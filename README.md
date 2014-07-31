@@ -211,6 +211,7 @@ let destination =
 Alamofire.download(.GET,
                    "http://httpbin.org/stream/100",
                    destination: destination)
+```
 
 #### Downloading a File w/Progress
 
