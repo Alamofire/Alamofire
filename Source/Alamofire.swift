@@ -155,7 +155,7 @@ public struct Alamofire {
 
         lazy var defaultHeaders: [String: String] = {
             // Accept-Language HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3
-            let acceptEncoding: String = "Accept-Encoding: gzip;q=1.0,compress;q=0.5"
+            let acceptEncoding: String = "gzip;q=1.0,compress;q=0.5"
 
             // Accept-Language HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
             let acceptLanguage: String = {
@@ -368,7 +368,7 @@ public struct Alamofire {
 
                 self.downloadTaskDidWriteData?(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
             }
-            
+
             func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
                 if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
                     delegate.URLSession(session, downloadTask: downloadTask, didResumeAtOffset: fileOffset, expectedTotalBytes: expectedTotalBytes)
@@ -401,7 +401,7 @@ public struct Alamofire {
     }
 
     // MARK: -
-    
+
     class Request {
         private let delegate: TaskDelegate
 
@@ -460,7 +460,7 @@ public struct Alamofire {
                                 return (data, error)
                             }, completionHandler: completionHandler)
         }
-        
+
         func response(priority: Int = DISPATCH_QUEUE_PRIORITY_DEFAULT, queue: dispatch_queue_t? = nil, serializer: (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?), completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
 
             dispatch_async(self.delegate.queue, {
