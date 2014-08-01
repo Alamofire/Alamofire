@@ -749,8 +749,8 @@ extension Alamofire.Request {
         var downloadTask: NSURLSessionDownloadTask! { return self.task as NSURLSessionDownloadTask }
         var downloadProgress: ((Int64, Int64, Int64) -> Void)?
 
-        var resumeData: NSData?
-        override var data: NSData { return self.resumeData! }
+        var resumeData: NSData!
+        override var data: NSData! { return self.resumeData }
 
         var downloadTaskDidFinishDownloadingToURL: ((NSURLSession!, NSURLSessionDownloadTask!, NSURL) -> (NSURL))?
         var downloadTaskDidWriteData: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64, Int64) -> Void)?
