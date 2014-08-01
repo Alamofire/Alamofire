@@ -214,7 +214,6 @@ Alamofire.download(.GET,
 
 #### Downloading a File w/Progress
 
-```swift
 Alamofire.download(.GET,
                    "http://httpbin.org/stream/100",
                    destination: destination)
