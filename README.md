@@ -11,17 +11,13 @@ Alamofire.request(.GET, "http://httpbin.org/get")
 #### With Parameters
 
 ```swift
-Alamofire.request(.GET,
-                  "http://httpbin.org/get",
-                  parameters: ["foo": "bar"])
+Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 ```
 
 #### With Response Handling
 
 ```swift
-Alamofire.request(.GET,
-                  "http://httpbin.org/get",
-                  parameters: ["foo": "bar"])
+Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .response { (request, response, data, error) in
                      println(request)
                      println(response)
@@ -32,9 +28,7 @@ Alamofire.request(.GET,
 #### With Response String Handling
 
 ```swift
-Alamofire.request(.GET,
-                  "http://httpbin.org/get",
-                  parameters: ["foo": "bar"])
+Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .responseString { (request, response, string, error) in
                   println(string)
          }
@@ -124,10 +118,7 @@ let encoding = Alamofire.ParameterEncoding.URL
 ### POST Request with JSON Response
 
 ```swift
-Alamofire.request(.POST,
-                  "http://httpbin.org/post",
-                  parameters: parameters,
-                  encoding: .JSON(options: nil))
+Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters, encoding: .JSON(options: nil))
          .responseJSON {(request, response, JSON, error) in
             println(JSON)
          }
@@ -156,17 +147,13 @@ let fileURL = NSBundle.mainBundle()
                       .URLForResource("Default",
                                       withExtension: "png")
 
-Alamofire.upload(.POST,
-                 "http://httpbin.org/post",
-                 file: fileURL)
+Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
 ```
 
 #### Uploading w/Progress
 
 ```swift
-Alamofire.upload(.POST,
-                 "http://httpbin.org/post",
-                 file: fileURL)
+Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
         .progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) in
             println(totalBytesWritten)
         }
@@ -185,9 +172,7 @@ Alamofire.upload(.POST,
 #### Downloading a File
 
 ```swift
-Alamofire.download(.GET,
-                  "http://httpbin.org/stream/100",
-                  destination: { (temporaryURL, response) in
+Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: { (temporaryURL, response) in
     if let directoryURL = NSFileManager.defaultManager()
                           .URLsForDirectory(.DocumentDirectory,
                                             inDomains: .UserDomainMask)[0]
@@ -204,20 +189,15 @@ Alamofire.download(.GET,
 #### Using the Default Download Destination Closure Function
 
 ```swift
-let destination =
-    Alamofire.Request.suggestedDownloadDestination(directory: .DocumentDirectory,
-                                                   domain: .UserDomainMask)
+let destination = Alamofire.Request.suggestedDownloadDestination(directory: .DocumentDirectory, domain: .UserDomainMask)
 
-Alamofire.download(.GET,
-                   "http://httpbin.org/stream/100",
-                   destination: destination)
+Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
+```
 
 #### Downloading a File w/Progress
 
 ```swift
-Alamofire.download(.GET,
-                   "http://httpbin.org/stream/100",
-                   destination: destination)
+Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
          .progress { (bytesRead, totalBytesRead, totalBytesExpectedToRead) in
              println(totalBytesRead)
          }
@@ -254,13 +234,8 @@ Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
 let user = "user"
 let password = "password"
 
-let credential = NSURLCredential(user: user,
-                                 password: password,
-                                 persistence: .ForSession)
-let protectionSpace = NSURLProtectionSpace(host: "httpbin.org",
-                                           port: 0,
-                                           `protocol`: "https",
-                                           realm: nil, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
+let credential = NSURLCredential(user: user, password: password, persistence: .ForSession)
+let protectionSpace = NSURLProtectionSpace(host: "httpbin.org", port: 0, `protocol`: "https", realm: nil, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
 ```
 
 ```swift
@@ -283,9 +258,7 @@ println(request)
 ### DebugPrintable
 
 ```swift
-let request = Alamofire.request(.GET,
-                                "http://httpbin.org/get",
-                                parameters: ["foo": "bar"])
+let request = Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 
 debugPrintln(request)
 ```
