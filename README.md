@@ -1,5 +1,32 @@
 ![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/assets/alamofire.png)
 
+Alamofire is an HTTP networking library written in Swift. Think of it as [AFNetworking](https://github.com/afnetworking/afnetworking) reimagined for the conventions of this new language.
+
+Of course, AFNetworking remains the premiere networking library available for Mac OS X and iOS, and can easily be used in Swift, just like any other Objective-C code. AFNetworking is stable and reliable, and isn't going anywhere. But for anyone looking for something a little more idiomatic to Swift, Alamofire may be right up your alley. (It's not a mutually-exclusive choice, either! AFNetworking & Alamofire will peacefully co-exist within the same codebase.)
+
+> Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu.edu/wildseed/alamofire.html), a hybrid variant of the Bluebonnet, the official state flower of Texas.
+
+## Features
+
+- Chainable Request / Response methods
+- URL / JSON / plist Parameter Encoding
+- Upload File / Data / Stream
+- Download using Request or Resume data
+- Authentication with NSURLCredential
+- Progress Closure & NSProgress
+- cURL Debug Output
+
+## Requirements
+
+- Xcode 6
+- iOS 7.0+ / Mac OS X 10.9+
+
+## Installation
+
+_The infrastructure and best practices for distributing Swift libraries is currently being developed by the developer community during this beta period of the language and Xcode. In the meantime, you can simply add Alamofire as a git submodule, and drag the `Alamofire.swift` file into your Xcode project._
+
+---
+
 ## Usage
 
 ### GET Request
