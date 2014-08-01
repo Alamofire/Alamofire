@@ -102,9 +102,7 @@ let parameters = [
     ]
 ]
 
-Alamofire.request(.POST,
-                  "http://httpbin.org/post",
-                  parameters: parameters)
+Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters)
 ```
 
 This sends the following HTTP Body:
