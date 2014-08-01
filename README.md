@@ -42,19 +42,19 @@ _The infrastructure and best practices for distributing Swift libraries is curre
 ### GET Request
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get")
+Alamofire.request("http://httpbin.org/get")
 ```
 
 #### With Parameters
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+Alamofire.request("http://httpbin.org/get", parameters: ["foo": "bar"])
 ```
 
 #### With Response Handling
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+Alamofire.request("http://httpbin.org/get", parameters: ["foo": "bar"])
          .response { (request, response, data, error) in
                      println(request)
                      println(response)
@@ -65,7 +65,7 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 #### With Response String Handling
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+Alamofire.request("http://httpbin.org/get", parameters: ["foo": "bar"])
          .responseString { (request, response, string, error) in
                   println(string)
          }

@@ -933,6 +933,10 @@ extension Alamofire {
     }
 
     // MARK: Request
+    
+    static func request(URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
+            return request(.GET, URL, parameters: parameters, encoding: encoding)
+    }
 
     static func request(method: Method, _ URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
         var mutableRequest = NSMutableURLRequest(URL: NSURL(string: URL))
