@@ -20,6 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#import "TargetConditionals.h"
+
 #if TARGET_OS_MAC && !TARGET_OS_IPHONE
 #import <Cocoa/Cocoa.h>
 #else
