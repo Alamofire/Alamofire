@@ -1,4 +1,4 @@
-// UploadTests.swift
+// UploadTaskDelegate.swift
 //
 // Copyright (c) 2014 Alamofire (http://alamofire.org)
 //
@@ -21,34 +21,29 @@
 // THE SOFTWARE.
 
 import Foundation
-import XCTest
 
-extension Alamofire {
-    struct UploadTests {
-        class UploadResponseTestCase: XCTestCase {
-            func testDownloadRequest() {
-                let URL = "http://httpbin.org/post"
-                let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
-
-                let expectation = expectationWithDescription(URL)
-
-                Alamofire.upload(.POST, URL, data: data!)
-                    .responseJSON {(request, response, JSON, error) in
-                        expectation.fulfill()
-
-                        XCTAssertNotNil(request, "request should not be nil")
-                        XCTAssertNotNil(response, "response should not be nil")
-
-                        XCTAssertNil(error, "error should be nil")
-
-                        println(JSON)
-                    }
-
-                waitForExpectationsWithTimeout(10){ error in
-                    XCTAssertNil(error, "\(error)")
-                }
-            }
-        }
+internal class UploadTaskDelegate: DataTaskDelegate {
+    
+    var uploadTask: NSURLSessionUploadTask! { return self.task as NSURLSessionUploadTask }
+    var uploadProgress: ((Int64, Int64, Int64) -> Void)!
+    
+    init(task: NSURLSessionTask) {
+        super.init(task: task)
     }
+    
 }
 
+// MARK: NSURLSessionTaskDelegate
+
+extension UploadTaskDelegate: NSURLSessionTaskDelegate {
+
+    func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        if self.uploadProgress {
+            self.uploadProgress(bytesSent, totalBytesSent, totalBytesExpectedToSend)
+        }
+        
+        self.progress.totalUnitCount = totalBytesExpectedToSend
+        self.progress.completedUnitCount = totalBytesSent
+    }
+    
+}
