@@ -1,4 +1,4 @@
-// UploadTests.swift
+// Alamofire.h
 //
 // Copyright (c) 2014 Alamofire (http://alamofire.org)
 //
@@ -20,35 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Foundation
-import XCTest
+#import "TargetConditionals.h"
 
-extension Alamofire {
-    struct UploadTests {
-        class UploadResponseTestCase: XCTestCase {
-            func testDownloadRequest() {
-                let URL = "http://httpbin.org/post"
-                let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+#import <Cocoa/Cocoa.h>
+#else
+#import <UIKit/UIKit.h>
+#endif
 
-                let expectation = expectationWithDescription(URL)
+//! Project version number for Alamofire.
+FOUNDATION_EXPORT double AlamofireVersionNumber;
 
-                Alamofire.upload(.POST, URL, data: data!)
-                    .responseJSON {(request, response, JSON, error) in
-                        expectation.fulfill()
+//! Project version string for Alamofire.
+FOUNDATION_EXPORT const unsigned char AlamofireVersionString[];
 
-                        XCTAssertNotNil(request, "request should not be nil")
-                        XCTAssertNotNil(response, "response should not be nil")
+// In this header, you should import all the public headers of your framework using statements like #import <Alamofire/PublicHeader.h>
 
-                        XCTAssertNil(error, "error should be nil")
-
-                        println(JSON)
-                    }
-
-                waitForExpectationsWithTimeout(10){ error in
-                    XCTAssertNil(error, "\(error)")
-                }
-            }
-        }
-    }
-}
 

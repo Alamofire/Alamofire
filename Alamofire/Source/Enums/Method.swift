@@ -1,4 +1,4 @@
-// ResponseTests.swift
+// Method.swift
 //
 // Copyright (c) 2014 Alamofire (http://alamofire.org)
 //
@@ -21,30 +21,18 @@
 // THE SOFTWARE.
 
 import Foundation
-import XCTest
 
-extension Alamofire {
-    struct ResponseTests {
-        class JSONResponseTestCase: XCTestCase {
-            func testJSONResponse() {
-                let URL = "http://httpbin.org/get"
-                let expectation = expectationWithDescription("\(URL)")
-
-                Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
-                         .responseJSON { (request, response, JSON, error) in
-                            expectation.fulfill()
-                            XCTAssertNotNil(request, "request should not be nil")
-                            XCTAssertNotNil(response, "response should not be nil")
-                            XCTAssertNotNil(JSON, "JSON should not be nil")
-                            XCTAssertNil(error, "error should be nil")
-
-                            XCTAssertEqual(JSON!["args"] as NSObject, ["foo": "bar"], "args should be equal")
-                         }
-
-                waitForExpectationsWithTimeout(10){ error in
-                    XCTAssertNil(error, "\(error)")
-                }
-            }
-        }
-    }
+// HTTP Method Definitions; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
+public enum Method: String {
+    
+    case OPTIONS = "OPTIONS"
+    case GET = "GET"
+    case HEAD = "HEAD"
+    case POST = "POST"
+    case PUT = "PUT"
+    case PATCH = "PATCH"
+    case DELETE = "DELETE"
+    case TRACE = "TRACE"
+    case CONNECT = "CONNECT"
+    
 }
