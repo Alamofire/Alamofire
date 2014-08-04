@@ -47,7 +47,7 @@ public struct Alamofire {
                 return (request, nil)
             }
 
-            var mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
+            let mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
             var error: NSError? = nil
 
             switch self {
@@ -115,17 +115,13 @@ public struct Alamofire {
                 }
 
             case .JSON(let options):
-                let data = NSJSONSerialization.dataWithJSONObject(parameters, options: options, error: &error)
-
-                if data {
+                if let data = NSJSONSerialization.dataWithJSONObject(parameters, options: options, error: &error) {
                     let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))
                     mutableRequest.setValue("application/json; charset=\(charset)", forHTTPHeaderField: "Content-Type")
                     mutableRequest.HTTPBody = data
                 }
             case .PropertyList(let (format, options)):
-                let data = NSPropertyListSerialization.dataWithPropertyList(parameters, format: format, options: options, error: &error)
-
-                if data {
+                if let data = NSPropertyListSerialization.dataWithPropertyList(parameters, format: format, options: options, error: &error) {
                     let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
                     mutableRequest.setValue("application/x-plist; charset=\(charset)", forHTTPHeaderField: "Content-Type")
                     mutableRequest.HTTPBody = data
@@ -179,7 +175,7 @@ public struct Alamofire {
                     let version: AnyObject? = info[kCFBundleVersionKey]
                     let os: AnyObject? = NSProcessInfo.processInfo()?.operatingSystemVersionString
 
-                    var mutableUserAgent = NSMutableString(string: "\(executable!)/\(bundle!) (\(version!); OS \(os!))") as CFMutableString
+                    let mutableUserAgent = NSMutableString(string: "\(executable!)/\(bundle!) (\(version!); OS \(os!))") as CFMutableString
                     let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
                     if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
                         return mutableUserAgent as NSString
@@ -206,10 +202,10 @@ public struct Alamofire {
         // MARK: -
 
         func request(request: NSURLRequest) -> Request {
-            var mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
+            let mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
 
             for (field, value) in self.defaultHeaders {
-                if !mutableRequest.valueForHTTPHeaderField(field){
+                if !mutableRequest.valueForHTTPHeaderField(field) {
                     mutableRequest.setValue(value, forHTTPHeaderField: field)
                 }
             }
@@ -934,7 +930,7 @@ extension Alamofire {
 
     // MARK: Request
 
-    static func request(method: Method, _ URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
+    static func request(method: Method, _ URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Alamofire.Request {
         return Manager.sharedInstance.request(encoding.encode(URLRequest(method, URL), parameters: parameters).0)
     }
 
