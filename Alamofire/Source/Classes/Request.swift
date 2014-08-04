@@ -86,7 +86,7 @@ public class Request {
             dispatch_async(dispatch_get_global_queue(priority, 0), {
                 let (responseObject: AnyObject?, error: NSError?) = serializer(self.request, self.response, self.delegate.data, self.delegate.error)
                 
-                dispatch_async(queue ? queue : dispatch_get_main_queue(), {
+                dispatch_async(queue ?? dispatch_get_main_queue(), {
                     completionHandler(self.request, self.response, responseObject, error)
                     })
                 })
@@ -155,7 +155,7 @@ extension Request: DebugPrintable {
         let URL = self.request.URL!
         
         if self.request.HTTPMethod != "GET" {
-            components += "-X \(self.request.HTTPMethod)"
+            components.append("-X \(self.request.HTTPMethod)")
         }
         
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
@@ -163,7 +163,7 @@ extension Request: DebugPrintable {
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
                 if !credentials.isEmpty {
                     if let credential = credentials[0] as? NSURLCredential {
-                        components += "-u \(credential.user):\(credential.password)"
+                        components.append("-u \(credential.user):\(credential.password)")
                     }
                 }
             }
@@ -173,7 +173,7 @@ extension Request: DebugPrintable {
             if let cookies = cookieStorage.cookiesForURL(URL) as? [NSHTTPCookie] {
                 if !cookies.isEmpty {
                     let string = cookies.reduce(""){ $0 + "\($1.name)=\($1.value);" }
-                    components += "-b \"\(string.substringToIndex(string.endIndex.predecessor()))\""
+                    components.append("-b \"\(string.substringToIndex(string.endIndex.predecessor()))\"")
                 }
             }
         }
@@ -183,17 +183,17 @@ extension Request: DebugPrintable {
             case "Cookie":
                 continue
             default:
-                components += "-H \"\(field): \(value)\""
+                components.append("-H \"\(field): \(value)\"")
             }
         }
         
         if let HTTPBody = self.request.HTTPBody {
-            components += "-d \"\(NSString(data: HTTPBody, encoding: NSUTF8StringEncoding))\""
+            components.append("-d \"\(NSString(data: HTTPBody, encoding: NSUTF8StringEncoding))\"")
         }
         
         // TODO: -T arguments for files
         
-        components += "\"\(URL.absoluteString)\""
+        components.append("\"\(URL.absoluteString)\"")
         
         return join(" \\\n\t", components)
     }
@@ -236,7 +236,7 @@ extension Request {
     public class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
         return { (request, response, data, error) in
             var serializationError: NSError?
-            let JSON: AnyObject! = NSJSONSerialization.JSONObjectWithData(data as NSData, options: options, error: &serializationError)
+            let JSON: AnyObject! = NSJSONSerialization.JSONObjectWithData(data, options: options, error: &serializationError)
             return (JSON, serializationError)
         }
     }
@@ -260,7 +260,7 @@ extension Request {
     public class func propertyListResponseSerializer(options: NSPropertyListReadOptions = 0) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
         return { (request, response, data, error) in
             var propertyListSerializationError: NSError?
-            let plist: AnyObject! = NSPropertyListSerialization.propertyListWithData(data as NSData, options: options, format: nil, error: &propertyListSerializationError)
+            let plist: AnyObject! = NSPropertyListSerialization.propertyListWithData(data, options: options, format: nil, error: &propertyListSerializationError)
             
             return (plist, propertyListSerializationError)
         }

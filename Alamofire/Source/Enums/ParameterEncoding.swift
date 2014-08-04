@@ -29,7 +29,7 @@ public enum ParameterEncoding {
     case PropertyList(format: NSPropertyListFormat, options: NSPropertyListWriteOptions)
     
     public func encode(request: NSURLRequest, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
-        if !parameters {
+        if parameters == nil {
             return (request, nil)
         }
         
@@ -64,7 +64,8 @@ public enum ParameterEncoding {
                     } else if let array = value as? [AnyObject] {
                         components += arrayQueryComponents(key, array)
                     } else {
-                        components += (key, "\(value)")
+                        let tuple = (key, "\(value)")
+                        components.append(tuple)
                     }
                     
                     return components
@@ -103,7 +104,7 @@ public enum ParameterEncoding {
         case .JSON(let options):
             let data = NSJSONSerialization.dataWithJSONObject(parameters, options: options, error: &error)
             
-            if data {
+            if data != nil {
                 let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))
                 mutableRequest.setValue("application/json; charset=\(charset)", forHTTPHeaderField: "Content-Type")
                 mutableRequest.HTTPBody = data
@@ -111,7 +112,7 @@ public enum ParameterEncoding {
         case .PropertyList(let (format, options)):
             let data = NSPropertyListSerialization.dataWithPropertyList(parameters, format: format, options: options, error: &error)
             
-            if data {
+            if data != nil {
                 let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
                 mutableRequest.setValue("application/x-plist; charset=\(charset)", forHTTPHeaderField: "Content-Type")
                 mutableRequest.HTTPBody = data

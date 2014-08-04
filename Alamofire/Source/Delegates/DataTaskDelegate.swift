@@ -36,7 +36,7 @@ internal class DataTaskDelegate: TaskDelegate {
     var dataTaskDidReceiveData: ((NSURLSession!, NSURLSessionDataTask!, NSData!) -> Void)?
     var dataTaskWillCacheResponse: ((NSURLSession!, NSURLSessionDataTask!, NSCachedURLResponse!) -> (NSCachedURLResponse))?
     
-    init(task: NSURLSessionTask) {
+    required init(task: NSURLSessionTask) {
         self.mutableData = NSMutableData()
         super.init(task: task)
     }
@@ -50,7 +50,7 @@ extension DataTaskDelegate: NSURLSessionDataDelegate {
     func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveResponse response: NSURLResponse!, completionHandler: ((NSURLSessionResponseDisposition) -> Void)!) {
         var disposition: NSURLSessionResponseDisposition = .Allow
         
-        if self.dataTaskDidReceiveResponse {
+        if self.dataTaskDidReceiveResponse != nil {
             disposition = self.dataTaskDidReceiveResponse!(session, dataTask, response)
         }
         
@@ -70,7 +70,7 @@ extension DataTaskDelegate: NSURLSessionDataDelegate {
     func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, willCacheResponse proposedResponse: NSCachedURLResponse!, completionHandler: ((NSCachedURLResponse!) -> Void)!) {
         var cachedResponse = proposedResponse
         
-        if self.dataTaskWillCacheResponse {
+        if self.dataTaskWillCacheResponse != nil {
             cachedResponse = self.dataTaskWillCacheResponse!(session, dataTask, proposedResponse)
         }
         

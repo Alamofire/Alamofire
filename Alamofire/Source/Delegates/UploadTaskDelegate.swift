@@ -27,7 +27,7 @@ internal class UploadTaskDelegate: DataTaskDelegate {
     var uploadTask: NSURLSessionUploadTask! { return self.task as NSURLSessionUploadTask }
     var uploadProgress: ((Int64, Int64, Int64) -> Void)!
     
-    init(task: NSURLSessionTask) {
+    required init(task: NSURLSessionTask) {
         super.init(task: task)
     }
     

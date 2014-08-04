@@ -34,7 +34,7 @@ internal class DownloadTaskDelegate: TaskDelegate {
     var downloadTaskDidWriteData: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64, Int64) -> Void)?
     var downloadTaskDidResumeAtOffset: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64) -> Void)?
     
-    init(task: NSURLSessionTask) {
+    required init(task: NSURLSessionTask) {
         super.init(task: task)
     }
     
@@ -45,7 +45,7 @@ internal class DownloadTaskDelegate: TaskDelegate {
 extension DownloadTaskDelegate: NSURLSessionDownloadDelegate {
 
     func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didFinishDownloadingToURL location: NSURL!) {
-        if self.downloadTaskDidFinishDownloadingToURL {
+        if self.downloadTaskDidFinishDownloadingToURL != nil {
             let destination = self.downloadTaskDidFinishDownloadingToURL!(session, downloadTask, location)
             var fileManagerError: NSError?
             

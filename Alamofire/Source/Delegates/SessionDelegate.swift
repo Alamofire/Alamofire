@@ -53,7 +53,7 @@ public class SessionDelegate: NSObject {
     public var downloadTaskDidWriteData: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64, Int64) -> Void)?
     public var downloadTaskDidResumeAtOffset: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64) -> Void)?
     
-    internal init() {
+    internal override init() {
         self.subdelegates = Dictionary()
         super.init()
     }
@@ -63,17 +63,17 @@ public class SessionDelegate: NSObject {
     override public func respondsToSelector(selector: Selector) -> Bool {
         switch selector {
         case "URLSession:didBecomeInvalidWithError:":
-            return self.sessionDidBecomeInvalidWithError ? true : false
+            return self.sessionDidBecomeInvalidWithError != nil
         case "URLSession:didReceiveChallenge:completionHandler:":
-            return self.sessionDidReceiveChallenge ? true : false
+            return self.sessionDidReceiveChallenge != nil
         case "URLSessionDidFinishEventsForBackgroundURLSession:":
-            return self.sessionDidFinishEventsForBackgroundURLSession ? true : false
+            return self.sessionDidFinishEventsForBackgroundURLSession != nil
         case "URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:":
-            return self.taskWillPerformHTTPRedirection ? true : false
+            return self.taskWillPerformHTTPRedirection != nil
         case "URLSession:dataTask:didReceiveResponse:completionHandler:":
-            return self.dataTaskDidReceiveResponse ? true : false
+            return self.dataTaskDidReceiveResponse != nil
         case "URLSession:dataTask:willCacheResponse:completionHandler:":
-            return self.dataTaskWillCacheResponse ? true : false
+            return self.dataTaskWillCacheResponse != nil
         default:
             return self.dynamicType.instancesRespondToSelector(selector)
         }
@@ -90,7 +90,7 @@ extension SessionDelegate: NSURLSessionDelegate {
     }
     
     public func URLSession(session: NSURLSession!, didReceiveChallenge challenge: NSURLAuthenticationChallenge!, completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)!) {
-        if self.sessionDidReceiveChallenge {
+        if self.sessionDidReceiveChallenge != nil {
             completionHandler(self.sessionDidReceiveChallenge!(session, challenge))
         } else {
             completionHandler(.PerformDefaultHandling, nil)
@@ -109,7 +109,7 @@ extension SessionDelegate: NSURLSessionTaskDelegate {
     
     public func URLSession(session: NSURLSession!, task: NSURLSessionTask!, willPerformHTTPRedirection response: NSHTTPURLResponse!, newRequest request: NSURLRequest!, completionHandler: ((NSURLRequest!) -> Void)!) {
         var redirectRequest = request
-        if self.taskWillPerformHTTPRedirection {
+        if self.taskWillPerformHTTPRedirection != nil {
             redirectRequest = self.taskWillPerformHTTPRedirection!(session, task, response, request)
         }
         
@@ -151,7 +151,7 @@ extension SessionDelegate: NSURLSessionDataDelegate {
     public func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveResponse response: NSURLResponse!, completionHandler: ((NSURLSessionResponseDisposition) -> Void)!) {
         var disposition: NSURLSessionResponseDisposition = .Allow
         
-        if self.dataTaskDidReceiveResponse {
+        if self.dataTaskDidReceiveResponse != nil {
             disposition = self.dataTaskDidReceiveResponse!(session, dataTask, response)
         }
         
@@ -174,7 +174,7 @@ extension SessionDelegate: NSURLSessionDataDelegate {
     public func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, willCacheResponse proposedResponse: NSCachedURLResponse!, completionHandler: ((NSCachedURLResponse!) -> Void)!) {
         var cachedResponse = proposedResponse
         
-        if self.dataTaskWillCacheResponse {
+        if self.dataTaskWillCacheResponse != nil {
             cachedResponse = self.dataTaskWillCacheResponse!(session, dataTask, proposedResponse)
         }
         

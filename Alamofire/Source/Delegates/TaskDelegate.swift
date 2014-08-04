@@ -41,7 +41,7 @@ internal class TaskDelegate: NSObject {
         self.progress = NSProgress(totalUnitCount: 0)
         
         let label: String = "com.alamofire.task-\(task.taskIdentifier)"
-        let queue = dispatch_queue_create(label.bridgeToObjectiveC().UTF8String, DISPATCH_QUEUE_SERIAL)
+        let queue = dispatch_queue_create(label, DISPATCH_QUEUE_SERIAL)
         dispatch_suspend(queue)
         self.queue = queue
     }
@@ -55,7 +55,7 @@ extension TaskDelegate: NSURLSessionTaskDelegate {
     
     func URLSession(session: NSURLSession!, task: NSURLSessionTask!, willPerformHTTPRedirection response: NSHTTPURLResponse!, newRequest request: NSURLRequest!, completionHandler: ((NSURLRequest!) -> Void)!) {
         var redirectRequest = request
-        if self.taskWillPerformHTTPRedirection {
+        if self.taskWillPerformHTTPRedirection != nil {
             redirectRequest = self.taskWillPerformHTTPRedirection!(session, task, response, request)
         }
         
@@ -66,7 +66,7 @@ extension TaskDelegate: NSURLSessionTaskDelegate {
         var disposition: NSURLSessionAuthChallengeDisposition = .PerformDefaultHandling
         var credential: NSURLCredential?
         
-        if self.taskDidReceiveChallenge {
+        if self.taskDidReceiveChallenge != nil {
             (disposition, credential) = self.taskDidReceiveChallenge!(session, task, challenge)
         } else {
             if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
@@ -82,7 +82,7 @@ extension TaskDelegate: NSURLSessionTaskDelegate {
     
     func URLSession(session: NSURLSession!, task: NSURLSessionTask!, needNewBodyStream completionHandler: ((NSInputStream!) -> Void)!) {
         var bodyStream: NSInputStream?
-        if self.taskNeedNewBodyStream {
+        if self.taskNeedNewBodyStream != nil {
             bodyStream = self.taskNeedNewBodyStream!(session, task)
         }
         

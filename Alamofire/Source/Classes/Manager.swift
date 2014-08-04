@@ -47,7 +47,7 @@ public class Manager {
             var components: [String] = []
             for (index, languageCode) in enumerate(NSLocale.preferredLanguages() as [String]) {
                 let q = 1.0 - (Double(index) * 0.1)
-                components += "\(languageCode);q=\(q)"
+                components.append("\(languageCode);q=\(q)")
                 if q <= 0.5 {
                     break
                 }
@@ -137,7 +137,7 @@ extension Manager {
         }
         
         let request = Request(session: self.session, task: uploadTask)
-        if stream {
+        if stream != nil {
             request.delegate.taskNeedNewBodyStream = { _, _ in
                 return stream
             }
