@@ -43,7 +43,7 @@ public struct Alamofire {
         case PropertyList(format: NSPropertyListFormat, options: NSPropertyListWriteOptions)
 
         func encode(request: NSURLRequest, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
-            if !parameters {
+            if parameters == nil {
                 return (request, nil)
             }
 
@@ -78,7 +78,7 @@ public struct Alamofire {
                         } else if let array = value as? [AnyObject] {
                             components += arrayQueryComponents(key, array)
                         } else {
-                            components += (key, "\(value)")
+                            components.append(key, "\(value)")
                         }
 
                         return components
@@ -507,12 +507,12 @@ public struct Alamofire {
             var taskDidSendBodyData: ((NSURLSession!, NSURLSessionTask!, Int64, Int64, Int64) -> Void)?
             var taskNeedNewBodyStream: ((NSURLSession!, NSURLSessionTask!) -> (NSInputStream!))?
 
-            override init(task: NSURLSessionTask) {
+            init(task: NSURLSessionTask) {
                 self.task = task
                 self.progress = NSProgress(totalUnitCount: 0)
 
                 let label: String = "com.alamofire.task-\(task.taskIdentifier)"
-                let queue = dispatch_queue_create(label.bridgeToObjectiveC().UTF8String, DISPATCH_QUEUE_SERIAL)
+                let queue = dispatch_queue_create((label as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
                 dispatch_suspend(queue)
                 self.queue = queue
             }
@@ -573,7 +573,7 @@ public struct Alamofire {
             var dataTaskDidReceiveData: ((NSURLSession!, NSURLSessionDataTask!, NSData!) -> Void)?
             var dataTaskWillCacheResponse: ((NSURLSession!, NSURLSessionDataTask!, NSCachedURLResponse!) -> (NSCachedURLResponse))?
 
-            init(task: NSURLSessionTask) {
+            override init(task: NSURLSessionTask) {
                 self.mutableData = NSMutableData()
                 super.init(task: task)
             }
@@ -824,7 +824,7 @@ extension Alamofire.Request: DebugPrintable {
             if let cookies = cookieStorage.cookiesForURL(URL) as? [NSHTTPCookie] {
                 if !cookies.isEmpty {
                     let string = cookies.reduce(""){ $0 + "\($1.name)=\($1.value);" }
-                    components += "-b \"\(string.substringToIndex(string.endIndex.predecessor()))\""
+                    components.append("-b \"\(string.substringToIndex(string.endIndex.predecessor()))\"")
                 }
             }
         }
