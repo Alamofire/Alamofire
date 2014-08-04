@@ -25,9 +25,6 @@ import Foundation
 // MARK: - Request
 
 public func request(method: Method, URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-    var mutableRequest = NSMutableURLRequest(URL: NSURL(string: URL))
-    mutableRequest.HTTPMethod = method.toRaw()
-    
     return Manager.sharedInstance.request(encoding.encode(URLRequest(method, URL), parameters: parameters).0)
 }
 
