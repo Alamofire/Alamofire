@@ -52,7 +52,6 @@ internal class TaskDelegate: NSObject {
 
 extension TaskDelegate: NSURLSessionTaskDelegate {
 
-    
     func URLSession(session: NSURLSession!, task: NSURLSessionTask!, willPerformHTTPRedirection response: NSHTTPURLResponse!, newRequest request: NSURLRequest!, completionHandler: ((NSURLRequest!) -> Void)!) {
         var redirectRequest = request
         if self.taskWillPerformHTTPRedirection != nil {
@@ -90,6 +89,7 @@ extension TaskDelegate: NSURLSessionTaskDelegate {
     }
     
     func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
+        self.error = error
         dispatch_resume(self.queue)
     }
 }
