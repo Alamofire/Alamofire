@@ -556,6 +556,7 @@ public struct Alamofire {
             }
 
             func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
+                self.error = error
                 dispatch_resume(self.queue)
             }
         }
