@@ -154,7 +154,7 @@ public struct Alamofire {
         var automaticallyStartsRequests: Bool = true
 
         lazy var defaultHeaders: [String: String] = {
-            // Accept-Language HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3
+            // Accept-Encoding HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3
             let acceptEncoding: String = "gzip;q=1.0,compress;q=0.5"
 
             // Accept-Language HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
