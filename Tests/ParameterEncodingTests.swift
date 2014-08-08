@@ -199,7 +199,7 @@ extension Alamofire {
                 XCTAssertNil(error, "error should be nil")
                 XCTAssertNil(request.URL.query?, "query should be nil")
                 XCTAssertNotNil(request.valueForHTTPHeaderField("Content-Type"), "Content-Type should not be nil")
-                XCTAssert(request.valueForHTTPHeaderField("Content-Type")?.hasPrefix("application/json"), "Content-Type should be application/json")
+                XCTAssert(request.valueForHTTPHeaderField("Content-Type")!.hasPrefix("application/json"), "Content-Type should be application/json")
                 XCTAssertNotNil(request.HTTPBody, "HTTPBody should not be nil")
 
                 let JSON = NSJSONSerialization.JSONObjectWithData(request.HTTPBody, options: .AllowFragments, error: nil) as NSObject!
@@ -245,7 +245,7 @@ extension Alamofire {
                 XCTAssertNil(error, "error should be nil")
                 XCTAssertNil(request.URL.query?, "query should be nil")
                 XCTAssertNotNil(request.valueForHTTPHeaderField("Content-Type"), "Content-Type should not be nil")
-                XCTAssert(request.valueForHTTPHeaderField("Content-Type")?.hasPrefix("application/x-plist"), "Content-Type should be application/x-plist")
+                XCTAssert(request.valueForHTTPHeaderField("Content-Type")!.hasPrefix("application/x-plist"), "Content-Type should be application/x-plist")
                 XCTAssertNotNil(request.HTTPBody, "HTTPBody should not be nil")
 
                 let plist = NSPropertyListSerialization.propertyListWithData(request.HTTPBody, options: 0, format: nil, error: nil) as NSObject
@@ -264,7 +264,7 @@ extension Alamofire {
                 XCTAssertNil(error, "error should be nil")
                 XCTAssertNil(request.URL.query?, "query should be nil")
                 XCTAssertNotNil(request.valueForHTTPHeaderField("Content-Type"), "Content-Type should not be nil")
-                XCTAssert(request.valueForHTTPHeaderField("Content-Type")?.hasPrefix("application/x-plist"), "Content-Type should be application/x-plist")
+                XCTAssert(request.valueForHTTPHeaderField("Content-Type")!.hasPrefix("application/x-plist"), "Content-Type should be application/x-plist")
                 XCTAssertNotNil(request.HTTPBody, "HTTPBody should not be nil")
 
                 let plist = NSPropertyListSerialization.propertyListWithData(request.HTTPBody, options: 0, format: nil, error: nil) as NSObject!
