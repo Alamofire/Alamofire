@@ -456,21 +456,29 @@ public struct Alamofire {
         // MARK: Response
 
         func response(completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-            return response({ (request, response, data, error) in
-                                return (data, error)
+            return response({ (request, response, data) in
+                                return (data, nil)
                             }, completionHandler: completionHandler)
         }
 
-        func response(priority: Int = DISPATCH_QUEUE_PRIORITY_DEFAULT, queue: dispatch_queue_t? = nil, serializer: (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?), completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+        func response(priority: Int = DISPATCH_QUEUE_PRIORITY_DEFAULT, queue: dispatch_queue_t? = nil, serializer: (NSURLRequest, NSHTTPURLResponse?, NSData?) -> (AnyObject?, NSError?), completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
 
             dispatch_async(self.delegate.queue, {
-                dispatch_async(dispatch_get_global_queue(priority, 0), {
-                    let (responseObject: AnyObject?, error: NSError?) = serializer(self.request, self.response, self.delegate.data, self.delegate.error)
+                let targetQueue = queue ?? dispatch_get_main_queue()
 
-                    dispatch_async(queue ?? dispatch_get_main_queue(), {
-                        completionHandler(self.request, self.response, responseObject, error)
+                if let error = self.delegate.error {
+                    dispatch_async(targetQueue, {
+                        completionHandler(self.request, self.response, nil, error)
                     })
-                })
+                } else {
+                    dispatch_async(dispatch_get_global_queue(priority, 0), {
+                        let (responseObject: AnyObject?, error: NSError?) = serializer(self.request, self.response, self.delegate.data)
+                        
+                        dispatch_async(targetQueue, {
+                            completionHandler(self.request, self.response, responseObject, error)
+                        })
+                    })
+                }
             })
 
             return self
@@ -860,10 +868,10 @@ extension Alamofire.Request: DebugPrintable {
 // MARK: String
 
 extension Alamofire.Request {
-    class func stringResponseSerializer(encoding: NSStringEncoding = NSUTF8StringEncoding) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
-        return { (_, _, data, error) in
+    class func stringResponseSerializer(encoding: NSStringEncoding = NSUTF8StringEncoding) -> (NSURLRequest, NSHTTPURLResponse?, NSData?) -> (AnyObject?, NSError?) {
+        return { (_, _, data) in
             let string = NSString(data: data, encoding: encoding)
-            return (string, error)
+            return (string, nil)
         }
     }
 
@@ -881,8 +889,8 @@ extension Alamofire.Request {
 // MARK: JSON
 
 extension Alamofire.Request {
-    class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
-        return { (request, response, data, error) in
+    class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> (NSURLRequest, NSHTTPURLResponse?, NSData?) -> (AnyObject?, NSError?) {
+        return { (request, response, data) in
             var serializationError: NSError?
             let JSON: AnyObject! = NSJSONSerialization.JSONObjectWithData(data, options: options, error: &serializationError)
             return (JSON, serializationError)
@@ -903,8 +911,8 @@ extension Alamofire.Request {
 // MARK: Property List
 
 extension Alamofire.Request {
-    class func propertyListResponseSerializer(options: NSPropertyListReadOptions = 0) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
-        return { (request, response, data, error) in
+    class func propertyListResponseSerializer(options: NSPropertyListReadOptions = 0) -> (NSURLRequest, NSHTTPURLResponse?, NSData?) -> (AnyObject?, NSError?) {
+        return { (request, response, data) in
             var propertyListSerializationError: NSError?
             let plist: AnyObject! = NSPropertyListSerialization.propertyListWithData(data, options: options, format: nil, error: &propertyListSerializationError)
 
