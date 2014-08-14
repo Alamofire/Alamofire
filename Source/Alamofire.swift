@@ -168,7 +168,7 @@ public struct Alamofire {
                     }
                 }
 
-                return components.reduce("", {$0 == "" ? $1 : "\($0),\($1)"})
+                return ",".join(components)
             }()
 
             // User-Agent Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.43
