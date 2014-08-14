@@ -45,6 +45,24 @@ extension Alamofire {
                     XCTAssertNil(error, "\(error)")
                 }
             }
+            
+            func testResponseError() {
+                let URL = "http://missing.url"
+                let expectation = expectationWithDescription(URL);
+                
+                Alamofire
+                    .request(.GET, URL)
+                    .responseJSON { (_, _, _, error) -> Void in
+                        expectation.fulfill()
+                        
+                        var domain = error?.domain
+                        XCTAssertEqual(domain!, NSURLErrorDomain, "should be not JSON but URL domain error")
+                }
+                
+                waitForExpectationsWithTimeout(10) { error in
+                    XCTAssertNil(error, "\(error)")
+                }
+            }
         }
     }
 }
