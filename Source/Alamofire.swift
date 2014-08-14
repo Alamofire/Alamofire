@@ -926,8 +926,16 @@ extension Alamofire.Request {
 // MARK: - Convenience
 
 extension Alamofire {
-    private static func URLRequest(method: Method, _ URL: String) -> NSURLRequest {
+    private static func URLRequest(method: Method, _ URL: String, _ additionalHeaders : [String: String]? = nil) -> NSURLRequest {
         let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL))
+        // add additional headers
+        if additionalHeaders != nil {
+            for (headerField, value) in additionalHeaders! {
+                mutableURLRequest.setValue(value, forHTTPHeaderField: headerField)
+            }
+            
+        }
+        
         mutableURLRequest.HTTPMethod = method.toRaw()
 
         return mutableURLRequest
@@ -935,8 +943,8 @@ extension Alamofire {
 
     // MARK: Request
 
-    static func request(method: Method, _ URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-        return Manager.sharedInstance.request(encoding.encode(URLRequest(method, URL), parameters: parameters).0)
+    static func request(method: Method, _ URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL, additionalHeaders: [String : String]? = nil) -> Request {
+        return Manager.sharedInstance.request(encoding.encode(URLRequest(method, URL, additionalHeaders), parameters: parameters).0)
     }
 
     // MARK: Upload
