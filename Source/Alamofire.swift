@@ -417,10 +417,10 @@ public struct Alamofire {
 
             if task is NSURLSessionUploadTask {
                 self.delegate = UploadTaskDelegate(task: task)
-            } else if task is NSURLSessionDownloadTask {
-                self.delegate = DownloadTaskDelegate(task: task)
             } else if task is NSURLSessionDataTask {
                 self.delegate = DataTaskDelegate(task: task)
+            } else if task is NSURLSessionDownloadTask {
+                self.delegate = DownloadTaskDelegate(task: task)
             } else {
                 self.delegate = TaskDelegate(task: task)
             }
