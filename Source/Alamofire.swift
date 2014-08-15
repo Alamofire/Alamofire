@@ -939,6 +939,10 @@ extension Alamofire {
         return Manager.sharedInstance.request(encoding.encode(URLRequest(method, URL), parameters: parameters).0)
     }
 
+    static func request(method: Method, _ URLRequest: NSURLRequest, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
+        return Manager.sharedInstance.request(encoding.encode(URLRequest, parameters: parameters).0)
+    }
+
     // MARK: Upload
 
     static func upload(method: Method, _ URL: String, file: NSURL) -> Alamofire.Request {
