@@ -964,4 +964,4 @@ extension Alamofire {
     }
 }
 
-typealias AF = Alamofire
+public typealias AF = Alamofire
