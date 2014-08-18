@@ -735,10 +735,10 @@ extension Alamofire.Manager {
 }
 
 extension Alamofire.Request {
-    class func suggestedDownloadDestination(directory: NSSearchPathDirectory = .DocumentDirectory, domain: NSSearchPathDomainMask = .UserDomainMask) -> (NSURL, NSHTTPURLResponse) -> (NSURL) {
+    class func suggestedDownloadDestination(directory: NSSearchPathDirectory, domain: NSSearchPathDomainMask) -> (NSURL, NSHTTPURLResponse) -> (NSURL) {
 
         return { (temporaryURL, response) -> (NSURL) in
-            if let directoryURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as? NSURL {
+            if let directoryURL = NSFileManager.defaultManager().URLsForDirectory(directory, inDomains: domain)[0] as? NSURL {
                 return directoryURL.URLByAppendingPathComponent(response.suggestedFilename)
             }
 
@@ -884,8 +884,12 @@ extension Alamofire.Request {
     class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
         return { (request, response, data, error) in
             var serializationError: NSError?
-            let JSON: AnyObject! = NSJSONSerialization.JSONObjectWithData(data, options: options, error: &serializationError)
-            return (JSON, serializationError)
+            if let d = data {
+                let JSON: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: options, error: &serializationError)
+                return (JSON, serializationError)
+            } else {
+              return (nil, NSError(domain: "AlamofireError", code: 0, userInfo: [:]))
+            }
         }
     }
 

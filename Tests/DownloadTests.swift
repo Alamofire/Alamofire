@@ -23,47 +23,45 @@
 import Foundation
 import XCTest
 
-extension Alamofire {
-    struct DownloadTests {
-        class DownloadResponseTestCase: XCTestCase {
-            func testDownloadRequest() {
-                let numberOfLines = 100
-                let URL = "http://httpbin.org/stream/\(numberOfLines)"
+class DownloadResponseTestCase: XCTestCase {
+    func testDownloadRequest() {
+        let numberOfLines = 100
+        let URL = "http://httpbin.org/stream/\(numberOfLines)"
 
-                let expectation = expectationWithDescription(URL)
+        let expectation = expectationWithDescription(URL)
 
-                Alamofire.download(.GET, URL, destination: Alamofire.Request.suggestedDownloadDestination(directory: .DocumentDirectory, domain: .UserDomainMask))
-                    .response { request, response, _, error in
-                        expectation.fulfill()
+        Alamofire.download(.GET, URL, destination: Alamofire.Request.suggestedDownloadDestination(.CachesDirectory, domain: .UserDomainMask))
+            .response { request, response, _, error in
+                expectation.fulfill()
 
-                        XCTAssertNotNil(request, "request should not be nil")
-                        XCTAssertNotNil(response, "response should not be nil")
+                XCTAssertNotNil(request, "request should not be nil")
+                XCTAssertNotNil(response, "response should not be nil")
 
-                        XCTAssertNil(error, "error should be nil")
+                XCTAssertNil(error, "error should be nil")
 
-                        let fileManager = NSFileManager.defaultManager()
-                        var fileManagerError: NSError?
-                        let directory = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as NSURL
-                        let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: .SkipsHiddenFiles, error: &fileManagerError) as NSArray
+                let fileManager = NSFileManager.defaultManager()
+                var fileManagerError: NSError?
+                let directory = fileManager.URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask)[0] as NSURL
+                let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: .SkipsHiddenFiles, error: &fileManagerError) as NSArray
+                println(directory)
+                println(contents)
+                XCTAssertNil(fileManagerError, "fileManagerError should be nil")
 
-                        XCTAssertNil(fileManagerError, "fileManagerError should be nil")
+                let predicate = NSPredicate(format: "lastPathComponent = '\(numberOfLines).json'")
+                println(predicate)
+                let filteredContents = contents.filteredArrayUsingPredicate(predicate)
+                println(filteredContents)
+                XCTAssertEqual(filteredContents.count, 1, "should have one file in Caches")
 
-                        let predicate = NSPredicate(format: "lastPathComponent = '\(numberOfLines)'")
-                        let filteredContents = contents.filteredArrayUsingPredicate(predicate)
+                let file = filteredContents[0] as NSURL
+                XCTAssertEqual(file.lastPathComponent!, "\(numberOfLines).json", "filename should be \(numberOfLines)")
 
-                        XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
+                let data = NSData(contentsOfURL: file)
+                XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
+        }
 
-                        let file = filteredContents[0] as NSURL
-                        XCTAssertEqual(file.lastPathComponent!, "\(numberOfLines)", "filename should be \(numberOfLines)")
-
-                        let data = NSData(contentsOfURL: file)
-                        XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
-                }
-
-                waitForExpectationsWithTimeout(10){ error in
-                    XCTAssertNil(error, "\(error)")
-                }
-            }
+        waitForExpectationsWithTimeout(10){ error in
+            XCTAssertNil(error, "\(error)")
         }
     }
 }
