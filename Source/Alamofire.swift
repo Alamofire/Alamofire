@@ -42,6 +42,39 @@ public struct Alamofire {
         case JSON(NSJSONWritingOptions)
         case PropertyList(format: NSPropertyListFormat, options: NSPropertyListWriteOptions)
 
+        // TODO: moved this here from within 'queryComponents' due to bug in XCode 6 beta 6 (11266246)
+        func dictionaryQueryComponents(key: String, dictionary: [String: AnyObject]) -> [(String, String)] {
+            var components: [(String, String)] = []
+            for (nestedKey, value) in dictionary {
+                components += queryComponents("\(key)[\(nestedKey)]", value: value)
+            }
+
+            return components
+        }
+
+        func queryComponents(key: String, value: AnyObject) -> [(String, String)] {
+            
+            func arrayQueryComponents(key: String, array: [AnyObject]) -> [(String, String)] {
+                var components: [(String, String)] = []
+                for value in array {
+                    components += queryComponents("\(key)[]", value)
+                }
+
+                return components
+            }
+
+            var components: [(String, String)] = []
+            if let dictionary = value as? [String: AnyObject] {
+                components += dictionaryQueryComponents(key, dictionary)
+            } else if let array = value as? [AnyObject] {
+                components += arrayQueryComponents(key, array)
+            } else {
+                components.append(key, "\(value)")
+            }
+
+            return components
+        }
+
         func encode(request: NSURLRequest, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
             if parameters == nil {
                 return (request, nil)
@@ -53,36 +86,10 @@ public struct Alamofire {
             switch self {
             case .URL:
                 func query(parameters: [String: AnyObject]) -> String! {
-                    func queryComponents(key: String, value: AnyObject) -> [(String, String)] {
-                        func dictionaryQueryComponents(key: String, dictionary: [String: AnyObject]) -> [(String, String)] {
-                            var components: [(String, String)] = []
-                            for (nestedKey, value) in dictionary {
-                                components += queryComponents("\(key)[\(nestedKey)]", value)
-                            }
 
-                            return components
-                        }
+                    
 
-                        func arrayQueryComponents(key: String, array: [AnyObject]) -> [(String, String)] {
-                            var components: [(String, String)] = []
-                            for value in array {
-                                components += queryComponents("\(key)[]", value)
-                            }
-
-                            return components
-                        }
-
-                        var components: [(String, String)] = []
-                        if let dictionary = value as? [String: AnyObject] {
-                            components += dictionaryQueryComponents(key, dictionary)
-                        } else if let array = value as? [AnyObject] {
-                            components += arrayQueryComponents(key, array)
-                        } else {
-                            components.append(key, "\(value)")
-                        }
-
-                        return components
-                    }
+                    
 
                     var components: [(String, String)] = []
                     for key in sorted(Array(parameters.keys), <) {
