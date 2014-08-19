@@ -811,7 +811,7 @@ extension Alamofire.Request: DebugPrintable {
         }
 
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
-            let protectionSpace = NSURLProtectionSpace(host: URL.host, port: URL.port ? URL.port : 0, `protocol`: URL.scheme, realm: URL.host, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
+            let protectionSpace = NSURLProtectionSpace(host: URL.host, port: URL.port != nil ? URL.port! : 0, `protocol`: URL.scheme, realm: URL.host, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
                 if !credentials.isEmpty {
                     if let credential = credentials[0] as? NSURLCredential {
