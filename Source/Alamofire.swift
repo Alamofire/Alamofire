@@ -43,16 +43,16 @@ public struct Alamofire {
         case PropertyList(format: NSPropertyListFormat, options: NSPropertyListWriteOptions)
 
         // TODO: moved this here from within 'queryComponents' due to bug in XCode 6 beta 6 (11266246)
-        func dictionaryQueryComponents(key: String, dictionary: [String: AnyObject]) -> [(String, String)] {
+        func dictionaryQueryComponents(key: String, _ dictionary: [String: AnyObject]) -> [(String, String)] {
             var components: [(String, String)] = []
             for (nestedKey, value) in dictionary {
-                components += queryComponents("\(key)[\(nestedKey)]", value: value)
+                components += queryComponents("\(key)[\(nestedKey)]", value)
             }
 
             return components
         }
 
-        func queryComponents(key: String, value: AnyObject) -> [(String, String)] {
+        func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
             
             func arrayQueryComponents(key: String, array: [AnyObject]) -> [(String, String)] {
                 var components: [(String, String)] = []
