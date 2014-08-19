@@ -174,12 +174,12 @@ public struct Alamofire {
             // User-Agent Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.43
             let userAgent: String = {
                 if let info = NSBundle.mainBundle().infoDictionary {
-                    let executable: AnyObject? = info[kCFBundleExecutableKey]
-                    let bundle: AnyObject? = info[kCFBundleIdentifierKey]
-                    let version: AnyObject? = info[kCFBundleVersionKey]
-                    let os: AnyObject? = NSProcessInfo.processInfo()?.operatingSystemVersionString
+                    let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
+                    let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
+                    let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
+                    let os: AnyObject = NSProcessInfo.processInfo()?.operatingSystemVersionString ?? "Unknown"
 
-                    var mutableUserAgent = NSMutableString(string: "\(executable!)/\(bundle!) (\(version!); OS \(os!))") as CFMutableString
+                    var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
                     let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
                     if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
                         return mutableUserAgent as NSString
