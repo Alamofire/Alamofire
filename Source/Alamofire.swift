@@ -104,7 +104,7 @@ public struct Alamofire {
 
                 if encodesParametersInURL(Method.fromRaw(request.HTTPMethod)!) {
                     let URLComponents = NSURLComponents(URL: mutableRequest.URL, resolvingAgainstBaseURL: false)
-                    URLComponents.query = (URLComponents.query ? URLComponents.query + "&" : "") + query(parameters!)
+                    URLComponents.query = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
                     mutableRequest.URL = URLComponents.URL
                 } else {
                     if mutableRequest.valueForHTTPHeaderField("Content-Type") == nil {
