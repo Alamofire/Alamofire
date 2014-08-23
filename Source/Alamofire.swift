@@ -448,7 +448,14 @@ public struct Alamofire {
 
             dispatch_async(self.delegate.queue, {
                 dispatch_async(dispatch_get_global_queue(priority, 0), {
-                    let (responseObject: AnyObject?, error: NSError?) = serializer(self.request, self.response, self.delegate.data, self.delegate.error)
+                    var error: NSError?
+                    var responseObject: AnyObject?
+
+                    if self.delegate.error != nil {
+                        error = self.delegate.error
+                    } else {
+                        (responseObject, error) = serializer(self.request, self.response, self.delegate.data, self.delegate.error)
+                    }
 
                     dispatch_async(queue ?? dispatch_get_main_queue(), {
                         completionHandler(self.request, self.response, responseObject, error)
