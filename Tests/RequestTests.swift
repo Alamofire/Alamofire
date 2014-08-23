@@ -26,6 +26,16 @@ import XCTest
 extension Alamofire {
     struct RequestTests {
         class RequestInitializationTestCase: XCTestCase {
+            func testRequestClassMethodWithURL() {
+                let URL = "http://httpbin.org/"
+                let request = Alamofire.request(URL)
+                
+                XCTAssertEqual(request.request.HTTPMethod!, Method.GET.toRaw(), "default request method should be GET")
+                XCTAssertNotNil(request.request, "request should not be nil")
+                XCTAssertEqual(request.request.URL!, NSURL(string: URL), "request URL should be equal")
+                XCTAssertNil(request.response, "response should be nil")
+            }
+            
             func testRequestClassMethodWithMethodAndURL() {
                 let URL = "http://httpbin.org/"
                 let request = Alamofire.request(.GET, URL)
