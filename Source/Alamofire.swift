@@ -40,7 +40,7 @@ public struct Alamofire {
     public enum ParameterEncoding {
         case URL
         case JSON(NSJSONWritingOptions)
-        case PropertyList(format: NSPropertyListFormat, options: NSPropertyListWriteOptions)
+        case PropertyList(NSPropertyListFormat, NSPropertyListWriteOptions)
         case Custom((NSURLRequest, [String: AnyObject]?) -> (NSURLRequest, NSError?))
 
         func encode(request: NSURLRequest, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
