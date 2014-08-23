@@ -39,8 +39,41 @@ public struct Alamofire {
 
     public enum ParameterEncoding {
         case URL
-        case JSON(options: NSJSONWritingOptions)
+        case JSON(NSJSONWritingOptions)
         case PropertyList(format: NSPropertyListFormat, options: NSPropertyListWriteOptions)
+
+        // TODO: moved this here from within 'queryComponents' due to bug in XCode 6 beta 6 (11266246)
+        func dictionaryQueryComponents(key: String, _ dictionary: [String: AnyObject]) -> [(String, String)] {
+            var components: [(String, String)] = []
+            for (nestedKey, value) in dictionary {
+                components += queryComponents("\(key)[\(nestedKey)]", value)
+            }
+
+            return components
+        }
+
+        func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
+            
+            func arrayQueryComponents(key: String, array: [AnyObject]) -> [(String, String)] {
+                var components: [(String, String)] = []
+                for value in array {
+                    components += queryComponents("\(key)[]", value)
+                }
+
+                return components
+            }
+
+            var components: [(String, String)] = []
+            if let dictionary = value as? [String: AnyObject] {
+                components += dictionaryQueryComponents(key, dictionary)
+            } else if let array = value as? [AnyObject] {
+                components += arrayQueryComponents(key, array)
+            } else {
+                components.append(key, "\(value)")
+            }
+
+            return components
+        }
 
         func encode(request: NSURLRequest, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
             if parameters == nil {
@@ -53,36 +86,10 @@ public struct Alamofire {
             switch self {
             case .URL:
                 func query(parameters: [String: AnyObject]) -> String! {
-                    func queryComponents(key: String, value: AnyObject) -> [(String, String)] {
-                        func dictionaryQueryComponents(key: String, dictionary: [String: AnyObject]) -> [(String, String)] {
-                            var components: [(String, String)] = []
-                            for (nestedKey, value) in dictionary {
-                                components += queryComponents("\(key)[\(nestedKey)]", value)
-                            }
 
-                            return components
-                        }
+                    
 
-                        func arrayQueryComponents(key: String, array: [AnyObject]) -> [(String, String)] {
-                            var components: [(String, String)] = []
-                            for value in array {
-                                components += queryComponents("\(key)[]", value)
-                            }
-
-                            return components
-                        }
-
-                        var components: [(String, String)] = []
-                        if let dictionary = value as? [String: AnyObject] {
-                            components += dictionaryQueryComponents(key, dictionary)
-                        } else if let array = value as? [AnyObject] {
-                            components += arrayQueryComponents(key, array)
-                        } else {
-                            components.append(key, "\(value)")
-                        }
-
-                        return components
-                    }
+                    
 
                     var components: [(String, String)] = []
                     for key in sorted(Array(parameters.keys), <) {
@@ -104,10 +111,10 @@ public struct Alamofire {
 
                 if encodesParametersInURL(Method.fromRaw(request.HTTPMethod)!) {
                     let URLComponents = NSURLComponents(URL: mutableRequest.URL, resolvingAgainstBaseURL: false)
-                    URLComponents.query = (URLComponents.query ? URLComponents.query + "&" : "") + query(parameters!)
+                    URLComponents.query = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
                     mutableRequest.URL = URLComponents.URL
                 } else {
-                    if !mutableRequest.valueForHTTPHeaderField("Content-Type") {
+                    if mutableRequest.valueForHTTPHeaderField("Content-Type") == nil {
                         mutableRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                     }
 
@@ -115,17 +122,17 @@ public struct Alamofire {
                 }
 
             case .JSON(let options):
-                let data = NSJSONSerialization.dataWithJSONObject(parameters, options: options, error: &error)
+                let data = NSJSONSerialization.dataWithJSONObject(parameters!, options: options, error: &error)
 
-                if data {
+                if (data != nil) {
                     let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))
                     mutableRequest.setValue("application/json; charset=\(charset)", forHTTPHeaderField: "Content-Type")
                     mutableRequest.HTTPBody = data
                 }
             case .PropertyList(let (format, options)):
-                let data = NSPropertyListSerialization.dataWithPropertyList(parameters, format: format, options: options, error: &error)
+                let data = NSPropertyListSerialization.dataWithPropertyList(parameters!, format: format, options: options, error: &error)
 
-                if data {
+                if (data != nil) {
                     let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
                     mutableRequest.setValue("application/x-plist; charset=\(charset)", forHTTPHeaderField: "Content-Type")
                     mutableRequest.HTTPBody = data
@@ -173,17 +180,17 @@ public struct Alamofire {
 
             // User-Agent Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.43
             let userAgent: String = {
-                if let info = NSBundle.mainBundle().infoDictionary {
-                    let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
-                    let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
-                    let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
-                    let os: AnyObject = NSProcessInfo.processInfo()?.operatingSystemVersionString ?? "Unknown"
+                let info = NSBundle.mainBundle().infoDictionary
 
-                    var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
-                    let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
-                    if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
-                        return mutableUserAgent as NSString
-                    }
+                let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
+                let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
+                let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
+                let os: AnyObject = NSProcessInfo.processInfo().operatingSystemVersionString ?? "Unknown"
+
+                var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
+                let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
+                if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
+                    return mutableUserAgent as NSString
                 }
 
                 return "Alamofire"
@@ -209,7 +216,7 @@ public struct Alamofire {
             var mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
 
             for (field, value) in self.defaultHeaders {
-                if !mutableRequest.valueForHTTPHeaderField(field){
+                if mutableRequest.valueForHTTPHeaderField(field) == nil {
                     mutableRequest.setValue(value, forHTTPHeaderField: field)
                 }
             }
@@ -678,7 +685,7 @@ extension Alamofire.Request {
         // MARK: NSURLSessionTaskDelegate
 
         func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-            if self.uploadProgress {
+            if self.uploadProgress != nil {
                 self.uploadProgress(bytesSent, totalBytesSent, totalBytesExpectedToSend)
             }
 
@@ -792,7 +799,7 @@ extension Alamofire.Request {
 extension Alamofire.Request: Printable {
     var description: String {
         var description = "\(self.request.HTTPMethod) \(self.request.URL)"
-        if self.response {
+        if self.response != nil {
             description += " (\(self.response?.statusCode))"
         }
 
@@ -811,7 +818,7 @@ extension Alamofire.Request: DebugPrintable {
         }
 
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
-            let protectionSpace = NSURLProtectionSpace(host: URL.host, port: URL.port ? URL.port : 0, `protocol`: URL.scheme, realm: URL.host, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
+            let protectionSpace = NSURLProtectionSpace(host: URL.host, port: URL.port != nil ? URL.port! : 0, `protocol`: URL.scheme, realm: URL.host, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
                 if !credentials.isEmpty {
                     if let credential = credentials[0] as? NSURLCredential {
@@ -862,7 +869,7 @@ extension Alamofire.Request: DebugPrintable {
 extension Alamofire.Request {
     class func stringResponseSerializer(encoding: NSStringEncoding = NSUTF8StringEncoding) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
         return { (_, _, data, error) in
-            let string = NSString(data: data, encoding: encoding)
+            let string = NSString(data: data!, encoding: encoding)
             return (string, error)
         }
     }
@@ -884,7 +891,7 @@ extension Alamofire.Request {
     class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
         return { (request, response, data, error) in
             var serializationError: NSError?
-            let JSON: AnyObject! = NSJSONSerialization.JSONObjectWithData(data, options: options, error: &serializationError)
+            let JSON: AnyObject! = NSJSONSerialization.JSONObjectWithData(data!, options: options, error: &serializationError)
             return (JSON, serializationError)
         }
     }
@@ -906,7 +913,7 @@ extension Alamofire.Request {
     class func propertyListResponseSerializer(options: NSPropertyListReadOptions = 0) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
         return { (request, response, data, error) in
             var propertyListSerializationError: NSError?
-            let plist: AnyObject! = NSPropertyListSerialization.propertyListWithData(data, options: options, format: nil, error: &propertyListSerializationError)
+            let plist: AnyObject! = NSPropertyListSerialization.propertyListWithData(data!, options: options, format: nil, error: &propertyListSerializationError)
 
             return (plist, propertyListSerializationError)
         }
