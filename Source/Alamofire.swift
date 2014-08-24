@@ -447,11 +447,17 @@ public class Request {
 
         dispatch_async(self.delegate.queue, {
             dispatch_async(dispatch_get_global_queue(priority, 0), {
-                let (responseObject: AnyObject?, error: NSError?) = serializer(self.request, self.response, self.delegate.data, self.delegate.error)
+                if var error = self.delegate.error {
+                    dispatch_async(queue ?? dispatch_get_main_queue(), {
+                        completionHandler(self.request, self.response, nil, error)
+                    })
+                } else {
+                    let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data, nil)
 
-                dispatch_async(queue ?? dispatch_get_main_queue(), {
-                    completionHandler(self.request, self.response, responseObject, error)
-                })
+                    dispatch_async(queue ?? dispatch_get_main_queue(), {
+                        completionHandler(self.request, self.response, responseObject, serializationError)
+                    })
+                }
             })
         })
 
