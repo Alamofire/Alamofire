@@ -21,52 +21,50 @@
 // THE SOFTWARE.
 
 import Foundation
+import Alamofire
 import XCTest
 
-extension Alamofire {
-    struct RequestTests {
-        class RequestInitializationTestCase: XCTestCase {
-            func testRequestClassMethodWithMethodAndURL() {
-                let URL = "http://httpbin.org/"
-                let request = Alamofire.request(.GET, URL)
+class AlamofireRequestInitializationTestCase: XCTestCase {
+    func testRequestClassMethodWithMethodAndURL() {
+        let URL = "http://httpbin.org/"
+        let request = Alamofire.request(.GET, URL)
 
-                XCTAssertNotNil(request.request, "request should not be nil")
-                XCTAssertEqual(request.request.URL!, NSURL(string: URL), "request URL should be equal")
-                XCTAssertNil(request.response, "response should be nil")
-            }
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request.URL!, NSURL(string: URL), "request URL should be equal")
+        XCTAssertNil(request.response, "response should be nil")
+    }
 
-            func testRequestClassMethodWithMethodAndURLAndParameters() {
-                let URL = "http://httpbin.org/get"
-                let request = Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
+    func testRequestClassMethodWithMethodAndURLAndParameters() {
+        let URL = "http://httpbin.org/get"
+        let request = Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
 
-                XCTAssertNotNil(request.request, "request should not be nil")
-                XCTAssertNotEqual(request.request.URL, NSURL(string: URL), "request URL should be equal")
-                XCTAssertEqual(request.request.URL.query!, "foo=bar", "query is incorrect")
-                XCTAssertNil(request.response, "response should be nil")
-            }
-        }
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertNotEqual(request.request.URL, NSURL(string: URL), "request URL should be equal")
+        XCTAssertEqual(request.request.URL.query!, "foo=bar", "query is incorrect")
+        XCTAssertNil(request.response, "response should be nil")
+    }
+}
 
-        class RequestResponseTestCase: XCTestCase {
-            func testRequestResponse() {
-                let URL = "http://httpbin.org/get"
-                let serializer = Alamofire.Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
+class AlamofireRequestResponseTestCase: XCTestCase {
+    func testRequestResponse() {
+        let URL = "http://httpbin.org/get"
+        let serializer = Alamofire.Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
 
-                let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("\(URL)")
 
-                Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
-                         .response(serializer: serializer){ (request, response, string, error) in
-                            expectation.fulfill()
+        Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
+                 .response(serializer: serializer){ (request, response, string, error) in
+                    expectation.fulfill()
 
-                            XCTAssertNotNil(request, "request should not be nil")
-                            XCTAssertNotNil(response, "response should not be nil")
-                            XCTAssertNotNil(string, "string should not be nil")
-                            XCTAssertNil(error, "error should be nil")
-                         }
+                    XCTAssertNotNil(request, "request should not be nil")
+                    XCTAssertNotNil(response, "response should not be nil")
+                    XCTAssertNotNil(string, "string should not be nil")
+                    XCTAssertNil(error, "error should be nil")
+                 }
 
-                waitForExpectationsWithTimeout(10){ error in
-                    XCTAssertNil(error, "\(error)")
-                }
-            }
+        waitForExpectationsWithTimeout(10){ error in
+            XCTAssertNil(error, "\(error)")
         }
     }
 }
+

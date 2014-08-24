@@ -21,30 +21,27 @@
 // THE SOFTWARE.
 
 import Foundation
+import Alamofire
 import XCTest
 
-extension Alamofire {
-    struct ResponseTests {
-        class JSONResponseTestCase: XCTestCase {
-            func testJSONResponse() {
-                let URL = "http://httpbin.org/get"
-                let expectation = expectationWithDescription("\(URL)")
+class AlamofireJSONResponseTestCase: XCTestCase {
+    func testJSONResponse() {
+        let URL = "http://httpbin.org/get"
+        let expectation = expectationWithDescription("\(URL)")
 
-                Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
-                         .responseJSON { (request, response, JSON, error) in
-                            expectation.fulfill()
-                            XCTAssertNotNil(request, "request should not be nil")
-                            XCTAssertNotNil(response, "response should not be nil")
-                            XCTAssertNotNil(JSON, "JSON should not be nil")
-                            XCTAssertNil(error, "error should be nil")
+        Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
+                 .responseJSON { (request, response, JSON, error) in
+                    expectation.fulfill()
+                    XCTAssertNotNil(request, "request should not be nil")
+                    XCTAssertNotNil(response, "response should not be nil")
+                    XCTAssertNotNil(JSON, "JSON should not be nil")
+                    XCTAssertNil(error, "error should be nil")
 
-                            XCTAssertEqual(JSON!["args"] as NSObject, ["foo": "bar"], "args should be equal")
-                         }
+                    XCTAssertEqual(JSON!["args"] as NSObject, ["foo": "bar"], "args should be equal")
+                 }
 
-                waitForExpectationsWithTimeout(10){ error in
-                    XCTAssertNil(error, "\(error)")
-                }
-            }
+        waitForExpectationsWithTimeout(10){ error in
+            XCTAssertNil(error, "\(error)")
         }
     }
 }
