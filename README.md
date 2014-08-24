@@ -308,16 +308,6 @@ $ curl -i \
 	"http://httpbin.org/get?foo=bar"
 ```
 
-### typealias
-
-```swift
-typealias AF = Alamofire
-```
-
-```swift
-AF.request(.GET, "http://httpbin.org/ip")
-```
-
 ### More Complex Use Cases
 
 Much of the functionality described above is provided as a convenience API on top of something more extensible, closer to the Foundation URL Loading System. For more complex usage, such as creating a `NSURLSession` with a custom configuration or passing `NSURLRequest` objects directly, Alamofire provides API that can accommodate that.
