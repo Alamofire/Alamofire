@@ -28,7 +28,7 @@ _* Scheduled to coincide with Swift 1.0 release_
 
 ## Requirements
 
-- Xcode 6
+- Xcode 6 Beta 6
 - iOS 7.0+ / Mac OS X 10.9+
 
 ## Installation
