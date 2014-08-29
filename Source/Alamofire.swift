@@ -833,7 +833,7 @@ extension Request: DebugPrintable {
 
         // TODO: -T arguments for files
 
-        components.append("\"\(URL.absoluteString)\"")
+        components.append("\"\(URL.absoluteString!)\"")
 
         return join(" \\\n\t", components)
     }
