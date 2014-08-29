@@ -869,20 +869,30 @@ extension Request {
 // MARK: JSON
 
 extension Request {
-    public class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
+    public class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments, headerLength:Int?) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
         return { (request, response, data, error) in
+			var jsonData = data!
+			if let bytesToStrip = headerLength {
+				if(jsonData.length > bytesToStrip) {
+					jsonData = jsonData.subdataWithRange(NSRange(location:bytesToStrip, length:jsonData.length - bytesToStrip))
+				}
+			}
             var serializationError: NSError?
-            let JSON: AnyObject! = NSJSONSerialization.JSONObjectWithData(data!, options: options, error: &serializationError)
+            let JSON: AnyObject! = NSJSONSerialization.JSONObjectWithData(jsonData, options: options, error: &serializationError)
             return (JSON, serializationError)
         }
     }
 
     public func responseJSON(completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return responseJSON(completionHandler: completionHandler)
+        return responseJSON(nil, completionHandler: completionHandler)
     }
 
-    public func responseJSON(options: NSJSONReadingOptions = .AllowFragments, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.JSONResponseSerializer(options: options), completionHandler: { (request, response, JSON, error) in
+	public func responseJSONWithHeaderOfLength(headerLength:Int, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+        return responseJSON(headerLength, completionHandler: completionHandler)
+    }
+
+    public func responseJSON(headerLength:Int?, options: NSJSONReadingOptions = .AllowFragments, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+        return response(serializer: Request.JSONResponseSerializer(options: options, headerLength:headerLength), completionHandler: { (request, response, JSON, error) in
             completionHandler(request, response, JSON, error)
         })
     }
