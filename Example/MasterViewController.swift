@@ -49,6 +49,8 @@ class MasterViewController: UITableViewController {
             let controllers = split.viewControllers
             self.detailViewController = controllers.last?.topViewController as? DetailViewController
         }
+        Alamofire.Manager.sharedInstance.baseURL = NSURL(string: "http://httpbin.org/")
+
     }
 
     // MARK: - UIStoryboardSegue
@@ -58,11 +60,11 @@ class MasterViewController: UITableViewController {
             func requestForSegue(segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier {
                     case "GET":
-                        return Alamofire.request(.GET, "http://httpbin.org/get")
+                        return Alamofire.request(.GET, "get")
                     case "POST":
                         return Alamofire.request(.POST, "http://httpbin.org/post")
                     case "PUT":
-                        return Alamofire.request(.PUT, "http://httpbin.org/put")
+                        return Alamofire.request(.PUT, "put")
                     case "DELETE":
                         return Alamofire.request(.DELETE, "http://httpbin.org/delete")
                     default:
