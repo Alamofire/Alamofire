@@ -136,6 +136,8 @@ public class Manager {
 
     var automaticallyStartsRequests: Bool = true
 
+    public var baseURL: NSURL?
+
     public lazy var defaultHeaders: [String: String] = {
         // Accept-Encoding HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3
         let acceptEncoding: String = "gzip;q=1.0,compress;q=0.5"
@@ -206,6 +208,10 @@ public class Manager {
         request.resume()
 
         return request
+    }
+
+    public func request(method: Method, URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
+        return request(encoding.encode(URLRequest(method, NSURL(string: URL, relativeToURL: baseURL).absoluteString!), parameters: parameters).0)
     }
 
     class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
@@ -923,7 +929,7 @@ private func URLRequest(method: Method, URL: String) -> NSURLRequest {
 // MARK: Request
 
 public func request(method: Method, URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-    return Manager.sharedInstance.request(encoding.encode(URLRequest(method, URL), parameters: parameters).0)
+    return Manager.sharedInstance.request(method, URL: URL, parameters: parameters, encoding: encoding)
 }
 
 // MARK: Upload
