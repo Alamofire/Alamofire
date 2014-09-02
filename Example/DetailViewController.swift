@@ -32,7 +32,7 @@ class DetailViewController: UITableViewController {
         willSet {
             if self.request != nil {
                 self.request?.cancel()
-                self.refreshControl.endRefreshing()
+                self.refreshControl?.endRefreshing()
                 self.headers.removeAll()
                 self.body = nil
                 self.elapsedTime = nil
@@ -50,7 +50,7 @@ class DetailViewController: UITableViewController {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        self.refreshControl.addTarget(self, action: "refresh", forControlEvents: .ValueChanged)
+        self.refreshControl?.addTarget(self, action: "refresh", forControlEvents: .ValueChanged)
 
     }
 
@@ -69,7 +69,7 @@ class DetailViewController: UITableViewController {
             return
         }
 
-        self.refreshControl.beginRefreshing()
+        self.refreshControl?.beginRefreshing()
 
         let start = CACurrentMediaTime()
         self.request?.responseString { (request, response, body, error) in
@@ -83,13 +83,13 @@ class DetailViewController: UITableViewController {
             self.body = body
 
             self.tableView.reloadData()
-            self.refreshControl.endRefreshing()
+            self.refreshControl?.endRefreshing()
         }
     }
 
     // MARK: UITableViewDataSource
 
-    override func tableView(tableView: UITableView!, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Sections.fromRaw(section)! {
         case .Headers:
             return self.headers.count
@@ -100,7 +100,7 @@ class DetailViewController: UITableViewController {
         }
     }
 
-    override func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
         switch Sections.fromRaw(indexPath.section)! {
         case .Headers:
@@ -108,39 +108,35 @@ class DetailViewController: UITableViewController {
             let field = self.headers.keys.array.sorted(<)[indexPath.row]
             let value = self.headers[field]
 
-            cell.textLabel.text = field
-            cell.detailTextLabel.text = value
+            cell.textLabel!.text = field
+            cell.detailTextLabel!.text = value
 
             return cell
         case .Body:
             let cell = self.tableView.dequeueReusableCellWithIdentifier("Body") as UITableViewCell
 
-            cell.textLabel.text = self.body
+            cell.textLabel!.text = self.body
 
             return cell
-        default:
-            return nil
         }
     }
 
     // MARK: UITableViewDelegate
 
-    override func numberOfSectionsInTableView(tableView: UITableView!) -> Int {
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 2
     }
 
-    override func tableView(tableView: UITableView!, titleForHeaderInSection section: Int) -> String! {
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String {
         switch Sections.fromRaw(section)! {
         case .Headers:
-            return self.headers.isEmpty ? nil : "Headers"
+            return self.headers.isEmpty ? "" : "Headers"
         case .Body:
-            return self.body == nil ? nil : "Body"
-        default:
-            return nil
+            return self.body == nil ? "" : "Body"
         }
     }
 
-    override func tableView(tableView: UITableView!, heightForRowAtIndexPath indexPath: NSIndexPath!) -> CGFloat {
+    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         switch Sections.fromRaw(indexPath.section)! {
         case .Body:
             return 300
@@ -149,12 +145,12 @@ class DetailViewController: UITableViewController {
         }
     }
 
-    override func tableView(tableView: UITableView!, titleForFooterInSection section: Int) -> String! {
+    override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String {
         switch Sections.fromRaw(section)! {
         case .Body:
-            return self.elapsedTime == nil ? nil : "Elapsed Time: \(self.elapsedTime!) sec"
+            return self.elapsedTime == nil ? "" : "Elapsed Time: \(self.elapsedTime!) sec"
         default:
-            return nil
+            return ""
         }
     }
 }

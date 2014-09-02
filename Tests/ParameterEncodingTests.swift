@@ -52,7 +52,7 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
 
     func testURLParameterEncodeOneStringKeyStringValueParameterAppendedToQuery() {
         var mutableRequest = self.request.mutableCopy() as NSMutableURLRequest
-        let URLComponents = NSURLComponents(URL: mutableRequest.URL, resolvingAgainstBaseURL: false)
+        let URLComponents = NSURLComponents(URL: mutableRequest.URL!, resolvingAgainstBaseURL: false)
         URLComponents.query = "baz=qux"
         mutableRequest.URL = URLComponents.URL
 
@@ -138,7 +138,7 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
     }
 
     func testURLParameterEncodeGETParametersInURL() {
-        var mutableRequest = self.request.mutableCopy() as NSMutableURLRequest!
+        var mutableRequest = self.request.mutableCopy() as NSMutableURLRequest
         mutableRequest.HTTPMethod = Method.GET.toRaw()
 
         let parameters = ["foo": 1, "bar": 2]
@@ -150,13 +150,13 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
     }
 
     func testURLParameterEncodePOSTParametersInHTTPBody() {
-        var mutableRequest = self.request.mutableCopy() as NSMutableURLRequest!
+        var mutableRequest = self.request.mutableCopy() as NSMutableURLRequest
         mutableRequest.HTTPMethod = Method.POST.toRaw()
 
         let parameters = ["foo": 1, "bar": 2]
         let (request, error) = self.encoding.encode(mutableRequest, parameters: parameters)
 
-        XCTAssertEqual(NSString(data: request.HTTPBody, encoding: NSUTF8StringEncoding), "bar=2&foo=1", "HTTPBody is incorrect")
+        XCTAssertEqual(NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding), "bar=2&foo=1", "HTTPBody is incorrect")
         XCTAssertEqual(request.valueForHTTPHeaderField("Content-Type")!, "application/x-www-form-urlencoded", "Content-Type should be application/x-www-form-urlencoded")
         XCTAssertNotNil(request.HTTPBody, "HTTPBody should not be nil")
     }
@@ -202,7 +202,7 @@ class AlamofireJSONParameterEncodingTestCase: XCTestCase {
         XCTAssert(request.valueForHTTPHeaderField("Content-Type")!.hasPrefix("application/json"), "Content-Type should be application/json")
         XCTAssertNotNil(request.HTTPBody, "HTTPBody should not be nil")
 
-        let JSON = NSJSONSerialization.JSONObjectWithData(request.HTTPBody, options: .AllowFragments, error: nil) as NSObject!
+        let JSON = NSJSONSerialization.JSONObjectWithData(request.HTTPBody!, options: .AllowFragments, error: nil) as NSObject!
         XCTAssertNotNil(JSON, "HTTPBody JSON is invalid")
         XCTAssertEqual(JSON as NSObject, parameters as NSObject, "HTTPBody JSON does not equal parameters")
     }
@@ -248,7 +248,7 @@ class AlamofirePropertyListParameterEncodingTestCase: XCTestCase {
         XCTAssert(request.valueForHTTPHeaderField("Content-Type")!.hasPrefix("application/x-plist"), "Content-Type should be application/x-plist")
         XCTAssertNotNil(request.HTTPBody, "HTTPBody should not be nil")
 
-        let plist = NSPropertyListSerialization.propertyListWithData(request.HTTPBody, options: 0, format: nil, error: nil) as NSObject
+        let plist = NSPropertyListSerialization.propertyListWithData(request.HTTPBody!, options: 0, format: nil, error: nil) as NSObject
         XCTAssertNotNil(plist, "HTTPBody JSON is invalid")
         XCTAssertEqual(plist as NSObject, parameters as NSObject, "HTTPBody plist does not equal parameters")
     }
@@ -270,7 +270,7 @@ class AlamofirePropertyListParameterEncodingTestCase: XCTestCase {
         XCTAssert(request.valueForHTTPHeaderField("Content-Type")!.hasPrefix("application/x-plist"), "Content-Type should be application/x-plist")
         XCTAssertNotNil(request.HTTPBody, "HTTPBody should not be nil")
 
-        let plist = NSPropertyListSerialization.propertyListWithData(request.HTTPBody, options: 0, format: nil, error: nil) as NSObject!
+        let plist = NSPropertyListSerialization.propertyListWithData(request.HTTPBody!, options: 0, format: nil, error: nil) as NSObject!
         XCTAssertNotNil(plist, "HTTPBody JSON is invalid")
         XCTAssert(plist.valueForKey("date") is NSDate, "date is not NSDate")
         XCTAssert(plist.valueForKey("data") is NSData, "data is not NSData")
