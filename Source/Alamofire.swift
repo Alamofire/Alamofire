@@ -42,7 +42,7 @@ public enum ParameterEncoding {
     case Custom((NSURLRequest, [String: AnyObject]?) -> (NSURLRequest, NSError?))
 
     public func encode(request: NSURLRequest, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
-        if parameters == nil {
+        if parameters == nil || parameters!.count == 0{
             return (request, nil)
         }
 
