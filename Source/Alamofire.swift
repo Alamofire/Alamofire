@@ -343,7 +343,7 @@ public class Manager {
             self.downloadTaskDidFinishDownloadingToURL?(session, downloadTask, location)
         }
 
-        func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
             if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(session, downloadTask: downloadTask, didWriteData: bytesWritten, totalBytesWritten: totalBytesWritten, totalBytesExpectedToWrite: totalBytesExpectedToWrite)
             }
@@ -351,7 +351,7 @@ public class Manager {
             self.downloadTaskDidWriteData?(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
         }
 
-        func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
+        func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
             if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(session, downloadTask: downloadTask, didResumeAtOffset: fileOffset, expectedTotalBytes: expectedTotalBytes)
             }
@@ -418,7 +418,7 @@ public class Request {
     }
 
     public func authenticate(usingCredential credential: NSURLCredential, forProtectionSpace protectionSpace: NSURLProtectionSpace) -> Self {
-        self.session.configuration.URLCredentialStorage?.setCredential(credential, forProtectionSpace: protectionSpace)
+        self.session.configuration.URLCredentialStorage!.setCredential(credential, forProtectionSpace: protectionSpace)
 
         return self
     }
