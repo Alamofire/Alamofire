@@ -635,26 +635,61 @@ extension Manager {
         if self.automaticallyStartsRequests {
             request.resume()
         }
+        
+        var mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
+        
+        for (field, value) in self.defaultHeaders {
+            if mutableRequest.valueForHTTPHeaderField(field) == nil {
+                mutableRequest.setValue(value, forHTTPHeaderField: field)
+            }
+        }
 
-        return request
+        return mutableRequest
     }
 
     // MARK: File
 
     func upload(request: NSURLRequest, file: NSURL) -> Request {
-        return upload(.File(request, file))
+        
+        var mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
+        
+        for (field, value) in self.defaultHeaders {
+            if mutableRequest.valueForHTTPHeaderField(field) == nil {
+                mutableRequest.setValue(value, forHTTPHeaderField: field)
+            }
+        }
+        
+        return upload(.File(mutableRequest, file))
     }
 
     // MARK: Data
 
     func upload(request: NSURLRequest, data: NSData) -> Request {
-        return upload(.Data(request, data))
+        
+        var mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
+        
+        for (field, value) in self.defaultHeaders {
+            if mutableRequest.valueForHTTPHeaderField(field) == nil {
+                mutableRequest.setValue(value, forHTTPHeaderField: field)
+            }
+        }
+        
+        return upload(.Data(mutableRequest, data))
     }
 
     // MARK: Stream
 
     func upload(request: NSURLRequest, stream: NSInputStream) -> Request {
-        return upload(.Stream(request, stream))
+        
+        var mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
+        
+        for (field, value) in self.defaultHeaders {
+            if mutableRequest.valueForHTTPHeaderField(field) == nil {
+                mutableRequest.setValue(value, forHTTPHeaderField: field)
+            }
+        }
+        
+        return upload(.Stream(mutableRequest, stream))
     }
 }
 
