@@ -128,7 +128,7 @@ Alamofire has built-in support for encoding parameters as URL query / URI form e
 ```swift
 enum ParameterEncoding {
     case URL
-    case JSON(options: NSJSONWritingOptions)
+    case JSON
     case PropertyList(format: NSPropertyListFormat,
                       options: NSPropertyListWriteOptions)
 
@@ -153,7 +153,7 @@ let encoding = Alamofire.ParameterEncoding.URL
 ### POST Request with JSON Response
 
 ```swift
-Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters, encoding: .JSON(options: nil))
+Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters, encoding: .JSON)
          .responseJSON {(request, response, JSON, error) in
             println(JSON)
          }
