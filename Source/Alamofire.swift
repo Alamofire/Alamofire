@@ -913,37 +913,65 @@ extension Request {
 
 // MARK: - Convenience
 
-private func URLRequest(method: Method, URL: String) -> NSURLRequest {
-    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL))
-    mutableURLRequest.HTTPMethod = method.toRaw()
-
-    return mutableURLRequest
+extension Manager {
+    private func URLRequest(method: Method, URL: String) -> NSURLRequest {
+        let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL))
+        mutableURLRequest.HTTPMethod = method.toRaw()
+        
+        return mutableURLRequest
+    }
+    
+    // MARK: Request
+    
+    public func request(method: Method, URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
+        return self.request(encoding.encode(URLRequest(method, URL: URL), parameters: parameters).0)
+    }
+    
+    // MARK: Upload
+    
+    public func upload(method: Method, URL: String, file: NSURL) -> Request {
+        return self.upload(URLRequest(method, URL: URL), file: file)
+    }
+    
+    public func upload(method: Method, URL: String, data: NSData) -> Request {
+        return self.upload(URLRequest(method, URL: URL), data: data)
+    }
+    
+    public func upload(method: Method, URL: String, stream: NSInputStream) -> Request {
+        return self.upload(URLRequest(method, URL: URL), stream: stream)
+    }
+    
+    // MARK: Download
+    
+    public func download(method: Method, URL: String, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
+        return self.download(URLRequest(method, URL: URL), destination: destination)
+    }
 }
 
 // MARK: Request
 
 public func request(method: Method, URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-    return Manager.sharedInstance.request(encoding.encode(URLRequest(method, URL), parameters: parameters).0)
+    return Manager.sharedInstance.request(method, URL: URL, parameters: parameters, encoding: encoding)
 }
 
 // MARK: Upload
 
 public func upload(method: Method, URL: String, file: NSURL) -> Request {
-    return Manager.sharedInstance.upload(URLRequest(method, URL), file: file)
+    return Manager.sharedInstance.upload(method, URL: URL, file: file)
 }
 
 public func upload(method: Method, URL: String, data: NSData) -> Request {
-    return Manager.sharedInstance.upload(URLRequest(method, URL), data: data)
+    return Manager.sharedInstance.upload(method, URL: URL, data: data)
 }
 
 public func upload(method: Method, URL: String, stream: NSInputStream) -> Request {
-    return Manager.sharedInstance.upload(URLRequest(method, URL), stream: stream)
+    return Manager.sharedInstance.upload(method, URL: URL, stream: stream)
 }
 
 // MARK: Download
 
 public func download(method: Method, URL: String, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
-    return Manager.sharedInstance.download(URLRequest(method, URL), destination: destination)
+    return Manager.sharedInstance.download(method, URL: URL, destination: destination)
 }
 
 public func download(resumeData data: NSData, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
