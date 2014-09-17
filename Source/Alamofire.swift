@@ -943,8 +943,8 @@ extension Request {
 
 // MARK: - Convenience
 
-private func URLRequest(method: Method, URL: String) -> NSURLRequest {
-    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL))
+private func URLRequest(method: Method, URLString: URLStringConvertible) -> NSURLRequest {
+    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString))
     mutableURLRequest.HTTPMethod = method.toRaw()
 
     return mutableURLRequest
@@ -952,28 +952,28 @@ private func URLRequest(method: Method, URL: String) -> NSURLRequest {
 
 // MARK: Request
 
-public func request(method: Method, URL: String, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-    return Manager.sharedInstance.request(encoding.encode(URLRequest(method, URL), parameters: parameters).0)
+public func request(method: Method, URLString: URLStringConvertible, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
+    return Manager.sharedInstance.request(encoding.encode(URLRequest(method, URLString), parameters: parameters).0)
 }
 
 // MARK: Upload
 
-public func upload(method: Method, URL: String, file: NSURL) -> Request {
-    return Manager.sharedInstance.upload(URLRequest(method, URL), file: file)
+public func upload(method: Method, URLString: URLStringConvertible, file: NSURL) -> Request {
+    return Manager.sharedInstance.upload(URLRequest(method, URLString), file: file)
 }
 
-public func upload(method: Method, URL: String, data: NSData) -> Request {
-    return Manager.sharedInstance.upload(URLRequest(method, URL), data: data)
+public func upload(method: Method, URLString: URLStringConvertible, data: NSData) -> Request {
+    return Manager.sharedInstance.upload(URLRequest(method, URLString), data: data)
 }
 
-public func upload(method: Method, URL: String, stream: NSInputStream) -> Request {
-    return Manager.sharedInstance.upload(URLRequest(method, URL), stream: stream)
+public func upload(method: Method, URLString: URLStringConvertible, stream: NSInputStream) -> Request {
+    return Manager.sharedInstance.upload(URLRequest(method, URLString), stream: stream)
 }
 
 // MARK: Download
 
-public func download(method: Method, URL: String, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
-    return Manager.sharedInstance.download(URLRequest(method, URL), destination: destination)
+public func download(method: Method, URLString: URLStringConvertible, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
+    return Manager.sharedInstance.download(URLRequest(method, URLString), destination: destination)
 }
 
 public func download(resumeData data: NSData, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
