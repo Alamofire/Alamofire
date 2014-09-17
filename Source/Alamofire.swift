@@ -826,7 +826,7 @@ extension Request: DebugPrintable {
         let URL = self.request.URL
 
         if self.request.HTTPMethod != "GET" {
-            components.append("-X \(self.request.HTTPMethod)")
+            components.append("-X \(self.request.HTTPMethod!)")
         }
 
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
