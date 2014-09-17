@@ -229,8 +229,8 @@ public class Manager {
 
     // MARK: -
 
-    public func request(request: NSURLRequest) -> Request {
-        var mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
+    public func request(URLRequest: URLRequestConvertible) -> Request {
+        var mutableRequest: NSMutableURLRequest! = URLRequest.URLRequest.mutableCopy() as NSMutableURLRequest
 
         for (field, value) in self.defaultHeaders {
             if mutableRequest.valueForHTTPHeaderField(field) == nil {
