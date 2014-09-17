@@ -420,8 +420,8 @@ public class Request {
     private var session: NSURLSession
     private var task: NSURLSessionTask { return self.delegate.task }
 
-    public var request: NSURLRequest! { return self.task.originalRequest }
-    public var response: NSHTTPURLResponse! { return self.task.response as? NSHTTPURLResponse }
+    public var request: NSURLRequest { return self.task.originalRequest }
+    public var response: NSHTTPURLResponse? { return self.task.response as? NSHTTPURLResponse }
     public var progress: NSProgress? { return self.delegate.progress }
 
     private init(session: NSURLSession, task: NSURLSessionTask) {
