@@ -151,6 +151,18 @@ extension NSURLRequest: URLStringConvertible {
 
 // MARK: -
 
+public protocol URLRequestConvertible {
+    var URLRequest: NSURLRequest { get }
+}
+
+extension NSURLRequest: URLRequestConvertible {
+    public var URLRequest: NSURLRequest {
+        return self
+    }
+}
+
+// MARK: -
+
 public class Manager {
     public class var sharedInstance: Manager {
         struct Singleton {
