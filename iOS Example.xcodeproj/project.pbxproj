@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E2BC1CC19C9C995004EACB8 /* Alamofire.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F8111E5419A95D7C0040E7D1 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F8111E0B19A951050040E7D1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E0A19A951050040E7D1 /* AppDelegate.swift */; };
 		F8111E0D19A951050040E7D1 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E0C19A951050040E7D1 /* MasterViewController.swift */; };
 		F8111E0F19A951050040E7D1 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E0E19A951050040E7D1 /* DetailViewController.swift */; };
@@ -37,6 +38,19 @@
 			remoteInfo = Alamofire;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4E2BC1CA19C9C97F004EACB8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4E2BC1CC19C9C995004EACB8 /* Alamofire.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		F8111E0519A951050040E7D1 /* iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +132,7 @@
 				F8111E0119A951050040E7D1 /* Sources */,
 				F8111E0219A951050040E7D1 /* Frameworks */,
 				F8111E0319A951050040E7D1 /* Resources */,
+				4E2BC1CA19C9C97F004EACB8 /* CopyFiles */,
 			);
 			buildRules = (
 			);
