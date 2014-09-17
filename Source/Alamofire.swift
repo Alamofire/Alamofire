@@ -966,7 +966,11 @@ private func URLRequest(method: Method, URLString: URLStringConvertible) -> NSUR
 // MARK: Request
 
 public func request(method: Method, URLString: URLStringConvertible, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-    return Manager.sharedInstance.request(encoding.encode(URLRequest(method, URLString), parameters: parameters).0)
+    return request(encoding.encode(URLRequest(method, URLString), parameters: parameters).0)
+}
+
+public func request(URLRequest: URLRequestConvertible) -> Request {
+    return Manager.sharedInstance.request(URLRequest.URLRequest)
 }
 
 // MARK: Upload
