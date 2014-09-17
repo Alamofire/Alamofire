@@ -121,6 +121,36 @@ public enum ParameterEncoding {
 
 // MARK: -
 
+public protocol URLStringConvertible {
+    var URLString: String { get }
+}
+
+extension String: URLStringConvertible {
+    public var URLString: String {
+        return self
+    }
+}
+
+extension NSURL: URLStringConvertible {
+    public var URLString: String {
+        return self.absoluteString!
+    }
+}
+
+extension NSURLComponents: URLStringConvertible {
+    public var URLString: String {
+        return self.URL!.URLString
+    }
+}
+
+extension NSURLRequest: URLStringConvertible {
+    public var URLString: String {
+        return self.URL.URLString
+    }
+}
+
+// MARK: -
+
 public class Manager {
     public class var sharedInstance: Manager {
         struct Singleton {
