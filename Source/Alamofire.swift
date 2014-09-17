@@ -480,13 +480,19 @@ public class Request {
 
     // MARK: Response
 
-    public func response(completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response({ (request, response, data, error) in
-                            return (data, error)
-                        }, completionHandler: completionHandler)
+    public typealias Serializer = (NSURLRequest, NSHTTPURLResponse?, NSData?) -> (AnyObject?, NSError?)
+
+    public class func responseDataSerializer() -> Serializer {
+        return { (request, response, data) in
+            return (data, nil)
+        }
     }
 
-    public func response(priority: Int = DISPATCH_QUEUE_PRIORITY_DEFAULT, queue: dispatch_queue_t? = nil, serializer: (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?), completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+    public func response(completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+        return response(Request.responseDataSerializer(), completionHandler: completionHandler)
+    }
+
+    public func response(priority: Int = DISPATCH_QUEUE_PRIORITY_DEFAULT, queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
 
         dispatch_async(self.delegate.queue, {
             dispatch_async(dispatch_get_global_queue(priority, 0), {
@@ -495,7 +501,7 @@ public class Request {
                         completionHandler(self.request, self.response, nil, error)
                     })
                 } else {
-                    let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data, nil)
+                    let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
 
                     dispatch_async(queue ?? dispatch_get_main_queue(), {
                         completionHandler(self.request, self.response, responseObject, serializationError)
@@ -891,10 +897,11 @@ extension Request: DebugPrintable {
 // MARK: String
 
 extension Request {
-    public class func stringResponseSerializer(encoding: NSStringEncoding = NSUTF8StringEncoding) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
-        return { (_, _, data, error) in
+    public class func stringResponseSerializer(encoding: NSStringEncoding = NSUTF8StringEncoding) -> Serializer {
+        return { (_, _, data) in
             let string = NSString(data: data!, encoding: encoding)
-            return (string, error)
+
+            return (string, nil)
         }
     }
 
@@ -912,10 +919,11 @@ extension Request {
 // MARK: JSON
 
 extension Request {
-    public class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
-        return { (request, response, data, error) in
+    public class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> Serializer {
+        return { (request, response, data) in
             var serializationError: NSError?
             let JSON: AnyObject! = NSJSONSerialization.JSONObjectWithData(data!, options: options, error: &serializationError)
+
             return (JSON, serializationError)
         }
     }
@@ -934,8 +942,8 @@ extension Request {
 // MARK: Property List
 
 extension Request {
-    public class func propertyListResponseSerializer(options: NSPropertyListReadOptions = 0) -> (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> (AnyObject?, NSError?) {
-        return { (request, response, data, error) in
+    public class func propertyListResponseSerializer(options: NSPropertyListReadOptions = 0) -> Serializer {
+        return { (request, response, data) in
             var propertyListSerializationError: NSError?
             let plist: AnyObject! = NSPropertyListSerialization.propertyListWithData(data!, options: options, format: nil, error: &propertyListSerializationError)
 
