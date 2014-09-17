@@ -119,7 +119,7 @@ public enum ParameterEncoding {
     }
 }
 
-// MARK: -
+// MARK: - URLStringConvertible
 
 public protocol URLStringConvertible {
     var URLString: String { get }
@@ -149,7 +149,7 @@ extension NSURLRequest: URLStringConvertible {
     }
 }
 
-// MARK: -
+// MARK: - URLRequestConvertible
 
 public protocol URLRequestConvertible {
     var URLRequest: NSURLRequest { get }
