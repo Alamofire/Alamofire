@@ -518,7 +518,7 @@ public class Request {
         let queue: dispatch_queue_t?
         let progress: NSProgress
 
-        var data: NSData! { return nil }
+        var data: NSData? { return nil }
         private(set) var error: NSError?
 
         var taskWillPerformHTTPRedirection: ((NSURLSession!, NSURLSessionTask!, NSHTTPURLResponse!, NSURLRequest!) -> (NSURLRequest!))?
@@ -584,7 +584,7 @@ public class Request {
         var dataTask: NSURLSessionDataTask! { return self.task as NSURLSessionDataTask }
 
         private var mutableData: NSMutableData
-        override var data: NSData! {
+        override var data: NSData? {
             return self.mutableData
         }
 
@@ -769,8 +769,8 @@ extension Request {
         var downloadTask: NSURLSessionDownloadTask! { return self.task as NSURLSessionDownloadTask }
         var downloadProgress: ((Int64, Int64, Int64) -> Void)?
 
-        var resumeData: NSData!
-        override var data: NSData! { return self.resumeData }
+        var resumeData: NSData?
+        override var data: NSData? { return self.resumeData }
 
         var downloadTaskDidFinishDownloadingToURL: ((NSURLSession!, NSURLSessionDownloadTask!, NSURL) -> (NSURL))?
         var downloadTaskDidWriteData: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64, Int64) -> Void)?
