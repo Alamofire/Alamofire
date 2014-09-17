@@ -427,13 +427,14 @@ public class Request {
     private init(session: NSURLSession, task: NSURLSessionTask) {
         self.session = session
 
-        if task is NSURLSessionUploadTask {
+        switch task {
+        case is NSURLSessionUploadTask:
             self.delegate = UploadTaskDelegate(task: task)
-        } else if task is NSURLSessionDataTask {
+        case is NSURLSessionDataTask:
             self.delegate = DataTaskDelegate(task: task)
-        } else if task is NSURLSessionDownloadTask {
+        case is NSURLSessionDownloadTask:
             self.delegate = DownloadTaskDelegate(task: task)
-        } else {
+        default:
             self.delegate = TaskDelegate(task: task)
         }
     }
