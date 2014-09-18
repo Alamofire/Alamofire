@@ -34,10 +34,6 @@ class MasterViewController: UITableViewController {
         super.awakeFromNib()
 
         self.navigationItem.titleView = self.titleImageView
-//        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-//            self.clearsSelectionOnViewWillAppear = false
-//            self.preferredContentSize = CGSize(width: 320.0, height: 600.0)
-//        }
     }
 
     // MARK: - UIViewController
@@ -59,7 +55,6 @@ class MasterViewController: UITableViewController {
                 switch segue.identifier {
                     case "GET", "POST", "PUT", "DELETE":
                         let method = Alamofire.Method.fromRaw(segue.identifier)!
-
                         return Alamofire.request(method, HTTPBinRoute.Method(method))
                     default:
                         return nil
