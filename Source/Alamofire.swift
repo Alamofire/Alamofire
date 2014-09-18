@@ -70,8 +70,8 @@ public enum ParameterEncoding {
                 }
             }
 
-            if encodesParametersInURL(Method.fromRaw(request.HTTPMethod!)!) {
-                let URLComponents = NSURLComponents(URL: mutableRequest.URL!, resolvingAgainstBaseURL: false)
+            if encodesParametersInURL(Method(rawValue: request.HTTPMethod!)!) {
+                let URLComponents = NSURLComponents(URL: mutableRequest.URL!, resolvingAgainstBaseURL: false)!
                 URLComponents.query = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
                 mutableRequest.URL = URLComponents.URL
             } else {
@@ -968,9 +968,9 @@ extension Request {
 
 // MARK: - Convenience
 
-private func URLRequest(method: Method, URLString: URLStringConvertible) -> NSURLRequest {
-    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString))
-    mutableURLRequest.HTTPMethod = method.toRaw()
+private func URLRequest(method: Method, URL: URLStringConvertible) -> NSURLRequest {
+    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL)!)
+    mutableURLRequest.HTTPMethod = method.rawValue
 
     return mutableURLRequest
 }
