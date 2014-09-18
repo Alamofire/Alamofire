@@ -84,14 +84,12 @@ public enum ParameterEncoding {
         case .JSON://(let options):
             let options = NSJSONWritingOptions.allZeros
             if let data = NSJSONSerialization.dataWithJSONObject(parameters!, options: options, error: &error) {
-                let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding))
-                mutableRequest.setValue("application/json; charset=\(charset)", forHTTPHeaderField: "Content-Type")
+                mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 mutableRequest.HTTPBody = data
             }
         case .PropertyList(let (format, options)):
             if let data = NSPropertyListSerialization.dataWithPropertyList(parameters!, format: format, options: options, error: &error) {
-                let charset = CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
-                mutableRequest.setValue("application/x-plist; charset=\(charset)", forHTTPHeaderField: "Content-Type")
+                mutableRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
                 mutableRequest.HTTPBody = data
             }
         case .Custom(let closure):
