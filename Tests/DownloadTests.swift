@@ -25,13 +25,29 @@ import Alamofire
 import XCTest
 
 class AlamofireDownloadResponseTestCase: XCTestCase {
+    let searchPathDirectory: NSSearchPathDirectory = .DocumentDirectory
+    let searchPathDomain: NSSearchPathDomainMask = .UserDomainMask
+
+    override func tearDown() {
+        let fileManager = NSFileManager.defaultManager()
+        let directory = fileManager.URLsForDirectory(searchPathDirectory, inDomains: searchPathDomain)[0] as NSURL
+        let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, error: nil)!
+        for file in contents {
+            fileManager.removeItemAtURL(file as NSURL, error: nil)
+        }
+    }
+
+    // MARK: -
+
     func testDownloadRequest() {
         let numberOfLines = 100
         let URL = "http://httpbin.org/stream/\(numberOfLines)"
 
         let expectation = expectationWithDescription(URL)
 
-        Alamofire.download(.GET, URL, Alamofire.Request.suggestedDownloadDestination(directory: .DocumentDirectory, domain: .UserDomainMask))
+        let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+
+        Alamofire.download(.GET, URL, destination)
             .response { request, response, _, error in
                 expectation.fulfill()
 
@@ -41,24 +57,21 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
 
                 let fileManager = NSFileManager.defaultManager()
+                let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as NSURL
+
                 var fileManagerError: NSError?
-                let directory = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as NSURL
-//                    let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: , error: &fileManagerError) as NSArray
-
                 let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, error: &fileManagerError)!
-
                 XCTAssertNil(fileManagerError, "fileManagerError should be nil")
 
-//                    let predicate = NSPredicate(format: "lastPathComponent = '\(numberOfLines)'")
-//                    let filteredContents = contents.filteredArrayUsingPredicate(predicate)
+                let predicate = NSPredicate(format: "lastPathComponent = '\(numberOfLines)'")
+                let filteredContents = (contents as NSArray).filteredArrayUsingPredicate(predicate)
+                XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
 
-//                XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
-//
-//                let file = filteredContents[0] as NSURL
-//                XCTAssertEqual(file.lastPathComponent!, "\(numberOfLines)", "filename should be \(numberOfLines)")
-//
-//                let data = NSData(contentsOfURL: file)
-//                XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
+                let file = filteredContents.first as NSURL
+                XCTAssertEqual(file.lastPathComponent, "\(numberOfLines)", "filename should be \(numberOfLines)")
+
+                let data = NSData(contentsOfURL: file)
+                XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
