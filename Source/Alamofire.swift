@@ -164,7 +164,6 @@ extension NSURLRequest: URLRequestConvertible {
 public class Manager {
     public class var sharedInstance: Manager {
         struct Singleton {
-
             static var configuration: NSURLSessionConfiguration = {
                 var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
 
@@ -453,15 +452,14 @@ public class Request {
 
     // MARK: Authentication
 
-    public func authenticate(HTTPBasic user: String, password: String) -> Self {
+    public func authenticate(#user: String, password: String) -> Self {
         let credential = NSURLCredential(user: user, password: password, persistence: .ForSession)
-        let protectionSpace = NSURLProtectionSpace(host: self.request.URL.host!, port: 0, `protocol`: self.request.URL.scheme, realm: nil, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
 
-        return authenticate(usingCredential: credential, forProtectionSpace: protectionSpace)
+        return authenticate(usingCredential: credential)
     }
 
-    public func authenticate(usingCredential credential: NSURLCredential, forProtectionSpace protectionSpace: NSURLProtectionSpace) -> Self {
-        self.session.configuration.URLCredentialStorage?.setCredential(credential, forProtectionSpace: protectionSpace)
+    public func authenticate(usingCredential credential: NSURLCredential) -> Self {
+        self.delegate.credential = credential
 
         return self
     }
@@ -541,6 +539,8 @@ public class Request {
         var data: NSData? { return nil }
         private(set) var error: NSError?
 
+        var credential: NSURLCredential?
+
         var taskWillPerformHTTPRedirection: ((NSURLSession!, NSURLSessionTask!, NSHTTPURLResponse!, NSURLRequest!) -> (NSURLRequest!))?
         var taskDidReceiveChallenge: ((NSURLSession!, NSURLSessionTask!, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential?))?
         var taskDidSendBodyData: ((NSURLSession!, NSURLSessionTask!, Int64, Int64, Int64) -> Void)?
@@ -574,10 +574,16 @@ public class Request {
             if self.taskDidReceiveChallenge != nil {
                 (disposition, credential) = self.taskDidReceiveChallenge!(session, task, challenge)
             } else {
-                if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-                    // TODO: Incorporate Trust Evaluation & TLS Chain Validation
+                // TODO: Incorporate Trust Evaluation & TLS Chain Validation
 
+                switch challenge.protectionSpace.authenticationMethod! {
+                case NSURLAuthenticationMethodServerTrust:
                     credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
+                default:
+                    credential = self.credential ?? session.configuration.URLCredentialStorage?.defaultCredentialForProtectionSpace(challenge.protectionSpace)
+                }
+
+                if credential != nil {
                     disposition = .UseCredential
                 }
             }
