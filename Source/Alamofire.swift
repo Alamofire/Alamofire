@@ -37,7 +37,7 @@ public enum Method: String {
 
 public enum ParameterEncoding {
     case URL
-    case JSON//(NSJSONWritingOptions)
+    case JSON
     case PropertyList(NSPropertyListFormat, NSPropertyListWriteOptions)
     case Custom((NSURLRequest, [String: AnyObject]?) -> (NSURLRequest, NSError?))
 
@@ -81,7 +81,7 @@ public enum ParameterEncoding {
 
                 mutableRequest.HTTPBody = query(parameters!).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
             }
-        case .JSON://(let options):
+        case .JSON:
             let options = NSJSONWritingOptions.allZeros
             if let data = NSJSONSerialization.dataWithJSONObject(parameters!, options: options, error: &error) {
                 mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
