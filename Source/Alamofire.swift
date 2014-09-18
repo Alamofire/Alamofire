@@ -875,10 +875,12 @@ extension Request: DebugPrintable {
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
             let protectionSpace = NSURLProtectionSpace(host: URL.host!, port: URL.port ?? 0, `protocol`: URL.scheme, realm: URL.host, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
-                if !credentials.isEmpty {
-                    if let credential = credentials[0] as? NSURLCredential {
-                        components.append("-u \(credential.user):\(credential.password)")
-                    }
+                for credential: NSURLCredential in (credentials as [NSURLCredential]) {
+                    components.append("-u \(credential.user):\(credential.password)")
+                }
+            } else {
+                if let credential = self.delegate.credential {
+                    components.append("-u \(credential.user):\(credential.password)")
                 }
             }
         }
