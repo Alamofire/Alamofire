@@ -33,7 +33,7 @@ _* Scheduled to coincide with Swift 1.0 release_
 
 ## Installation
 
-_The infrastructure and best practices for distributing Swift libraries is currently in flux during this beta period of the language and Xcode. In the meantime, you can simply add Alamofire as a git submodule, drag the `Alamofire.xcodeproj` file into your Xcode project, and add the framework product as a dependency for your application target. (This is how the example project is structured)_
+_The infrastructure and best practices for distributing Swift libraries is currently in flux during this beta period of the language and Xcode. In the meantime, you can simply 1) add Alamofire as a git submodule, 2) drag the `Alamofire.xcodeproj` file into your Xcode project, and 3) for your application target add the framework product (`Alamofire.framework`) to `Target Dependencies` and to `Copy Files` with `Frameworks` as the destination. (This is how the example project is structured)_
 
 ---
 
