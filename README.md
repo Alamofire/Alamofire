@@ -18,17 +18,16 @@ Of course, AFNetworking remains the premiere networking library available for Ma
 
 ### Planned for 1.0 Release*
 
-_* Scheduled to coincide with Swift 1.0 release_
+_* Coming very soon_
 
-- 100% Unit Test Coverage
+- Comprehensive Unit Test Coverage
 - Complete Documentation
 - HTTP Response Validation
 - TLS Chain Validation
-- UIKit / AppKit Extensions
 
 ## Requirements
 
-- Xcode 6 Beta 6
+- Xcode 6.0
 - iOS 7.0+ / Mac OS X 10.9+
 
 ## Installation
