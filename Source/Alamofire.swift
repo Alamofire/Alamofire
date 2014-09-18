@@ -166,7 +166,55 @@ extension NSURLRequest: URLRequestConvertible {
 public class Manager {
     public class var sharedInstance: Manager {
         struct Singleton {
-            static let instance = Manager()
+
+            static var configuration: NSURLSessionConfiguration = {
+                var configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+
+                configuration.HTTPAdditionalHeaders = {
+                    // Accept-Encoding HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3
+                    let acceptEncoding: String = "gzip;q=1.0,compress;q=0.5"
+
+                    // Accept-Language HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
+                    let acceptLanguage: String = {
+                        var components: [String] = []
+                        for (index, languageCode) in enumerate(NSLocale.preferredLanguages() as [String]) {
+                            let q = 1.0 - (Double(index) * 0.1)
+                            components.append("\(languageCode);q=\(q)")
+                            if q <= 0.5 {
+                                break
+                            }
+                        }
+
+                        return join(",", components)
+                    }()
+
+                    // User-Agent Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.43
+                    let userAgent: String = {
+                        let info = NSBundle.mainBundle().infoDictionary
+                        let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
+                        let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
+                        let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
+                        let os: AnyObject = NSProcessInfo.processInfo().operatingSystemVersionString ?? "Unknown"
+
+                        var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
+                        let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
+                        if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
+                            return mutableUserAgent as NSString
+                        }
+
+                        return "Alamofire"
+                    }()
+                    
+                    return ["Accept-Encoding": acceptEncoding,
+                            "Accept-Language": acceptLanguage,
+                            "User-Agent": userAgent]
+                }()
+
+                return configuration
+            }()
+
+
+            static let instance = Manager(configuration: configuration)
         }
 
         return Singleton.instance
@@ -178,47 +226,7 @@ public class Manager {
 
     var automaticallyStartsRequests: Bool = true
 
-    public lazy var defaultHeaders: [String: String] = {
-        // Accept-Encoding HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3
-        let acceptEncoding: String = "gzip;q=1.0,compress;q=0.5"
-
-        // Accept-Language HTTP Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
-        let acceptLanguage: String = {
-            var components: [String] = []
-            for (index, languageCode) in enumerate(NSLocale.preferredLanguages() as [String]) {
-                let q = 1.0 - (Double(index) * 0.1)
-                components.append("\(languageCode);q=\(q)")
-                if q <= 0.5 {
-                    break
-                }
-            }
-
-            return join(",", components)
-        }()
-
-        // User-Agent Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.43
-        let userAgent: String = {
-            let info = NSBundle.mainBundle().infoDictionary
-            let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
-            let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
-            let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
-            let os: AnyObject = NSProcessInfo.processInfo().operatingSystemVersionString ?? "Unknown"
-
-            var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
-            let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
-            if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
-                return mutableUserAgent as NSString
-            }
-
-            return "Alamofire"
-        }()
-
-        return ["Accept-Encoding": acceptEncoding,
-                "Accept-Language": acceptLanguage,
-                "User-Agent": userAgent]
-    }()
-
-    required public init(configuration: NSURLSessionConfiguration! = nil) {
+    required public init(configuration: NSURLSessionConfiguration? = nil) {
         self.delegate = SessionDelegate()
         self.session = NSURLSession(configuration: configuration, delegate: self.delegate, delegateQueue: self.operationQueue)
     }
@@ -230,17 +238,9 @@ public class Manager {
     // MARK: -
 
     public func request(URLRequest: URLRequestConvertible) -> Request {
-        var mutableRequest: NSMutableURLRequest! = URLRequest.URLRequest.mutableCopy() as NSMutableURLRequest
-
-        for (field, value) in self.defaultHeaders {
-            if mutableRequest.valueForHTTPHeaderField(field) == nil {
-                mutableRequest.setValue(value, forHTTPHeaderField: field)
-            }
-        }
-
         var dataTask: NSURLSessionDataTask?
         dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            dataTask = self.session.dataTaskWithRequest(mutableRequest)
+            dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest)
         }
 
         let request = Request(session: self.session, task: dataTask!)
