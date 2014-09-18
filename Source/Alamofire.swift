@@ -255,7 +255,7 @@ public class Manager {
                 return self.subdelegates[task.taskIdentifier]
             }
 
-            set(newValue) {
+            set {
                 self.subdelegates[task.taskIdentifier] = newValue
             }
         }
