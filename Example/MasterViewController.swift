@@ -57,14 +57,10 @@ class MasterViewController: UITableViewController {
         if let detailViewController = segue.destinationViewController.topViewController as? DetailViewController {
             func requestForSegue(segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier {
-                    case "GET":
-                        return Alamofire.request(.GET, "http://httpbin.org/get")
-                    case "POST":
-                        return Alamofire.request(.POST, "http://httpbin.org/post")
-                    case "PUT":
-                        return Alamofire.request(.PUT, "http://httpbin.org/put")
-                    case "DELETE":
-                        return Alamofire.request(.DELETE, "http://httpbin.org/delete")
+                    case "GET", "POST", "PUT", "DELETE":
+                        let method = Alamofire.Method.fromRaw(segue.identifier)!
+
+                        return Alamofire.request(method, HTTPBinRoute.Method(method))
                     default:
                         return nil
                 }
