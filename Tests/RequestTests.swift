@@ -62,7 +62,7 @@ class AlamofireRequestResponseTestCase: XCTestCase {
                     XCTAssertNil(error, "error should be nil")
                  }
 
-        waitForExpectationsWithTimeout(10){ error in
+        waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }

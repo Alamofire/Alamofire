@@ -61,7 +61,7 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
 //                XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
         }
 
-        waitForExpectationsWithTimeout(10){ error in
+        waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
