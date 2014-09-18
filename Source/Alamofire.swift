@@ -574,17 +574,21 @@ public class Request {
             if self.taskDidReceiveChallenge != nil {
                 (disposition, credential) = self.taskDidReceiveChallenge!(session, task, challenge)
             } else {
-                // TODO: Incorporate Trust Evaluation & TLS Chain Validation
+                if challenge.previousFailureCount > 0 {
+                    disposition = .CancelAuthenticationChallenge
+                } else {
+                    // TODO: Incorporate Trust Evaluation & TLS Chain Validation
 
-                switch challenge.protectionSpace.authenticationMethod! {
-                case NSURLAuthenticationMethodServerTrust:
-                    credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
-                default:
-                    credential = self.credential ?? session.configuration.URLCredentialStorage?.defaultCredentialForProtectionSpace(challenge.protectionSpace)
-                }
+                    switch challenge.protectionSpace.authenticationMethod! {
+                    case NSURLAuthenticationMethodServerTrust:
+                        credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
+                    default:
+                        credential = self.credential ?? session.configuration.URLCredentialStorage?.defaultCredentialForProtectionSpace(challenge.protectionSpace)
+                    }
 
-                if credential != nil {
-                    disposition = .UseCredential
+                    if credential != nil {
+                        disposition = .UseCredential
+                    }
                 }
             }
 

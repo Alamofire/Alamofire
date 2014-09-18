@@ -50,9 +50,9 @@ class AlamofireAuthenticationTestCase: XCTestCase {
                 invalidCredentialsExpectation.fulfill()
 
                 XCTAssertNotNil(request, "request should not be nil")
-                XCTAssertNotNil(response, "response should not be nil")
-                XCTAssert(response?.statusCode == 401, "response status code should be 401")
-                XCTAssertNil(error, "error should be nil")
+                XCTAssertNil(response, "response should be nil")
+                XCTAssertNotNil(error, "error should not be nil")
+                XCTAssert(error?.code == -999, "error should be NSURLErrorDomain Code -999 'cancelled'")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
@@ -86,9 +86,9 @@ class AlamofireAuthenticationTestCase: XCTestCase {
                 invalidCredentialsExpectation.fulfill()
 
                 XCTAssertNotNil(request, "request should not be nil")
-                XCTAssertNotNil(response, "response should not be nil")
-                XCTAssert(response?.statusCode == 401, "response status code should be 401")
-                XCTAssertNil(error, "error should be nil")
+                XCTAssertNil(response, "response should be nil")
+                XCTAssertNotNil(error, "error should not be nil")
+                XCTAssert(error?.code == -999, "error should be NSURLErrorDomain Code -999 'cancelled'")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
