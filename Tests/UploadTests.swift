@@ -24,29 +24,25 @@ import Foundation
 import Alamofire
 import XCTest
 
-struct AlamofireUploadTests {
-    class UploadResponseTestCase: XCTestCase {
-        func testDownloadRequest() {
-            let URL = "http://httpbin.org/post"
-            let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+class UploadResponseTestCase: XCTestCase {
+    func testDownloadRequest() {
+        let URL = "http://httpbin.org/post"
+        let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
 
-            let expectation = expectationWithDescription(URL)
+        let expectation = expectationWithDescription(URL)
 
-            Alamofire.upload(.POST, URL, data!)
-                .responseJSON {(request, response, JSON, error) in
+        Alamofire.upload(.POST, URL, data!)
+                 .responseJSON { (request, response, JSON, error) in
                     expectation.fulfill()
 
                     XCTAssertNotNil(request, "request should not be nil")
                     XCTAssertNotNil(response, "response should not be nil")
 
                     XCTAssertNil(error, "error should be nil")
-
-                    println(JSON)
                 }
 
-            waitForExpectationsWithTimeout(10){ error in
-                XCTAssertNil(error, "\(error)")
-            }
+        waitForExpectationsWithTimeout(10) { (error) in
+            XCTAssertNil(error, "\(error)")
         }
     }
 }
