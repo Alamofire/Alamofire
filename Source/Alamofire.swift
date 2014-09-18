@@ -855,7 +855,7 @@ extension Request: Printable {
         components.append(self.request.URL.absoluteString!)
 
         if self.response != nil {
-            components.append("\(self.response!.statusCode)")
+            components.append("(\(self.response!.statusCode))")
         }
 
         return join(" ", components)
@@ -904,8 +904,6 @@ extension Request: DebugPrintable {
         if let HTTPBody = self.request.HTTPBody {
             components.append("-d \"\(NSString(data: HTTPBody, encoding: NSUTF8StringEncoding))\"")
         }
-
-        // TODO: -T arguments for files
 
         components.append("\"\(URL.absoluteString!)\"")
 
