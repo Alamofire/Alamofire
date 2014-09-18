@@ -819,7 +819,9 @@ extension Request {
                 var fileManagerError: NSError?
 
                 NSFileManager.defaultManager().moveItemAtURL(location, toURL: destination, error: &fileManagerError)
-                // TODO: NSNotification on failure
+                if fileManagerError != nil {
+                    self.error = fileManagerError
+                }
             }
         }
 
