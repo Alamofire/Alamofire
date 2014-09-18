@@ -12,6 +12,8 @@
 		F8111E0F19A951050040E7D1 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E0E19A951050040E7D1 /* DetailViewController.swift */; };
 		F8111E1219A951050040E7D1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F8111E1019A951050040E7D1 /* Main.storyboard */; };
 		F8111E1419A951050040E7D1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8111E1319A951050040E7D1 /* Images.xcassets */; };
+		F818D0E419CA8CFA006034B1 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E5419A95D7C0040E7D1 /* Alamofire.framework */; };
+		F818D0E619CA8D25006034B1 /* Alamofire.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E5419A95D7C0040E7D1 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +40,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		F818D0E519CA8D15006034B1 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F818D0E619CA8D25006034B1 /* Alamofire.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		F8111E0519A951050040E7D1 /* iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E0919A951050040E7D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -54,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F818D0E419CA8CFA006034B1 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +135,7 @@
 				F8111E0119A951050040E7D1 /* Sources */,
 				F8111E0219A951050040E7D1 /* Frameworks */,
 				F8111E0319A951050040E7D1 /* Resources */,
+				F818D0E519CA8D15006034B1 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
