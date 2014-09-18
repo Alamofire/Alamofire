@@ -32,12 +32,11 @@ class UploadResponseTestCase: XCTestCase {
         let expectation = expectationWithDescription(URL)
 
         Alamofire.upload(.POST, URL, data!)
-                 .responseJSON { (request, response, JSON, error) in
+                 .response { (request, response, _, error) in
                     expectation.fulfill()
 
                     XCTAssertNotNil(request, "request should not be nil")
                     XCTAssertNotNil(response, "response should not be nil")
-
                     XCTAssertNil(error, "error should be nil")
                 }
 
