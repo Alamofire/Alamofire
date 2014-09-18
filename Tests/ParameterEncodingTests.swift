@@ -139,7 +139,7 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
 
     func testURLParameterEncodeGETParametersInURL() {
         var mutableRequest = self.request.mutableCopy() as NSMutableURLRequest
-        mutableRequest.HTTPMethod = Method.GET.toRaw()
+        mutableRequest.HTTPMethod = Method.GET.rawValue
 
         let parameters = ["foo": 1, "bar": 2]
         let (request, error) = self.encoding.encode(mutableRequest, parameters: parameters)
@@ -151,7 +151,7 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
 
     func testURLParameterEncodePOSTParametersInHTTPBody() {
         var mutableRequest = self.request.mutableCopy() as NSMutableURLRequest
-        mutableRequest.HTTPMethod = Method.POST.toRaw()
+        mutableRequest.HTTPMethod = Method.POST.rawValue
 
         let parameters = ["foo": 1, "bar": 2]
         let (request, error) = self.encoding.encode(mutableRequest, parameters: parameters)
