@@ -828,12 +828,18 @@ extension Request {
 
 extension Request: Printable {
     public var description: String {
-        var description = "\(self.request.HTTPMethod) \(self.request.URL)"
-        if self.response != nil {
-            description += " (\(self.response?.statusCode))"
+        var components: [String] = []
+        if self.request.HTTPMethod != nil {
+            components.append(self.request.HTTPMethod!)
         }
 
-        return description
+        components.append(self.request.URL.absoluteString!)
+
+        if self.response != nil {
+            components.append("\(self.response!.statusCode)")
+        }
+
+        return join(" ", components)
     }
 }
 
@@ -843,8 +849,8 @@ extension Request: DebugPrintable {
 
         let URL = self.request.URL
 
-        if self.request.HTTPMethod != "GET" {
-            components.append("-X \(self.request.HTTPMethod)")
+        if self.request.HTTPMethod != nil && self.request.HTTPMethod != "GET" {
+            components.append("-X \(self.request.HTTPMethod!)")
         }
 
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
