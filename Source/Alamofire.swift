@@ -471,6 +471,8 @@ public class Request {
             uploadDelegate.uploadProgress = closure
         } else if let downloadDelegate = self.delegate as? DownloadTaskDelegate {
             downloadDelegate.downloadProgress = closure
+        } else if let dataDelegate = self.delegate as? DataTaskDelegate {
+            dataDelegate.dataProgress = closure
         }
 
         return self
@@ -604,10 +606,13 @@ public class Request {
             return self.mutableData
         }
 
+        private var expectedContentLength: Int64?
+
         var dataTaskDidReceiveResponse: ((NSURLSession!, NSURLSessionDataTask!, NSURLResponse!) -> (NSURLSessionResponseDisposition))?
         var dataTaskDidBecomeDownloadTask: ((NSURLSession!, NSURLSessionDataTask!) -> Void)?
         var dataTaskDidReceiveData: ((NSURLSession!, NSURLSessionDataTask!, NSData!) -> Void)?
         var dataTaskWillCacheResponse: ((NSURLSession!, NSURLSessionDataTask!, NSCachedURLResponse!) -> (NSCachedURLResponse))?
+        var dataProgress: ((bytesReceived: Int64, totalBytesReceived: Int64, totalBytesExpectedToReceive: Int64) -> Void)?
 
         override init(task: NSURLSessionTask) {
             self.mutableData = NSMutableData()
@@ -618,6 +623,8 @@ public class Request {
 
         func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveResponse response: NSURLResponse!, completionHandler: ((NSURLSessionResponseDisposition) -> Void)!) {
             var disposition: NSURLSessionResponseDisposition = .Allow
+
+            expectedContentLength = response.expectedContentLength
 
             if self.dataTaskDidReceiveResponse != nil {
                 disposition = self.dataTaskDidReceiveResponse!(session, dataTask, response)
@@ -634,6 +641,10 @@ public class Request {
             self.dataTaskDidReceiveData?(session, dataTask, data)
 
             self.mutableData.appendData(data)
+
+            if let expectedContentLength = dataTask?.response?.expectedContentLength {
+                self.dataProgress?(bytesReceived: Int64(data.length), totalBytesReceived: Int64(self.mutableData.length), totalBytesExpectedToReceive: expectedContentLength)
+            }
         }
 
         func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, willCacheResponse proposedResponse: NSCachedURLResponse!, completionHandler: ((NSCachedURLResponse!) -> Void)!) {
