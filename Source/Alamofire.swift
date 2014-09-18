@@ -70,10 +70,10 @@ public enum ParameterEncoding {
                 }
             }
 
-            if encodesParametersInURL(Method.fromRaw(request.HTTPMethod!)!) {
+            if encodesParametersInURL(Method(rawValue: request.HTTPMethod!)!) {
                 let URLComponents = NSURLComponents(URL: mutableRequest.URL!, resolvingAgainstBaseURL: false)
-                URLComponents.query = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
-                mutableRequest.URL = URLComponents.URL
+                URLComponents!.query = (URLComponents!.query != nil ? URLComponents!.query! + "&" : "") + query(parameters!)
+                mutableRequest.URL = URLComponents!.URL
             } else {
                 if mutableRequest.valueForHTTPHeaderField("Content-Type") == nil {
                     mutableRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -980,8 +980,8 @@ extension Request {
 // MARK: - Convenience
 
 private func URLRequest(method: Method, URLString: URLStringConvertible) -> NSURLRequest {
-    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString))
-    mutableURLRequest.HTTPMethod = method.toRaw()
+    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString)!)
+    mutableURLRequest.HTTPMethod = method.rawValue
 
     return mutableURLRequest
 }
