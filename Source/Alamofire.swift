@@ -471,10 +471,10 @@ public class Request {
     public func progress(closure: ((Int64, Int64, Int64) -> Void)? = nil) -> Self {
         if let uploadDelegate = delegate as? UploadTaskDelegate {
             uploadDelegate.uploadProgress = closure
-        } else if let downloadDelegate = delegate as? DownloadTaskDelegate {
-            downloadDelegate.downloadProgress = closure
         } else if let dataDelegate = delegate as? DataTaskDelegate {
             dataDelegate.dataProgress = closure
+        } else if let downloadDelegate = delegate as? DownloadTaskDelegate {
+            downloadDelegate.downloadProgress = closure
         }
 
         return self
