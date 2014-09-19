@@ -716,19 +716,19 @@ extension Manager {
 
     // MARK: File
 
-    func upload(request: NSURLRequest, file: NSURL) -> Request {
+    public func upload(request: NSURLRequest, file: NSURL) -> Request {
         return upload(.File(request, file))
     }
 
     // MARK: Data
 
-    func upload(request: NSURLRequest, data: NSData) -> Request {
+    public func upload(request: NSURLRequest, data: NSData) -> Request {
         return upload(.Data(request, data))
     }
 
     // MARK: Stream
 
-    func upload(request: NSURLRequest, stream: NSInputStream) -> Request {
+    public func upload(request: NSURLRequest, stream: NSInputStream) -> Request {
         return upload(.Stream(request, stream))
     }
 }
