@@ -51,13 +51,13 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
     }
 
     func testURLParameterEncodeOneStringKeyStringValueParameterAppendedToQuery() {
-        var mutableRequest = self.request.mutableCopy() as NSMutableURLRequest
-        let URLComponents = NSURLComponents(URL: mutableRequest.URL!, resolvingAgainstBaseURL: false)
+        var mutableURLRequest = self.request.mutableCopy() as NSMutableURLRequest
+        let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false)
         URLComponents.query = "baz=qux"
-        mutableRequest.URL = URLComponents.URL
+        mutableURLRequest.URL = URLComponents.URL
 
         let parameters = ["foo": "bar"]
-        let (request, error) = self.encoding.encode(mutableRequest, parameters: parameters)
+        let (request, error) = self.encoding.encode(mutableURLRequest, parameters: parameters)
 
         XCTAssertEqual(request.URL.query!, "baz=qux&foo=bar", "query is incorrect")
     }
@@ -138,11 +138,11 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
     }
 
     func testURLParameterEncodeGETParametersInURL() {
-        var mutableRequest = self.request.mutableCopy() as NSMutableURLRequest
-        mutableRequest.HTTPMethod = Method.GET.toRaw()
+        var mutableURLRequest = self.request.mutableCopy() as NSMutableURLRequest
+        mutableURLRequest.HTTPMethod = Method.GET.toRaw()
 
         let parameters = ["foo": 1, "bar": 2]
-        let (request, error) = self.encoding.encode(mutableRequest, parameters: parameters)
+        let (request, error) = self.encoding.encode(mutableURLRequest, parameters: parameters)
 
         XCTAssertEqual(request.URL.query!, "bar=2&foo=1", "query is incorrect")
         XCTAssertNil(request.valueForHTTPHeaderField("Content-Type"), "Content-Type should be nil")
@@ -150,11 +150,11 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
     }
 
     func testURLParameterEncodePOSTParametersInHTTPBody() {
-        var mutableRequest = self.request.mutableCopy() as NSMutableURLRequest
-        mutableRequest.HTTPMethod = Method.POST.toRaw()
+        var mutableURLRequest = self.request.mutableCopy() as NSMutableURLRequest
+        mutableURLRequest.HTTPMethod = Method.POST.toRaw()
 
         let parameters = ["foo": 1, "bar": 2]
-        let (request, error) = self.encoding.encode(mutableRequest, parameters: parameters)
+        let (request, error) = self.encoding.encode(mutableURLRequest, parameters: parameters)
 
         XCTAssertEqual(NSString(data: request.HTTPBody!, encoding: NSUTF8StringEncoding), "bar=2&foo=1", "HTTPBody is incorrect")
         XCTAssertEqual(request.valueForHTTPHeaderField("Content-Type")!, "application/x-www-form-urlencoded", "Content-Type should be application/x-www-form-urlencoded")
@@ -274,5 +274,22 @@ class AlamofirePropertyListParameterEncodingTestCase: XCTestCase {
         XCTAssertNotNil(plist, "HTTPBody JSON is invalid")
         XCTAssert(plist.valueForKey("date") is NSDate, "date is not NSDate")
         XCTAssert(plist.valueForKey("data") is NSData, "data is not NSData")
+    }
+}
+
+class AlamofireCustomParameterEncodingTestCase: XCTestCase {
+    func testCustomParameterEncode() {
+        let encodingClosure: (URLRequestConvertible, [String: AnyObject]?) -> (NSURLRequest, NSError?) = { (URLRequest, parameters) in
+            let mutableURLRequest = URLRequest.URLRequest.mutableCopy() as NSMutableURLRequest
+            mutableURLRequest.setValue("Xcode", forHTTPHeaderField: "User-Agent")
+            return (mutableURLRequest, nil)
+        }
+
+        let encoding: ParameterEncoding = .Custom(encodingClosure)
+
+        let URLRequest = NSURLRequest(URL: NSURL(string: "http://example.com"))
+        let parameters: [String: AnyObject] = [:]
+
+        XCTAssertEqual(encoding.encode(URLRequest, parameters: parameters).0, encodingClosure(URLRequest, parameters).0, "request should be equal")
     }
 }

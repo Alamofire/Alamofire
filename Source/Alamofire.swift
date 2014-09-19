@@ -39,14 +39,14 @@ public enum ParameterEncoding {
     case URL
     case JSON
     case PropertyList(NSPropertyListFormat, NSPropertyListWriteOptions)
-    case Custom((NSURLRequest, [String: AnyObject]?) -> (NSURLRequest, NSError?))
+    case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSURLRequest, NSError?))
 
     public func encode(URLRequest: URLRequestConvertible, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
         if parameters == nil {
             return (URLRequest.URLRequest, nil)
         }
 
-        var mutableRequest: NSMutableURLRequest! = URLRequest.URLRequest.mutableCopy() as NSMutableURLRequest
+        var mutableURLRequest: NSMutableURLRequest! = URLRequest.URLRequest.mutableCopy() as NSMutableURLRequest
         var error: NSError? = nil
 
         switch self {
@@ -70,34 +70,34 @@ public enum ParameterEncoding {
                 }
             }
 
-            let method = Method.fromRaw(mutableRequest.HTTPMethod)
+            let method = Method.fromRaw(mutableURLRequest.HTTPMethod)
             if method != nil && encodesParametersInURL(method!) {
-                let URLComponents = NSURLComponents(URL: mutableRequest.URL!, resolvingAgainstBaseURL: false)
+                let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false)
                 URLComponents.query = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
-                mutableRequest.URL = URLComponents.URL
+                mutableURLRequest.URL = URLComponents.URL
             } else {
-                if mutableRequest.valueForHTTPHeaderField("Content-Type") == nil {
-                    mutableRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+                if mutableURLRequest.valueForHTTPHeaderField("Content-Type") == nil {
+                    mutableURLRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                 }
 
-                mutableRequest.HTTPBody = query(parameters!).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+                mutableURLRequest.HTTPBody = query(parameters!).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
             }
         case .JSON:
             let options = NSJSONWritingOptions.allZeros
             if let data = NSJSONSerialization.dataWithJSONObject(parameters!, options: options, error: &error) {
-                mutableRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                mutableRequest.HTTPBody = data
+                mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                mutableURLRequest.HTTPBody = data
             }
         case .PropertyList(let (format, options)):
             if let data = NSPropertyListSerialization.dataWithPropertyList(parameters!, format: format, options: options, error: &error) {
-                mutableRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
-                mutableRequest.HTTPBody = data
+                mutableURLRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
+                mutableURLRequest.HTTPBody = data
             }
         case .Custom(let closure):
-            return closure(mutableRequest, parameters)
+            return closure(mutableURLRequest, parameters)
         }
 
-        return (mutableRequest, error)
+        return (mutableURLRequest, error)
     }
 
     func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
