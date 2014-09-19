@@ -27,8 +27,10 @@ _* Coming very soon_
 
 ## Requirements
 
-- Xcode 6.0
 - iOS 7.0+ / Mac OS X 10.9+
+- Xcode 6.0
+
+> For Xcode 6.1, use [the `xcode-6.1` branch](https://github.com/Alamofire/Alamofire/tree/xcode-6.1).
 
 ## Installation
 
@@ -40,7 +42,6 @@ _The infrastructure and best practices for distributing Swift libraries is curre
 4. In the tab bar at the top of that window, open the "Build Phases" panel.
 5. Expand the "Link Binary with Libraries" group, and add `Alamofire.framework`.
 6. Click on the `+` button at the top left of the panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `Alamofire.framework`.
-
 
 ---
 
