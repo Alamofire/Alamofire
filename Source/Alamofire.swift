@@ -244,7 +244,10 @@ public class Manager {
 
         let request = Request(session: session, task: dataTask!)
         delegate[request.delegate.task] = request.delegate
-        request.resume()
+
+        if automaticallyStartsRequests {
+            request.resume()
+        }
 
         return request
     }
