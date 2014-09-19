@@ -217,8 +217,10 @@ public class Manager {
         return Singleton.instance
     }
 
-    let delegate: SessionDelegate
-    let session: NSURLSession!
+    private let delegate: SessionDelegate
+
+    public let session: NSURLSession!
+
     let operationQueue: NSOperationQueue = NSOperationQueue()
 
     var automaticallyStartsRequests: Bool = true
@@ -428,8 +430,8 @@ public class Manager {
 public class Request {
     private let delegate: TaskDelegate
 
-    private var session: NSURLSession
-    private var task: NSURLSessionTask { return self.delegate.task }
+    public let session: NSURLSession
+    public var task: NSURLSessionTask { return self.delegate.task }
 
     public var request: NSURLRequest { return self.task.originalRequest }
     public var response: NSHTTPURLResponse? { return self.task.response as? NSHTTPURLResponse }
