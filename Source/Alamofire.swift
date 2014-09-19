@@ -535,7 +535,7 @@ public class Request {
 
     private class TaskDelegate: NSObject, NSURLSessionTaskDelegate {
         let task: NSURLSessionTask
-        let queue: dispatch_queue_t?
+        let queue: dispatch_queue_t
         let progress: NSProgress
 
         var data: NSData? { return nil }
