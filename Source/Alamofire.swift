@@ -201,7 +201,7 @@ public class Manager {
 
                         return "Alamofire"
                     }()
-                    
+
                     return ["Accept-Encoding": acceptEncoding,
                             "Accept-Language": acceptLanguage,
                             "User-Agent": userAgent]
@@ -223,7 +223,7 @@ public class Manager {
 
     let operationQueue: NSOperationQueue = NSOperationQueue()
 
-    var automaticallyStartsRequests: Bool = true
+    var startRequestsImmediately: Bool = true
 
     required public init(configuration: NSURLSessionConfiguration? = nil) {
         self.delegate = SessionDelegate()
@@ -245,7 +245,7 @@ public class Manager {
         let request = Request(session: session, task: dataTask!)
         delegate[request.delegate.task] = request.delegate
 
-        if automaticallyStartsRequests {
+        if startRequestsImmediately {
             request.resume()
         }
 
@@ -707,7 +707,7 @@ extension Manager {
         }
         delegate[request.delegate.task] = request.delegate
 
-        if automaticallyStartsRequests {
+        if startRequestsImmediately {
             request.resume()
         }
 
@@ -777,7 +777,7 @@ extension Manager {
         }
         delegate[request.delegate.task] = request.delegate
 
-        if automaticallyStartsRequests {
+        if startRequestsImmediately {
             request.resume()
         }
 
