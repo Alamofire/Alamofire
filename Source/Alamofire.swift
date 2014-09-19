@@ -222,9 +222,9 @@ public class Manager {
 
     public let session: NSURLSession!
 
-    let operationQueue: NSOperationQueue = NSOperationQueue()
+    public var startRequestsImmediately: Bool = true
 
-    var startRequestsImmediately: Bool = true
+    let operationQueue: NSOperationQueue = NSOperationQueue()
 
     required public init(configuration: NSURLSessionConfiguration? = nil) {
         self.delegate = SessionDelegate()
