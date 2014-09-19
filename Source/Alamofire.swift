@@ -220,7 +220,7 @@ public class Manager {
 
     private let delegate: SessionDelegate
 
-    public let session: NSURLSession!
+    public let session: NSURLSession
 
     public var startRequestsImmediately: Bool = true
 
