@@ -253,7 +253,7 @@ public class Manager {
         return request
     }
 
-    private class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
+    class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
         private var subdelegates: [Int: Request.TaskDelegate]
         private subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
