@@ -589,7 +589,7 @@ public class Request {
                     case NSURLAuthenticationMethodServerTrust:
                         credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
                     default:
-                        credential = credential ?? session.configuration.URLCredentialStorage?.defaultCredentialForProtectionSpace(challenge.protectionSpace)
+                        credential = self.credential ?? session.configuration.URLCredentialStorage?.defaultCredentialForProtectionSpace(challenge.protectionSpace)
                     }
 
                     if credential != nil {
