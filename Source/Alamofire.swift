@@ -99,7 +99,7 @@ public enum ParameterEncoding {
         return (mutableRequest, error)
     }
 
-    private func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
+    func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
         var components: [(String, String)] = []
         if let dictionary = value as? [String: AnyObject] {
             for (nestedKey, value) in dictionary {
