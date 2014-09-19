@@ -265,7 +265,7 @@ let user = "user"
 let password = "password"
 
 Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
-    .authenticate(HTTPBasic: user, password: password)
+    .authenticate(user: user, password: password)
     .response {(request, response, _, error) in
         println(response)
     }
@@ -278,12 +278,11 @@ let user = "user"
 let password = "password"
 
 let credential = NSURLCredential(user: user, password: password, persistence: .ForSession)
-let protectionSpace = NSURLProtectionSpace(host: "httpbin.org", port: 0, `protocol`: "https", realm: nil, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
 ```
 
 ```swift
 Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
-    .authenticate(usingCredential: credential, forProtectionSpace: protectionSpace)
+    .authenticate(usingCredential: credential)
     .response {(request, response, _, error) in
         println(response)
 }
