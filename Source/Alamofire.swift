@@ -537,7 +537,7 @@ public class Request {
         }
     }
 
-    private class TaskDelegate: NSObject, NSURLSessionTaskDelegate {
+    class TaskDelegate: NSObject, NSURLSessionTaskDelegate {
         let task: NSURLSessionTask
         let queue: dispatch_queue_t
         let progress: NSProgress
@@ -616,7 +616,7 @@ public class Request {
         }
     }
 
-    private class DataTaskDelegate: TaskDelegate, NSURLSessionDataDelegate {
+    class DataTaskDelegate: TaskDelegate, NSURLSessionDataDelegate {
         var dataTask: NSURLSessionDataTask! { return task as NSURLSessionDataTask }
 
         private var mutableData: NSMutableData
@@ -735,7 +735,7 @@ extension Manager {
 }
 
 extension Request {
-    private class UploadTaskDelegate: DataTaskDelegate {
+    class UploadTaskDelegate: DataTaskDelegate {
         var uploadTask: NSURLSessionUploadTask! { return task as NSURLSessionUploadTask }
         var uploadProgress: ((Int64, Int64, Int64) -> Void)!
 
@@ -810,7 +810,7 @@ extension Request {
         }
     }
 
-    private class DownloadTaskDelegate: TaskDelegate, NSURLSessionDownloadDelegate {
+    class DownloadTaskDelegate: TaskDelegate, NSURLSessionDownloadDelegate {
         var downloadTask: NSURLSessionDownloadTask! { return task as NSURLSessionDownloadTask }
         var downloadProgress: ((Int64, Int64, Int64) -> Void)?
 
