@@ -41,12 +41,12 @@ public enum ParameterEncoding {
     case PropertyList(NSPropertyListFormat, NSPropertyListWriteOptions)
     case Custom((NSURLRequest, [String: AnyObject]?) -> (NSURLRequest, NSError?))
 
-    public func encode(request: NSURLRequest, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
+    public func encode(URLRequest: URLRequestConvertible, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
         if parameters == nil {
-            return (request, nil)
+            return (URLRequest.URLRequest, nil)
         }
 
-        var mutableRequest: NSMutableURLRequest! = request.mutableCopy() as NSMutableURLRequest
+        var mutableRequest: NSMutableURLRequest! = URLRequest.URLRequest.mutableCopy() as NSMutableURLRequest
         var error: NSError? = nil
 
         switch self {
@@ -70,7 +70,8 @@ public enum ParameterEncoding {
                 }
             }
 
-            if encodesParametersInURL(Method.fromRaw(request.HTTPMethod!)!) {
+            let method = Method.fromRaw(mutableRequest.HTTPMethod)
+            if method != nil && encodesParametersInURL(method!) {
                 let URLComponents = NSURLComponents(URL: mutableRequest.URL!, resolvingAgainstBaseURL: false)
                 URLComponents.query = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
                 mutableRequest.URL = URLComponents.URL
@@ -93,7 +94,7 @@ public enum ParameterEncoding {
                 mutableRequest.HTTPBody = data
             }
         case .Custom(let closure):
-            return closure(request, parameters)
+            return closure(mutableRequest, parameters)
         }
 
         return (mutableRequest, error)
@@ -716,20 +717,20 @@ extension Manager {
 
     // MARK: File
 
-    public func upload(request: NSURLRequest, file: NSURL) -> Request {
-        return upload(.File(request, file))
+    public func upload(URLRequest: URLRequestConvertible, file: NSURL) -> Request {
+        return upload(.File(URLRequest.URLRequest, file))
     }
 
     // MARK: Data
 
-    public func upload(request: NSURLRequest, data: NSData) -> Request {
-        return upload(.Data(request, data))
+    public func upload(URLRequest: URLRequestConvertible, data: NSData) -> Request {
+        return upload(.Data(URLRequest.URLRequest, data))
     }
 
     // MARK: Stream
 
-    public func upload(request: NSURLRequest, stream: NSInputStream) -> Request {
-        return upload(.Stream(request, stream))
+    public func upload(URLRequest: URLRequestConvertible, stream: NSInputStream) -> Request {
+        return upload(.Stream(URLRequest.URLRequest, stream))
     }
 }
 
@@ -786,8 +787,8 @@ extension Manager {
 
     // MARK: Request
 
-    public func download(request: NSURLRequest, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
-        return download(.Request(request), destination: destination)
+    public func download(URLRequest: URLRequestConvertible, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
+        return download(.Request(URLRequest.URLRequest), destination: destination)
     }
 
     // MARK: Resume Data
