@@ -999,7 +999,7 @@ extension Request {
 
 // MARK: - Convenience
 
-private func URLRequest(method: Method, URLString: URLStringConvertible) -> NSURLRequest {
+public func URLRequest(method: Method, URLString: URLStringConvertible) -> NSURLRequest {
     let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString))
     mutableURLRequest.HTTPMethod = method.toRaw()
 
