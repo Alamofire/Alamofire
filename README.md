@@ -222,7 +222,7 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: { (tempor
                           as? NSURL {
         let pathComponent = response.suggestedFilename
 
-        return directoryURL.URLByAppendingPathComponent(pathComponent)
+        return directoryURL.URLByAppendingPathComponent(pathComponent!)
     }
 
     return temporaryURL
