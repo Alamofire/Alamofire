@@ -500,6 +500,10 @@ enum Router: URLRequestConvertible {
 }
 ```
 
+```swift
+Alamofire.request(Router.Search(query: "foo bar", page: 1)) // ?q=foo+bar&offset=50
+```
+
 #### CRUD & Authorization
 
 ```swift
@@ -559,6 +563,10 @@ enum Router: URLRequestConvertible {
         }
     }
 }
+```
+
+```swift
+Alamofire.request(Router.ReadUser("mattt")) // GET /users/mattt
 ```
 
 * * *
