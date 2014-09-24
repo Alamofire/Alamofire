@@ -19,12 +19,6 @@ Of course, AFNetworking remains the premiere networking library available for Ma
 - [x] Comprehensive Unit Test Coverage
 - [x] Complete Documentation
 
-### Planned for 1.0 Release*
-
-_* Coming very soon_
-
-- [ ] TLS Chain Validation
-
 ## Requirements
 
 - iOS 7.0+ / Mac OS X 10.9+
@@ -34,7 +28,7 @@ _* Coming very soon_
 
 ## Installation
 
-_The infrastructure and best practices for distributing Swift libraries is currently in flux during this beta period of the language and Xcode... which is to say, the current installation process kinda sucks. _
+_The infrastructure and best practices for distributing Swift libraries is currently in flux... which is to say, the current installation process kinda sucks._
 
 1. Add Alamofire as a submodule by opening the Terminal, `cd`-ing into your top-level project directory, and entering the command `git submodule add https://github.com/Alamofire/Alamofire.git`
 2. Open the `Alamofire` folder, and drag `Alamofire.xcodeproj` into the file navigator of your Xcode project.
@@ -133,6 +127,8 @@ Alamofire has built-in support for encoding parameters as URL query / URI form e
 
 ### Parameter Encoding
 
+Used to specify the way in which a set of parameters are applied to a URL request.
+
 ```swift
 enum ParameterEncoding {
     case URL
@@ -147,6 +143,11 @@ enum ParameterEncoding {
 }
 ```
 
+- `URL`: A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
+- `JSON`: Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
+- `PropertyList`: Uses `NSPropertyListSerialization` to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
+- `Custom`: Uses the associated closure value to construct a new request given an existing request and parameters.
+
 #### Manual Parameter Encoding of an NSURLRequest
 
 ```swift
@@ -158,7 +159,16 @@ let encoding = Alamofire.ParameterEncoding.URL
 (request, _) = encoding.encode(request, parameters)
 ```
 
-### POST Request with JSON Response
+### Response Serialization
+
+**Built-in Response Methods**
+
+- `response()`
+- `responseString(encoding: NSStringEncoding)`
+- `responseJSON(options: NSJSONReadingOptions)`
+- `responsePropertyList(options: NSPropertyListReadOptions)`
+
+#### POST Request with JSON Response
 
 ```swift
 Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters, encoding: .JSON)
@@ -167,12 +177,9 @@ Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters, enco
          }
 ```
 
-#### Built-In Response Methods
+### Caching
 
-- `response()`
-- `responseString(encoding: NSStringEncoding)`
-- `responseJSON(options: NSJSONReadingOptions)`
-- `responsePropertyList(options: NSPropertyListReadOptions)`
+Caching is handled on the system framework level by [`NSURLCache`](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLCache_Class/Reference/Reference.html#//apple_ref/occ/cl/NSURLCache).
 
 ### Uploading
 
@@ -181,7 +188,6 @@ Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters, enco
 - File
 - Data
 - Stream
-- Multipart (Coming Soon)
 
 #### Uploading a File
 
@@ -229,7 +235,7 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: { (tempor
 })
 ```
 
-#### Using the Default Download Destination Closure Function
+#### Using the Default Download Destination
 
 ```swift
 let destination = Alamofire.Request.suggestedDownloadDestination(directory: .DocumentDirectory, domain: .UserDomainMask)
@@ -251,12 +257,12 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destinati
 
 ### Authentication
 
-#### Supported Authentication Schemes
+**Supported Authentication Schemes**
 
-- HTTP Basic
-- HTTP Digest
-- Kerberos
-- NTLM
+- [HTTP Basic](http://en.wikipedia.org/wiki/Basic_access_authentication)
+- [HTTP Digest](http://en.wikipedia.org/wiki/Digest_access_authentication)
+- [Kerberos](http://en.wikipedia.org/wiki/Kerberos_%28protocol%29)
+- [NTLM](http://en.wikipedia.org/wiki/NT_LAN_Manager)
 
 #### HTTP Basic Authentication
 
@@ -265,13 +271,13 @@ let user = "user"
 let password = "password"
 
 Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
-    .authenticate(user: user, password: password)
-    .response {(request, response, _, error) in
-        println(response)
-    }
+         .authenticate(user: user, password: password)
+         .response {(request, response, _, error) in
+             println(response)
+         }
 ```
 
-#### Authenticating with NSURLCredential & NSURLProtectionSpace
+#### Authenticating with NSURLCredential
 
 ```swift
 let user = "user"
@@ -282,15 +288,15 @@ let credential = NSURLCredential(user: user, password: password, persistence: .F
 
 ```swift
 Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
-    .authenticate(usingCredential: credential)
-    .response {(request, response, _, error) in
-        println(response)
-}
+         .authenticate(usingCredential: credential)
+         .response {(request, response, _, error) in
+             println(response)
+         }
 ```
 
 ### Validation
 
-#### Manual
+#### Manual Validation
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
@@ -301,7 +307,7 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          }
 ```
 
-#### Automatic
+#### Automatic Validation
 
 Automatically validates status code within `200...299` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
 
@@ -340,13 +346,222 @@ $ curl -i \
 	"http://httpbin.org/get?foo=bar"
 ```
 
-### More Complex Use Cases
-
-Much of the functionality described above is provided as a convenience API on top of something more extensible, closer to the Foundation URL Loading System. For more complex usage, such as creating a `NSURLSession` with a custom configuration or passing `NSURLRequest` objects directly, Alamofire provides API that can accommodate that.
-
-See the implementation of the `Alamofire.Manager` and `Alamofire.Request` classes for details on what's possible. Documentation and additional API refinement are forthcoming in future releases.
-
 ---
+
+## Advanced Usage
+
+> Alamofire is built on `NSURLSession` and the Foundation URL Loading System. To make the most of
+this framework, it is _strongly_ recommended that you are familiar with the concepts and capabilities of the underlying networking stack.
+
+**Recommended Reading**
+
+- [URL Loading System Programming Guide](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/URLLoadingSystem/URLLoadingSystem.html)
+- [NSURLSession Class Reference](https://developer.apple.com/library/mac/documentation/Foundation/Reference/NSURLSession_class/Introduction/Introduction.html#//apple_ref/occ/cl/NSURLSession)
+- [NSURLCache Class Reference](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLCache_Class/Reference/Reference.html#//apple_ref/occ/cl/NSURLCache)
+- [NSURLAuthenticationChallenge Class Reference](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLAuthenticationChallenge_Class/Reference/Reference.html)
+
+### Manager
+
+Top-level convenience methods like `Alamofire.request` use a shared instance of `Alamofire.Manager`, which is configured with the default `NSURLSessionConfiguration`.
+
+As such, the following two statements are equivalent:
+
+```swift
+Alamofire.request(.GET, "http://httpbin.org/get")
+```
+
+```swift
+let manager = Alamofire.Manager.sharedInstance
+manager.request(NSURLRequest(URL: NSURL(string: "http://httpbin.org/get")))
+```
+
+Applications can create managers for background and ephemeral sessions, as well as new managers that customize properties of the default session configuration, such as default headers (`HTTPAdditionalHeaders`) or timeout interval (`timeoutIntervalForRequest`).
+
+#### Creating a Manager with Default Configuration
+
+```swift
+let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+let manager = Alamofire.Manager(configuration: configuration)
+```
+
+#### Creating a Manager with Background Configuration
+
+```swift
+let configuration = NSURLSessionConfiguration.backgroundSessionConfiguration("com.example.app")
+let manager = Alamofire.Manager(configuration: configuration)
+```
+
+#### Creating a Manager with Ephemeral Configuration
+
+```swift
+let configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
+let manager = Alamofire.Manager(configuration: configuration)
+```
+
+#### Modifying Session Configuration
+
+```swift
+var defaultHeaders = Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders ?? [:]
+defaultHeaders["DNT"] = "1 (Do Not Track Enabled)"
+
+let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+configuration.HTTPAdditionalHeaders = defaultHeaders
+
+let manager = Alamofire.Manager(configuration: configuration)
+```
+
+> This is **not** recommended for `Authorization` or `Content-Type` headers. Instead, use `URLRequestConvertible` and `ParameterEncoding`, respectively.
+
+### Request
+
+The result of a `request`, `upload`, or `download` method is an instance of `Alamofire.Request`. A request is always created using a constructor method from an owning manager, and never initialized directly.
+
+Methods like `authenticate`, `validate`, and `response` return the caller in order to facilitate chaining.
+
+Requests can be suspended, resumed, and cancelled:
+
+- `suspend()`: Suspends the underlying task and dispatch queue
+- `resume()`: Resumes the underlying task and dispatch queue. If the owning manager does not have `startRequestsImmediately` set to `true`, the request must call `resume()` in order to start.
+- `cancel()`: Cancels the underlying task, producing an error that is passed to any registered response handlers.
+
+### URLStringConvertible
+
+Types adopting the `URLStringConvertible` can be used to construct URL strings, which are then used to construct URL requests. Top-level convenience methods taking a `URLStringConvertible` argument are provided to allow for type-safe routing behavior.
+
+Applications interacting with web applications in a significant manner are encouraged to adopt either `URLStringConvertible` or `URLRequestConvertible` as a way to ensure consistency of requested endpoints.
+
+#### Type-Safe Routing
+
+```swift
+enum Router: URLStringConvertible {
+    static let baseURLString = "http://example.com"
+
+    case Root
+    case User(String)
+    case Post(Int, Int, String)
+
+    // MARK: URLStringConvertible
+
+    var URLString: String {
+        let path: String = {
+            switch self {
+            case .Root:
+                return "/"
+            case .User(let username):
+                return "/users/\(username)"
+            case .Post(let year, let month, let title):
+                let slug = title.stringByReplacingOccurrencesOfString(" ", withString: "-").lowercaseString
+                return "/\(year)/\(month)/\(slug)"
+            }
+        }()
+
+        return Router.baseURLString + path
+    }
+}
+```
+
+```swift
+Alamofire.request(.GET, Router.User("mattt"))
+```
+
+### URLRequestConvertible
+
+Types adopting the `URLRequestConvertible` can be used to construct URL requests. Like `URLStringConvertible`, this is recommended for applications with any significant interactions between client and server.
+
+Top-level and instance methods on `Manager` taking `URLRequestConvertible` arguments are provided as a way to provide type-safe routing. Such an approach can be used to abstract away server-side inconsistencies, as well as manage authentication credentials and other state.
+
+#### API Parameter Abstraction
+
+```swift
+enum Router: URLRequestConvertible {
+    static let baseURLString = "http://example.com"
+    static let perPage = 50
+
+    case Search(query: String, page: Int)
+
+    // MARK: URLRequestConvertible
+
+    var URLRequest: NSURLRequest {
+        let (path: String, parameters: [String: AnyObject]?) = {
+            switch self {
+            case .Search(let query, let page) where page > 1:
+                return ("/search", ["q": query, "offset": Router.perPage * page])
+            case .Search(let query, _):
+                return ("/search", ["q": query])
+            }
+        }()
+
+        let URL = NSURL(string: Router.baseURLString)
+        let URLRequest = NSURLRequest(URL: URL.URLByAppendingPathComponent(path))
+        let encoding = Alamofire.ParameterEncoding.URL
+
+        return encoding.encode(URLRequest, parameters: parameters).0
+    }
+}
+```
+
+#### CRUD & Authorization
+
+```swift
+enum Router: URLRequestConvertible {
+    static let baseURLString = "http://example.com"
+    static var OAuthToken: String?
+
+    case CreateUser([String: AnyObject])
+    case ReadUser(String)
+    case UpdateUser(String, [String: AnyObject])
+    case DestroyUser(String)
+
+    var method: Alamofire.Method {
+        switch self {
+        case .CreateUser:
+            return .POST
+        case .ReadUser:
+            return .GET
+        case .UpdateUser:
+            return .PUT
+        case .DestroyUser:
+            return .DELETE
+        }
+    }
+
+    var path: String {
+        switch self {
+        case .CreateUser:
+            return "/users"
+        case .ReadUser(let username):
+            return "/users/\(username)"
+        case .UpdateUser(let username, _):
+            return "/users/\(username)"
+        case .DestroyUser(let username):
+            return "/users/\(username)"
+        }
+    }
+
+    // MARK: URLRequestConvertible
+
+    var URLRequest: NSURLRequest {
+        let URL = NSURL(string: Router.baseURLString)
+        let mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
+        mutableURLRequest.HTTPMethod = method.toRaw()
+
+        if let token = Router.OAuthToken {
+            mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
+        switch self {
+        case .CreateUser(let parameters):
+            return Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
+        case .UpdateUser(_, let parameters):
+            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+        default:
+            return mutableURLRequest
+        }
+    }
+}
+```
+
+* * *
 
 ## Contact
 
