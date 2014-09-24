@@ -154,7 +154,7 @@ public enum ParameterEncoding {
 // MARK: - URLStringConvertible
 
 /**
-    Types adopting the `URLStringConvertible` can be used to construct URL strings, which are then used to construct URL requests.
+    Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to construct URL requests.
 */
 public protocol URLStringConvertible {
     /// The URL string.
@@ -188,7 +188,7 @@ extension NSURLRequest: URLStringConvertible {
 // MARK: - URLRequestConvertible
 
 /**
-    Types adopting the `URLRequestConvertible` can be used to construct URL requests.
+    Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests.
 */
 public protocol URLRequestConvertible {
     /// The URL request.

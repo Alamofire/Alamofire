@@ -351,7 +351,7 @@ $ curl -i \
 ## Advanced Usage
 
 > Alamofire is built on `NSURLSession` and the Foundation URL Loading System. To make the most of
-this framework, it is _strongly_ recommended that you are familiar with the concepts and capabilities of the underlying networking stack.
+this framework, it is recommended that you be familiar with the concepts and capabilities of the underlying networking stack.
 
 **Recommended Reading**
 
@@ -426,7 +426,7 @@ Requests can be suspended, resumed, and cancelled:
 
 ### URLStringConvertible
 
-Types adopting the `URLStringConvertible` can be used to construct URL strings, which are then used to construct URL requests. Top-level convenience methods taking a `URLStringConvertible` argument are provided to allow for type-safe routing behavior.
+Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to construct URL requests. Top-level convenience methods taking a `URLStringConvertible` argument are provided to allow for type-safe routing behavior.
 
 Applications interacting with web applications in a significant manner are encouraged to adopt either `URLStringConvertible` or `URLRequestConvertible` as a way to ensure consistency of requested endpoints.
 
@@ -466,7 +466,7 @@ Alamofire.request(.GET, Router.User("mattt"))
 
 ### URLRequestConvertible
 
-Types adopting the `URLRequestConvertible` can be used to construct URL requests. Like `URLStringConvertible`, this is recommended for applications with any significant interactions between client and server.
+Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests. Like `URLStringConvertible`, this is recommended for applications with any significant interactions between client and server.
 
 Top-level and instance methods on `Manager` taking `URLRequestConvertible` arguments are provided as a way to provide type-safe routing. Such an approach can be used to abstract away server-side inconsistencies, as well as manage authentication credentials and other state.
 
