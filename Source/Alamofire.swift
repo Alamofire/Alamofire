@@ -22,6 +22,9 @@
 
 import Foundation
 
+/// Alamofire errors
+public let AlamofireErrorDomain = "com.alamofire.error"
+
 /**
     HTTP method definitions.
 
@@ -619,19 +622,13 @@ public class Request {
     */
     public func response(priority: Int = DISPATCH_QUEUE_PRIORITY_DEFAULT, queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
 
-        dispatch_async(delegate.queue, {
-            dispatch_async(dispatch_get_global_queue(priority, 0), {
-                if var error = self.delegate.error {
-                    dispatch_async(queue ?? dispatch_get_main_queue(), {
-                        completionHandler(self.request, self.response, nil, error)
-                    })
-                } else {
-                    let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
+        dispatch_sync(delegate.queue, {
+            dispatch_sync(dispatch_get_global_queue(priority, 0), {
+                let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
 
-                    dispatch_async(queue ?? dispatch_get_main_queue(), {
-                        completionHandler(self.request, self.response, responseObject, serializationError)
-                    })
-                }
+                dispatch_async(queue ?? dispatch_get_main_queue(), {
+                    completionHandler(self.request, self.response, responseObject, self.delegate.error ?? serializationError)
+                })
             })
         })
 
@@ -739,7 +736,10 @@ public class Request {
         }
 
         func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
-            self.error = error
+            if error != nil {
+                self.error = error
+            }
+
             dispatch_resume(queue)
         }
     }
@@ -802,6 +802,144 @@ public class Request {
 
             completionHandler(cachedResponse)
         }
+    }
+}
+
+// MARK: - Validation
+
+extension Request {
+
+    /**
+        A closure used to validate a request that takes a URL request and URL response, and returns whether the request was valid.
+    */
+    public typealias Validation = (NSURLRequest, NSHTTPURLResponse) -> (Bool)
+
+    /**
+        Validates the request, using the specified closure.
+
+        If validation fails, subsequent calls to response handlers will have an associated error.
+
+        :param: validation A closure to validate the request.
+
+        :returns: The request.
+    */
+    public func validate(validation: Validation) -> Self {
+        return response(priority: DISPATCH_QUEUE_PRIORITY_HIGH, queue: self.delegate.queue, serializer: Request.responseDataSerializer()){ (request, response, data, error) in
+            if response != nil && error == nil {
+                if !validation(request, response!) {
+                    self.delegate.error = NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
+                }
+            }
+        }
+    }
+
+    // MARK: Status Code
+
+    private class func response(response: NSHTTPURLResponse, hasAcceptableStatusCode statusCodes: [Int]) -> Bool {
+        return contains(statusCodes, response.statusCode)
+    }
+
+    /**
+        Validates that the response has a status code in the specified range.
+
+        If validation fails, subsequent calls to response handlers will have an associated error.
+
+        :param: range The range of acceptable status codes.
+
+        :returns: The request.
+    */
+    public func validate(statusCode range: Range<Int>) -> Self {
+        return validate { (_, response) in
+            return Request.response(response, hasAcceptableStatusCode: range.map({$0}))
+        }
+    }
+
+    /**
+        Validates that the response has a status code in the specified array.
+
+        If validation fails, subsequent calls to response handlers will have an associated error.
+
+        :param: array The acceptable status codes.
+
+        :returns: The request.
+    */
+    public func validate(statusCode array: [Int]) -> Self {
+        return validate { (_, response) in
+            return Request.response(response, hasAcceptableStatusCode: array)
+        }
+    }
+
+    // MARK: Content-Type
+
+    private struct MIMEType {
+        let type: String
+        let subtype: String
+
+        init(_ string: String) {
+            let components = string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).substringToIndex(string.rangeOfString(";")?.endIndex ?? string.endIndex).componentsSeparatedByString("/")
+
+            self.type = components.first!
+            self.subtype = components.last!
+        }
+
+        func matches(MIME: MIMEType) -> Bool {
+            switch (type, subtype) {
+            case ("*", "*"), ("*", MIME.subtype), (MIME.type, "*"), (MIME.type, MIME.subtype):
+                return true
+            default:
+                return false
+            }
+        }
+    }
+
+    private class func response(response: NSHTTPURLResponse, hasAcceptableContentType contentTypes: [String]) -> Bool {
+        if response.MIMEType != nil {
+            let responseMIMEType = MIMEType(response.MIMEType!)
+            for acceptableMIMEType in contentTypes.map({MIMEType($0)}) {
+                if acceptableMIMEType.matches(responseMIMEType) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    /**
+        Validates that the response has a content type in the specified array.
+
+        If validation fails, subsequent calls to response handlers will have an associated error.
+
+        :param: contentType The acceptable content types, which may specify wildcard types and/or subtypes.
+
+        :returns: The request.
+    */
+    public func validate(contentType array: [String]) -> Self {
+        return validate {(_, response) in
+            return Request.response(response, hasAcceptableContentType: array)
+        }
+    }
+
+    // MARK: Automatic
+
+    /**
+        Validates that the response has a status code in the default acceptable range of 200...299, and that the content type matches any specified in the Accept HTTP header field.
+
+        If validation fails, subsequent calls to response handlers will have an associated error.
+
+        :returns: The request.
+    */
+    public func validate() -> Self {
+        let acceptableStatusCodes: Range<Int> = 200..<300
+        let acceptableContentTypes: [String] = {
+            if let accept = self.request.valueForHTTPHeaderField("Accept") {
+                return accept.componentsSeparatedByString(",")
+            }
+
+            return ["*/*"]
+        }()
+        
+        return validate(statusCode: acceptableStatusCodes).validate(contentType: acceptableContentTypes)
     }
 }
 

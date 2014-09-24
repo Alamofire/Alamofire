@@ -13,17 +13,17 @@ Of course, AFNetworking remains the premiere networking library available for Ma
 - Upload File / Data / Stream
 - Download using Request or Resume data
 - Authentication with NSURLCredential
+- HTTP Response Validation
 - Progress Closure & NSProgress
 - cURL Debug Output
+- Comprehensive Unit Test Coverage
+- Complete Documentation
 
 ### Planned for 1.0 Release*
 
 _* Coming very soon_
 
-- Comprehensive Unit Test Coverage
-- Complete Documentation
-- HTTP Response Validation
-- TLS Chain Validation
+- [ ] TLS Chain Validation
 
 ## Requirements
 
@@ -286,6 +286,31 @@ Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
     .response {(request, response, _, error) in
         println(response)
 }
+```
+
+### Validation
+
+#### Manual
+
+```swift
+Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+         .validate(statusCode: 200..<300)
+         .validate(contentType: ["application/json"])
+         .response { (_, _, _, error) in
+                  println(error)
+         }
+```
+
+#### Automatic
+
+Automatically validates status code within `200...299` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
+
+```swift
+Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+         .validate()
+         .response { (_, _, _, error) in
+                  println(error)
+         }
 ```
 
 ### Printable

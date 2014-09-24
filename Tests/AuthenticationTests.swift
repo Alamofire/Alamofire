@@ -30,19 +30,7 @@ class AlamofireAuthenticationTestCase: XCTestCase {
         let password = "password"
         let URL = "http://httpbin.org/basic-auth/\(user)/\(password)"
 
-        let validCredentialsExpectation = expectationWithDescription("\(URL) 200")
         let invalidCredentialsExpectation = expectationWithDescription("\(URL) 401")
-
-        Alamofire.request(.GET, URL)
-            .authenticate(user: user, password: password)
-            .response { (request, response, _, error) in
-                validCredentialsExpectation.fulfill()
-
-                XCTAssertNotNil(request, "request should not be nil")
-                XCTAssertNotNil(response, "response should not be nil")
-                XCTAssert(response?.statusCode == 200, "response status code should be 200")
-                XCTAssertNil(error, "error should be nil")
-        }
 
         Alamofire.request(.GET, URL)
             .authenticate(user: "invalid", password: "credentials")
@@ -53,6 +41,19 @@ class AlamofireAuthenticationTestCase: XCTestCase {
                 XCTAssertNil(response, "response should be nil")
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssert(error?.code == -999, "error should be NSURLErrorDomain Code -999 'cancelled'")
+        }
+
+        let validCredentialsExpectation = expectationWithDescription("\(URL) 200")
+
+        Alamofire.request(.GET, URL)
+            .authenticate(user: user, password: password)
+            .response { (request, response, _, error) in
+                validCredentialsExpectation.fulfill()
+
+                XCTAssertNotNil(request, "request should not be nil")
+                XCTAssertNotNil(response, "response should not be nil")
+                XCTAssert(response?.statusCode == 200, "response status code should be 200")
+                XCTAssertNil(error, "error should be nil")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
@@ -66,19 +67,7 @@ class AlamofireAuthenticationTestCase: XCTestCase {
         let password = "password"
         let URL = "http://httpbin.org/digest-auth/\(qop)/\(user)/\(password)"
 
-        let validCredentialsExpectation = expectationWithDescription("\(URL) 200")
         let invalidCredentialsExpectation = expectationWithDescription("\(URL) 401")
-
-        Alamofire.request(.GET, URL)
-            .authenticate(user: user, password: password)
-            .response { (request, response, _, error) in
-                validCredentialsExpectation.fulfill()
-
-                XCTAssertNotNil(request, "request should not be nil")
-                XCTAssertNotNil(response, "response should not be nil")
-                XCTAssert(response?.statusCode == 200, "response status code should be 200")
-                XCTAssertNil(error, "error should be nil")
-        }
 
         Alamofire.request(.GET, URL)
             .authenticate(user: "invalid", password: "credentials")
@@ -89,6 +78,19 @@ class AlamofireAuthenticationTestCase: XCTestCase {
                 XCTAssertNil(response, "response should be nil")
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssert(error?.code == -999, "error should be NSURLErrorDomain Code -999 'cancelled'")
+        }
+
+        let validCredentialsExpectation = expectationWithDescription("\(URL) 200")
+
+        Alamofire.request(.GET, URL)
+            .authenticate(user: user, password: password)
+            .response { (request, response, _, error) in
+                validCredentialsExpectation.fulfill()
+
+                XCTAssertNotNil(request, "request should not be nil")
+                XCTAssertNotNil(response, "response should not be nil")
+                XCTAssert(response?.statusCode == 200, "response status code should be 200")
+                XCTAssertNil(error, "error should be nil")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
