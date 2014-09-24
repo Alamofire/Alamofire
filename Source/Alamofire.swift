@@ -1310,6 +1310,18 @@ public func upload(method: Method, URLString: URLStringConvertible, file: NSURL)
     return Manager.sharedInstance.upload(URLRequest(method, URLString), file: file)
 }
 
+/**
+    Creates an upload request using the shared manager instance for the specified URL request and file.
+
+    :param: URLRequest The URL request.
+    :param: file The file to upload.
+
+    :returns: The created upload request.
+*/
+public func upload(URLRequest: URLRequestConvertible, file: NSURL) -> Request {
+    return Manager.sharedInstance.upload(URLRequest, file: file)
+}
+
 // MARK: Data
 
 /**
@@ -1323,6 +1335,18 @@ public func upload(method: Method, URLString: URLStringConvertible, file: NSURL)
 */
 public func upload(method: Method, URLString: URLStringConvertible, data: NSData) -> Request {
     return Manager.sharedInstance.upload(URLRequest(method, URLString), data: data)
+}
+
+/**
+    Creates an upload request using the shared manager instance for the specified URL request and data.
+
+    :param: URLRequest The URL request.
+    :param: data The data to upload.
+
+    :returns: The created upload request.
+*/
+public func upload(URLRequest: URLRequestConvertible, data: NSData) -> Request {
+    return Manager.sharedInstance.upload(URLRequest, data: data)
 }
 
 // MARK: Stream
@@ -1340,9 +1364,21 @@ public func upload(method: Method, URLString: URLStringConvertible, stream: NSIn
     return Manager.sharedInstance.upload(URLRequest(method, URLString), stream: stream)
 }
 
+/**
+    Creates an upload request using the shared manager instance for the specified URL request and stream.
+
+    :param: URLRequest The URL request.
+    :param: stream The stream to upload.
+
+    :returns: The created upload request.
+*/
+public func upload(URLRequest: URLRequestConvertible, stream: NSInputStream) -> Request {
+    return Manager.sharedInstance.upload(URLRequest, stream: stream)
+}
+
 // MARK: - Download
 
-// MARK: Request
+// MARK: URL Request
 
 /**
     Creates a download request using the shared manager instance for the specified method and URL string.
@@ -1355,6 +1391,18 @@ public func upload(method: Method, URLString: URLStringConvertible, stream: NSIn
 */
 public func download(method: Method, URLString: URLStringConvertible, destination: Request.DownloadFileDestination) -> Request {
     return Manager.sharedInstance.download(URLRequest(method, URLString), destination: destination)
+}
+
+/**
+    Creates a download request using the shared manager instance for the specified URL request.
+
+    :param: URLRequest The URL request.
+    :param: destination The closure used to determine the destination of the downloaded file.
+
+    :returns: The created download request.
+*/
+public func download(URLRequest: URLRequestConvertible, destination: Request.DownloadFileDestination) -> Request {
+    return Manager.sharedInstance.download(URLRequest, destination: destination)
 }
 
 // MARK: Resume Data
