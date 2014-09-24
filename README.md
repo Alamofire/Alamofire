@@ -203,12 +203,12 @@ Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
 
 ```swift
 Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
-        .progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) in
-            println(totalBytesWritten)
-        }
-        .responseJSON { (request, response, JSON, error) in
-            println(JSON)
-        }
+         .progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) in
+             println(totalBytesWritten)
+         }
+         .responseJSON { (request, response, JSON, error) in
+             println(JSON)
+         }
 ```
 
 ### Downloading
