@@ -8,16 +8,16 @@ Of course, AFNetworking remains the premiere networking library available for Ma
 
 ## Features
 
-- Chainable Request / Response methods
-- URL / JSON / plist Parameter Encoding
-- Upload File / Data / Stream
-- Download using Request or Resume data
-- Authentication with NSURLCredential
-- HTTP Response Validation
-- Progress Closure & NSProgress
-- cURL Debug Output
-- Comprehensive Unit Test Coverage
-- Complete Documentation
+- [x] Chainable Request / Response methods
+- [x] URL / JSON / plist Parameter Encoding
+- [x] Upload File / Data / Stream
+- [x] Download using Request or Resume data
+- [x] Authentication with NSURLCredential
+- [x] HTTP Response Validation
+- [x] Progress Closure & NSProgress
+- [x] cURL Debug Output
+- [x] Comprehensive Unit Test Coverage
+- [x] Complete Documentation
 
 ### Planned for 1.0 Release*
 
