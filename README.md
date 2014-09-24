@@ -595,8 +595,9 @@ extension Alamofire.Request {
         })
     }
 }
-
 ```
+
+```swift
 class User: ResponseObjectSerializable {
     let username: String
     let name: String
@@ -608,7 +609,7 @@ class User: ResponseObjectSerializable {
 }
 ```
 
-```
+```swift
 Alamofire.request(.GET, "http://example.com/users/mattt")
          .responseObject { (_, _, user: User?, _) in
              println(user)
