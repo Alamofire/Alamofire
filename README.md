@@ -569,6 +569,78 @@ enum Router: URLRequestConvertible {
 Alamofire.request(Router.ReadUser("mattt")) // GET /users/mattt
 ```
 
+#### Generic Response Object Serialization
+
+Generics can be used to provide automatic, type-safe response object serialization.
+
+```swift
+@objc public protocol ResponseObjectSerializable {
+    init(response: NSHTTPURLResponse, representation: AnyObject)
+}
+
+extension Alamofire.Request {
+    public func responseObject<T: ResponseObjectSerializable>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, T?, NSError?) -> Void) -> Self {
+        let serializer: Serializer = { (request, response, data) in
+            let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
+            let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
+            if response != nil && JSON != nil {
+                return (T(response: response!, representation: JSON!), nil)
+            } else {
+                return (nil, serializationError)
+            }
+        }
+
+        return response(serializer: serializer, completionHandler: { (request, response, object, error) in
+            completionHandler(request, response, object as? T, error)
+        })
+    }
+}
+
+```
+class User: ResponseObjectSerializable {
+    let username: String
+    let name: String
+
+    required init(response: NSHTTPURLResponse, representation: AnyObject) {
+        self.username = response.URL!.lastPathComponent
+        self.name = representation.valueForKeyPath("name") as String
+    }
+}
+```
+
+```
+Alamofire.request(.GET, "http://example.com/users/mattt")
+         .responseObject { (_, _, user: User?, _) in
+             println(user)
+         }
+```
+
+The same approach can also be used to handle endpoints that return a representation of a collection of objects:
+
+```swift
+@objc public protocol ResponseCollectionSerializable {
+    class func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Self]
+}
+
+extension Alamofire.Request {
+    public func responseCollection<T: ResponseCollectionSerializable>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, [T]?, NSError?) -> Void) -> Self {
+        let serializer: Serializer = { (request, response, data) in
+            let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
+            let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
+            if response != nil && JSON != nil {
+                return (T.collection(response: response!, representation: JSON!), nil)
+            } else {
+                return (nil, serializationError)
+            }
+        }
+
+        return response(serializer: serializer, completionHandler: { (request, response, object, error) in
+            completionHandler(request, response, object as? [T], error)
+        })
+    }
+}
+```
+
 * * *
 
 ## Contact
