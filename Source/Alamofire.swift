@@ -268,6 +268,7 @@ public class Manager {
     private let delegate: SessionDelegate
 
     let operationQueue: NSOperationQueue = NSOperationQueue()
+    let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
 
     /// The underlying session.
     public let session: NSURLSession
@@ -300,7 +301,7 @@ public class Manager {
     */
     public func request(URLRequest: URLRequestConvertible) -> Request {
         var dataTask: NSURLSessionDataTask?
-        dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+        dispatch_sync(queue) {
             dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest)
         }
 
