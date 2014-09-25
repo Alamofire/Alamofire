@@ -267,7 +267,6 @@ public class Manager {
 
     private let delegate: SessionDelegate
 
-    let operationQueue: NSOperationQueue = NSOperationQueue()
     let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
 
     /// The underlying session.
@@ -281,7 +280,7 @@ public class Manager {
     */
     required public init(configuration: NSURLSessionConfiguration? = nil) {
         self.delegate = SessionDelegate()
-        self.session = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: operationQueue)
+        self.session = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
     }
 
     deinit {
