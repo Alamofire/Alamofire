@@ -89,7 +89,7 @@ Alamofire.request(.GET, "http://httpbin.org/get")
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get")
          .responseJSON { (_, _, JSON, _) in
-                  println(string)
+                  println(JSON)
          }
 ```
 
@@ -103,7 +103,7 @@ Alamofire.request(.GET, "http://httpbin.org/get")
                   println(string)
          }
          .responseJSON { (_, _, JSON, _) in
-                  println(string)
+                  println(JSON)
          }
 ```
 
