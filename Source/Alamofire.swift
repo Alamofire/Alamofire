@@ -680,11 +680,14 @@ public class Request {
         init(task: NSURLSessionTask) {
             self.task = task
             self.progress = NSProgress(totalUnitCount: 0)
+            self.queue = {
+                let label: String = "com.alamofire.task-\(task.taskIdentifier)"
+                let queue = dispatch_queue_create((label as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
 
-            let label: String = "com.alamofire.task-\(task.taskIdentifier)"
-            let queue = dispatch_queue_create((label as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
-            dispatch_suspend(queue)
-            self.queue = queue
+                dispatch_suspend(queue)
+
+                return queue
+            }()
         }
 
         // MARK: NSURLSessionTaskDelegate
