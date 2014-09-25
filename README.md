@@ -1,10 +1,6 @@
 ![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/assets/alamofire.png)
 
-Alamofire is an HTTP networking library written in Swift. Think of it as [AFNetworking](https://github.com/afnetworking/afnetworking), reimagined for the conventions of this new language.
-
-Of course, AFNetworking remains the premiere networking library available for Mac OS X and iOS, and can easily be used in Swift, just like any other Objective-C code. **AFNetworking is stable and reliable, and isn't going anywhere.** But for anyone looking for something a little more idiomatic to Swift, Alamofire may be right up your alley. (It's not a mutually-exclusive choice, either—AFNetworking & Alamofire will peacefully co-exist within the same codebase.)
-
-> Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu.edu/wildseed/alamofire.html), a hybrid variant of the Bluebonnet, the official state flower of Texas.
+Alamofire is an HTTP networking library written in Swift, from the creator of [AFNetworking](https://github.com/afnetworking/afnetworking).
 
 ## Features
 
@@ -49,19 +45,13 @@ _The infrastructure and best practices for distributing Swift libraries is curre
 
 ## Usage
 
-### GET Request
+### Making a Request
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get")
 ```
 
-#### With Parameters
-
-```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
-```
-
-#### With Response Handling
+### Response Handling
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
@@ -72,18 +62,40 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
                    }
 ```
 
-#### With Response String Handling
+> Networking in Alamofire is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
+
+> Rather than blocking execution to wait for a response from the server, a [callback](http://en.wikipedia.org/wiki/Callback_%28computer_programming%29) is specified to handle the response once it's received. The result of a request is only available inside the scope of a response handler, and any execution contingent on the response or data received from the server must be done within a handler.
+
+### Response Serialization
+
+**Built-in Response Methods**
+
+- `response()`
+- `responseString(encoding: NSStringEncoding)`
+- `responseJSON(options: NSJSONReadingOptions)`
+- `responsePropertyList(options: NSPropertyListReadOptions)`
+
+####  Response String Serialization
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
-         .responseString { (request, response, string, error) in
+Alamofire.request(.GET, "http://httpbin.org/get")
+         .responseString { (_, _, string, _) in
+                  println(string)
+         }
+```
+
+####  Response JSON Serialization
+
+```swift
+Alamofire.request(.GET, "http://httpbin.org/get")
+         .responseJSON { (_, _, JSON, _) in
                   println(string)
          }
 ```
 
 ### HTTP Methods
 
-The `Alamofire.Method` `enum` lists the HTTP methods defined in RFC 2616 §9:
+`Alamofire.Method` lists the HTTP methods defined in [RFC 7231 §4.3](http://tools.ietf.org/html/rfc7231#section-4.3):
 
 ```swift
 public enum Method: String {
@@ -109,7 +121,16 @@ Alamofire.request(.PUT, "http://httpbin.org/put")
 Alamofire.request(.DELETE, "http://httpbin.org/delete")
 ```
 
-### POST Request
+### Parameters
+
+#### GET Request With URL-Encoded Parameters
+
+```swift
+Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+// http://httpbin.org/get?foo=bar
+```
+
+#### POST Request With URL-Encoded Parameters
 
 ```swift
 let parameters = [
@@ -123,19 +144,12 @@ let parameters = [
 ]
 
 Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters)
+// HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
 ```
-
-This sends the following HTTP Body:
-
-```
-foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
-```
-
-Alamofire has built-in support for encoding parameters as URL query / URI form encoded, JSON, and Property List, using the `Alamofire.ParameterEncoding` `enum`:
 
 ### Parameter Encoding
 
-Used to specify the way in which a set of parameters are applied to a URL request.
+Parameters can also be encoded as JSON, Property List, or any custom format, using the `ParameterEncoding` enum:
 
 ```swift
 enum ParameterEncoding {
@@ -151,7 +165,7 @@ enum ParameterEncoding {
 }
 ```
 
-- `URL`: A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
+- `URL`: A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. _Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`)._
 - `JSON`: Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
 - `PropertyList`: Uses `NSPropertyListSerialization` to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
 - `Custom`: Uses the associated closure value to construct a new request given an existing request and parameters.
@@ -167,22 +181,18 @@ let encoding = Alamofire.ParameterEncoding.URL
 (request, _) = encoding.encode(request, parameters)
 ```
 
-### Response Serialization
-
-**Built-in Response Methods**
-
-- `response()`
-- `responseString(encoding: NSStringEncoding)`
-- `responseJSON(options: NSJSONReadingOptions)`
-- `responsePropertyList(options: NSPropertyListReadOptions)`
-
-#### POST Request with JSON Response
+#### POST Request with JSON-encoded Parameters
 
 ```swift
+let parameters = [
+    "foo": [1,2,3],
+    "bar": [
+        "baz": "qux"
+    ]
+]
+
 Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters, encoding: .JSON)
-         .responseJSON {(request, response, JSON, error) in
-            println(JSON)
-         }
+// HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
 ```
 
 ### Caching
@@ -191,7 +201,7 @@ Caching is handled on the system framework level by [`NSURLCache`](https://devel
 
 ### Uploading
 
-#### Supported Upload Types
+**Supported Upload Types**
 
 - File
 - Data
@@ -221,7 +231,7 @@ Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
 
 ### Downloading
 
-#### Supported Download Types
+**Supported Download Types**
 
 - Request
 - Resume Data
@@ -681,6 +691,32 @@ Alamofire.request(Router.ReadUser("mattt")) // GET /users/mattt
 
 * * *
 
+## FAQ
+
+### When should I use Alamofire?
+
+If you're starting a new project in Swift, and want to take full advantage of its conventions and language features, Alamofire is a great choice. Although not as fully-featured as AFNetworking, Alamofire is much nicer to work with, and should satisfy the vast majority of networking use cases.
+
+> It's important to note that two libraries aren't mutually exclusive: AFNetworking and Alamofire can peacefully exist in the same code base.
+
+### When should I use AFNetworking?
+
+AFNetworking remains the premiere networking library available for OS X and iOS, and can easily be used in Swift, just like any other Objective-C code. AFNetworking is stable and reliable, and isn't going anywhere.
+
+Use AFNetworking for any of the following:
+
+- UIKit extensions, such as asynchronously loading images to `UIImageView`
+- TLS verification, using `AFSecurityManager`
+- Situations requiring `NSOperation` or `NSURLConnection`, using `AFURLConnectionOperation`
+- Network reachability monitoring, using `AFNetworkReachabilityManager`
+- Multipart HTTP request construction, using `AFHTTPRequestSerializer`
+
+### What's the origin of the name Alamofire?
+
+Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu.edu/wildseed/alamofire.html), a hybrid variant of the Bluebonnet, the official state flower of Texas.
+
+* * *
+
 ## Contact
 
 Follow AFNetworking on Twitter ([@AFNetworking](https://twitter.com/AFNetworking))
@@ -691,4 +727,4 @@ Follow AFNetworking on Twitter ([@AFNetworking](https://twitter.com/AFNetworking
 
 ## License
 
-Alamofire is released under an MIT license. See LICENSE for more information.
+Alamofire is released under the MIT license. See LICENSE for details.
