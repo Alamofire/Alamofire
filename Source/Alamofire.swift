@@ -267,7 +267,7 @@ public class Manager {
 
     private let delegate: SessionDelegate
 
-    let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
+    private let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
 
     /// The underlying session.
     public let session: NSURLSession
