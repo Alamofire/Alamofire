@@ -424,6 +424,108 @@ Requests can be suspended, resumed, and cancelled:
 - `resume()`: Resumes the underlying task and dispatch queue. If the owning manager does not have `startRequestsImmediately` set to `true`, the request must call `resume()` in order to start.
 - `cancel()`: Cancels the underlying task, producing an error that is passed to any registered response handlers.
 
+### Response Serialization
+
+#### Creating a Custom Response Serializer
+
+Using [Ono](https://github.com/mattt/Ono) for XML handling:
+
+```swift
+extension Request {
+    class func XMLResponseSerializer() -> Serializer {
+        return { (request, response, data) in
+            if data == nil {
+                return (nil, nil)
+            }
+
+            var XMLSerializationError: NSError?
+            let XML = ONOXMLDocument.XMLDocumentWithData(data, &XMLSerializationError)
+
+            return (XML, XMLSerializationError)
+        }
+    }
+
+    func responseXMLDocument(completionHandler: (NSURLRequest, NSHTTPURLResponse?, OnoXMLDocument?, NSError?) -> Void) -> Self {
+        return response(serializer: Request.XMLResponseSerializer(), completionHandler: { (request, response, XML, error) in
+            completionHandler(request, response, XML, error)
+        })
+    }
+}
+```
+
+#### Generic Response Object Serialization
+
+Generics can be used to provide automatic, type-safe response object serialization.
+
+```swift
+@objc public protocol ResponseObjectSerializable {
+    init(response: NSHTTPURLResponse, representation: AnyObject)
+}
+
+extension Alamofire.Request {
+    public func responseObject<T: ResponseObjectSerializable>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, T?, NSError?) -> Void) -> Self {
+        let serializer: Serializer = { (request, response, data) in
+            let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
+            let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
+            if response != nil && JSON != nil {
+                return (T(response: response!, representation: JSON!), nil)
+            } else {
+                return (nil, serializationError)
+            }
+        }
+
+        return response(serializer: serializer, completionHandler: { (request, response, object, error) in
+            completionHandler(request, response, object as? T, error)
+        })
+    }
+}
+```
+
+```swift
+class User: ResponseObjectSerializable {
+    let username: String
+    let name: String
+
+    required init(response: NSHTTPURLResponse, representation: AnyObject) {
+        self.username = response.URL!.lastPathComponent
+        self.name = representation.valueForKeyPath("name") as String
+    }
+}
+```
+
+```swift
+Alamofire.request(.GET, "http://example.com/users/mattt")
+         .responseObject { (_, _, user: User?, _) in
+             println(user)
+         }
+```
+
+The same approach can also be used to handle endpoints that return a representation of a collection of objects:
+
+```swift
+@objc public protocol ResponseCollectionSerializable {
+    class func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Self]
+}
+
+extension Alamofire.Request {
+    public func responseCollection<T: ResponseCollectionSerializable>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, [T]?, NSError?) -> Void) -> Self {
+        let serializer: Serializer = { (request, response, data) in
+            let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
+            let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
+            if response != nil && JSON != nil {
+                return (T.collection(response: response!, representation: JSON!), nil)
+            } else {
+                return (nil, serializationError)
+            }
+        }
+
+        return response(serializer: serializer, completionHandler: { (request, response, object, error) in
+            completionHandler(request, response, object as? [T], error)
+        })
+    }
+}
+```
+
 ### URLStringConvertible
 
 Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to construct URL requests. Top-level convenience methods taking a `URLStringConvertible` argument are provided to allow for type-safe routing behavior.
@@ -567,79 +669,6 @@ enum Router: URLRequestConvertible {
 
 ```swift
 Alamofire.request(Router.ReadUser("mattt")) // GET /users/mattt
-```
-
-#### Generic Response Object Serialization
-
-Generics can be used to provide automatic, type-safe response object serialization.
-
-```swift
-@objc public protocol ResponseObjectSerializable {
-    init(response: NSHTTPURLResponse, representation: AnyObject)
-}
-
-extension Alamofire.Request {
-    public func responseObject<T: ResponseObjectSerializable>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, T?, NSError?) -> Void) -> Self {
-        let serializer: Serializer = { (request, response, data) in
-            let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
-            let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
-            if response != nil && JSON != nil {
-                return (T(response: response!, representation: JSON!), nil)
-            } else {
-                return (nil, serializationError)
-            }
-        }
-
-        return response(serializer: serializer, completionHandler: { (request, response, object, error) in
-            completionHandler(request, response, object as? T, error)
-        })
-    }
-}
-```
-
-```swift
-class User: ResponseObjectSerializable {
-    let username: String
-    let name: String
-
-    required init(response: NSHTTPURLResponse, representation: AnyObject) {
-        self.username = response.URL!.lastPathComponent
-        self.name = representation.valueForKeyPath("name") as String
-    }
-}
-```
-
-```swift
-Alamofire.request(.GET, "http://example.com/users/mattt")
-         .responseObject { (_, _, user: User?, _) in
-             println(user)
-         }
-```
-
-The same approach can also be used to handle endpoints that return a representation of a collection of objects:
-
-```swift
-@objc public protocol ResponseCollectionSerializable {
-    class func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Self]
-}
-
-extension Alamofire.Request {
-    public func responseCollection<T: ResponseCollectionSerializable>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, [T]?, NSError?) -> Void) -> Self {
-        let serializer: Serializer = { (request, response, data) in
-            let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
-            let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
-            if response != nil && JSON != nil {
-                return (T.collection(response: response!, representation: JSON!), nil)
-            } else {
-                return (nil, serializationError)
-            }
-        }
-
-        return response(serializer: serializer, completionHandler: { (request, response, object, error) in
-            completionHandler(request, response, object as? [T], error)
-        })
-    }
-}
 ```
 
 * * *
