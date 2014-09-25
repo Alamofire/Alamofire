@@ -1318,6 +1318,10 @@ extension Request {
     */
     public class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> Serializer {
         return { (request, response, data) in
+            if data == nil {
+                return (nil, nil)
+            }
+
             var serializationError: NSError?
             let JSON: AnyObject? = NSJSONSerialization.JSONObjectWithData(data!, options: options, error: &serializationError)
 
@@ -1363,6 +1367,10 @@ extension Request {
     */
     public class func propertyListResponseSerializer(options: NSPropertyListReadOptions = 0) -> Serializer {
         return { (request, response, data) in
+            if data == nil {
+                return (nil, nil)
+            }
+
             var propertyListSerializationError: NSError?
             let plist: AnyObject? = NSPropertyListSerialization.propertyListWithData(data!, options: options, format: nil, error: &propertyListSerializationError)
 
