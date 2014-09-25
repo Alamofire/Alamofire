@@ -1,6 +1,6 @@
 ![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/assets/alamofire.png)
 
-Alamofire is an HTTP networking library written in Swift, from the creator of [AFNetworking](https://github.com/afnetworking/afnetworking).
+Alamofire is an HTTP networking library written in Swift, from the [creator](https://github.com/mattt) of [AFNetworking](https://github.com/afnetworking/afnetworking).
 
 ## Features
 
@@ -32,7 +32,7 @@ Alamofire is an HTTP networking library written in Swift, from the creator of [A
 
 ## Installation
 
-_The infrastructure and best practices for distributing Swift libraries is currently in flux... which is to say, the current installation process kinda sucks._
+_Due to the current lack of [proper infrastructure](http://cocoapods.org) for dependency management, using Alamofire in your project requires the following steps:_
 
 1. Add Alamofire as a [submodule](http://git-scm.com/docs/git-submodule) by opening the Terminal, `cd`-ing into your top-level project directory, and entering the command `git submodule add https://github.com/Alamofire/Alamofire.git`
 2. Open the `Alamofire` folder, and drag `Alamofire.xcodeproj` into the file navigator of your Xcode project.
@@ -64,7 +64,7 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 
 > Networking in Alamofire is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
 
-> Rather than blocking execution to wait for a response from the server, a [callback](http://en.wikipedia.org/wiki/Callback_%28computer_programming%29) is specified to handle the response once it's received. The result of a request is only available inside the scope of a response handler, and any execution contingent on the response or data received from the server must be done within a handler.
+> Rather than blocking execution to wait for a response from the server, a [callback](http://en.wikipedia.org/wiki/Callback_%28computer_programming%29) is specified to handle the response once it's received. The result of a request is only available inside the scope of a response handler. Any execution contingent on the response or data received from the server must be done within a handler.
 
 ### Response Serialization
 
@@ -75,7 +75,7 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 - `responseJSON(options: NSJSONReadingOptions)`
 - `responsePropertyList(options: NSPropertyListReadOptions)`
 
-####  Response String Serialization
+####  Response String Handler
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get")
@@ -84,10 +84,24 @@ Alamofire.request(.GET, "http://httpbin.org/get")
          }
 ```
 
-####  Response JSON Serialization
+####  Response JSON Handler
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get")
+         .responseJSON { (_, _, JSON, _) in
+                  println(string)
+         }
+```
+
+#### Chained Response Handlers
+
+Response handlers can even be chained:
+
+```swift
+Alamofire.request(.GET, "http://httpbin.org/get")
+         .responseString { (_, _, string, _) in
+                  println(string)
+         }
          .responseJSON { (_, _, JSON, _) in
                   println(string)
          }
@@ -275,6 +289,8 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destinati
 
 ### Authentication
 
+Authentication is handled on the system framework level by [`NSURLCredential` and `NSURLAuthenticationChallenge`](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLAuthenticationChallenge_Class/Reference/Reference.html).
+
 **Supported Authentication Schemes**
 
 - [HTTP Basic](http://en.wikipedia.org/wiki/Basic_access_authentication)
@@ -295,16 +311,14 @@ Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
          }
 ```
 
-#### Authenticating with NSURLCredential
+#### Authentication with NSURLCredential
 
 ```swift
 let user = "user"
 let password = "password"
 
 let credential = NSURLCredential(user: user, password: password, persistence: .ForSession)
-```
 
-```swift
 Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
          .authenticate(usingCredential: credential)
          .response {(request, response, _, error) in
@@ -313,6 +327,8 @@ Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
 ```
 
 ### Validation
+
+By default, Alamofire treats any completed request to be successful, regardless of the content of the response. Calling `validate` before a response handler causes an error to be generated if the response had an unacceptable status code or MIME type.
 
 #### Manual Validation
 
@@ -393,7 +409,7 @@ let manager = Alamofire.Manager.sharedInstance
 manager.request(NSURLRequest(URL: NSURL(string: "http://httpbin.org/get")))
 ```
 
-Applications can create managers for background and ephemeral sessions, as well as new managers that customize properties of the default session configuration, such as default headers (`HTTPAdditionalHeaders`) or timeout interval (`timeoutIntervalForRequest`).
+Applications can create managers for background and ephemeral sessions, as well as new managers that customize the default session configuration, such as for default headers (`HTTPAdditionalHeaders`) or timeout interval (`timeoutIntervalForRequest`).
 
 #### Creating a Manager with Default Configuration
 
@@ -405,7 +421,7 @@ let manager = Alamofire.Manager(configuration: configuration)
 #### Creating a Manager with Background Configuration
 
 ```swift
-let configuration = NSURLSessionConfiguration.backgroundSessionConfiguration("com.example.app")
+let configuration = NSURLSessionConfiguration.backgroundSessionConfiguration("com.example.app.background")
 let manager = Alamofire.Manager(configuration: configuration)
 ```
 
@@ -446,7 +462,9 @@ Requests can be suspended, resumed, and cancelled:
 
 #### Creating a Custom Response Serializer
 
-Using [Ono](https://github.com/mattt/Ono) for XML handling:
+Alamofire provides built-in response serialization for strings, JSON, and property lists, but others can be added in extensions on `Alamofire.Request`.
+
+For example, here's how a response handler using [Ono](https://github.com/mattt/Ono) might be implemented:
 
 ```swift
 extension Request {
