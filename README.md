@@ -30,7 +30,8 @@ Of course, AFNetworking remains the premiere networking library available for Ma
 
 _The infrastructure and best practices for distributing Swift libraries is currently in flux... which is to say, the current installation process kinda sucks._
 
-1. Add Alamofire as a submodule by opening the Terminal, `cd`-ing into your top-level project directory, and entering the command `git submodule add https://github.com/Alamofire/Alamofire.git`
+1a. Add Alamofire as a submodule by opening the Terminal, `cd`-ing into your top-level project directory, and entering the command `git submodule add https://github.com/Alamofire/Alamofire.git`
+1b. (Optional) To check out a specific branch. Change into the Alamofire folder `cd Alamofire` and issue the command `git checkout <branch>` where your replace `<branch>` with the branch you want to checkout.
 2. Open the `Alamofire` folder, and drag `Alamofire.xcodeproj` into the file navigator of your Xcode project.
 3. In Xcode, navigate to the target configuration window by clicking on the blue project icon, and selecting the application target under the "Targets" heading in the sidebar.
 4. In the tab bar at the top of that window, open the "Build Phases" panel.
