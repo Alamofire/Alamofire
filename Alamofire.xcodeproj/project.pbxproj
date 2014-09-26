@@ -15,6 +15,7 @@
 		F8858DDE19A96B4400F55F93 /* ResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */; };
 		F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
 		F8AE910219D28DCC0078C7B2 /* ValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */; };
+		F8D1C6F519D52968002E74FE /* ManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D1C6F419D52968002E74FE /* ManagerTests.swift */; };
 		F8E6024519CB46A800A3E7F1 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 		F8111E5F19A9674D0040E7D1 /* UploadTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadTests.swift; sourceTree = "<group>"; };
 		F897FF4019AA800700AB5182 /* Alamofire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alamofire.swift; sourceTree = "<group>"; };
 		F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidationTests.swift; sourceTree = "<group>"; };
+		F8D1C6F419D52968002E74FE /* ManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagerTests.swift; sourceTree = "<group>"; };
 		F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -103,6 +105,7 @@
 			children = (
 				F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */,
 				F8111E5D19A9674D0040E7D1 /* RequestTests.swift */,
+				F8D1C6F419D52968002E74FE /* ManagerTests.swift */,
 				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
 				F8111E5F19A9674D0040E7D1 /* UploadTests.swift */,
 				F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */,
@@ -239,6 +242,7 @@
 				F8858DDD19A96B4300F55F93 /* RequestTests.swift in Sources */,
 				F8E6024519CB46A800A3E7F1 /* AuthenticationTests.swift in Sources */,
 				F8858DDE19A96B4400F55F93 /* ResponseTests.swift in Sources */,
+				F8D1C6F519D52968002E74FE /* ManagerTests.swift in Sources */,
 				F8AE910219D28DCC0078C7B2 /* ValidationTests.swift in Sources */,
 				F8111E6119A9674D0040E7D1 /* ParameterEncodingTests.swift in Sources */,
 				F8111E6419A9674D0040E7D1 /* UploadTests.swift in Sources */,
