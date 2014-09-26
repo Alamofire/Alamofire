@@ -621,9 +621,8 @@ public class Request {
         :returns: The request.
     */
     public func response(priority: Int = DISPATCH_QUEUE_PRIORITY_DEFAULT, queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-
-        dispatch_sync(delegate.queue, {
-            dispatch_sync(dispatch_get_global_queue(priority, 0), {
+        dispatch_async(delegate.queue, {
+            dispatch_async(dispatch_get_global_queue(priority, 0), {
                 let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
 
                 dispatch_async(queue ?? dispatch_get_main_queue(), {
@@ -827,13 +826,15 @@ extension Request {
         :returns: The request.
     */
     public func validate(validation: Validation) -> Self {
-        return response(priority: DISPATCH_QUEUE_PRIORITY_HIGH, queue: self.delegate.queue, serializer: Request.responseDataSerializer()){ (request, response, data, error) in
-            if response != nil && error == nil {
-                if !validation(request, response!) {
+        dispatch_async(delegate.queue) {
+            if self.response != nil && self.delegate.error == nil {
+                if !validation(self.request, self.response!) {
                     self.delegate.error = NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
                 }
             }
         }
+
+        return self
     }
 
     // MARK: Status Code
