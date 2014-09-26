@@ -1,4 +1,4 @@
-// UploadTests.swift
+// MasterViewController.swift
 //
 // Copyright (c) 2014 Alamofire (http://alamofire.org)
 //
@@ -22,26 +22,23 @@
 
 import Foundation
 import Alamofire
-import XCTest
 
-class UploadResponseTestCase: XCTestCase {
-    func testDownloadRequest() {
-        let URL = "http://httpbin.org/post"
-        let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+enum HTTPBinRoute: URLStringConvertible {
+    case Method(Alamofire.Method)
+    case BasicAuth(String, String)
 
-        let expectation = expectationWithDescription(URL)
+    var URLString: String {
+        let baseURLString = "http://httpbin.org/"
+        let path: String = {
+            switch self {
+            case .Method(let method):
+                return "/\(method.toRaw().lowercaseString)"
+            case .BasicAuth(let user, let password):
+                return "/basic-auth/\(user)/\(password)"
+            }
+        }()
 
-        Alamofire.upload(.POST, URL, data!)
-                 .response { (request, response, _, error) in
-                    expectation.fulfill()
-
-                    XCTAssertNotNil(request, "request should not be nil")
-                    XCTAssertNotNil(response, "response should not be nil")
-                    XCTAssertNil(error, "error should be nil")
-                }
-
-        waitForExpectationsWithTimeout(10) { (error) in
-            XCTAssertNil(error, "\(error)")
-        }
+        return NSURL(string: path, relativeToURL: NSURL(string: baseURLString)).absoluteString!
     }
 }
+

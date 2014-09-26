@@ -62,9 +62,69 @@ class AlamofireRequestResponseTestCase: XCTestCase {
                     XCTAssertNil(error, "error should be nil")
                  }
 
-        waitForExpectationsWithTimeout(10){ error in
+        waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
 }
 
+class AlamofireRequestDescriptionTestCase: XCTestCase {
+    func testRequestDescription() {
+        let URL = "http://httpbin.org/get"
+        let request = Alamofire.request(.GET, URL)
+
+        XCTAssertEqual(request.description, "GET http://httpbin.org/get", "incorrect request description")
+
+        let expectation = expectationWithDescription("\(URL)")
+
+        request.response { (_, response,_,_) in
+            expectation.fulfill()
+
+            XCTAssertEqual(request.description, "GET http://httpbin.org/get (\(response!.statusCode))", "incorrect request description")
+        }
+
+        waitForExpectationsWithTimeout(10) { (error) in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+}
+
+class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
+    private func cURLCommandComponents(request: Request) -> [String] {
+        return request.debugDescription.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).filter { $0 != "" && $0 != "\\" }
+    }
+
+    // MARK: -
+
+    func testGETRequestDebugDescription() {
+        let URL = "http://httpbin.org/get"
+        let request = Alamofire.request(.GET, URL)
+        let components = cURLCommandComponents(request)
+
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssert(!contains(components, "-X"), "command should not contain explicit -X flag")
+        XCTAssertEqual(components.last!, "\"\(URL)\"")
+    }
+
+    func testPOSTRequestDebugDescription() {
+        let URL = "http://httpbin.org/post"
+        let request = Alamofire.request(.POST, URL)
+        let components = cURLCommandComponents(request)
+
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[3..<5], ["-X", "POST"])
+        XCTAssertEqual(components.last!, "\"\(URL)\"")
+    }
+
+    func testPOSTRequestWithJSONParametersDebugDescription() {
+        let URL = "http://httpbin.org/post"
+        let request = Alamofire.request(.POST, URL, parameters: ["foo": "bar"], encoding: .JSON)
+        let components = cURLCommandComponents(request)
+
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[3..<5], ["-X", "POST"])
+        XCTAssert(request.debugDescription.rangeOfString("-H \"Content-Type: application/json\"") != nil)
+        XCTAssert(request.debugDescription.rangeOfString("-d \"{\"foo\":\"bar\"}\"") != nil)
+        XCTAssertEqual(components.last!, "\"\(URL)\"")
+    }
+}

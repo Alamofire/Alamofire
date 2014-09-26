@@ -29,18 +29,14 @@ class DetailViewController: UITableViewController {
     }
 
     var request: Alamofire.Request? {
-        willSet {
-            if self.request != nil {
-                self.request?.cancel()
-                self.refreshControl?.endRefreshing()
-                self.headers.removeAll()
-                self.body = nil
-                self.elapsedTime = nil
-            }
-        }
-
         didSet {
+            oldValue?.cancel()
+
             self.title = self.request?.description
+            self.refreshControl?.endRefreshing()
+            self.headers.removeAll()
+            self.body = nil
+            self.elapsedTime = nil
         }
     }
 
@@ -128,11 +124,15 @@ class DetailViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String {
+        if self.tableView(tableView, numberOfRowsInSection: section) == 0 {
+            return ""
+        }
+
         switch Sections.fromRaw(section)! {
         case .Headers:
-            return self.headers.isEmpty ? "" : "Headers"
+            return "Headers"
         case .Body:
-            return self.body == nil ? "" : "Body"
+            return "Body"
         }
     }
 
@@ -146,12 +146,14 @@ class DetailViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String {
-        switch Sections.fromRaw(section)! {
-        case .Body:
-            return self.elapsedTime == nil ? "" : "Elapsed Time: \(self.elapsedTime!) sec"
-        default:
-            return ""
+        if Sections.fromRaw(section)! == .Body && self.elapsedTime != nil {
+            let numberFormatter = NSNumberFormatter()
+            numberFormatter.numberStyle = .DecimalStyle
+
+            return "Elapsed Time: \(numberFormatter.stringFromNumber(self.elapsedTime!)) sec"
         }
+
+        return ""
     }
 }
 

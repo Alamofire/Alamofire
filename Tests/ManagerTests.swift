@@ -1,4 +1,4 @@
-// UploadTests.swift
+// RequestTests.swift
 //
 // Copyright (c) 2014 Alamofire (http://alamofire.org)
 //
@@ -24,24 +24,23 @@ import Foundation
 import Alamofire
 import XCTest
 
-class UploadResponseTestCase: XCTestCase {
-    func testDownloadRequest() {
-        let URL = "http://httpbin.org/post"
-        let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+class AlamofireManagerTestCase: XCTestCase {
+    func testSetStartRequestsImmediatelyToFalseAndResumeRequest() {
+        let manager = Alamofire.Manager()
+        manager.startRequestsImmediately = false
 
-        let expectation = expectationWithDescription(URL)
+        let URL = "http://httpbin.org/get"
+        let URLRequest = NSURLRequest(URL: NSURL(string: URL))
 
-        Alamofire.upload(.POST, URL, data!)
-                 .response { (request, response, _, error) in
-                    expectation.fulfill()
+        let expectation = expectationWithDescription("\(URL)")
 
-                    XCTAssertNotNil(request, "request should not be nil")
-                    XCTAssertNotNil(response, "response should not be nil")
-                    XCTAssertNil(error, "error should be nil")
-                }
+        manager.request(URLRequest)
+            .response { (_,_,_,_) in expectation.fulfill() }
+            .resume()
 
         waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
 }
+
