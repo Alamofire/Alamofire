@@ -622,7 +622,7 @@ public class Request {
     */
     public func response(priority: Int = DISPATCH_QUEUE_PRIORITY_DEFAULT, queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
 
-        dispatch_sync(delegate.queue, {
+        dispatch_async(delegate.queue, {
             dispatch_sync(dispatch_get_global_queue(priority, 0), {
                 let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
 
