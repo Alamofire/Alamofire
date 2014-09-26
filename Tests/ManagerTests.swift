@@ -34,9 +34,9 @@ class AlamofireManagerTestCase: XCTestCase {
 
         let expectation = expectationWithDescription("\(URL)")
 
-        let request = manager.request(URLRequest).response { (_,_,_,_) in expectation.fulfill() }
-
-        request.resume()
+        manager.request(URLRequest)
+            .response { (_,_,_,_) in expectation.fulfill() }
+            .resume()
 
         waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
