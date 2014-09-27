@@ -295,6 +295,21 @@ public class Manager {
     // MARK: -
 
     /**
+        Creates a request for the specified method, URL string, parameters, and parameter encoding.
+
+        :param: method The HTTP method.
+        :param: URLString The URL string.
+        :param: parameters The parameters. `nil` by default.
+        :param: encoding The parameter encoding. `.URL` by default.
+
+        :returns: The created request.
+    */
+    public func request(method: Method, _ URLString: URLStringConvertible, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
+        return request(encoding.encode(URLRequest(method, URLString), parameters: parameters).0)
+    }
+
+
+    /**
         Creates a request for the specified URL request.
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
