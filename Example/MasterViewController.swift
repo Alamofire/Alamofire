@@ -52,13 +52,10 @@ class MasterViewController: UITableViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let detailViewController = segue.destinationViewController.topViewController as? DetailViewController {
             func requestForSegue(segue: UIStoryboardSegue) -> Request? {
-                switch segue.identifier {
-                    case "GET", "POST", "PUT", "DELETE":
-                        let method = Alamofire.Method.fromRaw(segue.identifier)!
-                        return Alamofire.request(method, HTTPBinRoute.Method(method))
-                    default:
-                        return nil
+                if let method = Method.fromRaw(segue.identifier) {
+                    return request(method, HTTPBinRoute.Method(method))
                 }
+                return nil
             }
 
             if let request = requestForSegue(segue) {
