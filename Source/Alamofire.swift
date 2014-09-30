@@ -188,18 +188,18 @@ public class Manager {
 
                     // User-Agent Header; see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.43
                     let userAgent: String = {
-                        let info = NSBundle.mainBundle().infoDictionary
-                        let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
-                        let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
-                        let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
-                        let os: AnyObject = NSProcessInfo.processInfo().operatingSystemVersionString ?? "Unknown"
+                        if let info = NSBundle.mainBundle().infoDictionary {
+                            let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
+                            let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
+                            let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
+                            let os: AnyObject = NSProcessInfo.processInfo().operatingSystemVersionString ?? "Unknown"
 
-                        var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
-                        let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
-                        if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
-                            return mutableUserAgent as NSString
+                            var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
+                            let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
+                            if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
+                                return mutableUserAgent as NSString
+                            }
                         }
-
                         return "Alamofire"
                     }()
                     
@@ -852,7 +852,7 @@ extension Request: DebugPrintable {
         }
 
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
-            let protectionSpace = NSURLProtectionSpace(host: URL.host!, port: URL.port ?? 0, `protocol`: URL.scheme, realm: URL.host, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
+            let protectionSpace = NSURLProtectionSpace(host: URL.host!, port: URL.port?.integerValue ?? 0, `protocol`: URL.scheme!, realm: URL.host!, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
                 if !credentials.isEmpty {
                     if let credential = credentials[0] as? NSURLCredential {
