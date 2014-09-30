@@ -25,7 +25,7 @@ import Alamofire
 import XCTest
 
 class UploadResponseTestCase: XCTestCase {
-    func testDownloadRequest() {
+    func testUploadRequest() {
         let URL = "http://httpbin.org/post"
         let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
 
@@ -39,6 +39,26 @@ class UploadResponseTestCase: XCTestCase {
                     XCTAssertNotNil(response, "response should not be nil")
                     XCTAssertNil(error, "error should be nil")
                 }
+
+        waitForExpectationsWithTimeout(10) { (error) in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
+
+    func testUploadRequestWithProgress() {
+        let URL = "http://httpbin.org/post"
+        let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+
+        let expectation = expectationWithDescription(URL)
+
+        Alamofire.upload(.POST, URL, data!)
+                 .progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) -> Void in
+                    expectation.fulfill()
+
+                    XCTAssertGreaterThan(bytesWritten, 0, "bytesWritten should be > 0")
+                    XCTAssertGreaterThan(totalBytesWritten, 0, "totalBytesWritten should be > 0")
+                    XCTAssertGreaterThan(totalBytesExpectedToWrite, 0, "totalBytesExpectedToWrite should be > 0")
+                 }
 
         waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
