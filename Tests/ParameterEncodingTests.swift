@@ -160,6 +160,20 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
         XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type")!, "application/x-www-form-urlencoded", "Content-Type should be application/x-www-form-urlencoded")
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
     }
+    
+    func testURLParameterEncodePUTEmptyArrayParameter() {
+        var mutableURLRequest = self.URLRequest.mutableCopy() as NSMutableURLRequest
+        mutableURLRequest.HTTPMethod = Method.PUT.toRaw()
+        
+        let parameters = [
+            "foo" : "bar",
+            "baz" : []
+        ]
+        
+        let (URLRequest, error) = self.encoding.encode(mutableURLRequest, parameters: parameters)
+        
+        XCTAssertEqual(NSString(data: URLRequest.HTTPBody!, encoding: NSUTF8StringEncoding), "baz%5B%5D=&foo=bar", "HTTPBody is incorrect")
+    }
 }
 
 class AlamofireJSONParameterEncodingTestCase: XCTestCase {
@@ -205,6 +219,22 @@ class AlamofireJSONParameterEncodingTestCase: XCTestCase {
         let JSON = NSJSONSerialization.JSONObjectWithData(URLRequest.HTTPBody!, options: .AllowFragments, error: nil) as NSObject!
         XCTAssertNotNil(JSON, "HTTPBody JSON is invalid")
         XCTAssertEqual(JSON as NSObject, parameters as NSObject, "HTTPBody JSON does not equal parameters")
+    }
+    
+    func testJSONParameterEncodeEmptyArrayParameter() {
+        let parameters = [
+            "foo" : "bar",
+            "baz" : []
+        ]
+        
+        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
+        
+        XCTAssertNil(error, "error should be nil")
+        XCTAssertNil(URLRequest.URL.query?, "query should be nil")
+        
+        let JSON = NSJSONSerialization.JSONObjectWithData(URLRequest.HTTPBody!, options: .AllowFragments, error: nil) as NSObject!
+        XCTAssertNotNil(JSON, "HTTPBody JSON is invalid")
+        XCTAssertEqual(JSON as NSObject, parameters as NSObject, "HTTPBody JSON does not equal paramters")
     }
 }
 
