@@ -56,7 +56,7 @@ class MasterViewController: UITableViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let detailViewController = segue.destinationViewController.topViewController as? DetailViewController {
             func requestForSegue(segue: UIStoryboardSegue) -> Request? {
-                switch segue.identifier {
+                switch segue.identifier as String! {
                     case "GET":
                         return Alamofire.request(.GET, "http://httpbin.org/get")
                     case "POST":
