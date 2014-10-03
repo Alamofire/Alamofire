@@ -87,14 +87,16 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
 
         let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
 
-        Alamofire.download(.GET, URL, destination)
-                 .progress { (bytesRead, totalBytesRead, totalBytesExpectedToRead) -> Void in
-                    expectation.fulfill()
+        let download = Alamofire.download(.GET, URL, destination)
+        download.progress { (bytesRead, totalBytesRead, totalBytesExpectedToRead) -> Void in
+            expectation.fulfill()
 
-                    XCTAssertGreaterThan(bytesRead, 0, "bytesRead should be > 0")
-                    XCTAssertGreaterThan(totalBytesRead, 0, "totalBytesRead should be > 0")
-                    XCTAssertEqual(totalBytesExpectedToRead, -1, "totalBytesExpectedToRead should be -1")
-                 }
+            XCTAssertGreaterThan(bytesRead, 0, "bytesRead should be > 0")
+            XCTAssertGreaterThan(totalBytesRead, 0, "totalBytesRead should be > 0")
+            XCTAssertEqual(totalBytesExpectedToRead, -1, "totalBytesExpectedToRead should be -1")
+
+            download.cancel()
+        }
 
         waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")

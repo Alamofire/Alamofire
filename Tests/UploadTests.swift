@@ -51,14 +51,16 @@ class UploadResponseTestCase: XCTestCase {
 
         let expectation = expectationWithDescription(URL)
 
-        Alamofire.upload(.POST, URL, data!)
-                 .progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) -> Void in
-                    expectation.fulfill()
+        let upload = Alamofire.upload(.POST, URL, data!)
+        upload.progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) -> Void in
+            expectation.fulfill()
 
-                    XCTAssertGreaterThan(bytesWritten, 0, "bytesWritten should be > 0")
-                    XCTAssertGreaterThan(totalBytesWritten, 0, "totalBytesWritten should be > 0")
-                    XCTAssertGreaterThan(totalBytesExpectedToWrite, 0, "totalBytesExpectedToWrite should be > 0")
-                 }
+            XCTAssertGreaterThan(bytesWritten, 0, "bytesWritten should be > 0")
+            XCTAssertGreaterThan(totalBytesWritten, 0, "totalBytesWritten should be > 0")
+            XCTAssertGreaterThan(totalBytesExpectedToWrite, 0, "totalBytesExpectedToWrite should be > 0")
+
+            upload.cancel()
+        }
 
         waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
