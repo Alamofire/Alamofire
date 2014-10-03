@@ -106,7 +106,7 @@ public enum ParameterEncoding {
             let method = Method.fromRaw(mutableURLRequest.HTTPMethod)
             if method != nil && encodesParametersInURL(method!) {
                 let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false)
-                URLComponents.query = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
+                URLComponents.percentEncodedQuery = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
                 mutableURLRequest.URL = URLComponents.URL
             } else {
                 if mutableURLRequest.valueForHTTPHeaderField("Content-Type") == nil {
@@ -144,10 +144,15 @@ public enum ParameterEncoding {
                 components += queryComponents("\(key)[]", value)
             }
         } else {
-            components.extend([(key, "\(value)")])
+            components.extend([(escape(key), escape("\(value)"))])
         }
 
         return components
+    }
+
+    func escape(string: String) -> String {
+        let allowedCharacters =  NSCharacterSet(charactersInString:"=\"#%/<>?@\\^`{}[]|&").invertedSet
+        return string.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacters) ?? string
     }
 }
 

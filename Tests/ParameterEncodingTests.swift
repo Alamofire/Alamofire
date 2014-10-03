@@ -118,6 +118,13 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
         XCTAssertEqual(URLRequest.URL.query!, "foo%5Bbar%5D%5Bbaz%5D%5B%5D=a&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1", "query is incorrect")
     }
 
+    func testURLParameterEncodeStringWithAmpersandKeyStringWithAmpersandValueParameter() {
+        let parameters = ["foo&bar": "baz&qux", "foobar": "bazqux"]
+        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
+
+        XCTAssertEqual(URLRequest.URL.query!, "foo%26bar=baz%26qux&foobar=bazqux", "query is incorrect")
+    }
+
     func testURLParameterEncodeStringKeyPercentEncodedStringValueParameter() {
         let parameters = ["percent": "%25"]
         let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
