@@ -49,6 +49,8 @@ _Due to the current lack of [proper infrastructure](http://cocoapods.org) for Sw
 ### Making a Request
 
 ```swift
+import Alamofire
+
 Alamofire.request(.GET, "http://httpbin.org/get")
 ```
 
