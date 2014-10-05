@@ -90,7 +90,7 @@ class DetailViewController: UITableViewController {
     // MARK: UITableViewDataSource
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch Sections.fromRaw(section)! {
+        switch Sections(rawValue: section)! {
         case .Headers:
             return self.headers.count
         case .Body:
@@ -102,7 +102,7 @@ class DetailViewController: UITableViewController {
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
-        switch Sections.fromRaw(indexPath.section)! {
+        switch Sections(rawValue: indexPath.section)! {
         case .Headers:
             let cell = self.tableView.dequeueReusableCellWithIdentifier("Header") as UITableViewCell
             let field = self.headers.keys.array.sorted(<)[indexPath.row]
@@ -128,7 +128,7 @@ class DetailViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String {
-        switch Sections.fromRaw(section)! {
+        switch Sections(rawValue: section)! {
         case .Headers:
             return self.headers.isEmpty ? "" : "Headers"
         case .Body:
@@ -137,7 +137,7 @@ class DetailViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        switch Sections.fromRaw(indexPath.section)! {
+        switch Sections(rawValue: indexPath.section)! {
         case .Body:
             return 300
         default:
@@ -146,7 +146,7 @@ class DetailViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String {
-        switch Sections.fromRaw(section)! {
+        switch Sections(rawValue: section)! {
         case .Body:
             return self.elapsedTime == nil ? "" : "Elapsed Time: \(self.elapsedTime!) sec"
         default:
