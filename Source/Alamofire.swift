@@ -1251,6 +1251,15 @@ extension Request: DebugPrintable {
             }
         }
 
+        for (field, value) in session.configuration.HTTPAdditionalHeaders! {
+            switch field {
+            case "Cookie":
+                continue
+            default:
+                components.append("-H \"\(field): \(value)\"")
+            }
+        }
+        
         if let HTTPBody = request.HTTPBody {
             components.append("-d \"\(NSString(data: HTTPBody, encoding: NSUTF8StringEncoding))\"")
         }
