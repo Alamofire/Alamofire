@@ -113,7 +113,7 @@ public enum ParameterEncoding {
                     mutableURLRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                 }
 
-                mutableURLRequest.HTTPBody = (CFURLCreateStringByAddingPercentEscapes(nil, query(parameters!) as NSString, nil, nil, CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) as NSString).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+                mutableURLRequest.HTTPBody = query(parameters!).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
             }
         case .JSON:
             let options = NSJSONWritingOptions.allZeros
