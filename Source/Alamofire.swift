@@ -241,18 +241,18 @@ public class Manager {
 
                     // User-Agent Header; see http://tools.ietf.org/html/rfc7231#section-5.5.3
                     let userAgent: String = {
-                        let info = NSBundle.mainBundle().infoDictionary
-                        let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
-                        let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
-                        let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
-                        let os: AnyObject = NSProcessInfo.processInfo().operatingSystemVersionString ?? "Unknown"
+                        if let info = NSBundle.mainBundle().infoDictionary {
+                            let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
+                            let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
+                            let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
+                            let os: AnyObject = NSProcessInfo.processInfo().operatingSystemVersionString ?? "Unknown"
 
-                        var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
-                        let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
-                        if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
-                            return mutableUserAgent as NSString
+                            var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
+                            let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
+                            if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
+                                return mutableUserAgent as NSString
+                            }
                         }
-
                         return "Alamofire"
                     }()
 
@@ -1219,8 +1219,8 @@ extension Request: DebugPrintable {
             components.append("-X \(request.HTTPMethod!)")
         }
 
-        if let credentialStorage = session.configuration.URLCredentialStorage {
-            let protectionSpace = NSURLProtectionSpace(host: URL.host!, port: URL.port ?? 0, `protocol`: URL.scheme, realm: URL.host, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
+        if let credentialStorage = self.session.configuration.URLCredentialStorage {
+            let protectionSpace = NSURLProtectionSpace(host: URL.host!, port: URL.port?.integerValue ?? 0, `protocol`: URL.scheme!, realm: URL.host!, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
                 for credential: NSURLCredential in (credentials as [NSURLCredential]) {
                     components.append("-u \(credential.user):\(credential.password)")
@@ -1421,7 +1421,7 @@ extension Request {
 // MARK: - Convenience -
 
 private func URLRequest(method: Method, URL: URLStringConvertible) -> NSURLRequest {
-    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL)!)
+    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL.URLString)!)
     mutableURLRequest.HTTPMethod = method.rawValue
 
     return mutableURLRequest

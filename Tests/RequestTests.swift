@@ -30,7 +30,7 @@ class AlamofireRequestInitializationTestCase: XCTestCase {
         let request = Alamofire.request(.GET, URL)
 
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request.URL, NSURL(string: URL), "request URL should be equal")
+        XCTAssertEqual(request.request.URL, NSURL(string: URL)!, "request URL should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
@@ -39,7 +39,7 @@ class AlamofireRequestInitializationTestCase: XCTestCase {
         let request = Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
 
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertNotEqual(request.request.URL, NSURL(string: URL), "request URL should be equal")
+        XCTAssertNotEqual(request.request.URL, NSURL(string: URL)!, "request URL should be equal")
         XCTAssertEqual(request.request.URL.query!, "foo=bar", "query is incorrect")
         XCTAssertNil(request.response, "response should be nil")
     }
