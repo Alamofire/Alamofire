@@ -105,15 +105,15 @@ public enum ParameterEncoding {
 
             let method = Method(rawValue: request.HTTPMethod)
             if method != nil && encodesParametersInURL(method) {
-                let URLComponents = NSURLComponents(URL: mutableRequest.URL!, resolvingAgainstBaseURL: false)!
-                URLComponents.query = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
+                let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false)
+                URLComponents.percentEncodedQuery = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
                 mutableURLRequest.URL = URLComponents.URL
             } else {
                 if mutableURLRequest.valueForHTTPHeaderField("Content-Type") == nil {
                     mutableURLRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                 }
 
-                mutableURLRequest.HTTPBody = (CFURLCreateStringByAddingPercentEscapes(nil, query(parameters!) as NSString, nil, nil, CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)) as NSString).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+                mutableURLRequest.HTTPBody = query(parameters!).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
             }
         case .JSON:
             let options = NSJSONWritingOptions.allZeros
@@ -144,10 +144,15 @@ public enum ParameterEncoding {
                 components += queryComponents("\(key)[]", value)
             }
         } else {
-            components.extend([(key, "\(value)")])
+            components.extend([(escape(key), escape("\(value)"))])
         }
 
         return components
+    }
+
+    func escape(string: String) -> String {
+        let allowedCharacters =  NSCharacterSet(charactersInString:" =\"#%/<>?@\\^`{}[]|&").invertedSet
+        return string.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacters) ?? string
     }
 }
 
@@ -621,15 +626,14 @@ public class Request {
         :returns: The request.
     */
     public func response(priority: Int = DISPATCH_QUEUE_PRIORITY_DEFAULT, queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        dispatch_async(delegate.queue, {
-            dispatch_async(dispatch_get_global_queue(priority, 0), {
-                let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
+        let delegate = self.delegate
+        dispatch_async(delegate.queue) { [weak delegate] in
+            let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, delegate?.data)
 
-                dispatch_async(queue ?? dispatch_get_main_queue(), {
-                    completionHandler(self.request, self.response, responseObject, self.delegate.error ?? serializationError)
-                })
-            })
-        })
+            dispatch_async(queue ?? dispatch_get_main_queue()) {
+                completionHandler(self.request, self.response, responseObject, delegate?.error ?? serializationError)
+            }
+        }
 
         return self
     }
@@ -1246,6 +1250,15 @@ extension Request: DebugPrintable {
             }
         }
 
+        for (field, value) in session.configuration.HTTPAdditionalHeaders! {
+            switch field {
+            case "Cookie":
+                continue
+            default:
+                components.append("-H \"\(field): \(value)\"")
+            }
+        }
+        
         if let HTTPBody = request.HTTPBody {
             components.append("-d \"\(NSString(data: HTTPBody, encoding: NSUTF8StringEncoding))\"")
         }

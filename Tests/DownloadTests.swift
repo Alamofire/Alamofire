@@ -78,4 +78,28 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
+
+    func testDownloadRequestWithProgress() {
+        let numberOfLines = 100
+        let URL = "http://httpbin.org/stream/\(numberOfLines)"
+
+        let expectation = expectationWithDescription(URL)
+
+        let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+
+        let download = Alamofire.download(.GET, URL, destination)
+        download.progress { (bytesRead, totalBytesRead, totalBytesExpectedToRead) -> Void in
+            expectation.fulfill()
+
+            XCTAssertGreaterThan(bytesRead, 0, "bytesRead should be > 0")
+            XCTAssertGreaterThan(totalBytesRead, 0, "totalBytesRead should be > 0")
+            XCTAssertEqual(totalBytesExpectedToRead, -1, "totalBytesExpectedToRead should be -1")
+
+            download.cancel()
+        }
+
+        waitForExpectationsWithTimeout(10) { (error) in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
 }

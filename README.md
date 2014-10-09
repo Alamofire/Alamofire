@@ -35,11 +35,12 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 _Due to the current lack of [proper infrastructure](http://cocoapods.org) for Swift dependency management, using Alamofire in your project requires the following steps:_
 
 1. Add Alamofire as a [submodule](http://git-scm.com/docs/git-submodule) by opening the Terminal, `cd`-ing into your top-level project directory, and entering the command `git submodule add https://github.com/Alamofire/Alamofire.git`
-2. Open the `Alamofire` folder, and drag `Alamofire.xcodeproj` into the file navigator of your Xcode project.
+2. Open the `Alamofire` folder, and drag `Alamofire.xcodeproj` into the file navigator of your app project.
 3. In Xcode, navigate to the target configuration window by clicking on the blue project icon, and selecting the application target under the "Targets" heading in the sidebar.
-4. In the tab bar at the top of that window, open the "Build Phases" panel.
-5. Expand the "Link Binary with Libraries" group, and add `Alamofire.framework`.
-6. Click on the `+` button at the top left of the panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `Alamofire.framework`.
+4. Ensure that the deployment target of Alamofire.framework matches that of the application target.
+5. In the tab bar at the top of that window, open the "Build Phases" panel.
+6. Expand the "Link Binary with Libraries" group, and add `Alamofire.framework`.
+7. Click on the `+` button at the top left of the panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `Alamofire.framework`.
 
 ---
 
@@ -48,6 +49,8 @@ _Due to the current lack of [proper infrastructure](http://cocoapods.org) for Sw
 ### Making a Request
 
 ```swift
+import Alamofire
+
 Alamofire.request(.GET, "http://httpbin.org/get")
 ```
 
