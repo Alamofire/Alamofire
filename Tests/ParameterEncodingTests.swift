@@ -132,6 +132,20 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
         XCTAssertEqual(URLRequest.URL.query!, "%3Ffoo%3F=%3Fbar%3F", "query is incorrect")
     }
 
+    func testURLParameterEncodeStringWithSpaceKeyStringWithSpaceValueParameter() {
+        let parameters = [" foo ": " bar "]
+        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
+
+        XCTAssertEqual(URLRequest.URL.query!, "%20foo%20=%20bar%20", "query is incorrect")
+    }
+
+    func testURLParameterEncodeStringKeyAllowedCharactersStringValueParameter() {
+        let parameters = ["allowed": " =\"#%/<>?@\\^`{}[]|&"]
+        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
+
+        XCTAssertEqual(URLRequest.URL.query!, "allowed=%20%3D%22%23%25%2F%3C%3E%3F%40%5C%5E%60%7B%7D%5B%5D%7C%26", "query is incorrect")
+    }
+
     func testURLParameterEncodeStringKeyPercentEncodedStringValueParameter() {
         let parameters = ["percent": "%25"]
         let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
