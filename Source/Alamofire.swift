@@ -151,7 +151,7 @@ public enum ParameterEncoding {
     }
 
     func escape(string: String) -> String {
-        let allowedCharacters =  NSCharacterSet(charactersInString:" =\"#%/<>?@\\^`{}[]|&").invertedSet
+        let allowedCharacters =  NSCharacterSet(charactersInString:" =\"#%/<>?@\\^`{}[]|&+").invertedSet
         return string.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacters) ?? string
     }
 }
