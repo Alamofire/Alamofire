@@ -321,13 +321,16 @@ public class Manager {
 
     class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
         private var subdelegates: [Int: Request.TaskDelegate]
+        private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
         private subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
                 return subdelegates[task.taskIdentifier]
             }
-
+            
             set {
-                subdelegates[task.taskIdentifier] = newValue
+                dispatch_sync(subdelegateQueue) {
+                    self.subdelegates[task.taskIdentifier] = newValue
+                }
             }
         }
 
@@ -625,12 +628,11 @@ public class Request {
         :returns: The request.
     */
     public func response(queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        let delegate = self.delegate
-        dispatch_async(delegate.queue) { [weak delegate] in
-            let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, delegate?.data)
+        dispatch_async(delegate.queue) {
+            let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
 
             dispatch_async(queue ?? dispatch_get_main_queue()) {
-                completionHandler(self.request, self.response, responseObject, delegate?.error ?? serializationError)
+                completionHandler(self.request, self.response, responseObject, self.delegate.error ?? serializationError)
             }
         }
 
