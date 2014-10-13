@@ -32,13 +32,13 @@ enum HTTPBinRoute: URLStringConvertible {
         let path: String = {
             switch self {
             case .Method(let method):
-                return "/\(method.toRaw().lowercaseString)"
+                return "/\(method.rawValue.lowercaseString)"
             case .BasicAuth(let user, let password):
                 return "/basic-auth/\(user)/\(password)"
             }
         }()
 
-        return NSURL(string: path, relativeToURL: NSURL(string: baseURLString)).absoluteString!
+        return NSURL(string: path, relativeToURL: NSURL(string: baseURLString))!.absoluteString!
     }
 }
 
