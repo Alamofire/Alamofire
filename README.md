@@ -521,7 +521,7 @@ extension Alamofire.Request {
 ```
 
 ```swift
-class User: ResponseObjectSerializable {
+final class User: ResponseObjectSerializable {
     let username: String
     let name: String
 
