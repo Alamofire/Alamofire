@@ -324,9 +324,13 @@ public class Manager {
         private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
         private subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
-                return subdelegates[task.taskIdentifier]
+                var taskDelegate: Request.TaskDelegate?
+                dispatch_sync(subdelegateQueue) {
+                    taskDelegate = self.subdelegates[task.taskIdentifier]
+                }
+                return taskDelegate
             }
-            
+
             set {
                 dispatch_sync(subdelegateQueue) {
                     self.subdelegates[task.taskIdentifier] = newValue
