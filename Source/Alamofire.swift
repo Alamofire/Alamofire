@@ -521,7 +521,7 @@ public class Request {
     /// The progress of the request lifecycle.
     public var progress: NSProgress? { return delegate.progress }
 
-    private init(session: NSURLSession, task: NSURLSessionTask) {
+    public init(session: NSURLSession, task: NSURLSessionTask) {
         self.session = session
 
         switch task {
