@@ -91,7 +91,6 @@ class AlamofireRequestDescriptionTestCase: XCTestCase {
 
 class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
     private func cURLCommandComponents(request: Request) -> [String] {
-        println(request.debugDescription)
         return request.debugDescription.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).filter { $0 != "" && $0 != "\\" }
     }
 
