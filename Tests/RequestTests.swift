@@ -101,7 +101,7 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
         let request = Alamofire.request(.GET, URL)
         let components = cURLCommandComponents(request)
 
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual({components[0..<3]}(), {["$", "curl", "-i"]}())
         XCTAssert(!contains(components, "-X"), "command should not contain explicit -X flag")
         XCTAssertEqual(components.last!, "\"\(URL)\"")
     }
@@ -111,8 +111,8 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
         let request = Alamofire.request(.POST, URL)
         let components = cURLCommandComponents(request)
 
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
-        XCTAssertEqual(components[3..<5], ["-X", "POST"])
+        XCTAssertEqual({components[0..<3]}(), {["$", "curl", "-i"]}())
+        XCTAssertEqual({components[3..<5]}(), {["-X", "POST"]}())
         XCTAssertEqual(components.last!, "\"\(URL)\"")
     }
 
@@ -120,9 +120,9 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
         let URL = "http://httpbin.org/post"
         let request = Alamofire.request(.POST, URL, parameters: ["foo": "bar"], encoding: .JSON)
         let components = cURLCommandComponents(request)
-
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
-        XCTAssertEqual(components[3..<5], ["-X", "POST"])
+        
+        XCTAssertEqual({components[0..<3]}(), {["$", "curl", "-i"]}())
+        XCTAssertEqual({components[3..<5]}(), {["-X", "POST"]}())
         XCTAssert(request.debugDescription.rangeOfString("-H \"Content-Type: application/json\"") != nil)
         XCTAssert(request.debugDescription.rangeOfString("-d \"{\"foo\":\"bar\"}\"") != nil)
         XCTAssertEqual(components.last!, "\"\(URL)\"")
