@@ -1262,7 +1262,7 @@ extension Request: DebugPrintable {
         }
         
         if let HTTPBody = request.HTTPBody {
-            components.append("-d \"\(NSString(data: HTTPBody, encoding: NSUTF8StringEncoding))\"")
+            components.append("-d \"\(NSString(data: HTTPBody, encoding: NSUTF8StringEncoding)!)\"")
         }
 
         components.append("\"\(URL.absoluteString!)\"")
