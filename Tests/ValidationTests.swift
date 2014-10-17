@@ -203,13 +203,13 @@ class AlamofireMultipleValidationTestCase: XCTestCase {
 
 class AlamofireAutomaticValidationTestCase: XCTestCase {
     func testValidationForRequestWithAcceptableStatusCodeAndContentTypeResponse() {
-        let URL = NSURL(string: "http://httpbin.org/ip")
-        let mutableURLRequest = NSMutableURLRequest(URL: URL!)
+        let URL = NSURL(string: "http://httpbin.org/ip")!
+        let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL!)")
+        let expectation = expectationWithDescription("\(URL)")
 
-        Alamofire.request(.GET, URL!)
+        Alamofire.request(.GET, URL)
             .validate()
             .response { (_, _, _, error) in
                 expectation.fulfill()
@@ -243,13 +243,13 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
 
 
     func testValidationForRequestWithAcceptableWildcardContentTypeResponse() {
-        let URL = NSURL(string: "http://httpbin.org/ip")
-        let mutableURLRequest = NSMutableURLRequest(URL: URL!)
+        let URL = NSURL(string: "http://httpbin.org/ip")!
+        let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/*", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL!)")
+        let expectation = expectationWithDescription("\(URL)")
 
-        Alamofire.request(.GET, URL!)
+        Alamofire.request(.GET, URL)
             .validate()
             .response { (_, _, _, error) in
                 expectation.fulfill()
@@ -263,13 +263,13 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
     }
 
     func testValidationForRequestWithAcceptableComplexContentTypeResponse() {
-        let URL = NSURL(string: "http://httpbin.org/xml")
-        let mutableURLRequest = NSMutableURLRequest(URL: URL!)
+        let URL = NSURL(string: "http://httpbin.org/xml")!
+        let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL!)")
+        let expectation = expectationWithDescription("\(URL)")
 
-        Alamofire.request(.GET, URL!)
+        Alamofire.request(.GET, URL)
             .validate()
             .response { (_, _, _, error) in
                 expectation.fulfill()
@@ -283,13 +283,13 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
     }
 
     func testValidationForRequestWithUnacceptableContentTypeResponse() {
-        let URL = NSURL(string: "http://httpbin.org/xml")
-        let mutableURLRequest = NSMutableURLRequest(URL: URL!)
+        let URL = NSURL(string: "http://httpbin.org/xml")!
+        let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL!)")
+        let expectation = expectationWithDescription("\(URL)")
 
-        Alamofire.request(.GET, URL!)
+        Alamofire.request(.GET, URL)
             .validate()
             .response { (_, _, _, error) in
                 expectation.fulfill()
