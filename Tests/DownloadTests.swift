@@ -64,14 +64,14 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 XCTAssertNil(fileManagerError, "fileManagerError should be nil")
 
                 let predicate = NSPredicate(format: "lastPathComponent = '\(numberOfLines)'")
-                let filteredContents = (contents as NSArray).filteredArrayUsingPredicate(predicate)
+                let filteredContents = (contents as NSArray).filteredArrayUsingPredicate(predicate!)
                 XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
 
                 let file = filteredContents.first as NSURL
                 XCTAssertEqual(file.lastPathComponent, "\(numberOfLines)", "filename should be \(numberOfLines)")
 
                 let data = NSData(contentsOfURL: file)
-                XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
+                XCTAssertGreaterThan(data!.length, 0, "data length should be non-zero")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
@@ -91,9 +91,9 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
         download.progress { (bytesRead, totalBytesRead, totalBytesExpectedToRead) -> Void in
             expectation.fulfill()
 
-            XCTAssertGreaterThan(bytesRead, 0, "bytesRead should be > 0")
-            XCTAssertGreaterThan(totalBytesRead, 0, "totalBytesRead should be > 0")
-            XCTAssertEqual(totalBytesExpectedToRead, -1, "totalBytesExpectedToRead should be -1")
+            XCTAssertGreaterThan(bytesRead, Int64(0), "bytesRead should be > 0")
+            XCTAssertGreaterThan(totalBytesRead, Int64(0), "totalBytesRead should be > 0")
+            XCTAssertEqual(totalBytesExpectedToRead, Int64(-1), "totalBytesExpectedToRead should be -1")
 
             download.cancel()
         }
