@@ -337,14 +337,19 @@ public class Manager {
 
     class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
         private var subdelegates: [Int: Request.TaskDelegate]
-        private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
+        private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_CONCURRENT)
         private subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
-                return subdelegates[task.taskIdentifier]
+                var subdelegate: Request.TaskDelegate?
+                dispatch_sync(subdelegateQueue) {
+                    subdelegate = self.subdelegates[task.taskIdentifier]
+                }
+
+                return subdelegate
             }
             
             set {
-                dispatch_sync(subdelegateQueue) {
+                dispatch_barrier_async(subdelegateQueue) {
                     self.subdelegates[task.taskIdentifier] = newValue
                 }
             }
