@@ -1224,11 +1224,11 @@ extension Request: DebugPrintable {
             let protectionSpace = NSURLProtectionSpace(host: URL.host!, port: URL.port ?? 0, `protocol`: URL.scheme, realm: URL.host, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
                 for credential: NSURLCredential in (credentials as [NSURLCredential]) {
-                    components.append("-u \(credential.user):\(credential.password)")
+                    components.append("-u \(credential.user!):\(credential.password!)")
                 }
             } else {
                 if let credential = delegate.credential {
-                    components.append("-u \(credential.user):\(credential.password)")
+                    components.append("-u \(credential.user!):\(credential.password!)")
                 }
             }
         }
@@ -1261,7 +1261,9 @@ extension Request: DebugPrintable {
         }
         
         if let HTTPBody = request.HTTPBody {
-            components.append("-d \"\(NSString(data: HTTPBody, encoding: NSUTF8StringEncoding))\"")
+            let escapedBody = NSString(data: HTTPBody, encoding: NSUTF8StringEncoding)
+                                .stringByReplacingOccurrencesOfString("\"", withString: "\\\"")
+            components.append("-d \"\(escapedBody)\"")
         }
 
         components.append("\"\(URL.absoluteString!)\"")
