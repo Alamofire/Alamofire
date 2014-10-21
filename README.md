@@ -687,8 +687,8 @@ enum Router: URLRequestConvertible {
 
     var URLRequest: NSURLRequest {
         let URL = NSURL(string: Router.baseURLString)
-        let mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
-        mutableURLRequest.HTTPMethod = method.toRaw()
+        let mutableURLRequest = NSMutableURLRequest(URL: URL!.URLByAppendingPathComponent(path))
+        mutableURLRequest.HTTPMethod = method.rawValue
 
         if let token = Router.OAuthToken {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
