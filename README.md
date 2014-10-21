@@ -30,7 +30,7 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 
 ## Installation
 
-> For application targets that do not support embedded frameworks, such as iOS 7, Alamofire can be integrated by including the `Alamofire.swift` source file directly, and making the appropriate changes to calling semantics.
+> For application targets that do not support embedded frameworks, such as iOS 7, Alamofire can be integrated by including the `Alamofire.swift` source file directly, wrapping the top-level types in `struct Alamofire` to simulate a namespace. Yes, this sucks.
 
 _Due to the current lack of [proper infrastructure](http://cocoapods.org) for Swift dependency management, using Alamofire in your project requires the following steps:_
 
