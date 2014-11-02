@@ -103,11 +103,12 @@ public enum ParameterEncoding {
                 }
             }
 
-            let method = Method.fromRaw(mutableURLRequest.HTTPMethod)
+            let method = Method(rawValue: mutableURLRequest.HTTPMethod)
             if method != nil && encodesParametersInURL(method!) {
-                let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false)
-                URLComponents.percentEncodedQuery = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
-                mutableURLRequest.URL = URLComponents.URL
+                if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
+                    URLComponents.percentEncodedQuery = (URLComponents.query != nil ? URLComponents.query! + "&" : "") + query(parameters!)
+                    mutableURLRequest.URL = URLComponents.URL
+                }
             } else {
                 if mutableURLRequest.valueForHTTPHeaderField("Content-Type") == nil {
                     mutableURLRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -151,7 +152,7 @@ public enum ParameterEncoding {
     }
 
     func escape(string: String) -> String {
-        let allowedCharacters =  NSCharacterSet(charactersInString:" =\"#%/<>?@\\^`{}[]|&").invertedSet
+        let allowedCharacters =  NSCharacterSet(charactersInString:" =\"#%/<>?@\\^`{}[]|&+").invertedSet
         return string.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacters) ?? string
     }
 }
@@ -241,18 +242,18 @@ public class Manager {
 
                     // User-Agent Header; see http://tools.ietf.org/html/rfc7231#section-5.5.3
                     let userAgent: String = {
-                        let info = NSBundle.mainBundle().infoDictionary
-                        let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
-                        let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
-                        let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
-                        let os: AnyObject = NSProcessInfo.processInfo().operatingSystemVersionString ?? "Unknown"
+                        if let info = NSBundle.mainBundle().infoDictionary {
+                            let executable: AnyObject = info[kCFBundleExecutableKey] ?? "Unknown"
+                            let bundle: AnyObject = info[kCFBundleIdentifierKey] ?? "Unknown"
+                            let version: AnyObject = info[kCFBundleVersionKey] ?? "Unknown"
+                            let os: AnyObject = NSProcessInfo.processInfo().operatingSystemVersionString ?? "Unknown"
 
-                        var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
-                        let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
-                        if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
-                            return mutableUserAgent as NSString
+                            var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
+                            let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
+                            if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
+                                return mutableUserAgent as NSString
+                            }
                         }
-
                         return "Alamofire"
                     }()
 
@@ -295,6 +296,21 @@ public class Manager {
     // MARK: -
 
     /**
+        Creates a request for the specified method, URL string, parameters, and parameter encoding.
+
+        :param: method The HTTP method.
+        :param: URLString The URL string.
+        :param: parameters The parameters. `nil` by default.
+        :param: encoding The parameter encoding. `.URL` by default.
+
+        :returns: The created request.
+    */
+    public func request(method: Method, _ URLString: URLStringConvertible, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
+        return request(encoding.encode(URLRequest(method, URLString), parameters: parameters).0)
+    }
+
+
+    /**
         Creates a request for the specified URL request.
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
@@ -321,13 +337,21 @@ public class Manager {
 
     class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
         private var subdelegates: [Int: Request.TaskDelegate]
+        private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_CONCURRENT)
         private subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
-                return subdelegates[task.taskIdentifier]
-            }
+                var subdelegate: Request.TaskDelegate?
+                dispatch_sync(subdelegateQueue) {
+                    subdelegate = self.subdelegates[task.taskIdentifier]
+                }
 
+                return subdelegate
+            }
+            
             set {
-                subdelegates[task.taskIdentifier] = newValue
+                dispatch_barrier_async(subdelegateQueue) {
+                    self.subdelegates[task.taskIdentifier] = newValue
+                }
             }
         }
 
@@ -625,12 +649,11 @@ public class Request {
         :returns: The request.
     */
     public func response(queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        let delegate = self.delegate
-        dispatch_async(delegate.queue) { [weak delegate] in
-            let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, delegate?.data)
+        dispatch_async(delegate.queue) {
+            let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
 
             dispatch_async(queue ?? dispatch_get_main_queue()) {
-                completionHandler(self.request, self.response, responseObject, delegate?.error ?? serializationError)
+                completionHandler(self.request, self.response, responseObject, self.delegate.error ?? serializationError)
             }
         }
 
@@ -1218,15 +1241,15 @@ extension Request: DebugPrintable {
             components.append("-X \(request.HTTPMethod!)")
         }
 
-        if let credentialStorage = session.configuration.URLCredentialStorage {
-            let protectionSpace = NSURLProtectionSpace(host: URL.host!, port: URL.port ?? 0, `protocol`: URL.scheme, realm: URL.host, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
+        if let credentialStorage = self.session.configuration.URLCredentialStorage {
+            let protectionSpace = NSURLProtectionSpace(host: URL.host!, port: URL.port?.integerValue ?? 0, `protocol`: URL.scheme!, realm: URL.host!, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
                 for credential: NSURLCredential in (credentials as [NSURLCredential]) {
-                    components.append("-u \(credential.user):\(credential.password)")
+                    components.append("-u \(credential.user!):\(credential.password!)")
                 }
             } else {
                 if let credential = delegate.credential {
-                    components.append("-u \(credential.user):\(credential.password)")
+                    components.append("-u \(credential.user!):\(credential.password!)")
                 }
             }
         }
@@ -1259,7 +1282,9 @@ extension Request: DebugPrintable {
         }
         
         if let HTTPBody = request.HTTPBody {
-            components.append("-d \"\(NSString(data: HTTPBody, encoding: NSUTF8StringEncoding))\"")
+            if let escapedBody = NSString(data: HTTPBody, encoding: NSUTF8StringEncoding)?.stringByReplacingOccurrencesOfString("\"", withString: "\\\"") {
+                components.append("-d \"\(escapedBody)\"")
+            }
         }
 
         components.append("\"\(URL.absoluteString!)\"")
@@ -1419,9 +1444,9 @@ extension Request {
 
 // MARK: - Convenience -
 
-private func URLRequest(method: Method, URLString: URLStringConvertible) -> NSURLRequest {
-    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString))
-    mutableURLRequest.HTTPMethod = method.toRaw()
+private func URLRequest(method: Method, URL: URLStringConvertible) -> NSURLRequest {
+    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL.URLString)!)
+    mutableURLRequest.HTTPMethod = method.rawValue
 
     return mutableURLRequest
 }

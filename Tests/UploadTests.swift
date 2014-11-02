@@ -55,9 +55,9 @@ class UploadResponseTestCase: XCTestCase {
         upload.progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) -> Void in
             expectation.fulfill()
 
-            XCTAssertGreaterThan(bytesWritten, 0, "bytesWritten should be > 0")
-            XCTAssertGreaterThan(totalBytesWritten, 0, "totalBytesWritten should be > 0")
-            XCTAssertGreaterThan(totalBytesExpectedToWrite, 0, "totalBytesExpectedToWrite should be > 0")
+            XCTAssert(bytesWritten > 0, "bytesWritten should be > 0")
+            XCTAssert(totalBytesWritten > 0, "totalBytesWritten should be > 0")
+            XCTAssert(totalBytesExpectedToWrite > 0, "totalBytesExpectedToWrite should be > 0")
 
             upload.cancel()
         }

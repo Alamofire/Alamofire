@@ -18,9 +18,7 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 ## Requirements
 
 - iOS 7.0+ / Mac OS X 10.9+
-- Xcode 6.0
-
-> For Xcode 6.1, use [the `xcode-6.1` branch](https://github.com/Alamofire/Alamofire/tree/xcode-6.1).
+- Xcode 6.1
 
 ## Communication
 
@@ -32,6 +30,8 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 
 ## Installation
 
+> For application targets that do not support embedded frameworks, such as iOS 7, Alamofire can be integrated by including the `Alamofire.swift` source file directly, wrapping the top-level types in `struct Alamofire` to simulate a namespace. Yes, this sucks.
+
 _Due to the current lack of [proper infrastructure](http://cocoapods.org) for Swift dependency management, using Alamofire in your project requires the following steps:_
 
 1. Add Alamofire as a [submodule](http://git-scm.com/docs/git-submodule) by opening the Terminal, `cd`-ing into your top-level project directory, and entering the command `git submodule add https://github.com/Alamofire/Alamofire.git`
@@ -39,7 +39,7 @@ _Due to the current lack of [proper infrastructure](http://cocoapods.org) for Sw
 3. In Xcode, navigate to the target configuration window by clicking on the blue project icon, and selecting the application target under the "Targets" heading in the sidebar.
 4. Ensure that the deployment target of Alamofire.framework matches that of the application target.
 5. In the tab bar at the top of that window, open the "Build Phases" panel.
-6. Expand the "Link Binary with Libraries" group, and add `Alamofire.framework`.
+6. Expand the "Target Dependencies" group, and add `Alamofire.framework`.
 7. Click on the `+` button at the top left of the panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `Alamofire.framework`.
 
 ---
@@ -521,7 +521,7 @@ extension Alamofire.Request {
 ```
 
 ```swift
-class User: ResponseObjectSerializable {
+final class User: ResponseObjectSerializable {
     let username: String
     let name: String
 
@@ -687,8 +687,8 @@ enum Router: URLRequestConvertible {
 
     var URLRequest: NSURLRequest {
         let URL = NSURL(string: Router.baseURLString)
-        let mutableURLRequest = NSMutableURLRequest(URL: URL.URLByAppendingPathComponent(path))
-        mutableURLRequest.HTTPMethod = method.toRaw()
+        let mutableURLRequest = NSMutableURLRequest(URL: URL!.URLByAppendingPathComponent(path))
+        mutableURLRequest.HTTPMethod = method.rawValue
 
         if let token = Router.OAuthToken {
             mutableURLRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")

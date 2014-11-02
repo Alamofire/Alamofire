@@ -29,8 +29,8 @@ class AlamofireManagerTestCase: XCTestCase {
         let manager = Alamofire.Manager()
         manager.startRequestsImmediately = false
 
-        let URL = "http://httpbin.org/get"
-        let URLRequest = NSURLRequest(URL: NSURL(string: URL))
+        let URL = NSURL(string: "http://httpbin.org/get")!
+        let URLRequest = NSURLRequest(URL: URL)
 
         let expectation = expectationWithDescription("\(URL)")
 

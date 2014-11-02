@@ -86,7 +86,7 @@ class DetailViewController: UITableViewController {
     // MARK: UITableViewDataSource
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch Sections.fromRaw(section)! {
+        switch Sections(rawValue: section)! {
         case .Headers:
             return self.headers.count
         case .Body:
@@ -98,20 +98,20 @@ class DetailViewController: UITableViewController {
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
-        switch Sections.fromRaw(indexPath.section)! {
+        switch Sections(rawValue: indexPath.section)! {
         case .Headers:
             let cell = self.tableView.dequeueReusableCellWithIdentifier("Header") as UITableViewCell
             let field = self.headers.keys.array.sorted(<)[indexPath.row]
             let value = self.headers[field]
 
-            cell.textLabel!.text = field
+            cell.textLabel.text = field
             cell.detailTextLabel!.text = value
 
             return cell
         case .Body:
             let cell = self.tableView.dequeueReusableCellWithIdentifier("Body") as UITableViewCell
 
-            cell.textLabel!.text = self.body
+            cell.textLabel.text = self.body
 
             return cell
         }
@@ -128,7 +128,7 @@ class DetailViewController: UITableViewController {
             return ""
         }
 
-        switch Sections.fromRaw(section)! {
+        switch Sections(rawValue: section)! {
         case .Headers:
             return "Headers"
         case .Body:
@@ -137,7 +137,7 @@ class DetailViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        switch Sections.fromRaw(indexPath.section)! {
+        switch Sections(rawValue: indexPath.section)! {
         case .Body:
             return 300
         default:
@@ -146,7 +146,7 @@ class DetailViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String {
-        if Sections.fromRaw(section)! == .Body && self.elapsedTime != nil {
+        if Sections(rawValue: section)! == .Body && self.elapsedTime != nil {
             let numberFormatter = NSNumberFormatter()
             numberFormatter.numberStyle = .DecimalStyle
 

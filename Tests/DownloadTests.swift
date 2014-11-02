@@ -63,15 +63,18 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, error: &fileManagerError)!
                 XCTAssertNil(fileManagerError, "fileManagerError should be nil")
 
-                let predicate = NSPredicate(format: "lastPathComponent = '\(numberOfLines)'")
+                let predicate = NSPredicate(format: "lastPathComponent = '\(numberOfLines)'")!
                 let filteredContents = (contents as NSArray).filteredArrayUsingPredicate(predicate)
                 XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
 
                 let file = filteredContents.first as NSURL
                 XCTAssertEqual(file.lastPathComponent, "\(numberOfLines)", "filename should be \(numberOfLines)")
 
-                let data = NSData(contentsOfURL: file)
-                XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
+                if let data = NSData(contentsOfURL: file) {
+                    XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
+                } else {
+                    XCTFail("data should exist for contents of URL")
+                }
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
@@ -91,9 +94,9 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
         download.progress { (bytesRead, totalBytesRead, totalBytesExpectedToRead) -> Void in
             expectation.fulfill()
 
-            XCTAssertGreaterThan(bytesRead, 0, "bytesRead should be > 0")
-            XCTAssertGreaterThan(totalBytesRead, 0, "totalBytesRead should be > 0")
-            XCTAssertEqual(totalBytesExpectedToRead, -1, "totalBytesExpectedToRead should be -1")
+            XCTAssert(bytesRead > 0, "bytesRead should be > 0")
+            XCTAssert(totalBytesRead > 0, "totalBytesRead should be > 0")
+            XCTAssert(totalBytesExpectedToRead == -1, "totalBytesExpectedToRead should be -1")
 
             download.cancel()
         }
