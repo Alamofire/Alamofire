@@ -25,22 +25,27 @@ import Alamofire
 import XCTest
 
 class AlamofireDownloadResponseTestCase: XCTestCase {
+
+
     let searchPathDirectory: NSSearchPathDirectory = .DocumentDirectory
     let searchPathDomain: NSSearchPathDomainMask = .UserDomainMask
-
+    let numberOfLines = 100
+    
     override func tearDown() {
         let fileManager = NSFileManager.defaultManager()
         let directory = fileManager.URLsForDirectory(searchPathDirectory, inDomains: searchPathDomain)[0] as NSURL
         let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, error: nil)!
-        for file in contents {
-            fileManager.removeItemAtURL(file as NSURL, error: nil)
+        for file in contents {            
+            if ((file as NSURL).lastPathComponent == "\(numberOfLines)" || (file as NSURL).lastPathComponent == "\(numberOfLines).json") {
+                fileManager.removeItemAtURL(file as NSURL, error: nil)
+            }
         }
     }
 
     // MARK: -
 
     func testDownloadRequest() {
-        let numberOfLines = 100
+
         let URL = "http://httpbin.org/stream/\(numberOfLines)"
 
         let expectation = expectationWithDescription(URL)
@@ -63,17 +68,23 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, error: &fileManagerError)!
                 XCTAssertNil(fileManagerError, "fileManagerError should be nil")
 
-                let predicate = NSPredicate(format: "lastPathComponent = '\(numberOfLines)'")!
+                let predicate = NSPredicate(format: "lastPathComponent = '\(self.numberOfLines)'")!
                 let filteredContents = (contents as NSArray).filteredArrayUsingPredicate(predicate)
-                XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
-
-                let file = filteredContents.first as NSURL
-                XCTAssertEqual(file.lastPathComponent, "\(numberOfLines)", "filename should be \(numberOfLines)")
-
-                if let data = NSData(contentsOfURL: file) {
-                    XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
-                } else {
-                    XCTFail("data should exist for contents of URL")
+                
+                XCTAssertNotNil(filteredContents, "filteredContents should not be nil")
+                
+                if (filteredContents.isEmpty) {
+                    XCTAssertNotNil(filteredContents.first, "filteredContents is empty")
+                }
+                
+                if (!filteredContents.isEmpty) {
+                    let file = filteredContents.first as NSURL
+                    XCTAssertEqual(file.lastPathComponent, "\(self.numberOfLines)", "filename should be \(self.numberOfLines)")
+                    if let data = NSData(contentsOfURL: file) {
+                        XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
+                    } else {
+                        XCTFail("data should exist for contents of URL")
+                    }
                 }
         }
 
@@ -83,7 +94,7 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
     }
 
     func testDownloadRequestWithProgress() {
-        let numberOfLines = 100
+        
         let URL = "http://httpbin.org/stream/\(numberOfLines)"
 
         let expectation = expectationWithDescription(URL)
