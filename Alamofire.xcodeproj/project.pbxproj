@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4EC1C1531A0BEEA60026ED0B /* AlamofireOSX.h in Headers */ = {isa = PBXBuildFile; fileRef = 4EC1C1521A0BEEA60026ED0B /* AlamofireOSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		4EC1C1591A0BEEA60026ED0B /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EC1C14E1A0BEEA60026ED0B /* Alamofire.framework */; };
+		4EC1C1591A0BEEA60026ED0B /* AlamofireOSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EC1C14E1A0BEEA60026ED0B /* AlamofireOSX.framework */; };
 		4EC1C1671A0BEEB70026ED0B /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4EC1C1681A0BEEBB0026ED0B /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
 		4EC1C1691A0BEECF0026ED0B /* ParameterEncodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */; };
@@ -50,7 +50,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4EC1C14E1A0BEEA60026ED0B /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4EC1C14E1A0BEEA60026ED0B /* AlamofireOSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AlamofireOSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4EC1C1521A0BEEA60026ED0B /* AlamofireOSX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AlamofireOSX.h; path = ../AlamofireOSX/AlamofireOSX.h; sourceTree = "<group>"; };
 		4EC1C1581A0BEEA60026ED0B /* AlamofireOSXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AlamofireOSXTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3319A95C8B0040E7D1 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,7 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4EC1C1591A0BEEA60026ED0B /* Alamofire.framework in Frameworks */,
+				4EC1C1591A0BEEA60026ED0B /* AlamofireOSX.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +117,7 @@
 			children = (
 				F8111E3319A95C8B0040E7D1 /* Alamofire.framework */,
 				F8111E3E19A95C8B0040E7D1 /* AlamofireTests.xctest */,
-				4EC1C14E1A0BEEA60026ED0B /* Alamofire.framework */,
+				4EC1C14E1A0BEEA60026ED0B /* AlamofireOSX.framework */,
 				4EC1C1581A0BEEA60026ED0B /* AlamofireOSXTests.xctest */,
 			);
 			name = Products;
@@ -204,7 +204,7 @@
 			);
 			name = AlamofireOSX;
 			productName = AlamofireOSX;
-			productReference = 4EC1C14E1A0BEEA60026ED0B /* Alamofire.framework */;
+			productReference = 4EC1C14E1A0BEEA60026ED0B /* AlamofireOSX.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		4EC1C1571A0BEEA60026ED0B /* AlamofireOSXTests */ = {
@@ -401,7 +401,7 @@
 		4EC1C1621A0BEEA60026ED0B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -416,8 +416,8 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_MODULE_NAME = Alamofire;
-				PRODUCT_NAME = Alamofire;
+				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
@@ -426,7 +426,7 @@
 		4EC1C1631A0BEEA60026ED0B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
@@ -438,8 +438,8 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
-				PRODUCT_MODULE_NAME = Alamofire;
-				PRODUCT_NAME = Alamofire;
+				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
