@@ -401,6 +401,7 @@
 		4EC1C1621A0BEEA60026ED0B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -425,6 +426,7 @@
 		4EC1C1631A0BEEA60026ED0B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
@@ -640,6 +642,7 @@
 				4EC1C1631A0BEEA60026ED0B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4EC1C1641A0BEEA60026ED0B /* Build configuration list for PBXNativeTarget "AlamofireOSXTests" */ = {
 			isa = XCConfigurationList;
@@ -648,6 +651,7 @@
 				4EC1C1661A0BEEA60026ED0B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F8111E2D19A95C8B0040E7D1 /* Build configuration list for PBXProject "Alamofire" */ = {
 			isa = XCConfigurationList;
