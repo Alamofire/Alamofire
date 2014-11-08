@@ -633,7 +633,7 @@ enum Router: URLRequestConvertible {
         }()
 
         let URL = NSURL(string: Router.baseURLString)
-        let URLRequest = NSURLRequest(URL: URL.URLByAppendingPathComponent(path))
+        let URLRequest = NSURLRequest(URL: URL!.URLByAppendingPathComponent(path))
         let encoding = Alamofire.ParameterEncoding.URL
 
         return encoding.encode(URLRequest, parameters: parameters).0
