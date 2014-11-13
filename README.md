@@ -190,7 +190,7 @@ enum ParameterEncoding {
 #### Manual Parameter Encoding of an NSURLRequest
 
 ```swift
-let URL = NSURL(string: "http://httpbin.org/get")
+let URL = NSURL(string: "http://httpbin.org/get")!
 var request = NSURLRequest(URL: URL)
 
 let parameters = ["foo": "bar"]
@@ -632,7 +632,7 @@ enum Router: URLRequestConvertible {
             }
         }()
 
-        let URL = NSURL(string: Router.baseURLString)
+        let URL = NSURL(string: Router.baseURLString)!
         let URLRequest = NSURLRequest(URL: URL.URLByAppendingPathComponent(path))
         let encoding = Alamofire.ParameterEncoding.URL
 
@@ -686,7 +686,7 @@ enum Router: URLRequestConvertible {
     // MARK: URLRequestConvertible
 
     var URLRequest: NSURLRequest {
-        let URL = NSURL(string: Router.baseURLString)
+        let URL = NSURL(string: Router.baseURLString)!
         let mutableURLRequest = NSMutableURLRequest(URL: URL!.URLByAppendingPathComponent(path))
         mutableURLRequest.HTTPMethod = method.rawValue
 
