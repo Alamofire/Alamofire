@@ -1337,8 +1337,8 @@ extension Request {
 
         :returns: The request.
     */
-    public func responseString(encoding: NSStringEncoding = NSUTF8StringEncoding, completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
-        return response(serializer: Request.stringResponseSerializer(encoding: encoding), completionHandler: { request, response, string, error in
+    public func responseString(queue: dispatch_queue_t? = nil, encoding: NSStringEncoding = NSUTF8StringEncoding, completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
+        return response(queue: queue, serializer: Request.stringResponseSerializer(encoding: encoding), completionHandler: { request, response, string, error in
             completionHandler(request, response, string as? String, error)
         })
     }
@@ -1386,8 +1386,8 @@ extension Request {
 
         :returns: The request.
     */
-    public func responseJSON(options: NSJSONReadingOptions = .AllowFragments, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.JSONResponseSerializer(options: options), completionHandler: { (request, response, JSON, error) in
+    public func responseJSON(queue: dispatch_queue_t? = nil, options: NSJSONReadingOptions = .AllowFragments, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+        return response(queue: queue, serializer: Request.JSONResponseSerializer(options: options), completionHandler: { (request, response, JSON, error) in
             completionHandler(request, response, JSON, error)
         })
     }
@@ -1435,8 +1435,8 @@ extension Request {
 
         :returns: The request.
     */
-    public func responsePropertyList(options: NSPropertyListReadOptions = 0, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.propertyListResponseSerializer(options: options), completionHandler: { (request, response, plist, error) in
+    public func responsePropertyList(queue: dispatch_queue_t? = nil, options: NSPropertyListReadOptions = 0, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+        return response(queue: queue, serializer: Request.propertyListResponseSerializer(options: options), completionHandler: { (request, response, plist, error) in
             completionHandler(request, response, plist, error)
         })
     }
