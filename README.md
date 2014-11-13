@@ -375,7 +375,7 @@ debugPrintln(request)
 
 #### Output (cURL)
 
-```
+```bash
 $ curl -i \
 	-H "User-Agent: Alamofire" \
 	-H "Accept-Encoding: Accept-Encoding: gzip;q=1.0,compress;q=0.5" \
