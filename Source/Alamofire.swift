@@ -24,6 +24,9 @@ import Foundation
 
 /// Alamofire errors
 public let AlamofireErrorDomain = "com.alamofire.error"
+public enum AlamofireErrorCodes: Int {
+    case UnacceptableContentType, InvalidStatusCode
+}
 
 /**
     HTTP method definitions.
@@ -840,7 +843,7 @@ extension Request {
     /**
         A closure used to validate a request that takes a URL request and URL response, and returns whether the request was valid.
     */
-    public typealias Validation = (NSURLRequest, NSHTTPURLResponse) -> (Bool)
+    public typealias Validation = (NSURLRequest, NSHTTPURLResponse) -> NSError?
 
     /**
         Validates the request, using the specified closure.
@@ -854,8 +857,8 @@ extension Request {
     public func validate(validation: Validation) -> Self {
         dispatch_async(delegate.queue) {
             if self.response != nil && self.delegate.error == nil {
-                if !validation(self.request, self.response!) {
-                    self.delegate.error = NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
+                if let error = validation(self.request, self.response!) {
+                    self.delegate.error = error
                 }
             }
         }
@@ -865,8 +868,11 @@ extension Request {
 
     // MARK: Status Code
 
-    private class func response(response: NSHTTPURLResponse, hasAcceptableStatusCode statusCodes: [Int]) -> Bool {
-        return contains(statusCodes, response.statusCode)
+    private class func response(response: NSHTTPURLResponse, hasAcceptableStatusCode statusCodes: [Int]) -> NSError? {
+        if contains(statusCodes, response.statusCode) {
+            return nil
+        }
+        return NSError(domain: AlamofireErrorDomain, code: AlamofireErrorCodes.InvalidStatusCode.rawValue, userInfo: ["ActualValue": response.statusCode])
     }
 
     /**
@@ -922,17 +928,18 @@ extension Request {
         }
     }
 
-    private class func response(response: NSHTTPURLResponse, hasAcceptableContentType contentTypes: [String]) -> Bool {
+    private class func response(response: NSHTTPURLResponse, hasAcceptableContentType contentTypes: [String]) -> NSError? {
         if response.MIMEType != nil {
             let responseMIMEType = MIMEType(response.MIMEType!)
             for acceptableMIMEType in contentTypes.map({MIMEType($0)}) {
                 if acceptableMIMEType.matches(responseMIMEType) {
-                    return true
+                    return nil
                 }
             }
+            return NSError(domain: AlamofireErrorDomain, code: AlamofireErrorCodes.UnacceptableContentType.rawValue, userInfo: ["ActualValue": response.MIMEType!])
         }
 
-        return false
+        return NSError(domain: AlamofireErrorDomain, code: AlamofireErrorCodes.UnacceptableContentType.rawValue, userInfo: nil)
     }
 
     /**
