@@ -1263,21 +1263,25 @@ extension Request: DebugPrintable {
             }
         }
 
-        for (field, value) in request.allHTTPHeaderFields! {
-            switch field {
-            case "Cookie":
-                continue
-            default:
-                components.append("-H \"\(field): \(value)\"")
+        if request.allHTTPHeaderFields != nil {
+            for (field, value) in request.allHTTPHeaderFields! {
+                switch field {
+                case "Cookie":
+                    continue
+                default:
+                    components.append("-H \"\(field): \(value)\"")
+                }
             }
         }
 
-        for (field, value) in session.configuration.HTTPAdditionalHeaders! {
-            switch field {
-            case "Cookie":
-                continue
-            default:
-                components.append("-H \"\(field): \(value)\"")
+        if session.configuration.HTTPAdditionalHeaders != nil {
+            for (field, value) in session.configuration.HTTPAdditionalHeaders! {
+                switch field {
+                case "Cookie":
+                    continue
+                default:
+                    components.append("-H \"\(field): \(value)\"")
+                }
             }
         }
         
