@@ -127,4 +127,28 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
         XCTAssert(request.debugDescription.rangeOfString("-d \"{\\\"foo\\\":\\\"bar\\\"}\"") != nil)
         XCTAssert(components.last! == "\"\(URL)\"", "URL component should be equal")
     }
+
+    func testPOSTRequestWithCookieDebugDescription() {
+        let URL = "http://httpbin.org/post"
+
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+
+        let properties = [
+            NSHTTPCookieDomain: "httpbin.org",
+            NSHTTPCookiePath: "/post",
+            NSHTTPCookieName: "foo",
+            NSHTTPCookieValue: "bar",
+        ]
+        let cookie = NSHTTPCookie(properties: properties)!
+        configuration.HTTPCookieStorage?.setCookie(cookie)
+
+        let manager = Alamofire.Manager(configuration: configuration)
+        let request = manager.request(.POST, URL)
+        let components = cURLCommandComponents(request)
+
+        XCTAssert(components[0..<3] == ["$", "curl", "-i"], "components should be equal")
+        XCTAssert(components[3..<5] == ["-X", "POST"], "command should contain explicit -X flag")
+        XCTAssert(components[5..<7] == ["-b", "\"foo=bar\""], "command should contain -b flag")
+        XCTAssert(components.last! == "\"\(URL)\"", "URL component should be equal")
+    }
 }
