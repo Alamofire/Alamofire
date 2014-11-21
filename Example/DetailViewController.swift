@@ -104,14 +104,14 @@ class DetailViewController: UITableViewController {
             let field = self.headers.keys.array.sorted(<)[indexPath.row]
             let value = self.headers[field]
 
-            cell.textLabel.text = field
+            cell.textLabel?.text = field
             cell.detailTextLabel!.text = value
 
             return cell
         case .Body:
             let cell = self.tableView.dequeueReusableCellWithIdentifier("Body") as UITableViewCell
 
-            cell.textLabel.text = self.body
+            cell.textLabel?.text = self.body
 
             return cell
         }
