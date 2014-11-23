@@ -498,7 +498,7 @@ Generics can be used to provide automatic, type-safe response object serializati
 
 ```swift
 @objc public protocol ResponseObjectSerializable {
-    init(response: NSHTTPURLResponse, representation: AnyObject)
+    init?(response: NSHTTPURLResponse, representation: AnyObject)
 }
 
 extension Alamofire.Request {
@@ -514,7 +514,7 @@ extension Alamofire.Request {
         }
 
         return response(serializer: serializer, completionHandler: { (request, response, object, error) in
-            completionHandler(request, response, object as? T, error)
+            completionHandler(request, response, object, error)
         })
     }
 }
@@ -525,7 +525,7 @@ final class User: ResponseObjectSerializable {
     let username: String
     let name: String
 
-    required init(response: NSHTTPURLResponse, representation: AnyObject) {
+    required init?(response: NSHTTPURLResponse, representation: AnyObject) {
         self.username = response.URL!.lastPathComponent
         self.name = representation.valueForKeyPath("name") as String
     }
