@@ -991,7 +991,8 @@ extension Manager {
             uploadTask = session.uploadTaskWithRequest(request, fromData: data)
         case .File(let request, let fileURL):
             uploadTask = session.uploadTaskWithRequest(request, fromFile: fileURL)
-        case .Stream(let request, var stream):
+        case .Stream(let request, var aStream):
+            stream = aStream
             uploadTask = session.uploadTaskWithStreamedRequest(request)
         }
 
