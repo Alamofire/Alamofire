@@ -55,6 +55,7 @@ class AlamofireStatusCodeValidationTestCase: XCTestCase {
 
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
+                XCTAssertEqual(error!.code, AlamofireErrorCodes.InvalidStatusCode.rawValue, "error should have invalid status code code")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
@@ -74,6 +75,7 @@ class AlamofireStatusCodeValidationTestCase: XCTestCase {
 
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
+                XCTAssertEqual(error!.code, AlamofireErrorCodes.InvalidStatusCode.rawValue, "error should have invalid status code code")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
@@ -133,6 +135,7 @@ class AlamofireContentTypeValidationTestCase: XCTestCase {
 
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
+                XCTAssertEqual(error!.code, AlamofireErrorCodes.UnacceptableContentType.rawValue, "error should have unacceptable content type code")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
@@ -152,6 +155,7 @@ class AlamofireContentTypeValidationTestCase: XCTestCase {
 
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
+                XCTAssertEqual(error!.code, AlamofireErrorCodes.UnacceptableContentType.rawValue, "error should have unacceptable content type code")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
@@ -234,6 +238,7 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
 
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
+                XCTAssertEqual(error!.code, AlamofireErrorCodes.InvalidStatusCode.rawValue, "error should have invalid status code code")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
