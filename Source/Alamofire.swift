@@ -95,12 +95,13 @@ public enum ParameterEncoding {
             }
 
             func encodesParametersInURL(method: Method) -> Bool {
-                switch method {
+                /*switch method {
                 case .GET, .HEAD, .DELETE:
                     return true
                 default:
                     return false
-                }
+                }*/
+                return true
             }
 
             let method = Method(rawValue: mutableURLRequest.HTTPMethod)
