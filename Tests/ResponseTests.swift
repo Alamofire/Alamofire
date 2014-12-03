@@ -44,4 +44,22 @@ class AlamofireJSONResponseTestCase: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
+
+    func testJSONResponseWithEmptyBody() {
+        let URL = "http://httpbin.org/status/204"
+        let expectation = expectationWithDescription("\(URL)")
+
+        Alamofire.request(.GET, URL)
+            .responseJSON { (request, response, JSON, error) in
+                expectation.fulfill()
+                XCTAssertNotNil(request, "request should not be nil")
+                XCTAssertNotNil(response, "response should not be nil")
+                XCTAssertNil(JSON, "JSON should be nil")
+                XCTAssertNil(error, "error should be nil")
+        }
+
+        waitForExpectationsWithTimeout(10) { (error) in
+            XCTAssertNil(error, "\(error)")
+        }
+    }
 }

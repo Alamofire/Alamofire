@@ -1234,7 +1234,7 @@ extension Request: Printable {
 
 extension Request: DebugPrintable {
     func cURLRepresentation() -> String {
-        var components: [String] = ["$ curl -i"]
+        var components: [String] = ["$ curl -i --compressed"]
 
         let URL = request.URL
 
@@ -1361,7 +1361,7 @@ extension Request {
     */
     public class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> Serializer {
         return { (request, response, data) in
-            if data == nil {
+            if data == nil || data!.length == 0 {
                 return (nil, nil)
             }
 
