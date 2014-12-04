@@ -171,7 +171,27 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
 
         XCTAssertEqual(URLRequest.URL.query!, "arabic=%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9&emoji=%F0%9F%98%83&french=fran%C3%A7ais&japanese=%E6%97%A5%E6%9C%AC%E8%AA%9E", "query is incorrect")
     }
+    
+    func testURLParameterEncodeStringForRequestWithPrecomposedQuery() {
+        
+        let URL = NSURL(string: "http://example.com/movies?hd=[1]")!
+        
+        let parameters = ["page": "0"]
+        let (URLRequest, error) = self.encoding.encode(NSURLRequest(URL: URL), parameters: parameters)
+        
+        XCTAssertEqual(URLRequest.URL.query!, "hd=%5B1%5D&page=0", "query is incorrect")
+    }
 
+    func testURLParameterEncodeStringWithPlusKeyStringWithPlusValueParameterForRequestWithPrecomposedQuery() {
+        
+        let URL = NSURL(string: "http://example.com/movie?hd=[1]")!
+        
+        let parameters = ["+foo+": "+bar+"]
+        let (URLRequest, error) = self.encoding.encode(NSURLRequest(URL: URL), parameters: parameters)
+        
+        XCTAssertEqual(URLRequest.URL.query!, "hd=%5B1%5D&%2Bfoo%2B=%2Bbar%2B", "query is incorrect")
+    }
+    
     func testURLParameterEncodeGETParametersInURL() {
         var mutableURLRequest = self.URLRequest.mutableCopy() as NSMutableURLRequest
         mutableURLRequest.HTTPMethod = Method.GET.rawValue
