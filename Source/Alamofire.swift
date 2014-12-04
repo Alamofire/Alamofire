@@ -74,7 +74,7 @@ public enum ParameterEncoding {
 
         :returns: A tuple containing the constructed request and the error that occurred during parameter encoding, if any.
     */
-    public func encode(URLRequest: URLRequestConvertible, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
+    public func encode(URLRequest: URLRequestConvertible, parameters: [String: AnyObject]?, useSquareBracketsArrayParameter: Bool) -> (NSURLRequest, NSError?) {
         if parameters == nil {
             return (URLRequest.URLRequest, nil)
         }
@@ -84,11 +84,12 @@ public enum ParameterEncoding {
 
         switch self {
         case .URL:
+
             func query(parameters: [String: AnyObject]) -> String {
                 var components: [(String, String)] = []
                 for key in sorted(Array(parameters.keys), <) {
                     let value: AnyObject! = parameters[key]
-                    components += queryComponents(key, value)
+                    components += queryComponents(key, value, useSquareBracketsArrayParameter)
                 }
 
                 return join("&", components.map{"\($0)=\($1)"} as [String])
@@ -134,15 +135,15 @@ public enum ParameterEncoding {
         return (mutableURLRequest, error)
     }
 
-    func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
+    func queryComponents(key: String, _ value: AnyObject, _ useSquareBracketsArrayParameter: Bool) -> [(String, String)] {
         var components: [(String, String)] = []
         if let dictionary = value as? [String: AnyObject] {
             for (nestedKey, value) in dictionary {
-                components += queryComponents("\(key)[\(nestedKey)]", value)
+                components += queryComponents("\(key)[\(nestedKey)]", value, useSquareBracketsArrayParameter)
             }
         } else if let array = value as? [AnyObject] {
             for value in array {
-                components += queryComponents("\(key)[]", value)
+                components += queryComponents("\(key)" + (useSquareBracketsArrayParameter ? "[]" : ""), value, useSquareBracketsArrayParameter)
             }
         } else {
             components.extend([(escape(key), escape("\(value)"))])
@@ -281,6 +282,9 @@ public class Manager {
     /// Whether to start requests immediately after being constructed. `true` by default.
     public var startRequestsImmediately: Bool = true
 
+    /// Wether to use `[]` for array parameters
+    public var useSquareBracketsArrayParameter = true
+
     /**
         :param: configuration The configuration used to construct the managed session.
     */
@@ -306,7 +310,7 @@ public class Manager {
         :returns: The created request.
     */
     public func request(method: Method, _ URLString: URLStringConvertible, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-        return request(encoding.encode(URLRequest(method, URLString), parameters: parameters).0)
+        return request(encoding.encode(URLRequest(method, URLString), parameters: parameters, useSquareBracketsArrayParameter: useSquareBracketsArrayParameter).0)
     }
 
 
@@ -1469,7 +1473,7 @@ private func URLRequest(method: Method, URL: URLStringConvertible) -> NSURLReque
     :returns: The created request.
 */
 public func request(method: Method, URLString: URLStringConvertible, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-    return request(encoding.encode(URLRequest(method, URLString), parameters: parameters).0)
+    return request(encoding.encode(URLRequest(method, URLString), parameters: parameters, useSquareBracketsArrayParameter: Manager.sharedInstance.useSquareBracketsArrayParameter).0)
 }
 
 /**
