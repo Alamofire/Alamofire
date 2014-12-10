@@ -1361,7 +1361,7 @@ extension Request {
     */
     public class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> Serializer {
         return { (request, response, data) in
-            if data == nil {
+            if data == nil || data?.length == 0 {
                 return (nil, nil)
             }
 
@@ -1410,7 +1410,7 @@ extension Request {
     */
     public class func propertyListResponseSerializer(options: NSPropertyListReadOptions = 0) -> Serializer {
         return { (request, response, data) in
-            if data == nil {
+            if data == nil || data?.length == 0 {
                 return (nil, nil)
             }
 
