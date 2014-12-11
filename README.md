@@ -140,14 +140,14 @@ Alamofire.request(.DELETE, "http://httpbin.org/delete")
 
 ### Parameters
 
-#### GET Request With URL-Encoded Parameters
+#### `GET` Request With URL-Encoded Parameters
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 // http://httpbin.org/get?foo=bar
 ```
 
-#### POST Request With URL-Encoded Parameters
+#### `POST` Request With URL-Encoded Parameters
 
 ```swift
 let parameters = [
@@ -198,7 +198,7 @@ let encoding = Alamofire.ParameterEncoding.URL
 (request, _) = encoding.encode(request, parameters)
 ```
 
-#### POST Request with JSON-encoded Parameters
+#### `POST` Request with JSON-encoded Parameters
 
 ```swift
 let parameters = [
