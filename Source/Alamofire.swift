@@ -1241,7 +1241,7 @@ extension Request: Printable {
 
 extension Request: DebugPrintable {
     func cURLRepresentation() -> String {
-        var components: [String] = ["$ curl -i"]
+        var components: [String] = ["$ curl -i --compressed"]
 
         let URL = request.URL
 

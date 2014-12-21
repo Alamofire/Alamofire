@@ -101,7 +101,7 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
         let request = Alamofire.request(.GET, URL)
         let components = cURLCommandComponents(request)
 
-        XCTAssert(components[0..<3] == ["$", "curl", "-i"], "components should be equal")
+        XCTAssert(components[0..<4] == ["$", "curl", "-i", "--compressed"], "components should be equal")
         XCTAssert(!contains(components, "-X"), "command should not contain explicit -X flag")
         XCTAssert(components.last! == "\"\(URL)\"", "URL component should be equal")
     }
@@ -111,8 +111,8 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
         let request = Alamofire.request(.POST, URL)
         let components = cURLCommandComponents(request)
 
-        XCTAssert(components[0..<3] == ["$", "curl", "-i"], "components should be equal")
-        XCTAssert(components[3..<5] == ["-X", "POST"], "command should contain explicit -X flag")
+        XCTAssert(components[0..<4] == ["$", "curl", "-i", "--compressed"], "components should be equal")
+        XCTAssert(components[4..<6] == ["-X", "POST"], "command should contain explicit -X flag")
         XCTAssert(components.last! == "\"\(URL)\"", "URL component should be equal")
     }
 
@@ -121,8 +121,8 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
         let request = Alamofire.request(.POST, URL, parameters: ["foo": "bar"], encoding: .JSON)
         let components = cURLCommandComponents(request)
 
-        XCTAssert(components[0..<3] == ["$", "curl", "-i"], "components should be equal")
-        XCTAssert(components[3..<5] == ["-X", "POST"], "command should contain explicit -X flag")
+        XCTAssert(components[0..<4] == ["$", "curl", "-i", "--compressed"], "components should be equal")
+        XCTAssert(components[4..<6] == ["-X", "POST"], "command should contain explicit -X flag")
         XCTAssert(request.debugDescription.rangeOfString("-H \"Content-Type: application/json\"") != nil)
         XCTAssert(request.debugDescription.rangeOfString("-d \"{\\\"foo\\\":\\\"bar\\\"}\"") != nil)
         XCTAssert(components.last! == "\"\(URL)\"", "URL component should be equal")
@@ -146,9 +146,9 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
         let request = manager.request(.POST, URL)
         let components = cURLCommandComponents(request)
 
-        XCTAssert(components[0..<3] == ["$", "curl", "-i"], "components should be equal")
-        XCTAssert(components[3..<5] == ["-X", "POST"], "command should contain explicit -X flag")
-        XCTAssert(components[5..<7] == ["-b", "\"foo=bar\""], "command should contain -b flag")
+        XCTAssert(components[0..<4] == ["$", "curl", "-i", "--compressed"], "components should be equal")
+        XCTAssert(components[4..<6] == ["-X", "POST"], "command should contain explicit -X flag")
+        XCTAssert(components[6..<8] == ["-b", "\"foo=bar\""], "command should contain -b flag")
         XCTAssert(components.last! == "\"\(URL)\"", "URL component should be equal")
     }
 }
