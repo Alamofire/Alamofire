@@ -42,5 +42,19 @@ class AlamofireManagerTestCase: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
-}
 
+    func testReleasingManagerWithPendingRequestDeinitializesSuccessfully() {
+        var manager: Manager? = Alamofire.Manager()
+        manager!.startRequestsImmediately = false
+
+        let URL = NSURL(string: "http://httpbin.org/get")!
+        let URLRequest = NSURLRequest(URL: URL)
+
+        let request = manager!.request(URLRequest)
+
+        manager = nil
+
+        XCTAssert(request.task.state == .Suspended)
+        XCTAssertNil(manager)
+    }
+}

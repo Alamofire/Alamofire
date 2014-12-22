@@ -296,10 +296,6 @@ public class Manager {
         self.session = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
     }
 
-    deinit {
-        self.session.invalidateAndCancel()
-    }
-
     // MARK: -
 
     /**
