@@ -211,6 +211,8 @@ extension NSURLRequest: URLRequestConvertible {
 
 /**
     Responsible for creating and managing `Request` objects, as well as their underlying `NSURLSession`.
+
+    When finished with a manager, be sure to call either `session.finishTasksAndInvalidate()` or `session.invalidateAndCancel()` before deinitialization.
 */
 public class Manager {
 
