@@ -1091,7 +1091,7 @@ extension Manager {
         case ResumeData(NSData)
     }
 
-    private func download(downloadable: Downloadable, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
+    private func download(downloadable: Downloadable, destination: Request.DownloadFileDestination) -> Request {
         var downloadTask: NSURLSessionDownloadTask!
 
         switch downloadable {
@@ -1128,7 +1128,7 @@ extension Manager {
 
         :returns: The created download request.
     */
-    public func download(URLRequest: URLRequestConvertible, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
+    public func download(URLRequest: URLRequestConvertible, destination: Request.DownloadFileDestination) -> Request {
         return download(.Request(URLRequest.URLRequest), destination: destination)
     }
 
@@ -1153,7 +1153,7 @@ extension Request {
     /**
         A closure executed once a request has successfully completed in order to determine where to move the temporary file written to during the download process. The closure takes two arguments: the temporary file URL and the URL response, and returns a single argument: the file URL where the temporary file should be moved.
     */
-    public typealias DownloadFileDestination = (NSURL, NSHTTPURLResponse) -> (NSURL)
+    public typealias DownloadFileDestination = (NSURL, NSHTTPURLResponse) -> (NSURL?)
 
     /**
         Creates a download file destination closure which uses the default file manager to move the temporary file to a file URL in the first available directory with the specified search path directory and search path domain mask.
@@ -1165,12 +1165,12 @@ extension Request {
     */
     public class func suggestedDownloadDestination(directory: NSSearchPathDirectory = .DocumentDirectory, domain: NSSearchPathDomainMask = .UserDomainMask) -> DownloadFileDestination {
 
-        return { (temporaryURL, response) -> (NSURL) in
+        return { (temporaryURL, response) -> (NSURL?) in
             if let directoryURL = NSFileManager.defaultManager().URLsForDirectory(directory, inDomains: domain)[0] as? NSURL {
                 return directoryURL.URLByAppendingPathComponent(response.suggestedFilename!)
             }
 
-            return temporaryURL
+            return nil
         }
     }
 
@@ -1181,7 +1181,7 @@ extension Request {
         var resumeData: NSData?
         override var data: NSData? { return resumeData }
 
-        var downloadTaskDidFinishDownloadingToURL: ((NSURLSession!, NSURLSessionDownloadTask!, NSURL) -> (NSURL))?
+        var downloadTaskDidFinishDownloadingToURL: ((NSURLSession!, NSURLSessionDownloadTask!, NSURL) -> (NSURL?))?
         var downloadTaskDidWriteData: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64, Int64) -> Void)?
         var downloadTaskDidResumeAtOffset: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64) -> Void)?
 
@@ -1189,12 +1189,13 @@ extension Request {
 
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
             if downloadTaskDidFinishDownloadingToURL != nil {
-                let destination = downloadTaskDidFinishDownloadingToURL!(session, downloadTask, location)
-                var fileManagerError: NSError?
+                if let destination = downloadTaskDidFinishDownloadingToURL!(session, downloadTask, location) {
+                    var fileManagerError: NSError?
 
-                NSFileManager.defaultManager().moveItemAtURL(location, toURL: destination, error: &fileManagerError)
-                if fileManagerError != nil {
-                    error = fileManagerError
+                    NSFileManager.defaultManager().moveItemAtURL(location, toURL: destination, error: &fileManagerError)
+                    if fileManagerError != nil {
+                        error = fileManagerError
+                    }
                 }
             }
         }
