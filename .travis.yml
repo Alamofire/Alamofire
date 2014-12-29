@@ -1,0 +1,7 @@
+language: objective-c
+before_install:
+- gem install xcpretty
+script:
+- set -o pipefail
+- xcodebuild -project Alamofire.xcodeproj -scheme Alamofire test -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty -c
+- xcodebuild -project "iOS Example.xcodeproj" -scheme "iOS Example" build -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty -c
