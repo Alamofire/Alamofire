@@ -514,7 +514,7 @@ extension Alamofire.Request {
         }
 
         return response(serializer: serializer, completionHandler: { (request, response, object, error) in
-            completionHandler(request, response, object, error)
+            completionHandler(request, response, object as T?, error)
         })
     }
 }
