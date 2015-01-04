@@ -1073,12 +1073,10 @@ extension Request {
         // MARK: NSURLSessionTaskDelegate
 
         func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-            if uploadProgress != nil {
-                uploadProgress(bytesSent, totalBytesSent, totalBytesExpectedToSend)
-            }
-
             progress.totalUnitCount = totalBytesExpectedToSend
             progress.completedUnitCount = totalBytesSent
+
+            uploadProgress?(bytesSent, totalBytesSent, totalBytesExpectedToSend)
         }
     }
 }
@@ -1200,19 +1198,19 @@ extension Request {
         }
 
         func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+            progress.totalUnitCount = totalBytesExpectedToWrite
+            progress.completedUnitCount = totalBytesWritten
+
             downloadTaskDidWriteData?(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
 
             downloadProgress?(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
-
-            progress.totalUnitCount = totalBytesExpectedToWrite
-            progress.completedUnitCount = totalBytesWritten
         }
 
         func URLSession(session: NSURLSession!, downloadTask: NSURLSessionDownloadTask!, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
-            downloadTaskDidResumeAtOffset?(session, downloadTask, fileOffset, expectedTotalBytes)
-
             progress.totalUnitCount = expectedTotalBytes
             progress.completedUnitCount = fileOffset
+
+            downloadTaskDidResumeAtOffset?(session, downloadTask, fileOffset, expectedTotalBytes)
         }
     }
 }
