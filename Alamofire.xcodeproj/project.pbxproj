@@ -138,9 +138,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		F8111E3219A95C8B0040E7D1 /* Alamofire */ = {
+		F8111E3219A95C8B0040E7D1 /* Alamofire iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F8111E4619A95C8B0040E7D1 /* Build configuration list for PBXNativeTarget "Alamofire" */;
+			buildConfigurationList = F8111E4619A95C8B0040E7D1 /* Build configuration list for PBXNativeTarget "Alamofire iOS" */;
 			buildPhases = (
 				F8111E2E19A95C8B0040E7D1 /* Sources */,
 				F8111E2F19A95C8B0040E7D1 /* Frameworks */,
@@ -151,7 +151,7 @@
 			);
 			dependencies = (
 			);
-			name = Alamofire;
+			name = "Alamofire iOS";
 			productName = Alamofire;
 			productReference = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */;
 			productType = "com.apple.product-type.framework";
@@ -203,7 +203,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F8111E3219A95C8B0040E7D1 /* Alamofire */,
+				F8111E3219A95C8B0040E7D1 /* Alamofire iOS */,
 				F8111E3D19A95C8B0040E7D1 /* AlamofireTests */,
 			);
 		};
@@ -255,7 +255,7 @@
 /* Begin PBXTargetDependency section */
 		F8111E6619A967880040E7D1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F8111E3219A95C8B0040E7D1 /* Alamofire */;
+			target = F8111E3219A95C8B0040E7D1 /* Alamofire iOS */;
 			targetProxy = F8111E6519A967880040E7D1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -358,7 +358,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Alamofire;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -377,7 +377,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Alamofire;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
@@ -425,7 +425,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F8111E4619A95C8B0040E7D1 /* Build configuration list for PBXNativeTarget "Alamofire" */ = {
+		F8111E4619A95C8B0040E7D1 /* Build configuration list for PBXNativeTarget "Alamofire iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F8111E4719A95C8B0040E7D1 /* Debug */,

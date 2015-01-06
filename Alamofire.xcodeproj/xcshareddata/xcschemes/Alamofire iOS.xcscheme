@@ -16,16 +16,16 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F8111E3219A95C8B0040E7D1"
                BuildableName = "Alamofire.framework"
-               BlueprintName = "Alamofire"
+               BlueprintName = "Alamofire iOS"
                ReferencedContainer = "container:Alamofire.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
-            buildForRunning = "NO"
+            buildForRunning = "YES"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
+            buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F8111E3D19A95C8B0040E7D1"
@@ -58,7 +58,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F8111E3219A95C8B0040E7D1"
             BuildableName = "Alamofire.framework"
-            BlueprintName = "Alamofire"
+            BlueprintName = "Alamofire iOS"
             ReferencedContainer = "container:Alamofire.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -77,7 +77,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F8111E3219A95C8B0040E7D1"
             BuildableName = "Alamofire.framework"
-            BlueprintName = "Alamofire"
+            BlueprintName = "Alamofire iOS"
             ReferencedContainer = "container:Alamofire.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -95,7 +95,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F8111E3219A95C8B0040E7D1"
             BuildableName = "Alamofire.framework"
-            BlueprintName = "Alamofire"
+            BlueprintName = "Alamofire iOS"
             ReferencedContainer = "container:Alamofire.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
