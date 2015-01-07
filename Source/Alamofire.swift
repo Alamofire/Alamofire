@@ -1452,9 +1452,14 @@ extension Request {
 
 // MARK: Image
 
+#if os(iOS)
 import UIKit
+#elseif os(OSX)
+import Cocoa
+#endif
 
 extension Request {
+#if os(iOS)
     /**
         Creates a response serializer that returns an image initialized from the response data using the specified image options.
 
@@ -1517,18 +1522,6 @@ extension Request {
                 completionHandler(request, response, data, error)
             }
         )
-    }
-
-    private class func validateResponse(response: NSHTTPURLResponse?) -> Bool {
-        let acceptableContentTypes = NSSet(objects: "image/tiff", "image/jpeg", "image/gif", "image/png", "image/ico", "image/x-icon", "image/bmp", "image/x-bmp", "image/x-xbitmap", "image/x-win-bitmap")
-
-        if let mimeType = response?.MIMEType {
-            if acceptableContentTypes.containsObject(mimeType) {
-                return true
-            }
-        }
-
-        return false
     }
 
     private class func imageFromResponseData(data: NSData, imageScale: CGFloat) -> (UIImage?, NSError?) {
@@ -1605,6 +1598,66 @@ extension Request {
         }
 
         return nil
+    }
+
+#elseif os(OSX)
+    /**
+        Creates a response serializer that returns an image initialized from the response data.
+
+        :returns: An image response serializer.
+    */
+    public class func imageResponseSerializer() -> Serializer {
+        return { (request, response, data) in
+            if data == nil {
+                return (nil, Request.imageDataError())
+            }
+
+            if !Request.validateResponse(response) {
+                return (nil, Request.contentTypeValidationError())
+            }
+
+            var image: NSImage? = nil
+            var error: NSError? = nil
+
+            if let bitmapImage = NSBitmapImageRep(data: data!) {
+                image = NSImage(size: NSSize(width: bitmapImage.pixelsWide, height: bitmapImage.pixelsHigh))
+                image!.addRepresentation(bitmapImage)
+            } else {
+                error = Request.imageDataError()
+            }
+
+            return (image, error)
+        }
+    }
+
+    /**
+        Adds a handler to be called once the request has finished.
+
+        :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the image, if one could be created from the URL response and data, and any error produced while creating the image.
+
+        :returns: The request.
+    */
+    public func responseImage(completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+        return response(
+            serializer: Request.imageResponseSerializer(),
+            completionHandler: { (request, response, data, error) in
+                completionHandler(request, response, data, error)
+            }
+        )
+    }
+
+#endif
+
+    private class func validateResponse(response: NSHTTPURLResponse?) -> Bool {
+        let acceptableContentTypes = NSSet(objects: "image/tiff", "image/jpeg", "image/gif", "image/png", "image/ico", "image/x-icon", "image/bmp", "image/x-bmp", "image/x-xbitmap", "image/x-win-bitmap")
+
+        if let mimeType = response?.MIMEType {
+            if acceptableContentTypes.containsObject(mimeType) {
+                return true
+            }
+        }
+
+        return false
     }
 
     private class func contentTypeValidationError() -> NSError {
