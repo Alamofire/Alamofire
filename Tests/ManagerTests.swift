@@ -38,7 +38,7 @@ class AlamofireManagerTestCase: XCTestCase {
             .response { (_,_,_,_) in expectation.fulfill() }
             .resume()
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }

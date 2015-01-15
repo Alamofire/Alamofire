@@ -56,7 +56,7 @@ class AlamofireAuthenticationTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -93,7 +93,7 @@ class AlamofireAuthenticationTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }

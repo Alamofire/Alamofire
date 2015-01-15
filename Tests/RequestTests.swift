@@ -62,7 +62,7 @@ class AlamofireRequestResponseTestCase: XCTestCase {
                     XCTAssertNil(error, "error should be nil")
                  }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -83,7 +83,7 @@ class AlamofireRequestDescriptionTestCase: XCTestCase {
             XCTAssertEqual(request.description, "GET http://httpbin.org/get (\(response!.statusCode))", "incorrect request description")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }

@@ -40,7 +40,7 @@ class AlamofireJSONResponseTestCase: XCTestCase {
                     XCTAssertEqual(JSON!["args"] as NSObject, ["foo": "bar"], "args should be equal")
                  }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -60,7 +60,7 @@ class AlamofireJSONResponseTestCase: XCTestCase {
                 XCTAssertEqual(JSON!["form"] as NSObject, ["foo": "bar"], "args should be equal")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }

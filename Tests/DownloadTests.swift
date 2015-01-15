@@ -83,7 +83,7 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 }
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -107,7 +107,7 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
             download.cancel()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
