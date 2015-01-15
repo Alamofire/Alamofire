@@ -5,5 +5,5 @@ before_install:
 script:
 - set -o pipefail
 - xcodebuild -project Alamofire.xcodeproj -scheme 'Alamofire iOS' test -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO
-- xcodebuild -project Alamofire.xcodeproj -scheme 'Alamofire OSX' test ONLY_ACTIVE_ARCH=NO
+- xcodebuild -project Alamofire.xcodeproj -scheme 'Alamofire OSX' test -sdk macosx10.10 ONLY_ACTIVE_ARCH=NO
 - xcodebuild -project "iOS Example.xcodeproj" -scheme "iOS Example" build -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO
