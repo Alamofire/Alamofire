@@ -1340,13 +1340,14 @@ extension Request {
     /**
         Adds a handler to be called once the request has finished.
 
+        :param: queue The queue on which the completion handler is dispatched.
         :param: encoding The string encoding. `NSUTF8StringEncoding` by default.
         :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the string, if one could be created from the URL response and data, and any error produced while creating the string.
 
         :returns: The request.
     */
-    public func responseString(encoding: NSStringEncoding = NSUTF8StringEncoding, completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
-        return response(serializer: Request.stringResponseSerializer(encoding: encoding), completionHandler: { request, response, string, error in
+    public func responseString(queue: dispatch_queue_t? = nil, encoding: NSStringEncoding = NSUTF8StringEncoding, completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
+        return response(queue: queue, serializer: Request.stringResponseSerializer(encoding: encoding), completionHandler: { request, response, string, error in
             completionHandler(request, response, string as? String, error)
         })
     }
@@ -1389,13 +1390,14 @@ extension Request {
     /**
         Adds a handler to be called once the request has finished.
 
+        :param: queue The queue on which the completion handler is dispatched.
         :param: options The JSON serialization reading options. `.AllowFragments` by default.
         :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the JSON object, if one could be created from the URL response and data, and any error produced while creating the JSON object.
 
         :returns: The request.
     */
-    public func responseJSON(options: NSJSONReadingOptions = .AllowFragments, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.JSONResponseSerializer(options: options), completionHandler: { (request, response, JSON, error) in
+    public func responseJSON(queue: dispatch_queue_t? = nil, options: NSJSONReadingOptions = .AllowFragments, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+        return response(queue: queue, serializer: Request.JSONResponseSerializer(options: options), completionHandler: { (request, response, JSON, error) in
             completionHandler(request, response, JSON, error)
         })
     }
@@ -1438,13 +1440,14 @@ extension Request {
     /**
         Adds a handler to be called once the request has finished.
 
+        :param: queue The queue on which the completion handler is dispatched.
         :param: options The property list reading options. `0` by default.
         :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the property list, if one could be created from the URL response and data, and any error produced while creating the property list.
 
         :returns: The request.
     */
-    public func responsePropertyList(options: NSPropertyListReadOptions = 0, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.propertyListResponseSerializer(options: options), completionHandler: { (request, response, plist, error) in
+    public func responsePropertyList(queue: dispatch_queue_t? = nil, options: NSPropertyListReadOptions = 0, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+        return response(queue: queue, serializer: Request.propertyListResponseSerializer(options: options), completionHandler: { (request, response, plist, error) in
             completionHandler(request, response, plist, error)
         })
     }
