@@ -52,7 +52,7 @@ To integrate Alamofire into your Xcode project using CocoaPods, specify it in yo
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 
-pod 'Alamofire', ~> '1.1'
+pod 'Alamofire', '~> 1.1'
 ```
 
 Then, run the following command:
