@@ -32,9 +32,9 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 
 ## Installation
 
-**Embedded frameworks require a minimum deployment target of iOS 8 or OS X Mavericks.**
-
-To use Alamofire with a project targeting iOS 7, you must include the `Alamofire.swift` source file directly in your project. See the ['Source File'](#source-file) section for instructions.
+> **Embedded frameworks require a minimum deployment target of iOS 8 or OS X Mavericks.**
+>
+> To use Alamofire with a project targeting iOS 7, you must include the `Alamofire.swift` source file directly in your project. See the ['Source File'](#source-file) section for instructions.
 
 ### CocoaPods
 
