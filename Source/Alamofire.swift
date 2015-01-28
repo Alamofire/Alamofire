@@ -415,6 +415,7 @@ public class Manager {
 
         func URLSession(session: NSURLSession!, task: NSURLSessionTask!, willPerformHTTPRedirection response: NSHTTPURLResponse!, newRequest request: NSURLRequest!, completionHandler: ((NSURLRequest!) -> Void)!) {
             var redirectRequest = request
+
             if taskWillPerformHTTPRedirection != nil {
                 redirectRequest = taskWillPerformHTTPRedirection!(session, task, response, request)
             }
@@ -423,7 +424,9 @@ public class Manager {
         }
 
         func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didReceiveChallenge challenge: NSURLAuthenticationChallenge!, completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)!) {
-            if let delegate = self[task] {
+            if taskDidReceiveChallenge != nil {
+                completionHandler(taskDidReceiveChallenge!(session, task, challenge))
+            } else if let delegate = self[task] {
                 delegate.URLSession(session, task: task, didReceiveChallenge: challenge, completionHandler: completionHandler)
             } else {
                 URLSession(session, didReceiveChallenge: challenge, completionHandler: completionHandler)
@@ -431,19 +434,25 @@ public class Manager {
         }
 
         func URLSession(session: NSURLSession!, task: NSURLSessionTask!, needNewBodyStream completionHandler: ((NSInputStream!) -> Void)!) {
-            if let delegate = self[task] {
+            if taskNeedNewBodyStream != nil {
+                completionHandler(taskNeedNewBodyStream!(session, task))
+            } else if let delegate = self[task] {
                 delegate.URLSession(session, task: task, needNewBodyStream: completionHandler)
             }
         }
 
         func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-            if let delegate = self[task] as? Request.UploadTaskDelegate {
+            if taskDidSendBodyData != nil {
+                taskDidSendBodyData!(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
+            } else if let delegate = self[task] as? Request.UploadTaskDelegate {
                 delegate.URLSession(session, task: task, didSendBodyData: bytesSent, totalBytesSent: totalBytesSent, totalBytesExpectedToSend: totalBytesExpectedToSend)
             }
         }
 
         func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didCompleteWithError error: NSError!) {
-            if let delegate = self[task] {
+            if taskDidComplete != nil {
+                taskDidComplete!(session, task, error)
+            } else if let delegate = self[task] {
                 delegate.URLSession(session, task: task, didCompleteWithError: error)
 
                 self[task] = nil
