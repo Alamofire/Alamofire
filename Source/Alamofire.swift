@@ -402,7 +402,7 @@ public class Manager {
         public var taskWillPerformHTTPRedirection: ((NSURLSession!, NSURLSessionTask!, NSHTTPURLResponse!, NSURLRequest!) -> (NSURLRequest!))?
 
         /// NSURLSessionTaskDelegate override closure for `URLSession:willPerformHTTPRedirection:newRequest:completionHandler:` method.
-        public var taskDidReceiveChallenge: ((NSURLSession!, NSURLSessionTask!, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential?))?
+        public var taskDidReceiveChallenge: ((NSURLSession!, NSURLSessionTask!, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential!))?
 
         /// NSURLSessionTaskDelegate override closure for `URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:` method.
         public var taskDidSendBodyData: ((NSURLSession!, NSURLSessionTask!, Int64, Int64, Int64) -> Void)?
