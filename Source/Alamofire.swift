@@ -404,11 +404,14 @@ public class Manager {
         /// NSURLSessionTaskDelegate override closure for `URLSession:willPerformHTTPRedirection:newRequest:completionHandler:` method.
         public var taskDidReceiveChallenge: ((NSURLSession!, NSURLSessionTask!, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential!))?
 
+        /// NSURLSessionTaskDelegate override closure for `URLSession:task:didCompleteWithError:` method.
+        public var taskNeedNewBodyStream: ((NSURLSession!, NSURLSessionTask!) -> (NSInputStream!))?
+
         /// NSURLSessionTaskDelegate override closure for `URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:` method.
         public var taskDidSendBodyData: ((NSURLSession!, NSURLSessionTask!, Int64, Int64, Int64) -> Void)?
 
         /// NSURLSessionTaskDelegate override closure for `URLSession:task:didCompleteWithError:` method.
-        public var taskNeedNewBodyStream: ((NSURLSession!, NSURLSessionTask!) -> (NSInputStream!))?
+        public var taskDidComplete: ((NSURLSession!, NSURLSessionTask!, NSError!) -> Void)?
 
         func URLSession(session: NSURLSession!, task: NSURLSessionTask!, willPerformHTTPRedirection response: NSHTTPURLResponse!, newRequest request: NSURLRequest!, completionHandler: ((NSURLRequest!) -> Void)!) {
             var redirectRequest = request
