@@ -291,12 +291,21 @@ public class Manager {
     /// Whether to start requests immediately after being constructed. `true` by default.
     public var startRequestsImmediately: Bool = true
 
+    /// The background completion handler closure provided by the UIApplicationDelegate `application:handleEventsForBackgroundURLSession:completionHandler:` method. By setting the background completion handler, the SessionDelegate `sessionDidFinishEventsForBackgroundURLSession` closure implementation will automatically call the handler. If you need to handle your own events before the handler is called, then you need to override the SessionDelegate `sessionDidFinishEventsForBackgroundURLSession` and manually call the handler when finished. `nil` by default.
+    public var backgroundCompletionHandler: (() -> Void)?
+
     /**
         :param: configuration The configuration used to construct the managed session.
     */
     required public init(configuration: NSURLSessionConfiguration? = nil) {
         self.delegate = SessionDelegate()
         self.session = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+
+        self.delegate.sessionDidFinishEventsForBackgroundURLSession = { [weak self] session in
+            if let strongSelf = self {
+                strongSelf.backgroundCompletionHandler?()
+            }
+        }
     }
 
     // MARK: -
