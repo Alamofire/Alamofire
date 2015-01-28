@@ -484,16 +484,20 @@ public class Manager {
         }
 
         func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didBecomeDownloadTask downloadTask: NSURLSessionDownloadTask!) {
-            let downloadDelegate = Request.DownloadTaskDelegate(task: downloadTask)
-            self[downloadTask] = downloadDelegate
+            if dataTaskDidBecomeDownloadTask != nil {
+                dataTaskDidBecomeDownloadTask!(session, dataTask, downloadTask)
+            } else {
+                let downloadDelegate = Request.DownloadTaskDelegate(task: downloadTask)
+                self[downloadTask] = downloadDelegate
+            }
         }
 
         func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, didReceiveData data: NSData!) {
-            if let delegate = self[dataTask] as? Request.DataTaskDelegate {
+            if dataTaskDidReceiveData != nil {
+                dataTaskDidReceiveData!(session, dataTask, data)
+            } else if let delegate = self[dataTask] as? Request.DataTaskDelegate {
                 delegate.URLSession(session, dataTask: dataTask, didReceiveData: data)
             }
-
-            dataTaskDidReceiveData?(session, dataTask, data)
         }
 
         func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask!, willCacheResponse proposedResponse: NSCachedURLResponse!, completionHandler: ((NSCachedURLResponse!) -> Void)!) {
