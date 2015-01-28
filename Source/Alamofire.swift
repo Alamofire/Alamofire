@@ -1089,7 +1089,7 @@ extension Manager {
         case ResumeData(NSData)
     }
 
-    private func download(downloadable: Downloadable, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
+    private func download(downloadable: Downloadable, destination: Request.DownloadFileDestination) -> Request {
         var downloadTask: NSURLSessionDownloadTask!
 
         switch downloadable {
@@ -1126,7 +1126,7 @@ extension Manager {
 
         :returns: The created download request.
     */
-    public func download(URLRequest: URLRequestConvertible, destination: (NSURL, NSHTTPURLResponse) -> (NSURL)) -> Request {
+    public func download(URLRequest: URLRequestConvertible, destination: Request.DownloadFileDestination) -> Request {
         return download(.Request(URLRequest.URLRequest), destination: destination)
     }
 
