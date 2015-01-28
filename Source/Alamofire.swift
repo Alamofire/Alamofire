@@ -465,7 +465,7 @@ public class Manager {
         public var dataTaskDidReceiveResponse: ((NSURLSession!, NSURLSessionDataTask!, NSURLResponse!) -> (NSURLSessionResponseDisposition))?
 
         /// NSURLSessionDataDelegate override closure for `URLSession:dataTask:didBecomeDownloadTask:` method.
-        public var dataTaskDidBecomeDownloadTask: ((NSURLSession!, NSURLSessionDataTask!) -> Void)?
+        public var dataTaskDidBecomeDownloadTask: ((NSURLSession!, NSURLSessionDataTask!, NSURLSessionDownloadTask!) -> Void)?
 
         /// NSURLSessionDataDelegate override closure for `URLSession:dataTask:didReceiveData:` method.
         public var dataTaskDidReceiveData: ((NSURLSession!, NSURLSessionDataTask!, NSData!) -> Void)?
