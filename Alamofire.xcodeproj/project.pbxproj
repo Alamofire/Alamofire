@@ -52,7 +52,7 @@
 		F8111E3319A95C8B0040E7D1 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3719A95C8B0040E7D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F8111E3819A95C8B0040E7D1 /* Alamofire.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Alamofire.h; sourceTree = "<group>"; };
-		F8111E3E19A95C8B0040E7D1 /* AlamofireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = AlamofireTests.xctest; path = "Alamofire iOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8111E3E19A95C8B0040E7D1 /* Alamofire iOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Alamofire iOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E4119A95C8B0040E7D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadTests.swift; sourceTree = "<group>"; };
 		F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterEncodingTests.swift; sourceTree = "<group>"; };
@@ -112,7 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				F8111E3319A95C8B0040E7D1 /* Alamofire.framework */,
-				F8111E3E19A95C8B0040E7D1 /* AlamofireTests.xctest */,
+				F8111E3E19A95C8B0040E7D1 /* Alamofire iOS Tests.xctest */,
 				4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */,
 				F829C6B21A7A94F100A2CD59 /* Alamofire OSX Tests.xctest */,
 			);
@@ -234,7 +234,7 @@
 			);
 			name = "Alamofire iOS Tests";
 			productName = AlamofireTests;
-			productReference = F8111E3E19A95C8B0040E7D1 /* AlamofireTests.xctest */;
+			productReference = F8111E3E19A95C8B0040E7D1 /* Alamofire iOS Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		F829C6B11A7A94F100A2CD59 /* Alamofire OSX Tests */ = {
