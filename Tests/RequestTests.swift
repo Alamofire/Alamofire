@@ -1,6 +1,6 @@
 // RequestTests.swift
 //
-// Copyright (c) 2014–2015 Alamofire (http://alamofire.org)
+// Copyright (c) 2014 Alamofire (http://alamofire.org)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -90,19 +90,11 @@ class AlamofireRequestDescriptionTestCase: XCTestCase {
 }
 
 class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
-    let manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
-
-    // MARK: -
-
-    override func setUp() {
+    let manager: Alamofire.Manager = {
+        let manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
         manager.startRequestsImmediately = false
-
-        if let cookieStorage = manager.session.configuration.HTTPCookieStorage {
-            for cookie in cookieStorage.cookies ?? [] {
-                cookieStorage.deleteCookie(cookie as NSHTTPCookie)
-            }
-        }
-    }
+        return manager
+    }()
 
     // MARK: -
 
@@ -155,7 +147,7 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
 
         XCTAssert(components[0..<3] == ["$", "curl", "-i"], "components should be equal")
         XCTAssert(components[3..<5] == ["-X", "POST"], "command should contain explicit -X flag")
-        XCTAssert(components[5..<7] == ["-b", "\"foo=bar\""], "command should contain -b flag")
+        XCTAssert(components[5..<6] == ["-b"], "command should contain -b flag")
         XCTAssert(components.last! == "\"\(URL)\"", "URL component should be equal")
     }
 
