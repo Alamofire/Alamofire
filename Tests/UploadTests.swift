@@ -40,7 +40,7 @@ class UploadResponseTestCase: XCTestCase {
                     XCTAssertNil(error, "error should be nil")
                 }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -62,7 +62,7 @@ class UploadResponseTestCase: XCTestCase {
             upload.cancel()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }

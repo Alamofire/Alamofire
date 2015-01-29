@@ -38,7 +38,7 @@ class AlamofireStatusCodeValidationTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
             }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -57,7 +57,7 @@ class AlamofireStatusCodeValidationTestCase: XCTestCase {
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -76,7 +76,7 @@ class AlamofireStatusCodeValidationTestCase: XCTestCase {
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -96,7 +96,7 @@ class AlamofireContentTypeValidationTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -116,7 +116,7 @@ class AlamofireContentTypeValidationTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -135,7 +135,7 @@ class AlamofireContentTypeValidationTestCase: XCTestCase {
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -154,7 +154,7 @@ class AlamofireContentTypeValidationTestCase: XCTestCase {
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -175,7 +175,7 @@ class AlamofireMultipleValidationTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -195,7 +195,7 @@ class AlamofireMultipleValidationTestCase: XCTestCase {
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -217,7 +217,7 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -236,7 +236,7 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -257,7 +257,7 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -277,7 +277,7 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -297,7 +297,7 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(20) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
