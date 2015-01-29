@@ -130,6 +130,9 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
         XCTAssert(components.last! == "\"\(URL)\"", "URL component should be equal")
     }
 
+    // Temporarily disabled on OS X due to build failure for CocoaPods
+    // See https://github.com/CocoaPods/swift/issues/24
+    #if !os(OSX)
     func testPOSTRequestWithCookieDebugDescription() {
         let URL = "http://httpbin.org/post"
 
@@ -150,6 +153,7 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
         XCTAssert(components[5..<6] == ["-b"], "command should contain -b flag")
         XCTAssert(components.last! == "\"\(URL)\"", "URL component should be equal")
     }
+    #endif
 
     // MARK: -
 

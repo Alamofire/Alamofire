@@ -1258,6 +1258,9 @@ extension Request: DebugPrintable {
             }
         }
 
+        // Temporarily disabled on OS X due to build failure for CocoaPods
+        // See https://github.com/CocoaPods/swift/issues/24
+        #if !os(OSX)
         if let cookieStorage = session.configuration.HTTPCookieStorage {
             if let cookies = cookieStorage.cookiesForURL(URL) as? [NSHTTPCookie] {
                 if !cookies.isEmpty {
@@ -1266,6 +1269,7 @@ extension Request: DebugPrintable {
                 }
             }
         }
+        #endif
 
         if request.allHTTPHeaderFields != nil {
             for (field, value) in request.allHTTPHeaderFields! {
