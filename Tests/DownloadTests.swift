@@ -28,15 +28,6 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
     let searchPathDirectory: NSSearchPathDirectory = .DocumentDirectory
     let searchPathDomain: NSSearchPathDomainMask = .UserDomainMask
 
-    override func tearDown() {
-        let fileManager = NSFileManager.defaultManager()
-        let directory = fileManager.URLsForDirectory(searchPathDirectory, inDomains: searchPathDomain)[0] as NSURL
-        let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, error: nil)!
-        for file in contents {
-            fileManager.removeItemAtURL(file as NSURL, error: nil)
-        }
-    }
-
     // MARK: -
 
     func testDownloadRequest() {
