@@ -25,90 +25,132 @@ import Alamofire
 import XCTest
 
 class AlamofireDownloadResponseTestCase: XCTestCase {
-    let searchPathDirectory: NSSearchPathDirectory = .DocumentDirectory
-    let searchPathDomain: NSSearchPathDomainMask = .UserDomainMask
-
+    
+    let spDirectory : NSSearchPathDirectory  = .DocumentDirectory
+    let spDomain    : NSSearchPathDomainMask = .UserDomainMask
+    
+    let fileManager =  NSFileManager.defaultManager()
+    
+    let baseURL = "http://httpbin.org/stream/"
+    let numberOfLines = 100
+    
     override func tearDown() {
-        let fileManager = NSFileManager.defaultManager()
-        let directory = fileManager.URLsForDirectory(searchPathDirectory, inDomains: searchPathDomain)[0] as NSURL
-        let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, error: nil)!
-        for file in contents {
-            fileManager.removeItemAtURL(file as NSURL, error: nil)
-        }
+        removeDownloadedFile()
     }
-
-    // MARK: -
-
+    
+    // MARK: Test
+    
     func testDownloadRequest() {
-        let numberOfLines = 100
-        let URL = "http://httpbin.org/stream/\(numberOfLines)"
-
-        let expectation = expectationWithDescription(URL)
-
-        let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
-
-        Alamofire.download(.GET, URL, destination)
-            .response { request, response, _, error in
-                expectation.fulfill()
-
-                XCTAssertNotNil(request, "request should not be nil")
-                XCTAssertNotNil(response, "response should not be nil")
-
-                XCTAssertNil(error, "error should be nil")
-
-                let fileManager = NSFileManager.defaultManager()
-                let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as NSURL
-
-                var fileManagerError: NSError?
-                let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, error: &fileManagerError)!
-                XCTAssertNil(fileManagerError, "fileManagerError should be nil")
-
-                #if os(iOS)
-                let suggestedFilename = "\(numberOfLines)"
-                #elseif os(OSX)
-                let suggestedFilename = "\(numberOfLines).json"
-                #endif
-
-                let predicate = NSPredicate(format: "lastPathComponent = '\(suggestedFilename)'")!
-                let filteredContents = (contents as NSArray).filteredArrayUsingPredicate(predicate)
-                XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
-
-                let file = filteredContents.first as NSURL
-                XCTAssertEqual(file.lastPathComponent!, "\(suggestedFilename)", "filename should bsuggestedFilenameines)")
-
-                if let data = NSData(contentsOfURL: file) {
-                    XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
-                } else {
-                    XCTFail("data should exist for contents of URL")
-                }
-        }
-
-        waitForExpectationsWithTimeout(10) { (error) in
-            XCTAssertNil(error, "\(error)")
+        
+        alamofireDownloadFileWithResponse { [unowned self] request, response, _, error in
+            
+            self.assertNotNilResponse(response)
+            self.assertNilError(error)
+            self.assertDownloadedFileExist()
+            self.assertDownloadedFileContainsData(self.downloadedFileContent())
         }
     }
-
+    
     func testDownloadRequestWithProgress() {
-        let numberOfLines = 100
-        let URL = "http://httpbin.org/stream/\(numberOfLines)"
-
+        
+        let URL = requestUrl()
+        
         let expectation = expectationWithDescription(URL)
-
-        let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
-
+        
+        let destination = Alamofire.Request.suggestedDownloadDestination(directory: spDirectory, domain: spDomain)
+        
         let download = Alamofire.download(.GET, URL, destination)
-        download.progress { (bytesRead, totalBytesRead, totalBytesExpectedToRead) -> Void in
+        download.progress { (bytesRead, totalBytesRead, totalBytesExpectedToRead) in
             expectation.fulfill()
-
+            
             XCTAssert(bytesRead > 0, "bytesRead should be > 0")
             XCTAssert(totalBytesRead > 0, "totalBytesRead should be > 0")
             XCTAssert(totalBytesExpectedToRead == -1, "totalBytesExpectedToRead should be -1")
-
+            
             download.cancel()
         }
-
+        
         waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
+        }
+    }
+    
+    // MARK: - Assert
+    
+    func assertNotNilResponse(response: AnyObject?) {
+        XCTAssertNotNil(response, "Response should not be nil")
+    }
+    
+    func assertNilError(error: NSError?) {
+        XCTAssertNil(error, "Error should be nil")
+    }
+    
+    func assertDownloadedFileExist() {
+        XCTAssertNotNil(urlToDownloadedFile(), "No file with name \(self.numberOfLines)")
+    }
+    
+    func assertDownloadedFileContainsData(data: NSData?) {
+        if let d = data {
+            XCTAssertGreaterThan(d.length, 0, "Data length should be non-zero")
+        } else {
+            XCTFail("No data for downloaded file")
+        }
+    }
+    
+    // MARK: - Download
+    func alamofireDownloadFileWithResponse(closure:
+        (request: NSURLRequest, response: NSHTTPURLResponse?, object: AnyObject?, error: NSError?) -> ()) {
+            
+            let URL = requestUrl()
+            
+            let expectation = expectationWithDescription(URL)
+            
+            let destination = Alamofire.Request.suggestedDownloadDestination(directory: spDirectory, domain: spDomain)
+            
+            Alamofire.download(.GET, URL, destination).response {request, response, _, error in
+                
+                expectation.fulfill()
+                
+                closure(request: request, response: response, object: nil, error: error)
+            }
+            
+            waitForExpectationsWithTimeout(10) { (error) in
+                XCTAssertNil(error, "\(error)")
+            }
+    }
+    
+    // MARK: -
+    
+    func requestUrl() -> String {
+        return "\(baseURL)\(numberOfLines)"
+    }
+    
+    func downloadsDirectory() -> NSURL {
+        return self.fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first as NSURL
+    }
+    
+    func contentsOfDownloadsDirectory() -> [AnyObject]? {
+        return fileManager.contentsOfDirectoryAtURL(downloadsDirectory(),
+            includingPropertiesForKeys: nil, options: .SkipsHiddenFiles, error: nil)!
+    }
+    
+    func urlToDownloadedFile() -> NSURL? {
+        let filtered = contentsOfDownloadsDirectory()?.filter { [unowned self]
+            url in (url.lastPathComponent == "\(self.numberOfLines)")
+        }
+        return filtered?.first as? NSURL
+    }
+    
+    func downloadedFileContent() -> NSData? {
+        if let url = self.urlToDownloadedFile() {
+            return NSData(contentsOfURL: url)
+        }
+        return nil
+    }
+    
+    func removeDownloadedFile() {
+        contentsOfDownloadsDirectory()?.map{ [unowned self] file in
+            self.fileManager.removeItemAtURL(file as NSURL, error: nil)
         }
     }
 }
