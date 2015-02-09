@@ -1262,7 +1262,7 @@ extension Request: DebugPrintable {
         // See https://github.com/CocoaPods/swift/issues/24
         #if !os(OSX)
         if let cookieStorage = session.configuration.HTTPCookieStorage {
-            if let cookies = cookieStorage.cookiesForURL(URL) as? [NSHTTPCookie] {
+            if let cookies = cookieStorage.cookiesForURL(URL!) as? [NSHTTPCookie] {
                 if !cookies.isEmpty {
                     let string = cookies.reduce(""){ $0 + "\($1.name)=\($1.value ?? String());" }
                     components.append("-b \"\(string.substringToIndex(string.endIndex.predecessor()))\"")
