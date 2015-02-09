@@ -37,7 +37,7 @@ class AlamofireJSONResponseTestCase: XCTestCase {
                     XCTAssertNotNil(JSON, "JSON should not be nil")
                     XCTAssertNil(error, "error should be nil")
 
-                    XCTAssertEqual(JSON!["args"] as NSObject, ["foo": "bar"], "args should be equal")
+                    XCTAssertEqual(JSON!["args"] as! NSObject, ["foo": "bar"], "args should be equal")
                  }
 
         waitForExpectationsWithTimeout(10) { (error) in
@@ -57,7 +57,7 @@ class AlamofireJSONResponseTestCase: XCTestCase {
                 XCTAssertNotNil(JSON, "JSON should not be nil")
                 XCTAssertNil(error, "error should be nil")
 
-                XCTAssertEqual(JSON!["form"] as NSObject, ["foo": "bar"], "args should be equal")
+                XCTAssertEqual(JSON!["form"] as! NSObject, ["foo": "bar"], "args should be equal")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
