@@ -48,7 +48,7 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
 
                 let fileManager = NSFileManager.defaultManager()
-                let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as NSURL
+                let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as! NSURL
 
                 var fileManagerError: NSError?
                 let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, error: &fileManagerError)!
@@ -60,11 +60,11 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 let suggestedFilename = "\(numberOfLines).json"
                 #endif
 
-                let predicate = NSPredicate(format: "lastPathComponent = '\(suggestedFilename)'")!
+                let predicate = NSPredicate(format: "lastPathComponent = '\(suggestedFilename)'")
                 let filteredContents = (contents as NSArray).filteredArrayUsingPredicate(predicate)
                 XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
 
-                let file = filteredContents.first as NSURL
+                let file = filteredContents.first as! NSURL
                 XCTAssertEqual(file.lastPathComponent!, "\(suggestedFilename)", "filename should bsuggestedFilenameines)")
 
                 if let data = NSData(contentsOfURL: file) {
@@ -72,6 +72,8 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 } else {
                     XCTFail("data should exist for contents of URL")
                 }
+
+                fileManager.removeItemAtURL(file, error: nil)
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
