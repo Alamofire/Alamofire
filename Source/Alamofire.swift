@@ -1162,6 +1162,19 @@ extension Manager {
     // MARK: Request
 
     /**
+        Creates a download request using the shared manager instance for the specified method and URL string.
+
+        :param: method The HTTP method.
+        :param: URLString The URL string.
+        :param: destination The closure used to determine the destination of the downloaded file.
+
+        :returns: The created download request.
+    */
+    public func download(method: Method, _ URLString: URLStringConvertible, destination: Request.DownloadFileDestination) -> Request {
+        return download(URLRequest(method, URLString), destination: destination)
+    }
+
+    /**
         Creates a request for downloading from the specified URL request.
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
@@ -1521,7 +1534,7 @@ private func URLRequest(method: Method, URL: URLStringConvertible) -> NSURLReque
     :returns: The created request.
 */
 public func request(method: Method, URLString: URLStringConvertible, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-    return request(encoding.encode(URLRequest(method, URLString), parameters: parameters).0)
+    return Manager.sharedInstance.request(method, URLString, parameters: parameters, encoding: encoding)
 }
 
 /**
@@ -1551,7 +1564,7 @@ public func request(URLRequest: URLRequestConvertible) -> Request {
     :returns: The created upload request.
 */
 public func upload(method: Method, URLString: URLStringConvertible, file: NSURL) -> Request {
-    return Manager.sharedInstance.upload(URLRequest(method, URLString), file: file)
+    return Manager.sharedInstance.upload(method, URLString, file: file)
 }
 
 /**
@@ -1578,7 +1591,7 @@ public func upload(URLRequest: URLRequestConvertible, file: NSURL) -> Request {
     :returns: The created upload request.
 */
 public func upload(method: Method, URLString: URLStringConvertible, data: NSData) -> Request {
-    return Manager.sharedInstance.upload(URLRequest(method, URLString), data: data)
+    return Manager.sharedInstance.upload(method, URLString, data: data)
 }
 
 /**
@@ -1605,7 +1618,7 @@ public func upload(URLRequest: URLRequestConvertible, data: NSData) -> Request {
     :returns: The created upload request.
 */
 public func upload(method: Method, URLString: URLStringConvertible, stream: NSInputStream) -> Request {
-    return Manager.sharedInstance.upload(URLRequest(method, URLString), stream: stream)
+    return Manager.sharedInstance.upload(method, URLString, stream: stream)
 }
 
 /**
@@ -1634,7 +1647,7 @@ public func upload(URLRequest: URLRequestConvertible, stream: NSInputStream) -> 
     :returns: The created download request.
 */
 public func download(method: Method, URLString: URLStringConvertible, destination: Request.DownloadFileDestination) -> Request {
-    return Manager.sharedInstance.download(URLRequest(method, URLString), destination: destination)
+    return Manager.sharedInstance.download(method, URLString, destination: destination)
 }
 
 /**
