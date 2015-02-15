@@ -72,6 +72,8 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 } else {
                     XCTFail("data should exist for contents of URL")
                 }
+
+                fileManager.removeItemAtURL(file, error: nil)
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
