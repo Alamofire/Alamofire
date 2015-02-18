@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F8111E3D19A95C8B0040E7D1"
-               BuildableName = "AlamofireTests.xctest"
-               BlueprintName = "AlamofireTests"
+               BuildableName = "Alamofire iOS Tests.xctest"
+               BlueprintName = "Alamofire iOS Tests"
                ReferencedContainer = "container:Alamofire.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,8 +47,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F8111E3D19A95C8B0040E7D1"
-               BuildableName = "AlamofireTests.xctest"
-               BlueprintName = "AlamofireTests"
+               BuildableName = "Alamofire iOS Tests.xctest"
+               BlueprintName = "Alamofire iOS Tests"
                ReferencedContainer = "container:Alamofire.xcodeproj">
             </BuildableReference>
          </TestableReference>
