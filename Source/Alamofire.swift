@@ -1315,7 +1315,7 @@ extension Request {
         :returns: The request.
     */
     public func responseString(completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self {
-        return responseString(completionHandler: completionHandler)
+        return responseString(encoding: NSUTF8StringEncoding, completionHandler: completionHandler)
     }
 
     /**
@@ -1326,7 +1326,7 @@ extension Request {
 
         :returns: The request.
     */
-    public func responseString(encoding: NSStringEncoding = NSUTF8StringEncoding, completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
+    public func responseString(#encoding: NSStringEncoding, completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
         return response(serializer: Request.stringResponseSerializer(encoding: encoding), completionHandler: { request, response, string, error in
             completionHandler(request, response, string as? String, error)
         })
