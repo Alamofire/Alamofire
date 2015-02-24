@@ -48,7 +48,7 @@ class AlamofireRequestInitializationTestCase: XCTestCase {
 class AlamofireRequestResponseTestCase: XCTestCase {
     func testRequestResponse() {
         let URL = "http://httpbin.org/get"
-        let serializer = Alamofire.Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
+        let serializer = Alamofire.Request.stringResponseSerializer()
 
         let expectation = expectationWithDescription("\(URL)")
 
