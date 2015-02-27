@@ -88,7 +88,7 @@ public enum ParameterEncoding {
                 var components: [(String, String)] = []
                 for key in sorted(Array(parameters.keys), <) {
                     let value: AnyObject! = parameters[key]
-                    components += queryComponents(key, value)
+                    components += self.queryComponents(key, value)
                 }
 
                 return join("&", components.map{"\($0)=\($1)"} as [String])
