@@ -173,7 +173,6 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
     }
     
     func testURLParameterEncodeStringForRequestWithPrecomposedQuery() {
-        
         let URL = NSURL(string: "http://example.com/movies?hd=[1]")!
         
         let parameters = ["page": "0"]
@@ -183,7 +182,6 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
     }
 
     func testURLParameterEncodeStringWithPlusKeyStringWithPlusValueParameterForRequestWithPrecomposedQuery() {
-        
         let URL = NSURL(string: "http://example.com/movie?hd=[1]")!
         
         let parameters = ["+foo+": "+bar+"]
