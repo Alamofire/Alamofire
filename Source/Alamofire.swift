@@ -145,14 +145,15 @@ public enum ParameterEncoding {
                 components += queryComponents("\(key)[]", value)
             }
         } else {
-            components.extend([(escape(key), escape("\(value)"))])
+            components.extend([(escapeQuery(key), escapeQuery("\(value)"))])
         }
 
         return components
     }
 
-    func escape(string: String) -> String {
-        let legalURLCharactersToBeEscaped: CFStringRef = ":/?&=;+!@#$()',*"
+    // See http://tools.ietf.org/html/rfc3986#section-3.4
+    func escapeQuery(string: String) -> String {
+        let legalURLCharactersToBeEscaped: CFStringRef = ":&=;+!@#$()',*"
         return CFURLCreateStringByAddingPercentEscapes(nil, string, nil, legalURLCharactersToBeEscaped, CFStringBuiltInEncodings.UTF8.rawValue) as! String
     }
 }
