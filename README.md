@@ -51,6 +51,7 @@ $ gem install cocoapods --pre
 To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
+use_frameworks!
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 
