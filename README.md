@@ -42,10 +42,10 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 
 [CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects.
 
-CocoaPods 0.36 beta adds supports for Swift and embedded frameworks. You can install it with the following command:
+CocoaPods 0.36 adds supports for Swift and embedded frameworks. You can install it with the following command:
 
 ```bash
-$ gem install cocoapods --pre
+$ gem install cocoapods
 ```
 
 To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
@@ -53,6 +53,7 @@ To integrate Alamofire into your Xcode project using CocoaPods, specify it in yo
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
+use_frameworks!
 
 pod 'Alamofire', '~> 1.1'
 ```
