@@ -57,4 +57,20 @@ class AlamofireManagerTestCase: XCTestCase {
         XCTAssert(request.task.state == .Suspended)
         XCTAssertNil(manager)
     }
+
+    func testReleasingManagerWithPendingCanceledRequestDeinitializesSuccessfully() {
+        var manager: Manager? = Alamofire.Manager()
+        manager!.startRequestsImmediately = false
+
+        let URL = NSURL(string: "http://httpbin.org/get")!
+        let URLRequest = NSURLRequest(URL: URL)
+
+        let request = manager!.request(URLRequest)
+        request.cancel()
+
+        manager = nil
+
+        XCTAssert(request.task.state == .Canceling)
+        XCTAssertNil(manager)
+    }
 }

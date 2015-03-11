@@ -211,8 +211,6 @@ extension NSURLRequest: URLRequestConvertible {
 
 /**
     Responsible for creating and managing `Request` objects, as well as their underlying `NSURLSession`.
-
-    When finished with a manager, be sure to call either `session.finishTasksAndInvalidate()` or `session.invalidateAndCancel()` before deinitialization.
 */
 public class Manager {
 
@@ -296,6 +294,10 @@ public class Manager {
     required public init(configuration: NSURLSessionConfiguration? = nil) {
         self.delegate = SessionDelegate()
         self.session = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+    }
+
+    deinit {
+        self.session.invalidateAndCancel()
     }
 
     // MARK: -
@@ -654,7 +656,7 @@ public class Request {
         :returns: The request.
     */
     public func response(queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        dispatch_async(delegate.queue) {
+        delegate.queue.addOperationWithBlock {
             let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
 
             dispatch_async(queue ?? dispatch_get_main_queue()) {
@@ -694,7 +696,7 @@ public class Request {
 
     class TaskDelegate: NSObject, NSURLSessionTaskDelegate {
         let task: NSURLSessionTask
-        let queue: dispatch_queue_t
+        let queue: NSOperationQueue
         let progress: NSProgress
 
         var data: NSData? { return nil }
@@ -711,13 +713,18 @@ public class Request {
             self.task = task
             self.progress = NSProgress(totalUnitCount: 0)
             self.queue = {
-                let label: String = "com.alamofire.task-\(task.taskIdentifier)"
-                let queue = dispatch_queue_create((label as NSString).UTF8String, DISPATCH_QUEUE_SERIAL)
+                let operationQueue = NSOperationQueue()
+                operationQueue.maxConcurrentOperationCount = 1
+                operationQueue.qualityOfService = NSQualityOfService.Utility
+                operationQueue.suspended = true
 
-                dispatch_suspend(queue)
-
-                return queue
+                return operationQueue
             }()
+        }
+
+        deinit {
+            queue.cancelAllOperations()
+            queue.suspended = true
         }
 
         // MARK: NSURLSessionTaskDelegate
@@ -773,7 +780,7 @@ public class Request {
                 self.error = error
             }
 
-            dispatch_resume(queue)
+            queue.suspended = false
         }
     }
 
@@ -857,7 +864,7 @@ extension Request {
         :returns: The request.
     */
     public func validate(validation: Validation) -> Self {
-        dispatch_async(delegate.queue) {
+        delegate.queue.addOperationWithBlock {
             if self.response != nil && self.delegate.error == nil {
                 if !validation(self.request, self.response!) {
                     self.delegate.error = NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
