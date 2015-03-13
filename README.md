@@ -35,6 +35,8 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 > **Embedded frameworks require a minimum deployment target of iOS 8 or OS X Mavericks.**
 >
 > To use Alamofire with a project targeting iOS 7, you must include the `Alamofire.swift` source file directly in your project. See the ['Source File'](#source-file) section for instructions.
+>
+> For Swift 1.2 using the Xcode 6.3 Beta, use the [xcode-6.3 branch](https://github.com/Alamofire/Alamofire/tree/xcode-6.3).
 
 ### CocoaPods
 
@@ -626,49 +628,59 @@ extension Alamofire.Request {
 
 ### URLStringConvertible
 
-Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to construct URL requests. Top-level convenience methods taking a `URLStringConvertible` argument are provided to allow for type-safe routing behavior.
+Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to construct URL requests. `NSString`, `NSURL`, `NSURLComponents`, and `NSURLRequest` conform to `URLStringConvertible` by default, allowing any of them to be passed as `URLString` parameters to the `request`, `upload`, and `download` methods:
 
-Applications interacting with web applications in a significant manner are encouraged to adopt either `URLStringConvertible` or `URLRequestConvertible` as a way to ensure consistency of requested endpoints.
+```swift
+let string = NSString(string: "http://httpbin.org/post")
+Alamofire.request(.POST, string)
+
+let URL = NSURL(string: string)!
+Alamofire.request(.POST, URL)
+
+let URLRequest = NSURLRequest(URL: URL)
+Alamofire.request(.POST, URLRequest) // overrides `HTTPMethod` of `URLRequest`
+
+let URLComponents = NSURLComponents(URL: URL, resolvingAgainstBaseURL: true)
+Alamofire.request(.POST, URLComponents)
+```
+
+Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLStringConvertible` as a convenient way to map domain-specific models to server resources.
 
 #### Type-Safe Routing
 
 ```swift
-enum Router: URLStringConvertible {
+extension User: URLStringConvertible {
     static let baseURLString = "http://example.com"
 
-    case Root
-    case User(String)
-    case Post(Int, Int, String)
-
-    // MARK: URLStringConvertible
-
     var URLString: String {
-        let path: String = {
-            switch self {
-            case .Root:
-                return "/"
-            case .User(let username):
-                return "/users/\(username)"
-            case .Post(let year, let month, let title):
-                let slug = title.stringByReplacingOccurrencesOfString(" ", withString: "-").lowercaseString
-                return "/\(year)/\(month)/\(slug)"
-            }
-        }()
-
-        return Router.baseURLString + path
+        return User.baseURLString + "/users/\(username)/"
     }
 }
 ```
 
 ```swift
-Alamofire.request(.GET, Router.User("mattt"))
+let user = User(username: "mattt")
+Alamofire.request(.GET, user) // http://example.com/users/mattt
 ```
 
 ### URLRequestConvertible
 
-Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests. Like `URLStringConvertible`, this is recommended for applications with any significant interactions between client and server.
+Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests. `NSURLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly (this is the recommended way to specify custom HTTP header fields or HTTP body for individual requests):
 
-Top-level and instance methods on `Manager` taking `URLRequestConvertible` arguments are provided as a way to provide type-safe routing. Such an approach can be used to abstract away server-side inconsistencies, as well as manage authentication credentials and other state.
+```swift
+let URL = NSURL(string: "http://httpbin.org/post")!
+let mutableURLRequest = NSMutableURLRequest(URL: URL)
+mutableURLRequest.HTTPMethod = "POST"
+
+let parameters = ["foo": "bar"]
+var JSONSerializationError: NSError? = nil
+mutableURLRequest.HTTPBody = NSJSONSerialization.dataWithJSONObject(parameters, options: nil, error: &JSONSerializationError)
+mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+Alamofire.request(mutableURLRequest)
+```
+
+Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLRequestConvertible` as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage authentication credentials and other state.
 
 #### API Parameter Abstraction
 
