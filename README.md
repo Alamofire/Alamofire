@@ -257,7 +257,7 @@ var request = NSURLRequest(URL: URL)
 
 let parameters = ["foo": "bar"]
 let encoding = Alamofire.ParameterEncoding.URL
-(request, _) = encoding.encode(request, parameters)
+(request, _) = encoding.encode(request, parameters: parameters)
 ```
 
 #### POST Request with JSON-encoded Parameters
