@@ -540,15 +540,15 @@ extension Request {
             }
 
             var XMLSerializationError: NSError?
-            let XML = ONOXMLDocument.XMLDocumentWithData(data, &XMLSerializationError)
+            let XML = ONOXMLDocument(data: data, &XMLSerializationError)
 
             return (XML, XMLSerializationError)
         }
     }
 
-    func responseXMLDocument(completionHandler: (NSURLRequest, NSHTTPURLResponse?, OnoXMLDocument?, NSError?) -> Void) -> Self {
+    func responseXMLDocument(completionHandler: (NSURLRequest, NSHTTPURLResponse?, ONOXMLDocument?, NSError?) -> Void) -> Self {
         return response(serializer: Request.XMLResponseSerializer(), completionHandler: { (request, response, XML, error) in
-            completionHandler(request, response, XML, error)
+            completionHandler(request, response, XML as? ONOXMLDocument, error)
         })
     }
 }
