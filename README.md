@@ -42,10 +42,10 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 
 [CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects.
 
-CocoaPods 0.36 beta adds supports for Swift and embedded frameworks. You can install it with the following command:
+CocoaPods 0.36 adds supports for Swift and embedded frameworks. You can install it with the following command:
 
 ```bash
-$ gem install cocoapods --pre
+$ gem install cocoapods
 ```
 
 To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
@@ -53,6 +53,7 @@ To integrate Alamofire into your Xcode project using CocoaPods, specify it in yo
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
+use_frameworks!
 
 pod 'Alamofire', '~> 1.1'
 ```
@@ -256,7 +257,7 @@ var request = NSURLRequest(URL: URL)
 
 let parameters = ["foo": "bar"]
 let encoding = Alamofire.ParameterEncoding.URL
-(request, _) = encoding.encode(request, parameters)
+(request, _) = encoding.encode(request, parameters: parameters)
 ```
 
 #### POST Request with JSON-encoded Parameters
@@ -539,15 +540,15 @@ extension Request {
             }
 
             var XMLSerializationError: NSError?
-            let XML = ONOXMLDocument.XMLDocumentWithData(data, &XMLSerializationError)
+            let XML = ONOXMLDocument(data: data, &XMLSerializationError)
 
             return (XML, XMLSerializationError)
         }
     }
 
-    func responseXMLDocument(completionHandler: (NSURLRequest, NSHTTPURLResponse?, OnoXMLDocument?, NSError?) -> Void) -> Self {
+    func responseXMLDocument(completionHandler: (NSURLRequest, NSHTTPURLResponse?, ONOXMLDocument?, NSError?) -> Void) -> Self {
         return response(serializer: Request.XMLResponseSerializer(), completionHandler: { (request, response, XML, error) in
-            completionHandler(request, response, XML, error)
+            completionHandler(request, response, XML as? ONOXMLDocument, error)
         })
     }
 }
