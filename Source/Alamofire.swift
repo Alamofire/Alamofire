@@ -271,6 +271,8 @@ public class Manager {
                 "Accept-Language": acceptLanguage,
                 "User-Agent": userAgent]
     }()
+    
+    public static var defaultPinnedCertificates: [SecCertificate] = []
 
     private let delegate: SessionDelegate
 
@@ -737,7 +739,25 @@ public class Request {
 
                     switch challenge.protectionSpace.authenticationMethod! {
                     case NSURLAuthenticationMethodServerTrust:
-                        credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
+                        if Manager.defaultPinnedCertificates.isEmpty {
+                            credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
+                        } else {
+                            // use certificate pinning
+                            let trust = challenge.protectionSpace.serverTrust
+                            SecTrustSetAnchorCertificates(trust, Manager.defaultPinnedCertificates)
+                            SecTrustSetAnchorCertificatesOnly(trust, 1)
+                            
+                            var result: SecTrustResultType = 0
+                            let status = SecTrustEvaluate(trust, &result)
+                            
+                            if status == errSecSuccess
+                                && (result == SecTrustResultType(kSecTrustResultProceed) || result == SecTrustResultType(kSecTrustResultUnspecified)) {
+                                    credential = NSURLCredential(forTrust: trust)
+                            } else {
+                                credential = nil
+                                disposition = .CancelAuthenticationChallenge
+                            }
+                        }
                     default:
                         credential = self.credential ?? session.configuration.URLCredentialStorage?.defaultCredentialForProtectionSpace(challenge.protectionSpace)
                     }
