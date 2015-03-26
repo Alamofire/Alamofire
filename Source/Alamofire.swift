@@ -285,7 +285,7 @@ public class Manager {
     private let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
 
     /// The underlying session.
-    public let session: NSURLSession
+    private let session: NSURLSession
 
     /// Whether to start requests immediately after being constructed. `true` by default.
     public var startRequestsImmediately: Bool = true
@@ -533,16 +533,19 @@ public class Request {
     private let delegate: TaskDelegate
 
     /// The underlying task.
-    public var task: NSURLSessionTask { return delegate.task }
+    private var task: NSURLSessionTask { return delegate.task }
 
     /// The session belonging to the underlying task.
-    public let session: NSURLSession
+    private let session: NSURLSession
 
     /// The request sent or to be sent to the server.
     public var request: NSURLRequest { return task.originalRequest }
 
     /// The response received from the server, if any.
     public var response: NSHTTPURLResponse? { return task.response as? NSHTTPURLResponse }
+    
+    /// The state of underlying task.
+    public var state: NSURLSessionTaskState { return task.state }
 
     /// The progress of the request lifecycle.
     public var progress: NSProgress? { return delegate.progress }

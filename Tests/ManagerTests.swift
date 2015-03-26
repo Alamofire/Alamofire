@@ -54,7 +54,7 @@ class AlamofireManagerTestCase: XCTestCase {
 
         manager = nil
 
-        XCTAssert(request.task.state == .Suspended)
+        XCTAssert(request.state == .Suspended)
         XCTAssertNil(manager)
     }
 }
