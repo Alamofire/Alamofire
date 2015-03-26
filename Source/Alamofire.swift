@@ -152,7 +152,7 @@ public enum ParameterEncoding {
     }
 
     func escape(string: String) -> String {
-        let legalURLCharactersToBeEscaped: CFStringRef = ":/?&=;+!@#$()',*"
+        let legalURLCharactersToBeEscaped: CFStringRef = ":&=;+!@#$()',*"
         return CFURLCreateStringByAddingPercentEscapes(nil, string, nil, legalURLCharactersToBeEscaped, CFStringBuiltInEncodings.UTF8.rawValue)
     }
 }
