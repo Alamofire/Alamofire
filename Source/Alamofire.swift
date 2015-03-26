@@ -286,6 +286,8 @@ public class Manager {
 
     /// The underlying session.
     private let session: NSURLSession
+    
+    public let configuration: NSURLSessionConfiguration?
 
     /// Whether to start requests immediately after being constructed. `true` by default.
     public var startRequestsImmediately: Bool = true
@@ -295,6 +297,7 @@ public class Manager {
     */
     required public init(configuration: NSURLSessionConfiguration? = nil) {
         self.delegate = SessionDelegate()
+        self.configuration = configuration
         self.session = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
     }
 

@@ -143,7 +143,7 @@ class AlamofireRequestDebugDescriptionTestCase: XCTestCase {
             NSHTTPCookieValue: "bar",
         ]
         let cookie = NSHTTPCookie(properties: properties)!
-        manager.session.configuration.HTTPCookieStorage?.setCookie(cookie)
+        manager.configuration?.HTTPCookieStorage?.setCookie(cookie)
 
         let request = manager.request(.POST, URL)
         let components = cURLCommandComponents(request)
