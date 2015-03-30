@@ -545,7 +545,7 @@ public class Request {
     public var response: NSHTTPURLResponse? { return task.response as? NSHTTPURLResponse }
 
     /// The progress of the request lifecycle.
-    public var progress: NSProgress? { return delegate.progress }
+    public var progress: NSProgress { return delegate.progress }
 
     private init(session: NSURLSession, task: NSURLSessionTask) {
         self.session = session
