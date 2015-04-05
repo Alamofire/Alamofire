@@ -65,7 +65,7 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
 
                 let file = filteredContents.first as NSURL
-                XCTAssertEqual(file.lastPathComponent!, "\(suggestedFilename)", "filename should bsuggestedFilenameines)")
+                XCTAssertEqual(file.lastPathComponent!, "\(suggestedFilename)", "filename should be \(suggestedFilename)")
 
                 if let data = NSData(contentsOfURL: file) {
                     XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
