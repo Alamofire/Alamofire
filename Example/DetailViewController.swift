@@ -68,7 +68,7 @@ class DetailViewController: UITableViewController {
         self.refreshControl?.beginRefreshing()
 
         let start = CACurrentMediaTime()
-        self.request?.responseString { (request, response, body, error) in
+        self.request?.responseString({ (request, response, body, error) in
             let end = CACurrentMediaTime()
             self.elapsedTime = end - start
 
@@ -80,7 +80,7 @@ class DetailViewController: UITableViewController {
 
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()
-        }
+        })
     }
 
     // MARK: UITableViewDataSource
