@@ -54,13 +54,13 @@ class AlamofireRequestResponseTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
                  .response(serializer: serializer){ (request, response, string, error) in
-                    expectation.fulfill()
-
                     XCTAssertNotNil(request, "request should not be nil")
                     XCTAssertNotNil(response, "response should not be nil")
                     XCTAssertNotNil(string, "string should not be nil")
                     XCTAssertNil(error, "error should be nil")
-                 }
+
+                    expectation.fulfill()
+        }
 
         waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
@@ -78,9 +78,9 @@ class AlamofireRequestDescriptionTestCase: XCTestCase {
         let expectation = expectationWithDescription("\(URL)")
 
         request.response { (_, response,_,_) in
-            expectation.fulfill()
-
             XCTAssertEqual(request.description, "GET http://httpbin.org/get (\(response!.statusCode))", "incorrect request description")
+
+            expectation.fulfill()
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
