@@ -346,7 +346,7 @@ public class Manager {
         Responsible for handling all delegate callbacks for the underlying session.
     */
     public final class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
-        private var subdelegates: [Int: Request.TaskDelegate]
+        private var subdelegates: [Int: Request.TaskDelegate] = [:]
         private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_CONCURRENT)
         private subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
@@ -363,11 +363,6 @@ public class Manager {
                     self.subdelegates[task.taskIdentifier] = newValue
                 }
             }
-        }
-
-        public required override init() {
-            self.subdelegates = Dictionary()
-            super.init()
         }
 
         // MARK: NSURLSessionDelegate
