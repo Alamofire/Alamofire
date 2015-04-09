@@ -1368,17 +1368,6 @@ extension Request {
     /**
         Adds a handler to be called once the request has finished.
 
-        :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the string, if one could be created from the URL response and data, and any error produced while creating the string.
-
-        :returns: The request.
-    */
-    public func responseString(completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self {
-        return responseString(completionHandler: completionHandler)
-    }
-
-    /**
-        Adds a handler to be called once the request has finished.
-
         :param: encoding The string encoding. `NSUTF8StringEncoding` by default.
         :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the string, if one could be created from the URL response and data, and any error produced while creating the string.
 
@@ -1450,17 +1439,6 @@ extension Request {
 
             return (plist, propertyListSerializationError)
         }
-    }
-
-    /**
-        Adds a handler to be called once the request has finished.
-
-        :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the property list, if one could be created from the URL response and data, and any error produced while creating the property list.
-
-        :returns: The request.
-    */
-    public func responsePropertyList(completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return responsePropertyList(completionHandler: completionHandler)
     }
 
     /**
