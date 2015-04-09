@@ -3,5 +3,4 @@
     <sections>
         <code source-file-name='section-1.swift'/>
     </sections>
-    <timeline fileName='timeline.xctimeline'/>
 </playground>

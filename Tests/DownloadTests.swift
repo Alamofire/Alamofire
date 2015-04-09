@@ -62,7 +62,7 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
                 let filteredContents = (contents as NSArray).filteredArrayUsingPredicate(predicate)
                 XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
 
-                let file = filteredContents.first as NSURL
+                let file = filteredContents.first as! NSURL
                 XCTAssertEqual(file.lastPathComponent!, "\(suggestedFilename)", "filename should be \(suggestedFilename)")
 
                 if let data = NSData(contentsOfURL: file) {

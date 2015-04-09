@@ -129,14 +129,14 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
         let parameters = ["?foo?": "?bar?"]
         let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
 
-        XCTAssertEqual(URLRequest.URL.query!, "?foo?=?bar?", "query is incorrect")
+        XCTAssertEqual(URLRequest.URL!.query!, "?foo?=?bar?", "query is incorrect")
     }
 
     func testURLParameterEncodeStringWithSlashKeyStringWithQuestionMarkValueParameter() {
         let parameters = ["foo": "/bar/baz/qux"]
         let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
 
-        XCTAssertEqual(URLRequest.URL.query!, "foo=/bar/baz/qux", "query is incorrect")
+        XCTAssertEqual(URLRequest.URL!.query!, "foo=/bar/baz/qux", "query is incorrect")
     }
 
     func testURLParameterEncodeStringWithSpaceKeyStringWithSpaceValueParameter() {
@@ -157,11 +157,7 @@ class AlamofireURLParameterEncodingTestCase: XCTestCase {
         let parameters = ["allowed": " =\"#%<>@\\^`{}[]|&"]
         let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
 
-<<<<<<< HEAD
-        XCTAssertEqual(URLRequest.URL.query!, "allowed=%20%3D%22%23%25%3C%3E%40%5C%5E%60%7B%7D%5B%5D%7C%26", "query is incorrect")
-=======
-        XCTAssertEqual(URLRequest.URL!.query!, "allowed=%20%3D%22%23%25%2F%3C%3E%3F%40%5C%5E%60%7B%7D%5B%5D%7C%26", "query is incorrect")
->>>>>>> xcode-6.3
+        XCTAssertEqual(URLRequest.URL!.query!, "allowed=%20%3D%22%23%25%3C%3E%40%5C%5E%60%7B%7D%5B%5D%7C%26", "query is incorrect")
     }
 
     func testURLParameterEncodeStringKeyPercentEncodedStringValueParameter() {
