@@ -1,8 +1,16 @@
 language: objective-c
-osx_image: xcode613
+osx_image: xcode63
+branches:
+  only:
+    - master
+env:
+- LC_CTYPE=en_US.UTF-8 LANG=en_US.UTF-8
 before_install:
-- gem install xcpretty
+- gem install xcpretty -N
 script:
 - set -o pipefail
-- xcodebuild -project Alamofire.xcodeproj -scheme "Alamofire iOS" test -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty -c
-- xcodebuild -project "iOS Example.xcodeproj" -scheme "iOS Example" build -sdk iphonesimulator ONLY_ACTIVE_ARCH=YES | xcpretty -c
+- xcodebuild -project Alamofire.xcodeproj -scheme "Alamofire iOS" -sdk iphonesimulator
+  -destination "platform=iOS Simulator,name=iPhone 6" ONLY_ACTIVE_ARCH=NO  test | xcpretty -c
+- xcodebuild -project "iOS Example.xcodeproj" -scheme "iOS Example" -sdk iphonesimulator
+  -destination "platform=iOS Simulator,name=iPhone 6" ONLY_ACTIVE_ARCH=YES build | xcpretty -c
+- pod lib lint --quick
