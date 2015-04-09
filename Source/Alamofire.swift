@@ -394,19 +394,19 @@ public class Manager {
 
         // MARK: NSURLSessionTaskDelegate
 
-        /// NSURLSessionTaskDelegate override closure for `URLSession:willPerformHTTPRedirection:newRequest:completionHandler:` method.
+        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:willPerformHTTPRedirection:newRequest:completionHandler:`.
         public var taskWillPerformHTTPRedirection: ((NSURLSession!, NSURLSessionTask!, NSHTTPURLResponse!, NSURLRequest!) -> (NSURLRequest!))?
 
-        /// NSURLSessionTaskDelegate override closure for `URLSession:willPerformHTTPRedirection:newRequest:completionHandler:` method.
+        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:willPerformHTTPRedirection:newRequest:completionHandler:`.
         public var taskDidReceiveChallenge: ((NSURLSession!, NSURLSessionTask!, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential!))?
 
-        /// NSURLSessionTaskDelegate override closure for `URLSession:task:didCompleteWithError:` method.
+        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didCompleteWithError:`.
         public var taskNeedNewBodyStream: ((NSURLSession!, NSURLSessionTask!) -> (NSInputStream!))?
 
-        /// NSURLSessionTaskDelegate override closure for `URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:` method.
+        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:`.
         public var taskDidSendBodyData: ((NSURLSession!, NSURLSessionTask!, Int64, Int64, Int64) -> Void)?
 
-        /// NSURLSessionTaskDelegate override closure for `URLSession:task:didCompleteWithError:` method.
+        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didCompleteWithError:`.
         public var taskDidComplete: ((NSURLSession!, NSURLSessionTask!, NSError!) -> Void)?
 
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: ((NSURLRequest!) -> Void)) {
@@ -457,16 +457,16 @@ public class Manager {
 
         // MARK: NSURLSessionDataDelegate
 
-        /// NSURLSessionDataDelegate override closure for `URLSession:dataTask:didReceiveResponse:completionHandler:` method.
+        /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didReceiveResponse:completionHandler:`.
         public var dataTaskDidReceiveResponse: ((NSURLSession!, NSURLSessionDataTask!, NSURLResponse!) -> (NSURLSessionResponseDisposition))?
 
-        /// NSURLSessionDataDelegate override closure for `URLSession:dataTask:didBecomeDownloadTask:` method.
+        /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didBecomeDownloadTask:`.
         public var dataTaskDidBecomeDownloadTask: ((NSURLSession!, NSURLSessionDataTask!, NSURLSessionDownloadTask!) -> Void)?
 
-        /// NSURLSessionDataDelegate override closure for `URLSession:dataTask:didReceiveData:` method.
+        /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didReceiveData:`.
         public var dataTaskDidReceiveData: ((NSURLSession!, NSURLSessionDataTask!, NSData!) -> Void)?
 
-        /// NSURLSessionDataDelegate override closure for `URLSession:dataTask:willCacheResponse:completionHandler:` method.
+        /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:willCacheResponse:completionHandler:`.
         public var dataTaskWillCacheResponse: ((NSURLSession!, NSURLSessionDataTask!, NSCachedURLResponse!) -> (NSCachedURLResponse))?
 
         public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
@@ -508,13 +508,13 @@ public class Manager {
 
         // MARK: NSURLSessionDownloadDelegate
 
-        /// NSURLSessionDownloadDelegate override closure for `URLSession:downloadTask:didFinishDownloadingToURL:` method.
+        /// Overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didFinishDownloadingToURL:`.
         public var downloadTaskDidFinishDownloadingToURL: ((NSURLSession!, NSURLSessionDownloadTask!, NSURL) -> (NSURL))?
 
-        /// NSURLSessionDownloadDelegate override closure for `URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:` method.
+        /// Overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:`.
         public var downloadTaskDidWriteData: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64, Int64) -> Void)?
 
-        /// NSURLSessionDownloadDelegate override closure for `URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:` method.
+        /// Overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:`.
         public var downloadTaskDidResumeAtOffset: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64) -> Void)?
 
         public func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
