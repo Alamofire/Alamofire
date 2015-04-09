@@ -1353,13 +1353,23 @@ extension Request {
     /**
         Creates a response serializer that returns a string initialized from the response data with the specified string encoding.
 
-        :param: encoding The string encoding. `NSUTF8StringEncoding` by default.
+        :param: encoding The string encoding. If `nil`, the string encoding will be determined from the server response, falling back to the default HTTP default character set, ISO-8859-1.
 
         :returns: A string response serializer.
     */
-    public class func stringResponseSerializer(encoding: NSStringEncoding = NSUTF8StringEncoding) -> Serializer {
-        return { (_, _, data) in
-            let string = NSString(data: data!, encoding: encoding)
+    public class func stringResponseSerializer(var encoding: NSStringEncoding? = nil) -> Serializer {
+        return { (_, response, data) in
+            if data == nil || data?.length == 0 {
+                return (nil, nil)
+            }
+
+            if encoding == nil {
+                if let encodingName = response?.textEncodingName {
+                    encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName))
+                }
+            }
+
+            let string = NSString(data: data!, encoding: encoding ?? NSISOLatin1StringEncoding)
 
             return (string, nil)
         }
@@ -1368,12 +1378,12 @@ extension Request {
     /**
         Adds a handler to be called once the request has finished.
 
-        :param: encoding The string encoding. `NSUTF8StringEncoding` by default.
+        :param: encoding The string encoding. If `nil`, the string encoding will be determined from the server response, falling back to the default HTTP default character set, ISO-8859-1.
         :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the string, if one could be created from the URL response and data, and any error produced while creating the string.
 
         :returns: The request.
     */
-    public func responseString(encoding: NSStringEncoding = NSUTF8StringEncoding, completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
+    public func responseString(encoding: NSStringEncoding? = nil, completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
         return response(serializer: Request.stringResponseSerializer(encoding: encoding), completionHandler: { request, response, string, error in
             completionHandler(request, response, string as? String, error)
         })
