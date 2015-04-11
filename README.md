@@ -20,7 +20,7 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 ## Requirements
 
 - iOS 7.0+ / Mac OS X 10.9+
-- Xcode 6.1
+- Xcode 6.3
 
 ## Communication
 
@@ -35,8 +35,6 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 > **Embedded frameworks require a minimum deployment target of iOS 8 or OS X Mavericks.**
 >
 > To use Alamofire with a project targeting iOS 7, you must include the `Alamofire.swift` source file directly in your project. See the ['Source File'](#source-file) section for instructions.
->
-> For Swift 1.2 using the Xcode 6.3 Beta, use the [xcode-6.3 branch](https://github.com/Alamofire/Alamofire/tree/xcode-6.3).
 
 ### CocoaPods
 
@@ -55,7 +53,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Alamofire', '~> 1.1'
+pod 'Alamofire', '~> 1.2'
 ```
 
 Then, run the following command:
@@ -78,7 +76,7 @@ $ brew install carthage
 To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" >= 1.1
+github "Alamofire/Alamofire" >= 1.2
 ```
 
 ### Manually
