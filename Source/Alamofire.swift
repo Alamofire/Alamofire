@@ -1011,11 +1011,17 @@ extension Manager {
 
         switch uploadable {
         case .Data(let request, let data):
-            uploadTask = session.uploadTaskWithRequest(request, fromData: data)
+            dispatch_sync(queue) {
+                uploadTask = self.session.uploadTaskWithRequest(request, fromData: data)
+            }
         case .File(let request, let fileURL):
-            uploadTask = session.uploadTaskWithRequest(request, fromFile: fileURL)
+            dispatch_sync(queue) {
+                uploadTask = self.session.uploadTaskWithRequest(request, fromFile: fileURL)
+            }
         case .Stream(let request, var stream):
-            uploadTask = session.uploadTaskWithStreamedRequest(request)
+            dispatch_sync(queue) {
+                uploadTask = self.session.uploadTaskWithStreamedRequest(request)
+            }
             HTTPBodyStream = stream
         }
 
@@ -1157,9 +1163,13 @@ extension Manager {
 
         switch downloadable {
         case .Request(let request):
-            downloadTask = session.downloadTaskWithRequest(request)
+            dispatch_sync(queue) {
+                downloadTask = self.session.downloadTaskWithRequest(request)
+            }
         case .ResumeData(let resumeData):
-            downloadTask = session.downloadTaskWithResumeData(resumeData)
+            dispatch_sync(queue) {
+                downloadTask = self.session.downloadTaskWithResumeData(resumeData)
+            }
         }
 
         let request = Request(session: session, task: downloadTask)
