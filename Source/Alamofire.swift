@@ -781,17 +781,17 @@ public class Request {
                 if challenge.previousFailureCount > 0 {
                     disposition = .CancelAuthenticationChallenge
                 } else {
-                    // TODO: Incorporate Trust Evaluation & TLS Chain Validation
 
                     switch challenge.protectionSpace.authenticationMethod! {
                     case NSURLAuthenticationMethodServerTrust:
-                        credential = NSURLCredential(forTrust: challenge.protectionSpace.serverTrust)
+                        // TODO: Incorporate custom Trust Evaluation & TLS Chain Validation
+                        // For now, fall back on default system SSL validation.
+                        break
                     default:
                         credential = self.credential ?? session.configuration.URLCredentialStorage?.defaultCredentialForProtectionSpace(challenge.protectionSpace)
-                    }
-
-                    if credential != nil {
-                        disposition = .UseCredential
+                        if credential != nil {
+                            disposition = .UseCredential
+                        }
                     }
                 }
             }
