@@ -2,9 +2,89 @@
 
 ## [Unreleased](https://github.com/Alamofire/Alamofire/tree/HEAD)
 
-[Full Changelog](https://github.com/Alamofire/Alamofire/compare/1.1.5...HEAD)
+[Full Changelog](https://github.com/Alamofire/Alamofire/compare/1.2.1...HEAD)
 
 **Closed issues:**
+
+- I keep getting an error when chaining the response methods? [\#444](https://github.com/Alamofire/Alamofire/issues/444)
+
+## [1.2.1](https://github.com/Alamofire/Alamofire/tree/1.2.1) (2015-04-21)
+
+[Full Changelog](https://github.com/Alamofire/Alamofire/compare/1.2.0...1.2.1)
+
+**Closed issues:**
+
+- ResponseJSON Completion Handler Issue! [\#442](https://github.com/Alamofire/Alamofire/issues/442)
+
+- Cannot load underlying module for 'Alamofire' [\#441](https://github.com/Alamofire/Alamofire/issues/441)
+
+- Symbol not found OS X 10.10.3/Xcode 6.3 [\#440](https://github.com/Alamofire/Alamofire/issues/440)
+
+- alamofire build fails after Carthage update Xcode 6.3 [\#439](https://github.com/Alamofire/Alamofire/issues/439)
+
+- Type 'X' does not conform to protocol 'ResponseObjectSerializable' [\#438](https://github.com/Alamofire/Alamofire/issues/438)
+
+- Code Signing Issue with Alamofire Latest SDK [\#437](https://github.com/Alamofire/Alamofire/issues/437)
+
+- Code Signing Issue with Alamofire [\#436](https://github.com/Alamofire/Alamofire/issues/436)
+
+- Japanese XML response are garbled. [\#435](https://github.com/Alamofire/Alamofire/issues/435)
+
+- Alamofire is breaking with the new updated Xcode [\#434](https://github.com/Alamofire/Alamofire/issues/434)
+
+- Error install via cocoapod [\#433](https://github.com/Alamofire/Alamofire/issues/433)
+
+- Build failed on empty project [\#432](https://github.com/Alamofire/Alamofire/issues/432)
+
+- README still says to use the xcode 6.3 branch, but that has been merged into master and deleted [\#431](https://github.com/Alamofire/Alamofire/issues/431)
+
+- support Xcode 6.3 [\#430](https://github.com/Alamofire/Alamofire/issues/430)
+
+- Compiler Error: Declaration is only valid at file scope [\#429](https://github.com/Alamofire/Alamofire/issues/429)
+
+- How to setup with xcode 6.3 branch? [\#428](https://github.com/Alamofire/Alamofire/issues/428)
+
+- Not compatible with latest public release of Xcode 6.3.  [\#425](https://github.com/Alamofire/Alamofire/issues/425)
+
+- Cocoapods error for 1.1.5 \(works for 1.1.4\) [\#422](https://github.com/Alamofire/Alamofire/issues/422)
+
+- swift 1.2 support [\#421](https://github.com/Alamofire/Alamofire/issues/421)
+
+- How come uploadTaskWithRequest is not treated as dataTaskWithRequest regarding identifier uniqueness? [\#393](https://github.com/Alamofire/Alamofire/issues/393)
+
+- Shouldn't skip SSL certificate common name validation [\#331](https://github.com/Alamofire/Alamofire/issues/331)
+
+- Follow HTTP redirects \(or not\) per request [\#314](https://github.com/Alamofire/Alamofire/issues/314)
+
+- Background downloads [\#194](https://github.com/Alamofire/Alamofire/issues/194)
+
+**Merged pull requests:**
+
+- Change iOS deployment target to 8.0 - related to issues \#352, \#375, \#401... [\#426](https://github.com/Alamofire/Alamofire/pull/426) ([pseudovirtual](https://github.com/pseudovirtual))
+
+- \[Tests\] Added redirect sessiondelegate tests [\#424](https://github.com/Alamofire/Alamofire/pull/424) ([jhersh](https://github.com/jhersh))
+
+- Swift 1.2 [\#423](https://github.com/Alamofire/Alamofire/pull/423) ([swizzlr](https://github.com/swizzlr))
+
+- Updated iOS deployment target to 8.0, fixed ambiguous responseString err... [\#418](https://github.com/Alamofire/Alamofire/pull/418) ([kiancheong](https://github.com/kiancheong))
+
+- added certificate pinning [\#402](https://github.com/Alamofire/Alamofire/pull/402) ([isoiphone](https://github.com/isoiphone))
+
+- Use system provided SSL validation until proper customization is implemented [\#394](https://github.com/Alamofire/Alamofire/pull/394) ([mthole](https://github.com/mthole))
+
+- Water the swift1.2 branch, get example compiling again [\#387](https://github.com/Alamofire/Alamofire/pull/387) ([rromanchuk](https://github.com/rromanchuk))
+
+- Fix Swift 1.2 ambiguity error in responseString. [\#353](https://github.com/Alamofire/Alamofire/pull/353) ([kevboh](https://github.com/kevboh))
+
+- Public SessionDelegate + initial redirect support [\#350](https://github.com/Alamofire/Alamofire/pull/350) ([jhersh](https://github.com/jhersh))
+
+## [1.2.0](https://github.com/Alamofire/Alamofire/tree/1.2.0) (2015-04-09)
+
+[Full Changelog](https://github.com/Alamofire/Alamofire/compare/1.1.5...1.2.0)
+
+**Closed issues:**
+
+- Placement of expectation.fulfill\(\) potentially skips XCTAsserts [\#419](https://github.com/Alamofire/Alamofire/issues/419)
 
 - Thanks [\#414](https://github.com/Alamofire/Alamofire/issues/414)
 
@@ -16,19 +96,33 @@
 
 - Headers missing after deploy [\#405](https://github.com/Alamofire/Alamofire/issues/405)
 
+- is iso-8859-1 encoding supported by Alamofire? [\#358](https://github.com/Alamofire/Alamofire/issues/358)
+
 - Change MinimumOSVersion to 8.0 to support Carthage builds [\#352](https://github.com/Alamofire/Alamofire/issues/352)
 
 - Code Signing Identity for Release is set to iOS Developer instead of iOS Distribution. [\#305](https://github.com/Alamofire/Alamofire/issues/305)
 
 **Merged pull requests:**
 
+- Move expectation.fulfill\(\) to end of blocks [\#420](https://github.com/Alamofire/Alamofire/pull/420) ([natecook1000](https://github.com/natecook1000))
+
+- Fix minor grammatical error [\#416](https://github.com/Alamofire/Alamofire/pull/416) ([getaaron](https://github.com/getaaron))
+
 - \[travis\] Use Xcode 6.2 [\#415](https://github.com/Alamofire/Alamofire/pull/415) ([kylef](https://github.com/kylef))
+
+- Fix typo in download test [\#413](https://github.com/Alamofire/Alamofire/pull/413) ([getaaron](https://github.com/getaaron))
 
 - Fix minor grammatical error [\#412](https://github.com/Alamofire/Alamofire/pull/412) ([getaaron](https://github.com/getaaron))
 
+- Removed ambiguous response serializer methods that collide with default parameters [\#408](https://github.com/Alamofire/Alamofire/pull/408) ([cnoon](https://github.com/cnoon))
+
 - Fixed compilation error for Xcode 6.3 beta 4 [\#406](https://github.com/Alamofire/Alamofire/pull/406) ([nduplessis](https://github.com/nduplessis))
 
+- Remove optional type from Request.progress property. [\#404](https://github.com/Alamofire/Alamofire/pull/404) ([pitiphong-p](https://github.com/pitiphong-p))
+
 - Change iOS deployment target to 8.0 to fix the issue \#352 [\#375](https://github.com/Alamofire/Alamofire/pull/375) ([pseudovirtual](https://github.com/pseudovirtual))
+
+- \[String Response\] Respect remote server's content encoding [\#359](https://github.com/Alamofire/Alamofire/pull/359) ([kylef](https://github.com/kylef))
 
 ## [1.1.5](https://github.com/Alamofire/Alamofire/tree/1.1.5) (2015-03-26)
 
@@ -169,6 +263,8 @@
 - Convert Alamofire to a universal framework [\#326](https://github.com/Alamofire/Alamofire/pull/326) ([kylef](https://github.com/kylef))
 
 - Fixed testDownloadRequest crash in offline mode. Refactored DownloadTests. [\#320](https://github.com/Alamofire/Alamofire/pull/320) ([salabaha](https://github.com/salabaha))
+
+- Support for Background Sessions as well as SessionDelegate override closures [\#317](https://github.com/Alamofire/Alamofire/pull/317) ([cnoon](https://github.com/cnoon))
 
 ## [1.1.4](https://github.com/Alamofire/Alamofire/tree/1.1.4) (2015-01-30)
 
