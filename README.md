@@ -20,7 +20,7 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 ## Requirements
 
 - iOS 7.0+ / Mac OS X 10.9+
-- Xcode 6.1
+- Xcode 6.3
 
 ## Communication
 
@@ -35,8 +35,6 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 > **Embedded frameworks require a minimum deployment target of iOS 8 or OS X Mavericks.**
 >
 > To use Alamofire with a project targeting iOS 7, you must include the `Alamofire.swift` source file directly in your project. See the ['Source File'](#source-file) section for instructions.
->
-> For Swift 1.2 using the Xcode 6.3 Beta, use the [xcode-6.3 branch](https://github.com/Alamofire/Alamofire/tree/xcode-6.3).
 
 ### CocoaPods
 
@@ -55,7 +53,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Alamofire', '~> 1.1'
+pod 'Alamofire', '~> 1.2'
 ```
 
 Then, run the following command:
@@ -78,7 +76,7 @@ $ brew install carthage
 To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" >= 1.1
+github "Alamofire/Alamofire" >= 1.2
 ```
 
 ### Manually
@@ -244,7 +242,7 @@ enum ParameterEncoding {
 }
 ```
 
-- `URL`: A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. _Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`)._
+- `URL`: A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. _Since there is no published specification for how to encode collection types, Alamofire follows the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`)._
 - `JSON`: Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
 - `PropertyList`: Uses `NSPropertyListSerialization` to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
 - `Custom`: Uses the associated closure value to construct a new request given an existing request and parameters.
