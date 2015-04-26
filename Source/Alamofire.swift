@@ -373,7 +373,7 @@ public class Manager {
         /// NSURLSessionDelegate override closure for `URLSession:didReceiveChallenge:completionHandler:` method.
         public var sessionDidReceiveChallenge: ((NSURLSession!, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential!))?
 
-        /// NSURLSessionDelegate override closure for `URLSession:didFinishEventsForBackgroundURLSession:` method.
+        /// NSURLSessionDelegate override closure for `URLSessionDidFinishEventsForBackgroundURLSession:` method.
         public var sessionDidFinishEventsForBackgroundURLSession: ((NSURLSession!) -> Void)?
 
         public func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
@@ -394,10 +394,10 @@ public class Manager {
 
         // MARK: NSURLSessionTaskDelegate
 
-        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:willPerformHTTPRedirection:newRequest:completionHandler:`.
+        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:`.
         public var taskWillPerformHTTPRedirection: ((NSURLSession!, NSURLSessionTask!, NSHTTPURLResponse!, NSURLRequest!) -> (NSURLRequest!))?
 
-        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:willPerformHTTPRedirection:newRequest:completionHandler:`.
+        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didReceiveChallenge:completionHandler:`.
         public var taskDidReceiveChallenge: ((NSURLSession!, NSURLSessionTask!, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential!))?
 
         /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:session:task:needNewBodyStream:`.
