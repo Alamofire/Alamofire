@@ -288,9 +288,10 @@ public class Manager {
 
     /**
         :param: configuration The configuration used to construct the managed session.
+        :param: delegate Responsible for handling all delegate callbacks for the underlying session.
     */
-    required public init(configuration: NSURLSessionConfiguration? = nil) {
-        self.delegate = SessionDelegate()
+    required public init(configuration: NSURLSessionConfiguration? = nil, delegate: SessionDelegate = SessionDelegate()) {
+        self.delegate = delegate
         self.session = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
 
         self.delegate.sessionDidFinishEventsForBackgroundURLSession = { [weak self] session in
@@ -345,7 +346,7 @@ public class Manager {
     /**
         Responsible for handling all delegate callbacks for the underlying session.
     */
-    public final class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
+    public class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
         private var subdelegates: [Int: Request.TaskDelegate] = [:]
         private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_CONCURRENT)
         private subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
