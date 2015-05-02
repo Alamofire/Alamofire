@@ -1,6 +1,6 @@
 ![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/assets/alamofire.png)
 
-Alamofire is an HTTP networking library written in Swift, from the [creator](https://github.com/mattt) of [AFNetworking](https://github.com/afnetworking/afnetworking).
+Alamofire is an HTTP networking library written in Swift.
 
 ## Features
 
@@ -806,13 +806,9 @@ Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu
 
 * * *
 
-## Contact
+## Credits
 
-Follow AFNetworking on Twitter ([@AFNetworking](https://twitter.com/AFNetworking))
-
-### Creator
-
-- [Mattt Thompson](http://github.com/mattt) ([@mattt](https://twitter.com/mattt))
+Alamofire is owned and maintained by the [Alamofire Software Foundation](http://alamofire.org).
 
 ## License
 
