@@ -1,6 +1,6 @@
 // ResponseTests.swift
 //
-// Copyright (c) 2014–2015 Alamofire (http://alamofire.org)
+// Copyright (c) 2014–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 
 import Foundation
 import Alamofire
@@ -72,14 +73,14 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
     func testGETRequestRedirectResponse() {
         let URL = "http://google.com"
         let expectation = expectationWithDescription("\(URL)")
-        
+
         let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
-        
+
         delegate.taskWillPerformHTTPRedirection = { (session: NSURLSession!, task: NSURLSessionTask!, response: NSHTTPURLResponse!, request: NSURLRequest!) in
             // Accept the redirect by returning the updated request.
             return request
         }
-        
+
         Alamofire.request(.GET, URL)
             .response { (request, response, data, error) in
                 expectation.fulfill()
@@ -87,29 +88,29 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
                 XCTAssertNotNil(response, "response should not be nil")
                 XCTAssertNotNil(data, "data should not be nil")
                 XCTAssertNil(error, "error should be nil")
-                
+
                 XCTAssertEqual(response!.URL!, NSURL(string: "http://www.google.com/")!, "request should have followed a redirect")
         }
-        
+
         waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
         }
     }
-    
+
     func testGETRequestDisallowRedirectResponse() {
         let URL = "http://google.com/"
         let expectation = expectationWithDescription("\(URL)")
-        
+
         let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
-        
+
         delegate.taskWillPerformHTTPRedirection = { (session: NSURLSession!, task: NSURLSessionTask!, response: NSHTTPURLResponse!, request: NSURLRequest!) in
             // Disallow redirects by returning nil.
             // TODO: NSURLSessionDelegate's URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:
             // suggests that returning nil should refuse the redirect, but this causes a deadlock/timeout
-            
+
             return NSURLRequest(URL: NSURL(string: URL)!)
         }
-        
+
         Alamofire.request(.GET, URL)
             .response { (request, response, data, error) in
                 expectation.fulfill()
@@ -117,10 +118,10 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
                 XCTAssertNotNil(response, "response should not be nil")
                 XCTAssertNotNil(data, "data should not be nil")
                 XCTAssertNil(error, "error should be nil")
-                
+
                 XCTAssertEqual(response!.URL!, NSURL(string: URL)!, "request should not have followed a redirect")
         }
-        
+
         waitForExpectationsWithTimeout(10) { (error) in
             XCTAssertNil(error, "\(error)")
         }
