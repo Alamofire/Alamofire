@@ -75,7 +75,7 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
 
         let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
 
-        delegate.taskWillPerformHTTPRedirection = { (session: NSURLSession!, task: NSURLSessionTask!, response: NSHTTPURLResponse!, request: NSURLRequest!) in
+        delegate.taskWillPerformHTTPRedirection = { session, task, response, request in
             // Accept the redirect by returning the updated request.
             return request
         }
@@ -101,8 +101,7 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
         let expectation = expectationWithDescription("\(URL)")
 
         let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
-
-        delegate.taskWillPerformHTTPRedirection = { (session: NSURLSession!, task: NSURLSessionTask!, response: NSHTTPURLResponse!, request: NSURLRequest!) in
+        delegate.taskWillPerformHTTPRedirection = { session, task, response, request in
             // Disallow redirects by returning nil.
             // TODO: NSURLSessionDelegate's URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:
             // suggests that returning nil should refuse the redirect, but this causes a deadlock/timeout
@@ -111,7 +110,7 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
         }
 
         Alamofire.request(.GET, URL)
-            .response { (request, response, data, error) in
+            .response { request, response, data, error in
                 expectation.fulfill()
                 XCTAssertNotNil(request, "request should not be nil")
                 XCTAssertNotNil(response, "response should not be nil")
