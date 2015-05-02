@@ -1312,7 +1312,7 @@ extension Request {
 // MARK: - Printable
 
 extension Request: Printable {
-    /// The textual representation used when written to an `OutputStreamType`, which includes the HTTP method and URL, as well as the response status code if a response has been received.
+    /// The textual representation used when written to an output stream, which includes the HTTP method and URL, as well as the response status code if a response has been received.
     public var description: String {
         var components: [String] = []
         if request.HTTPMethod != nil {
@@ -1397,7 +1397,7 @@ extension Request: DebugPrintable {
         return join(" \\\n\t", components)
     }
 
-    /// The textual representation used when written to an `OutputStreamType`, in the form of a cURL command.
+    /// The textual representation used when written to an output stream, in the form of a cURL command.
     public var debugDescription: String {
         return cURLRepresentation()
     }
