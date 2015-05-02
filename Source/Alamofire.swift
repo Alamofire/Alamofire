@@ -164,7 +164,15 @@ public enum ParameterEncoding {
     Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to construct URL requests.
 */
 public protocol URLStringConvertible {
-    /// The URL string.
+    /** 
+        A URL that conforms to RFC 2396.
+    
+        Methods accepting a `URLStringConvertible` type parameter parse it according to RFCs 1738 and 1808.
+        
+        See http://tools.ietf.org/html/rfc2396
+        See http://tools.ietf.org/html/rfc1738
+        See http://tools.ietf.org/html/rfc1808
+    */
     var URLString: String { get }
 }
 
