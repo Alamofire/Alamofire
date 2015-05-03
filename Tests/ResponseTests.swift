@@ -24,6 +24,12 @@ import Foundation
 import Alamofire
 import XCTest
 
+#if os(iOS)
+import UIKit
+#elseif os(OSX)
+import Cocoa
+#endif
+
 class AlamofireJSONResponseTestCase: XCTestCase {
     func testGETRequestJSONResponse() {
         let URL = "http://httpbin.org/get"
