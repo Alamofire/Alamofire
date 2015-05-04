@@ -114,6 +114,7 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
                 XCTAssertNotNil(data, "data should not be nil")
                 XCTAssertNil(error, "error should be nil")
 
+                XCTAssertEqual(response!.URL!, NSURL(string: URL)!, "request should not have followed a redirect")
                 XCTAssertEqual(response!.statusCode, 302, "response has 302 status code")
                 XCTAssertNotNil(response!.allHeaderFields["Location"], "response location header should not be nil")
         }
