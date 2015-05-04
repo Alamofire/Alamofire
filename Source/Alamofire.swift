@@ -732,10 +732,13 @@ public class Request {
     /**
         Cancels the request.
     */
-    public func cancel() {
+    public func cancel(_ completion: ((NSData?) -> Void)? = nil) {
         if let downloadDelegate = delegate as? DownloadTaskDelegate {
             downloadDelegate.downloadTask.cancelByProducingResumeData { (data) in
                 downloadDelegate.resumeData = data
+                if let handler = completion {
+                    handler(data);
+                }
             }
         } else {
             task.cancel()

@@ -104,4 +104,23 @@ class AlamofireDownloadResponseTestCase: XCTestCase {
             XCTAssertNil(error, "\(error)")
         }
     }
+
+    func testDownloadRequestCancellationWithResumeData() {
+        let numberOfLines = 100
+        let URL = "http://httpbin.org/stream/\(numberOfLines)"
+
+        let expectation = expectationWithDescription(URL)
+
+        let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+
+        let download = Alamofire.download(.GET, URL, destination)
+        download.cancel { (resumeData) -> Void in
+            expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(10) { (error) in
+            XCTAssertNil(error, "\(error)")
+        }
+
+    }
 }
