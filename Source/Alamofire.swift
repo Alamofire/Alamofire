@@ -418,7 +418,7 @@ public class Manager {
         public var taskDidComplete: ((NSURLSession, NSURLSessionTask, NSError?) -> Void)?
 
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: ((NSURLRequest!) -> Void)) {
-            var redirectRequest: NSURLRequest! = request
+            var redirectRequest: NSURLRequest? = request
 
             if taskWillPerformHTTPRedirection != nil {
                 redirectRequest = taskWillPerformHTTPRedirection!(session, task, response, request)
