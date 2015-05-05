@@ -82,13 +82,14 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .response { (request, response, data, error) in
-                expectation.fulfill()
                 XCTAssertNotNil(request, "request should not be nil")
                 XCTAssertNotNil(response, "response should not be nil")
                 XCTAssertNotNil(data, "data should not be nil")
                 XCTAssertNil(error, "error should be nil")
 
                 XCTAssertEqual(response!.URL!, NSURL(string: "http://www.google.com/")!, "request should have followed a redirect")
+
+                expectation.fulfill()
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
@@ -111,13 +112,14 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .response { request, response, data, error in
-                expectation.fulfill()
                 XCTAssertNotNil(request, "request should not be nil")
                 XCTAssertNotNil(response, "response should not be nil")
                 XCTAssertNotNil(data, "data should not be nil")
                 XCTAssertNil(error, "error should be nil")
 
                 XCTAssertEqual(response!.URL!, NSURL(string: URL)!, "request should not have followed a redirect")
+
+                expectation.fulfill()
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
