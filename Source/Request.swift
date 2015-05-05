@@ -58,7 +58,7 @@ public class Request {
         }
     }
     
-    // MARK: Authentication
+    // MARK: - Authentication
     
     /**
         Associates an HTTP Basic credential with the request.
@@ -87,7 +87,7 @@ public class Request {
         return self
     }
     
-    // MARK: Progress
+    // MARK: - Progress
     
     /**
         Sets a closure to be called periodically during the lifecycle of the request as data is written to or read from the server.
@@ -111,7 +111,7 @@ public class Request {
         return self
     }
     
-    // MARK: Response
+    // MARK: - Response
     
     /**
         A closure used by response handlers that takes a request, response, and data and returns a serialized object and any error that occured in the process.
@@ -161,6 +161,8 @@ public class Request {
         return self
     }
     
+    // MARK: - State
+    
     /**
         Suspends the request.
     */
@@ -187,6 +189,8 @@ public class Request {
             task.cancel()
         }
     }
+    
+    // MARK: - TaskDelegate
     
     class TaskDelegate: NSObject, NSURLSessionTaskDelegate {
         let task: NSURLSessionTask
@@ -221,7 +225,7 @@ public class Request {
             queue.suspended = true
         }
         
-        // MARK: NSURLSessionTaskDelegate
+        // MARK: - NSURLSessionTaskDelegate
         
         func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: ((NSURLRequest!) -> Void)) {
             var redirectRequest = request
@@ -270,6 +274,8 @@ public class Request {
         }
     }
     
+    // MARK: - DataTaskDelegate
+    
     class DataTaskDelegate: TaskDelegate, NSURLSessionDataDelegate {
         var dataTask: NSURLSessionDataTask! { return task as! NSURLSessionDataTask }
         
@@ -291,7 +297,7 @@ public class Request {
             super.init(task: task)
         }
         
-        // MARK: NSURLSessionDataDelegate
+        // MARK: - NSURLSessionDataDelegate
         
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
             var disposition: NSURLSessionResponseDisposition = .Allow

@@ -39,6 +39,8 @@ public enum Method: String {
     case CONNECT = "CONNECT"
 }
 
+// MARK: - ParameterEncoding
+
 /**
     Used to specify the way in which a set of parameters are applied to a URL request.
 */

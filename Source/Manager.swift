@@ -27,6 +27,8 @@ import Foundation
 */
 public class Manager {
     
+    // MARK: - Properties
+    
     /**
         A shared instance of `Manager`, used by top-level Alamofire request methods, and suitable for use directly for any ad hoc requests.
     */
@@ -96,6 +98,8 @@ public class Manager {
     
     /// The background completion handler closure provided by the UIApplicationDelegate `application:handleEventsForBackgroundURLSession:completionHandler:` method. By setting the background completion handler, the SessionDelegate `sessionDidFinishEventsForBackgroundURLSession` closure implementation will automatically call the handler. If you need to handle your own events before the handler is called, then you need to override the SessionDelegate `sessionDidFinishEventsForBackgroundURLSession` and manually call the handler when finished. `nil` by default.
     public var backgroundCompletionHandler: (() -> Void)?
+
+    // MARK: - Lifecycle
     
     /**
         :param: configuration The configuration used to construct the managed session.
@@ -115,7 +119,7 @@ public class Manager {
         self.session.invalidateAndCancel()
     }
     
-    // MARK: -
+    // MARK: - Request
     
     /**
         Creates a request for the specified method, URL string, parameters, and parameter encoding.
@@ -156,6 +160,8 @@ public class Manager {
         return request
     }
     
+    // MARK: - SessionDelegate
+    
     /**
         Responsible for handling all delegate callbacks for the underlying session.
     */
@@ -180,7 +186,9 @@ public class Manager {
             }
         }
         
-        // MARK: NSURLSessionDelegate
+        // MARK: - NSURLSessionDelegate
+        
+        // MARK: Override Closures
         
         /// NSURLSessionDelegate override closure for `URLSession:didBecomeInvalidWithError:` method.
         public var sessionDidBecomeInvalidWithError: ((NSURLSession, NSError?) -> Void)?
@@ -190,6 +198,8 @@ public class Manager {
         
         /// NSURLSessionDelegate override closure for `URLSessionDidFinishEventsForBackgroundURLSession:` method.
         public var sessionDidFinishEventsForBackgroundURLSession: ((NSURLSession) -> Void)?
+
+        // MARK: Delegate Methods
         
         public func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
             sessionDidBecomeInvalidWithError?(session, error)
@@ -207,7 +217,9 @@ public class Manager {
             sessionDidFinishEventsForBackgroundURLSession?(session)
         }
         
-        // MARK: NSURLSessionTaskDelegate
+        // MARK: - NSURLSessionTaskDelegate
+        
+        // MARK: Override Closures
         
         /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:`.
         public var taskWillPerformHTTPRedirection: ((NSURLSession, NSURLSessionTask, NSHTTPURLResponse, NSURLRequest) -> (NSURLRequest!))?
@@ -223,6 +235,8 @@ public class Manager {
         
         /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didCompleteWithError:`.
         public var taskDidComplete: ((NSURLSession, NSURLSessionTask, NSError?) -> Void)?
+        
+        // MARK: Delegate Methods
         
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: ((NSURLRequest!) -> Void)) {
             var redirectRequest: NSURLRequest? = request
@@ -270,7 +284,9 @@ public class Manager {
             }
         }
         
-        // MARK: NSURLSessionDataDelegate
+        // MARK: - NSURLSessionDataDelegate
+        
+        // MARK: Override Closures
         
         /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didReceiveResponse:completionHandler:`.
         public var dataTaskDidReceiveResponse: ((NSURLSession, NSURLSessionDataTask, NSURLResponse) -> (NSURLSessionResponseDisposition))?
@@ -283,6 +299,8 @@ public class Manager {
         
         /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:willCacheResponse:completionHandler:`.
         public var dataTaskWillCacheResponse: ((NSURLSession, NSURLSessionDataTask, NSCachedURLResponse) -> (NSCachedURLResponse!))?
+
+        // MARK: Delegate Methods
         
         public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
             var disposition: NSURLSessionResponseDisposition = .Allow
@@ -321,7 +339,9 @@ public class Manager {
             }
         }
         
-        // MARK: NSURLSessionDownloadDelegate
+        // MARK: - NSURLSessionDownloadDelegate
+        
+        // MARK: Override Closures
         
         /// Overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didFinishDownloadingToURL:`.
         public var downloadTaskDidFinishDownloadingToURL: ((NSURLSession, NSURLSessionDownloadTask, NSURL) -> Void)?
@@ -331,6 +351,8 @@ public class Manager {
         
         /// Overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:`.
         public var downloadTaskDidResumeAtOffset: ((NSURLSession, NSURLSessionDownloadTask, Int64, Int64) -> Void)?
+
+        // MARK: Delegate Methods
         
         public func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
             if downloadTaskDidFinishDownloadingToURL != nil {
@@ -356,7 +378,7 @@ public class Manager {
             }
         }
         
-        // MARK: NSObject
+        // MARK: - NSObject
         
         public override func respondsToSelector(selector: Selector) -> Bool {
             switch selector {

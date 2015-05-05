@@ -65,7 +65,7 @@ extension Request {
     }
 }
 
-// MARK: JSON
+// MARK: - JSON
 
 extension Request {
     /**
@@ -103,7 +103,7 @@ extension Request {
     }
 }
 
-// MARK: Property List
+// MARK: - Property List
 
 extension Request {
     /**

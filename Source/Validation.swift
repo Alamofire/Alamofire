@@ -50,7 +50,7 @@ extension Request {
         return self
     }
     
-    // MARK: Status Code
+    // MARK: - Status Code
     
     /**
         Validates that the response has a status code in the specified range.
@@ -67,7 +67,7 @@ extension Request {
         }
     }
     
-    // MARK: Content-Type
+    // MARK: - Content-Type
     
     private struct MIMEType {
         let type: String
@@ -123,7 +123,7 @@ extension Request {
         }
     }
     
-    // MARK: Automatic
+    // MARK: - Automatic
     
     /**
         Validates that the response has a status code in the default acceptable range of 200...299, and that the content type matches any specified in the Accept HTTP header field.

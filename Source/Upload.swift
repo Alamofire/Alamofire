@@ -158,12 +158,17 @@ extension Manager {
     }
 }
 
+// MARK: -
+
 extension Request {
+    
+    // MARK: - UploadTaskDelegate
+    
     class UploadTaskDelegate: DataTaskDelegate {
         var uploadTask: NSURLSessionUploadTask! { return task as! NSURLSessionUploadTask }
         var uploadProgress: ((Int64, Int64, Int64) -> Void)!
         
-        // MARK: NSURLSessionTaskDelegate
+        // MARK: - NSURLSessionTaskDelegate
         
         func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
             progress.totalUnitCount = totalBytesExpectedToSend

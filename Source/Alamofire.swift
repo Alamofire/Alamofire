@@ -83,7 +83,7 @@ extension NSURLRequest: URLRequestConvertible {
     }
 }
 
-// MARK: - Convenience -
+// MARK: - Convenience
 
 func URLRequest(method: Method, URL: URLStringConvertible) -> NSURLRequest {
     let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL.URLString)!)
@@ -92,7 +92,7 @@ func URLRequest(method: Method, URL: URLStringConvertible) -> NSURLRequest {
     return mutableURLRequest
 }
 
-// MARK: - Request
+// MARK: - Request Methods
 
 /**
     Creates a request using the shared manager instance for the specified method, URL string, parameters, and parameter encoding.
@@ -121,7 +121,7 @@ public func request(URLRequest: URLRequestConvertible) -> Request {
     return Manager.sharedInstance.request(URLRequest.URLRequest)
 }
 
-// MARK: - Upload
+// MARK: - Upload Methods
 
 // MARK: File
 
@@ -204,7 +204,7 @@ public func upload(URLRequest: URLRequestConvertible, stream: NSInputStream) -> 
     return Manager.sharedInstance.upload(URLRequest, stream: stream)
 }
 
-// MARK: - Download
+// MARK: - Download Methods
 
 // MARK: URL Request
 
