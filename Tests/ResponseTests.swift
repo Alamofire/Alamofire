@@ -102,11 +102,8 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
 
         let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
         delegate.taskWillPerformHTTPRedirection = { session, task, response, request in
-            // Disallow redirects by returning nil.
-            // TODO: NSURLSessionDelegate's URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:
-            // suggests that returning nil should refuse the redirect, but this causes a deadlock/timeout
-
-            return NSURLRequest(URL: NSURL(string: URL)!)
+            // https://developer.apple.com/library/ios/documentation/Foundation/Reference/NSURLSessionTaskDelegate_protocol/index.html#//apple_ref/occ/intfm/NSURLSessionTaskDelegate/URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:
+            return nil
         }
 
         Alamofire.request(.GET, URL)
@@ -118,6 +115,8 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
 
                 XCTAssertEqual(response!.URL!, NSURL(string: URL)!, "request should not have followed a redirect")
+                XCTAssertEqual(response!.statusCode, 302, "response has 302 status code")
+                XCTAssertNotNil(response!.allHeaderFields["Location"], "response location header should not be nil")
         }
 
         waitForExpectationsWithTimeout(10) { (error) in
