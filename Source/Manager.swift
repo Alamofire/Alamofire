@@ -83,7 +83,7 @@ public class Manager {
             "User-Agent": userAgent]
     }()
     
-    private let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
+    let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
     
     /// The underlying session.
     public let session: NSURLSession
@@ -162,7 +162,8 @@ public class Manager {
     public final class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
         private var subdelegates: [Int: Request.TaskDelegate] = [:]
         private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_CONCURRENT)
-        private subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
+        
+        subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
                 var subdelegate: Request.TaskDelegate?
                 dispatch_sync(subdelegateQueue) {

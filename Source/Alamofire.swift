@@ -89,7 +89,7 @@ extension NSURLRequest: URLRequestConvertible {
     Responsible for sending a request and receiving the response and associated data from the server, as well as managing its underlying `NSURLSessionTask`.
 */
 public class Request {
-    private let delegate: TaskDelegate
+    let delegate: TaskDelegate
 
     /// The underlying task.
     public var task: NSURLSessionTask { return delegate.task }
@@ -106,7 +106,7 @@ public class Request {
     /// The progress of the request lifecycle.
     public var progress: NSProgress { return delegate.progress }
 
-    private init(session: NSURLSession, task: NSURLSessionTask) {
+    init(session: NSURLSession, task: NSURLSessionTask) {
         self.session = session
 
         switch task {
@@ -1042,7 +1042,7 @@ extension Request {
 
 // MARK: - Convenience -
 
-private func URLRequest(method: Method, URL: URLStringConvertible) -> NSURLRequest {
+func URLRequest(method: Method, URL: URLStringConvertible) -> NSURLRequest {
     let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL.URLString)!)
     mutableURLRequest.HTTPMethod = method.rawValue
 
