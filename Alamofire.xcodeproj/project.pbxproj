@@ -125,7 +125,6 @@
 		F8111E3519A95C8B0040E7D1 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				F8111E3819A95C8B0040E7D1 /* Alamofire.h */,
 				F897FF4019AA800700AB5182 /* Alamofire.swift */,
 				F8111E3619A95C8B0040E7D1 /* Supporting Files */,
 			);
@@ -135,6 +134,7 @@
 		F8111E3619A95C8B0040E7D1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				F8111E3819A95C8B0040E7D1 /* Alamofire.h */,
 				F8111E3719A95C8B0040E7D1 /* Info.plist */,
 			);
 			name = "Supporting Files";
