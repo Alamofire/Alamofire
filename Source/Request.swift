@@ -26,6 +26,9 @@ import Foundation
     Responsible for sending a request and receiving the response and associated data from the server, as well as managing its underlying `NSURLSessionTask`.
 */
 public class Request {
+
+    // MARK: - Properties
+
     let delegate: TaskDelegate
 
     /// The underlying task.
@@ -42,6 +45,8 @@ public class Request {
 
     /// The progress of the request lifecycle.
     public var progress: NSProgress { return delegate.progress }
+
+    // MARK: - Lifecycle
 
     init(session: NSURLSession, task: NSURLSessionTask) {
         self.session = session
