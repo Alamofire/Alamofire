@@ -194,7 +194,7 @@ public class Request {
         let progress: NSProgress
         
         var data: NSData? { return nil }
-        private(set) var error: NSError?
+        var error: NSError?
         
         var credential: NSURLCredential?
         
