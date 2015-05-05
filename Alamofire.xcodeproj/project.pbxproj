@@ -123,6 +123,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4CDE2C481AF8A14A00BABAE5 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				4CDE2C361AF8932A00BABAE5 /* Manager.swift */,
+				4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */,
+				4CDE2C391AF899EC00BABAE5 /* Request.swift */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		4CDE2C491AF8A14E00BABAE5 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				4CDE2C3C1AF89D4900BABAE5 /* Download.swift */,
+				4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */,
+				4CDE2C3F1AF89E0700BABAE5 /* Upload.swift */,
+				4CDE2C421AF89F0900BABAE5 /* Validation.swift */,
+			);
+			name = Features;
+			sourceTree = "<group>";
+		};
 		F8111E2919A95C8B0040E7D1 = {
 			isa = PBXGroup;
 			children = (
@@ -147,13 +168,8 @@
 			isa = PBXGroup;
 			children = (
 				F897FF4019AA800700AB5182 /* Alamofire.swift */,
-				4CDE2C3C1AF89D4900BABAE5 /* Download.swift */,
-				4CDE2C361AF8932A00BABAE5 /* Manager.swift */,
-				4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */,
-				4CDE2C391AF899EC00BABAE5 /* Request.swift */,
-				4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */,
-				4CDE2C3F1AF89E0700BABAE5 /* Upload.swift */,
-				4CDE2C421AF89F0900BABAE5 /* Validation.swift */,
+				4CDE2C481AF8A14A00BABAE5 /* Core */,
+				4CDE2C491AF8A14E00BABAE5 /* Features */,
 				F8111E3619A95C8B0040E7D1 /* Supporting Files */,
 			);
 			path = Source;
