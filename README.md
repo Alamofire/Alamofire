@@ -81,7 +81,7 @@ github "Alamofire/Alamofire" >= 1.2
 
 If you prefer not to use either of the aforementioned dependency managers, you can integrate Alamofire into your project manually.
 
-### Embedded Framework
+#### Embedded Framework
 
 - Add Alamofire as a [submodule](http://git-scm.com/docs/git-submodule) by opening the Terminal, `cd`-ing into your top-level project directory, and entering the following command:
 
@@ -89,16 +89,29 @@ If you prefer not to use either of the aforementioned dependency managers, you c
 $ git submodule add https://github.com/Alamofire/Alamofire.git
 ```
 
-- Open the `Alamofire` folder, and drag `Alamofire.xcodeproj` into the file navigator of your app project.
-- In Xcode, navigate to the target configuration window by clicking on the blue project icon, and selecting the application target under the "Targets" heading in the sidebar.
-- Ensure that the deployment target of Alamofire.framework matches that of the application target.
-- In the tab bar at the top of that window, open the "Build Phases" panel.
-- Expand the "Target Dependencies" group, and add `Alamofire.framework`.
-- Click on the `+` button at the top left of the panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `Alamofire.framework`.
+- Open the new `Alamofire` folder, and drag the `Alamofire.xcodeproj` into the Project Navigator of your application's Xcode project.
+
+    > It should appear nested underneath your application's blue project icon. Whether it is above or below all the other Xcode groups does not matter.
+
+- Select the `Alamofire.xcodeproj` in the Project Navigator and verify the deployment target matches that of your application target.
+- Next, select your application project in the Project Navigator (blue project icon) to navigate to the target configuration window and select the application target under the "Targets" heading in the sidebar.
+- In the tab bar at the top of that window, open the "General" panel.
+- Click on the `+` button under the "Embedded Binaries" section.
+- You will see two different `Alamofire.xcodeproj` folders each with two different versions of the `Alamofire.framework` nested inside a `Products` folder.
+
+    > It does not matter which `Products` folder you choose from, but it does matter whether you choose the top or bottom `Alamofire.framework`. 
+    
+- Select the top `Alamofire.framework` for iOS and the bottom one for OS X.
+
+    > You can verify which one you selected by inspecting the build log for your project. The build target for `Alamofire` will be listed as either `Alamofire iOS` or `Alamofire OSX`.
+
+- And that's it!
+
+> The `Alamofire.framework` is automagically added as a target dependency, linked framework and embedded framework in a copy files build phase which is all you need to build on the simulator and a device.
 
 #### Source File
 
-For application targets that do not support embedded frameworks, such as iOS 7, Alamofire can be integrated by adding the `Alamofire.swift` source file directly into your project. Note that any calling conventions described in the ['Usage'](#usage) section with the `Alamofire` prefix would instead omit it (for example, `Alamofire.request` becomes `request`), since this functionality is incorporated into the top-level namespace.
+For application targets that do not support embedded frameworks, such as iOS 7, Alamofire can be integrated by adding the `Alamofire.swift` source file directly into your project. Note that you will no longer need to `import Alamofire` since you are not actually loading a framework. Additionally, any of the calling conventions described in the ['Usage'](#usage) section with the `Alamofire` prefix would instead omit it (for example, `Alamofire.request` becomes `request`), since this functionality is incorporated into the top-level namespace.
 
 ---
 
