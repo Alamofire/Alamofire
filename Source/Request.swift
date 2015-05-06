@@ -218,8 +218,11 @@ public class Request {
             self.queue = {
                 let operationQueue = NSOperationQueue()
                 operationQueue.maxConcurrentOperationCount = 1
-                operationQueue.qualityOfService = NSQualityOfService.Utility
                 operationQueue.suspended = true
+
+                if operationQueue.respondsToSelector("qualityOfService") {
+                    operationQueue.qualityOfService = NSQualityOfService.Utility
+                }
 
                 return operationQueue
             }()
