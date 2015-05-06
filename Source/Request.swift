@@ -98,7 +98,7 @@ public class Request {
         Sets a closure to be called periodically during the lifecycle of the request as data is written to or read from the server.
 
         - For uploads, the progress closure returns the bytes written, total bytes written, and total bytes expected to write.
-        - For downloads, the progress closure returns the bytes read, total bytes read, and total bytes expected to write.
+        - For downloads and data tasks, the progress closure returns the bytes read, total bytes read, and total bytes expected to read.
 
         :param: closure The code to be executed periodically during the lifecycle of the request.
 
@@ -328,9 +328,13 @@ public class Request {
 
             mutableData.appendData(data)
 
-            if let expectedContentLength = dataTask.response?.expectedContentLength {
-                dataProgress?(bytesReceived: Int64(data.length), totalBytesReceived: Int64(mutableData.length), totalBytesExpectedToReceive: expectedContentLength)
-            }
+            let totalBytesReceived = Int64(mutableData.length)
+            let totalBytesExpectedToReceive = dataTask.response?.expectedContentLength ?? NSURLSessionTransferSizeUnknown
+
+            progress.totalUnitCount = totalBytesExpectedToReceive
+            progress.completedUnitCount = totalBytesReceived
+
+            dataProgress?(bytesReceived: Int64(data.length), totalBytesReceived: totalBytesReceived, totalBytesExpectedToReceive: totalBytesExpectedToReceive)
         }
 
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: ((NSCachedURLResponse!) -> Void)) {

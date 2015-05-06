@@ -88,6 +88,7 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
 
                 XCTAssertEqual(response!.URL!, NSURL(string: "http://www.google.com/")!, "request should have followed a redirect")
+                XCTAssertEqual(response!.statusCode, 200, "response should have a 200 status code")
 
                 expectation.fulfill()
         }
@@ -118,6 +119,7 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
                 XCTAssertNil(error, "error should be nil")
 
                 XCTAssertEqual(response!.URL!, NSURL(string: URL)!, "request should not have followed a redirect")
+                XCTAssertEqual(response!.statusCode, 301, "response should have a 301 status code")
 
                 expectation.fulfill()
         }
