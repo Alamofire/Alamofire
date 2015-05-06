@@ -215,6 +215,159 @@ extension NSURLRequest: URLRequestConvertible {
     }
 }
 
+// MARK: - TLSTrustPolicy
+
+/**
+Describes a policy to evaluate server credentials against pinned X.509 certificates or public keys.
+*/
+public enum TLSTrustPolicy {
+    /// Accept any certificate.
+    case InsecureTrustAny
+    
+    /**
+    Validates host chain by pinning the associated certificates.
+    
+    Supports multiple use cases such as:
+    
+    - Pinning a single (potentially self-signed) certificate
+    - Pinning a root CA (or intermediate) which has signed the leaf certificate presented by the host.
+    - Requiring the root of the host chain to be among a fixed set of certificates.
+    
+    The trust evaluation succeeds if the host chain is valid and contains any of the pinned certificates. The host name is checked against the leaf certificate.
+    */
+    case PinCertificates([SecCertificateRef])
+    
+    /**
+    Validates host chain by pinning the associated public keys.
+    
+    The trust evaluation succeeds if the host chain contains any of the pinned public keys. The host name is NOT checked.
+    
+    See `ServerTrustPolicy.PinCertificates` for additional information on use cases.
+    */
+    case PinPublicKeys([SecKeyRef])
+    
+    /**
+    Uses the associated closure value to evaluate the server trust.
+    
+    The closure should return `true` to trust the host chain.
+    */
+    case Custom((SecTrust, String) -> Bool)
+    
+    /**
+    A convenience function to access all (`.cer`) certficates contained within the app bundle.
+    
+    :returns: The certificates contained within the app bundle.
+    */
+    public static let bundledCertificates: [SecCertificateRef] = {
+        let mainBundle = NSBundle.mainBundle()
+        let paths = mainBundle.pathsForResourcesOfType(".cer", inDirectory: ".") as! [String]
+        var certificates = [SecCertificateRef]()
+        for path in paths {
+            if let certificate = SecCertificateCreateWithData(nil, NSData(contentsOfFile: path))?.takeRetainedValue() {
+                certificates.append(certificate)
+            }
+        }
+        return certificates
+        }()
+    
+    /**
+    :returns: The public keys of any certificates contained within the app bundle.
+    */
+    public static let bundledPublicKeys: [SecKeyRef] = {
+        let certificates = TLSTrustPolicy.bundledCertificates
+        var keys = [SecKeyRef]()
+        for certificate in certificates {
+            if let key = TLSTrustPolicy.publicKeyFromCertificate(certificate) {
+                keys.append(key)
+            }
+        }
+        return keys
+        }()
+    
+    /**
+    :returns: The public keys of any certificates contained within the app bundle.
+    */
+    public static func publicKeyFromCertificate(certificate: SecCertificateRef) -> SecKeyRef? {
+        let policy = SecPolicyCreateBasicX509().takeRetainedValue()
+        var trustPtr: Unmanaged<SecTrustRef>? = nil
+        SecTrustCreateWithCertificates(certificate, policy, &trustPtr)
+        let trust = trustPtr!.takeRetainedValue()
+        var result = SecTrustResultType(kSecTrustResultInvalid)
+        SecTrustEvaluate(trust, &result)
+        let key = SecTrustCopyPublicKey(trust).takeRetainedValue()
+        return key
+    }
+    
+    /**
+    Evaluates the host's SecTrust and determines whether to trust it or not.
+    
+    :param: serverTrust The server trust to evaluate
+    :param: host The hostname
+    
+    :returns: Whether to trust the server, `true` if trusted.
+    */
+    public func evaluateTrust(serverTrust: SecTrust, forHost host: String) -> Bool {
+        switch self {
+        case InsecureTrustAny:
+            return true
+            
+        case .PinCertificates(let pinnedCertificates):
+            let policies = [SecPolicyCreateSSL(1, host as CFString).takeRetainedValue()]
+            
+            var status = errSecSuccess
+            status = SecTrustSetPolicies(serverTrust, policies)
+            status = SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates)
+            
+            var result = SecTrustResultType(kSecTrustResultInvalid)
+            status = SecTrustEvaluate(serverTrust, &result)
+            
+            if status != errSecSuccess {
+                return false
+            }
+            
+            switch result {
+            case SecTrustResultType(kSecTrustResultProceed), SecTrustResultType(kSecTrustResultUnspecified):
+                return true
+            default:
+                return false
+            }
+            
+        case .PinPublicKeys(let pinnedKeys):
+            let policies = [SecPolicyCreateBasicX509().takeRetainedValue()]
+            var status = errSecSuccess
+            status = SecTrustSetPolicies(serverTrust, policies)
+            var result = SecTrustResultType(kSecTrustResultInvalid)
+            status = SecTrustEvaluate(serverTrust, &result)
+            if status != errSecSuccess && !(result == SecTrustResultType(kSecTrustResultProceed) || result == SecTrustResultType(kSecTrustResultUnspecified)) {
+                return false
+            }
+            
+            let hostCount = SecTrustGetCertificateCount(serverTrust)
+            var hostKeys = [SecKeyRef]()
+            for ix in 0..<hostCount {
+                let hostCertificate = SecTrustGetCertificateAtIndex(serverTrust, ix).takeUnretainedValue()
+                if let key = TLSTrustPolicy.publicKeyFromCertificate(hostCertificate) {
+                    hostKeys.append(key)
+                }
+            }
+            
+            let matchedBundledKeys = pinnedKeys.filter {
+                let bundledKey: AnyObject = $0 as AnyObject
+                for hostKey in hostKeys as [AnyObject] {
+                    if bundledKey.isEqual(hostKey) {
+                        return true
+                    }
+                }
+                return false
+            }
+            return matchedBundledKeys.count >= 1
+            
+        case Custom(let closure):
+            return closure(serverTrust, host)
+        }
+    }
+}
+
 // MARK: -
 
 /**
@@ -382,6 +535,39 @@ public class Manager {
 
         /// NSURLSessionDelegate override closure for `URLSession:didReceiveChallenge:completionHandler:` method.
         public var sessionDidReceiveChallenge: ((NSURLSession, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential!))?
+        
+        // TLSPolicy is a convenience to set the `sessionDidReceiveChallenge` override closure based on a TLSPolicy
+        public var TLSPolicy: TLSTrustPolicy? {
+            didSet(policy) {
+                if let tlsPolicy = policy {
+                    sessionDidReceiveChallenge = { (_, challenge) in
+                        var disposition: NSURLSessionAuthChallengeDisposition = .PerformDefaultHandling
+                        var credential: NSURLCredential?
+                        
+                        if challenge.previousFailureCount > 0 {
+                            disposition = .CancelAuthenticationChallenge
+                        } else {
+                            switch challenge.protectionSpace.authenticationMethod! {
+                            case NSURLAuthenticationMethodServerTrust:
+                                let serverTrust = challenge.protectionSpace.serverTrust!
+                                let trusted = tlsPolicy.evaluateTrust(serverTrust, forHost: challenge.protectionSpace.host)
+                                if trusted {
+                                    credential = NSURLCredential(forTrust: serverTrust)
+                                    disposition = .UseCredential
+                                } else {
+                                    disposition = .CancelAuthenticationChallenge
+                                }
+                            default:
+                                break
+                            }
+                        }
+                        return (disposition, credential)
+                    }
+                } else {
+                    sessionDidReceiveChallenge = nil
+                }
+            }
+        }
 
         /// NSURLSessionDelegate override closure for `URLSessionDidFinishEventsForBackgroundURLSession:` method.
         public var sessionDidFinishEventsForBackgroundURLSession: ((NSURLSession) -> Void)?
@@ -1700,4 +1886,14 @@ public func download(URLRequest: URLRequestConvertible, destination: Request.Dow
 */
 public func download(resumeData data: NSData, destination: Request.DownloadFileDestination) -> Request {
     return Manager.sharedInstance.download(data, destination: destination)
+}
+
+// MARK: - TLS Policy
+public var TLSPolicy: TLSTrustPolicy? {
+    get {
+      return Manager.sharedInstance.delegate.TLSPolicy
+    }
+    set(newPolicy) {
+        Manager.sharedInstance.delegate.TLSPolicy = newPolicy
+    }
 }
