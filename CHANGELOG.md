@@ -1,0 +1,286 @@
+# Change Log
+All notable changes to this project will be documented in this file.
+`Alamofire` adheres to [Semantic Versioning](http://semver.org/).
+
+- `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121)
+- `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
+- `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## 1.2.1
+Released on 2015-04-21.
+
+#### Added
+- Redirect tests for the `SessionDelegate`.
+  - Added by [Jonathan Hersh](https://github.com/jhersh) in Pull Request #424.
+- TLS evaluation test case.
+  - Added by [Mattt Thompson](https://github.com/mattt).
+- Additional guards to ensure unique task identifiers for upload and download tasks.
+  - Added by [Mattt Thompson](https://github.com/mattt) in regards to Issue #393.
+
+#### Updated
+- Required Xcode version to Xcode to 6.3 in the README.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+- SSL validation to use default system validation by default.
+  - Updated by [Michael Thole](https://github.com/mthole) in Pull Request #394.
+
+## 1.2.0
+Released on 2015-04-09.
+
+#### Added
+- New `testURLParameterEncodeStringWithSlashKeyStringWithQuestionMarkValueParameter`
+test.
+  - Added by [Mattt Thompson](https://github.com/mattt) in regards to Issue #370.
+- New `backgroundCompletionHandler` property to the `Manager` called when the 
+session background tasks finish.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request #317.
+
+#### Updated
+- `Request` computed property `progress` to no longer be an optional type.
+  - Updated by [Pitiphong Phongpattranont](https://github.com/pitiphong-p) in
+  Pull Request #404.
+- All logic to Swift 1.2.
+  - Updated by [Aron Cedercrantz](https://github.com/rastersize) and
+  [Mattt Thompson](https://github.com/mattt).
+- The `responseString` serializer to respect server provided character encoding with
+overrideable configuration, default string response serialization to ISO-8859-1, as
+per the HTTP/1.1 specification.
+  - Updated by [Kyle Fuller](https://github.com/kylef) and
+  [Mattt Thompson](https://github.com/mattt) in Pull Request
+  #359 which also resolved Issue #358.  
+- `SessionDelegate` methods to first call the override closures if set.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request #317.
+- `SessionDelegate` and all override closures to a public ACL allowing for customization.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request #317.
+- `SessionDelegate` class to `final`.
+  - Updated by [Mattt Thompson](https://github.com/mattt).  
+- `SessionDelegate` header documentation for method override properties.
+  - Updated by [Mattt Thompson](https://github.com/mattt).  
+- Xcode project to set `APPLICATION_EXTENSION_API_ONLY` to `YES` for OS X target.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+
+#### Removed
+- Ambiguous response serializer methods that collided with default parameters.
+  - Removed by [Christian Noon](https://github.com/cnoon) in Pull Request #408.
+- `SessionDelegate` initializer and replaced with default property value.
+  - Removed by [Mattt Thompson](https://github.com/mattt).
+
+#### Fixed
+- Async tests where asserts were potentially not being run by by moving
+`expectation.fullfill()` to end of closures.
+  - Fixed by [Nate Cook](https://github.com/natecook1000) in Pull Request #420.
+- Small grammatical error in the ParameterEncoding section of the README.
+  - Fixed by [Aaron Brager](https://github.com/getaaron) in Pull Request #416.
+- Typo in a download test comment.
+  - Fixed by [Aaron Brager](https://github.com/getaaron) in Pull Request #413.
+- Signature mismatch in the `dataTaskDidBecomeDownloadTask` override closure.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request #317.
+- Issue in the `SessionDelegate` where the `DataTaskDelegate` was not being called.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request #317.
+
+---
+
+## 1.1.5
+Released on 2015-03-26.
+
+#### Added
+- Convenience upload functions to the `Manager`.
+  - Added by [Olivier Bohrer](https://github.com/obohrer) in Pull Request #334.
+- Info to the README about Swift 1.2 support.
+  - Added by [Mattt Thompson](https://github.com/mattt).
+
+#### Updated
+- All request / upload / download methods on `Manager` to match the top-level functions.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+- The `testDownloadRequest` to no longer remove the downloaded file.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+- Ono XML response serializer example in the README.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+- Travis-CI settings to only build the master branch.
+  - Updated by [Mattt Thompson](https://github.com/mattt).  
+- Code signing identities for the frameworks and targets to better support Carthage.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request #400.
+- iOS deployment target to iOS 8.0 for iOS target and tests.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request #401.  
+- Legal characters to be escaped according to RFC 3986 Section 3.4.
+  - Updated by [Stephane Lizeray](https://github.com/slizeray) in Pull Request #370.
+
+#### Fixed
+- Travis-CI scheme issue, added podspec linting and added ENV variables.
+  - Fixed by [Jonathan Hersh](https://github.com/jhersh) in Pull Request #351.
+- Code sample in the README in the Manual Parameter Encoding section.
+  - Fixed by [Petr Korolev](https://github.com/skywinder) in Pull Request #381.
+
+## 1.1.4
+Released on 2015-01-30.
+
+#### Added
+- Podspec argument `requires_arc` to the podspec file.
+  - Added by [Mattt Thompson](https://github.com/mattt).
+- Support for Travis-CI for automated testing purposes.
+  - Added by [Kyle Fuller](https://github.com/kylef) in Pull Request #279.
+
+#### Updated
+- Installation instructions in the README to include CocoaPods, Carthage and
+Embedded Frameworks.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+- Travis-CI to use Xcode 6.1.1.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+- The `download` method on `Manager` to use `Request.DownloadFileDestination` typealias.
+  - Updated by [Alexander Strakovich](https://github.com/astrabot) in Pull Request #318.
+- `RequestTests` to no longer delete all cookies in default session configuration.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+- Travis-CI yaml file to only build the active architecture.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+- Deployment targets to iOS 7.0 and Mac OS X 10.9.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+
+#### Removed
+- The `tearDown` method in the `AlamofireDownloadResponseTestCase`.
+  - Removed by [Mattt Thompson](https://github.com/mattt).
+
+#### Fixed
+- Small formatting issue in the CocoaPods Podfile example in the README.
+  - Fixed by [rborkow](https://github.com/rborkow) in Pull Request #313.
+- Several issues with the iOS and OSX targets in the Xcode project.
+  - Fixed by [Mattt Thompson](https://github.com/mattt).
+- The `testDownloadRequest` in `DownloadTests` by adding `.json` file extension.
+  - Fixed by [Martin Kavalar](https://github.com/mk) in Pull Request #302.
+- The `AlamofireRequestDebugDescriptionTestCase` on OSX.
+  - Fixed by [Mattt Thompson](https://github.com/mattt).
+- Spec validation error with CocoaPods 0.36.0.beta-1 by disabling -b flags in `cURL`
+debug on OSX.
+  - Fixed by [Mattt Thompson](https://github.com/mattt).
+- Travis-CI build issue by adding suppport for an `iOS Example` scheme. 
+  - Fixed by [Yasuharu Ozaki](https://github.com/yasuoza) in Pull Request #322.
+
+## 1.1.3
+Released on 2015-01-09.
+
+#### Added
+- Podspec file to support CocoaPods deployment.
+  - Added by [Marius Rackwitz](https://github.com/mrackwitz) in Pull Request #218.
+- Shared scheme to support Carthage deployments.
+  - Added by [Yosuke Ishikawa](https://github.com/ishkawa) in Pull Request #228.
+- New target for Alamofire OSX framework.
+  - Added by [Martin Kavalar](https://github.com/mk) in Pull Request #293.
+
+#### Updated
+- Upload and Download progress state to be updated before calling progress closure.
+  - Updated by [Alexander Strakovich](https://github.com/astrabot) in Pull Request #278.
+
+#### Fixed
+- Some casting code logic in the Generic Response Object Serialization example in
+the README.
+  - Fixed by [Philip Heinser](https://github.com/philipheinser) in Pull Request #258.
+- Indentation formatting of the `responseString` parameter documentation.
+  - Fixed by [Ah.Miao](https://github.com/mrahmiao) in Pull Request #291.
+
+## 1.1.2
+Released on 2014-12-21.
+
+#### Added
+- POST request JSON response test.
+  - Added by [Mattt Thompson](https://github.com/mattt).
+
+#### Updated
+- The response object example to use a failable initializer in the README.
+  - Updated by [Mattt Thompson](https://github.com/mattt) in regards to Issue #230.
+- Router example in the README by removing extraneous force unwrap.
+  - Updated by [Arnaud Mesureur](https://github.com/nsarno) in Pull Request #247.
+- Xcode project `APPLICATION_EXTENSION_API_ONLY` flag to `YES`.
+  - Updated by [Michael Latta](https://github.com/technomage) in Pull Request #273.
+- Default HTTP header creation by moving it into a public class method.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request #261.
+
+#### Fixed
+- Upload stream method to set `HTTPBodyStream` for streamed request.
+  - Fixed by [Florent Vilmart](https://github.com/flovilmart) and
+    [Mattt Thompson](https://github.com/mattt) in Pull Request #241.
+- ParameterEncoding to compose percent-encoded query strings from
+percent-encoded components.
+  - Fixed by [Oleh Sannikov](https://github.com/sunnycows) in Pull Request #249.
+- Serialization handling of NSData with 0 bytes.
+  - Fixed by [Mike Owens](https://github.com/mowens) in Pull Request #254.
+- Issue where `suggestedDownloadDestination` parameters were being ignored.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request #257.
+- Crash caused by `Manager` deinitialization and added documentation.
+  - Fixed by [Mattt Thompson](https://github.com/mattt) in regards to Issue #269.
+
+## 1.1.1
+Released on 2014-11-20.
+
+#### Updated
+- Dispatch-based synchronized access to subdelegates.
+  - Updated by [Mattt Thompson](https://github.com/mattt) in regards to Issue #175.
+- iOS 7 instructions in the README.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+- CRUD example in the README to work on Xcode 6.1.
+  - Updated by [John Beynon](https://github.com/johnbeynon) in Pull Request #187.
+- The `cURL` example annotation in the README to pick up `bash` syntax highlighting.
+  - Updated by [Samuel E. Giddins](https://github.com/segiddins) in Pull Request #208.
+
+#### Fixed
+- Out-of-memory exception by replacing `stringByAddingPercentEncodingWithAllowedCharacters`
+with `CFURLCreateStringByAddingPercentEscapes`.
+  - Fixed by [Mattt Thompson](https://github.com/mattt) in regards to Issue #206.
+- Several issues in the README examples where an NSURL initializer needs to be unwrapped.
+  - Fixed by [Mattt Thompson](https://github.com/mattt) in regards to Issue #213.
+- Possible exception when force unwrapping optional header properties.
+  - Fixed by [Mattt Thompson](https://github.com/mattt).
+- Optional cookie entry in `cURL` output.
+  - Fixed by [Mattt Thompson](https://github.com/mattt) in regards to Issue #226.
+- Optional `textLabel` property on cells in the example app.
+  - Fixed by [Mattt Thompson](https://github.com/mattt).
+
+## 1.1.0
+Released on 2014-10-20.
+
+#### Updated
+- Project to support Swift 1.1 and Xcode 6.1.
+  - Updated by [Aral Balkan](https://github.com/aral),
+    [Ross Kimes](https://github.com/rosskimes),
+    [Orta Therox](https://github.com/orta),
+    [Nico du Plessis](https://github.com/nduplessis)
+    and [Mattt Thompson](https://github.com/mattt).
+
+---
+
+## 1.0.1
+Released on 2014-10-20.
+
+#### Added
+- Tests for upload and download with progress.
+  - Added by [Mattt Thompson](https://github.com/mattt).
+- Test for question marks in url encoded query.
+  - Added by [Mattt Thompson](https://github.com/mattt).
+- The `NSURLSessionConfiguration` headers to `cURL` representation.
+  - Added by [Matthias Ryne Cheow](https://github.com/rynecheow) in Pull Request #140.
+- Parameter encoding tests for key/value pairs containing spaces.
+  - Added by [Mattt Thompson](https://github.com/mattt).
+- Percent character encoding for the `+` character.
+  - Added by [Niels van Hoorn](https://github.com/nvh) in Pull Request #167.
+- Escaping for quotes to support JSON in `cURL` commands.
+  - Added by [John Gibb](https://github.com/johngibb) in Pull Request #178.
+- The `request` method to the `Manager` bringing it more inline with the top-level methods.
+  - Added by Brian Smith.
+
+#### Fixed
+- Parameter encoding of ampersands and escaping of characters.
+  - Fixed by [Mattt Thompson](https://github.com/mattt) in regards to Issues #146 and #162.
+- Parameter encoding of `HTTPBody` from occurring twice.
+  - Fixed by Yuri in Pull Request #153.
+- Extraneous dispatch to background by using weak reference for delegate in response.
+  - Fixed by [Mattt Thompson](https://github.com/mattt).
+- Response handler threading issue by adding a `subdelegateQueue` to the `SessionDelegate`.
+  - Fixed by [Essan Parto](https://github.com/parto) in Pull Request #171.
+- Challenge issue where basic auth credentials were not being unwrapped. 
+  - Fixed by [Mattt Thompson](https://github.com/mattt).
+
+## 1.0.0
+Released on 2014-09-25.
+
+#### Added
+- Initial release of Alamofire.
+  - Added by [Mattt Thompson](https://github.com/mattt).
