@@ -2,11 +2,78 @@
 All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
-- `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121)
+- `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## 1.2.2
+Released on 2015-05-13.
+
+#### Added
+- Contributing Guidelines document to the project.
+  - Added by [Mattt Thompson](https://github.com/mattt).
+- Documentation to the `URLStringConvertible` protocol around RFC specs.
+  - Added by [Mattt Thompson](https://github.com/mattt) in regards to Issue
+  [#464](https://github.com/Alamofire/Alamofire/pull/464).
+- The `Carthage/Build` ignore flag to the `.gitignore` file.
+  - Added by [Tomáš Slíž](https://github.com/tomassliz) in Pull Request
+  [#451](https://github.com/Alamofire/Alamofire/pull/451).
+- The `.DS_Store` ignore flag to the `.gitignore` file.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Response status code asserts for redirect tests.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- A CHANGELOG to the project documenting each official release.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- `SessionDelegate` override closure properties to match the method signatures.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#456](https://github.com/Alamofire/Alamofire/pull/456).
+- Documentation for the `Printable` protocol on `Request` to reference output stream
+rather than the specific `OutputStreamType`.
+  - Updated by [Mattt Thompson](https://github.com/mattt).
+- Deployment targets to iOS 8.0 and OS X 10.9 for the respective frameworks.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- `SessionDelegate` willPerformHTTPRedirection method to accept optional return type
+from override closure.
+  - Updated by [Chungsub Kim](https://github.com/subicura) in Pull Request
+  [#469](https://github.com/Alamofire/Alamofire/pull/469).
+- Embedded Framework and Source File documentation in the README.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#427](https://github.com/Alamofire/Alamofire/pull/427).
+- Alamofire source to be split into multiple core files and feature files.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#471](https://github.com/Alamofire/Alamofire/pull/471).
+- `TaskDelegate` override closure signatures and delegate method implementations.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Removed
+- Travis-CI build status from the README until Xcode 6.3 is supported.
+  - Removed by [Mattt Thompson](https://github.com/mattt).
+- Unnecessary parentheses from closure parameters and typealiases.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- `SessionDelegate` override closure documentation.
+  - Fixed by [Siemen Sikkema](https://github.com/siemensikkema) in Pull Request
+  [#448](https://github.com/Alamofire/Alamofire/pull/448).
+- Some inaccurate documentation on several of the public `SessionDelegate` closures.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#456](https://github.com/Alamofire/Alamofire/pull/456).
+- A deinit race condition where the task delegate queue could fail to `dispatch_release`.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#379](https://github.com/Alamofire/Alamofire/pull/379).
+- `TaskDelegate` to only set `qualityOfService` for `NSOperationQueue` on iOS 8+.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#472](https://github.com/Alamofire/Alamofire/pull/472).
+- Expectation order issue in the redirect tests.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+- `DataTaskDelegate` behavior ensuring `NSProgress` values and `progress` override
+closures are always updated and executed.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#407](https://github.com/Alamofire/Alamofire/pull/407).
 
 ## 1.2.1
 Released on 2015-04-21.
