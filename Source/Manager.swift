@@ -80,9 +80,11 @@ public class Manager {
             return "Alamofire"
         }()
 
-        return ["Accept-Encoding": acceptEncoding,
+        return [
+            "Accept-Encoding": acceptEncoding,
             "Accept-Language": acceptLanguage,
-            "User-Agent": userAgent]
+            "User-Agent": userAgent
+        ]
     }()
 
     let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)

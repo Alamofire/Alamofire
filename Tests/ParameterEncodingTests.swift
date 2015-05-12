@@ -248,10 +248,11 @@ class AlamofireJSONParameterEncodingTestCase: XCTestCase {
         let parameters = [
             "foo": "bar",
             "baz": ["a", 1, true],
-            "qux": ["a": 1,
-                    "b": [2, 2],
-                    "c": [3, 3, 3]
-                   ]
+            "qux": [
+                "a": 1,
+                "b": [2, 2],
+                "c": [3, 3, 3]
+            ]
         ]
 
         let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
@@ -294,7 +295,8 @@ class AlamofirePropertyListParameterEncodingTestCase: XCTestCase {
         let parameters = [
             "foo": "bar",
             "baz": ["a", 1, true],
-            "qux": ["a": 1,
+            "qux": [
+                "a": 1,
                 "b": [2, 2],
                 "c": [3, 3, 3]
             ]
