@@ -27,7 +27,7 @@ extension Request {
     /**
         A closure used to validate a request that takes a URL request and URL response, and returns whether the request was valid.
     */
-    public typealias Validation = (NSURLRequest, NSHTTPURLResponse) -> (Bool)
+    public typealias Validation = (NSURLRequest, NSHTTPURLResponse) -> Bool
 
     /**
         Validates the request, using the specified closure.
@@ -62,7 +62,7 @@ extension Request {
         :returns: The request.
     */
     public func validate<S : SequenceType where S.Generator.Element == Int>(statusCode acceptableStatusCode: S) -> Self {
-        return validate { (_, response) in
+        return validate { _, response in
             return contains(acceptableStatusCode, response.statusCode)
         }
     }
@@ -106,7 +106,7 @@ extension Request {
         :returns: The request.
     */
     public func validate<S : SequenceType where S.Generator.Element == String>(contentType acceptableContentTypes: S) -> Self {
-        return validate {(_, response) in
+        return validate { _, response in
             if let responseContentType = response.MIMEType,
                 responseMIMEType = MIMEType(responseContentType)
             {

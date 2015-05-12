@@ -62,7 +62,7 @@ class AlamofireRequestResponseTestCase: XCTestCase {
                     expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -77,13 +77,13 @@ class AlamofireRequestDescriptionTestCase: XCTestCase {
 
         let expectation = expectationWithDescription("\(URL)")
 
-        request.response { (_, response,_,_) in
+        request.response { _, response, _, _ in
             XCTAssertEqual(request.description, "GET http://httpbin.org/get (\(response!.statusCode))", "incorrect request description")
 
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }

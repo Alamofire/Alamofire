@@ -30,7 +30,7 @@ class AlamofireJSONResponseTestCase: XCTestCase {
         let expectation = expectationWithDescription("\(URL)")
 
         Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
-                 .responseJSON { (request, response, JSON, error) in
+                 .responseJSON { request, response, JSON, error in
                     XCTAssertNotNil(request, "request should not be nil")
                     XCTAssertNotNil(response, "response should not be nil")
                     XCTAssertNotNil(JSON, "JSON should not be nil")
@@ -41,7 +41,7 @@ class AlamofireJSONResponseTestCase: XCTestCase {
                     expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -51,7 +51,7 @@ class AlamofireJSONResponseTestCase: XCTestCase {
         let expectation = expectationWithDescription("\(URL)")
 
         Alamofire.request(.POST, URL, parameters: ["foo": "bar"])
-            .responseJSON { (request, response, JSON, error) in
+            .responseJSON { request, response, JSON, error in
                 XCTAssertNotNil(request, "request should not be nil")
                 XCTAssertNotNil(response, "response should not be nil")
                 XCTAssertNotNil(JSON, "JSON should not be nil")
@@ -62,7 +62,7 @@ class AlamofireJSONResponseTestCase: XCTestCase {
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -81,7 +81,7 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
         }
 
         Alamofire.request(.GET, URL)
-            .response { (request, response, data, error) in
+            .response { request, response, data, error in
                 XCTAssertNotNil(request, "request should not be nil")
                 XCTAssertNotNil(response, "response should not be nil")
                 XCTAssertNotNil(data, "data should not be nil")
@@ -93,7 +93,7 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -124,7 +124,7 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }

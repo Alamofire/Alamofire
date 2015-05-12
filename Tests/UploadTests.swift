@@ -32,7 +32,7 @@ class UploadResponseTestCase: XCTestCase {
         let expectation = expectationWithDescription(URL)
 
         Alamofire.upload(.POST, URL, data!)
-                 .response { (request, response, _, error) in
+                 .response { request, response, _, error in
                     XCTAssertNotNil(request, "request should not be nil")
                     XCTAssertNotNil(response, "response should not be nil")
                     XCTAssertNil(error, "error should be nil")
@@ -40,7 +40,7 @@ class UploadResponseTestCase: XCTestCase {
                     expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -52,7 +52,7 @@ class UploadResponseTestCase: XCTestCase {
         let expectation = expectationWithDescription(URL)
 
         let upload = Alamofire.upload(.POST, URL, data!)
-        upload.progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) -> Void in
+        upload.progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
             XCTAssert(bytesWritten > 0, "bytesWritten should be > 0")
             XCTAssert(totalBytesWritten > 0, "totalBytesWritten should be > 0")
             XCTAssert(totalBytesExpectedToWrite > 0, "totalBytesExpectedToWrite should be > 0")
@@ -62,7 +62,7 @@ class UploadResponseTestCase: XCTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }

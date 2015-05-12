@@ -32,13 +32,13 @@ class AlamofireStatusCodeValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate(statusCode: 200..<300)
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNil(error, "error should be nil")
 
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -50,14 +50,14 @@ class AlamofireStatusCodeValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate(statusCode: [200])
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -69,14 +69,14 @@ class AlamofireStatusCodeValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate(statusCode: [])
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -90,13 +90,13 @@ class AlamofireContentTypeValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate(contentType: ["application/json"])
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNil(error, "error should be nil")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -110,13 +110,13 @@ class AlamofireContentTypeValidationTestCase: XCTestCase {
             .validate(contentType: ["*/*"])
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNil(error, "error should be nil")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -128,14 +128,14 @@ class AlamofireContentTypeValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate(contentType: ["application/octet-stream"])
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -147,14 +147,14 @@ class AlamofireContentTypeValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate(contentType: [])
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -169,13 +169,13 @@ class AlamofireMultipleValidationTestCase: XCTestCase {
         Alamofire.request(.GET, URL)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNil(error, "error should be nil")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -188,14 +188,14 @@ class AlamofireMultipleValidationTestCase: XCTestCase {
         Alamofire.request(.GET, URL)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -211,13 +211,13 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate()
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNil(error, "error should be nil")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -229,14 +229,14 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate()
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -251,13 +251,13 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate()
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNil(error, "error should be nil")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -271,13 +271,13 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate()
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNil(error, "error should be nil")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
@@ -291,13 +291,13 @@ class AlamofireAutomaticValidationTestCase: XCTestCase {
 
         Alamofire.request(.GET, URL)
             .validate()
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNil(error, "error should be nil")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }

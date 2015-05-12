@@ -35,10 +35,10 @@ class AlamofireManagerTestCase: XCTestCase {
         let expectation = expectationWithDescription("\(URL)")
 
         manager.request(URLRequest)
-            .response { (_,_,_,_) in expectation.fulfill() }
+            .response { _, _, _, _ in expectation.fulfill() }
             .resume()
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }

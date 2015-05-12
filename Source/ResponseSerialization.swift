@@ -33,7 +33,7 @@ extension Request {
         :returns: A string response serializer.
     */
     public class func stringResponseSerializer(var encoding: NSStringEncoding? = nil) -> Serializer {
-        return { (_, response, data) in
+        return { _, response, data in
             if data == nil || data?.length == 0 {
                 return (nil, nil)
             }
@@ -76,7 +76,7 @@ extension Request {
         :returns: A JSON object response serializer.
     */
     public class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> Serializer {
-        return { (request, response, data) in
+        return { request, response, data in
             if data == nil || data?.length == 0 {
                 return (nil, nil)
             }
@@ -97,7 +97,7 @@ extension Request {
         :returns: The request.
     */
     public func responseJSON(options: NSJSONReadingOptions = .AllowFragments, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.JSONResponseSerializer(options: options), completionHandler: { (request, response, JSON, error) in
+        return response(serializer: Request.JSONResponseSerializer(options: options), completionHandler: { request, response, JSON, error in
             completionHandler(request, response, JSON, error)
         })
     }
@@ -114,7 +114,7 @@ extension Request {
         :returns: A property list object response serializer.
     */
     public class func propertyListResponseSerializer(options: NSPropertyListReadOptions = 0) -> Serializer {
-        return { (request, response, data) in
+        return { request, response, data in
             if data == nil || data?.length == 0 {
                 return (nil, nil)
             }
@@ -135,7 +135,7 @@ extension Request {
         :returns: The request.
     */
     public func responsePropertyList(options: NSPropertyListReadOptions = 0, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.propertyListResponseSerializer(options: options), completionHandler: { (request, response, plist, error) in
+        return response(serializer: Request.propertyListResponseSerializer(options: options), completionHandler: { request, response, plist, error in
             completionHandler(request, response, plist, error)
         })
     }

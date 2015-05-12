@@ -31,14 +31,14 @@ class AlamofireTLSEvaluationTestCase: XCTestCase {
         let expectation = expectationWithDescription("\(URL)")
 
         Alamofire.request(.GET, URL)
-            .response { (_, _, _, error) in
+            .response { _, _, _, error in
                 XCTAssertNotNil(error, "error should not be nil")
                 XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted, "error should be NSURLErrorServerCertificateUntrusted")
 
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { (error) in
+        waitForExpectationsWithTimeout(10) { error in
             XCTAssertNil(error, "\(error)")
         }
     }
