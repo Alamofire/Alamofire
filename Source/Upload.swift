@@ -165,16 +165,26 @@ extension Request {
     // MARK: - UploadTaskDelegate
 
     class UploadTaskDelegate: DataTaskDelegate {
-        var uploadTask: NSURLSessionUploadTask! { return task as! NSURLSessionUploadTask }
+        var uploadTask: NSURLSessionUploadTask? { return task as? NSURLSessionUploadTask }
         var uploadProgress: ((Int64, Int64, Int64) -> Void)!
 
         // MARK: - NSURLSessionTaskDelegate
 
-        func URLSession(session: NSURLSession!, task: NSURLSessionTask!, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-            progress.totalUnitCount = totalBytesExpectedToSend
-            progress.completedUnitCount = totalBytesSent
+        // MARK: Override Closures
 
-            uploadProgress?(bytesSent, totalBytesSent, totalBytesExpectedToSend)
+        var taskDidSendBodyData: ((NSURLSession, NSURLSessionTask, Int64, Int64, Int64) -> Void)?
+
+        // MARK: Delegate Methods
+
+        func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+            if taskDidSendBodyData != nil {
+                taskDidSendBodyData!(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
+            } else {
+                progress.totalUnitCount = totalBytesExpectedToSend
+                progress.completedUnitCount = totalBytesSent
+
+                uploadProgress?(bytesSent, totalBytesSent, totalBytesExpectedToSend)
+            }
         }
     }
 }

@@ -186,8 +186,10 @@ public class Request {
         Cancels the request.
     */
     public func cancel() {
-        if let downloadDelegate = delegate as? DownloadTaskDelegate {
-            downloadDelegate.downloadTask.cancelByProducingResumeData { (data) in
+        if let downloadDelegate = delegate as? DownloadTaskDelegate,
+            downloadTask = downloadDelegate.downloadTask
+        {
+            downloadTask.cancelByProducingResumeData { data in
                 downloadDelegate.resumeData = data
             }
         } else {
@@ -206,11 +208,6 @@ public class Request {
         var error: NSError?
 
         var credential: NSURLCredential?
-
-        var taskWillPerformHTTPRedirection: ((NSURLSession!, NSURLSessionTask!, NSHTTPURLResponse!, NSURLRequest!) -> (NSURLRequest!))?
-        var taskDidReceiveChallenge: ((NSURLSession!, NSURLSessionTask!, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential?))?
-        var taskDidSendBodyData: ((NSURLSession!, NSURLSessionTask!, Int64, Int64, Int64) -> Void)?
-        var taskNeedNewBodyStream: ((NSURLSession!, NSURLSessionTask!) -> (NSInputStream!))?
 
         init(task: NSURLSessionTask) {
             self.task = task
@@ -235,8 +232,18 @@ public class Request {
 
         // MARK: - NSURLSessionTaskDelegate
 
+        // MARK: Override Closures
+
+        var taskWillPerformHTTPRedirection: ((NSURLSession, NSURLSessionTask, NSHTTPURLResponse, NSURLRequest) -> (NSURLRequest?))?
+        var taskDidReceiveChallenge: ((NSURLSession, NSURLSessionTask, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential?))?
+        var taskNeedNewBodyStream: ((NSURLSession, NSURLSessionTask) -> (NSInputStream?))?
+        var taskDidCompleteWithError: ((NSURLSession, NSURLSessionTask, NSError?) -> Void)?
+
+        // MARK: Delegate Methods
+
         func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: ((NSURLRequest!) -> Void)) {
-            var redirectRequest = request
+            var redirectRequest: NSURLRequest? = request
+
             if taskWillPerformHTTPRedirection != nil {
                 redirectRequest = taskWillPerformHTTPRedirection!(session, task, response, request)
             }
@@ -255,6 +262,7 @@ public class Request {
                     disposition = .CancelAuthenticationChallenge
                 } else {
                     credential = self.credential ?? session.configuration.URLCredentialStorage?.defaultCredentialForProtectionSpace(challenge.protectionSpace)
+
                     if credential != nil {
                         disposition = .UseCredential
                     }
@@ -266,6 +274,7 @@ public class Request {
 
         func URLSession(session: NSURLSession, task: NSURLSessionTask, needNewBodyStream completionHandler: ((NSInputStream!) -> Void)) {
             var bodyStream: NSInputStream?
+
             if taskNeedNewBodyStream != nil {
                 bodyStream = taskNeedNewBodyStream!(session, task)
             }
@@ -274,18 +283,22 @@ public class Request {
         }
 
         func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-            if error != nil {
-                self.error = error
-            }
+            if taskDidCompleteWithError != nil {
+                taskDidCompleteWithError!(session, task, error)
+            } else {
+                if error != nil {
+                    self.error = error
+                }
 
-            queue.suspended = false
+                queue.suspended = false
+            }
         }
     }
 
     // MARK: - DataTaskDelegate
 
     class DataTaskDelegate: TaskDelegate, NSURLSessionDataDelegate {
-        var dataTask: NSURLSessionDataTask! { return task as! NSURLSessionDataTask }
+        var dataTask: NSURLSessionDataTask? { return task as? NSURLSessionDataTask }
 
         private var mutableData: NSMutableData
         override var data: NSData? {
@@ -294,10 +307,7 @@ public class Request {
 
         private var expectedContentLength: Int64?
 
-        var dataTaskDidReceiveResponse: ((NSURLSession!, NSURLSessionDataTask!, NSURLResponse!) -> (NSURLSessionResponseDisposition))?
-        var dataTaskDidBecomeDownloadTask: ((NSURLSession!, NSURLSessionDataTask!) -> Void)?
-        var dataTaskDidReceiveData: ((NSURLSession!, NSURLSessionDataTask!, NSData!) -> Void)?
-        var dataTaskWillCacheResponse: ((NSURLSession!, NSURLSessionDataTask!, NSCachedURLResponse!) -> (NSCachedURLResponse))?
+
         var dataProgress: ((bytesReceived: Int64, totalBytesReceived: Int64, totalBytesExpectedToReceive: Int64) -> Void)?
 
         override init(task: NSURLSessionTask) {
@@ -306,6 +316,15 @@ public class Request {
         }
 
         // MARK: - NSURLSessionDataDelegate
+
+        // MARK: Override Closures
+
+        var dataTaskDidReceiveResponse: ((NSURLSession, NSURLSessionDataTask, NSURLResponse) -> (NSURLSessionResponseDisposition))?
+        var dataTaskDidBecomeDownloadTask: ((NSURLSession, NSURLSessionDataTask, NSURLSessionDownloadTask) -> Void)?
+        var dataTaskDidReceiveData: ((NSURLSession, NSURLSessionDataTask, NSData) -> Void)?
+        var dataTaskWillCacheResponse: ((NSURLSession, NSURLSessionDataTask, NSCachedURLResponse) -> (NSCachedURLResponse?))?
+
+        // MARK: Delegate Methods
 
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
             var disposition: NSURLSessionResponseDisposition = .Allow
@@ -320,25 +339,27 @@ public class Request {
         }
 
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didBecomeDownloadTask downloadTask: NSURLSessionDownloadTask) {
-            dataTaskDidBecomeDownloadTask?(session, dataTask)
+            dataTaskDidBecomeDownloadTask?(session, dataTask, downloadTask)
         }
 
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-            dataTaskDidReceiveData?(session, dataTask, data)
+            if dataTaskDidReceiveData != nil {
+                dataTaskDidReceiveData!(session, dataTask, data)
+            } else {
+                mutableData.appendData(data)
 
-            mutableData.appendData(data)
+                let totalBytesReceived = Int64(mutableData.length)
+                let totalBytesExpectedToReceive = dataTask.response?.expectedContentLength ?? NSURLSessionTransferSizeUnknown
 
-            let totalBytesReceived = Int64(mutableData.length)
-            let totalBytesExpectedToReceive = dataTask.response?.expectedContentLength ?? NSURLSessionTransferSizeUnknown
+                progress.totalUnitCount = totalBytesExpectedToReceive
+                progress.completedUnitCount = totalBytesReceived
 
-            progress.totalUnitCount = totalBytesExpectedToReceive
-            progress.completedUnitCount = totalBytesReceived
-
-            dataProgress?(bytesReceived: Int64(data.length), totalBytesReceived: totalBytesReceived, totalBytesExpectedToReceive: totalBytesExpectedToReceive)
+                dataProgress?(bytesReceived: Int64(data.length), totalBytesReceived: totalBytesReceived, totalBytesExpectedToReceive: totalBytesExpectedToReceive)
+            }
         }
 
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: ((NSCachedURLResponse!) -> Void)) {
-            var cachedResponse = proposedResponse
+            var cachedResponse: NSCachedURLResponse? = proposedResponse
 
             if dataTaskWillCacheResponse != nil {
                 cachedResponse = dataTaskWillCacheResponse!(session, dataTask, proposedResponse)

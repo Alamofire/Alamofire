@@ -133,17 +133,21 @@ extension Request {
     // MARK: - DownloadTaskDelegate
 
     class DownloadTaskDelegate: TaskDelegate, NSURLSessionDownloadDelegate {
-        var downloadTask: NSURLSessionDownloadTask! { return task as! NSURLSessionDownloadTask }
+        var downloadTask: NSURLSessionDownloadTask? { return task as? NSURLSessionDownloadTask }
         var downloadProgress: ((Int64, Int64, Int64) -> Void)?
 
         var resumeData: NSData?
         override var data: NSData? { return resumeData }
 
-        var downloadTaskDidFinishDownloadingToURL: ((NSURLSession!, NSURLSessionDownloadTask!, NSURL) -> (NSURL))?
-        var downloadTaskDidWriteData: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64, Int64) -> Void)?
-        var downloadTaskDidResumeAtOffset: ((NSURLSession!, NSURLSessionDownloadTask!, Int64, Int64) -> Void)?
-
         // MARK: - NSURLSessionDownloadDelegate
+
+        // MARK: Override Closures
+
+        var downloadTaskDidFinishDownloadingToURL: ((NSURLSession, NSURLSessionDownloadTask, NSURL) -> (NSURL))?
+        var downloadTaskDidWriteData: ((NSURLSession, NSURLSessionDownloadTask, Int64, Int64, Int64) -> Void)?
+        var downloadTaskDidResumeAtOffset: ((NSURLSession, NSURLSessionDownloadTask, Int64, Int64) -> Void)?
+
+        // MARK: Delegate Methods
 
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
             if downloadTaskDidFinishDownloadingToURL != nil {
@@ -151,6 +155,7 @@ extension Request {
                 var fileManagerError: NSError?
 
                 NSFileManager.defaultManager().moveItemAtURL(location, toURL: destination, error: &fileManagerError)
+
                 if fileManagerError != nil {
                     error = fileManagerError
                 }
@@ -158,19 +163,23 @@ extension Request {
         }
 
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-            progress.totalUnitCount = totalBytesExpectedToWrite
-            progress.completedUnitCount = totalBytesWritten
+            if downloadTaskDidWriteData != nil {
+                downloadTaskDidWriteData!(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
+            } else {
+                progress.totalUnitCount = totalBytesExpectedToWrite
+                progress.completedUnitCount = totalBytesWritten
 
-            downloadTaskDidWriteData?(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
-
-            downloadProgress?(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
+                downloadProgress?(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
+            }
         }
 
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
-            progress.totalUnitCount = expectedTotalBytes
-            progress.completedUnitCount = fileOffset
-
-            downloadTaskDidResumeAtOffset?(session, downloadTask, fileOffset, expectedTotalBytes)
+            if downloadTaskDidResumeAtOffset != nil {
+                downloadTaskDidResumeAtOffset!(session, downloadTask, fileOffset, expectedTotalBytes)
+            } else {
+                progress.totalUnitCount = expectedTotalBytes
+                progress.completedUnitCount = fileOffset
+            }
         }
     }
 }
