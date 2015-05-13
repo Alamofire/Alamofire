@@ -53,7 +53,7 @@ class AlamofireRequestResponseTestCase: XCTestCase {
         let expectation = expectationWithDescription("\(URL)")
 
         Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
-                 .response(serializer: serializer){ (request, response, string, error) in
+                 .response(serializer: serializer) { request, response, string, error in
                     XCTAssertNotNil(request, "request should not be nil")
                     XCTAssertNotNil(response, "response should not be nil")
                     XCTAssertNotNil(string, "string should not be nil")
