@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## 1.2.2
-Released on 2015-05-13.
+Released on 2015-05-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.2.2).
 
 #### Added
 - Contributing Guidelines document to the project.
