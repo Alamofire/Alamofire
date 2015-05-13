@@ -32,7 +32,7 @@ Alamofire is an HTTP networking library written in Swift.
 
 > **Embedded frameworks require a minimum deployment target of iOS 8 or OS X Mavericks.**
 >
-> To use Alamofire with a project targeting iOS 7, you must include the `Alamofire.swift` source file directly in your project. See the ['Source File'](#source-file) section for instructions.
+> To use Alamofire with a project targeting iOS 7, you must include every swift files from `source` folder directly into your project. See the ['Source File'](#source-file) section for instructions.
 
 ### CocoaPods
 
@@ -111,7 +111,7 @@ $ git submodule add https://github.com/Alamofire/Alamofire.git
 
 #### Source File
 
-For application targets that do not support embedded frameworks, such as iOS 7, Alamofire can be integrated by adding the `Alamofire.swift` source file directly into your project. Note that you will no longer need to `import Alamofire` since you are not actually loading a framework. Additionally, any of the calling conventions described in the ['Usage'](#usage) section with the `Alamofire` prefix would instead omit it (for example, `Alamofire.request` becomes `request`), since this functionality is incorporated into the top-level namespace.
+For application targets that do not support embedded frameworks, such as iOS 7, Alamofire can be integrated by adding every swift files from `source` folder directly into your project. Note that you will no longer need to `import Alamofire` since you are not actually loading a framework. Additionally, any of the calling conventions described in the ['Usage'](#usage) section with the `Alamofire` prefix would instead omit it (for example, `Alamofire.request` becomes `request`), since this functionality is incorporated into the top-level namespace.
 
 ---
 
