@@ -118,8 +118,10 @@ class AlamofireRedirectResponseTestCase: XCTestCase {
                 XCTAssertNotNil(data, "data should not be nil")
                 XCTAssertNil(error, "error should be nil")
 
-                XCTAssertEqual(response!.URL!, NSURL(string: URL)!, "request should not have followed a redirect")
-                XCTAssertEqual(response!.statusCode, 301, "response should have a 301 status code")
+                if let optionalResponse = response {
+                    XCTAssertEqual(optionalResponse.URL!, NSURL(string: URL)!, "request should not have followed a redirect")
+                    XCTAssertEqual(optionalResponse.statusCode, 301, "response should have a 301 status code")
+                }
 
                 expectation.fulfill()
         }
