@@ -341,7 +341,7 @@ class AlamofirePropertyListParameterEncodingTestCase: XCTestCase {
 
 class AlamofireCustomParameterEncodingTestCase: XCTestCase {
     func testCustomParameterEncode() {
-        let encodingClosure: (URLRequestConvertible, [String: AnyObject]?) -> (NSURLRequest, NSError?) = { URLRequest, parameters in
+        let encodingClosure: (URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?) = { URLRequest, parameters in
             let mutableURLRequest = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
             mutableURLRequest.setValue("Xcode", forHTTPHeaderField: "User-Agent")
             return (mutableURLRequest, nil)
