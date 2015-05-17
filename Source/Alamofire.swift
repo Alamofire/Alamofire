@@ -23,9 +23,6 @@
 import Foundation
 import UIKit
 
-public let AlamofireRequestSessionDidStart = "com.alamofire.networking.session.start"
-public let AlamofireRequestSessionDidFinish = "com.alamofire.networking.session.finish"
-
 /// Alamofire errors
 public let AlamofireErrorDomain = "com.alamofire.error"
 
