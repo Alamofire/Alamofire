@@ -45,6 +45,8 @@ class MasterViewController: UITableViewController {
             let controllers = split.viewControllers
             self.detailViewController = controllers.last?.topViewController as? DetailViewController
         }
+        
+        AlamofireActivityIndicatorManager.sharedManager.isEnabled = true
     }
 
     // MARK: - UIStoryboardSegue

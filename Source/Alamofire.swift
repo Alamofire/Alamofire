@@ -21,6 +21,10 @@
 // THE SOFTWARE.
 
 import Foundation
+import UIKit
+
+public let AlamofireRequestSessionDidStart = "com.alamofire.networking.session.start"
+public let AlamofireRequestSessionDidFinish = "com.alamofire.networking.session.finish"
 
 /// Alamofire errors
 public let AlamofireErrorDomain = "com.alamofire.error"
@@ -346,7 +350,9 @@ public class Manager {
         if startRequestsImmediately {
             request.resume()
         }
-
+        
+        AlamofireActivityIndicatorManager.sharedManager.incrementActivityCount()
+        
         return request
     }
 
@@ -812,6 +818,8 @@ public class Request {
             if error != nil {
                 self.error = error
             }
+            
+            AlamofireActivityIndicatorManager.sharedManager.decrementActivityCount()
 
             dispatch_resume(queue)
         }
@@ -848,6 +856,8 @@ public class Request {
             if dataTaskDidReceiveResponse != nil {
                 disposition = dataTaskDidReceiveResponse!(session, dataTask, response)
             }
+            
+            AlamofireActivityIndicatorManager.sharedManager.decrementActivityCount()
 
             completionHandler(disposition)
         }
@@ -1686,4 +1696,45 @@ public func download(URLRequest: URLRequestConvertible, destination: Request.Dow
 */
 public func download(resumeData data: NSData, destination: Request.DownloadFileDestination) -> Request {
     return Manager.sharedInstance.download(data, destination: destination)
+}
+
+// MARK: - Alamofire indicator
+
+public class AlamofireActivityIndicatorManager {
+    
+    public var isEnabled = false
+    private var activityCount = 0 {
+        didSet {
+            updateNetworkActivityIndicatorVisibility()
+        }
+    }
+    
+    var isNetworkActivityIndicatorVisible: Bool {
+        get {
+            return self.activityCount > 0
+        }
+    }
+    
+    public class var sharedManager: AlamofireActivityIndicatorManager {
+        struct Static {
+            static let instance: AlamofireActivityIndicatorManager = AlamofireActivityIndicatorManager()
+        }
+        return Static.instance
+    }
+    
+    func incrementActivityCount() {
+        activityCount += 1
+    }
+    
+    func decrementActivityCount() {
+        if activityCount > 0 {
+            activityCount = activityCount - 1
+        }
+    }
+    
+    private func updateNetworkActivityIndicatorVisibility() {
+        if isEnabled {
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = self.isNetworkActivityIndicatorVisible
+        }
+    }
 }
