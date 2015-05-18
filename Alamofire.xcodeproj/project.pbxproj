@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C256A531B096C770065714F /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
+		4C256A541B096C770065714F /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
 		4CDE2C371AF8932A00BABAE5 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C361AF8932A00BABAE5 /* Manager.swift */; };
 		4CDE2C381AF8932A00BABAE5 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C361AF8932A00BABAE5 /* Manager.swift */; };
 		4CDE2C3A1AF899EC00BABAE5 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C391AF899EC00BABAE5 /* Request.swift */; };
@@ -64,6 +66,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4C256A501B096C2C0065714F /* BaseTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		4CDE2C361AF8932A00BABAE5 /* Manager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 		4CDE2C391AF899EC00BABAE5 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		4CDE2C3C1AF89D4900BABAE5 /* Download.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Download.swift; sourceTree = "<group>"; };
@@ -123,6 +126,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4C256A4E1B09656A0065714F /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */,
+				F8D1C6F419D52968002E74FE /* ManagerTests.swift */,
+				F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */,
+				F8111E5D19A9674D0040E7D1 /* RequestTests.swift */,
+				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		4C256A4F1B09656E0065714F /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */,
+				F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */,
+				F8111E5F19A9674D0040E7D1 /* UploadTests.swift */,
+				F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */,
+			);
+			name = Features;
+			sourceTree = "<group>";
+		};
 		4CDE2C481AF8A14A00BABAE5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,15 +213,9 @@
 		F8111E3F19A95C8B0040E7D1 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */,
-				F8111E5D19A9674D0040E7D1 /* RequestTests.swift */,
-				F8D1C6F419D52968002E74FE /* ManagerTests.swift */,
-				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
-				F8111E5F19A9674D0040E7D1 /* UploadTests.swift */,
-				F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */,
-				F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */,
-				F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */,
-				F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */,
+				4C256A501B096C2C0065714F /* BaseTestCase.swift */,
+				4C256A4E1B09656A0065714F /* Core */,
+				4C256A4F1B09656E0065714F /* Features */,
 				F8111E4019A95C8B0040E7D1 /* Supporting Files */,
 			);
 			path = Tests;
@@ -414,6 +434,7 @@
 			files = (
 				F86AEFE71AE6A312007D9C76 /* TLSEvaluationTests.swift in Sources */,
 				F8858DDD19A96B4300F55F93 /* RequestTests.swift in Sources */,
+				4C256A531B096C770065714F /* BaseTestCase.swift in Sources */,
 				F8E6024519CB46A800A3E7F1 /* AuthenticationTests.swift in Sources */,
 				F8858DDE19A96B4400F55F93 /* ResponseTests.swift in Sources */,
 				F8D1C6F519D52968002E74FE /* ManagerTests.swift in Sources */,
@@ -430,6 +451,7 @@
 			files = (
 				F829C6BE1A7A950600A2CD59 /* ParameterEncodingTests.swift in Sources */,
 				F829C6BF1A7A950600A2CD59 /* RequestTests.swift in Sources */,
+				4C256A541B096C770065714F /* BaseTestCase.swift in Sources */,
 				F829C6C01A7A950600A2CD59 /* ManagerTests.swift in Sources */,
 				F829C6C11A7A950600A2CD59 /* ResponseTests.swift in Sources */,
 				F829C6C21A7A950600A2CD59 /* UploadTests.swift in Sources */,

@@ -20,50 +20,68 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Foundation
 import Alamofire
+import Foundation
 import XCTest
 
-class UploadResponseTestCase: XCTestCase {
+class UploadResponseTestCase: BaseTestCase {
     func testUploadRequest() {
+        // Given
         let URL = "http://httpbin.org/post"
-        let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+        let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
         let expectation = expectationWithDescription(URL)
 
-        Alamofire.upload(.POST, URL, data!)
-                 .response { request, response, _, error in
-                    XCTAssertNotNil(request, "request should not be nil")
-                    XCTAssertNotNil(response, "response should not be nil")
-                    XCTAssertNil(error, "error should be nil")
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var error: NSError?
 
-                    expectation.fulfill()
+        // When
+        Alamofire.upload(.POST, URL, data)
+            .response { responseRequest, responseResponse, _, responseError in
+                request = responseRequest
+                response = responseResponse
+                error = responseError
+
+                expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNil(error, "error should be nil")
     }
 
     func testUploadRequestWithProgress() {
+        // Given
         let URL = "http://httpbin.org/post"
-        let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+        let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
         let expectation = expectationWithDescription(URL)
 
-        let upload = Alamofire.upload(.POST, URL, data!)
-        upload.progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
-            XCTAssert(bytesWritten > 0, "bytesWritten should be > 0")
-            XCTAssert(totalBytesWritten > 0, "totalBytesWritten should be > 0")
-            XCTAssert(totalBytesExpectedToWrite > 0, "totalBytesExpectedToWrite should be > 0")
+        var bytesWritten: Int64?
+        var totalBytesWritten: Int64?
+        var totalBytesExpectedToWrite: Int64?
+
+        // When
+        let upload = Alamofire.upload(.POST, URL, data)
+        upload.progress { progressBytesWritten, progressTotalBytesWritten, progressTotalBytesExpectedToWrite in
+            bytesWritten = progressBytesWritten
+            totalBytesWritten = progressTotalBytesWritten
+            totalBytesExpectedToWrite = progressTotalBytesExpectedToWrite
 
             upload.cancel()
 
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertGreaterThan(bytesWritten ?? 0, 0, "bytesWritten should be > 0")
+        XCTAssertGreaterThan(totalBytesWritten ?? 0, 0, "totalBytesWritten should be > 0")
+        XCTAssertGreaterThan(totalBytesExpectedToWrite ?? 0, 0, "totalBytesExpectedToWrite should be > 0")
     }
 }
