@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## 1.2.2
+## [1.2.2](https://github.com/Alamofire/Alamofire/releases/tag/1.2.2)
 Released on 2015-05-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.2.2).
 
 #### Added
@@ -75,7 +75,7 @@ closures are always updated and executed.
   - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#407](https://github.com/Alamofire/Alamofire/pull/407).
 
-## 1.2.1
+## [1.2.1](https://github.com/Alamofire/Alamofire/releases/tag/1.2.1)
 Released on 2015-04-21.
 
 #### Added
@@ -95,7 +95,7 @@ Released on 2015-04-21.
   - Updated by [Michael Thole](https://github.com/mthole) in Pull Request
   [#394](https://github.com/Alamofire/Alamofire/pull/394).
 
-## 1.2.0
+## [1.2.0](https://github.com/Alamofire/Alamofire/releases/tag/1.2.0)
 Released on 2015-04-09.
 
 #### Added
@@ -163,7 +163,7 @@ per the HTTP/1.1 specification.
 
 ---
 
-## 1.1.5
+## [1.1.5](https://github.com/Alamofire/Alamofire/releases/tag/1.1.5)
 Released on 2015-03-26.
 
 #### Added
@@ -200,7 +200,7 @@ Released on 2015-03-26.
   - Fixed by [Petr Korolev](https://github.com/skywinder) in Pull Request
   [#381](https://github.com/Alamofire/Alamofire/pull/381).
 
-## 1.1.4
+## [1.1.4](https://github.com/Alamofire/Alamofire/releases/tag/1.1.4)
 Released on 2015-01-30.
 
 #### Added
@@ -248,7 +248,7 @@ debug on OSX.
   - Fixed by [Yasuharu Ozaki](https://github.com/yasuoza) in Pull Request
   [#322](https://github.com/Alamofire/Alamofire/pull/322).
 
-## 1.1.3
+## [1.1.3](https://github.com/Alamofire/Alamofire/releases/tag/1.1.3)
 Released on 2015-01-09.
 
 #### Added
@@ -276,7 +276,7 @@ the README.
   - Fixed by [Ah.Miao](https://github.com/mrahmiao) in Pull Request
   [#291](https://github.com/Alamofire/Alamofire/pull/291).
 
-## 1.1.2
+## [1.1.2](https://github.com/Alamofire/Alamofire/releases/tag/1.1.2)
 Released on 2014-12-21.
 
 #### Added
@@ -316,7 +316,7 @@ percent-encoded components.
   - Fixed by [Mattt Thompson](https://github.com/mattt) in regards to Issue
   [#269](https://github.com/Alamofire/Alamofire/pull/269).
 
-## 1.1.1
+## [1.1.1](https://github.com/Alamofire/Alamofire/releases/tag/1.1.1)
 Released on 2014-11-20.
 
 #### Updated
@@ -348,7 +348,7 @@ with `CFURLCreateStringByAddingPercentEscapes`.
 - Optional `textLabel` property on cells in the example app.
   - Fixed by [Mattt Thompson](https://github.com/mattt).
 
-## 1.1.0
+## [1.1.0](https://github.com/Alamofire/Alamofire/releases/tag/1.1.0)
 Released on 2014-10-20.
 
 #### Updated
@@ -361,7 +361,7 @@ Released on 2014-10-20.
 
 ---
 
-## 1.0.1
+## [1.0.1](https://github.com/Alamofire/Alamofire/releases/tag/1.0.1)
 Released on 2014-10-20.
 
 #### Added
@@ -399,7 +399,7 @@ Released on 2014-10-20.
 - Challenge issue where basic auth credentials were not being unwrapped. 
   - Fixed by [Mattt Thompson](https://github.com/mattt).
 
-## 1.0.0
+## [1.0.0](https://github.com/Alamofire/Alamofire/releases/tag/1.0.0)
 Released on 2014-09-25.
 
 #### Added
