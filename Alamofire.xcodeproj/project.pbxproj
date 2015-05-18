@@ -123,6 +123,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4C256A4E1B09656A0065714F /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */,
+				F8D1C6F419D52968002E74FE /* ManagerTests.swift */,
+				F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */,
+				F8111E5D19A9674D0040E7D1 /* RequestTests.swift */,
+				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
+			);
+			name = Core;
+			sourceTree = "<group>";
+		};
+		4C256A4F1B09656E0065714F /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */,
+				F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */,
+				F8111E5F19A9674D0040E7D1 /* UploadTests.swift */,
+				F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */,
+			);
+			name = Features;
+			sourceTree = "<group>";
+		};
 		4CDE2C481AF8A14A00BABAE5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,15 +210,8 @@
 		F8111E3F19A95C8B0040E7D1 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */,
-				F8111E5D19A9674D0040E7D1 /* RequestTests.swift */,
-				F8D1C6F419D52968002E74FE /* ManagerTests.swift */,
-				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
-				F8111E5F19A9674D0040E7D1 /* UploadTests.swift */,
-				F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */,
-				F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */,
-				F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */,
-				F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */,
+				4C256A4E1B09656A0065714F /* Core */,
+				4C256A4F1B09656E0065714F /* Features */,
 				F8111E4019A95C8B0040E7D1 /* Supporting Files */,
 			);
 			path = Tests;
