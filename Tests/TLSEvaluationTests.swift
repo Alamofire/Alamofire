@@ -20,26 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Foundation
 import Alamofire
+import Foundation
 import XCTest
 
-class AlamofireTLSEvaluationTestCase: XCTestCase {
-    func testSSLCertificateCommonNameValidation() {
+class TLSEvaluationTestCase: BaseTestCase {
+    func testThatExpiredSSLCertificateFailsEvaluation() {
+        // Given
         let URL = "https://testssl-expire.disig.sk/"
-
         let expectation = expectationWithDescription("\(URL)")
 
-        Alamofire.request(.GET, URL)
-            .response { _, _, _, error in
-                XCTAssertNotNil(error, "error should not be nil")
-                XCTAssert(error?.code == NSURLErrorServerCertificateUntrusted, "error should be NSURLErrorServerCertificateUntrusted")
+        var error: NSError?
 
+        // When
+        Alamofire.request(.GET, URL)
+            .response { _, _, _, responseError in
+                error = responseError
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(10) { error in
-            XCTAssertNil(error, "\(error)")
-        }
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertEqual(error?.code ?? -1, NSURLErrorServerCertificateUntrusted, "error should be NSURLErrorServerCertificateUntrusted")
     }
 }
