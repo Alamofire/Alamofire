@@ -56,23 +56,39 @@ class UploadResponseTestCase: BaseTestCase {
 
     func testUploadRequestWithProgress() {
         // Given
-        let URL = "http://httpbin.org/post"
-        let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        let URLString = "http://httpbin.org/post"
+        let data: NSData = {
+            var text = ""
+            for _ in 1...3_000 {
+                text += "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+            }
 
-        let expectation = expectationWithDescription(URL)
+            return text.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        }()
 
-        var bytesWritten: Int64?
-        var totalBytesWritten: Int64?
-        var totalBytesExpectedToWrite: Int64?
+        let expectation = expectationWithDescription("Bytes upload progress should be reported: \(URLString)")
+
+        var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
+        var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
+        var responseRequest: NSURLRequest?
+        var responseResponse: NSHTTPURLResponse?
+        var responseData: AnyObject?
+        var responseError: NSError?
 
         // When
-        let upload = Alamofire.upload(.POST, URL, data)
-        upload.progress { progressBytesWritten, progressTotalBytesWritten, progressTotalBytesExpectedToWrite in
-            bytesWritten = progressBytesWritten
-            totalBytesWritten = progressTotalBytesWritten
-            totalBytesExpectedToWrite = progressTotalBytesExpectedToWrite
+        let upload = Alamofire.upload(.POST, URLString, data)
+        upload.progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
+            let bytes = (bytes: bytesWritten, totalBytes: totalBytesWritten, totalBytesExpected: totalBytesExpectedToWrite)
+            byteValues.append(bytes)
 
-            upload.cancel()
+            let progress = (completedUnitCount: upload.progress.completedUnitCount, totalUnitCount: upload.progress.totalUnitCount)
+            progressValues.append(progress)
+        }
+        upload.response { request, response, data, error in
+            responseRequest = request
+            responseResponse = response
+            responseData = data
+            responseError = error
 
             expectation.fulfill()
         }
@@ -80,8 +96,34 @@ class UploadResponseTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
         // Then
-        XCTAssertGreaterThan(bytesWritten ?? 0, 0, "bytesWritten should be > 0")
-        XCTAssertGreaterThan(totalBytesWritten ?? 0, 0, "totalBytesWritten should be > 0")
-        XCTAssertGreaterThan(totalBytesExpectedToWrite ?? 0, 0, "totalBytesExpectedToWrite should be > 0")
+        XCTAssertNotNil(responseRequest, "response request should not be nil")
+        XCTAssertNotNil(responseResponse, "response response should not be nil")
+        XCTAssertNotNil(responseData, "response data should not be nil")
+        XCTAssertNil(responseError, "response error should be nil")
+
+        XCTAssertEqual(byteValues.count, progressValues.count, "byteValues count should equal progressValues count")
+
+        if byteValues.count == progressValues.count {
+            for index in 0..<byteValues.count {
+                let byteValue = byteValues[index]
+                let progressValue = progressValues[index]
+
+                XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
+                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount, "total bytes should be equal to completed unit count")
+                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount, "total bytes expected should be equal to total unit count")
+            }
+        }
+
+        if let lastByteValue = byteValues.last,
+            lastProgressValue = progressValues.last
+        {
+            let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
+            let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
+
+            XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
+            XCTAssertEqual(progressValueFractionalCompletion, 1.0, "progress value fractional completion should equal 1.0")
+        } else {
+            XCTFail("last item in bytesValues and progressValues should not be nil")
+        }
     }
 }
