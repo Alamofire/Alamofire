@@ -27,27 +27,27 @@ import XCTest
 class RequestInitializationTestCase: BaseTestCase {
     func testRequestClassMethodWithMethodAndURL() {
         // Given
-        let URL = "http://httpbin.org/"
+        let URLString = "http://httpbin.org/"
 
         // When
-        let request = Alamofire.request(.GET, URL)
+        let request = Alamofire.request(.GET, URLString)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request.URL!, NSURL(string: URL)!, "request URL should be equal")
+        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
     func testRequestClassMethodWithMethodAndURLAndParameters() {
         // Given
-        let URL = "http://httpbin.org/get"
+        let URLString = "http://httpbin.org/get"
 
         // When
-        let request = Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
+        let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertNotEqual(request.request.URL!, NSURL(string: URL)!, "request URL should be equal")
+        XCTAssertNotEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
         XCTAssertEqual(request.request.URL?.query ?? "", "foo=bar", "query is incorrect")
         XCTAssertNil(request.response, "response should be nil")
     }
@@ -58,10 +58,10 @@ class RequestInitializationTestCase: BaseTestCase {
 class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
-        let URL = "http://httpbin.org/get"
+        let URLString = "http://httpbin.org/get"
         let serializer = Alamofire.Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("GET request should succeed: \(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
@@ -69,7 +69,7 @@ class RequestResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
+        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
             .response(serializer: serializer) { responseRequest, responseResponse, responseString, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -160,11 +160,11 @@ class RequestResponseTestCase: BaseTestCase {
 class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
-        let URL = "http://httpbin.org/get"
-        let request = Alamofire.request(.GET, URL)
+        let URLString = "http://httpbin.org/get"
+        let request = Alamofire.request(.GET, URLString)
         let initialRequestDescription = request.description
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("Request description should update: \(URLString)")
 
         var finalRequestDescription: String?
         var response: NSHTTPURLResponse?
@@ -200,38 +200,38 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testGETRequestDebugDescription() {
         // Given
-        let URL = "http://httpbin.org/get"
+        let URLString = "http://httpbin.org/get"
 
         // When
-        let request = manager.request(.GET, URL)
+        let request = manager.request(.GET, URLString)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertFalse(contains(components, "-X"), "command should not contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URL)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
 
     func testPOSTRequestDebugDescription() {
         // Given
-        let URL = "http://httpbin.org/post"
+        let URLString = "http://httpbin.org/post"
 
         // When
-        let request = manager.request(.POST, URL)
+        let request = manager.request(.POST, URLString)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URL)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
 
     func testPOSTRequestWithJSONParametersDebugDescription() {
         // Given
-        let URL = "http://httpbin.org/post"
+        let URLString = "http://httpbin.org/post"
 
         // When
-        let request = manager.request(.POST, URL, parameters: ["foo": "bar"], encoding: .JSON)
+        let request = manager.request(.POST, URLString, parameters: ["foo": "bar"], encoding: .JSON)
         let components = cURLCommandComponents(request)
 
         // Then
@@ -239,12 +239,12 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
         XCTAssertTrue(request.debugDescription.rangeOfString("-H \"Content-Type: application/json\"") != nil, "command should contain 'application/json' Content-Type")
         XCTAssertTrue(request.debugDescription.rangeOfString("-d \"{\\\"foo\\\":\\\"bar\\\"}\"") != nil, "command data should contain JSON encoded parameters")
-        XCTAssertEqual(components.last ?? "", "\"\(URL)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
 
     func testPOSTRequestWithCookieDebugDescription() {
         // Given
-        let URL = "http://httpbin.org/post"
+        let URLString = "http://httpbin.org/post"
 
         let properties = [
             NSHTTPCookieDomain: "httpbin.org",
@@ -256,13 +256,13 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         manager.session.configuration.HTTPCookieStorage?.setCookie(cookie)
 
         // When
-        let request = manager.request(.POST, URL)
+        let request = manager.request(.POST, URLString)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URL)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
 
         #if !os(OSX)
         XCTAssertEqual(components[5..<6], ["-b"], "command should contain -b flag")

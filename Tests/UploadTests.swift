@@ -27,17 +27,17 @@ import XCTest
 class UploadResponseTestCase: BaseTestCase {
     func testUploadRequest() {
         // Given
-        let URL = "http://httpbin.org/post"
+        let URLString = "http://httpbin.org/post"
         let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
-        let expectation = expectationWithDescription(URL)
+        let expectation = expectationWithDescription("Upload request should succeed: \(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var error: NSError?
 
         // When
-        Alamofire.upload(.POST, URL, data)
+        Alamofire.upload(.POST, URLString, data)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
