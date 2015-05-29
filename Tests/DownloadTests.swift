@@ -35,18 +35,18 @@ class DownloadResponseTestCase: BaseTestCase {
     func testDownloadRequest() {
         // Given
         let numberOfLines = 100
-        let URL = "http://httpbin.org/stream/\(numberOfLines)"
+        let URLString = "http://httpbin.org/stream/\(numberOfLines)"
 
         let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
 
-        let expectation = expectationWithDescription(URL)
+        let expectation = expectationWithDescription("Download request should download data to file: \(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var error: NSError?
 
         // When
-        Alamofire.download(.GET, URL, destination)
+        Alamofire.download(.GET, URLString, destination)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -99,25 +99,39 @@ class DownloadResponseTestCase: BaseTestCase {
 
     func testDownloadRequestWithProgress() {
         // Given
-        let numberOfLines = 100
-        let URL = "http://httpbin.org/stream/\(numberOfLines)"
+        let randomBytes = 4 * 1024 * 1024
+        let URLString = "http://httpbin.org/bytes/\(randomBytes)"
 
-        let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+        let fileManager = NSFileManager.defaultManager()
+        let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as! NSURL
+        let filename = "test_download_data"
+        let fileURL = directory.URLByAppendingPathComponent(filename)
 
-        let expectation = expectationWithDescription(URL)
+        let expectation = expectationWithDescription("Bytes download progress should be reported: \(URLString)")
 
-        var bytesRead: Int64?
-        var totalBytesRead: Int64?
-        var totalBytesExpectedToRead: Int64?
+        var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
+        var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
+        var responseRequest: NSURLRequest?
+        var responseResponse: NSHTTPURLResponse?
+        var responseData: AnyObject?
+        var responseError: NSError?
 
         // When
-        let download = Alamofire.download(.GET, URL, destination)
-        download.progress { progressBytesRead, progressTotalBytesRead, progressTotalBytesExpectedToRead in
-            bytesRead = progressBytesRead
-            totalBytesRead = progressTotalBytesRead
-            totalBytesExpectedToRead = progressTotalBytesExpectedToRead
+        let download = Alamofire.download(.GET, URLString) { _, _ in
+            return fileURL
+        }
+        download.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
+            let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
+            byteValues.append(bytes)
 
-            download.cancel()
+            let progress = (completedUnitCount: download.progress.completedUnitCount, totalUnitCount: download.progress.totalUnitCount)
+            progressValues.append(progress)
+        }
+        download.response { request, response, data, error in
+            responseRequest = request
+            responseResponse = response
+            responseData = data
+            responseError = error
 
             expectation.fulfill()
         }
@@ -125,8 +139,38 @@ class DownloadResponseTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
         // Then
-        XCTAssertGreaterThan(bytesRead ?? 0, 0, "bytesRead should be > 0")
-        XCTAssertGreaterThan(totalBytesRead ?? 0, 0, "totalBytesRead should be > 0")
-        XCTAssertEqual(totalBytesExpectedToRead ?? 0, -1, "totalBytesExpectedToRead should be -1")
+        XCTAssertNotNil(responseRequest, "response request should not be nil")
+        XCTAssertNotNil(responseResponse, "response response should not be nil")
+        XCTAssertNil(responseData, "response data should be nil")
+        XCTAssertNil(responseError, "response error should be nil")
+
+        XCTAssertEqual(byteValues.count, progressValues.count, "byteValues count should equal progressValues count")
+
+        if byteValues.count == progressValues.count {
+            for index in 0..<byteValues.count {
+                let byteValue = byteValues[index]
+                let progressValue = progressValues[index]
+
+                XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
+                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount, "total bytes should be equal to completed unit count")
+                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount, "total bytes expected should be equal to total unit count")
+            }
+        }
+
+        if let lastByteValue = byteValues.last,
+            lastProgressValue = progressValues.last
+        {
+            let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
+            let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
+
+            XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
+            XCTAssertEqual(progressValueFractionalCompletion, 1.0, "progress value fractional completion should equal 1.0")
+        } else {
+            XCTFail("last item in bytesValues and progressValues should not be nil")
+        }
+
+        var removalError: NSError?
+        fileManager.removeItemAtURL(fileURL, error: &removalError)
+        XCTAssertNil(removalError, "removal error should be nil")
     }
 }

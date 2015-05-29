@@ -27,27 +27,27 @@ import XCTest
 class RequestInitializationTestCase: BaseTestCase {
     func testRequestClassMethodWithMethodAndURL() {
         // Given
-        let URL = "http://httpbin.org/"
+        let URLString = "http://httpbin.org/"
 
         // When
-        let request = Alamofire.request(.GET, URL)
+        let request = Alamofire.request(.GET, URLString)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request.URL!, NSURL(string: URL)!, "request URL should be equal")
+        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
     func testRequestClassMethodWithMethodAndURLAndParameters() {
         // Given
-        let URL = "http://httpbin.org/get"
+        let URLString = "http://httpbin.org/get"
 
         // When
-        let request = Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
+        let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertNotEqual(request.request.URL!, NSURL(string: URL)!, "request URL should be equal")
+        XCTAssertNotEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
         XCTAssertEqual(request.request.URL?.query ?? "", "foo=bar", "query is incorrect")
         XCTAssertNil(request.response, "response should be nil")
     }
@@ -58,10 +58,10 @@ class RequestInitializationTestCase: BaseTestCase {
 class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
-        let URL = "http://httpbin.org/get"
+        let URLString = "http://httpbin.org/get"
         let serializer = Alamofire.Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("GET request should succeed: \(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
@@ -69,7 +69,7 @@ class RequestResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
+        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
             .response(serializer: serializer) { responseRequest, responseResponse, responseString, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -87,6 +87,72 @@ class RequestResponseTestCase: BaseTestCase {
         XCTAssertNotNil(string, "string should not be nil")
         XCTAssertNil(error, "error should be nil")
     }
+
+    func testRequestResponseWithProgress() {
+        // Given
+        let randomBytes = 4 * 1024 * 1024
+        let URLString = "http://httpbin.org/bytes/\(randomBytes)"
+
+        let expectation = expectationWithDescription("Bytes download progress should be reported: \(URLString)")
+
+        var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
+        var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
+        var responseRequest: NSURLRequest?
+        var responseResponse: NSHTTPURLResponse?
+        var responseData: AnyObject?
+        var responseError: NSError?
+
+        // When
+        let request = Alamofire.request(.GET, URLString)
+        request.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
+            let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
+            byteValues.append(bytes)
+
+            let progress = (completedUnitCount: request.progress.completedUnitCount, totalUnitCount: request.progress.totalUnitCount)
+            progressValues.append(progress)
+        }
+        request.response { request, response, data, error in
+            responseRequest = request
+            responseResponse = response
+            responseData = data
+            responseError = error
+
+            expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(responseRequest, "response request should not be nil")
+        XCTAssertNotNil(responseResponse, "response response should not be nil")
+        XCTAssertNotNil(responseData, "response data should not be nil")
+        XCTAssertNil(responseError, "response error should be nil")
+
+        XCTAssertEqual(byteValues.count, progressValues.count, "byteValues count should equal progressValues count")
+
+        if byteValues.count == progressValues.count {
+            for index in 0..<byteValues.count {
+                let byteValue = byteValues[index]
+                let progressValue = progressValues[index]
+
+                XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
+                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount, "total bytes should be equal to completed unit count")
+                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount, "total bytes expected should be equal to total unit count")
+            }
+        }
+
+        if let lastByteValue = byteValues.last,
+            lastProgressValue = progressValues.last
+        {
+            let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
+            let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
+
+            XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
+            XCTAssertEqual(progressValueFractionalCompletion, 1.0, "progress value fractional completion should equal 1.0")
+        } else {
+            XCTFail("last item in bytesValues and progressValues should not be nil")
+        }
+    }
 }
 
 // MARK: -
@@ -94,11 +160,11 @@ class RequestResponseTestCase: BaseTestCase {
 class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
-        let URL = "http://httpbin.org/get"
-        let request = Alamofire.request(.GET, URL)
+        let URLString = "http://httpbin.org/get"
+        let request = Alamofire.request(.GET, URLString)
         let initialRequestDescription = request.description
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("Request description should update: \(URLString)")
 
         var finalRequestDescription: String?
         var response: NSHTTPURLResponse?
@@ -134,38 +200,38 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testGETRequestDebugDescription() {
         // Given
-        let URL = "http://httpbin.org/get"
+        let URLString = "http://httpbin.org/get"
 
         // When
-        let request = manager.request(.GET, URL)
+        let request = manager.request(.GET, URLString)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertFalse(contains(components, "-X"), "command should not contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URL)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
 
     func testPOSTRequestDebugDescription() {
         // Given
-        let URL = "http://httpbin.org/post"
+        let URLString = "http://httpbin.org/post"
 
         // When
-        let request = manager.request(.POST, URL)
+        let request = manager.request(.POST, URLString)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URL)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
 
     func testPOSTRequestWithJSONParametersDebugDescription() {
         // Given
-        let URL = "http://httpbin.org/post"
+        let URLString = "http://httpbin.org/post"
 
         // When
-        let request = manager.request(.POST, URL, parameters: ["foo": "bar"], encoding: .JSON)
+        let request = manager.request(.POST, URLString, parameters: ["foo": "bar"], encoding: .JSON)
         let components = cURLCommandComponents(request)
 
         // Then
@@ -173,12 +239,12 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
         XCTAssertTrue(request.debugDescription.rangeOfString("-H \"Content-Type: application/json\"") != nil, "command should contain 'application/json' Content-Type")
         XCTAssertTrue(request.debugDescription.rangeOfString("-d \"{\\\"foo\\\":\\\"bar\\\"}\"") != nil, "command data should contain JSON encoded parameters")
-        XCTAssertEqual(components.last ?? "", "\"\(URL)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
 
     func testPOSTRequestWithCookieDebugDescription() {
         // Given
-        let URL = "http://httpbin.org/post"
+        let URLString = "http://httpbin.org/post"
 
         let properties = [
             NSHTTPCookieDomain: "httpbin.org",
@@ -190,13 +256,13 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         manager.session.configuration.HTTPCookieStorage?.setCookie(cookie)
 
         // When
-        let request = manager.request(.POST, URL)
+        let request = manager.request(.POST, URLString)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URL)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
 
         #if !os(OSX)
         XCTAssertEqual(components[5..<6], ["-b"], "command should contain -b flag")
