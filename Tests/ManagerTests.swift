@@ -72,18 +72,18 @@ class ManagerTestCase: BaseTestCase {
     func testReleasingManagerWithPendingCanceledRequestDeinitializesSuccessfully() {
         // Given
         var manager: Manager? = Alamofire.Manager()
-        manager?.startRequestsImmediately = false
+        manager!.startRequestsImmediately = false
 
         let URL = NSURL(string: "http://httpbin.org/get")!
         let URLRequest = NSURLRequest(URL: URL)
 
         // When
-        let request = manager?.request(URLRequest)
-        request?.cancel()
+        let request = manager!.request(URLRequest)
+        request.cancel()
         manager = nil
 
         // Then
-        XCTAssert(request?.task.state == .Canceling, "request task state should be '.Canceling'")
+        XCTAssertEqual(request.task.state, NSURLSessionTaskState.Canceling, "request task state should be '.Canceling'")
         XCTAssertNil(manager, "manager should be nil")
     }
 }
