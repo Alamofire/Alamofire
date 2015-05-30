@@ -151,7 +151,11 @@ public enum ParameterEncoding {
     }
 
     func escape(string: String) -> String {
-        let legalURLCharactersToBeEscaped: CFStringRef = ":&=;+!@#$()',*"
+        let generalDelimiters = ":#[]@" // dropping "?" and "/" due to RFC 3986 - Section 3.4
+        let subDelimiters = "!$&'()*+,;="
+
+        let legalURLCharactersToBeEscaped: CFStringRef = generalDelimiters + subDelimiters
+
         return CFURLCreateStringByAddingPercentEscapes(nil, string, nil, legalURLCharactersToBeEscaped, CFStringBuiltInEncodings.UTF8.rawValue) as String
     }
 }

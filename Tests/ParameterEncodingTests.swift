@@ -30,6 +30,9 @@ class ParameterEncodingTestCase: BaseTestCase {
 
 // MARK: -
 
+/**
+    The URL parameter encoding tests cover a variety of cases for encoding query parameters in addition to percent escaping reserved characters. The percent escaping implementation follows RFC 3986 - Sections 2.2, 2.4 and 3.4. All reserved characters are percent encoded with the exception of the "?" and "/" characters. This exception was made to allow other URIs to be included as query parameters without issue. See RFC 3986 - Section 3.4 for more details.
+*/
 class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     // MARK: Properties
 
