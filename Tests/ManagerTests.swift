@@ -83,7 +83,7 @@ class ManagerTestCase: BaseTestCase {
         manager = nil
 
         // Then
-        XCTAssertEqual(request.task.state, NSURLSessionTaskState.Canceling, "request task state should be '.Canceling'")
+        XCTAssertEqual(request.task.state.rawValue, NSURLSessionTaskState.Canceling.rawValue, "request task state should be '.Canceling'")
         XCTAssertNil(manager, "manager should be nil")
     }
 }
