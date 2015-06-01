@@ -723,7 +723,7 @@ enum Router: URLRequestConvertible {
 ```
 
 ```swift
-Alamofire.request(Router.Search(query: "foo bar", page: 1)) // ?q=foo+bar&offset=50
+Alamofire.request(Router.Search(query: "foo bar", page: 1)) // ?q=foo%20bar&offset=50
 ```
 
 #### CRUD & Authorization
