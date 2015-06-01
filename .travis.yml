@@ -10,7 +10,9 @@ before_install:
 script:
 - set -o pipefail
 - xcodebuild -project Alamofire.xcodeproj -scheme "Alamofire iOS" -sdk iphonesimulator
-  -destination "platform=iOS Simulator,name=iPhone 6" ONLY_ACTIVE_ARCH=NO  test | xcpretty -c
+  -destination "platform=iOS Simulator,name=iPhone 6" ONLY_ACTIVE_ARCH=NO test | xcpretty -c
+- xcodebuild -project Alamofire.xcodeproj -scheme "Alamofire OSX" -sdk macosx10.10
+  -destination "platform=OS X,arch=x86_64" ONLY_ACTIVE_ARCH=NO test | xcpretty -c
 - xcodebuild -project "iOS Example.xcodeproj" -scheme "iOS Example" -sdk iphonesimulator
   -destination "platform=iOS Simulator,name=iPhone 6" ONLY_ACTIVE_ARCH=YES build | xcpretty -c
 - pod lib lint --quick
