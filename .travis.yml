@@ -12,4 +12,5 @@ script:
   -destination "platform=OS X,arch=x86_64" ONLY_ACTIVE_ARCH=NO test | xcpretty -c
 - xcodebuild -project "iOS Example.xcodeproj" -scheme "iOS Example" -sdk iphonesimulator
   -destination "platform=iOS Simulator,name=iPhone 6" ONLY_ACTIVE_ARCH=YES build | xcpretty -c
+- gem install cocoapods
 - pod lib lint --quick
