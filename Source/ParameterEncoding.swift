@@ -150,8 +150,44 @@ public enum ParameterEncoding {
         return components
     }
 
+    /**
+        Returns a percent escaped string following RFC 3986 for query string formatting.
+
+        RFC 3986 states that the following characters are "reserved" characters.
+
+        - General Delimiters: ":", "#", "[", "]", "@", "?", "/"
+        - Sub-Delimiters: "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "="
+
+        Core Foundation interprets RFC 3986 in terms of legal and illegal characters.
+
+        - Legal Numbers: "0123456789"
+        - Legal Letters: "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        - Legal Characters: "!", "$", "&", "'", "(", ")", "*", "+", ",", "-",
+                            ".", "/", ":", ";", "=", "?", "@", "_", "~", "\""
+        - Illegal Characters: All characters not listed as Legal
+
+        While the Core Foundation `CFURLCreateStringByAddingPercentEscapes` documentation states
+        that it follows RFC 3986, the headers actually point out that it follows RFC 2396. This
+        explains why it does not consider "[", "]" and "#" to be "legal" characters even though 
+        they are specified as "reserved" characters in RFC 3986. The following rdar has been filed
+        to hopefully get the documentation updated.
+
+        - https://openradar.appspot.com/radar?id=5058257274011648
+
+        In RFC 3986 - Section 3.4, it states that the "?" and "/" characters should not be escaped to allow
+        query strings to include a URL. Therefore, all "reserved" characters with the exception of "?" and "/"
+        should be percent escaped in the query string.
+
+        :param: string The string to be percent escaped.
+
+        :returns: The percent escaped string.
+    */
     func escape(string: String) -> String {
-        let legalURLCharactersToBeEscaped: CFStringRef = ":&=;+!@#$()',*"
+        let generalDelimiters = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
+        let subDelimiters = "!$&'()*+,;="
+
+        let legalURLCharactersToBeEscaped: CFStringRef = generalDelimiters + subDelimiters
+
         return CFURLCreateStringByAddingPercentEscapes(nil, string, nil, legalURLCharactersToBeEscaped, CFStringBuiltInEncodings.UTF8.rawValue) as String
     }
 }

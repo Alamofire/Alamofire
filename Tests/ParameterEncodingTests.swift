@@ -35,7 +35,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     let encoding: ParameterEncoding = .URL
 
-    // MARK: Tests
+    // MARK: Tests - Parameter Types
 
     func testURLParameterEncodeNilParameters() {
         // Given
@@ -161,6 +161,78 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertEqual(URLRequest.URL?.query ?? "", "foo%5Bbar%5D%5Bbaz%5D%5B%5D=a&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1", "query is incorrect")
     }
 
+    // MARK: Tests - All Reserved / Unreserved / Illegal Characters According to RFC 3986
+
+    func testThatReservedCharactersArePercentEscapedMinusQuestionMarkAndForwardSlash() {
+        // Given
+        let generalDelimiters = ":#[]@"
+        let subDelimiters = "!$&'()*+,;="
+        let parameters = ["reserved": "\(generalDelimiters)\(subDelimiters)"]
+
+        // When
+        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
+
+        // Then
+        XCTAssertEqual(URLRequest.URL?.query ?? "", "reserved=%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D", "query is incorrect")
+    }
+
+    func testThatReservedCharactersQuestionMarkAndForwardSlashAreNotPercentEscaped() {
+        // Given
+        let parameters = ["reserved": "?/"]
+
+        // When
+        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
+
+        // Then
+        XCTAssertEqual(URLRequest.URL?.query ?? "", "reserved=?/", "query is incorrect")
+    }
+
+    func testThatUnreservedNumericCharactersAreNotPercentEscaped() {
+        // Given
+        let parameters = ["numbers": "0123456789"]
+
+        // When
+        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
+
+        // Then
+        XCTAssertEqual(URLRequest.URL?.query ?? "", "numbers=0123456789", "query is incorrect")
+    }
+
+    func testThatUnreservedLowercaseCharactersAreNotPercentEscaped() {
+        // Given
+        let parameters = ["lowercase": "abcdefghijklmnopqrstuvwxyz"]
+
+        // When
+        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
+
+        // Then
+        XCTAssertEqual(URLRequest.URL?.query ?? "", "lowercase=abcdefghijklmnopqrstuvwxyz", "query is incorrect")
+    }
+
+    func testThatUnreservedUppercaseCharactersAreNotPercentEscaped() {
+        // Given
+        let parameters = ["uppercase": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
+
+        // When
+        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
+
+        // Then
+        XCTAssertEqual(URLRequest.URL?.query ?? "", "uppercase=ABCDEFGHIJKLMNOPQRSTUVWXYZ", "query is incorrect")
+    }
+
+    func testThatIllegalASCIICharactersArePercentEscaped() {
+        // Given
+        let parameters = ["illegal": " \"#%<>[]\\^`{}|"]
+
+        // When
+        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
+
+        // Then
+        XCTAssertEqual(URLRequest.URL?.query ?? "", "illegal=%20%22%23%25%3C%3E%5B%5D%5C%5E%60%7B%7D%7C", "query is incorrect")
+    }
+
+    // MARK: Tests - Special Character Queries
+
     func testURLParameterEncodeStringWithAmpersandKeyStringWithAmpersandValueParameter() {
         // Given
         let parameters = ["foo&bar": "baz&qux", "foobar": "bazqux"]
@@ -216,17 +288,6 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertEqual(URLRequest.URL?.query ?? "", "%2Bfoo%2B=%2Bbar%2B", "query is incorrect")
     }
 
-    func testURLParameterEncodeStringKeyAllowedCharactersStringValueParameter() {
-        // Given
-        let parameters = ["allowed": " =\"#%<>@\\^`{}[]|&"]
-
-        // When
-        let (URLRequest, error) = self.encoding.encode(self.URLRequest, parameters: parameters)
-
-        // Then
-        XCTAssertEqual(URLRequest.URL?.query ?? "", "allowed=%20%3D%22%23%25%3C%3E%40%5C%5E%60%7B%7D%5B%5D%7C%26", "query is incorrect")
-    }
-
     func testURLParameterEncodeStringKeyPercentEncodedStringValueParameter() {
         // Given
         let parameters = ["percent": "%25"]
@@ -277,6 +338,8 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "hd=%5B1%5D&%2Bfoo%2B=%2Bbar%2B", "query is incorrect")
     }
+
+    // MARK: Tests - Varying HTTP Methods
 
     func testURLParameterEncodeGETParametersInURL() {
         // Given
