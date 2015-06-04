@@ -256,12 +256,7 @@ class CacheTestCase: BaseTestCase {
         XCTAssertNotNil(maxAgeNonExpiredResponse, "\(CacheControl.MaxAgeNonExpired) response should not be nil")
         XCTAssertNotNil(maxAgeExpiredResponse, "\(CacheControl.MaxAgeExpired) response should not be nil")
         XCTAssertNotNil(noCacheResponse, "\(CacheControl.NoCache) response should not be nil")
-
-        #if os(OSX)
-            XCTAssertNil(noStoreResponse, "\(CacheControl.NoStore) response should be nil")
-        #else
-            XCTAssertNotNil(noStoreResponse, "\(CacheControl.NoStore) response should not be nil")
-        #endif
+        XCTAssertNil(noStoreResponse, "\(CacheControl.NoStore) response should be nil")
     }
 
     func testDefaultCachePolicy() {
@@ -294,12 +289,7 @@ class CacheTestCase: BaseTestCase {
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.MaxAgeNonExpired, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.MaxAgeExpired, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoCache, shouldReturnCachedResponse: true)
-
-        #if os(OSX)
-            executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoStore, shouldReturnCachedResponse: false)
-        #else
-            executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoStore, shouldReturnCachedResponse: true)
-        #endif
+        executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoStore, shouldReturnCachedResponse: false)
     }
 
     func testUseLocalCacheDataAndDontLoadFromNetworkPolicy() {
@@ -311,23 +301,21 @@ class CacheTestCase: BaseTestCase {
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.MaxAgeExpired, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoCache, shouldReturnCachedResponse: true)
 
-        #if os(OSX)
-            // Given
-            let expectation = expectationWithDescription("GET request to httpbin")
-            var response: NSHTTPURLResponse?
+        // Execute Test - CacheControl.NoStore
 
-            // When
-            let request = startRequest(cacheControl: CacheControl.NoStore, cachePolicy: cachePolicy) { _, responseResponse in
-                response = responseResponse
-                expectation.fulfill()
-            }
+        // Given
+        let expectation = expectationWithDescription("GET request to httpbin")
+        var response: NSHTTPURLResponse?
 
-            waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        // When
+        let request = startRequest(cacheControl: CacheControl.NoStore, cachePolicy: cachePolicy) { _, responseResponse in
+            response = responseResponse
+            expectation.fulfill()
+        }
 
-            // Then
-            XCTAssertNil(response, "response should be nil")
-        #else
-            executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoStore, shouldReturnCachedResponse: true)
-        #endif
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNil(response, "response should be nil")
     }
 }
