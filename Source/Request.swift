@@ -116,6 +116,24 @@ public class Request {
         return self
     }
 
+    /**
+    Sets a closure to be called periodically during the lifecycle of the request as data is read from the server.
+    This closure returns the bytes most recently received from the server, not including data from in previous calls.
+    If this closure is set, data will only be available within this closure, and will not be otherwise saved. 
+    (The .response closure will be called with nil responseData.)
+
+    :param: closure The code to be executed periodically during the lifecycle of the request.
+
+    :returns: The request.
+    */
+    public func stream(closure: ((NSData) -> Void)? = nil) -> Self {
+        if let dataDelegate = delegate as? DataTaskDelegate {
+            dataDelegate.dataStream = closure
+        }
+
+        return self
+    }
+
     // MARK: - Response
 
     /**
@@ -300,15 +318,21 @@ public class Request {
     class DataTaskDelegate: TaskDelegate, NSURLSessionDataDelegate {
         var dataTask: NSURLSessionDataTask? { return task as? NSURLSessionDataTask }
 
+        private var totalBytesReceived: Int64 = 0
         private var mutableData: NSMutableData
         override var data: NSData? {
-            return mutableData
+            if dataStream != nil {
+                return nil
+            } else {
+                return mutableData
+            }
         }
 
         private var expectedContentLength: Int64?
 
 
         var dataProgress: ((bytesReceived: Int64, totalBytesReceived: Int64, totalBytesExpectedToReceive: Int64) -> Void)?
+        var dataStream: ((data: NSData) -> Void)?
 
         override init(task: NSURLSessionTask) {
             self.mutableData = NSMutableData()
@@ -346,9 +370,13 @@ public class Request {
             if dataTaskDidReceiveData != nil {
                 dataTaskDidReceiveData!(session, dataTask, data)
             } else {
-                mutableData.appendData(data)
+                if let ds = dataStream {
+                    ds(data: data)
+                } else {
+                    mutableData.appendData(data)
+                }
+                totalBytesReceived += data.length
 
-                let totalBytesReceived = Int64(mutableData.length)
                 let totalBytesExpectedToReceive = dataTask.response?.expectedContentLength ?? NSURLSessionTransferSizeUnknown
 
                 progress.totalUnitCount = totalBytesExpectedToReceive
