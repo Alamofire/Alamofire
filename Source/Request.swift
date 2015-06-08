@@ -418,12 +418,14 @@ extension Request: DebugPrintable {
         // Temporarily disabled on OS X due to build failure for CocoaPods
         // See https://github.com/CocoaPods/swift/issues/24
         #if !os(OSX)
-            if let cookieStorage = session.configuration.HTTPCookieStorage,
-                cookies = cookieStorage.cookiesForURL(URL!) as? [NSHTTPCookie]
-                where !cookies.isEmpty
-            {
-                let string = cookies.reduce(""){ $0 + "\($1.name)=\($1.value ?? String());" }
-                components.append("-b \"\(string.substringToIndex(string.endIndex.predecessor()))\"")
+            if session.configuration.HTTPShouldSetCookies {
+                if let cookieStorage = session.configuration.HTTPCookieStorage,
+                    cookies = cookieStorage.cookiesForURL(URL!) as? [NSHTTPCookie]
+                    where !cookies.isEmpty
+                {
+                    let string = cookies.reduce(""){ $0 + "\($1.name)=\($1.value ?? String());" }
+                    components.append("-b \"\(string.substringToIndex(string.endIndex.predecessor()))\"")
+                }
             }
         #endif
 

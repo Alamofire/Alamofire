@@ -196,6 +196,16 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         return manager
     }()
 
+    let managerDisallowingCookies: Alamofire.Manager = {
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        configuration.HTTPShouldSetCookies = false
+
+        let manager = Alamofire.Manager(configuration: configuration)
+        manager.startRequestsImmediately = false
+
+        return manager
+    }()
+
     // MARK: Tests
 
     func testGETRequestDebugDescription() {
@@ -267,6 +277,29 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         #if !os(OSX)
         XCTAssertEqual(components[5..<6], ["-b"], "command should contain -b flag")
         #endif
+    }
+
+    func testPOSTRequestWithCookiesDisabledDebugDescription() {
+        // Given
+        let URLString = "http://httpbin.org/post"
+
+        let properties = [
+            NSHTTPCookieDomain: "httpbin.org",
+            NSHTTPCookiePath: "/post",
+            NSHTTPCookieName: "foo",
+            NSHTTPCookieValue: "bar",
+        ]
+
+        let cookie = NSHTTPCookie(properties: properties)!
+        managerDisallowingCookies.session.configuration.HTTPCookieStorage?.setCookie(cookie)
+
+        // When
+        let request = managerDisallowingCookies.request(.POST, URLString)
+        let components = cURLCommandComponents(request)
+
+        // Then
+        let cookieComponents = components.filter { $0 == "-b" }
+        XCTAssertTrue(cookieComponents.isEmpty, "command should not contain -b flag")
     }
 
     // MARK: Test Helper Methods
