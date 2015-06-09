@@ -33,7 +33,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate(statusCode: 200..<300)
             .response { _, _, _, responseError in
                 error = responseError
@@ -54,7 +54,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate(statusCode: [200])
             .response { _, _, _, responseError in
                 error = responseError
@@ -76,7 +76,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate(statusCode: [])
             .response { _, _, _, responseError in
                 error = responseError
@@ -102,7 +102,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate(contentType: ["application/json"])
             .response { _, _, _, responseError in
                 error = responseError
@@ -123,7 +123,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate(contentType: ["*/*"])
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
@@ -146,7 +146,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate(contentType: ["application/octet-stream"])
             .response { _, _, _, responseError in
                 error = responseError
@@ -168,7 +168,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate(contentType: [])
             .response { _, _, _, responseError in
                 error = responseError
@@ -194,7 +194,7 @@ class MultipleValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .response { _, _, _, responseError in
@@ -216,7 +216,7 @@ class MultipleValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
             .response { _, _, _, responseError in
@@ -246,7 +246,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -267,7 +267,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -292,7 +292,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -316,7 +316,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -340,7 +340,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError

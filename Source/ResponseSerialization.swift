@@ -28,9 +28,9 @@ extension Request {
     /**
         Creates a response serializer that returns a string initialized from the response data with the specified string encoding.
 
-        :param: encoding The string encoding. If `nil`, the string encoding will be determined from the server response, falling back to the default HTTP default character set, ISO-8859-1.
+        - parameter encoding: The string encoding. If `nil`, the string encoding will be determined from the server response, falling back to the default HTTP default character set, ISO-8859-1.
 
-        :returns: A string response serializer.
+        - returns: A string response serializer.
     */
     public class func stringResponseSerializer(var encoding: NSStringEncoding? = nil) -> Serializer {
         return { _, response, data in
@@ -53,13 +53,13 @@ extension Request {
     /**
         Adds a handler to be called once the request has finished.
 
-        :param: encoding The string encoding. If `nil`, the string encoding will be determined from the server response, falling back to the default HTTP default character set, ISO-8859-1.
-        :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the string, if one could be created from the URL response and data, and any error produced while creating the string.
+        - parameter encoding: The string encoding. If `nil`, the string encoding will be determined from the server response, falling back to the default HTTP default character set, ISO-8859-1.
+        - parameter completionHandler: A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the string, if one could be created from the URL response and data, and any error produced while creating the string.
 
-        :returns: The request.
+        - returns: The request.
     */
     public func responseString(encoding: NSStringEncoding? = nil, completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
-        return response(serializer: Request.stringResponseSerializer(encoding: encoding), completionHandler: { request, response, string, error in
+        return response(serializer: Request.stringResponseSerializer(encoding), completionHandler: { request, response, string, error in
             completionHandler(request, response, string as? String, error)
         })
     }
@@ -71,9 +71,9 @@ extension Request {
     /**
         Creates a response serializer that returns a JSON object constructed from the response data using `NSJSONSerialization` with the specified reading options.
 
-        :param: options The JSON serialization reading options. `.AllowFragments` by default.
+        - parameter options: The JSON serialization reading options. `.AllowFragments` by default.
 
-        :returns: A JSON object response serializer.
+        - returns: A JSON object response serializer.
     */
     public class func JSONResponseSerializer(options: NSJSONReadingOptions = .AllowFragments) -> Serializer {
         return { request, response, data in
@@ -82,7 +82,15 @@ extension Request {
             }
 
             var serializationError: NSError?
-            let JSON: AnyObject? = NSJSONSerialization.JSONObjectWithData(data!, options: options, error: &serializationError)
+            let JSON: AnyObject?
+            do {
+                JSON = try NSJSONSerialization.JSONObjectWithData(data!, options: options)
+            } catch let error as NSError {
+                serializationError = error
+                JSON = nil
+            } catch {
+                fatalError()
+            }
 
             return (JSON, serializationError)
         }
@@ -91,13 +99,13 @@ extension Request {
     /**
         Adds a handler to be called once the request has finished.
 
-        :param: options The JSON serialization reading options. `.AllowFragments` by default.
-        :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the JSON object, if one could be created from the URL response and data, and any error produced while creating the JSON object.
+        - parameter options: The JSON serialization reading options. `.AllowFragments` by default.
+        - parameter completionHandler: A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the JSON object, if one could be created from the URL response and data, and any error produced while creating the JSON object.
 
-        :returns: The request.
+        - returns: The request.
     */
     public func responseJSON(options: NSJSONReadingOptions = .AllowFragments, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.JSONResponseSerializer(options: options), completionHandler: { request, response, JSON, error in
+        return response(serializer: Request.JSONResponseSerializer(options), completionHandler: { request, response, JSON, error in
             completionHandler(request, response, JSON, error)
         })
     }
@@ -109,18 +117,26 @@ extension Request {
     /**
         Creates a response serializer that returns an object constructed from the response data using `NSPropertyListSerialization` with the specified reading options.
 
-        :param: options The property list reading options. `0` by default.
+        - parameter options: The property list reading options. `0` by default.
 
-        :returns: A property list object response serializer.
+        - returns: A property list object response serializer.
     */
-    public class func propertyListResponseSerializer(options: NSPropertyListReadOptions = 0) -> Serializer {
+    public class func propertyListResponseSerializer(options: NSPropertyListReadOptions = NSPropertyListReadOptions(rawValue: 0)) -> Serializer {
         return { request, response, data in
             if data == nil || data?.length == 0 {
                 return (nil, nil)
             }
 
             var propertyListSerializationError: NSError?
-            let plist: AnyObject? = NSPropertyListSerialization.propertyListWithData(data!, options: options, format: nil, error: &propertyListSerializationError)
+            let plist: AnyObject?
+            do {
+                plist = try NSPropertyListSerialization.propertyListWithData(data!, options: options, format: nil)
+            } catch let error as NSError {
+                propertyListSerializationError = error
+                plist = nil
+            } catch {
+                fatalError()
+            }
 
             return (plist, propertyListSerializationError)
         }
@@ -129,13 +145,13 @@ extension Request {
     /**
         Adds a handler to be called once the request has finished.
 
-        :param: options The property list reading options. `0` by default.
-        :param: completionHandler A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the property list, if one could be created from the URL response and data, and any error produced while creating the property list.
+        - parameter options: The property list reading options. `0` by default.
+        - parameter completionHandler: A closure to be executed once the request has finished. The closure takes 4 arguments: the URL request, the URL response, if one was received, the property list, if one could be created from the URL response and data, and any error produced while creating the property list.
 
-        :returns: The request.
+        - returns: The request.
     */
-    public func responsePropertyList(options: NSPropertyListReadOptions = 0, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.propertyListResponseSerializer(options: options), completionHandler: { request, response, plist, error in
+    public func responsePropertyList(options: NSPropertyListReadOptions = NSPropertyListReadOptions(rawValue: 0), completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
+        return response(serializer: Request.propertyListResponseSerializer(options), completionHandler: { request, response, plist, error in
             completionHandler(request, response, plist, error)
         })
     }

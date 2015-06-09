@@ -91,8 +91,6 @@ class DetailViewController: UITableViewController {
             return self.headers.count
         case .Body:
             return self.body == nil ? 0 : 1
-        default:
-            return 0
         }
     }
 
@@ -100,20 +98,20 @@ class DetailViewController: UITableViewController {
 
         switch Sections(rawValue: indexPath.section)! {
         case .Headers:
-            let cell = self.tableView.dequeueReusableCellWithIdentifier("Header") as! UITableViewCell
-            let field = self.headers.keys.array.sorted(<)[indexPath.row]
+            let cell = self.tableView.dequeueReusableCellWithIdentifier("Header")
+            let field = self.headers.keys.array.sort(<)[indexPath.row]
             let value = self.headers[field]
 
-            cell.textLabel?.text = field
-            cell.detailTextLabel!.text = value
+            cell!.textLabel?.text = field
+            cell!.detailTextLabel!.text = value
 
-            return cell
+            return cell!
         case .Body:
-            let cell = self.tableView.dequeueReusableCellWithIdentifier("Body") as! UITableViewCell
+            let cell = self.tableView.dequeueReusableCellWithIdentifier("Body")
 
-            cell.textLabel?.text = self.body
+            cell!.textLabel?.text = self.body
 
-            return cell
+            return cell!
         }
     }
 

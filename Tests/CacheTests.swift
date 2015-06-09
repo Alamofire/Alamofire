@@ -161,7 +161,7 @@ class CacheTestCase: BaseTestCase {
 
     // MARK: - Request Helper Methods
 
-    func URLRequest(#cacheControl: String, cachePolicy: NSURLRequestCachePolicy) -> NSURLRequest {
+    func URLRequest(cacheControl cacheControl: String, cachePolicy: NSURLRequestCachePolicy) -> NSURLRequest {
         let parameters = ["Cache-Control": cacheControl]
         let URL = NSURL(string: self.URLString)!
         let URLRequest = NSMutableURLRequest(URL: URL, cachePolicy: cachePolicy, timeoutInterval: self.requestTimeout)
@@ -171,7 +171,7 @@ class CacheTestCase: BaseTestCase {
     }
 
     func startRequest(
-        #cacheControl: String,
+        cacheControl cacheControl: String,
         cachePolicy: NSURLRequestCachePolicy = .UseProtocolCachePolicy,
         queue: dispatch_queue_t = dispatch_get_main_queue(),
         completion: (NSURLRequest, NSHTTPURLResponse?) -> Void)
@@ -180,13 +180,9 @@ class CacheTestCase: BaseTestCase {
         let urlRequest = URLRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)
 
         let request = self.manager.request(urlRequest)
-        request.response(
-            queue: queue,
-            serializer: Request.responseDataSerializer(),
-            completionHandler: { _, response, _, _ in
-                completion(request.request, response)
-            }
-        )
+        request.response(queue, serializer: Request.responseDataSerializer()) { (_, response, _, _) -> Void in
+            completion(request.request, response)
+        }
 
         return urlRequest
     }
@@ -194,7 +190,7 @@ class CacheTestCase: BaseTestCase {
     // MARK: - Test Execution and Verification
 
     func executeTest(
-        #cachePolicy: NSURLRequestCachePolicy,
+        cachePolicy cachePolicy: NSURLRequestCachePolicy,
         cacheControl: String,
         shouldReturnCachedResponse: Bool)
     {
@@ -203,7 +199,7 @@ class CacheTestCase: BaseTestCase {
         var response: NSHTTPURLResponse?
 
         // When
-        let request = startRequest(cacheControl: cacheControl, cachePolicy: cachePolicy) { _, responseResponse in
+        _ = startRequest(cacheControl: cacheControl, cachePolicy: cachePolicy) { _, responseResponse in
             response = responseResponse
             expectation.fulfill()
         }
@@ -308,7 +304,7 @@ class CacheTestCase: BaseTestCase {
         var response: NSHTTPURLResponse?
 
         // When
-        let request = startRequest(cacheControl: CacheControl.NoStore, cachePolicy: cachePolicy) { _, responseResponse in
+        _ = startRequest(cacheControl: CacheControl.NoStore, cachePolicy: cachePolicy) { _, responseResponse in
             response = responseResponse
             expectation.fulfill()
         }

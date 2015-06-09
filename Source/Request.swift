@@ -38,7 +38,7 @@ public class Request {
     public let session: NSURLSession
 
     /// The request sent or to be sent to the server.
-    public var request: NSURLRequest { return task.originalRequest }
+    public var request: NSURLRequest { return task.originalRequest! }
 
     /// The response received from the server, if any.
     public var response: NSHTTPURLResponse? { return task.response as? NSHTTPURLResponse }
@@ -68,12 +68,12 @@ public class Request {
     /**
         Associates an HTTP Basic credential with the request.
 
-        :param: user The user.
-        :param: password The password.
+        - parameter user: The user.
+        - parameter password: The password.
 
-        :returns: The request.
+        - returns: The request.
     */
-    public func authenticate(#user: String, password: String) -> Self {
+    public func authenticate(user user: String, password: String) -> Self {
         let credential = NSURLCredential(user: user, password: password, persistence: .ForSession)
 
         return authenticate(usingCredential: credential)
@@ -82,9 +82,9 @@ public class Request {
     /**
         Associates a specified credential with the request.
 
-        :param: credential The credential.
+        - parameter credential: The credential.
 
-        :returns: The request.
+        - returns: The request.
     */
     public func authenticate(usingCredential credential: NSURLCredential) -> Self {
         delegate.credential = credential
@@ -100,9 +100,9 @@ public class Request {
         - For uploads, the progress closure returns the bytes written, total bytes written, and total bytes expected to write.
         - For downloads and data tasks, the progress closure returns the bytes read, total bytes read, and total bytes expected to read.
 
-        :param: closure The code to be executed periodically during the lifecycle of the request.
+        - parameter closure: The code to be executed periodically during the lifecycle of the request.
 
-        :returns: The request.
+        - returns: The request.
     */
     public func progress(closure: ((Int64, Int64, Int64) -> Void)? = nil) -> Self {
         if let uploadDelegate = delegate as? UploadTaskDelegate {
@@ -126,7 +126,7 @@ public class Request {
     /**
         Creates a response serializer that returns the associated data as-is.
 
-        :returns: A data response serializer.
+        - returns: A data response serializer.
     */
     public class func responseDataSerializer() -> Serializer {
         return { request, response, data in
@@ -137,9 +137,9 @@ public class Request {
     /**
         Adds a handler to be called once the request has finished.
 
-        :param: completionHandler The code to be executed once the request has finished.
+        - parameter completionHandler: The code to be executed once the request has finished.
 
-        :returns: The request.
+        - returns: The request.
     */
     public func response(completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
         return response(serializer: Request.responseDataSerializer(), completionHandler: completionHandler)
@@ -148,15 +148,15 @@ public class Request {
     /**
         Adds a handler to be called once the request has finished.
 
-        :param: queue The queue on which the completion handler is dispatched.
-        :param: serializer The closure responsible for serializing the request, response, and data.
-        :param: completionHandler The code to be executed once the request has finished.
+        - parameter queue: The queue on which the completion handler is dispatched.
+        - parameter serializer: The closure responsible for serializing the request, response, and data.
+        - parameter completionHandler: The code to be executed once the request has finished.
 
-        :returns: The request.
+        - returns: The request.
     */
     public func response(queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
         delegate.queue.addOperationWithBlock {
-            let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
+            let (responseObject, serializationError): (AnyObject?, NSError?) = serializer(self.request, self.response, self.delegate.data)
 
             dispatch_async(queue ?? dispatch_get_main_queue()) {
                 completionHandler(self.request, self.response, responseObject, self.delegate.error ?? serializationError)
@@ -218,7 +218,11 @@ public class Request {
                 operationQueue.suspended = true
 
                 if operationQueue.respondsToSelector("qualityOfService") {
-                    operationQueue.qualityOfService = NSQualityOfService.Utility
+                    if #available(OSXApplicationExtension 10.10, *) {
+                        operationQueue.qualityOfService = NSQualityOfService.Utility
+                    } else {
+                        // Fallback on earlier versions
+                    }
                 }
 
                 return operationQueue
@@ -241,7 +245,7 @@ public class Request {
 
         // MARK: Delegate Methods
 
-        func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: ((NSURLRequest!) -> Void)) {
+        func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: ((NSURLRequest?) -> Void)) {
             var redirectRequest: NSURLRequest? = request
 
             if taskWillPerformHTTPRedirection != nil {
@@ -251,7 +255,7 @@ public class Request {
             completionHandler(redirectRequest)
         }
 
-        func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)) {
+        func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void)) {
             var disposition: NSURLSessionAuthChallengeDisposition = .PerformDefaultHandling
             var credential: NSURLCredential?
 
@@ -272,7 +276,7 @@ public class Request {
             completionHandler(disposition, credential)
         }
 
-        func URLSession(session: NSURLSession, task: NSURLSessionTask, needNewBodyStream completionHandler: ((NSInputStream!) -> Void)) {
+        func URLSession(session: NSURLSession, task: NSURLSessionTask, needNewBodyStream completionHandler: ((NSInputStream?) -> Void)) {
             var bodyStream: NSInputStream?
 
             if taskNeedNewBodyStream != nil {
@@ -358,7 +362,7 @@ public class Request {
             }
         }
 
-        func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: ((NSCachedURLResponse!) -> Void)) {
+        func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: ((NSCachedURLResponse?) -> Void)) {
             var cachedResponse: NSCachedURLResponse? = proposedResponse
 
             if dataTaskWillCacheResponse != nil {
@@ -372,7 +376,7 @@ public class Request {
 
 // MARK: - Printable
 
-extension Request: Printable {
+extension Request: CustomStringConvertible {
     /// The textual representation used when written to an output stream, which includes the HTTP method and URL, as well as the response status code if a response has been received.
     public var description: String {
         var components: [String] = []
@@ -380,19 +384,19 @@ extension Request: Printable {
             components.append(request.HTTPMethod!)
         }
 
-        components.append(request.URL!.absoluteString!)
+        components.append(request.URL!.absoluteString)
 
         if response != nil {
             components.append("(\(response!.statusCode))")
         }
 
-        return join(" ", components)
+        return " ".join(components)
     }
 }
 
 // MARK: - DebugPrintable
 
-extension Request: DebugPrintable {
+extension Request: CustomDebugStringConvertible {
     func cURLRepresentation() -> String {
         var components: [String] = ["$ curl -i"]
 
@@ -403,9 +407,9 @@ extension Request: DebugPrintable {
         }
 
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
-            let protectionSpace = NSURLProtectionSpace(host: URL!.host!, port: URL!.port?.integerValue ?? 0, `protocol`: URL!.scheme!, realm: URL!.host!, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
+            let protectionSpace = NSURLProtectionSpace(host: URL!.host!, port: URL!.port?.integerValue ?? 0, `protocol`: URL!.scheme, realm: URL!.host!, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
-                for credential: NSURLCredential in (credentials as! [NSURLCredential]) {
+                for credential: NSURLCredential in (credentials as [NSURLCredential]) {
                     components.append("-u \(credential.user!):\(credential.password!)")
                 }
             } else {
@@ -419,7 +423,7 @@ extension Request: DebugPrintable {
         // See https://github.com/CocoaPods/swift/issues/24
         #if !os(OSX)
             if let cookieStorage = session.configuration.HTTPCookieStorage,
-                cookies = cookieStorage.cookiesForURL(URL!) as? [NSHTTPCookie]
+                cookies = cookieStorage.cookiesForURL(URL!)
                 where !cookies.isEmpty
             {
                 let string = cookies.reduce(""){ $0 + "\($1.name)=\($1.value ?? String());" }
@@ -455,9 +459,9 @@ extension Request: DebugPrintable {
             components.append("-d \"\(escapedBody)\"")
         }
 
-        components.append("\"\(URL!.absoluteString!)\"")
+        components.append("\"\(URL!.absoluteString)\"")
 
-        return join(" \\\n\t", components)
+        return " \\\n\t".join(components)
     }
 
     /// The textual representation used when written to an output stream, in the form of a cURL command.

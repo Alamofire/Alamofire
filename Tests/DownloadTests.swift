@@ -37,7 +37,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let numberOfLines = 100
         let URLString = "http://httpbin.org/stream/\(numberOfLines)"
 
-        let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+        let destination = Alamofire.Request.suggestedDownloadDestination(searchPathDirectory, domain: searchPathDomain)
 
         let expectation = expectationWithDescription("Download request should download data to file: \(URLString)")
 
@@ -46,7 +46,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.download(.GET, URLString, destination)
+        Alamofire.download(.GET, URLString: URLString, destination: destination)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -63,10 +63,11 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
 
         let fileManager = NSFileManager.defaultManager()
-        let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as! NSURL
+        let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as NSURL
 
         var fileManagerError: NSError?
-        if let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: .SkipsHiddenFiles, error: &fileManagerError) {
+        do {
+            let contents = try fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: .SkipsHiddenFiles)
             XCTAssertNil(fileManagerError, "fileManagerError should be nil")
 
             #if os(iOS)
@@ -88,11 +89,15 @@ class DownloadResponseTestCase: BaseTestCase {
                     XCTFail("data should exist for contents of URL")
                 }
 
-                fileManager.removeItemAtURL(file, error: nil)
+                do {
+                    try fileManager.removeItemAtURL(file)
+                } catch _ {
+                }
             } else {
                 XCTFail("file should not be nil")
             }
-        } else {
+        } catch let error as NSError {
+            fileManagerError = error
             XCTFail("contents should not be nil")
         }
     }
@@ -103,7 +108,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let URLString = "http://httpbin.org/bytes/\(randomBytes)"
 
         let fileManager = NSFileManager.defaultManager()
-        let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as! NSURL
+        let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as NSURL
         let filename = "test_download_data"
         let fileURL = directory.URLByAppendingPathComponent(filename)
 
@@ -117,7 +122,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var responseError: NSError?
 
         // When
-        let download = Alamofire.download(.GET, URLString) { _, _ in
+        let download = Alamofire.download(.GET, URLString: URLString) { _, _ in
             return fileURL
         }
         download.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
@@ -170,7 +175,11 @@ class DownloadResponseTestCase: BaseTestCase {
         }
 
         var removalError: NSError?
-        fileManager.removeItemAtURL(fileURL, error: &removalError)
+        do {
+            try fileManager.removeItemAtURL(fileURL)
+        } catch let error as NSError {
+            removalError = error
+        }
         XCTAssertNil(removalError, "removal error should be nil")
     }
 }
