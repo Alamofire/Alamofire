@@ -36,7 +36,7 @@ class JSONResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
+        Alamofire.request(.GET, URLString: URL, parameters: ["foo": "bar"])
             .responseJSON { responseRequest, responseResponse, responseJSON, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -72,7 +72,7 @@ class JSONResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.POST, URL, parameters: ["foo": "bar"])
+        Alamofire.request(.POST, URLString: URL, parameters: ["foo": "bar"])
             .responseJSON { responseRequest, responseResponse, responseJSON, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -114,7 +114,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.request(.GET, URLString: URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -149,7 +149,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.request(.GET, URLString: URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -189,7 +189,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.request(.GET, URLString: URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -229,7 +229,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.request(.GET, URLString: URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -271,7 +271,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.request(.GET, URLString: URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse

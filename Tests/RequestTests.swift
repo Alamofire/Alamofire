@@ -30,7 +30,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let URLString = "http://httpbin.org/"
 
         // When
-        let request = Alamofire.request(.GET, URLString)
+        let request = Alamofire.request(.GET, URLString: URLString)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -43,7 +43,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let URLString = "http://httpbin.org/get"
 
         // When
-        let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        let request = Alamofire.request(.GET, URLString: URLString, parameters: ["foo": "bar"])
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -59,7 +59,7 @@ class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
         let URLString = "http://httpbin.org/get"
-        let serializer = Alamofire.Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
+        let serializer = Alamofire.Request.stringResponseSerializer(NSUTF8StringEncoding)
 
         let expectation = expectationWithDescription("GET request should succeed: \(URLString)")
 
@@ -69,7 +69,7 @@ class RequestResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        Alamofire.request(.GET, URLString: URLString, parameters: ["foo": "bar"])
             .response(serializer: serializer) { responseRequest, responseResponse, responseString, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -103,7 +103,7 @@ class RequestResponseTestCase: BaseTestCase {
         var responseError: NSError?
 
         // When
-        let request = Alamofire.request(.GET, URLString)
+        let request = Alamofire.request(.GET, URLString: URLString)
         request.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
@@ -161,7 +161,7 @@ class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
         let URLString = "http://httpbin.org/get"
-        let request = Alamofire.request(.GET, URLString)
+        let request = Alamofire.request(.GET, URLString: URLString)
         let initialRequestDescription = request.description
 
         let expectation = expectationWithDescription("Request description should update: \(URLString)")
@@ -208,7 +208,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
-        XCTAssertFalse(contains(components, "-X"), "command should not contain explicit -X flag")
+        XCTAssertFalse(components.contains("-X"), "command should not contain explicit -X flag")
         XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
 
