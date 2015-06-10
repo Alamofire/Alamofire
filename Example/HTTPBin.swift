@@ -38,7 +38,7 @@ enum HTTPBinRoute: URLStringConvertible {
             }
         }()
 
-        return NSURL(string: path, relativeToURL: NSURL(string: baseURLString))!.absoluteString!
+        return NSURL(string: path, relativeToURL: NSURL(string: baseURLString))!.absoluteString
     }
 }
 

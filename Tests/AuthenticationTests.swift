@@ -37,13 +37,10 @@ class AuthenticationTestCase: BaseTestCase {
         super.tearDown()
 
         let credentialStorage = NSURLCredentialStorage.sharedCredentialStorage()
-        let allCredentials = credentialStorage.allCredentials as! [NSURLProtectionSpace: AnyObject]
 
-        for (protectionSpace, credentials) in allCredentials {
-            if let credentials = credentials as? [String: NSURLCredential] {
-                for (user, credential) in credentials {
-                    credentialStorage.removeCredential(credential, forProtectionSpace: protectionSpace)
-                }
+        for (protectionSpace, credentials) in credentialStorage.allCredentials {
+            for (_, credential) in credentials {
+                credentialStorage.removeCredential(credential, forProtectionSpace: protectionSpace)
             }
         }
     }
@@ -71,7 +68,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, self.URLString)
+        Alamofire.request(.GET, URLString: self.URLString)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -102,7 +99,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, self.URLString)
+        Alamofire.request(.GET, URLString: self.URLString)
             .authenticate(user: self.user, password: self.password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -150,7 +147,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, self.URLString)
+        Alamofire.request(.GET, URLString: self.URLString)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -181,7 +178,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, self.URLString)
+        Alamofire.request(.GET, URLString: self.URLString)
             .authenticate(user: self.user, password: self.password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
