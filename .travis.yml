@@ -1,5 +1,8 @@
 language: objective-c
 osx_image: beta-xcode6.3
+branches:
+  except:
+    - swift-2.0
 env:
   - LC_CTYPE=en_US.UTF-8 LANG=en_US.UTF-8
 before_install:
