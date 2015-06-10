@@ -33,7 +33,7 @@ class TLSEvaluationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString: URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()

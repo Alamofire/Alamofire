@@ -27,8 +27,8 @@ import XCTest
 class JSONResponseTestCase: BaseTestCase {
     func testGETRequestJSONResponse() {
         // Given
-        let URL = "http://httpbin.org/get"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/get"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
@@ -36,7 +36,7 @@ class JSONResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
+        Alamofire.request(.GET, URLString: URLString, parameters: ["foo": "bar"])
             .responseJSON { responseRequest, responseResponse, responseJSON, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -54,8 +54,8 @@ class JSONResponseTestCase: BaseTestCase {
         XCTAssertNotNil(JSON, "JSON should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let args = JSON?["args"] as? NSObject {
-            XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
+        if let args = JSON?["args"] as? AnyObject {
+            XCTAssertEqual(args as? [String: String] ?? [:], ["foo": "bar"], "args should match parameters")
         } else {
             XCTFail("args should not be nil")
         }
@@ -63,8 +63,8 @@ class JSONResponseTestCase: BaseTestCase {
 
     func testPOSTRequestJSONResponse() {
         // Given
-        let URL = "http://httpbin.org/post"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/post"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
@@ -72,7 +72,7 @@ class JSONResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.POST, URL, parameters: ["foo": "bar"])
+        Alamofire.request(.POST, URLString: URLString, parameters: ["foo": "bar"])
             .responseJSON { responseRequest, responseResponse, responseJSON, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -90,8 +90,8 @@ class JSONResponseTestCase: BaseTestCase {
         XCTAssertNotNil(JSON, "JSON should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let form = JSON?["form"] as? NSObject {
-            XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
+        if let form = JSON?["form"] as? AnyObject {
+            XCTAssertEqual(form as? [String: String] ?? [:], ["foo": "bar"], "form should match parameters")
         } else {
             XCTFail("form should not be nil")
         }
@@ -114,7 +114,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.request(.GET, URLString: URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -149,7 +149,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.request(.GET, URLString: URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -189,7 +189,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.request(.GET, URLString: URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -229,7 +229,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.request(.GET, URLString: URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -271,7 +271,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.request(.GET, URLString: URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse

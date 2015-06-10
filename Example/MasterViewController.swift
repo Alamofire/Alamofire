@@ -43,24 +43,24 @@ class MasterViewController: UITableViewController {
 
         if let split = self.splitViewController {
             let controllers = split.viewControllers
-            self.detailViewController = controllers.last?.topViewController as? DetailViewController
+            detailViewController = (controllers.last as! UINavigationController).topViewController as? DetailViewController
         }
     }
 
     // MARK: - UIStoryboardSegue
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let detailViewController = segue.destinationViewController.topViewController as? DetailViewController {
+        if let detailViewController = (segue.destinationViewController as! UINavigationController).topViewController as? DetailViewController {
             func requestForSegue(segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier as String! {
                     case "GET":
-                        return Alamofire.request(.GET, "http://httpbin.org/get")
+                        return Alamofire.request(.GET, URLString: "http://httpbin.org/get")
                     case "POST":
-                        return Alamofire.request(.POST, "http://httpbin.org/post")
+                        return Alamofire.request(.POST, URLString: "http://httpbin.org/post")
                     case "PUT":
-                        return Alamofire.request(.PUT, "http://httpbin.org/put")
+                        return Alamofire.request(.PUT, URLString: "http://httpbin.org/put")
                     case "DELETE":
-                        return Alamofire.request(.DELETE, "http://httpbin.org/delete")
+                        return Alamofire.request(.DELETE, URLString: "http://httpbin.org/delete")
                     default:
                         return nil
                 }

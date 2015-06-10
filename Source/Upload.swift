@@ -42,7 +42,7 @@ extension Manager {
             dispatch_sync(queue) {
                 uploadTask = self.session.uploadTaskWithRequest(request, fromFile: fileURL)
             }
-        case .Stream(let request, var stream):
+        case .Stream(let request, let stream):
             dispatch_sync(queue) {
                 uploadTask = self.session.uploadTaskWithStreamedRequest(request)
             }
@@ -71,10 +71,10 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: URLRequest The URL request
-        :param: file The file to upload
+        - parameter URLRequest: The URL request
+        - parameter file: The file to upload
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
     public func upload(URLRequest: URLRequestConvertible, file: NSURL) -> Request {
         return upload(.File(URLRequest.URLRequest, file))
@@ -85,14 +85,14 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: method The HTTP method.
-        :param: URLString The URL string.
-        :param: file The file to upload
+        - parameter method: The HTTP method.
+        - parameter URLString: The URL string.
+        - parameter file: The file to upload
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
     public func upload(method: Method, _ URLString: URLStringConvertible, file: NSURL) -> Request {
-        return upload(URLRequest(method, URLString), file: file)
+        return upload(URLRequest(method, URLString: URLString), file: file)
     }
 
     // MARK: Data
@@ -102,10 +102,10 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: URLRequest The URL request
-        :param: data The data to upload
+        - parameter URLRequest: The URL request
+        - parameter data: The data to upload
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
     public func upload(URLRequest: URLRequestConvertible, data: NSData) -> Request {
         return upload(.Data(URLRequest.URLRequest, data))
@@ -116,14 +116,14 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: method The HTTP method.
-        :param: URLString The URL string.
-        :param: data The data to upload
+        - parameter method: The HTTP method.
+        - parameter URLString: The URL string.
+        - parameter data: The data to upload
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
     public func upload(method: Method, _ URLString: URLStringConvertible, data: NSData) -> Request {
-        return upload(URLRequest(method, URLString), data: data)
+        return upload(URLRequest(method, URLString: URLString), data: data)
     }
 
     // MARK: Stream
@@ -133,10 +133,10 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: URLRequest The URL request
-        :param: stream The stream to upload
+        - parameter URLRequest: The URL request
+        - parameter stream: The stream to upload
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
     public func upload(URLRequest: URLRequestConvertible, stream: NSInputStream) -> Request {
         return upload(.Stream(URLRequest.URLRequest, stream))
@@ -147,14 +147,14 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: method The HTTP method.
-        :param: URLString The URL string.
-        :param: stream The stream to upload.
+        - parameter method: The HTTP method.
+        - parameter URLString: The URL string.
+        - parameter stream: The stream to upload.
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
     public func upload(method: Method, _ URLString: URLStringConvertible, stream: NSInputStream) -> Request {
-        return upload(URLRequest(method, URLString), stream: stream)
+        return upload(URLRequest(method, URLString: URLString), stream: stream)
     }
 }
 
