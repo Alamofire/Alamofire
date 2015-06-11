@@ -81,16 +81,13 @@ extension Request {
                 return (nil, nil)
             }
 
-            let JSON: AnyObject?
+            var JSON: AnyObject?
             var serializationError: NSError?
 
             do {
                 JSON = try NSJSONSerialization.JSONObjectWithData(data!, options: options)
-            } catch let error as NSError {
-                serializationError = error
-                JSON = nil
             } catch {
-                fatalError("JSON serialization failed and did not return an error")
+                serializationError = error as NSError
             }
 
             return (JSON, serializationError)
@@ -128,16 +125,13 @@ extension Request {
                 return (nil, nil)
             }
 
-            let plist: AnyObject?
+            var plist: AnyObject?
             var propertyListSerializationError: NSError?
 
             do {
                 plist = try NSPropertyListSerialization.propertyListWithData(data!, options: options, format: nil)
-            } catch let error as NSError {
-                propertyListSerializationError = error
-                plist = nil
             } catch {
-                fatalError("Property list serialization failed and did not return an error")
+                propertyListSerializationError = error as NSError
             }
 
             return (plist, propertyListSerializationError)

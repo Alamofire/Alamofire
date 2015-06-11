@@ -79,7 +79,7 @@ public enum ParameterEncoding {
         }
 
         var mutableURLRequest: NSMutableURLRequest! = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
-        var error: NSError? = nil
+        var encodingError: NSError? = nil
 
         switch self {
         case .URL:
@@ -121,22 +121,22 @@ public enum ParameterEncoding {
                 let data = try NSJSONSerialization.dataWithJSONObject(parameters!, options: options)
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 mutableURLRequest.HTTPBody = data
-            } catch let serializationError as NSError {
-                error = serializationError
+            } catch {
+                encodingError = error as NSError
             }
         case .PropertyList(let (format, options)):
             do {
                 let data = try NSPropertyListSerialization.dataWithPropertyList(parameters!, format: format, options: options)
                 mutableURLRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
                 mutableURLRequest.HTTPBody = data
-            } catch let serializationError as NSError {
-                error = serializationError
+            } catch {
+                encodingError = error as NSError
             }
         case .Custom(let closure):
             return closure(mutableURLRequest, parameters)
         }
 
-        return (mutableURLRequest, error)
+        return (mutableURLRequest, encodingError)
     }
 
     func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {

@@ -156,8 +156,8 @@ extension Request {
                 do {
                     let destination = downloadTaskDidFinishDownloadingToURL!(session, downloadTask, location)
                     try NSFileManager.defaultManager().moveItemAtURL(location, toURL: destination)
-                } catch let moveError as NSError {
-                    self.error = moveError
+                } catch {
+                    self.error = error as NSError
                 }
             }
         }
