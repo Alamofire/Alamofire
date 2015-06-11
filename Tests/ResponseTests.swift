@@ -54,8 +54,10 @@ class JSONResponseTestCase: BaseTestCase {
         XCTAssertNotNil(JSON, "JSON should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let args = JSON?["args"] as? AnyObject {
-            XCTAssertEqual(args as? [String: String] ?? [:], ["foo": "bar"], "args should match parameters")
+        // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
+        // - http://openradar.appspot.com/radar?id=5517037090635776
+        if let args = JSON?["args" as NSString] as? [String: String] {
+            XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
         } else {
             XCTFail("args should not be nil")
         }
@@ -90,8 +92,10 @@ class JSONResponseTestCase: BaseTestCase {
         XCTAssertNotNil(JSON, "JSON should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let form = JSON?["form"] as? AnyObject {
-            XCTAssertEqual(form as? [String: String] ?? [:], ["foo": "bar"], "form should match parameters")
+        // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
+        // - http://openradar.appspot.com/radar?id=5517037090635776
+        if let form = JSON?["form" as NSString] as? [String: String] {
+            XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
         } else {
             XCTFail("form should not be nil")
         }
