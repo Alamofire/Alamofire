@@ -163,12 +163,12 @@ class RequestResponseTestCase: BaseTestCase {
 
         var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
+        var accumulatedData = [NSData]()
+
         var responseRequest: NSURLRequest?
         var responseResponse: NSHTTPURLResponse?
         var responseData: AnyObject?
         var responseError: NSError?
-
-        var accumulatedData = [NSData]()
 
         // When
         let request = Alamofire.request(.GET, URLString)
@@ -179,7 +179,7 @@ class RequestResponseTestCase: BaseTestCase {
             let progress = (completedUnitCount: request.progress.completedUnitCount, totalUnitCount: request.progress.totalUnitCount)
             progressValues.append(progress)
         }
-        request.stream { data in accumulatedData.append(data) }
+        request.stream { accumulatedData.append($0) }
         request.response { request, response, data, error in
             responseRequest = request
             responseResponse = response

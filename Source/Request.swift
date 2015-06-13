@@ -117,16 +117,15 @@ public class Request {
     }
 
     /**
-    Sets a closure to be called periodically during the lifecycle of the request as data is read from the server.
-    This closure returns the bytes most recently received from the server, not including data from in previous calls.
-    If this closure is set, data will only be available within this closure, and will not be otherwise saved. 
-    (The .response closure will be called with nil responseData.)
+        Sets a closure to be called periodically during the lifecycle of the request as data is read from the server.
 
-    :param: closure The code to be executed periodically during the lifecycle of the request.
+        This closure returns the bytes most recently received from the server, not including data from previous calls. If this closure is set, data will only be available within this closure, and will not be saved elsewhere. It is also important to note that the `response` closure will be called with nil `responseData`.
 
-    :returns: The request.
+        :param: closure The code to be executed periodically during the lifecycle of the request.
+
+        :returns: The request.
     */
-    public func stream(closure: ((NSData) -> Void)? = nil) -> Self {
+    public func stream(closure: (NSData -> Void)? = nil) -> Self {
         if let dataDelegate = delegate as? DataTaskDelegate {
             dataDelegate.dataStream = closure
         }
@@ -329,10 +328,8 @@ public class Request {
         }
 
         private var expectedContentLength: Int64?
-
-
-        var dataProgress: ((bytesReceived: Int64, totalBytesReceived: Int64, totalBytesExpectedToReceive: Int64) -> Void)?
-        var dataStream: ((data: NSData) -> Void)?
+        private var dataProgress: ((bytesReceived: Int64, totalBytesReceived: Int64, totalBytesExpectedToReceive: Int64) -> Void)?
+        private var dataStream: ((data: NSData) -> Void)?
 
         override init(task: NSURLSessionTask) {
             self.mutableData = NSMutableData()
@@ -370,13 +367,13 @@ public class Request {
             if dataTaskDidReceiveData != nil {
                 dataTaskDidReceiveData!(session, dataTask, data)
             } else {
-                if let ds = dataStream {
-                    ds(data: data)
+                if let dataStream = dataStream {
+                    dataStream(data: data)
                 } else {
                     mutableData.appendData(data)
                 }
-                totalBytesReceived += data.length
 
+                totalBytesReceived += data.length
                 let totalBytesExpectedToReceive = dataTask.response?.expectedContentLength ?? NSURLSessionTransferSizeUnknown
 
                 progress.totalUnitCount = totalBytesExpectedToReceive
