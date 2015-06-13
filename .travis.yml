@@ -1,16 +1,31 @@
 language: objective-c
 osx_image: beta-xcode6.3
 env:
-  - LC_CTYPE=en_US.UTF-8 LANG=en_US.UTF-8
+  global:
+  - LC_CTYPE=en_US.UTF-8
+  - LANG=en_US.UTF-8
+  matrix:
+    - DESTINATION="OS=8.1,name=iPhone 5S" SCHEME="Alamofire iOS" SDK=iphonesimulator8.3 BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - DESTINATION="OS=8.2,name=iPhone 6" SCHEME="Alamofire iOS" SDK=iphonesimulator8.3 BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - DESTINATION="OS=8.3,name=iPhone 6 Plus" SCHEME="Alamofire iOS" SDK=iphonesimulator8.3 BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - DESTINATION="arch=x86_64" SCHEME="Alamofire OSX" SDK=macosx10.10 BUILD_EXAMPLE="NO" POD_LINT="YES"
 before_install:
   - gem install cocoapods --no-rdoc --no-ri --no-document --quiet
   - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
 script:
   - set -o pipefail
-  - xcodebuild -project Alamofire.xcodeproj -scheme "Alamofire iOS" -sdk iphonesimulator
-    -destination "platform=iOS Simulator,name=iPhone 6" ONLY_ACTIVE_ARCH=NO test | xcpretty -c
-  - xcodebuild -project Alamofire.xcodeproj -scheme "Alamofire OSX" -sdk macosx10.10
-    -destination "platform=OS X,arch=x86_64" ONLY_ACTIVE_ARCH=NO test | xcpretty -c
-  - xcodebuild -project "iOS Example.xcodeproj" -scheme "iOS Example" -sdk iphonesimulator
-    -destination "platform=iOS Simulator,name=iPhone 6" ONLY_ACTIVE_ARCH=YES build | xcpretty -c
-  - pod lib lint --quick
+  - xcodebuild -project Alamofire.xcodeproj -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" 
+    -configuration Debug ONLY_ACTIVE_ARCH=NO test | xcpretty -c
+  - xcodebuild -project Alamofire.xcodeproj -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" 
+    -configuration Release ONLY_ACTIVE_ARCH=NO test | xcpretty -c
+  - if [ $BUILD_EXAMPLE == "YES" ]; then 
+      xcodebuild -project "iOS Example.xcodeproj" -scheme "iOS Example" -sdk "$SDK" -destination "$DESTINATION" 
+      -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c; 
+    fi
+  - if [ $BUILD_EXAMPLE == "YES" ]; then 
+      xcodebuild -project "iOS Example.xcodeproj" -scheme "iOS Example" -sdk "$SDK" -destination "$DESTINATION" 
+      -configuration Release ONLY_ACTIVE_ARCH=NO build | xcpretty -c; 
+    fi
+  - if [ $POD_LINT == "YES" ]; then 
+      pod lib lint --quick; 
+    fi
