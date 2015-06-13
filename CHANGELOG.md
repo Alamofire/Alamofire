@@ -2,14 +2,78 @@
 All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
-- `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122)
+- `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
 
+## [1.2.3](https://github.com/Alamofire/Alamofire/releases/tag/1.2.3)
+Released on 2015-06-12. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.2.3).
+
+#### Added
+- Tests for data task progress closure and NSProgress updates.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#494](https://github.com/Alamofire/Alamofire/pull/494).
+- More robust tests around download and upload progress.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#494](https://github.com/Alamofire/Alamofire/pull/494).
+- More robust redirect tests around default behavior and task override closures.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#507](https://github.com/Alamofire/Alamofire/pull/507).
+- The "[" and "]" to the legal escape characters and added more documentation.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#504](https://github.com/Alamofire/Alamofire/pull/504).
+- Percent escaping tests around reserved / unreserved / illegal characters.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#504](https://github.com/Alamofire/Alamofire/pull/504).
+- Tests for various Cache-Control headers with different request cache policies.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#505](https://github.com/Alamofire/Alamofire/pull/505).
+- Link to Carthage in the README.
+  - Added by [Josh Brown](https://github.com/joshuatbrown) in Pull Request
+  [#520](https://github.com/Alamofire/Alamofire/pull/520).
+
+#### Updated
+- iOS 7 instructions to cover multiple Swift files in the README.
+  - Updated by [Sébastien Michoy](https://github.com/SebastienMichoy) in regards
+  to Issue [#479](https://github.com/Alamofire/Alamofire/pull/479).
+- All tests to follow the Given / When / Then structure.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#489](https://github.com/Alamofire/Alamofire/pull/489).
+- All tests to be crash safe.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#489](https://github.com/Alamofire/Alamofire/pull/489).
+- The OS X tests so that they are all passing again.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#489](https://github.com/Alamofire/Alamofire/pull/489).
+- Re-enabled Travis-CI tests for both iOS and Mac OS X.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#506](https://github.com/Alamofire/Alamofire/pull/506).
+- Travis-CI test suite to run all tests in both debug and release.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#506](https://github.com/Alamofire/Alamofire/pull/506).
+- Travis-CI test suite to run all tests on iOS 8.1, 8.2 and 8.3 as well as Mac OS X 10.10.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#506](https://github.com/Alamofire/Alamofire/pull/506).
+- Travis-CI test suite to run `pod lib lint` against the latest version of CocoaPods.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#506](https://github.com/Alamofire/Alamofire/pull/506).
+
+#### Fixed
+- Random deinitialization test failure by handling task state race condition.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+- Typo in the API Parameter Abstraction in the README.
+  - Fixed by [Josh Brown](https://github.com/joshuatbrown) in Pull Request
+  [#500](https://github.com/Alamofire/Alamofire/pull/500).
+- Cookies are now only applied in the DebugPrintable API when appropriate.
+  - Fixed by [Alex Plescan](https://github.com/alexpls) in Pull Request
+  [#516](https://github.com/Alamofire/Alamofire/pull/516).
+
 ## [1.2.2](https://github.com/Alamofire/Alamofire/releases/tag/1.2.2)
-Released on 2015-05-13. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.2.2).
+Released on 2015-05-13. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.2.2).
 
 #### Added
 - Contributing Guidelines document to the project.
