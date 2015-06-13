@@ -231,6 +231,22 @@ class CacheTestCase: BaseTestCase {
         }
     }
 
+    // MARK: - Cache Helper Methods
+
+    private func isCachedResponseForNoStoreHeaderExpected() -> Bool {
+        var storedInCache = false
+
+        #if os(iOS)
+            let operatingSystemVersion = NSOperatingSystemVersion(majorVersion: 8, minorVersion: 3, patchVersion: 0)
+
+            if !NSProcessInfo().isOperatingSystemAtLeastVersion(operatingSystemVersion) {
+                storedInCache = true
+            }
+        #endif
+
+        return storedInCache
+    }
+
     // MARK: - Tests
 
     func testURLCacheContainsCachedResponsesForAllRequests() {
@@ -256,7 +272,12 @@ class CacheTestCase: BaseTestCase {
         XCTAssertNotNil(maxAgeNonExpiredResponse, "\(CacheControl.MaxAgeNonExpired) response should not be nil")
         XCTAssertNotNil(maxAgeExpiredResponse, "\(CacheControl.MaxAgeExpired) response should not be nil")
         XCTAssertNotNil(noCacheResponse, "\(CacheControl.NoCache) response should not be nil")
-        XCTAssertNil(noStoreResponse, "\(CacheControl.NoStore) response should be nil")
+
+        if isCachedResponseForNoStoreHeaderExpected() {
+            XCTAssertNotNil(noStoreResponse, "\(CacheControl.NoStore) response should not be nil")
+        } else {
+            XCTAssertNil(noStoreResponse, "\(CacheControl.NoStore) response should be nil")
+        }
     }
 
     func testDefaultCachePolicy() {
@@ -289,7 +310,12 @@ class CacheTestCase: BaseTestCase {
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.MaxAgeNonExpired, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.MaxAgeExpired, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoCache, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoStore, shouldReturnCachedResponse: false)
+
+        if isCachedResponseForNoStoreHeaderExpected() {
+            executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoStore, shouldReturnCachedResponse: true)
+        } else {
+            executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoStore, shouldReturnCachedResponse: false)
+        }
     }
 
     func testUseLocalCacheDataAndDontLoadFromNetworkPolicy() {
@@ -301,21 +327,23 @@ class CacheTestCase: BaseTestCase {
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.MaxAgeExpired, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoCache, shouldReturnCachedResponse: true)
 
-        // Execute Test - CacheControl.NoStore
+        if isCachedResponseForNoStoreHeaderExpected() {
+            executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoStore, shouldReturnCachedResponse: true)
+        } else {
+            // Given
+            let expectation = expectationWithDescription("GET request to httpbin")
+            var response: NSHTTPURLResponse?
 
-        // Given
-        let expectation = expectationWithDescription("GET request to httpbin")
-        var response: NSHTTPURLResponse?
+            // When
+            let request = startRequest(cacheControl: CacheControl.NoStore, cachePolicy: cachePolicy) { _, responseResponse in
+                response = responseResponse
+                expectation.fulfill()
+            }
 
-        // When
-        let request = startRequest(cacheControl: CacheControl.NoStore, cachePolicy: cachePolicy) { _, responseResponse in
-            response = responseResponse
-            expectation.fulfill()
+            waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+            // Then
+            XCTAssertNil(response, "response should be nil")
         }
-
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
-
-        // Then
-        XCTAssertNil(response, "response should be nil")
     }
 }
