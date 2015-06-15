@@ -22,9 +22,12 @@
 
 import Foundation
 
+private let defaultValidationErrorGenerator: Request.ValidationErrorGenerator = { request, response in
+    return NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
+}
 
-private let defaultValidationErrorGenerator: Request.ValidationErrorGenerator = {
-    request, response in return NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
+private let defaultStatusCodeValidationErrorGenerator: Request.ValidationErrorGenerator = { request, response in
+    return NSError(domain: AlamofireErrorDomain, code: response.statusCode, userInfo: nil)
 }
 
 extension Request {
@@ -33,6 +36,10 @@ extension Request {
         A closure used to validate a request that takes a URL request and URL response, and returns whether the request was valid.
     */
     public typealias Validation = (NSURLRequest, NSHTTPURLResponse) -> Bool
+    
+    /**
+        A closure used that generates an NSError when a validation has failed.
+    */
     public typealias ValidationErrorGenerator = (NSURLRequest, NSHTTPURLResponse) -> NSError
     
     
@@ -68,7 +75,7 @@ extension Request {
 
         :returns: The request.
     */
-    public func validate<S : SequenceType where S.Generator.Element == Int>(statusCode acceptableStatusCode: S, errorGenerator: ValidationErrorGenerator = defaultValidationErrorGenerator) -> Self {
+    public func validate<S : SequenceType where S.Generator.Element == Int>(statusCode acceptableStatusCode: S, errorGenerator: ValidationErrorGenerator = defaultStatusCodeValidationErrorGenerator) -> Self {
         return validate({ _, response in
             return contains(acceptableStatusCode, response.statusCode)
         }, errorGenerator: errorGenerator)
@@ -139,7 +146,7 @@ extension Request {
 
         :returns: The request.
     */
-    public func validate(errorGenerator: ValidationErrorGenerator = defaultValidationErrorGenerator) -> Self {
+    public func validate() -> Self {
         let acceptableStatusCodes: Range<Int> = 200..<300
         let acceptableContentTypes: [String] = {
             if let accept = self.request.valueForHTTPHeaderField("Accept") {
@@ -149,6 +156,6 @@ extension Request {
             return ["*/*"]
         }()
 
-        return validate(statusCode: acceptableStatusCodes, errorGenerator: errorGenerator).validate(contentType: acceptableContentTypes, errorGenerator: errorGenerator)
+        return validate(statusCode: acceptableStatusCodes).validate(contentType: acceptableContentTypes)
     }
 }
