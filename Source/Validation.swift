@@ -22,13 +22,20 @@
 
 import Foundation
 
+
+private let defaultValidationErrorGenerator: Request.ValidationErrorGenerator = {
+    request, response in return NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
+}
+
 extension Request {
 
     /**
         A closure used to validate a request that takes a URL request and URL response, and returns whether the request was valid.
     */
     public typealias Validation = (NSURLRequest, NSHTTPURLResponse) -> Bool
-
+    public typealias ValidationErrorGenerator = (NSURLRequest, NSHTTPURLResponse) -> NSError
+    
+    
     /**
         Validates the request, using the specified closure.
 
@@ -38,11 +45,11 @@ extension Request {
 
         :returns: The request.
     */
-    public func validate(validation: Validation) -> Self {
+    public func validate(validation: Validation, errorGenerator: ValidationErrorGenerator = defaultValidationErrorGenerator) -> Self {
         delegate.queue.addOperationWithBlock {
             if self.response != nil && self.delegate.error == nil {
                 if !validation(self.request, self.response!) {
-                    self.delegate.error = NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
+                    self.delegate.error = errorGenerator(self.request, self.response!)
                 }
             }
         }
@@ -61,10 +68,10 @@ extension Request {
 
         :returns: The request.
     */
-    public func validate<S : SequenceType where S.Generator.Element == Int>(statusCode acceptableStatusCode: S) -> Self {
-        return validate { _, response in
+    public func validate<S : SequenceType where S.Generator.Element == Int>(statusCode acceptableStatusCode: S, errorGenerator: ValidationErrorGenerator = defaultValidationErrorGenerator) -> Self {
+        return validate({ _, response in
             return contains(acceptableStatusCode, response.statusCode)
-        }
+        }, errorGenerator: errorGenerator)
     }
 
     // MARK: - Content-Type
@@ -105,8 +112,8 @@ extension Request {
 
         :returns: The request.
     */
-    public func validate<S : SequenceType where S.Generator.Element == String>(contentType acceptableContentTypes: S) -> Self {
-        return validate { _, response in
+    public func validate<S : SequenceType where S.Generator.Element == String>(contentType acceptableContentTypes: S, errorGenerator: ValidationErrorGenerator = defaultValidationErrorGenerator) -> Self {
+        return validate({ _, response in
             if let responseContentType = response.MIMEType,
                 responseMIMEType = MIMEType(responseContentType)
             {
@@ -120,7 +127,7 @@ extension Request {
             }
 
             return false
-        }
+        }, errorGenerator: errorGenerator)
     }
 
     // MARK: - Automatic
@@ -132,7 +139,7 @@ extension Request {
 
         :returns: The request.
     */
-    public func validate() -> Self {
+    public func validate(errorGenerator: ValidationErrorGenerator = defaultValidationErrorGenerator) -> Self {
         let acceptableStatusCodes: Range<Int> = 200..<300
         let acceptableContentTypes: [String] = {
             if let accept = self.request.valueForHTTPHeaderField("Accept") {
@@ -142,6 +149,6 @@ extension Request {
             return ["*/*"]
         }()
 
-        return validate(statusCode: acceptableStatusCodes).validate(contentType: acceptableContentTypes)
+        return validate(statusCode: acceptableStatusCodes, errorGenerator: errorGenerator).validate(contentType: acceptableContentTypes, errorGenerator: errorGenerator)
     }
 }

@@ -245,6 +245,9 @@ class AutomaticValidationTestCase: BaseTestCase {
 
         var error: NSError?
 
+        Alamofire.request(.GET, URL).validate(statusCode: 200..<300)
+        
+        
         // When
         Alamofire.request(.GET, URL)
             .validate()
@@ -351,5 +354,31 @@ class AutomaticValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNil(error, "error should be nil")
+    }
+    
+    func testValidationWithCustomError() {
+        // Given
+        let URL = "http://httpbin.org/status/404"
+        let expectation = expectationWithDescription("\(URL)")
+        let expectedError = NSError(domain: "custom.error.domain", code: 404, userInfo: nil)
+        
+        var error: NSError?
+        
+        // When
+        Alamofire.request(.GET, URL)
+            .validate(statusCode: 200..<300) { request, response in expectedError }
+            .response { _, _, _, responseError in
+                error = responseError
+                
+                expectation.fulfill()
+        }
+        
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        
+        // Then
+        XCTAssertNotNil(error, "error should not be nil")
+        if let error = error {
+            XCTAssertEqual(expectedError, error, "error should be the expected one")
+        }
     }
 }
