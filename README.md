@@ -640,6 +640,13 @@ extension Alamofire.Request {
 }
 ```
 
+```swift
+Alamofire.request(.GET, "http://example.com/users")
+         .responseCollection { (_, _, users: [User]?, _) in
+             println(users)
+         }
+```
+
 ### URLStringConvertible
 
 Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to construct URL requests. `NSString`, `NSURL`, `NSURLComponents`, and `NSURLRequest` conform to `URLStringConvertible` by default, allowing any of them to be passed as `URLString` parameters to the `request`, `upload`, and `download` methods:
