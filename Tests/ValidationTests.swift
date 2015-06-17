@@ -66,6 +66,10 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+        XCTAssertEqual(error?.code ?? 0, AlamofireErrorInvalidStatusCode, "code should be AlamofireErrorInvalidStatusCode")
+        
+        let URLFromError = error?.userInfo?[NSURLErrorFailingURLErrorKey] as? NSURL
+        XCTAssertEqual(URLFromError?.absoluteString ?? "", URL, "error.userInfo[NSURLErrorFailingURLErrorKey] should equal the request URL")
     }
 
     func testValidationForRequestWithNoAcceptableStatusCodes() {
@@ -88,6 +92,10 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+        XCTAssertEqual(error?.code ?? 0, AlamofireErrorInvalidStatusCode, "code should be AlamofireErrorInvalidStatusCode")
+        
+        let URLFromError = error?.userInfo?[NSURLErrorFailingURLErrorKey] as? NSURL
+        XCTAssertEqual(URLFromError?.absoluteString ?? "", URL, "error.userInfo[NSURLErrorFailingURLErrorKey] should equal the request URL")
     }
 }
 
@@ -158,6 +166,10 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+        XCTAssertEqual(error?.code ?? 0, AlamofireErrorInvalidContentType, "code should be AlamofireErrorInvalidContentType")
+        
+        let URLFromError = error?.userInfo?[NSURLErrorFailingURLErrorKey] as? NSURL
+        XCTAssertEqual(URLFromError?.absoluteString ?? "", URL, "error.userInfo[NSURLErrorFailingURLErrorKey] should equal the request URL")
     }
 
     func testValidationForRequestWithNoAcceptableContentTypeResponse() {
@@ -180,6 +192,10 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+        XCTAssertEqual(error?.code ?? 0, AlamofireErrorInvalidContentType, "code should be AlamofireErrorInvalidContentType")
+        
+        let URLFromError = error?.userInfo?[NSURLErrorFailingURLErrorKey] as? NSURL
+        XCTAssertEqual(URLFromError?.absoluteString ?? "", URL, "error.userInfo[NSURLErrorFailingURLErrorKey] should equal the request URL")
     }
 }
 
@@ -229,6 +245,9 @@ class MultipleValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+        
+        let URLFromError = error?.userInfo?[NSURLErrorFailingURLErrorKey] as? NSURL
+        XCTAssertEqual(URLFromError?.absoluteString ?? "", URL, "error.userInfo[NSURLErrorFailingURLErrorKey] should equal the request URL")
     }
 }
 
@@ -279,6 +298,10 @@ class AutomaticValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
+        XCTAssertEqual(error?.code ?? 0, AlamofireErrorInvalidStatusCode, "code should be AlamofireErrorInvalidStatusCode")
+        
+        let URLFromError = error?.userInfo?[NSURLErrorFailingURLErrorKey] as? NSURL
+        XCTAssertEqual(URLFromError?.absoluteString ?? "", URL, "error.userInfo[NSURLErrorFailingURLErrorKey] should equal the request URL")
     }
 
     func testValidationForRequestWithAcceptableWildcardContentTypeResponse() {

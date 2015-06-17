@@ -22,12 +22,15 @@
 
 import Foundation
 
+public let AlamofireErrorInvalidStatusCode = 1
+public let AlamofireErrorInvalidContentType = 2
+
 extension Request {
 
     /**
         A closure used to validate a request that takes a URL request and URL response, and returns whether the request was valid.
     */
-    public typealias Validation = (NSURLRequest, NSHTTPURLResponse) -> Bool
+    public typealias Validation = (NSURLRequest, NSHTTPURLResponse) -> (Bool, NSError?)
 
     /**
         Validates the request, using the specified closure.
@@ -41,8 +44,9 @@ extension Request {
     public func validate(validation: Validation) -> Self {
         delegate.queue.addOperationWithBlock {
             if self.response != nil && self.delegate.error == nil {
-                if !validation(self.request, self.response!) {
-                    self.delegate.error = NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
+                let (success, error) = validation(self.request, self.response!)
+                if !success {
+                    self.delegate.error = error ?? NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
                 }
             }
         }
@@ -63,7 +67,19 @@ extension Request {
     */
     public func validate<S : SequenceType where S.Generator.Element == Int>(statusCode acceptableStatusCode: S) -> Self {
         return validate { _, response in
-            return contains(acceptableStatusCode, response.statusCode)
+            let success = contains(acceptableStatusCode, response.statusCode)
+            var error: NSError? = nil
+            
+            if !success {
+                let statusCodeString = NSHTTPURLResponse.localizedStringForStatusCode(response.statusCode)
+                var userInfo: [NSObject: AnyObject] = [NSLocalizedDescriptionKey: "Request failed: \(statusCodeString) \(response.statusCode)"]
+                if let url = response.URL {
+                    userInfo[NSURLErrorFailingURLErrorKey] = url
+                }
+                
+                error = NSError(domain: AlamofireErrorDomain, code: AlamofireErrorInvalidStatusCode, userInfo: userInfo)
+            }
+            return (success, error)
         }
     }
 
@@ -114,12 +130,19 @@ extension Request {
                     if let acceptableMIMEType = MIMEType(contentType)
                         where acceptableMIMEType.matches(responseMIMEType)
                     {
-                        return true
+                        return (true, nil)
                     }
                 }
             }
 
-            return false
+            let statusCodeString = NSHTTPURLResponse.localizedStringForStatusCode(response.statusCode)
+            var userInfo: [NSObject: AnyObject] = [NSLocalizedDescriptionKey: "Request failed: Content-Type is \(response.MIMEType) (Expected to be in \(acceptableContentTypes)"]
+            if let url = response.URL {
+                userInfo[NSURLErrorFailingURLErrorKey] = url
+            }
+            
+            let error = NSError(domain: AlamofireErrorDomain, code: AlamofireErrorInvalidContentType, userInfo: userInfo)
+            return (false, error)
         }
     }
 
