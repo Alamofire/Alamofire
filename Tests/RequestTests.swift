@@ -153,6 +153,77 @@ class RequestResponseTestCase: BaseTestCase {
             XCTFail("last item in bytesValues and progressValues should not be nil")
         }
     }
+
+    func testRequestResponseWithStream() {
+        // Given
+        let randomBytes = 4 * 1024 * 1024
+        let URLString = "http://httpbin.org/bytes/\(randomBytes)"
+
+        let expectation = expectationWithDescription("Bytes download progress should be reported: \(URLString)")
+
+        var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
+        var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
+        var accumulatedData = [NSData]()
+
+        var responseRequest: NSURLRequest?
+        var responseResponse: NSHTTPURLResponse?
+        var responseData: AnyObject?
+        var responseError: NSError?
+
+        // When
+        let request = Alamofire.request(.GET, URLString: URLString)
+        request.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
+            let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
+            byteValues.append(bytes)
+
+            let progress = (completedUnitCount: request.progress.completedUnitCount, totalUnitCount: request.progress.totalUnitCount)
+            progressValues.append(progress)
+        }
+        request.stream { accumulatedData.append($0) }
+        request.response { request, response, data, error in
+            responseRequest = request
+            responseResponse = response
+            responseData = data
+            responseError = error
+
+            expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(responseRequest, "response request should not be nil")
+        XCTAssertNotNil(responseResponse, "response response should not be nil")
+        XCTAssertNil(responseData, "response data should be nil")
+        XCTAssertNil(responseError, "response error should be nil")
+        XCTAssertGreaterThanOrEqual(accumulatedData.count, 1, "accumulated data should have one or more parts")
+
+        XCTAssertEqual(byteValues.count, progressValues.count, "byteValues count should equal progressValues count")
+
+        if byteValues.count == progressValues.count {
+            for index in 0..<byteValues.count {
+                let byteValue = byteValues[index]
+                let progressValue = progressValues[index]
+
+                XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
+                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount, "total bytes should be equal to completed unit count")
+                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount, "total bytes expected should be equal to total unit count")
+            }
+        }
+
+        if let lastByteValue = byteValues.last,
+            lastProgressValue = progressValues.last
+        {
+            let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
+            let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
+
+            XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
+            XCTAssertEqual(progressValueFractionalCompletion, 1.0, "progress value fractional completion should equal 1.0")
+            XCTAssertEqual(accumulatedData.reduce(0) { $0 + $1.length }, lastByteValue.totalBytes, "accumulated data length should match byte count")
+        } else {
+            XCTFail("last item in bytesValues and progressValues should not be nil")
+        }
+    }
 }
 
 // MARK: -
@@ -193,6 +264,16 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     let manager: Alamofire.Manager = {
         let manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
         manager.startRequestsImmediately = false
+        return manager
+    }()
+
+    let managerDisallowingCookies: Alamofire.Manager = {
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        configuration.HTTPShouldSetCookies = false
+
+        let manager = Alamofire.Manager(configuration: configuration)
+        manager.startRequestsImmediately = false
+
         return manager
     }()
 
@@ -267,6 +348,29 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         #if !os(OSX)
         XCTAssertEqual(components[5..<6], ["-b"], "command should contain -b flag")
         #endif
+    }
+
+    func testPOSTRequestWithCookiesDisabledDebugDescription() {
+        // Given
+        let URLString = "http://httpbin.org/post"
+
+        let properties = [
+            NSHTTPCookieDomain: "httpbin.org",
+            NSHTTPCookiePath: "/post",
+            NSHTTPCookieName: "foo",
+            NSHTTPCookieValue: "bar",
+        ]
+
+        let cookie = NSHTTPCookie(properties: properties)!
+        managerDisallowingCookies.session.configuration.HTTPCookieStorage?.setCookie(cookie)
+
+        // When
+        let request = managerDisallowingCookies.request(.POST, URLString)
+        let components = cURLCommandComponents(request)
+
+        // Then
+        let cookieComponents = components.filter { $0 == "-b" }
+        XCTAssertTrue(cookieComponents.isEmpty, "command should not contain -b flag")
     }
 
     // MARK: Test Helper Methods
