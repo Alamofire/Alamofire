@@ -24,6 +24,8 @@ import Foundation
 
 /// Alamofire errors
 public let AlamofireErrorDomain = "com.alamofire.error"
+public let AlamofireInputStreamReadFailed = -6000
+public let AlamofireOutputStreamWriteFailed = -6001
 
 // MARK: - URLStringConvertible
 
