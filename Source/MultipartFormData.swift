@@ -86,12 +86,14 @@ public class MultipartFormData {
     class BodyPart {
         let headers: [String: String]
         let bodyStream: NSInputStream
+        let bodyContentLength: UInt64
         var hasInitialBoundary = false
         var hasFinalBoundary = false
 
-        init(headers: [String: String], bodyStream: NSInputStream) {
+        init(headers: [String: String], bodyStream: NSInputStream, bodyContentLength: UInt64) {
             self.headers = headers
             self.bodyStream = bodyStream
+            self.bodyContentLength = bodyContentLength
         }
     }
 
@@ -99,6 +101,9 @@ public class MultipartFormData {
 
     /// The `Content-Type` header value containing the boundary used to generate the `multipart/form-data`.
     public var contentType: String { return "multipart/form-data;boundary=\(self.boundaryKey)" }
+
+    /// The content length of all body parts used to generate the `multipart/form-data` not including the boundaries.
+    public var contentLength: UInt64 { return self.bodyParts.reduce(0) { $0 + $1.bodyContentLength } }
 
     private let stringEncoding: NSStringEncoding
     private let boundaryKey: String
@@ -200,8 +205,21 @@ public class MultipartFormData {
             return errorWithCode(NSURLErrorBadURL, failureReason: "The URL is not reachable: \(URL)")
         }
 
+        let bodyContentLength: UInt64
+        var fileAttributesError: NSError?
+
+        if let
+            path = URL.path,
+            attributes = NSFileManager.defaultManager().attributesOfItemAtPath(path, error: &fileAttributesError),
+            fileSize = (attributes[NSFileSize] as? NSNumber)?.unsignedLongLongValue
+        {
+            bodyContentLength = fileSize
+        } else {
+            return errorWithCode(NSURLErrorBadURL, failureReason: "Could not fetch attributes from the URL: \(URL)")
+        }
+
         if let bodyStream = NSInputStream(URL: URL) {
-            let bodyPart = BodyPart(headers: headers, bodyStream: bodyStream)
+            let bodyPart = BodyPart(headers: headers, bodyStream: bodyStream, bodyContentLength: bodyContentLength)
             self.bodyParts.append(bodyPart)
         } else {
             let failureReason = "Failed to create an input stream from the URL: \(URL)"
@@ -230,7 +248,7 @@ public class MultipartFormData {
         let headers = contentHeaders(name: name, fileName: fileName, mimeType: mimeType)
         let bodyStream = NSInputStream(data: data)
         let bodyContentLength = UInt64(data.length)
-        let bodyPart = BodyPart(headers: headers, bodyStream: bodyStream)
+        let bodyPart = BodyPart(headers: headers, bodyStream: bodyStream, bodyContentLength: bodyContentLength)
 
         self.bodyParts.append(bodyPart)
     }
@@ -251,7 +269,7 @@ public class MultipartFormData {
         let headers = contentHeaders(name: name)
         let bodyStream = NSInputStream(data: data)
         let bodyContentLength = UInt64(data.length)
-        let bodyPart = BodyPart(headers: headers, bodyStream: bodyStream)
+        let bodyPart = BodyPart(headers: headers, bodyStream: bodyStream, bodyContentLength: bodyContentLength)
 
         self.bodyParts.append(bodyPart)
     }
@@ -271,9 +289,9 @@ public class MultipartFormData {
         :param: fileName The filename to associate with the stream content in the `Content-Disposition` HTTP header.
         :param: mimeType The MIME type to associate with the stream content in the `Content-Type` HTTP header.
     */
-    public func appendBodyPart(#stream: NSInputStream, name: String, fileName: String, mimeType: String) {
+    public func appendBodyPart(#stream: NSInputStream, name: String, fileName: String, length: UInt64, mimeType: String) {
         let headers = contentHeaders(name: name, fileName: fileName, mimeType: mimeType)
-        let bodyPart = BodyPart(headers: headers, bodyStream: stream)
+        let bodyPart = BodyPart(headers: headers, bodyStream: stream, bodyContentLength: length)
 
         self.bodyParts.append(bodyPart)
     }
