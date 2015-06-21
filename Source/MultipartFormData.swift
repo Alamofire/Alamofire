@@ -63,23 +63,23 @@ public class MultipartFormData {
             case Initial, Encapsulated, Final
         }
 
-        static func randomBoundaryKey() -> String {
+        static func randomBoundary() -> String {
             return String(format: "alamofire.boundary.%08x%08x", arc4random(), arc4random())
         }
 
-        static func boundaryData(#boundaryType: BoundaryType, boundaryKey: String, stringEncoding: NSStringEncoding) -> NSData {
-            let boundary: String
+        static func boundaryData(#boundaryType: BoundaryType, boundary: String) -> NSData {
+            let boundaryText: String
 
             switch boundaryType {
             case .Initial:
-                boundary = "--\(boundaryKey)\(EncodingCharacters.CRLF)"
+                boundaryText = "--\(boundary)\(EncodingCharacters.CRLF)"
             case .Encapsulated:
-                boundary = "\(EncodingCharacters.CRLF)--\(boundaryKey)\(EncodingCharacters.CRLF)"
+                boundaryText = "\(EncodingCharacters.CRLF)--\(boundary)\(EncodingCharacters.CRLF)"
             case .Final:
-                boundary = "\(EncodingCharacters.CRLF)--\(boundaryKey)--\(EncodingCharacters.CRLF)"
+                boundaryText = "\(EncodingCharacters.CRLF)--\(boundary)--\(EncodingCharacters.CRLF)"
             }
 
-            return boundary.dataUsingEncoding(stringEncoding, allowLossyConversion: false)!
+            return boundaryText.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         }
     }
 
@@ -100,28 +100,26 @@ public class MultipartFormData {
     // MARK: - Properties
 
     /// The `Content-Type` header value containing the boundary used to generate the `multipart/form-data`.
-    public var contentType: String { return "multipart/form-data;boundary=\(self.boundaryKey)" }
+    public var contentType: String { return "multipart/form-data; boundary=\(self.boundary)" }
 
     /// The content length of all body parts used to generate the `multipart/form-data` not including the boundaries.
     public var contentLength: UInt64 { return self.bodyParts.reduce(0) { $0 + $1.bodyContentLength } }
 
-    private let stringEncoding: NSStringEncoding
-    private let boundaryKey: String
+    /// The boundary used to separate the body parts in the encoded form data.
+    public let boundary: String
+
     private var bodyParts: [BodyPart]
     private let streamBufferSize: Int
 
     // MARK: - Lifecycle
 
     /**
-        Creates a multipart form data object with the given string encoding.
-
-        :param: stringEncoding The string encoding used to encode the data.
+        Creates a multipart form data object.
 
         :returns: The multipart form data object.
     */
-    public init(stringEncoding: NSStringEncoding) {
-        self.stringEncoding = stringEncoding
-        self.boundaryKey = BoundaryGenerator.randomBoundaryKey()
+    public init() {
+        self.boundary = BoundaryGenerator.randomBoundary()
         self.bodyParts = []
 
         /**
@@ -418,7 +416,7 @@ public class MultipartFormData {
         }
         headerText += EncodingCharacters.CRLF
 
-        return headerText.dataUsingEncoding(self.stringEncoding, allowLossyConversion: false)!
+        return headerText.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
     }
 
     private func encodeBodyStreamDataForBodyPart(bodyPart: BodyPart) -> EncodingResult {
@@ -606,15 +604,15 @@ public class MultipartFormData {
     // MARK: - Private - Boundary Encoding
 
     private func initialBoundaryData() -> NSData {
-        return BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: self.boundaryKey, stringEncoding: self.stringEncoding)
+        return BoundaryGenerator.boundaryData(boundaryType: .Initial, boundary: self.boundary)
     }
 
     private func encapsulatedBoundaryData() -> NSData {
-        return BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundaryKey: self.boundaryKey, stringEncoding: self.stringEncoding)
+        return BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundary: self.boundary)
     }
 
     private func finalBoundaryData() -> NSData {
-        return BoundaryGenerator.boundaryData(boundaryType: .Final, boundaryKey: self.boundaryKey, stringEncoding: self.stringEncoding)
+        return BoundaryGenerator.boundaryData(boundaryType: .Final, boundary: self.boundary)
     }
 
     // MARK: - Private - Errors
