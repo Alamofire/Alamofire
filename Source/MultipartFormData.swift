@@ -153,26 +153,18 @@ public class MultipartFormData {
         :returns: An `NSError` if an error occurred, `nil` otherwise.
     */
     public func appendBodyPart(fileURL URL: NSURL, name: String) -> NSError? {
-        let fileName: String
-        let mimeType: String
-
-        if let lastPathComponent = URL.lastPathComponent {
-            fileName = lastPathComponent
-        } else {
-            let failureReason = "Failed to extract the fileName of the provided URL: \(URL)"
-            let userInfo = [NSLocalizedFailureReasonErrorKey: failureReason]
-            return NSError(domain: AlamofireErrorDomain, code: NSURLErrorBadURL, userInfo: userInfo)
+        if let
+            fileName = URL.lastPathComponent,
+            pathExtension = URL.pathExtension
+        {
+            let mimeType = mimeTypeForPathExtension(pathExtension)
+            return appendBodyPart(fileURL: URL, name: name, fileName: fileName, mimeType: mimeType)
         }
 
-        if let pathExtension = URL.pathExtension {
-            mimeType = mimeTypeForPathExtension(pathExtension)
-        } else {
-            let failureReason = "Failed to extract the file extension of the provided URL: \(URL)"
-            let userInfo = [NSLocalizedFailureReasonErrorKey: failureReason]
-            return NSError(domain: AlamofireErrorDomain, code: NSURLErrorBadURL, userInfo: userInfo)
-        }
+        let failureReason = "Failed to extract the fileName of the provided URL: \(URL)"
+        let userInfo = [NSLocalizedFailureReasonErrorKey: failureReason]
 
-        return appendBodyPart(fileURL: URL, name: name, fileName: fileName, mimeType: mimeType)
+        return NSError(domain: AlamofireErrorDomain, code: NSURLErrorBadURL, userInfo: userInfo)
     }
 
     /**
@@ -194,13 +186,14 @@ public class MultipartFormData {
     */
     public func appendBodyPart(fileURL URL: NSURL, name: String, fileName: String, mimeType: String) -> NSError? {
         let headers = contentHeaders(name: name, fileName: fileName, mimeType: mimeType)
-
-        var reachableError: NSError?
+        var isDirectory: ObjCBool = false
 
         if !URL.fileURL {
-            return errorWithCode(NSURLErrorBadURL, failureReason: "The URL does not point to a valid file: \(URL)")
-        } else if !URL.checkResourceIsReachableAndReturnError(&reachableError) {
+            return errorWithCode(NSURLErrorBadURL, failureReason: "The URL does not point to a file URL: \(URL)")
+        } else if !URL.checkResourceIsReachableAndReturnError(nil) {
             return errorWithCode(NSURLErrorBadURL, failureReason: "The URL is not reachable: \(URL)")
+        } else if NSFileManager.defaultManager().fileExistsAtPath(URL.path!, isDirectory: &isDirectory) && isDirectory {
+            return errorWithCode(NSURLErrorBadURL, failureReason: "The URL is a directory, not a file: \(URL)")
         }
 
         let bodyContentLength: UInt64
@@ -336,10 +329,17 @@ public class MultipartFormData {
         :param: completionHandler A closure to be executed when writing is finished.
     */
     public func writeEncodedDataToDisk(fileURL: NSURL, completionHandler: (NSError?) -> Void) {
-        if !fileURL.fileURL {
-            let failureReason = "The URL does not point to a valid file: \(fileURL)"
-            let error = errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
+        var error: NSError?
 
+        if let path = fileURL.path where NSFileManager.defaultManager().fileExistsAtPath(path) {
+            let failureReason = "A file already exists at the given file URL: \(fileURL)"
+            error = errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
+        } else if !fileURL.fileURL {
+            let failureReason = "The URL does not point to a valid file: \(fileURL)"
+            error = errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
+        }
+
+        if let error = error {
             completionHandler(error)
             return
         }
