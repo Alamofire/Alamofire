@@ -70,11 +70,12 @@ public class Request {
 
         :param: user The user.
         :param: password The password.
+        :param: persistence The URL credential persistence. `.ForSession` by default.
 
         :returns: The request.
     */
-    public func authenticate(#user: String, password: String) -> Self {
-        let credential = NSURLCredential(user: user, password: password, persistence: .ForSession)
+    public func authenticate(#user: String, password: String, persistence: NSURLCredentialPersistence = .ForSession) -> Self {
+        let credential = NSURLCredential(user: user, password: password, persistence: persistence)
 
         return authenticate(usingCredential: credential)
     }
