@@ -26,6 +26,6 @@ script:
       xcodebuild -project "iOS Example.xcodeproj" -scheme "iOS Example" -sdk "$SDK" -destination "$DESTINATION" 
       -configuration Release ONLY_ACTIVE_ARCH=NO build | xcpretty -c; 
     fi
-  - if [ $POD_LINT == "YES" ]; then 
-      pod lib lint --quick; 
+  - if [ $POD_LINT == "YES" ]; then
+      pod lib lint;
     fi
