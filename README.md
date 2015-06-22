@@ -17,7 +17,7 @@ Alamofire is an HTTP networking library written in Swift.
 - [x] Progress Closure & NSProgress
 - [x] cURL Debug Output
 - [x] Comprehensive Unit Test Coverage
-- [x] Complete Documentation
+- [x] [Complete Documentation](http://cocoadocs.org/docsets/Alamofire)
 
 ## Requirements
 
