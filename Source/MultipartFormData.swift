@@ -436,13 +436,15 @@ public class MultipartFormData {
                 break
             }
 
-            if bytesRead < 0 {
+            if bytesRead > 0 {
+                encoded.appendBytes(buffer, length: bytesRead)
+            } else if bytesRead < 0 {
                 let failureReason = "Failed to read from input stream: \(inputStream)"
                 error = errorWithCode(AlamofireInputStreamReadFailed, failureReason: failureReason)
                 break
+            } else {
+                break
             }
-
-            encoded.appendBytes(buffer, length: bytesRead)
         }
 
         inputStream.close()
@@ -503,18 +505,20 @@ public class MultipartFormData {
                 break
             }
 
-            if bytesRead < 0 {
+            if bytesRead > 0 {
+                if buffer.count != bytesRead {
+                    buffer = Array(buffer[0..<bytesRead])
+                }
+
+                if let writeError = writeBuffer(&buffer, toOutputStream: outputStream) {
+                    error = writeError
+                    break
+                }
+            } else if bytesRead < 0 {
                 let failureReason = "Failed to read from input stream: \(inputStream)"
                 error = errorWithCode(AlamofireInputStreamReadFailed, failureReason: failureReason)
                 break
-            }
-
-            if buffer.count != bytesRead {
-                buffer = Array(buffer[0..<bytesRead])
-            }
-
-            if let writeError = writeBuffer(&buffer, toOutputStream: outputStream) {
-                error = writeError
+            } else {
                 break
             }
         }
