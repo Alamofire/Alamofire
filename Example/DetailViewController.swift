@@ -146,11 +146,11 @@ class DetailViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String {
-        if Sections(rawValue: section)! == .Body && self.elapsedTime != nil {
+        if Sections(rawValue: section) == .Body, let elapsedTime = self.elapsedTime {
             let numberFormatter = NSNumberFormatter()
             numberFormatter.numberStyle = .DecimalStyle
 
-            return "Elapsed Time: \(numberFormatter.stringFromNumber(self.elapsedTime!)) sec"
+            return "Elapsed Time: \(numberFormatter.stringFromNumber(elapsedTime)) sec"
         }
 
         return ""

@@ -40,10 +40,8 @@ extension Request {
     */
     public func validate(validation: Validation) -> Self {
         delegate.queue.addOperationWithBlock {
-            if self.response != nil && self.delegate.error == nil {
-                if !validation(self.request, self.response!) {
-                    self.delegate.error = NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
-                }
+            if let response = self.response where self.delegate.error == nil && !validation(self.request, response) {
+                self.delegate.error = NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
             }
         }
 
