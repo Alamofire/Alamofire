@@ -277,9 +277,8 @@ public class Manager {
         }
 
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-            if taskDidComplete != nil {
-                taskDidComplete!(session, task, error)
-            } else if let delegate = self[task] {
+            taskDidComplete?(session, task, error)
+            if let delegate = self[task] {
                 delegate.URLSession(session, task: task, didCompleteWithError: error)
 
                 self[task] = nil
