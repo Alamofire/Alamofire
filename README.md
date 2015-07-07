@@ -10,7 +10,7 @@ Alamofire is an HTTP networking library written in Swift.
 
 - [x] Chainable Request / Response methods
 - [x] URL / JSON / plist Parameter Encoding
-- [x] Upload File / Data / Stream
+- [x] Upload File / Data / Stream / MultipartFormData
 - [x] Download using Request or Resume data
 - [x] Authentication with NSURLCredential
 - [x] HTTP Response Validation
@@ -298,6 +298,7 @@ Caching is handled on the system framework level by [`NSURLCache`](https://devel
 - File
 - Data
 - Stream
+- MultipartFormData
 
 #### Uploading a File
 
@@ -309,7 +310,7 @@ let fileURL = NSBundle.mainBundle()
 Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
 ```
 
-#### Uploading w/Progress
+#### Uploading with Progress
 
 ```swift
 Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
@@ -319,6 +320,29 @@ Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
          .responseJSON { (request, response, JSON, error) in
              println(JSON)
          }
+```
+
+#### Uploading MultipartFormData
+
+```swift
+Alamofire.upload(
+    .POST,
+    URLString: "http://httpbin.org/post",
+    multipartFormData: { multipartFormData in
+        multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
+        multipartFormData.appendBodyPart(fileURL: rainbowImageURL, name: "rainbow")
+    },
+    encodingCompletion: { encodingResult in
+    	switch encodingResult {
+    	case .Success(let upload, _, _):
+    		upload.responseJSON { request, response, JSON, error in
+    			println(JSON)
+    		}
+    	case .Failure(let encodingError):
+    		println(encodingError)
+    	}
+    }
+)
 ```
 
 ### Downloading
@@ -850,7 +874,6 @@ Use AFNetworking for any of the following:
 - TLS verification, using `AFSecurityManager`
 - Situations requiring `NSOperation` or `NSURLConnection`, using `AFURLConnectionOperation`
 - Network reachability monitoring, using `AFNetworkReachabilityManager`
-- Multipart HTTP request construction, using `AFHTTPRequestSerializer`
 
 ### What's the origin of the name Alamofire?
 

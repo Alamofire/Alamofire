@@ -24,6 +24,8 @@ import Foundation
 
 /// Alamofire errors
 public let AlamofireErrorDomain = "com.alamofire.error"
+public let AlamofireInputStreamReadFailed = -6000
+public let AlamofireOutputStreamWriteFailed = -6001
 
 // MARK: - URLStringConvertible
 
@@ -202,6 +204,57 @@ public func upload(method: Method, URLString: URLStringConvertible, stream: NSIn
 */
 public func upload(URLRequest: URLRequestConvertible, stream: NSInputStream) -> Request {
     return Manager.sharedInstance.upload(URLRequest, stream: stream)
+}
+
+// MARK: MultipartFormData
+
+/**
+    Creates an upload request using the shared manager instance for the specified method and URL string.
+
+    :param: method                  The HTTP method.
+    :param: URLString               The URL string.
+    :param: multipartFormData       The closure used to append body parts to the `MultipartFormData`.
+    :param: encodingMemoryThreshold The encoding memory threshold in bytes. `MultipartFormDataEncodingMemoryThreshold` 
+                                    by default.
+    :param: encodingCompletion      The closure called when the `MultipartFormData` encoding is complete.
+*/
+public func upload(
+    method: Method,
+    #URLString: URLStringConvertible,
+    #multipartFormData: MultipartFormData -> Void,
+    encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
+    #encodingCompletion: (Manager.MultipartFormDataEncodingResult -> Void)?)
+{
+    return Manager.sharedInstance.upload(
+        method,
+        URLString,
+        multipartFormData: multipartFormData,
+        encodingMemoryThreshold: encodingMemoryThreshold,
+        encodingCompletion: encodingCompletion
+    )
+}
+
+/**
+    Creates an upload request using the shared manager instance for the specified method and URL string.
+
+    :param: URLRequest              The URL request.
+    :param: multipartFormData       The closure used to append body parts to the `MultipartFormData`.
+    :param: encodingMemoryThreshold The encoding memory threshold in bytes. `MultipartFormDataEncodingMemoryThreshold`
+                                    by default.
+    :param: encodingCompletion      The closure called when the `MultipartFormData` encoding is complete.
+*/
+public func upload(
+    URLRequest: URLRequestConvertible,
+    #multipartFormData: MultipartFormData -> Void,
+    encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
+    #encodingCompletion: (Manager.MultipartFormDataEncodingResult -> Void)?)
+{
+    return Manager.sharedInstance.upload(
+        URLRequest,
+        multipartFormData: multipartFormData,
+        encodingMemoryThreshold: encodingMemoryThreshold,
+        encodingCompletion: encodingCompletion
+    )
 }
 
 // MARK: - Download Methods
