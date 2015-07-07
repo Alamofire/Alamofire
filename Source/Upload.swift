@@ -252,6 +252,9 @@ extension Manager {
             let formData = MultipartFormData()
             multipartFormData(formData)
 
+            let URLRequestWithContentType = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
+            URLRequestWithContentType.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
+
             if formData.contentLength < encodingMemoryThreshold {
                 let encodingResult = formData.encode()
 
@@ -259,7 +262,7 @@ extension Manager {
                     switch encodingResult {
                     case .Success(let data):
                         let encodingResult = MultipartFormDataEncodingResult.Success(
-                            request: self.upload(URLRequest, data: data),
+                            request: self.upload(URLRequestWithContentType, data: data),
                             streamingFromDisk: false,
                             streamFileURL: nil
                         )
@@ -284,7 +287,7 @@ extension Manager {
                                 encodingCompletion?(.Failure(error))
                             } else {
                                 let encodingResult = MultipartFormDataEncodingResult.Success(
-                                    request: self.upload(URLRequest, file: fileURL),
+                                    request: self.upload(URLRequestWithContentType, file: fileURL),
                                     streamingFromDisk: true,
                                     streamFileURL: fileURL
                                 )

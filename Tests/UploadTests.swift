@@ -135,6 +135,63 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     // MARK: Tests
 
+    func testThatUploadingMultipartFormDataSetsContentTypeHeader() {
+        // Given
+        let URLString = "http://httpbin.org/post"
+        let uploadData = "upload_data".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+
+        let expectation = expectationWithDescription("multipart form data upload should succeed")
+
+        var formData: MultipartFormData?
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var data: AnyObject?
+        var error: NSError?
+
+        // When
+        Alamofire.upload(
+            .POST,
+            URLString: URLString,
+            multipartFormData: { multipartFormData in
+                multipartFormData.appendBodyPart(data: uploadData, name: "upload_data")
+                formData = multipartFormData
+            },
+            encodingCompletion: { result in
+                switch result {
+                case .Success(let upload, _, _):
+                    upload.response { responseRequest, responseResponse, responseData, responseError in
+                        request = responseRequest
+                        response = responseResponse
+                        data = responseData
+                        error = responseError
+
+                        expectation.fulfill()
+                    }
+                case .Failure:
+                    expectation.fulfill()
+                }
+            }
+        )
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
+        XCTAssertNil(error, "error should be nil")
+
+        if let
+            request = request,
+            multipartFormData = formData,
+            contentType = request.valueForHTTPHeaderField("Content-Type")
+        {
+            XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
+        } else {
+            XCTFail("Content-Type header value should not be nil")
+        }
+    }
+
     func testThatUploadingMultipartFormDataSucceedsWithDefaultParameters() {
         // Given
         let URLString = "http://httpbin.org/post"
@@ -235,6 +292,60 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         }
     }
 
+    func testThatUploadingMultipartFormDataBelowMemoryThresholdSetsContentTypeHeader() {
+        // Given
+        let URLString = "http://httpbin.org/post"
+        let uploadData = "upload data".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+
+        let expectation = expectationWithDescription("multipart form data upload should succeed")
+
+        var formData: MultipartFormData?
+        var request: NSURLRequest?
+        var streamingFromDisk: Bool?
+
+        // When
+        Alamofire.upload(
+            .POST,
+            URLString: URLString,
+            multipartFormData: { multipartFormData in
+                multipartFormData.appendBodyPart(data: uploadData, name: "upload_data")
+                formData = multipartFormData
+            },
+            encodingCompletion: { result in
+                switch result {
+                case let .Success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
+                    streamingFromDisk = uploadStreamingFromDisk
+
+                    upload.response { responseRequest, _, _, _ in
+                        request = responseRequest
+                        expectation.fulfill()
+                    }
+                case .Failure:
+                    expectation.fulfill()
+                }
+            }
+        )
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
+
+        if let streamingFromDisk = streamingFromDisk {
+            XCTAssertFalse(streamingFromDisk, "streaming from disk should be false")
+        }
+
+        if let
+            request = request,
+            multipartFormData = formData,
+            contentType = request.valueForHTTPHeaderField("Content-Type")
+        {
+            XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
+        } else {
+            XCTFail("Content-Type header value should not be nil")
+        }
+    }
+
     func testThatUploadingMultipartFormDataAboveMemoryThresholdStreamsFromDisk() {
         // Given
         let URLString = "http://httpbin.org/post"
@@ -282,6 +393,61 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         {
             XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
             XCTAssertTrue(NSFileManager.defaultManager().fileExistsAtPath(streamFilePath), "stream file path should exist")
+        }
+    }
+
+    func testThatUploadingMultipartFormDataAboveMemoryThresholdSetsContentTypeHeader() {
+        // Given
+        let URLString = "http://httpbin.org/post"
+        let uploadData = "upload data".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+
+        let expectation = expectationWithDescription("multipart form data upload should succeed")
+
+        var formData: MultipartFormData?
+        var request: NSURLRequest?
+        var streamingFromDisk: Bool?
+
+        // When
+        Alamofire.upload(
+            .POST,
+            URLString: URLString,
+            multipartFormData: { multipartFormData in
+                multipartFormData.appendBodyPart(data: uploadData, name: "upload_data")
+                formData = multipartFormData
+            },
+            encodingMemoryThreshold: 0,
+            encodingCompletion: { result in
+                switch result {
+                case let .Success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
+                    streamingFromDisk = uploadStreamingFromDisk
+
+                    upload.response { responseRequest, _, _, _ in
+                        request = responseRequest
+                        expectation.fulfill()
+                    }
+                case .Failure:
+                    expectation.fulfill()
+                }
+            }
+        )
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
+
+        if let streamingFromDisk = streamingFromDisk {
+            XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
+        }
+
+        if let
+            request = request,
+            multipartFormData = formData,
+            contentType = request.valueForHTTPHeaderField("Content-Type")
+        {
+            XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
+        } else {
+            XCTFail("Content-Type header value should not be nil")
         }
     }
 
