@@ -262,8 +262,8 @@ public class Request {
         func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: ((NSURLRequest!) -> Void)) {
             var redirectRequest: NSURLRequest? = request
 
-            if taskWillPerformHTTPRedirection != nil {
-                redirectRequest = taskWillPerformHTTPRedirection!(session, task, response, request)
+            if let taskWillPerformHTTPRedirection = self.taskWillPerformHTTPRedirection {
+                redirectRequest = taskWillPerformHTTPRedirection(session, task, response, request)
             }
 
             completionHandler(redirectRequest)
@@ -273,8 +273,8 @@ public class Request {
             var disposition: NSURLSessionAuthChallengeDisposition = .PerformDefaultHandling
             var credential: NSURLCredential?
 
-            if taskDidReceiveChallenge != nil {
-                (disposition, credential) = taskDidReceiveChallenge!(session, task, challenge)
+            if let taskDidReceiveChallenge = self.taskDidReceiveChallenge {
+                (disposition, credential) = taskDidReceiveChallenge(session, task, challenge)
             } else {
                 if challenge.previousFailureCount > 0 {
                     disposition = .CancelAuthenticationChallenge
@@ -293,16 +293,16 @@ public class Request {
         func URLSession(session: NSURLSession, task: NSURLSessionTask, needNewBodyStream completionHandler: ((NSInputStream!) -> Void)) {
             var bodyStream: NSInputStream?
 
-            if taskNeedNewBodyStream != nil {
-                bodyStream = taskNeedNewBodyStream!(session, task)
+            if let taskNeedNewBodyStream = self.taskNeedNewBodyStream {
+                bodyStream = taskNeedNewBodyStream(session, task)
             }
 
             completionHandler(bodyStream)
         }
 
         func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-            if taskDidCompleteWithError != nil {
-                taskDidCompleteWithError!(session, task, error)
+            if let taskDidCompleteWithError = self.taskDidCompleteWithError {
+                taskDidCompleteWithError(session, task, error)
             } else {
                 if error != nil {
                     self.error = error
@@ -353,8 +353,8 @@ public class Request {
 
             expectedContentLength = response.expectedContentLength
 
-            if dataTaskDidReceiveResponse != nil {
-                disposition = dataTaskDidReceiveResponse!(session, dataTask, response)
+            if let dataTaskDidReceiveResponse = self.dataTaskDidReceiveResponse {
+                disposition = dataTaskDidReceiveResponse(session, dataTask, response)
             }
 
             completionHandler(disposition)
@@ -365,8 +365,8 @@ public class Request {
         }
 
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-            if dataTaskDidReceiveData != nil {
-                dataTaskDidReceiveData!(session, dataTask, data)
+            if let dataTaskDidReceiveData = self.dataTaskDidReceiveData {
+                dataTaskDidReceiveData(session, dataTask, data)
             } else {
                 if let dataStream = dataStream {
                     dataStream(data: data)
@@ -387,8 +387,8 @@ public class Request {
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: ((NSCachedURLResponse!) -> Void)) {
             var cachedResponse: NSCachedURLResponse? = proposedResponse
 
-            if dataTaskWillCacheResponse != nil {
-                cachedResponse = dataTaskWillCacheResponse!(session, dataTask, proposedResponse)
+            if let dataTaskWillCacheResponse = self.dataTaskWillCacheResponse {
+                cachedResponse = dataTaskWillCacheResponse(session, dataTask, proposedResponse)
             }
 
             completionHandler(cachedResponse)
@@ -402,14 +402,14 @@ extension Request: Printable {
     /// The textual representation used when written to an output stream, which includes the HTTP method and URL, as well as the response status code if a response has been received.
     public var description: String {
         var components: [String] = []
-        if request.HTTPMethod != nil {
-            components.append(request.HTTPMethod!)
+        if let HTTPMethod = self.request.HTTPMethod {
+            components.append(HTTPMethod)
         }
 
         components.append(request.URL!.absoluteString!)
 
-        if response != nil {
-            components.append("(\(response!.statusCode))")
+        if let response = self.response {
+            components.append("(\(response.statusCode))")
         }
 
         return join(" ", components)
@@ -424,8 +424,8 @@ extension Request: DebugPrintable {
 
         let URL = request.URL
 
-        if request.HTTPMethod != nil && request.HTTPMethod != "GET" {
-            components.append("-X \(request.HTTPMethod!)")
+        if let HTTPMethod = self.request.HTTPMethod where HTTPMethod != "GET" {
+            components.append("-X \(HTTPMethod)")
         }
 
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
@@ -455,8 +455,8 @@ extension Request: DebugPrintable {
             }
         #endif
 
-        if request.allHTTPHeaderFields != nil {
-            for (field, value) in request.allHTTPHeaderFields! {
+        if let headerFields = self.request.allHTTPHeaderFields {
+            for (field, value) in headerFields {
                 switch field {
                 case "Cookie":
                     continue
@@ -466,8 +466,8 @@ extension Request: DebugPrintable {
             }
         }
 
-        if session.configuration.HTTPAdditionalHeaders != nil {
-            for (field, value) in session.configuration.HTTPAdditionalHeaders! {
+        if let additionalHeaders = self.session.configuration.HTTPAdditionalHeaders {
+            for (field, value) in additionalHeaders {
                 switch field {
                 case "Cookie":
                     continue

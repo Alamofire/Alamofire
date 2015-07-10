@@ -324,8 +324,8 @@ extension Request {
         // MARK: Delegate Methods
 
         func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-            if taskDidSendBodyData != nil {
-                taskDidSendBodyData!(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
+            if let taskDidSendBodyData = self.taskDidSendBodyData {
+                taskDidSendBodyData(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
             } else {
                 progress.totalUnitCount = totalBytesExpectedToSend
                 progress.completedUnitCount = totalBytesSent

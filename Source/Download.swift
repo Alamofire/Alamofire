@@ -150,8 +150,8 @@ extension Request {
         // MARK: Delegate Methods
 
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
-            if downloadTaskDidFinishDownloadingToURL != nil {
-                let destination = downloadTaskDidFinishDownloadingToURL!(session, downloadTask, location)
+            if let downloadTaskDidFinishDownloadingToURL = self.downloadTaskDidFinishDownloadingToURL {
+                let destination = downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
                 var fileManagerError: NSError?
 
                 NSFileManager.defaultManager().moveItemAtURL(location, toURL: destination, error: &fileManagerError)
@@ -163,8 +163,8 @@ extension Request {
         }
 
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-            if downloadTaskDidWriteData != nil {
-                downloadTaskDidWriteData!(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
+            if let downloadTaskDidWriteData = self.downloadTaskDidWriteData {
+                downloadTaskDidWriteData(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
             } else {
                 progress.totalUnitCount = totalBytesExpectedToWrite
                 progress.completedUnitCount = totalBytesWritten
@@ -174,8 +174,8 @@ extension Request {
         }
 
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
-            if downloadTaskDidResumeAtOffset != nil {
-                downloadTaskDidResumeAtOffset!(session, downloadTask, fileOffset, expectedTotalBytes)
+            if let downloadTaskDidResumeAtOffset = self.downloadTaskDidResumeAtOffset {
+                downloadTaskDidResumeAtOffset(session, downloadTask, fileOffset, expectedTotalBytes)
             } else {
                 progress.totalUnitCount = expectedTotalBytes
                 progress.completedUnitCount = fileOffset
