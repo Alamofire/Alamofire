@@ -63,7 +63,7 @@ public enum ParameterEncoding {
     /**
         Uses the associated closure value to construct a new request given an existing request and parameters.
     */
-    case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSURLRequest, NSError?))
+    case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?))
 
     /**
         Creates a URL request by encoding parameters and applying them onto an existing request.
@@ -73,12 +73,13 @@ public enum ParameterEncoding {
 
         :returns: A tuple containing the constructed request and the error that occurred during parameter encoding, if any.
     */
-    public func encode(URLRequest: URLRequestConvertible, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
+    public func encode(URLRequest: URLRequestConvertible, parameters: [String: AnyObject]?) -> (NSMutableURLRequest, NSError?) {
+        var mutableURLRequest: NSMutableURLRequest = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
+
         if parameters == nil {
-            return (URLRequest.URLRequest, nil)
+            return (mutableURLRequest, nil)
         }
 
-        var mutableURLRequest: NSMutableURLRequest! = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
         var error: NSError? = nil
 
         switch self {
@@ -127,7 +128,7 @@ public enum ParameterEncoding {
                 mutableURLRequest.HTTPBody = data
             }
         case .Custom(let closure):
-            return closure(mutableURLRequest, parameters)
+            (mutableURLRequest, error) = closure(mutableURLRequest, parameters)
         }
 
         return (mutableURLRequest, error)
