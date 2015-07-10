@@ -369,7 +369,8 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type") ?? "", "application/x-www-form-urlencoded", "Content-Type should be application/x-www-form-urlencoded")
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
 
-        if let HTTPBody = URLRequest.HTTPBody,
+        if let
+            HTTPBody = URLRequest.HTTPBody,
             decodedHTTPBody = NSString(data: HTTPBody, encoding: NSUTF8StringEncoding)
         {
             XCTAssertEqual(decodedHTTPBody, "bar=2&foo=1", "HTTPBody is incorrect")
@@ -422,7 +423,8 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type") ?? "", "application/json", "Content-Type should be application/json")
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
 
-        if let HTTPBody = URLRequest.HTTPBody,
+        if let
+            HTTPBody = URLRequest.HTTPBody,
             JSON = NSJSONSerialization.JSONObjectWithData(HTTPBody, options: .AllowFragments, error: nil) as? NSObject
         {
             XCTAssertEqual(JSON, parameters as NSObject, "HTTPBody JSON does not equal parameters")
@@ -475,8 +477,9 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type") ?? "", "application/x-plist", "Content-Type should be application/x-plist")
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
 
-        if let HTTPBody = URLRequest.HTTPBody,
-            let plist = NSPropertyListSerialization.propertyListWithData(HTTPBody, options: 0, format: nil, error: nil) as? NSObject
+        if let
+            HTTPBody = URLRequest.HTTPBody,
+            plist = NSPropertyListSerialization.propertyListWithData(HTTPBody, options: 0, format: nil, error: nil) as? NSObject
         {
             XCTAssertEqual(plist, parameters as NSObject, "HTTPBody plist does not equal parameters")
         } else {
@@ -504,8 +507,9 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type") ?? "", "application/x-plist", "Content-Type should be application/x-plist")
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
 
-        if let HTTPBody = URLRequest.HTTPBody,
-            let plist = NSPropertyListSerialization.propertyListWithData(HTTPBody, options: 0, format: nil, error: nil) as? NSObject
+        if let
+            HTTPBody = URLRequest.HTTPBody,
+            plist = NSPropertyListSerialization.propertyListWithData(HTTPBody, options: 0, format: nil, error: nil) as? NSObject
         {
             XCTAssertTrue(plist.valueForKey("date") is NSDate, "date is not NSDate")
             XCTAssertTrue(plist.valueForKey("data") is NSData, "data is not NSData")

@@ -91,7 +91,7 @@ public enum ParameterEncoding {
                     components += self.queryComponents(key, value)
                 }
 
-                return join("&", components.map{"\($0)=\($1)"} as [String])
+                return join("&", components.map{ "\($0)=\($1)" } as [String])
             }
 
             func encodesParametersInURL(method: Method) -> Bool {
