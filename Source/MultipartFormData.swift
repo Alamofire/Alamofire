@@ -266,6 +266,29 @@ public class MultipartFormData {
     }
 
     /**
+    Creates a body part from the data and appends it to the multipart form data object.
+    This is to upload non-file data, e.g. a JSON string from the form input
+    
+    The body part data will be encoded using the following format:
+    
+    - `Content-Disposition: form-data; name=#{name};mimeType=#{mimeType}` (HTTP Header)
+    - Encoded data
+    - Multipart form boundary
+    
+    :param: data The data to encode into the multipart form data.
+    :param: name The name to associate with the data in the `Content-Disposition` HTTP header.
+    :param: mimeType The MIME type to associate with the data in the `Content-Type` HTTP header.
+    */
+    public func appendBodyPart(#data: NSData, name: String, mimeType: String) {
+        let headers = contentHeaders(name: name, mimeType: mimeType)
+        let bodyStream = NSInputStream(data: data)
+        let bodyContentLength = UInt64(data.length)
+        let bodyPart = BodyPart(headers: headers, bodyStream: bodyStream, bodyContentLength: bodyContentLength)
+        
+        self.bodyParts.append(bodyPart)
+    }
+    
+    /**
         Creates a body part from the stream and appends it to the multipart form data object.
 
         The body part data will be encoded using the following format:
@@ -596,6 +619,13 @@ public class MultipartFormData {
 
     private func contentHeaders(#name: String) -> [String: String] {
         return ["Content-Disposition": "form-data; name=\"\(name)\""]
+    }
+    
+    private func contentHeaders(#name: String, mimeType: String) -> [String: String] {
+        return [
+            "Content-Disposition": "form-data; name=\"\(name)\"",
+            "Content-Type": "\(mimeType)"
+        ]
     }
 
     private func contentHeaders(#name: String, fileName: String, mimeType: String) -> [String: String] {
