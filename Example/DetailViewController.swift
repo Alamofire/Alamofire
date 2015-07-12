@@ -43,7 +43,8 @@ class DetailViewController: UITableViewController {
     var headers: [String: String] = [:]
     var body: String?
     var elapsedTime: NSTimeInterval?
-
+    var segueIdentifier: String?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         self.refreshControl?.addTarget(self, action: "refresh", forControlEvents: .ValueChanged)
@@ -76,11 +77,44 @@ class DetailViewController: UITableViewController {
                 self.headers["\(field)"] = "\(value)"
             }
 
-            self.body = body
+            if let segueIdentifier = self.segueIdentifier {
+                switch segueIdentifier {
+                case "GET", "POST", "PUT", "DELETE":
+                    self.body = body
+                case "DOWNLOAD":
+                    self.body = self.downloadedBodyString()
+                default:
+                    break
+                }
+            }
 
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()
         }
+    }
+
+    private func downloadedBodyString() -> String {
+        let fileManager = NSFileManager.defaultManager()
+        let cachesDirectory = fileManager.URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask)[0] as! NSURL
+
+        if let
+            contents = fileManager.contentsOfDirectoryAtURL(
+                cachesDirectory,
+                includingPropertiesForKeys: nil,
+                options: .SkipsHiddenFiles,
+                error: nil
+            ),
+            fileURL = contents.first as? NSURL,
+            data = NSData(contentsOfURL: fileURL),
+            json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil),
+            prettyData = NSJSONSerialization.dataWithJSONObject(json, options: .PrettyPrinted, error: nil),
+            prettyString = NSString(data: prettyData, encoding: NSUTF8StringEncoding) as? String
+        {
+            fileManager.removeItemAtURL(fileURL, error: nil)
+            return prettyString
+        }
+
+        return ""
     }
 
     // MARK: UITableViewDataSource
