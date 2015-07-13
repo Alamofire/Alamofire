@@ -29,8 +29,6 @@ public class Request {
 
     // MARK: - Properties
 
-    let delegate: TaskDelegate
-
     /// The underlying task.
     public var task: NSURLSessionTask { return delegate.task }
 
@@ -45,6 +43,8 @@ public class Request {
 
     /// The progress of the request lifecycle.
     public var progress: NSProgress { return delegate.progress }
+
+    let delegate: TaskDelegate
 
     // MARK: - Lifecycle
 
@@ -276,6 +276,20 @@ public class Request {
 
             if let taskDidReceiveChallenge = self.taskDidReceiveChallenge {
                 (disposition, credential) = taskDidReceiveChallenge(session, task, challenge)
+            } else if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
+                let host = challenge.protectionSpace.host
+
+                if let
+                    serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicyForHost(host),
+                    serverTrust = challenge.protectionSpace.serverTrust
+                {
+                    if serverTrustPolicy.evaluateServerTrust(serverTrust, isValidForHost: host) {
+                        disposition = .UseCredential
+                        credential = NSURLCredential(forTrust: serverTrust)
+                    } else {
+                        disposition = .CancelAuthenticationChallenge
+                    }
+                }
             } else {
                 if challenge.previousFailureCount > 0 {
                     disposition = .CancelAuthenticationChallenge

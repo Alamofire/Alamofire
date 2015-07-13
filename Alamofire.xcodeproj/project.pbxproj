@@ -13,12 +13,40 @@
 		4C256A541B096C770065714F /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
 		4C3238E71B3604DB00FE04AE /* MultipartFormDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */; };
 		4C3238E81B3604DB00FE04AE /* MultipartFormDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */; };
-		4C3238EC1B3617BB00FE04AE /* rainbow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C3238EA1B3617BB00FE04AE /* rainbow.jpg */; };
-		4C3238ED1B3617BB00FE04AE /* rainbow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C3238EA1B3617BB00FE04AE /* rainbow.jpg */; };
-		4C3238EE1B3617BB00FE04AE /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C3238EB1B3617BB00FE04AE /* unicorn.png */; };
-		4C3238EF1B3617BB00FE04AE /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C3238EB1B3617BB00FE04AE /* unicorn.png */; };
+		4C33A1251B5207DB00873DFF /* *.alamofire.org.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1181B5207DB00873DFF /* *.alamofire.org.cer */; };
+		4C33A1261B5207DB00873DFF /* *.alamofire.org.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1181B5207DB00873DFF /* *.alamofire.org.cer */; };
+		4C33A1271B5207DB00873DFF /* alamofire-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1191B5207DB00873DFF /* alamofire-root-ca.cer */; };
+		4C33A1281B5207DB00873DFF /* alamofire-root-ca.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1191B5207DB00873DFF /* alamofire-root-ca.cer */; };
+		4C33A1291B5207DB00873DFF /* alamofire-signing-ca1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11A1B5207DB00873DFF /* alamofire-signing-ca1.cer */; };
+		4C33A12A1B5207DB00873DFF /* alamofire-signing-ca1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11A1B5207DB00873DFF /* alamofire-signing-ca1.cer */; };
+		4C33A12B1B5207DB00873DFF /* alamofire-signing-ca2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11B1B5207DB00873DFF /* alamofire-signing-ca2.cer */; };
+		4C33A12C1B5207DB00873DFF /* alamofire-signing-ca2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11B1B5207DB00873DFF /* alamofire-signing-ca2.cer */; };
+		4C33A12D1B5207DB00873DFF /* missing-dns-name-and-uri.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11C1B5207DB00873DFF /* missing-dns-name-and-uri.cer */; };
+		4C33A12E1B5207DB00873DFF /* missing-dns-name-and-uri.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11C1B5207DB00873DFF /* missing-dns-name-and-uri.cer */; };
+		4C33A12F1B5207DB00873DFF /* signed-by-ca1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11D1B5207DB00873DFF /* signed-by-ca1.cer */; };
+		4C33A1301B5207DB00873DFF /* signed-by-ca1.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11D1B5207DB00873DFF /* signed-by-ca1.cer */; };
+		4C33A1311B5207DB00873DFF /* signed-by-ca2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11E1B5207DB00873DFF /* signed-by-ca2.cer */; };
+		4C33A1321B5207DB00873DFF /* signed-by-ca2.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11E1B5207DB00873DFF /* signed-by-ca2.cer */; };
+		4C33A1331B5207DB00873DFF /* test.alamofire.org.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11F1B5207DB00873DFF /* test.alamofire.org.cer */; };
+		4C33A1341B5207DB00873DFF /* test.alamofire.org.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A11F1B5207DB00873DFF /* test.alamofire.org.cer */; };
+		4C33A1351B5207DB00873DFF /* valid-dns-name.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1201B5207DB00873DFF /* valid-dns-name.cer */; };
+		4C33A1361B5207DB00873DFF /* valid-dns-name.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1201B5207DB00873DFF /* valid-dns-name.cer */; };
+		4C33A1371B5207DB00873DFF /* valid-uri.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1211B5207DB00873DFF /* valid-uri.cer */; };
+		4C33A1381B5207DB00873DFF /* valid-uri.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1211B5207DB00873DFF /* valid-uri.cer */; };
+		4C33A1391B5207DB00873DFF /* rainbow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1231B5207DB00873DFF /* rainbow.jpg */; };
+		4C33A13A1B5207DB00873DFF /* rainbow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1231B5207DB00873DFF /* rainbow.jpg */; };
+		4C33A13B1B5207DB00873DFF /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1241B5207DB00873DFF /* unicorn.png */; };
+		4C33A13C1B5207DB00873DFF /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1241B5207DB00873DFF /* unicorn.png */; };
+		4C33A1431B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C33A1421B52089C00873DFF /* ServerTrustPolicyTests.swift */; };
+		4C33A1441B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C33A1421B52089C00873DFF /* ServerTrustPolicyTests.swift */; };
+		4C33A1461B520B5A00873DFF /* expired.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1451B520B5A00873DFF /* expired.cer */; };
+		4C33A1471B520B5A00873DFF /* expired.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1451B520B5A00873DFF /* expired.cer */; };
+		4C33A1491B52230400873DFF /* multiple-dns-names.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1481B52230400873DFF /* multiple-dns-names.cer */; };
+		4C33A14A1B52230400873DFF /* multiple-dns-names.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1481B52230400873DFF /* multiple-dns-names.cer */; };
 		4C341BBA1B1A865A00C1B34D /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
 		4C341BBB1B1A865A00C1B34D /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
+		4C811F8D1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */; };
+		4C811F8E1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */; };
 		4CCFA79A1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */; };
 		4CCFA79B1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */; };
 		4CDE2C371AF8932A00BABAE5 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C361AF8932A00BABAE5 /* Manager.swift */; };
@@ -81,9 +109,23 @@
 		4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormData.swift; sourceTree = "<group>"; };
 		4C256A501B096C2C0065714F /* BaseTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormDataTests.swift; sourceTree = "<group>"; };
-		4C3238EA1B3617BB00FE04AE /* rainbow.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = rainbow.jpg; path = Resources/rainbow.jpg; sourceTree = "<group>"; };
-		4C3238EB1B3617BB00FE04AE /* unicorn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = unicorn.png; path = Resources/unicorn.png; sourceTree = "<group>"; };
+		4C33A1181B5207DB00873DFF /* *.alamofire.org.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "*.alamofire.org.cer"; sourceTree = "<group>"; };
+		4C33A1191B5207DB00873DFF /* alamofire-root-ca.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "alamofire-root-ca.cer"; sourceTree = "<group>"; };
+		4C33A11A1B5207DB00873DFF /* alamofire-signing-ca1.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "alamofire-signing-ca1.cer"; sourceTree = "<group>"; };
+		4C33A11B1B5207DB00873DFF /* alamofire-signing-ca2.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "alamofire-signing-ca2.cer"; sourceTree = "<group>"; };
+		4C33A11C1B5207DB00873DFF /* missing-dns-name-and-uri.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "missing-dns-name-and-uri.cer"; sourceTree = "<group>"; };
+		4C33A11D1B5207DB00873DFF /* signed-by-ca1.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "signed-by-ca1.cer"; sourceTree = "<group>"; };
+		4C33A11E1B5207DB00873DFF /* signed-by-ca2.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "signed-by-ca2.cer"; sourceTree = "<group>"; };
+		4C33A11F1B5207DB00873DFF /* test.alamofire.org.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = test.alamofire.org.cer; sourceTree = "<group>"; };
+		4C33A1201B5207DB00873DFF /* valid-dns-name.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "valid-dns-name.cer"; sourceTree = "<group>"; };
+		4C33A1211B5207DB00873DFF /* valid-uri.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "valid-uri.cer"; sourceTree = "<group>"; };
+		4C33A1231B5207DB00873DFF /* rainbow.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = rainbow.jpg; sourceTree = "<group>"; };
+		4C33A1241B5207DB00873DFF /* unicorn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unicorn.png; sourceTree = "<group>"; };
+		4C33A1421B52089C00873DFF /* ServerTrustPolicyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustPolicyTests.swift; sourceTree = "<group>"; };
+		4C33A1451B520B5A00873DFF /* expired.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = expired.cer; sourceTree = "<group>"; };
+		4C33A1481B52230400873DFF /* multiple-dns-names.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "multiple-dns-names.cer"; sourceTree = "<group>"; };
 		4C341BB91B1A865A00C1B34D /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
+		4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustPolicy.swift; sourceTree = "<group>"; };
 		4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLProtocolTests.swift; sourceTree = "<group>"; };
 		4CDE2C361AF8932A00BABAE5 /* Manager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 		4CDE2C391AF899EC00BABAE5 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
@@ -162,6 +204,7 @@
 				4C341BB91B1A865A00C1B34D /* CacheTests.swift */,
 				F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */,
 				4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */,
+				4C33A1421B52089C00873DFF /* ServerTrustPolicyTests.swift */,
 				F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */,
 				F8111E5F19A9674D0040E7D1 /* UploadTests.swift */,
 				4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */,
@@ -173,10 +216,80 @@
 		4C3238E91B3617A600FE04AE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				4C3238EA1B3617BB00FE04AE /* rainbow.jpg */,
-				4C3238EB1B3617BB00FE04AE /* unicorn.png */,
+				4C33A1171B5207DB00873DFF /* Certificates */,
+				4C33A1221B5207DB00873DFF /* Images */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		4C33A1171B5207DB00873DFF /* Certificates */ = {
+			isa = PBXGroup;
+			children = (
+				4C33A13D1B52080800873DFF /* Root */,
+				4C33A13E1B52081100873DFF /* Intermediate */,
+				4C33A13F1B52081A00873DFF /* Leaf */,
+			);
+			name = Certificates;
+			path = Resources/Certificates;
+			sourceTree = "<group>";
+		};
+		4C33A1221B5207DB00873DFF /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				4C33A1231B5207DB00873DFF /* rainbow.jpg */,
+				4C33A1241B5207DB00873DFF /* unicorn.png */,
+			);
+			name = Images;
+			path = Resources/Images;
+			sourceTree = "<group>";
+		};
+		4C33A13D1B52080800873DFF /* Root */ = {
+			isa = PBXGroup;
+			children = (
+				4C33A1191B5207DB00873DFF /* alamofire-root-ca.cer */,
+			);
+			name = Root;
+			sourceTree = "<group>";
+		};
+		4C33A13E1B52081100873DFF /* Intermediate */ = {
+			isa = PBXGroup;
+			children = (
+				4C33A11A1B5207DB00873DFF /* alamofire-signing-ca1.cer */,
+				4C33A11B1B5207DB00873DFF /* alamofire-signing-ca2.cer */,
+			);
+			name = Intermediate;
+			sourceTree = "<group>";
+		};
+		4C33A13F1B52081A00873DFF /* Leaf */ = {
+			isa = PBXGroup;
+			children = (
+				4C33A1401B52084400873DFF /* Signed by CA1 */,
+				4C33A1411B52084E00873DFF /* Signed by CA2 */,
+			);
+			name = Leaf;
+			sourceTree = "<group>";
+		};
+		4C33A1401B52084400873DFF /* Signed by CA1 */ = {
+			isa = PBXGroup;
+			children = (
+				4C33A1181B5207DB00873DFF /* *.alamofire.org.cer */,
+				4C33A1481B52230400873DFF /* multiple-dns-names.cer */,
+				4C33A11D1B5207DB00873DFF /* signed-by-ca1.cer */,
+				4C33A11F1B5207DB00873DFF /* test.alamofire.org.cer */,
+			);
+			name = "Signed by CA1";
+			sourceTree = "<group>";
+		};
+		4C33A1411B52084E00873DFF /* Signed by CA2 */ = {
+			isa = PBXGroup;
+			children = (
+				4C33A1451B520B5A00873DFF /* expired.cer */,
+				4C33A11C1B5207DB00873DFF /* missing-dns-name-and-uri.cer */,
+				4C33A11E1B5207DB00873DFF /* signed-by-ca2.cer */,
+				4C33A1201B5207DB00873DFF /* valid-dns-name.cer */,
+				4C33A1211B5207DB00873DFF /* valid-uri.cer */,
+			);
+			name = "Signed by CA2";
 			sourceTree = "<group>";
 		};
 		4CDE2C481AF8A14A00BABAE5 /* Core */ = {
@@ -195,6 +308,7 @@
 				4CDE2C3C1AF89D4900BABAE5 /* Download.swift */,
 				4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */,
 				4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */,
+				4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */,
 				4CDE2C3F1AF89E0700BABAE5 /* Upload.swift */,
 				4CDE2C421AF89F0900BABAE5 /* Validation.swift */,
 			);
@@ -417,8 +531,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C3238EE1B3617BB00FE04AE /* unicorn.png in Resources */,
-				4C3238EC1B3617BB00FE04AE /* rainbow.jpg in Resources */,
+				4C33A12B1B5207DB00873DFF /* alamofire-signing-ca2.cer in Resources */,
+				4C33A1291B5207DB00873DFF /* alamofire-signing-ca1.cer in Resources */,
+				4C33A1461B520B5A00873DFF /* expired.cer in Resources */,
+				4C33A1491B52230400873DFF /* multiple-dns-names.cer in Resources */,
+				4C33A1331B5207DB00873DFF /* test.alamofire.org.cer in Resources */,
+				4C33A12D1B5207DB00873DFF /* missing-dns-name-and-uri.cer in Resources */,
+				4C33A13B1B5207DB00873DFF /* unicorn.png in Resources */,
+				4C33A1391B5207DB00873DFF /* rainbow.jpg in Resources */,
+				4C33A1371B5207DB00873DFF /* valid-uri.cer in Resources */,
+				4C33A1311B5207DB00873DFF /* signed-by-ca2.cer in Resources */,
+				4C33A1251B5207DB00873DFF /* *.alamofire.org.cer in Resources */,
+				4C33A1351B5207DB00873DFF /* valid-dns-name.cer in Resources */,
+				4C33A1271B5207DB00873DFF /* alamofire-root-ca.cer in Resources */,
+				4C33A12F1B5207DB00873DFF /* signed-by-ca1.cer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,8 +552,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C3238EF1B3617BB00FE04AE /* unicorn.png in Resources */,
-				4C3238ED1B3617BB00FE04AE /* rainbow.jpg in Resources */,
+				4C33A12C1B5207DB00873DFF /* alamofire-signing-ca2.cer in Resources */,
+				4C33A12A1B5207DB00873DFF /* alamofire-signing-ca1.cer in Resources */,
+				4C33A1471B520B5A00873DFF /* expired.cer in Resources */,
+				4C33A14A1B52230400873DFF /* multiple-dns-names.cer in Resources */,
+				4C33A1341B5207DB00873DFF /* test.alamofire.org.cer in Resources */,
+				4C33A12E1B5207DB00873DFF /* missing-dns-name-and-uri.cer in Resources */,
+				4C33A13C1B5207DB00873DFF /* unicorn.png in Resources */,
+				4C33A13A1B5207DB00873DFF /* rainbow.jpg in Resources */,
+				4C33A1381B5207DB00873DFF /* valid-uri.cer in Resources */,
+				4C33A1321B5207DB00873DFF /* signed-by-ca2.cer in Resources */,
+				4C33A1261B5207DB00873DFF /* *.alamofire.org.cer in Resources */,
+				4C33A1361B5207DB00873DFF /* valid-dns-name.cer in Resources */,
+				4C33A1281B5207DB00873DFF /* alamofire-root-ca.cer in Resources */,
+				4C33A1301B5207DB00873DFF /* signed-by-ca1.cer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,6 +583,7 @@
 				4CDE2C381AF8932A00BABAE5 /* Manager.swift in Sources */,
 				4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */,
 				4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
+				4C811F8E1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,
 				4CDE2C3E1AF89D4900BABAE5 /* Download.swift in Sources */,
 				4CDE2C441AF89F0900BABAE5 /* Validation.swift in Sources */,
 			);
@@ -461,6 +600,7 @@
 				4CDE2C371AF8932A00BABAE5 /* Manager.swift in Sources */,
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
 				4C23EB431B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
+				4C811F8D1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,
 				4CDE2C3D1AF89D4900BABAE5 /* Download.swift in Sources */,
 				4CDE2C431AF89F0900BABAE5 /* Validation.swift in Sources */,
 			);
@@ -471,6 +611,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C3238E71B3604DB00FE04AE /* MultipartFormDataTests.swift in Sources */,
+				4C33A1431B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBA1B1A865A00C1B34D /* CacheTests.swift in Sources */,
 				4CCFA79A1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
 				F86AEFE71AE6A312007D9C76 /* TLSEvaluationTests.swift in Sources */,
@@ -491,6 +632,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C3238E81B3604DB00FE04AE /* MultipartFormDataTests.swift in Sources */,
+				4C33A1441B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBB1B1A865A00C1B34D /* CacheTests.swift in Sources */,
 				4CCFA79B1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
 				F829C6BE1A7A950600A2CD59 /* ParameterEncodingTests.swift in Sources */,
