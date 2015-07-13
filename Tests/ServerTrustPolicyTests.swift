@@ -24,7 +24,7 @@ import Alamofire
 import Foundation
 import XCTest
 
-struct TestCertificates {
+private struct TestCertificates {
     // Root Certificates
     static let RootCA = TestCertificates.certificateWithFileName("alamofire-root-ca")
 
@@ -57,7 +57,7 @@ struct TestCertificates {
 
 // MARK: -
 
-struct TestPublicKeys {
+private struct TestPublicKeys {
     // Root Public Keys
     static let RootCA = TestPublicKeys.publicKeyForCertificate(TestCertificates.RootCA)
 
@@ -92,7 +92,7 @@ struct TestPublicKeys {
 
 // MARK: -
 
-enum TestTrusts {
+private enum TestTrusts {
     // Leaf Trusts - Signed by CA1
     case LeafWildcard
     case LeafMultipleDNSNames
