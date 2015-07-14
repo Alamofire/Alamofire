@@ -64,12 +64,14 @@ extension Manager {
 
         :param: method The HTTP method.
         :param: URLString The URL string.
+        :param: headers The HTTP headers. `nil` by default.
         :param: destination The closure used to determine the destination of the downloaded file.
 
         :returns: The created download request.
     */
-    public func download(method: Method, _ URLString: URLStringConvertible, destination: Request.DownloadFileDestination) -> Request {
-        return download(URLRequest(method, URLString), destination: destination)
+    public func download(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, destination: Request.DownloadFileDestination) -> Request {
+        let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+        return download(mutableURLRequest, destination: destination)
     }
 
     /**
