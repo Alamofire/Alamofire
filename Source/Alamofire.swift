@@ -87,7 +87,7 @@ extension NSURLRequest: URLRequestConvertible {
 
 // MARK: - Convenience
 
-func URLRequest(method: Method, URL: URLStringConvertible) -> NSURLRequest {
+func URLRequest(method: Method, URL: URLStringConvertible) -> NSMutableURLRequest {
     let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URL.URLString)!)
     mutableURLRequest.HTTPMethod = method.rawValue
 
