@@ -46,7 +46,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.download(.GET, URLString, destination)
+        Alamofire.download(.GET, URLString, destination: destination)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
