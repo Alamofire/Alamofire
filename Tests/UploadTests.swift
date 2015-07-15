@@ -24,6 +24,120 @@ import Alamofire
 import Foundation
 import XCTest
 
+class UploadFileInitializationTestCase: BaseTestCase {
+    func testUploadClassMethodWithMethodURLAndFile() {
+        // Given
+        let URLString = "http://httpbin.org/"
+        let imageURL = URLForResource("rainbow", withExtension: "jpg")
+
+        // When
+        let request = Alamofire.upload(.POST, URLString, file: imageURL)
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertNil(request.response, "response should be nil")
+    }
+
+    func testUploadClassMethodWithMethodURLHeadersAndFile() {
+        // Given
+        let URLString = "http://httpbin.org/"
+        let imageURL = URLForResource("rainbow", withExtension: "jpg")
+
+        // When
+        let request = Alamofire.upload(.POST, URLString, headers: ["Authorization": "123456"], file: imageURL)
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+
+        let authorizationHeader = request.request.valueForHTTPHeaderField("Authorization") ?? ""
+        XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
+
+        XCTAssertNil(request.response, "response should be nil")
+    }
+}
+
+// MARK: -
+
+class UploadDataInitializationTestCase: BaseTestCase {
+    func testUploadClassMethodWithMethodURLAndData() {
+        // Given
+        let URLString = "http://httpbin.org/"
+
+        // When
+        let request = Alamofire.upload(.POST, URLString, data: NSData())
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertNil(request.response, "response should be nil")
+    }
+
+    func testUploadClassMethodWithMethodURLHeadersAndData() {
+        // Given
+        let URLString = "http://httpbin.org/"
+
+        // When
+        let request = Alamofire.upload(.POST, URLString, headers: ["Authorization": "123456"], data: NSData())
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+
+        let authorizationHeader = request.request.valueForHTTPHeaderField("Authorization") ?? ""
+        XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
+
+        XCTAssertNil(request.response, "response should be nil")
+    }
+}
+
+// MARK: -
+
+class UploadStreamInitializationTestCase: BaseTestCase {
+    func testUploadClassMethodWithMethodURLAndStream() {
+        // Given
+        let URLString = "http://httpbin.org/"
+        let imageURL = URLForResource("rainbow", withExtension: "jpg")
+        let imageStream = NSInputStream(URL: imageURL)!
+
+        // When
+        let request = Alamofire.upload(.POST, URLString, stream: imageStream)
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertNil(request.response, "response should be nil")
+    }
+
+    func testUploadClassMethodWithMethodURLHeadersAndStream() {
+        // Given
+        let URLString = "http://httpbin.org/"
+        let imageURL = URLForResource("rainbow", withExtension: "jpg")
+        let imageStream = NSInputStream(URL: imageURL)!
+
+        // When
+        let request = Alamofire.upload(.POST, URLString, headers: ["Authorization": "123456"], stream: imageStream)
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+
+        let authorizationHeader = request.request.valueForHTTPHeaderField("Authorization") ?? ""
+        XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
+
+        XCTAssertNil(request.response, "response should be nil")
+    }
+}
+
+// MARK: -
+
 class UploadDataTestCase: BaseTestCase {
     func testUploadDataRequest() {
         // Given
