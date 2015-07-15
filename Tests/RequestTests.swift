@@ -34,6 +34,7 @@ class RequestInitializationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request.HTTPMethod ?? "", "GET", "request HTTP method should match expected value")
         XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
@@ -47,8 +48,28 @@ class RequestInitializationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request.HTTPMethod ?? "", "GET", "request HTTP method should match expected value")
         XCTAssertNotEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
         XCTAssertEqual(request.request.URL?.query ?? "", "foo=bar", "query is incorrect")
+        XCTAssertNil(request.response, "response should be nil")
+    }
+
+    func testRequestClassMethodWithMethodURLParametersAndHeaders() {
+        // Given
+        let URLString = "http://httpbin.org/get"
+
+        // When
+        let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"], headers: ["Authorization": "123456"])
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request.HTTPMethod ?? "", "GET", "request HTTP method should match expected value")
+        XCTAssertNotEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertEqual(request.request.URL?.query ?? "", "foo=bar", "query is incorrect")
+
+        let authorizationHeader = request.request.valueForHTTPHeaderField("Authorization") ?? ""
+        XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
+
         XCTAssertNil(request.response, "response should be nil")
     }
 }
