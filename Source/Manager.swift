@@ -158,14 +158,14 @@ public class Manager {
     */
     public func request(URLRequest: URLRequestConvertible) -> Request {
         var dataTask: NSURLSessionDataTask?
-        dispatch_sync(queue) {
+        dispatch_sync(self.queue) {
             dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest)
         }
 
-        let request = Request(session: session, task: dataTask!)
-        delegate[request.delegate.task] = request.delegate
+        let request = Request(session: self.session, task: dataTask!)
+        self.delegate[request.delegate.task] = request.delegate
 
-        if startRequestsImmediately {
+        if self.startRequestsImmediately {
             request.resume()
         }
 
@@ -184,7 +184,7 @@ public class Manager {
         subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
                 var subdelegate: Request.TaskDelegate?
-                dispatch_sync(subdelegateQueue) {
+                dispatch_sync(self.subdelegateQueue) {
                     subdelegate = self.subdelegates[task.taskIdentifier]
                 }
 
@@ -192,7 +192,7 @@ public class Manager {
             }
 
             set {
-                dispatch_barrier_async(subdelegateQueue) {
+                dispatch_barrier_async(self.subdelegateQueue) {
                     self.subdelegates[task.taskIdentifier] = newValue
                 }
             }
@@ -214,7 +214,7 @@ public class Manager {
         // MARK: Delegate Methods
 
         public func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
-            sessionDidBecomeInvalidWithError?(session, error)
+            self.sessionDidBecomeInvalidWithError?(session, error)
         }
 
         public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)) {
@@ -226,7 +226,7 @@ public class Manager {
         }
 
         public func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
-            sessionDidFinishEventsForBackgroundURLSession?(session)
+            self.sessionDidFinishEventsForBackgroundURLSession?(session)
         }
 
         // MARK: - NSURLSessionTaskDelegate
@@ -395,17 +395,17 @@ public class Manager {
         public override func respondsToSelector(selector: Selector) -> Bool {
             switch selector {
             case "URLSession:didBecomeInvalidWithError:":
-                return (sessionDidBecomeInvalidWithError != nil)
+                return (self.sessionDidBecomeInvalidWithError != nil)
             case "URLSession:didReceiveChallenge:completionHandler:":
-                return (sessionDidReceiveChallenge != nil)
+                return (self.sessionDidReceiveChallenge != nil)
             case "URLSessionDidFinishEventsForBackgroundURLSession:":
-                return (sessionDidFinishEventsForBackgroundURLSession != nil)
+                return (self.sessionDidFinishEventsForBackgroundURLSession != nil)
             case "URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:":
-                return (taskWillPerformHTTPRedirection != nil)
+                return (self.taskWillPerformHTTPRedirection != nil)
             case "URLSession:dataTask:didReceiveResponse:completionHandler:":
-                return (dataTaskDidReceiveResponse != nil)
+                return (self.dataTaskDidReceiveResponse != nil)
             case "URLSession:dataTask:willCacheResponse:completionHandler:":
-                return (dataTaskWillCacheResponse != nil)
+                return (self.dataTaskWillCacheResponse != nil)
             default:
                 return self.dynamicType.instancesRespondToSelector(selector)
             }

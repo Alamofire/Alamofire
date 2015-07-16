@@ -88,7 +88,7 @@ public class Request {
         :returns: The request.
     */
     public func authenticate(usingCredential credential: NSURLCredential) -> Self {
-        delegate.credential = credential
+        self.delegate.credential = credential
 
         return self
     }
@@ -106,11 +106,11 @@ public class Request {
         :returns: The request.
     */
     public func progress(closure: ((Int64, Int64, Int64) -> Void)? = nil) -> Self {
-        if let uploadDelegate = delegate as? UploadTaskDelegate {
+        if let uploadDelegate = self.delegate as? UploadTaskDelegate {
             uploadDelegate.uploadProgress = closure
-        } else if let dataDelegate = delegate as? DataTaskDelegate {
+        } else if let dataDelegate = self.delegate as? DataTaskDelegate {
             dataDelegate.dataProgress = closure
-        } else if let downloadDelegate = delegate as? DownloadTaskDelegate {
+        } else if let downloadDelegate = self.delegate as? DownloadTaskDelegate {
             downloadDelegate.downloadProgress = closure
         }
 
@@ -127,7 +127,7 @@ public class Request {
         :returns: The request.
     */
     public func stream(closure: (NSData -> Void)? = nil) -> Self {
-        if let dataDelegate = delegate as? DataTaskDelegate {
+        if let dataDelegate = self.delegate as? DataTaskDelegate {
             dataDelegate.dataStream = closure
         }
 
@@ -173,7 +173,7 @@ public class Request {
         :returns: The request.
     */
     public func response(queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        delegate.queue.addOperationWithBlock {
+        self.delegate.queue.addOperationWithBlock {
             let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
 
             dispatch_async(queue ?? dispatch_get_main_queue()) {
@@ -190,28 +190,29 @@ public class Request {
         Suspends the request.
     */
     public func suspend() {
-        task.suspend()
+        self.task.suspend()
     }
 
     /**
         Resumes the request.
     */
     public func resume() {
-        task.resume()
+        self.task.resume()
     }
 
     /**
         Cancels the request.
     */
     public func cancel() {
-        if let downloadDelegate = delegate as? DownloadTaskDelegate,
+        if let
+            downloadDelegate = delegate as? DownloadTaskDelegate,
             downloadTask = downloadDelegate.downloadTask
         {
             downloadTask.cancelByProducingResumeData { data in
                 downloadDelegate.resumeData = data
             }
         } else {
-            task.cancel()
+            self.task.cancel()
         }
     }
 
@@ -244,8 +245,8 @@ public class Request {
         }
 
         deinit {
-            queue.cancelAllOperations()
-            queue.suspended = true
+            self.queue.cancelAllOperations()
+            self.queue.suspended = true
         }
 
         // MARK: - NSURLSessionTaskDelegate
@@ -308,7 +309,7 @@ public class Request {
                     self.error = error
                 }
 
-                queue.suspended = false
+                self.queue.suspended = false
             }
         }
     }
@@ -316,15 +317,15 @@ public class Request {
     // MARK: - DataTaskDelegate
 
     class DataTaskDelegate: TaskDelegate, NSURLSessionDataDelegate {
-        var dataTask: NSURLSessionDataTask? { return task as? NSURLSessionDataTask }
+        var dataTask: NSURLSessionDataTask? { return self.task as? NSURLSessionDataTask }
 
         private var totalBytesReceived: Int64 = 0
         private var mutableData: NSMutableData
         override var data: NSData? {
-            if dataStream != nil {
+            if self.dataStream != nil {
                 return nil
             } else {
-                return mutableData
+                return self.mutableData
             }
         }
 
@@ -351,7 +352,7 @@ public class Request {
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
             var disposition: NSURLSessionResponseDisposition = .Allow
 
-            expectedContentLength = response.expectedContentLength
+            self.expectedContentLength = response.expectedContentLength
 
             if let dataTaskDidReceiveResponse = self.dataTaskDidReceiveResponse {
                 disposition = dataTaskDidReceiveResponse(session, dataTask, response)
@@ -361,26 +362,26 @@ public class Request {
         }
 
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didBecomeDownloadTask downloadTask: NSURLSessionDownloadTask) {
-            dataTaskDidBecomeDownloadTask?(session, dataTask, downloadTask)
+            self.dataTaskDidBecomeDownloadTask?(session, dataTask, downloadTask)
         }
 
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
             if let dataTaskDidReceiveData = self.dataTaskDidReceiveData {
                 dataTaskDidReceiveData(session, dataTask, data)
             } else {
-                if let dataStream = dataStream {
+                if let dataStream = self.dataStream {
                     dataStream(data: data)
                 } else {
-                    mutableData.appendData(data)
+                    self.mutableData.appendData(data)
                 }
 
-                totalBytesReceived += data.length
+                self.totalBytesReceived += data.length
                 let totalBytesExpectedToReceive = dataTask.response?.expectedContentLength ?? NSURLSessionTransferSizeUnknown
 
-                progress.totalUnitCount = totalBytesExpectedToReceive
-                progress.completedUnitCount = totalBytesReceived
+                self.progress.totalUnitCount = totalBytesExpectedToReceive
+                self.progress.completedUnitCount = totalBytesReceived
 
-                dataProgress?(bytesReceived: Int64(data.length), totalBytesReceived: totalBytesReceived, totalBytesExpectedToReceive: totalBytesExpectedToReceive)
+                self.dataProgress?(bytesReceived: Int64(data.length), totalBytesReceived: self.totalBytesReceived, totalBytesExpectedToReceive: totalBytesExpectedToReceive)
             }
         }
 
@@ -406,7 +407,7 @@ extension Request: Printable {
             components.append(HTTPMethod)
         }
 
-        components.append(request.URL!.absoluteString!)
+        components.append(self.request.URL!.absoluteString!)
 
         if let response = self.response {
             components.append("(\(response.statusCode))")
@@ -422,7 +423,7 @@ extension Request: DebugPrintable {
     func cURLRepresentation() -> String {
         var components: [String] = ["$ curl -i"]
 
-        let URL = request.URL
+        let URL = self.request.URL
 
         if let HTTPMethod = self.request.HTTPMethod where HTTPMethod != "GET" {
             components.append("-X \(HTTPMethod)")
@@ -435,7 +436,7 @@ extension Request: DebugPrintable {
                     components.append("-u \(credential.user!):\(credential.password!)")
                 }
             } else {
-                if let credential = delegate.credential {
+                if let credential = self.delegate.credential {
                     components.append("-u \(credential.user!):\(credential.password!)")
                 }
             }
@@ -444,8 +445,8 @@ extension Request: DebugPrintable {
         // Temporarily disabled on OS X due to build failure for CocoaPods
         // See https://github.com/CocoaPods/swift/issues/24
         #if !os(OSX)
-            if session.configuration.HTTPShouldSetCookies {
-                if let cookieStorage = session.configuration.HTTPCookieStorage,
+            if self.session.configuration.HTTPShouldSetCookies {
+                if let cookieStorage = self.session.configuration.HTTPCookieStorage,
                     cookies = cookieStorage.cookiesForURL(URL!) as? [NSHTTPCookie]
                     where !cookies.isEmpty
                 {
@@ -477,7 +478,8 @@ extension Request: DebugPrintable {
             }
         }
 
-        if let HTTPBody = request.HTTPBody,
+        if let
+            HTTPBody = self.request.HTTPBody,
             escapedBody = NSString(data: HTTPBody, encoding: NSUTF8StringEncoding)?.stringByReplacingOccurrencesOfString("\"", withString: "\\\"")
         {
             components.append("-d \"\(escapedBody)\"")

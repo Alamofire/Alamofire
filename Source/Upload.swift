@@ -35,29 +35,29 @@ extension Manager {
 
         switch uploadable {
         case .Data(let request, let data):
-            dispatch_sync(queue) {
+            dispatch_sync(self.queue) {
                 uploadTask = self.session.uploadTaskWithRequest(request, fromData: data)
             }
         case .File(let request, let fileURL):
-            dispatch_sync(queue) {
+            dispatch_sync(self.queue) {
                 uploadTask = self.session.uploadTaskWithRequest(request, fromFile: fileURL)
             }
         case .Stream(let request, var stream):
-            dispatch_sync(queue) {
+            dispatch_sync(self.queue) {
                 uploadTask = self.session.uploadTaskWithStreamedRequest(request)
             }
             HTTPBodyStream = stream
         }
 
-        let request = Request(session: session, task: uploadTask)
+        let request = Request(session: self.session, task: uploadTask)
         if HTTPBodyStream != nil {
             request.delegate.taskNeedNewBodyStream = { _, _ in
                 return HTTPBodyStream
             }
         }
-        delegate[request.delegate.task] = request.delegate
+        self.delegate[request.delegate.task] = request.delegate
 
-        if startRequestsImmediately {
+        if self.startRequestsImmediately {
             request.resume()
         }
 
@@ -320,7 +320,7 @@ extension Request {
     // MARK: - UploadTaskDelegate
 
     class UploadTaskDelegate: DataTaskDelegate {
-        var uploadTask: NSURLSessionUploadTask? { return task as? NSURLSessionUploadTask }
+        var uploadTask: NSURLSessionUploadTask? { return self.task as? NSURLSessionUploadTask }
         var uploadProgress: ((Int64, Int64, Int64) -> Void)!
 
         // MARK: - NSURLSessionTaskDelegate
@@ -335,10 +335,10 @@ extension Request {
             if let taskDidSendBodyData = self.taskDidSendBodyData {
                 taskDidSendBodyData(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
             } else {
-                progress.totalUnitCount = totalBytesExpectedToSend
-                progress.completedUnitCount = totalBytesSent
+                self.progress.totalUnitCount = totalBytesExpectedToSend
+                self.progress.completedUnitCount = totalBytesSent
 
-                uploadProgress?(bytesSent, totalBytesSent, totalBytesExpectedToSend)
+                self.uploadProgress?(bytesSent, totalBytesSent, totalBytesExpectedToSend)
             }
         }
     }

@@ -56,7 +56,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
     override func setUp() {
         super.setUp()
-        self.URLString = "http://httpbin.org/basic-auth/\(user)/\(password)"
+        self.URLString = "http://httpbin.org/basic-auth/\(self.user)/\(self.password)"
     }
 
     // MARK: Tests
@@ -135,7 +135,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
     override func setUp() {
         super.setUp()
-        self.URLString = "http://httpbin.org/digest-auth/\(qop)/\(user)/\(password)"
+        self.URLString = "http://httpbin.org/digest-auth/\(self.qop)/\(self.user)/\(self.password)"
     }
 
     // MARK: Tests

@@ -33,24 +33,24 @@ extension Manager {
 
         switch downloadable {
         case .Request(let request):
-            dispatch_sync(queue) {
+            dispatch_sync(self.queue) {
                 downloadTask = self.session.downloadTaskWithRequest(request)
             }
         case .ResumeData(let resumeData):
-            dispatch_sync(queue) {
+            dispatch_sync(self.queue) {
                 downloadTask = self.session.downloadTaskWithResumeData(resumeData)
             }
         }
 
-        let request = Request(session: session, task: downloadTask)
+        let request = Request(session: self.session, task: downloadTask)
         if let downloadDelegate = request.delegate as? Request.DownloadTaskDelegate {
             downloadDelegate.downloadTaskDidFinishDownloadingToURL = { session, downloadTask, URL in
                 return destination(URL, downloadTask.response as! NSHTTPURLResponse)
             }
         }
-        delegate[request.delegate.task] = request.delegate
+        self.delegate[request.delegate.task] = request.delegate
 
-        if startRequestsImmediately {
+        if self.startRequestsImmediately {
             request.resume()
         }
 
@@ -135,7 +135,7 @@ extension Request {
     // MARK: - DownloadTaskDelegate
 
     class DownloadTaskDelegate: TaskDelegate, NSURLSessionDownloadDelegate {
-        var downloadTask: NSURLSessionDownloadTask? { return task as? NSURLSessionDownloadTask }
+        var downloadTask: NSURLSessionDownloadTask? { return self.task as? NSURLSessionDownloadTask }
         var downloadProgress: ((Int64, Int64, Int64) -> Void)?
 
         var resumeData: NSData?
@@ -159,7 +159,7 @@ extension Request {
                 NSFileManager.defaultManager().moveItemAtURL(location, toURL: destination, error: &fileManagerError)
 
                 if fileManagerError != nil {
-                    error = fileManagerError
+                    self.error = fileManagerError
                 }
             }
         }
@@ -168,10 +168,10 @@ extension Request {
             if let downloadTaskDidWriteData = self.downloadTaskDidWriteData {
                 downloadTaskDidWriteData(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
             } else {
-                progress.totalUnitCount = totalBytesExpectedToWrite
-                progress.completedUnitCount = totalBytesWritten
+                self.progress.totalUnitCount = totalBytesExpectedToWrite
+                self.progress.completedUnitCount = totalBytesWritten
 
-                downloadProgress?(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
+                self.downloadProgress?(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
             }
         }
 
@@ -179,8 +179,8 @@ extension Request {
             if let downloadTaskDidResumeAtOffset = self.downloadTaskDidResumeAtOffset {
                 downloadTaskDidResumeAtOffset(session, downloadTask, fileOffset, expectedTotalBytes)
             } else {
-                progress.totalUnitCount = expectedTotalBytes
-                progress.completedUnitCount = fileOffset
+                self.progress.totalUnitCount = expectedTotalBytes
+                self.progress.completedUnitCount = fileOffset
             }
         }
     }

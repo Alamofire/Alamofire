@@ -39,7 +39,7 @@ extension Request {
         :returns: The request.
     */
     public func validate(validation: Validation) -> Self {
-        delegate.queue.addOperationWithBlock {
+        self.delegate.queue.addOperationWithBlock {
             if let response = self.response where self.delegate.error == nil && !validation(self.request, response) {
                 self.delegate.error = NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
             }
@@ -59,7 +59,7 @@ extension Request {
 
         :returns: The request.
     */
-    public func validate<S : SequenceType where S.Generator.Element == Int>(statusCode acceptableStatusCode: S) -> Self {
+    public func validate<S: SequenceType where S.Generator.Element == Int>(statusCode acceptableStatusCode: S) -> Self {
         return validate { _, response in
             return contains(acceptableStatusCode, response.statusCode)
         }
@@ -85,7 +85,7 @@ extension Request {
         }
 
         func matches(MIME: MIMEType) -> Bool {
-            switch (type, subtype) {
+            switch (self.type, self.subtype) {
             case (MIME.type, MIME.subtype), (MIME.type, "*"), ("*", MIME.subtype), ("*", "*"):
                 return true
             default:
@@ -105,7 +105,8 @@ extension Request {
     */
     public func validate<S : SequenceType where S.Generator.Element == String>(contentType acceptableContentTypes: S) -> Self {
         return validate { _, response in
-            if let responseContentType = response.MIMEType,
+            if let
+                responseContentType = response.MIMEType,
                 responseMIMEType = MIMEType(responseContentType)
             {
                 for contentType in acceptableContentTypes {
