@@ -94,7 +94,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 

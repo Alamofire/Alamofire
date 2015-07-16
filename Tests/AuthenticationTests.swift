@@ -80,7 +80,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -111,7 +111,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -159,7 +159,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -190,7 +190,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
