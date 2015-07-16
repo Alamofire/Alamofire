@@ -250,6 +250,63 @@ class RequestResponseTestCase: BaseTestCase {
 
 // MARK: -
 
+extension Request {
+    private func preValidate(operation: Void -> Void) -> Self {
+        self.delegate.queue.addOperationWithBlock {
+            operation()
+        }
+
+        return self
+    }
+
+    private func postValidate(operation: Void -> Void) -> Self {
+        self.delegate.queue.addOperationWithBlock {
+            operation()
+        }
+
+        return self
+    }
+}
+
+// MARK: -
+
+class RequestExtensionTestCase: BaseTestCase {
+    func testThatRequestExtensionHasAccessToTaskDelegateQueue() {
+        // Given
+        let URLString = "http://httpbin.org/get"
+        let expectation = expectationWithDescription("GET request should succeed: \(URLString)")
+
+        var responses: [String] = []
+
+        // When
+        Alamofire.request(.GET, URLString)
+            .preValidate {
+                responses.append("preValidate")
+            }
+            .validate()
+            .postValidate {
+                responses.append("postValidate")
+            }
+            .response { _, _, _, _ in
+                responses.append("response")
+                expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        if responses.count == 3 {
+            XCTAssertEqual(responses[0], "preValidate", "response at index 0 should be preValidate")
+            XCTAssertEqual(responses[1], "postValidate", "response at index 1 should be postValidate")
+            XCTAssertEqual(responses[2], "response", "response at index 2 should be response")
+        } else {
+            XCTFail("responses count should be equal to 3")
+        }
+    }
+}
+
+// MARK: -
+
 class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
