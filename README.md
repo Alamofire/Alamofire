@@ -285,6 +285,24 @@ Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters, enco
 // HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
 ```
 
+### HTTP Headers
+
+Adding a custom HTTP header to a `Request` is supported directly in the global `request` method. This makes it easy to attach HTTP headers to a `Request` that can be constantly changing.
+
+> For HTTP headers that do not change, it is recommended to set them on the `NSURLSessionConfiguration` so they are automatically applied to any `NSURLSessionTask` created by the underlying `NSURLSession`.
+
+```swift
+let headers = [
+    "Authorization", "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
+    "Content-Type": "application/x-www-form-urlencoded"
+]
+
+Alamofire.request(.GET, "http://httpbin.org/get", headers: headers)
+         .responseJSON { _, _, JSON, _ in
+             println(JSON)
+         }
+```
+
 ### Caching
 
 Caching is handled on the system framework level by [`NSURLCache`](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLCache_Class/Reference/Reference.html#//apple_ref/occ/cl/NSURLCache).
