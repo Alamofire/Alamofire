@@ -130,11 +130,21 @@ public class Manager {
         :param: URLString The URL string.
         :param: parameters The parameters. `nil` by default.
         :param: encoding The parameter encoding. `.URL` by default.
+        :param: headers The HTTP headers. `nil` by default.
 
         :returns: The created request.
     */
-    public func request(method: Method, _ URLString: URLStringConvertible, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-        return request(encoding.encode(URLRequest(method, URLString), parameters: parameters).0)
+    public func request(
+        method: Method,
+        _ URLString: URLStringConvertible,
+        parameters: [String: AnyObject]? = nil,
+        encoding: ParameterEncoding = .URL,
+        headers: [String: String]? = nil)
+        -> Request
+    {
+        let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+        let encodedURLRequest = encoding.encode(mutableURLRequest, parameters: parameters).0
+        return request(encodedURLRequest)
     }
 
     /**
