@@ -411,6 +411,8 @@ Authentication is handled on the system framework level by [`NSURLCredential` an
 
 #### HTTP Basic Authentication
 
+The `authenticate` method on a `Request` will automatically provide an `NSURLCredential` to an `NSURLAuthenticationChallenge` when appropriate:
+
 ```swift
 let user = "user"
 let password = "password"
@@ -419,6 +421,23 @@ Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
          .authenticate(user: user, password: password)
          .response { request, response, _, error in
              println(response)
+         }
+```
+
+Depending upon your server implementation, an `Authorization` header may also be appropriate:
+
+```swift
+let user = "user"
+let password = "password"
+
+let credentialData = "\(user):\(password)".dataUsingEncoding(NSUTF8StringEncoding)!
+let base64Credentials = credentialData.base64EncodedStringWithOptions(nil)
+
+let headers = ["Authorization": "Basic \(base64Credentials)"]
+
+Alamofire.request(.GET, "http://httpbin.org/basic-auth/user/password", headers: headers)
+         .responseJSON { _, _, JSON, _ in
+             println(JSON)
          }
 ```
 
