@@ -33,7 +33,7 @@ public class Manager {
         A shared instance of `Manager`, used by top-level Alamofire request methods, and suitable for use directly for any ad hoc requests.
     */
     public static let sharedInstance: Manager = {
-        let configuration: NSURLSessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.HTTPAdditionalHeaders = Manager.defaultHTTPHeaders
 
         return Manager(configuration: configuration)
@@ -130,11 +130,21 @@ public class Manager {
         - parameter URLString: The URL string.
         - parameter parameters: The parameters. `nil` by default.
         - parameter encoding: The parameter encoding. `.URL` by default.
+        - parameter headers: The HTTP headers. `nil` by default.
 
         - returns: The created request.
     */
-    public func request(method: Method, _ URLString: URLStringConvertible, parameters: [String: AnyObject]? = nil, encoding: ParameterEncoding = .URL) -> Request {
-        return request(encoding.encode(URLRequest(method, URLString: URLString), parameters: parameters).0)
+    public func request(
+        method: Method,
+        _ URLString: URLStringConvertible,
+        parameters: [String: AnyObject]? = nil,
+        encoding: ParameterEncoding = .URL,
+        headers: [String: String]? = nil)
+        -> Request
+    {
+        let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+        let encodedURLRequest = encoding.encode(mutableURLRequest, parameters: parameters).0
+        return request(encodedURLRequest)
     }
 
     /**
@@ -148,14 +158,14 @@ public class Manager {
     */
     public func request(URLRequest: URLRequestConvertible) -> Request {
         var dataTask: NSURLSessionDataTask?
-        dispatch_sync(queue) {
+        dispatch_sync(self.queue) {
             dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest)
         }
 
-        let request = Request(session: session, task: dataTask!)
-        delegate[request.delegate.task] = request.delegate
+        let request = Request(session: self.session, task: dataTask!)
+        self.delegate[request.delegate.task] = request.delegate
 
-        if startRequestsImmediately {
+        if self.startRequestsImmediately {
             request.resume()
         }
 
@@ -174,7 +184,7 @@ public class Manager {
         subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
                 var subdelegate: Request.TaskDelegate?
-                dispatch_sync(subdelegateQueue) {
+                dispatch_sync(self.subdelegateQueue) {
                     subdelegate = self.subdelegates[task.taskIdentifier]
                 }
 
@@ -182,7 +192,7 @@ public class Manager {
             }
 
             set {
-                dispatch_barrier_async(subdelegateQueue) {
+                dispatch_barrier_async(self.subdelegateQueue) {
                     self.subdelegates[task.taskIdentifier] = newValue
                 }
             }
@@ -204,19 +214,19 @@ public class Manager {
         // MARK: Delegate Methods
 
         public func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
-            sessionDidBecomeInvalidWithError?(session, error)
+            self.sessionDidBecomeInvalidWithError?(session, error)
         }
 
-        public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void)) {
-            if sessionDidReceiveChallenge != nil {
-                completionHandler(sessionDidReceiveChallenge!(session, challenge))
+        public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)) {
+            if let sessionDidReceiveChallenge = self.sessionDidReceiveChallenge {
+                completionHandler(sessionDidReceiveChallenge(session, challenge))
             } else {
                 completionHandler(.PerformDefaultHandling, nil)
             }
         }
 
         public func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
-            sessionDidFinishEventsForBackgroundURLSession?(session)
+            self.sessionDidFinishEventsForBackgroundURLSession?(session)
         }
 
         // MARK: - NSURLSessionTaskDelegate
@@ -243,16 +253,16 @@ public class Manager {
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, willPerformHTTPRedirection response: NSHTTPURLResponse, newRequest request: NSURLRequest, completionHandler: ((NSURLRequest?) -> Void)) {
             var redirectRequest: NSURLRequest? = request
 
-            if taskWillPerformHTTPRedirection != nil {
-                redirectRequest = taskWillPerformHTTPRedirection!(session, task, response, request)
+            if let taskWillPerformHTTPRedirection = self.taskWillPerformHTTPRedirection {
+                redirectRequest = taskWillPerformHTTPRedirection(session, task, response, request)
             }
 
             completionHandler(redirectRequest)
         }
 
-        public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void)) {
-            if taskDidReceiveChallenge != nil {
-                completionHandler(taskDidReceiveChallenge!(session, task, challenge))
+        public func URLSession(session: NSURLSession, task: NSURLSessionTask, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)) {
+            if let taskDidReceiveChallenge = self.taskDidReceiveChallenge {
+                completionHandler(taskDidReceiveChallenge(session, task, challenge))
             } else if let delegate = self[task] {
                 delegate.URLSession(session, task: task, didReceiveChallenge: challenge, completionHandler: completionHandler)
             } else {
@@ -260,25 +270,25 @@ public class Manager {
             }
         }
 
-        public func URLSession(session: NSURLSession, task: NSURLSessionTask, needNewBodyStream completionHandler: ((NSInputStream?) -> Void)) {
-            if taskNeedNewBodyStream != nil {
-                completionHandler(taskNeedNewBodyStream!(session, task))
+        public func URLSession(session: NSURLSession, task: NSURLSessionTask, needNewBodyStream completionHandler: ((NSInputStream!) -> Void)) {
+            if let taskNeedNewBodyStream = self.taskNeedNewBodyStream {
+                completionHandler(taskNeedNewBodyStream(session, task))
             } else if let delegate = self[task] {
                 delegate.URLSession(session, task: task, needNewBodyStream: completionHandler)
             }
         }
 
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-            if taskDidSendBodyData != nil {
-                taskDidSendBodyData!(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
+            if let taskDidSendBodyData = self.taskDidSendBodyData {
+                taskDidSendBodyData(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
             } else if let delegate = self[task] as? Request.UploadTaskDelegate {
                 delegate.URLSession(session, task: task, didSendBodyData: bytesSent, totalBytesSent: totalBytesSent, totalBytesExpectedToSend: totalBytesExpectedToSend)
             }
         }
 
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-            if taskDidComplete != nil {
-                taskDidComplete!(session, task, error)
+            if let taskDidComplete = self.taskDidComplete {
+                taskDidComplete(session, task, error)
             } else if let delegate = self[task] {
                 delegate.URLSession(session, task: task, didCompleteWithError: error)
 
@@ -307,16 +317,16 @@ public class Manager {
         public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
             var disposition: NSURLSessionResponseDisposition = .Allow
 
-            if dataTaskDidReceiveResponse != nil {
-                disposition = dataTaskDidReceiveResponse!(session, dataTask, response)
+            if let dataTaskDidReceiveResponse = self.dataTaskDidReceiveResponse {
+                disposition = dataTaskDidReceiveResponse(session, dataTask, response)
             }
 
             completionHandler(disposition)
         }
 
         public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didBecomeDownloadTask downloadTask: NSURLSessionDownloadTask) {
-            if dataTaskDidBecomeDownloadTask != nil {
-                dataTaskDidBecomeDownloadTask!(session, dataTask, downloadTask)
+            if let dataTaskDidBecomeDownloadTask = self.dataTaskDidBecomeDownloadTask {
+                dataTaskDidBecomeDownloadTask(session, dataTask, downloadTask)
             } else {
                 let downloadDelegate = Request.DownloadTaskDelegate(task: downloadTask)
                 self[downloadTask] = downloadDelegate
@@ -324,16 +334,16 @@ public class Manager {
         }
 
         public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-            if dataTaskDidReceiveData != nil {
-                dataTaskDidReceiveData!(session, dataTask, data)
+            if let dataTaskDidReceiveData = self.dataTaskDidReceiveData {
+                dataTaskDidReceiveData(session, dataTask, data)
             } else if let delegate = self[dataTask] as? Request.DataTaskDelegate {
                 delegate.URLSession(session, dataTask: dataTask, didReceiveData: data)
             }
         }
 
-        public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: ((NSCachedURLResponse?) -> Void)) {
-            if dataTaskWillCacheResponse != nil {
-                completionHandler(dataTaskWillCacheResponse!(session, dataTask, proposedResponse))
+        public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, willCacheResponse proposedResponse: NSCachedURLResponse, completionHandler: ((NSCachedURLResponse!) -> Void)) {
+            if let dataTaskWillCacheResponse = self.dataTaskWillCacheResponse {
+                completionHandler(dataTaskWillCacheResponse(session, dataTask, proposedResponse))
             } else if let delegate = self[dataTask] as? Request.DataTaskDelegate {
                 delegate.URLSession(session, dataTask: dataTask, willCacheResponse: proposedResponse, completionHandler: completionHandler)
             } else {
@@ -357,24 +367,24 @@ public class Manager {
         // MARK: Delegate Methods
 
         public func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
-            if downloadTaskDidFinishDownloadingToURL != nil {
-                downloadTaskDidFinishDownloadingToURL!(session, downloadTask, location)
+            if let downloadTaskDidFinishDownloadingToURL = self.downloadTaskDidFinishDownloadingToURL {
+                downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
             } else if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(session, downloadTask: downloadTask, didFinishDownloadingToURL: location)
             }
         }
 
         public func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-            if downloadTaskDidWriteData != nil {
-                downloadTaskDidWriteData!(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
+            if let downloadTaskDidWriteData = self.downloadTaskDidWriteData {
+                downloadTaskDidWriteData(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
             } else if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(session, downloadTask: downloadTask, didWriteData: bytesWritten, totalBytesWritten: totalBytesWritten, totalBytesExpectedToWrite: totalBytesExpectedToWrite)
             }
         }
 
         public func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
-            if downloadTaskDidResumeAtOffset != nil {
-                downloadTaskDidResumeAtOffset!(session, downloadTask, fileOffset, expectedTotalBytes)
+            if let downloadTaskDidResumeAtOffset = self.downloadTaskDidResumeAtOffset {
+                downloadTaskDidResumeAtOffset(session, downloadTask, fileOffset, expectedTotalBytes)
             } else if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(session, downloadTask: downloadTask, didResumeAtOffset: fileOffset, expectedTotalBytes: expectedTotalBytes)
             }
@@ -385,17 +395,17 @@ public class Manager {
         public override func respondsToSelector(selector: Selector) -> Bool {
             switch selector {
             case "URLSession:didBecomeInvalidWithError:":
-                return (sessionDidBecomeInvalidWithError != nil)
+                return (self.sessionDidBecomeInvalidWithError != nil)
             case "URLSession:didReceiveChallenge:completionHandler:":
-                return (sessionDidReceiveChallenge != nil)
+                return (self.sessionDidReceiveChallenge != nil)
             case "URLSessionDidFinishEventsForBackgroundURLSession:":
-                return (sessionDidFinishEventsForBackgroundURLSession != nil)
+                return (self.sessionDidFinishEventsForBackgroundURLSession != nil)
             case "URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:":
-                return (taskWillPerformHTTPRedirection != nil)
+                return (self.taskWillPerformHTTPRedirection != nil)
             case "URLSession:dataTask:didReceiveResponse:completionHandler:":
-                return (dataTaskDidReceiveResponse != nil)
+                return (self.dataTaskDidReceiveResponse != nil)
             case "URLSession:dataTask:willCacheResponse:completionHandler:":
-                return (dataTaskWillCacheResponse != nil)
+                return (self.dataTaskWillCacheResponse != nil)
             default:
                 return self.dynamicType.instancesRespondToSelector(selector)
             }
