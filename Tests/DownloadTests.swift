@@ -198,7 +198,8 @@ class DownloadResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
+        if let
+            lastByteValue = byteValues.last,
             lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)

@@ -403,6 +403,7 @@ extension Request: Printable {
     /// The textual representation used when written to an output stream, which includes the HTTP method and URL, as well as the response status code if a response has been received.
     public var description: String {
         var components: [String] = []
+
         if let HTTPMethod = self.request.HTTPMethod {
             components.append(HTTPMethod)
         }
@@ -430,7 +431,14 @@ extension Request: DebugPrintable {
         }
 
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
-            let protectionSpace = NSURLProtectionSpace(host: URL!.host!, port: URL!.port?.integerValue ?? 0, `protocol`: URL!.scheme!, realm: URL!.host!, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
+            let protectionSpace = NSURLProtectionSpace(
+                host: URL!.host!,
+                port: URL!.port?.integerValue ?? 0,
+                `protocol`: URL!.scheme!,
+                realm: URL!.host!,
+                authenticationMethod: NSURLAuthenticationMethodHTTPBasic
+            )
+
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
                 for credential: NSURLCredential in (credentials as! [NSURLCredential]) {
                     components.append("-u \(credential.user!):\(credential.password!)")
@@ -446,9 +454,9 @@ extension Request: DebugPrintable {
         // See https://github.com/CocoaPods/swift/issues/24
         #if !os(OSX)
             if self.session.configuration.HTTPShouldSetCookies {
-                if let cookieStorage = self.session.configuration.HTTPCookieStorage,
-                    cookies = cookieStorage.cookiesForURL(URL!) as? [NSHTTPCookie]
-                    where !cookies.isEmpty
+                if let
+                    cookieStorage = self.session.configuration.HTTPCookieStorage,
+                    cookies = cookieStorage.cookiesForURL(URL!) as? [NSHTTPCookie] where !cookies.isEmpty
                 {
                     let string = cookies.reduce(""){ $0 + "\($1.name)=\($1.value ?? String());" }
                     components.append("-b \"\(string.substringToIndex(string.endIndex.predecessor()))\"")

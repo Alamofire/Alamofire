@@ -103,8 +103,7 @@ public enum ParameterEncoding {
                 }
             }
 
-            let method = Method(rawValue: mutableURLRequest.HTTPMethod)
-            if let method = method where encodesParametersInURL(method) {
+            if let method = Method(rawValue: mutableURLRequest.HTTPMethod) where encodesParametersInURL(method) {
                 if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
                     URLComponents.percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters!)
                     mutableURLRequest.URL = URLComponents.URL
@@ -118,6 +117,7 @@ public enum ParameterEncoding {
             }
         case .JSON:
             let options = NSJSONWritingOptions.allZeros
+
             if let data = NSJSONSerialization.dataWithJSONObject(parameters!, options: options, error: &error) {
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 mutableURLRequest.HTTPBody = data

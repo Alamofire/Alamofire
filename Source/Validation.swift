@@ -72,9 +72,12 @@ extension Request {
         let subtype: String
 
         init?(_ string: String) {
-            let components = string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).substringToIndex(string.rangeOfString(";")?.endIndex ?? string.endIndex).componentsSeparatedByString("/")
+            let components = string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                                   .substringToIndex(string.rangeOfString(";")?.endIndex ?? string.endIndex)
+                                   .componentsSeparatedByString("/")
 
-            if let type = components.first,
+            if let
+                type = components.first,
                 subtype = components.last
             {
                 self.type = type
@@ -110,9 +113,7 @@ extension Request {
                 responseMIMEType = MIMEType(responseContentType)
             {
                 for contentType in acceptableContentTypes {
-                    if let acceptableMIMEType = MIMEType(contentType)
-                        where acceptableMIMEType.matches(responseMIMEType)
-                    {
+                    if let acceptableMIMEType = MIMEType(contentType) where acceptableMIMEType.matches(responseMIMEType) {
                         return true
                     }
                 }

@@ -46,15 +46,18 @@ extension Manager {
             dispatch_sync(self.queue) {
                 uploadTask = self.session.uploadTaskWithStreamedRequest(request)
             }
+
             HTTPBodyStream = stream
         }
 
         let request = Request(session: self.session, task: uploadTask)
+
         if HTTPBodyStream != nil {
             request.delegate.taskNeedNewBodyStream = { _, _ in
                 return HTTPBodyStream
             }
         }
+
         self.delegate[request.delegate.task] = request.delegate
 
         if self.startRequestsImmediately {
@@ -127,6 +130,7 @@ extension Manager {
     */
     public func upload(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, data: NSData) -> Request {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+
         return upload(mutableURLRequest, data: data)
     }
 
@@ -160,6 +164,7 @@ extension Manager {
     */
     public func upload(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, stream: NSInputStream) -> Request {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+
         return upload(mutableURLRequest, stream: stream)
     }
 
