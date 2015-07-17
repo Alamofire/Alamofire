@@ -80,18 +80,18 @@ class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
         let URLString = "http://httpbin.org/get"
-        let serializer = Alamofire.Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
+        let serializer = Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
 
         let expectation = expectationWithDescription("GET request should succeed: \(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var string: AnyObject?
+        var string: String?
         var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
-            .response(serializer: serializer) { responseRequest, responseResponse, responseString, responseError in
+            .response(responseSerializer: serializer) { responseRequest, responseResponse, responseString, responseError in
                 request = responseRequest
                 response = responseResponse
                 string = responseString
@@ -120,7 +120,7 @@ class RequestResponseTestCase: BaseTestCase {
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
         var responseRequest: NSURLRequest?
         var responseResponse: NSHTTPURLResponse?
-        var responseData: AnyObject?
+        var responseData: NSData?
         var responseError: NSError?
 
         // When
@@ -189,7 +189,7 @@ class RequestResponseTestCase: BaseTestCase {
 
         var responseRequest: NSURLRequest?
         var responseResponse: NSHTTPURLResponse?
-        var responseData: AnyObject?
+        var responseData: NSData?
         var responseError: NSError?
 
         // When

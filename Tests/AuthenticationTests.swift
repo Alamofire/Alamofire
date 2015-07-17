@@ -59,7 +59,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
@@ -90,7 +90,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
@@ -132,7 +132,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
@@ -163,7 +163,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
