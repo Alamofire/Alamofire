@@ -141,7 +141,7 @@ extension Request {
         var downloadProgress: ((Int64, Int64, Int64) -> Void)?
 
         var resumeData: NSData?
-        override var data: NSData? { return resumeData }
+        override var data: NSData? { return self.resumeData }
 
         // MARK: - NSURLSessionDownloadDelegate
 
