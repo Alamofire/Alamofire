@@ -103,12 +103,7 @@ extension Request {
         :returns: The request.
     */
     public func response(completionHandler: (NSURLRequest, NSHTTPURLResponse?, NSData?, NSError?) -> Void) -> Self {
-        return response(
-            responseSerializer: Request.dataResponseSerializer(),
-            completionHandler: { (request, response, data: NSData?, error) in
-                completionHandler(request, response, data, error)
-            }
-        )
+        return response(responseSerializer: Request.dataResponseSerializer(), completionHandler: completionHandler)
     }
 }
 
@@ -154,9 +149,7 @@ extension Request {
     {
         return response(
             responseSerializer: Request.stringResponseSerializer(encoding: encoding),
-            completionHandler: { (request, response, string: String?, error) in
-                completionHandler(request, response, string, error)
-            }
+            completionHandler: completionHandler
         )
     }
 }
@@ -200,9 +193,7 @@ extension Request {
     {
         return response(
             responseSerializer: Request.JSONResponseSerializer(options: options),
-            completionHandler: { (request, response, JSON: AnyObject?, error) in
-                completionHandler(request, response, JSON, error)
-            }
+            completionHandler: completionHandler
         )
     }
 }
@@ -251,9 +242,7 @@ extension Request {
     {
         return response(
             responseSerializer: Request.propertyListResponseSerializer(options: options),
-            completionHandler: { (request, response, plist: AnyObject?, error) in
-                completionHandler(request, response, plist, error)
-            }
+            completionHandler: completionHandler
         )
     }
 }
