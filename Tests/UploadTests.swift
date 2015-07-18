@@ -31,12 +31,12 @@ class UploadFileInitializationTestCase: BaseTestCase {
         let imageURL = URLForResource("rainbow", withExtension: "jpg")
 
         // When
-        let request = Alamofire.upload(.POST, URLString, file: imageURL)
+        let request = Alamofire.upload(.POST, URLString: URLString, file: imageURL)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertEqual(request.request!.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request!.URL!, NSURL(string: URLString)!, "request URL should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
@@ -46,14 +46,14 @@ class UploadFileInitializationTestCase: BaseTestCase {
         let imageURL = URLForResource("rainbow", withExtension: "jpg")
 
         // When
-        let request = Alamofire.upload(.POST, URLString, headers: ["Authorization": "123456"], file: imageURL)
+        let request = Alamofire.upload(.POST, URLString: URLString, headers: ["Authorization": "123456"], file: imageURL)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertEqual(request.request!.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request!.URL!, NSURL(string: URLString)!, "request URL should be equal")
 
-        let authorizationHeader = request.request.valueForHTTPHeaderField("Authorization") ?? ""
+        let authorizationHeader = request.request!.valueForHTTPHeaderField("Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
 
         XCTAssertNil(request.response, "response should be nil")
@@ -68,12 +68,12 @@ class UploadDataInitializationTestCase: BaseTestCase {
         let URLString = "http://httpbin.org/"
 
         // When
-        let request = Alamofire.upload(.POST, URLString, data: NSData())
+        let request = Alamofire.upload(.POST, URLString: URLString, data: NSData())
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertEqual(request.request!.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request!.URL!, NSURL(string: URLString)!, "request URL should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
@@ -82,14 +82,14 @@ class UploadDataInitializationTestCase: BaseTestCase {
         let URLString = "http://httpbin.org/"
 
         // When
-        let request = Alamofire.upload(.POST, URLString, headers: ["Authorization": "123456"], data: NSData())
+        let request = Alamofire.upload(.POST, URLString: URLString, headers: ["Authorization": "123456"], data: NSData())
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertEqual(request.request!.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request!.URL!, NSURL(string: URLString)!, "request URL should be equal")
 
-        let authorizationHeader = request.request.valueForHTTPHeaderField("Authorization") ?? ""
+        let authorizationHeader = request.request!.valueForHTTPHeaderField("Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
 
         XCTAssertNil(request.response, "response should be nil")
@@ -106,12 +106,12 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         let imageStream = NSInputStream(URL: imageURL)!
 
         // When
-        let request = Alamofire.upload(.POST, URLString, stream: imageStream)
+        let request = Alamofire.upload(.POST, URLString: URLString, stream: imageStream)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertEqual(request.request!.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request!.URL!, NSURL(string: URLString)!, "request URL should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
@@ -122,14 +122,14 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         let imageStream = NSInputStream(URL: imageURL)!
 
         // When
-        let request = Alamofire.upload(.POST, URLString, headers: ["Authorization": "123456"], stream: imageStream)
+        let request = Alamofire.upload(.POST, URLString: URLString, headers: ["Authorization": "123456"], stream: imageStream)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertEqual(request.request!.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request!.URL!, NSURL(string: URLString)!, "request URL should be equal")
 
-        let authorizationHeader = request.request.valueForHTTPHeaderField("Authorization") ?? ""
+        let authorizationHeader = request.request!.valueForHTTPHeaderField("Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
 
         XCTAssertNil(request.response, "response should be nil")
@@ -427,7 +427,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             },
             encodingCompletion: { result in
                 switch result {
-                case let .Success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
+                case let .Success(upload, uploadStreamingFromDisk, _):
                     streamingFromDisk = uploadStreamingFromDisk
 
                     upload.response { responseRequest, _, _, _ in
@@ -532,7 +532,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             encodingMemoryThreshold: 0,
             encodingCompletion: { result in
                 switch result {
-                case let .Success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
+                case let .Success(upload, uploadStreamingFromDisk, _):
                     streamingFromDisk = uploadStreamingFromDisk
 
                     upload.response { responseRequest, _, _, _ in
@@ -567,24 +567,25 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     // MARK: Combined Test Execution
 
-    private func executeMultipartFormDataUploadRequestWithProgress(#streamFromDisk: Bool) {
+    private func executeMultipartFormDataUploadRequestWithProgress(streamFromDisk streamFromDisk: Bool) {
         // Given
         let URLString = "http://httpbin.org/post"
         let loremData1: NSData = {
-            var loremValues: [String] = []
+//            var loremValues: [String] = []
+            var loremValues = ""
             for _ in 1...1_500 {
-                loremValues.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                loremValues = loremValues+"Lorem ipsum dolor sit amet, consectetur adipiscing elit."+" "
             }
-
-            return join(" ", loremValues).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            return loremValues.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         }()
         let loremData2: NSData = {
-            var loremValues: [String] = []
+//            var loremValues: [String] = []
+            var loremValues = ""
             for _ in 1...1_500 {
-                loremValues.append("Lorem ipsum dolor sit amet, nam no graeco recusabo appellantur.")
+                loremValues = loremValues+"Lorem ipsum dolor sit amet, nam no graeco recusabo appellantur."+" "
             }
 
-            return join(" ", loremValues).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            return loremValues.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         }()
 
         let expectation = expectationWithDescription("multipart form data upload should succeed")
@@ -607,7 +608,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             encodingMemoryThreshold: streamFromDisk ? 0 : 100_000_000,
             encodingCompletion: { result in
                 switch result {
-                case .Success(let upload, let streamingFromDisk, _):
+                case .Success(let upload, _, _):
                     upload.progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
                         let bytes = (bytes: bytesWritten, totalBytes: totalBytesWritten, totalBytesExpected: totalBytesExpectedToWrite)
                         byteValues.append(bytes)

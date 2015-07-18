@@ -33,7 +33,7 @@ struct BoundaryGenerator {
         case Initial, Encapsulated, Final
     }
 
-    static func boundary(#boundaryType: BoundaryType, boundaryKey: String) -> String {
+    static func boundary(boundaryType boundaryType: BoundaryType, boundaryKey: String) -> String {
         let boundary: String
 
         switch boundaryType {
@@ -48,7 +48,7 @@ struct BoundaryGenerator {
         return boundary
     }
 
-    static func boundaryData(#boundaryType: BoundaryType, boundaryKey: String) -> NSData {
+    static func boundaryData(boundaryType boundaryType: BoundaryType, boundaryKey: String) -> NSData {
         return BoundaryGenerator.boundary(
             boundaryType: boundaryType,
             boundaryKey: boundaryKey
@@ -57,11 +57,15 @@ struct BoundaryGenerator {
 }
 
 private func temporaryFileURL() -> NSURL {
-    let tempDirectoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory())!
+    let tempDirectoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
     let directoryURL = tempDirectoryURL.URLByAppendingPathComponent("com.alamofire.test/multipart.form.data")
 
     let fileManager = NSFileManager.defaultManager()
-    fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil, error: nil)
+    do {
+        try fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
+    } catch {
+        // TODO: Handle this error
+    }
 
     let fileName = NSUUID().UUIDString
     let fileURL = directoryURL.URLByAppendingPathComponent(fileName)
@@ -784,7 +788,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
             XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
-            if let failureReason = error.userInfo?[NSLocalizedFailureReasonErrorKey] as? String {
+            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
                 let expectedFailureReason = "Failed to extract the fileName of the provided URL: \(fileURL)"
                 XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
             } else {
@@ -808,7 +812,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
             XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
-            if let failureReason = error.userInfo?[NSLocalizedFailureReasonErrorKey] as? String {
+            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
                 let expectedFailureReason = "The URL does not point to a file URL: \(fileURL)"
                 XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
             } else {
@@ -819,7 +823,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
     func testThatAppendingFileBodyPartThatIsNotReachableReturnsError() {
         // Given
-        let fileURL = NSURL(fileURLWithPath: NSTemporaryDirectory().stringByAppendingPathComponent("does_not_exist.jpg"))!
+        let fileURL = NSURL(fileURLWithPath: NSTemporaryDirectory().stringByAppendingPathComponent("does_not_exist.jpg"))
         let multipartFormData = MultipartFormData()
 
         // When
@@ -832,7 +836,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
             XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
-            if let failureReason = error.userInfo?[NSLocalizedFailureReasonErrorKey] as? String {
+            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
                 let expectedFailureReason = "The URL is not reachable: \(fileURL)"
                 XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
             } else {
@@ -843,7 +847,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
     func testThatAppendingFileBodyPartThatIsDirectoryReturnsError() {
         // Given
-        let directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)!
+        let directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         let multipartFormData = MultipartFormData()
 
         // When
@@ -856,7 +860,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
             XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
-            if let failureReason = error.userInfo?[NSLocalizedFailureReasonErrorKey] as? String {
+            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
                 let expectedFailureReason = "The URL is a directory, not a file: \(directoryURL)"
                 XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
             } else {
@@ -870,7 +874,9 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let expectation = expectationWithDescription("multipart form data should fail when writing to disk")
 
         let fileURL = temporaryFileURL()
-        "dummy data".writeToURL(fileURL, atomically: true, encoding: NSUTF8StringEncoding, error: nil)
+        do {
+            try "dummy data".writeToURL(fileURL, atomically: true, encoding: NSUTF8StringEncoding)
+        } catch {}
 
         let multipartFormData = MultipartFormData()
         let data = "Lorem ipsum dolor sit amet.".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!

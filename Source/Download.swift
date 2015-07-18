@@ -70,7 +70,7 @@ extension Manager {
         - returns: The created download request.
     */
     public func download(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, destination: Request.DownloadFileDestination) -> Request {
-        let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+        let mutableURLRequest = URLRequest(method, URLString: URLString, headers: headers)
         return download(mutableURLRequest, destination: destination)
     }
 
@@ -156,7 +156,7 @@ extension Request {
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
             if let downloadTaskDidFinishDownloadingToURL = self.downloadTaskDidFinishDownloadingToURL {
                 do {
-                    let destination = downloadTaskDidFinishDownloadingToURL!(session, downloadTask, location)
+                    let destination = downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
                     try NSFileManager.defaultManager().moveItemAtURL(location, toURL: destination)
                 } catch {
                     self.error = error as NSError

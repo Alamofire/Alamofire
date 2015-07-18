@@ -434,7 +434,7 @@ extension Request: CustomDebugStringConvertible {
 
         let URL = request.URL
 
-        if let HTTPMethod = self.request.HTTPMethod where HTTPMethod != "GET" {
+        if let HTTPMethod = request.HTTPMethod where HTTPMethod != "GET" {
             components.append("-X \(HTTPMethod)")
         }
 
@@ -465,7 +465,7 @@ extension Request: CustomDebugStringConvertible {
             }
         #endif
 
-        if let headerFields = self.request.allHTTPHeaderFields {
+        if let headerFields = request.allHTTPHeaderFields {
             for (field, value) in headerFields {
                 switch field {
                 case "Cookie":
@@ -488,7 +488,7 @@ extension Request: CustomDebugStringConvertible {
         }
 
         if let
-            HTTPBody = self.request.HTTPBody,
+            HTTPBody = request.HTTPBody,
             escapedBody = NSString(data: HTTPBody, encoding: NSUTF8StringEncoding)?.stringByReplacingOccurrencesOfString("\"", withString: "\\\"")
         {
             components.append("-d \"\(escapedBody)\"")

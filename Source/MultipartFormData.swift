@@ -67,7 +67,7 @@ public class MultipartFormData {
             return String(format: "alamofire.boundary.%08x%08x", arc4random(), arc4random())
         }
 
-        static func boundaryData(#boundaryType: BoundaryType, boundary: String) -> NSData {
+        static func boundaryData(boundaryType boundaryType: BoundaryType, boundary: String) -> NSData {
             let boundaryText: String
 
             switch boundaryType {
@@ -190,31 +190,38 @@ public class MultipartFormData {
 
         if !URL.fileURL {
             return errorWithCode(NSURLErrorBadURL, failureReason: "The URL does not point to a file URL: \(URL)")
-        } else if !URL.checkResourceIsReachableAndReturnError(nil) {
-            return errorWithCode(NSURLErrorBadURL, failureReason: "The URL is not reachable: \(URL)")
         } else if NSFileManager.defaultManager().fileExistsAtPath(URL.path!, isDirectory: &isDirectory) && isDirectory {
             return errorWithCode(NSURLErrorBadURL, failureReason: "The URL is a directory, not a file: \(URL)")
         }
+        
+        do {
+            try URL.checkResourceIsReachable()
+        } catch {
+            return errorWithCode(NSURLErrorBadURL, failureReason: "The URL is not reachable: \(URL)")
+        }
+        
 
         let bodyContentLength: UInt64
-        var fileAttributesError: NSError?
-
-        if let
-            path = URL.path,
-            attributes = NSFileManager.defaultManager().attributesOfItemAtPath(path, error: &fileAttributesError),
-            fileSize = (attributes[NSFileSize] as? NSNumber)?.unsignedLongLongValue
-        {
-            bodyContentLength = fileSize
-        } else {
-            return errorWithCode(NSURLErrorBadURL, failureReason: "Could not fetch attributes from the URL: \(URL)")
+        
+        guard let path = URL.path else {
+            return errorWithCode(NSURLErrorBadURL, failureReason: "Could not obtain a path from the URL: \(URL)")
         }
-
-        if let bodyStream = NSInputStream(URL: URL) {
-            let bodyPart = BodyPart(headers: headers, bodyStream: bodyStream, bodyContentLength: bodyContentLength)
-            self.bodyParts.append(bodyPart)
-        } else {
+        
+        guard let bodyStream = NSInputStream(URL: URL) else {
             let failureReason = "Failed to create an input stream from the URL: \(URL)"
             return errorWithCode(NSURLErrorCannotOpenFile, failureReason: failureReason)
+        }
+        
+        do {
+            let attributes = try NSFileManager.defaultManager().attributesOfItemAtPath(path)
+            guard let fileSize = (attributes[NSFileSize] as? NSNumber)?.unsignedLongLongValue else {
+                return errorWithCode(NSURLErrorBadURL, failureReason: "Failed to cast \(attributes[NSFileSize]) to NSNumber")
+            }
+            bodyContentLength = fileSize
+            let bodyPart = BodyPart(headers: headers, bodyStream: bodyStream, bodyContentLength: bodyContentLength)
+            self.bodyParts.append(bodyPart)
+        } catch {
+            return errorWithCode(NSURLErrorBadURL, failureReason: "Could not fetch attributes from the URL: \(URL)")
         }
 
         return nil
@@ -256,7 +263,7 @@ public class MultipartFormData {
         :param: data The data to encode into the multipart form data.
         :param: name The name to associate with the data in the `Content-Disposition` HTTP header.
     */
-    public func appendBodyPart(#data: NSData, name: String) {
+    public func appendBodyPart(data data: NSData, name: String) {
         let headers = contentHeaders(name: name)
         let bodyStream = NSInputStream(data: data)
         let bodyContentLength = UInt64(data.length)
@@ -280,7 +287,7 @@ public class MultipartFormData {
         :param: fileName The filename to associate with the stream content in the `Content-Disposition` HTTP header.
         :param: mimeType The MIME type to associate with the stream content in the `Content-Type` HTTP header.
     */
-    public func appendBodyPart(#stream: NSInputStream, name: String, fileName: String, length: UInt64, mimeType: String) {
+    public func appendBodyPart(stream stream: NSInputStream, name: String, fileName: String, length: UInt64, mimeType: String) {
         let headers = contentHeaders(name: name, fileName: fileName, mimeType: mimeType)
         let bodyPart = BodyPart(headers: headers, bodyStream: stream, bodyContentLength: length)
 
@@ -583,10 +590,10 @@ public class MultipartFormData {
     // MARK: - Private - Mime Type
 
     private func mimeTypeForPathExtension(pathExtension: String) -> String {
-        let identifier = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension, nil).takeRetainedValue()
-
-        if let contentType = UTTypeCopyPreferredTagWithClass(identifier, kUTTagClassMIMEType) {
-            return contentType.takeRetainedValue() as String
+        if let
+            identifier = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension, nil)?.takeRetainedValue(),
+            contentType = UTTypeCopyPreferredTagWithClass(identifier, kUTTagClassMIMEType) {
+                return contentType.takeRetainedValue() as String
         }
 
         return "application/octet-stream"
@@ -594,11 +601,11 @@ public class MultipartFormData {
 
     // MARK: - Private - Content Headers
 
-    private func contentHeaders(#name: String) -> [String: String] {
+    private func contentHeaders(name name: String) -> [String: String] {
         return ["Content-Disposition": "form-data; name=\"\(name)\""]
     }
 
-    private func contentHeaders(#name: String, fileName: String, mimeType: String) -> [String: String] {
+    private func contentHeaders(name name: String, fileName: String, mimeType: String) -> [String: String] {
         return [
             "Content-Disposition": "form-data; name=\"\(name)\"; filename=\"\(fileName)\"",
             "Content-Type": "\(mimeType)"

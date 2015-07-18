@@ -134,7 +134,7 @@ public enum ParameterEncoding {
                 encodingError = error as NSError
             }
         case .Custom(let closure):
-            (mutableURLRequest, error) = closure(mutableURLRequest, parameters)
+            (mutableURLRequest, encodingError) = closure(mutableURLRequest, parameters)
         }
 
         return (mutableURLRequest, encodingError)

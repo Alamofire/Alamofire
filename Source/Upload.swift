@@ -93,7 +93,7 @@ extension Manager {
         - returns: The created upload request.
     */
     public func upload(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, file: NSURL) -> Request {
-        let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+        let mutableURLRequest = URLRequest(method, URLString: URLString, headers: headers)
         return upload(mutableURLRequest, file: file)
     }
 
@@ -126,7 +126,7 @@ extension Manager {
         - returns: The created upload request.
     */
     public func upload(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, data: NSData) -> Request {
-        let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+        let mutableURLRequest = URLRequest(method, URLString: URLString, headers: headers)
         return upload(mutableURLRequest, data: data)
     }
 
@@ -159,7 +159,7 @@ extension Manager {
         - returns: The created upload request.
     */
     public func upload(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, stream: NSInputStream) -> Request {
-        let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+        let mutableURLRequest = URLRequest(method, URLString: URLString, headers: headers)
         return upload(mutableURLRequest, stream: stream)
     }
 
@@ -216,7 +216,7 @@ extension Manager {
         encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
         encodingCompletion: (MultipartFormDataEncodingResult -> Void)?)
     {
-        let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+        let mutableURLRequest = URLRequest(method, URLString: URLString, headers: headers)
 
         return upload(
             mutableURLRequest,
@@ -281,31 +281,31 @@ extension Manager {
                 }
             } else {
                 let fileManager = NSFileManager.defaultManager()
-                let tempDirectoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory())!
+                let tempDirectoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
                 let directoryURL = tempDirectoryURL.URLByAppendingPathComponent("com.alamofire.manager/multipart.form.data")
                 let fileName = NSUUID().UUIDString
                 let fileURL = directoryURL.URLByAppendingPathComponent(fileName)
-
-                var error: NSError?
-
-                if fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil, error: &error) {
-                    formData.writeEncodedDataToDisk(fileURL) { error in
-                        dispatch_async(dispatch_get_main_queue()) {
-                            if let error = error {
-                                encodingCompletion?(.Failure(error))
-                            } else {
-                                let encodingResult = MultipartFormDataEncodingResult.Success(
-                                    request: self.upload(URLRequestWithContentType, file: fileURL),
-                                    streamingFromDisk: true,
-                                    streamFileURL: fileURL
-                                )
-                                encodingCompletion?(encodingResult)
+                
+                do {
+                    try fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
+                        formData.writeEncodedDataToDisk(fileURL) { error in
+                            dispatch_async(dispatch_get_main_queue()) {
+                                if let error = error {
+                                    encodingCompletion?(.Failure(error))
+                                } else {
+                                    let encodingResult = MultipartFormDataEncodingResult.Success(
+                                        request: self.upload(URLRequestWithContentType, file: fileURL),
+                                        streamingFromDisk: true,
+                                        streamFileURL: fileURL
+                                    )
+                                    encodingCompletion?(encodingResult)
+                                }
                             }
                         }
-                    }
-                } else {
+                } catch {
+                    let error = error as NSError
                     dispatch_async(dispatch_get_main_queue()) {
-                        encodingCompletion?(.Failure(error!))
+                        encodingCompletion?(.Failure(error))
                     }
                 }
             }
