@@ -134,6 +134,17 @@ extension Request {
         }
     }
 
+    /// The resume data of the underlying download task if available after a failure.
+    public var resumeData: NSData? {
+        var data: NSData?
+
+        if let delegate = self.delegate as? DownloadTaskDelegate {
+            data = delegate.resumeData
+        }
+
+        return data
+    }
+
     // MARK: - DownloadTaskDelegate
 
     class DownloadTaskDelegate: TaskDelegate, NSURLSessionDownloadDelegate {
