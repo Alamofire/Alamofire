@@ -122,9 +122,9 @@ public class Request {
 
         This closure returns the bytes most recently received from the server, not including data from previous calls. If this closure is set, data will only be available within this closure, and will not be saved elsewhere. It is also important to note that the `response` closure will be called with nil `responseData`.
 
-        :param: closure The code to be executed periodically during the lifecycle of the request.
+        - parameter closure: The code to be executed periodically during the lifecycle of the request.
 
-        :returns: The request.
+        - returns: The request.
     */
     public func stream(closure: (NSData -> Void)? = nil) -> Self {
         if let dataDelegate = self.delegate as? DataTaskDelegate {
