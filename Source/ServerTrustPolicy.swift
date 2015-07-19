@@ -1,4 +1,4 @@
-// Alamofire.swift
+// ServerTrustPolicy.swift
 //
 // Copyright (c) 2014–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -114,7 +114,7 @@ public enum ServerTrustPolicy {
 
         :returns: All certificates within the given bundle.
     */
-    public func certificatesInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecCertificate] {
+    public static func certificatesInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecCertificate] {
         var certificates: [SecCertificate] = []
 
         for path in bundle.pathsForResourcesOfType(".cer", inDirectory: nil) as! [String] {
@@ -136,7 +136,7 @@ public enum ServerTrustPolicy {
 
         :returns: All public keys within the given bundle.
     */
-    public func publicKeysInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecKey] {
+    public static func publicKeysInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecKey] {
         var publicKeys: [SecKey] = []
 
         for certificate in certificatesInBundle(bundle: bundle) {
@@ -200,8 +200,8 @@ public enum ServerTrustPolicy {
             }
 
             if certificateChainEvaluationPassed {
-                let serverKeys = publicKeysForTrust(serverTrust)
-                outerLoop: for serverPublicKey in publicKeysForTrust(serverTrust) as [AnyObject] {
+                let serverKeys = ServerTrustPolicy.publicKeysForTrust(serverTrust)
+                outerLoop: for serverPublicKey in ServerTrustPolicy.publicKeysForTrust(serverTrust) as [AnyObject] {
                     for pinnedPublicKey in pinnedPublicKeys as [AnyObject] {
                         if serverPublicKey.isEqual(pinnedPublicKey) {
                             serverTrustIsValid = true
@@ -256,7 +256,7 @@ public enum ServerTrustPolicy {
 
     // MARK: - Private - Public Key Extraction
 
-    private func publicKeysForTrust(trust: SecTrust) -> [SecKey] {
+    private static func publicKeysForTrust(trust: SecTrust) -> [SecKey] {
         var publicKeys: [SecKey] = []
 
         for index in 0..<SecTrustGetCertificateCount(trust) {
@@ -270,7 +270,7 @@ public enum ServerTrustPolicy {
         return publicKeys
     }
 
-    private func publicKeyForCertificate(certificate: SecCertificate) -> SecKey? {
+    private static func publicKeyForCertificate(certificate: SecCertificate) -> SecKey? {
         var publicKey: SecKey?
 
         let policy = SecPolicyCreateBasicX509().takeRetainedValue()
