@@ -882,6 +882,59 @@ enum Router: URLRequestConvertible {
 Alamofire.request(Router.ReadUser("mattt")) // GET /users/mattt
 ```
 
+### Security
+
+Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire will evaluate the certificate chain provided by the server using Apple's built in validation provided by the Security framework. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by the `ServerTrustPolicy`.
+
+#### ServerTrustPolicy
+
+The `ServerTrustPolicy` enumeration evaluates the server trust generally provided by an `NSURLAuthenticationChallenge` when connecting to a server over a secure HTTPS connection.
+
+```swift
+let serverTrustPolicy = ServerTrustPolicy.PinCertificates(
+    certificates: ServerTrustPolicy.certificatesInBundle(),
+    validateCertificateChain: true,
+    validateHost: true
+)
+```
+
+There are many different cases of server trust evaluation giving you complete control over the validation process:
+
+* `PerformDefaultEvaluation`: Uses the default server trust evaluation while allowing you to control whether to validate the host provided by the challenge. 
+* `PinCertificates`: Uses the pinned certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates.
+* `PinPublicKeys`: Uses the pinned public keys to validate the server trust. The server trust is considered valid if one of the pinned public keys match one of the server certificate public keys.
+* `DisableEvaluation`: Disables all evaluation which in turn will always consider any server trust as valid.
+* `CustomEvaluation`: Uses the associated closure to evaluate the validity of the server trust thus giving you complete control over the validation process. Use with caution.
+
+#### Server Trust Policy Manager
+
+The `ServerTrustPolicyManager` is responsible for storing an internal mapping of server trust policies to a particular host. This allows Alamofire to evaluate each host against a different server trust policy. 
+
+```swift
+let serverTrustPolicies: [String: ServerTrustPolicy] = [
+    "test.example.com": .PinCertificates(
+        certificates: ServerTrustPolicy.certificatesInBundle(),
+        validateCertificateChain: true,
+        validateHost: true
+    ),
+    "insecure.expired-apis.com": .DisableEvaluation
+]
+
+let manager = Manager(
+    configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
+    serverTrustPolicyManager: ServerTrustPolicyManager(policies: serverTrustPolicies)
+)
+```
+
+These server trust policies will result in the following behavior:
+
+* `test.example.com` will always use certificate pinning with certificate chain and host validation enabled thus requiring the following criteria to be met to allow the TLS handshake to succeed:
+  * Certificate chain MUST be valid.
+  * Certificate chain MUST include one of the pinned certificates.
+  * Challenge host MUST match the host in the certificate chain's leaf certificate.
+* `insecure.expired-apis.com` will never evaluate the certificate chain and will always allow the TLS handshake to succeed.
+* All other hosts will use the default evaluation provided by Apple.
+
 * * *
 
 ## FAQ
@@ -899,8 +952,6 @@ AFNetworking remains the premiere networking library available for OS X and iOS,
 Use AFNetworking for any of the following:
 
 - UIKit extensions, such as asynchronously loading images to `UIImageView`
-- TLS verification, using `AFSecurityManager`
-- Situations requiring `NSOperation` or `NSURLConnection`, using `AFURLConnectionOperation`
 - Network reachability monitoring, using `AFNetworkReachabilityManager`
 
 ### What's the origin of the name Alamofire?
