@@ -26,7 +26,7 @@ import XCTest
 
 private struct TestCertificates {
     static let RootCA = TestCertificates.certificateWithFileName("root-ca-disig")
-    static let IntermedateCA = TestCertificates.certificateWithFileName("intermediate-ca-disig")
+    static let IntermediateCA = TestCertificates.certificateWithFileName("intermediate-ca-disig")
     static let Leaf = TestCertificates.certificateWithFileName("testssl-expire.disig.sk")
 
     static func certificateWithFileName(fileName: String) -> SecCertificate {
@@ -43,7 +43,7 @@ private struct TestCertificates {
 
 private struct TestPublicKeys {
     static let RootCA = TestPublicKeys.publicKeyForCertificate(TestCertificates.RootCA)
-    static let IntermediateCA = TestPublicKeys.publicKeyForCertificate(TestCertificates.IntermedateCA)
+    static let IntermediateCA = TestPublicKeys.publicKeyForCertificate(TestCertificates.IntermediateCA)
     static let Leaf = TestPublicKeys.publicKeyForCertificate(TestCertificates.Leaf)
 
     static func publicKeyForCertificate(certificate: SecCertificate) -> SecKey {
@@ -154,7 +154,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWhenPinningAllCertificates() {
         // Given
-        let certificates = [TestCertificates.Leaf, TestCertificates.IntermedateCA, TestCertificates.RootCA]
+        let certificates = [TestCertificates.Leaf, TestCertificates.IntermediateCA, TestCertificates.RootCA]
         let policies: [String: ServerTrustPolicy] = [
             self.host: .PinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
         ]
