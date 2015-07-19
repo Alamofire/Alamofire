@@ -112,7 +112,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -123,7 +123,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     // MARK: Server Trust Policy - Certificate Pinning Tests
 
-    func testThatExpiredCertificateRequestFailsWhenPinningLeafCertificate() {
+    func testThatExpiredCertificateRequestFailsWhenPinningLeafCertificateWithCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.Leaf]
         let policies: [String: ServerTrustPolicy] = [
@@ -143,7 +143,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -152,7 +152,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertEqual(error?.code ?? -1, NSURLErrorCancelled, "error should be NSURLErrorCancelled")
     }
 
-    func testThatExpiredCertificateRequestFailsWhenPinningAllCertificates() {
+    func testThatExpiredCertificateRequestFailsWhenPinningAllCertificatesWithCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.Leaf, TestCertificates.IntermediateCA, TestCertificates.RootCA]
         let policies: [String: ServerTrustPolicy] = [
@@ -172,13 +172,97 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.code ?? -1, NSURLErrorCancelled, "error should be NSURLErrorCancelled")
+    }
+
+    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafCertificateWithoutCertificateChainValidation() {
+        // Given
+        let certificates = [TestCertificates.Leaf]
+        let policies: [String: ServerTrustPolicy] = [
+            self.host: .PinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+        ]
+
+        let manager = Manager(
+            configuration: self.configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
+
+        let expectation = expectationWithDescription("\(self.URL)")
+        var error: NSError?
+
+        // When
+        manager.request(.GET, self.URL)
+            .response { _, _, _, responseError in
+                error = responseError
+                expectation.fulfill()
+            }
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNil(error, "error should be nil")
+    }
+
+    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCACertificateWithoutCertificateChainValidation() {
+        // Given
+        let certificates = [TestCertificates.IntermediateCA]
+        let policies: [String: ServerTrustPolicy] = [
+            self.host: .PinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+        ]
+
+        let manager = Manager(
+            configuration: self.configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
+
+        let expectation = expectationWithDescription("\(self.URL)")
+        var error: NSError?
+
+        // When
+        manager.request(.GET, self.URL)
+            .response { _, _, _, responseError in
+                error = responseError
+                expectation.fulfill()
+            }
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNil(error, "error should be nil")
+    }
+
+    func testThatExpiredCertificateRequestSucceedsWhenPinningRootCACertificateWithoutCertificateChainValidation() {
+        // Given
+        let certificates = [TestCertificates.RootCA]
+        let policies: [String: ServerTrustPolicy] = [
+            self.host: .PinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+        ]
+
+        let manager = Manager(
+            configuration: self.configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
+
+        let expectation = expectationWithDescription("\(self.URL)")
+        var error: NSError?
+
+        // When
+        manager.request(.GET, self.URL)
+            .response { _, _, _, responseError in
+                error = responseError
+                expectation.fulfill()
+            }
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        
+        // Then
+        XCTAssertNil(error, "error should be nil")
     }
 
     // MARK: Server Trust Policy - Public Key Pinning Tests
@@ -203,7 +287,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -232,7 +316,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -260,7 +344,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -288,7 +372,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -314,7 +398,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -346,7 +430,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -376,7 +460,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
