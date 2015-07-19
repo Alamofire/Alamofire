@@ -571,21 +571,18 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         // Given
         let URLString = "http://httpbin.org/post"
         let loremData1: NSData = {
-//            var loremValues: [String] = []
-            var loremValues = ""
+            var loremValues: [String] = []
             for _ in 1...1_500 {
-                loremValues = loremValues+"Lorem ipsum dolor sit amet, consectetur adipiscing elit."+" "
+                loremValues.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
             }
-            return loremValues.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            return " ".join(loremValues).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         }()
         let loremData2: NSData = {
-//            var loremValues: [String] = []
-            var loremValues = ""
+            var loremValues: [String] = []
             for _ in 1...1_500 {
-                loremValues = loremValues+"Lorem ipsum dolor sit amet, nam no graeco recusabo appellantur."+" "
+                loremValues.append("Lorem ipsum dolor sit amet, nam no graeco recusabo appellantur.")
             }
-
-            return loremValues.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            return " ".join(loremValues).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         }()
 
         let expectation = expectationWithDescription("multipart form data upload should succeed")
