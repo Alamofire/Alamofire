@@ -97,7 +97,7 @@ class RequestResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -161,7 +161,8 @@ class RequestResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
+        if let
+            lastByteValue = byteValues.last,
             lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
@@ -231,7 +232,8 @@ class RequestResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
+        if let
+            lastByteValue = byteValues.last,
             lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
@@ -281,17 +283,17 @@ class RequestDescriptionTestCase: BaseTestCase {
 class RequestDebugDescriptionTestCase: BaseTestCase {
     // MARK: Properties
 
-    let manager: Alamofire.Manager = {
-        let manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+    let manager: Manager = {
+        let manager = Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
         manager.startRequestsImmediately = false
         return manager
     }()
 
-    let managerDisallowingCookies: Alamofire.Manager = {
+    let managerDisallowingCookies: Manager = {
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.HTTPShouldSetCookies = false
 
-        let manager = Alamofire.Manager(configuration: configuration)
+        let manager = Manager(configuration: configuration)
         manager.startRequestsImmediately = false
 
         return manager
@@ -353,6 +355,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
             NSHTTPCookieName: "foo",
             NSHTTPCookieValue: "bar",
         ]
+
         let cookie = NSHTTPCookie(properties: properties)!
         manager.session.configuration.HTTPCookieStorage?.setCookie(cookie)
 

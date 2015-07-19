@@ -38,10 +38,8 @@ extension Request {
                 return (nil, nil)
             }
 
-            if encoding == nil {
-                if let encodingName = response?.textEncodingName {
-                    encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName))
-                }
+            if let encodingName = response?.textEncodingName where encoding == nil {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName))
             }
 
             let string = NSString(data: data!, encoding: encoding ?? NSISOLatin1StringEncoding)
@@ -58,10 +56,10 @@ extension Request {
 
         - returns: The request.
     */
-    public func responseString(encoding encoding: NSStringEncoding? = nil, completionHandler: (NSURLRequest?, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
-        return response(serializer: Request.stringResponseSerializer(encoding: encoding), completionHandler: { request, response, string, error in
+    public func responseString(encoding: NSStringEncoding? = nil, completionHandler: (NSURLRequest, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
+        return response(serializer: Request.stringResponseSerializer(encoding: encoding)) { request, response, string, error in
             completionHandler(request, response, string as? String, error)
-        })
+        }
     }
 }
 
@@ -103,9 +101,9 @@ extension Request {
         - returns: The request.
     */
     public func responseJSON(options options: NSJSONReadingOptions = .AllowFragments, completionHandler: (NSURLRequest?, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.JSONResponseSerializer(options: options), completionHandler: { request, response, JSON, error in
+        return response(serializer: Request.JSONResponseSerializer(options: options)) { request, response, JSON, error in
             completionHandler(request, response, JSON, error)
-        })
+        }
     }
 }
 
@@ -147,8 +145,8 @@ extension Request {
         - returns: The request.
     */
     public func responsePropertyList(options options: NSPropertyListReadOptions = NSPropertyListReadOptions(rawValue: 0), completionHandler: (NSURLRequest?, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.propertyListResponseSerializer(options: options), completionHandler: { request, response, plist, error in
+        return response(serializer: Request.propertyListResponseSerializer(options: options)) { request, response, plist, error in
             completionHandler(request, response, plist, error)
-        })
+        }
     }
 }

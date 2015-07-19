@@ -434,12 +434,19 @@ extension Request: CustomDebugStringConvertible {
 
         let URL = request.URL
 
-        if let HTTPMethod = request.HTTPMethod where HTTPMethod != "GET" {
+        if let HTTPMethod = self.request.HTTPMethod where HTTPMethod != "GET" {
             components.append("-X \(HTTPMethod)")
         }
 
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
-            let protectionSpace = NSURLProtectionSpace(host: URL!.host!, port: URL!.port?.integerValue ?? 0, `protocol`: URL!.scheme, realm: URL!.host!, authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
+            let protectionSpace = NSURLProtectionSpace(
+                host: URL!.host!,
+                port: URL!.port?.integerValue ?? 0,
+                `protocol`: URL!.scheme!,
+                realm: URL!.host!,
+                authenticationMethod: NSURLAuthenticationMethodHTTPBasic
+            )
+
             if let credentials = credentialStorage.credentialsForProtectionSpace(protectionSpace)?.values.array {
                 for credential in credentials {
                     components.append("-u \(credential.user!):\(credential.password!)")
@@ -465,7 +472,7 @@ extension Request: CustomDebugStringConvertible {
             }
         #endif
 
-        if let headerFields = request.allHTTPHeaderFields {
+        if let headerFields = self.request.allHTTPHeaderFields {
             for (field, value) in headerFields {
                 switch field {
                 case "Cookie":
@@ -488,7 +495,7 @@ extension Request: CustomDebugStringConvertible {
         }
 
         if let
-            HTTPBody = request.HTTPBody,
+            HTTPBody = self.request.HTTPBody,
             escapedBody = NSString(data: HTTPBody, encoding: NSUTF8StringEncoding)?.stringByReplacingOccurrencesOfString("\"", withString: "\\\"")
         {
             components.append("-d \"\(escapedBody)\"")

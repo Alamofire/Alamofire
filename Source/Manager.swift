@@ -72,6 +72,7 @@ public class Manager {
 
                 var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
                 let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
+
                 if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
                     return mutableUserAgent as String
                 }
@@ -291,7 +292,6 @@ public class Manager {
                 taskDidComplete(session, task, error)
             } else if let delegate = self[task] {
                 delegate.URLSession(session, task: task, didCompleteWithError: error)
-
                 self[task] = nil
             }
         }
