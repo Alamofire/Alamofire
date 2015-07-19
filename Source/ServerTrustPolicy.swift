@@ -22,11 +22,22 @@
 
 import Foundation
 
-// TODO: DocStrings
+/// Responsible for managing the mapping of `ServerTrustPolicy` objects to a given host.
 public class ServerTrustPolicyManager {
     let policies: [String: ServerTrustPolicy]
 
-    // TODO: DocStrings
+    /**
+        Initializes the `ServerTrustPolicyManager` instance with the given policies.
+
+        Since different servers and web services can have different leaf certificates, intermediate and even root 
+        certficates, it is important to have the flexibility to specify evaluation policies on a per host basis. This 
+        allows for scenarios such as using default evaluation for host1, certificate pinning for host2, public key 
+        pinning for host3 and disabling evaluation for host4.
+
+        :param: policies A dictionary of all policies mapped to a particular host.
+
+        :returns: The new `ServerTrustPolicyManager` instance.
+    */
     public init(policies: [String: ServerTrustPolicy]) {
         self.policies = policies
     }
@@ -55,7 +66,38 @@ extension NSURLSession {
 
 // MARK: - ServerTrustPolicy
 
-// TODO: DocStrings
+/**
+    The `ServerTrustPolicy` evaluates the server trust generally provided by an `NSURLAuthenticationChallenge` when 
+    connecting to a server over a secure HTTPS connection. The policy configuration then evaluates the server trust 
+    with a given set of criteria to determine whether the server trust is valid and the connection should be made.
+
+    Using pinned certificates or public keys for evaluation helps prevent man-in-the-middle (MITM) attacks and other 
+    vulnerabilities. Applications dealing with sensitive customer data or financial information are strongly encouraged 
+    to route all communication over an HTTPS connection with pinning enabled.
+
+    - PerformDefaultEvaluation: Uses the default server trust evaluation while allowing you to control whether to 
+                                validate the host provided by the challenge. Applications are encouraged to always 
+                                validate the host in production environments to guarantee the validity of the server's 
+                                certificate chain.
+
+    - PinCertificates:          Uses the pinned certificates to validate the server trust. The server trust is
+                                considered valid if one of the pinned certificates match one of the server certificates. 
+                                By validating both the certificate chain and host, certificate pinning provides a very 
+                                secure form of server trust validation mitigating most, if not all, MITM attacks. 
+                                Applications are encouraged to always validate the host and require a valid certificate 
+                                chain in production environments.
+
+    - PinPublicKeys:            Uses the pinned public keys to validate the server trust. The server trust is considered
+                                valid if one of the pinned public keys match one of the server certificate public keys. 
+                                By validating both the certificate chain and host, public key pinning provides a very 
+                                secure form of server trust validation mitigating most, if not all, MITM attacks. 
+                                Applications are encouraged to always validate the host and require a valid certificate 
+                                chain in production environments.
+
+    - DisableEvaluation:        Disables all evaluation which in turn will always consider any server trust as valid.
+
+    - CustomEvaluation:         Uses the associated closure to evaluate the validity of the server trust.
+*/
 public enum ServerTrustPolicy {
     case PerformDefaultEvaluation(validateHost: Bool)
     case PinCertificates(certificates: [SecCertificate], validateCertificateChain: Bool, validateHost: Bool)
@@ -65,7 +107,13 @@ public enum ServerTrustPolicy {
 
     // MARK: - Bundle Location
 
-    // TODO: DocStrings
+    /**
+        Returns all certificates within the given bundle with a `.cer` file extension.
+
+        :param: bundle The bundle to search for all `.cer` files.
+
+        :returns: All certificates within the given bundle.
+    */
     public func certificatesInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecCertificate] {
         var certificates: [SecCertificate] = []
 
@@ -81,7 +129,13 @@ public enum ServerTrustPolicy {
         return certificates
     }
 
-    // TODO: DocStrings
+    /**
+        Returns all public keys within the given bundle with a `.cer` file extension.
+
+        :param: bundle The bundle to search for all `*.cer` files.
+
+        :returns: All public keys within the given bundle.
+    */
     public func publicKeysInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecKey] {
         var publicKeys: [SecKey] = []
 
@@ -96,7 +150,14 @@ public enum ServerTrustPolicy {
 
     // MARK: - Evaluation
 
-    // TODO: DocStrings
+    /**
+        Evaluates whether the server trust is valid for the given host.
+
+        :param: serverTrust The server trust to evaluate.
+        :param: host        The host of the challenge protection space.
+
+        :returns: Whether the server trust is valid.
+    */
     public func evaluateServerTrust(serverTrust: SecTrust, isValidForHost host: String) -> Bool {
         var serverTrustIsValid = false
 
