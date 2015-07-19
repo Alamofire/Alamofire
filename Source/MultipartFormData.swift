@@ -159,6 +159,28 @@ public class MultipartFormData {
 
         The body part data will be encoded using the following format:
 
+        - `Content-Disposition: form-data; name=#{name}` (HTTP Header)
+        - `Content-Type: #{generated mimeType}` (HTTP Header)
+        - Encoded data
+        - Multipart form boundary
+
+        :param: data The data to encode into the multipart form data.
+        :param: name The name to associate with the data in the `Content-Disposition` HTTP header.
+        :param: mimeType The MIME type to associate with the data content type in the `Content-Type` HTTP header.
+    */
+    public func appendBodyPart(#data: NSData, name: String, mimeType: String) {
+        let headers = contentHeaders(name: name, mimeType: mimeType)
+        let stream = NSInputStream(data: data)
+        let length = UInt64(data.length)
+
+        appendBodyPart(stream: stream, length: length, headers: headers)
+    }
+
+    /**
+        Creates a body part from the data and appends it to the multipart form data object.
+
+        The body part data will be encoded using the following format:
+
         - `Content-Disposition: form-data; name=#{name}; filename=#{filename}` (HTTP Header)
         - `Content-Type: #{mimeType}` (HTTP Header)
         - Encoded file data

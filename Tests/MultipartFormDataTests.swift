@@ -141,8 +141,8 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
 
         // When
         multipartFormData.appendBodyPart(data: french, name: "french")
-        multipartFormData.appendBodyPart(data: japanese, name: "japanese")
-        multipartFormData.appendBodyPart(data: emoji, name: "emoji")
+        multipartFormData.appendBodyPart(data: japanese, name: "japanese", mimeType: "text/plain")
+        multipartFormData.appendBodyPart(data: emoji, name: "emoji", mimeType: "text/plain")
         let encodingResult = multipartFormData.encode()
 
         // Then
@@ -155,10 +155,12 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
                 "Content-Disposition: form-data; name=\"french\"\(self.CRLF)\(self.CRLF)" +
                 "français" +
                 BoundaryGenerator.boundary(boundaryType: .Encapsulated, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"japanese\"\(self.CRLF)\(self.CRLF)" +
+                "Content-Disposition: form-data; name=\"japanese\"\(self.CRLF)" +
+                "Content-Type: text/plain\(self.CRLF)\(self.CRLF)" +
                 "日本語" +
                 BoundaryGenerator.boundary(boundaryType: .Encapsulated, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"emoji\"\(self.CRLF)\(self.CRLF)" +
+                "Content-Disposition: form-data; name=\"emoji\"\(self.CRLF)" +
+                "Content-Type: text/plain\(self.CRLF)\(self.CRLF)" +
                 "😃👍🏻🍻🎉" +
                 BoundaryGenerator.boundary(boundaryType: .Final, boundaryKey: boundary)
             ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
