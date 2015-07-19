@@ -58,7 +58,7 @@ extension NSURLSession {
 // TODO: DocStrings
 public enum ServerTrustPolicy {
     case PerformDefaultEvaluation(validateHost: Bool)
-    case PinCertificates(certificates: [SecCertificate], validateHost: Bool)
+    case PinCertificates(certificates: [SecCertificate], validateCertificateChain: Bool, validateHost: Bool)
     case PinPublicKeys(publicKeys: [SecKey], validateCertificateChain: Bool, validateHost: Bool)
     case DisableEvaluation
     case CustomEvaluation((serverTrust: SecTrust, host: String) -> Bool)
@@ -106,14 +106,28 @@ public enum ServerTrustPolicy {
             SecTrustSetPolicies(serverTrust, [policy.takeRetainedValue()])
 
             serverTrustIsValid = trustIsValid(serverTrust)
-        case let .PinCertificates(pinnedCertificates, validateHost):
-            let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
-            SecTrustSetPolicies(serverTrust, [policy.takeRetainedValue()])
+        case let .PinCertificates(pinnedCertificates, validateCertificateChain, validateHost):
+            if validateCertificateChain {
+                let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
+                SecTrustSetPolicies(serverTrust, [policy.takeRetainedValue()])
 
-            SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates)
-            SecTrustSetAnchorCertificatesOnly(serverTrust, 1)
+                SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates)
+                SecTrustSetAnchorCertificatesOnly(serverTrust, 1)
 
-            serverTrustIsValid = trustIsValid(serverTrust)
+                serverTrustIsValid = trustIsValid(serverTrust)
+            } else {
+                let serverCertificatesDataArray = certificateDataForTrust(serverTrust)
+                let pinnedCertificatesDataArray = certificateDataForCertificates(pinnedCertificates)
+
+                outerLoop: for serverCertificateData in serverCertificatesDataArray {
+                    for pinnedCertificateData in pinnedCertificatesDataArray {
+                        if serverCertificateData.isEqualToData(pinnedCertificateData) {
+                            serverTrustIsValid = true
+                            break outerLoop
+                        }
+                    }
+                }
+            }
         case let .PinPublicKeys(pinnedPublicKeys, validateCertificateChain, validateHost):
             var certificateChainEvaluationPassed = true
 
@@ -160,6 +174,23 @@ public enum ServerTrustPolicy {
         }
 
         return isValid
+    }
+
+    // MARK: - Private - Certificate Data
+
+    private func certificateDataForTrust(trust: SecTrust) -> [NSData] {
+        var certificates: [SecCertificate] = []
+
+        for index in 0..<SecTrustGetCertificateCount(trust) {
+            let certificate = SecTrustGetCertificateAtIndex(trust, index).takeUnretainedValue()
+            certificates.append(certificate)
+        }
+
+        return certificateDataForCertificates(certificates)
+    }
+
+    private func certificateDataForCertificates(certificates: [SecCertificate]) -> [NSData] {
+        return certificates.map { SecCertificateCopyData($0).takeRetainedValue() as NSData }
     }
 
     // MARK: - Private - Public Key Extraction

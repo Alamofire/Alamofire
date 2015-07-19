@@ -126,7 +126,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWhenPinningLeafCertificate() {
         // Given
         let certificates = [TestCertificates.Leaf]
-        let policies = [self.host: ServerTrustPolicy.PinCertificates(certificates: certificates, validateHost: true)]
+        let policies: [String: ServerTrustPolicy] = [
+            self.host: .PinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
+        ]
+
         let manager = Manager(
             configuration: self.configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
@@ -152,7 +155,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWhenPinningAllCertificates() {
         // Given
         let certificates = [TestCertificates.Leaf, TestCertificates.IntermedateCA, TestCertificates.RootCA]
-        let policies = [self.host: ServerTrustPolicy.PinCertificates(certificates: certificates, validateHost: true)]
+        let policies: [String: ServerTrustPolicy] = [
+            self.host: .PinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
+        ]
+
         let manager = Manager(
             configuration: self.configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
