@@ -148,7 +148,7 @@ class URLProtocolTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 

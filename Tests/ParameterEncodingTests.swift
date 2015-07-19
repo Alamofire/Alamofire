@@ -369,7 +369,8 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type") ?? "", "application/x-www-form-urlencoded", "Content-Type should be application/x-www-form-urlencoded")
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
 
-        if let HTTPBody = URLRequest.HTTPBody,
+        if let
+            HTTPBody = URLRequest.HTTPBody,
             decodedHTTPBody = NSString(data: HTTPBody, encoding: NSUTF8StringEncoding)
         {
             XCTAssertEqual(decodedHTTPBody, "bar=2&foo=1", "HTTPBody is incorrect")
@@ -538,7 +539,7 @@ class CustomParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testCustomParameterEncode() {
         // Given
-        let encodingClosure: (URLRequestConvertible, [String: AnyObject]?) -> (NSURLRequest, NSError?) = { URLRequest, parameters in
+        let encodingClosure: (URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?) = { URLRequest, parameters in
             let mutableURLRequest = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
             mutableURLRequest.setValue("Xcode", forHTTPHeaderField: "User-Agent")
             return (mutableURLRequest, nil)

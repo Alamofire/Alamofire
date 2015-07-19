@@ -38,7 +38,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -59,7 +59,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -81,7 +81,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -107,7 +107,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -130,7 +130,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -151,7 +151,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -173,7 +173,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -200,7 +200,7 @@ class MultipleValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -222,7 +222,7 @@ class MultipleValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -251,7 +251,7 @@ class AutomaticValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -272,7 +272,7 @@ class AutomaticValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -297,7 +297,7 @@ class AutomaticValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -321,7 +321,7 @@ class AutomaticValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -345,7 +345,7 @@ class AutomaticValidationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 

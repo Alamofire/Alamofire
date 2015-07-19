@@ -44,7 +44,7 @@ class JSONResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -82,7 +82,7 @@ class JSONResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -126,7 +126,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -161,7 +161,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -201,7 +201,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -241,7 +241,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -283,7 +283,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 

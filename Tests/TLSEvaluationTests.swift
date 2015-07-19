@@ -37,7 +37,7 @@ class TLSEvaluationTestCase: BaseTestCase {
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 

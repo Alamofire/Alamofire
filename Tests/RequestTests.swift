@@ -46,9 +46,29 @@ class RequestInitializationTestCase: BaseTestCase {
         let request = Alamofire.request(.GET, URLString: URLString, parameters: ["foo": "bar"])
 
         // Then
-        XCTAssertNotNil(request.request, "request URL request should not be nil")
-        XCTAssertNotEqual(request.request?.URL?.URLString ?? "", URLString, "request URL string should be equal")
-        XCTAssertEqual(request.request?.URL?.query ?? "", "foo=bar", "query is incorrect")
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request!.HTTPMethod ?? "", "GET", "request HTTP method should match expected value")
+        XCTAssertNotEqual(request.request!.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertEqual(request.request!.URL?.query ?? "", "foo=bar", "query is incorrect")
+        XCTAssertNil(request.response, "response should be nil")
+    }
+
+    func testRequestClassMethodWithMethodURLParametersAndHeaders() {
+        // Given
+        let URLString = "http://httpbin.org/get"
+
+        // When
+        let request = Alamofire.request(.GET, URLString: URLString, parameters: ["foo": "bar"], headers: ["Authorization": "123456"])
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request!.HTTPMethod ?? "", "GET", "request HTTP method should match expected value")
+        XCTAssertNotEqual(request.request!.URL!, NSURL(string: URLString)!, "request URL should be equal")
+        XCTAssertEqual(request.request!.URL?.query ?? "", "foo=bar", "query is incorrect")
+
+        let authorizationHeader = request.request!.valueForHTTPHeaderField("Authorization") ?? ""
+        XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
+
         XCTAssertNil(request.response, "request response should be nil")
     }
 }
@@ -77,7 +97,7 @@ class RequestResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -141,7 +161,8 @@ class RequestResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
+        if let
+            lastByteValue = byteValues.last,
             lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
@@ -211,7 +232,8 @@ class RequestResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
+        if let
+            lastByteValue = byteValues.last,
             lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
@@ -261,17 +283,17 @@ class RequestDescriptionTestCase: BaseTestCase {
 class RequestDebugDescriptionTestCase: BaseTestCase {
     // MARK: Properties
 
-    let manager: Alamofire.Manager = {
-        let manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+    let manager: Manager = {
+        let manager = Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
         manager.startRequestsImmediately = false
         return manager
     }()
 
-    let managerDisallowingCookies: Alamofire.Manager = {
+    let managerDisallowingCookies: Manager = {
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.HTTPShouldSetCookies = false
 
-        let manager = Alamofire.Manager(configuration: configuration)
+        let manager = Manager(configuration: configuration)
         manager.startRequestsImmediately = false
 
         return manager
@@ -333,6 +355,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
             NSHTTPCookieName: "foo",
             NSHTTPCookieValue: "bar",
         ]
+
         let cookie = NSHTTPCookie(properties: properties)!
         manager.session.configuration.HTTPCookieStorage?.setCookie(cookie)
 
