@@ -25,7 +25,7 @@ import Foundation
 import XCTest
 
 class StatusCodeValidationTestCase: BaseTestCase {
-    func testValidationForRequestWithAcceptableStatusCodeResponse() {
+    func testThatValidationForRequestWithAcceptableStatusCodeResponseSucceeds() {
         // Given
         let URL = "http://httpbin.org/status/200"
         let expectation = expectationWithDescription("\(URL)")
@@ -46,7 +46,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testValidationForRequestWithUnacceptableStatusCodeResponse() {
+    func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
         let URL = "http://httpbin.org/status/404"
         let expectation = expectationWithDescription("\(URL)")
@@ -68,7 +68,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
     }
 
-    func testValidationForRequestWithNoAcceptableStatusCodes() {
+    func testThatValidationForRequestWithNoAcceptableStatusCodesFails() {
         // Given
         let URL = "http://httpbin.org/status/201"
         let expectation = expectationWithDescription("\(URL)")
@@ -94,7 +94,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
 // MARK: -
 
 class ContentTypeValidationTestCase: BaseTestCase {
-    func testValidationForRequestWithAcceptableContentTypeResponse() {
+    func testThatValidationForRequestWithAcceptableContentTypeResponseSucceeds() {
         // Given
         let URL = "http://httpbin.org/ip"
         let expectation = expectationWithDescription("\(URL)")
@@ -115,7 +115,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testValidationForRequestWithAcceptableWildcardContentTypeResponse() {
+    func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
         let URL = "http://httpbin.org/ip"
         let expectation = expectationWithDescription("\(URL)")
@@ -138,7 +138,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testValidationForRequestWithUnacceptableContentTypeResponse() {
+    func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
         let URL = "http://httpbin.org/xml"
         let expectation = expectationWithDescription("\(URL)")
@@ -160,7 +160,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
     }
 
-    func testValidationForRequestWithNoAcceptableContentTypeResponse() {
+    func testThatValidationForRequestWithNoAcceptableContentTypeResponseFails() {
         // Given
         let URL = "http://httpbin.org/xml"
         let expectation = expectationWithDescription("\(URL)")
@@ -186,7 +186,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
 // MARK: -
 
 class MultipleValidationTestCase: BaseTestCase {
-    func testValidationForRequestWithAcceptableStatusCodeAndContentTypeResponse() {
+    func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
         let URL = "http://httpbin.org/ip"
         let expectation = expectationWithDescription("\(URL)")
@@ -208,7 +208,7 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponse() {
+    func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFails() {
         // Given
         let URL = "http://httpbin.org/xml"
         let expectation = expectationWithDescription("\(URL)")
@@ -235,7 +235,7 @@ class MultipleValidationTestCase: BaseTestCase {
 // MARK: -
 
 class AutomaticValidationTestCase: BaseTestCase {
-    func testValidationForRequestWithAcceptableStatusCodeAndContentTypeResponse() {
+    func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
         let URL = NSURL(string: "http://httpbin.org/ip")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
@@ -259,7 +259,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testValidationForRequestWithUnacceptableStatusCodeResponse() {
+    func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
         let URL = "http://httpbin.org/status/404"
         let expectation = expectationWithDescription("\(URL)")
@@ -281,7 +281,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
     }
 
-    func testValidationForRequestWithAcceptableWildcardContentTypeResponse() {
+    func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
         let URL = NSURL(string: "http://httpbin.org/ip")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
@@ -305,7 +305,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testValidationForRequestWithAcceptableComplexContentTypeResponse() {
+    func testThatValidationForRequestWithAcceptableComplexContentTypeResponseSucceeds() {
         // Given
         let URL = NSURL(string: "http://httpbin.org/xml")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
@@ -329,7 +329,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testValidationForRequestWithUnacceptableContentTypeResponse() {
+    func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
         let URL = NSURL(string: "http://httpbin.org/xml")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
@@ -340,7 +340,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(mutableURLRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -350,6 +350,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
         // Then
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
     }
 }
