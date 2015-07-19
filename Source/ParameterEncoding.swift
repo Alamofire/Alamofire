@@ -117,7 +117,7 @@ public enum ParameterEncoding {
             }
         case .JSON:
             do {
-                let options = NSJSONWritingOptions.allZeros
+                let options = NSJSONWritingOptions()
                 let data = try NSJSONSerialization.dataWithJSONObject(parameters!, options: options)
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 mutableURLRequest.HTTPBody = data
