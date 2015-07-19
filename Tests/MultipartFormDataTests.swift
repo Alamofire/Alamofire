@@ -248,9 +248,9 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // When
         multipartFormData.appendBodyPart(
             stream: unicornStream,
+            length: unicornDataLength,
             name: "unicorn",
             fileName: "unicorn.png",
-            length: unicornDataLength,
             mimeType: "image/png"
         )
         let encodingResult = multipartFormData.encode()
@@ -291,16 +291,16 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // When
         multipartFormData.appendBodyPart(
             stream: unicornStream,
+            length: unicornDataLength,
             name: "unicorn",
             fileName: "unicorn.png",
-            length: unicornDataLength,
             mimeType: "image/png"
         )
         multipartFormData.appendBodyPart(
             stream: rainbowStream,
+            length: rainbowDataLength,
             name: "rainbow",
             fileName: "rainbow.jpg",
-            length: rainbowDataLength,
             mimeType: "image/jpeg"
         )
         let encodingResult = multipartFormData.encode()
@@ -350,9 +350,9 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
         multipartFormData.appendBodyPart(
             stream: rainbowStream,
+            length: rainbowDataLength,
             name: "rainbow",
             fileName: "rainbow.jpg",
-            length: rainbowDataLength,
             mimeType: "image/jpeg"
         )
         let encodingResult = multipartFormData.encode()
@@ -591,9 +591,9 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         // When
         multipartFormData.appendBodyPart(
             stream: unicornStream,
+            length: unicornDataLength,
             name: "unicorn",
             fileName: "unicorn.png",
-            length: unicornDataLength,
             mimeType: "image/png"
         )
 
@@ -646,16 +646,16 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         // When
         multipartFormData.appendBodyPart(
             stream: unicornStream,
+            length: unicornDataLength,
             name: "unicorn",
             fileName: "unicorn.png",
-            length: unicornDataLength,
             mimeType: "image/png"
         )
         multipartFormData.appendBodyPart(
             stream: rainbowStream,
+            length: rainbowDataLength,
             name: "rainbow",
             fileName: "rainbow.jpg",
-            length: rainbowDataLength,
             mimeType: "image/jpeg"
         )
 
@@ -717,9 +717,9 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
         multipartFormData.appendBodyPart(
             stream: rainbowStream,
+            length: rainbowDataLength,
             name: "rainbow",
             fileName: "rainbow.jpg",
-            length: rainbowDataLength,
             mimeType: "image/jpeg"
         )
 
@@ -774,8 +774,17 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let fileURL = NSURL(string: "")!
         let multipartFormData = MultipartFormData()
 
+        var error: NSError?
+
         // When
-        let error = multipartFormData.appendBodyPart(fileURL: fileURL, name: "empty_data")
+        multipartFormData.appendBodyPart(fileURL: fileURL, name: "empty_data")
+
+        switch multipartFormData.encode() {
+        case .Failure(let encodingError):
+            error = encodingError
+        default:
+            break
+        }
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -798,8 +807,17 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let fileURL = NSURL(string: "http://example.com/image.jpg")!
         let multipartFormData = MultipartFormData()
 
+        var error: NSError?
+
         // When
-        let error = multipartFormData.appendBodyPart(fileURL: fileURL, name: "empty_data")
+        multipartFormData.appendBodyPart(fileURL: fileURL, name: "empty_data")
+
+        switch multipartFormData.encode() {
+        case .Failure(let encodingError):
+            error = encodingError
+        default:
+            break
+        }
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -822,8 +840,17 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let fileURL = NSURL(fileURLWithPath: NSTemporaryDirectory().stringByAppendingPathComponent("does_not_exist.jpg"))!
         let multipartFormData = MultipartFormData()
 
+        var error: NSError?
+
         // When
-        let error = multipartFormData.appendBodyPart(fileURL: fileURL, name: "empty_data")
+        multipartFormData.appendBodyPart(fileURL: fileURL, name: "empty_data")
+
+        switch multipartFormData.encode() {
+        case .Failure(let encodingError):
+            error = encodingError
+        default:
+            break
+        }
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -846,8 +873,17 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)!
         let multipartFormData = MultipartFormData()
 
+        var error: NSError?
+
         // When
-        let error = multipartFormData.appendBodyPart(fileURL: directoryURL, name: "empty_data")
+        multipartFormData.appendBodyPart(fileURL: directoryURL, name: "empty_data")
+
+        switch multipartFormData.encode() {
+        case .Failure(let encodingError):
+            error = encodingError
+        default:
+            break
+        }
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
