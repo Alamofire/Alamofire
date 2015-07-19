@@ -177,11 +177,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     // MARK: Server Trust Policy - Public Key Pinning Tests
 
-    func testThatExpiredCertificateRequestFailsWhenPinningLeafPublicKeyWhileNotAllowingInvalidCertificates() {
+    func testThatExpiredCertificateRequestFailsWhenPinningLeafPublicKeyWithCertificateChainValidation() {
         // Given
         let publicKeys = [TestPublicKeys.Leaf]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinPublicKeys(publicKeys: publicKeys, validateHost: true, allowInvalidCertificates: false)
+            self.host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: true, validateHost: true)
         ]
 
         let manager = Manager(
@@ -206,11 +206,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertEqual(error?.code ?? -1, NSURLErrorCancelled, "error should be NSURLErrorCancelled")
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyAndAllowingInvalidCertificates() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyWithoutCertificateChainValidation() {
         // Given
         let publicKeys = [TestPublicKeys.Leaf]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinPublicKeys(publicKeys: publicKeys, validateHost: true, allowInvalidCertificates: true)
+            self.host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = Manager(
@@ -234,11 +234,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyAndAllowingInvalidCertificates() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyWithoutCertificateChainValidation() {
         // Given
         let publicKeys = [TestPublicKeys.IntermediateCA]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinPublicKeys(publicKeys: publicKeys, validateHost: true, allowInvalidCertificates: true)
+            self.host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = Manager(
@@ -262,11 +262,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningRootCAPublicKeyAndAllowingInvalidCertificates() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningRootCAPublicKeyWithoutCertificateChainValidation() {
         // Given
         let publicKeys = [TestPublicKeys.RootCA]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinPublicKeys(publicKeys: publicKeys, validateHost: true, allowInvalidCertificates: true)
+            self.host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = Manager(

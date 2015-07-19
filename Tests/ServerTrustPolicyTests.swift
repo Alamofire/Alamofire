@@ -780,7 +780,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
 
 class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
-    // MARK: Require Valid Certificate Chain Without Host Validation
+    // MARK: Validate Certificate Chain Without Validating Host
 
     func testThatPinningLeafKeyPassesEvaluationWithoutHostValidation() {
         // Given
@@ -789,8 +789,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let publicKeys = [TestPublicKeys.LeafValidDNSName]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: false
+            validateCertificateChain: true,
+            validateHost: false
         )
 
         // When
@@ -808,8 +808,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let publicKeys = [TestPublicKeys.IntermediateCA2]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: false
+            validateCertificateChain: true,
+            validateHost: false
         )
 
         // When
@@ -827,8 +827,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let publicKeys = [TestPublicKeys.RootCA]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: false
+            validateCertificateChain: true,
+            validateHost: false
         )
 
         // When
@@ -846,8 +846,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let publicKeys = [TestPublicKeys.LeafSignedByCA2]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: false
+            validateCertificateChain: true,
+            validateHost: false
         )
 
         // When
@@ -865,8 +865,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let publicKeys = [TestPublicKeys.LeafSignedByCA1, TestPublicKeys.IntermediateCA1, TestPublicKeys.LeafValidDNSName]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: false
+            validateCertificateChain: true,
+            validateHost: false
         )
 
         // When
@@ -877,7 +877,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    // MARK: Require Valid Certificate Chain With Host Validation
+    // MARK: Validate Certificate Chain and Host
 
     func testThatPinningLeafKeyPassesEvaluationWithHostValidation() {
         // Given
@@ -886,8 +886,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let publicKeys = [TestPublicKeys.LeafValidDNSName]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: true,
-            allowInvalidCertificates: false
+            validateCertificateChain: true,
+            validateHost: true
         )
 
         // When
@@ -905,8 +905,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let publicKeys = [TestPublicKeys.IntermediateCA2]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: true,
-            allowInvalidCertificates: false
+            validateCertificateChain: true,
+            validateHost: true
         )
 
         // When
@@ -924,8 +924,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let publicKeys = [TestPublicKeys.RootCA]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: true,
-            allowInvalidCertificates: false
+            validateCertificateChain: true,
+            validateHost: true
         )
 
         // When
@@ -943,8 +943,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let publicKeys = [TestPublicKeys.LeafSignedByCA2]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: true,
-            allowInvalidCertificates: false
+            validateCertificateChain: true,
+            validateHost: true
         )
 
         // When
@@ -962,8 +962,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let publicKeys = [TestPublicKeys.LeafSignedByCA1, TestPublicKeys.IntermediateCA1, TestPublicKeys.LeafValidDNSName]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: true,
-            allowInvalidCertificates: false
+            validateCertificateChain: true,
+            validateHost: true
         )
 
         // When
@@ -974,17 +974,17 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    // MARK: Allow Invalid Certificate Chain
+    // MARK: Do NOT Validate Certificate Chain or Host
 
-    func testThatPinningLeafKeyWhileAllowingInvalidCertificatesPassesEvaluationWithMissingIntermediateCertificate() {
+    func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithMissingIntermediateCertificate() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.LeafValidDNSNameMissingIntermediate.trust
         let publicKeys = [TestPublicKeys.LeafValidDNSName]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: true
+            validateCertificateChain: false,
+            validateHost: false
         )
 
         // When
@@ -995,15 +995,15 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningRootKeyWhileAllowingInvalidCertificatesFailsEvaluationWithMissingIntermediateCertificate() {
+    func testThatPinningRootKeyWithoutCertificateChainValidationFailsEvaluationWithMissingIntermediateCertificate() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.LeafValidDNSNameMissingIntermediate.trust
         let publicKeys = [TestPublicKeys.RootCA]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: true
+            validateCertificateChain: false,
+            validateHost: false
         )
 
         // When
@@ -1014,15 +1014,15 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningLeafKeyWhileAllowingInvalidCertificatesPassesEvaluationWithIncorrectIntermediateCertificate() {
+    func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithIncorrectIntermediateCertificate() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.LeafValidDNSNameWithIncorrectIntermediate.trust
         let publicKeys = [TestPublicKeys.LeafValidDNSName]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: true
+            validateCertificateChain: false,
+            validateHost: false
         )
 
         // When
@@ -1033,15 +1033,15 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningLeafKeyWhileAllowingInvalidCertificatesPassesEvaluationWithExpiredLeafCertificate() {
+    func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.LeafExpired.trust
         let publicKeys = [TestPublicKeys.LeafExpired]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: true
+            validateCertificateChain: false,
+            validateHost: false
         )
 
         // When
@@ -1052,15 +1052,15 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningIntermediateKeyWhileAllowingInvalidCertificatesPassesEvaluationWithExpiredLeafCertificate() {
+    func testThatPinningIntermediateKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.LeafExpired.trust
         let publicKeys = [TestPublicKeys.IntermediateCA2]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: true
+            validateCertificateChain: false,
+            validateHost: false
         )
 
         // When
@@ -1071,15 +1071,15 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningRootKeyWhileAllowingInvalidCertificatesPassesEvaluationWithExpiredLeafCertificate() {
+    func testThatPinningRootKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.LeafExpired.trust
         let publicKeys = [TestPublicKeys.RootCA]
         let serverTrustPolicy = ServerTrustPolicy.PinPublicKeys(
             publicKeys: publicKeys,
-            validateHost: false,
-            allowInvalidCertificates: true
+            validateCertificateChain: false,
+            validateHost: false
         )
 
         // When

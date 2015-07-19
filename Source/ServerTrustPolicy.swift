@@ -31,8 +31,7 @@ public class ServerTrustPolicyManager {
         self.policies = policies
     }
 
-    // TODO: DocStrings
-    public func serverTrustPolicyForHost(host: String) -> ServerTrustPolicy? {
+    func serverTrustPolicyForHost(host: String) -> ServerTrustPolicy? {
         return self.policies[host]
     }
 }
@@ -60,7 +59,7 @@ extension NSURLSession {
 public enum ServerTrustPolicy {
     case PerformDefaultEvaluation(validateHost: Bool)
     case PinCertificates(certificates: [SecCertificate], validateHost: Bool)
-    case PinPublicKeys(publicKeys: [SecKey], validateHost: Bool, allowInvalidCertificates: Bool)
+    case PinPublicKeys(publicKeys: [SecKey], validateCertificateChain: Bool, validateHost: Bool)
     case DisableEvaluation
     case CustomEvaluation((serverTrust: SecTrust, host: String) -> Bool)
 
@@ -115,10 +114,10 @@ public enum ServerTrustPolicy {
             SecTrustSetAnchorCertificatesOnly(serverTrust, 1)
 
             serverTrustIsValid = trustIsValid(serverTrust)
-        case let .PinPublicKeys(pinnedPublicKeys, validateHost, allowInvalidCertificates):
+        case let .PinPublicKeys(pinnedPublicKeys, validateCertificateChain, validateHost):
             var certificateChainEvaluationPassed = true
 
-            if !allowInvalidCertificates {
+            if validateCertificateChain {
                 let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
                 SecTrustSetPolicies(serverTrust, [policy.takeRetainedValue()])
 
