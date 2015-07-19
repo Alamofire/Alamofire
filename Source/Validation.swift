@@ -117,6 +117,12 @@ extension Request {
                         return true
                     }
                 }
+            } else {
+                for contentType in acceptableContentTypes {
+                    if let MIMEType = MIMEType(contentType) where MIMEType.type == "*" && MIMEType.subtype == "*" {
+                        return true
+                    }
+                }
             }
 
             return false
