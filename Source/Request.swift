@@ -426,7 +426,7 @@ extension Request: DebugPrintable {
 
         let URL = self.request.URL
 
-        if let HTTPMethod = self.request.HTTPMethod where HTTPMethod != "GET" {
+        if let HTTPMethod = self.request.HTTPMethod {
             components.append("-X \(HTTPMethod)")
         }
 
