@@ -253,6 +253,8 @@ class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertNil(response, "response should be nil")
         XCTAssertNil(data, "data should be nil")
         XCTAssertNotNil(error, "error should not be nil")
+
+        XCTAssertNil(download.resumeData, "resume data should be nil")
     }
 
     func testThatCancelledDownloadResponseDataMatchesResumeData() {
