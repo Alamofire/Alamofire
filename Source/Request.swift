@@ -269,8 +269,16 @@ public class Request {
             if let taskDidCompleteWithError = self.taskDidCompleteWithError {
                 taskDidCompleteWithError(session, task, error)
             } else {
-                if error != nil {
+                if let error = error {
                     self.error = error
+
+                    if let
+                        downloadDelegate = self as? DownloadTaskDelegate,
+                        userInfo = error.userInfo as? [String: AnyObject],
+                        resumeData = userInfo[NSURLSessionDownloadTaskResumeData] as? NSData
+                    {
+                        downloadDelegate.resumeData = resumeData
+                    }
                 }
 
                 self.queue.suspended = false
