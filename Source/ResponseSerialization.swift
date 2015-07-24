@@ -44,6 +44,17 @@ public struct GenericResponseSerializer<T>: ResponseSerializer {
 
     /// A closure used by response handlers that takes a request, response, and data and returns a serialized object and any error that occured in the process.
     public var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?) -> (SerializedObject?, NSError?)
+
+    /**
+        Initializes the `GenericResponseSerializer` instance with the given serialize response closure.
+
+        :param: serializeResponse The closure used to serialize the response.
+
+        :returns: The new generic response serializer instance.
+    */
+    public init(serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?) -> (SerializedObject?, NSError?)) {
+        self.serializeResponse = serializeResponse
+    }
 }
 
 // MARK: - Default
