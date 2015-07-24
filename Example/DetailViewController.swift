@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import UIKit
 import Alamofire
+import UIKit
 
 class DetailViewController: UITableViewController {
     enum Sections: Int {
@@ -43,6 +43,15 @@ class DetailViewController: UITableViewController {
     var headers: [String: String] = [:]
     var body: String?
     var elapsedTime: NSTimeInterval?
+    var segueIdentifier: String?
+
+    static let numberFormatter: NSNumberFormatter = {
+        let formatter = NSNumberFormatter()
+        formatter.numberStyle = .DecimalStyle
+        return formatter
+    }()
+
+    // MARK: View Lifecycle
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -50,15 +59,13 @@ class DetailViewController: UITableViewController {
 
     }
 
-    // MARK: - UIViewController
-
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
 
         self.refresh()
     }
 
-    // MARK: - IBAction
+    // MARK: IBActions
 
     @IBAction func refresh() {
         if self.request == nil {
@@ -68,7 +75,7 @@ class DetailViewController: UITableViewController {
         self.refreshControl?.beginRefreshing()
 
         let start = CACurrentMediaTime()
-        self.request?.responseString { (request, response, body, error) in
+        self.request?.responseString { request, response, body, error in
             let end = CACurrentMediaTime()
             self.elapsedTime = end - start
 
@@ -76,15 +83,50 @@ class DetailViewController: UITableViewController {
                 self.headers["\(field)"] = "\(value)"
             }
 
-            self.body = body
+            if let segueIdentifier = self.segueIdentifier {
+                switch segueIdentifier {
+                case "GET", "POST", "PUT", "DELETE":
+                    self.body = body
+                case "DOWNLOAD":
+                    self.body = self.downloadedBodyString()
+                default:
+                    break
+                }
+            }
 
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()
         }
     }
 
-    // MARK: UITableViewDataSource
+    private func downloadedBodyString() -> String {
+        let fileManager = NSFileManager.defaultManager()
+        let cachesDirectory = fileManager.URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask)[0] as! NSURL
 
+        if let
+            contents = fileManager.contentsOfDirectoryAtURL(
+                cachesDirectory,
+                includingPropertiesForKeys: nil,
+                options: .SkipsHiddenFiles,
+                error: nil
+            ),
+            fileURL = contents.first as? NSURL,
+            data = NSData(contentsOfURL: fileURL),
+            json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil),
+            prettyData = NSJSONSerialization.dataWithJSONObject(json, options: .PrettyPrinted, error: nil),
+            prettyString = NSString(data: prettyData, encoding: NSUTF8StringEncoding) as? String
+        {
+            fileManager.removeItemAtURL(fileURL, error: nil)
+            return prettyString
+        }
+
+        return ""
+    }
+}
+
+// MARK: - UITableViewDataSource
+
+extension DetailViewController: UITableViewDataSource {
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Sections(rawValue: section)! {
         case .Headers:
@@ -97,7 +139,6 @@ class DetailViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-
         switch Sections(rawValue: indexPath.section)! {
         case .Headers:
             let cell = self.tableView.dequeueReusableCellWithIdentifier("Header") as! UITableViewCell
@@ -105,7 +146,7 @@ class DetailViewController: UITableViewController {
             let value = self.headers[field]
 
             cell.textLabel?.text = field
-            cell.detailTextLabel!.text = value
+            cell.detailTextLabel?.text = value
 
             return cell
         case .Body:
@@ -116,14 +157,16 @@ class DetailViewController: UITableViewController {
             return cell
         }
     }
+}
 
-    // MARK: UITableViewDelegate
+// MARK: - UITableViewDelegate
 
+extension DetailViewController: UITableViewDelegate {
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 2
     }
 
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String {
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if self.tableView(tableView, numberOfRowsInSection: section) == 0 {
             return ""
         }
@@ -145,15 +188,12 @@ class DetailViewController: UITableViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String {
+    override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if Sections(rawValue: section) == .Body, let elapsedTime = self.elapsedTime {
-            let numberFormatter = NSNumberFormatter()
-            numberFormatter.numberStyle = .DecimalStyle
-
-            return "Elapsed Time: \(numberFormatter.stringFromNumber(elapsedTime)) sec"
+            let elapsedTimeText = DetailViewController.numberFormatter.stringFromNumber(elapsedTime) ?? "???"
+            return "Elapsed Time: \(elapsedTimeText) sec"
         }
 
         return ""
     }
 }
-
