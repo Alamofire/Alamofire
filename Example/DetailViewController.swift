@@ -45,6 +45,12 @@ class DetailViewController: UITableViewController {
     var elapsedTime: NSTimeInterval?
     var segueIdentifier: String?
 
+    static let numberFormatter: NSNumberFormatter = {
+        let formatter = NSNumberFormatter()
+        formatter.numberStyle = .DecimalStyle
+        return formatter
+    }()
+
     // MARK: View Lifecycle
 
     override func awakeFromNib() {
@@ -133,7 +139,6 @@ extension DetailViewController: UITableViewDataSource {
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-
         switch Sections(rawValue: indexPath.section)! {
         case .Headers:
             let cell = self.tableView.dequeueReusableCellWithIdentifier("Header") as! UITableViewCell
@@ -141,7 +146,7 @@ extension DetailViewController: UITableViewDataSource {
             let value = self.headers[field]
 
             cell.textLabel?.text = field
-            cell.detailTextLabel!.text = value
+            cell.detailTextLabel?.text = value
 
             return cell
         case .Body:
@@ -185,10 +190,8 @@ extension DetailViewController: UITableViewDelegate {
 
     override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if Sections(rawValue: section) == .Body, let elapsedTime = self.elapsedTime {
-            let numberFormatter = NSNumberFormatter()
-            numberFormatter.numberStyle = .DecimalStyle
-
-            return "Elapsed Time: \(numberFormatter.stringFromNumber(elapsedTime)) sec"
+            let elapsedTimeText = DetailViewController.numberFormatter.stringFromNumber(elapsedTime) ?? "???"
+            return "Elapsed Time: \(elapsedTimeText) sec"
         }
 
         return ""
