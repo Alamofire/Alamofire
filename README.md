@@ -601,23 +601,21 @@ For example, here's how a response handler using [Ono](https://github.com/mattt/
 
 ```swift
 extension Request {
-    class func XMLResponseSerializer() -> Serializer {
-        return { request, response, data in
+    public static func XMLResponseSerializer() -> GenericResponseSerializer<ONOXMLDocument> {
+        return GenericResponseSerializer { request, response, data in
             if data == nil {
                 return (nil, nil)
             }
 
             var XMLSerializationError: NSError?
-            let XML = ONOXMLDocument(data: data, &XMLSerializationError)
+            let XML = ONOXMLDocument(data: data!, error: &XMLSerializationError)
 
             return (XML, XMLSerializationError)
         }
     }
 
-    func responseXMLDocument(completionHandler: (NSURLRequest, NSHTTPURLResponse?, ONOXMLDocument?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.XMLResponseSerializer()) { request, response, XML, error in
-            completionHandler(request, response, XML as? ONOXMLDocument, error)
-        }
+    public func responseXMLDocument(completionHandler: (NSURLRequest, NSHTTPURLResponse?, ONOXMLDocument?, NSError?) -> Void) -> Self {
+        return response(responseSerializer: Request.XMLResponseSerializer(), completionHandler: completionHandler)
     }
 }
 ```
@@ -631,11 +629,11 @@ Generics can be used to provide automatic, type-safe response object serializati
     init?(response: NSHTTPURLResponse, representation: AnyObject)
 }
 
-extension Alamofire.Request {
+extension Request {
     public func responseObject<T: ResponseObjectSerializable>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, T?, NSError?) -> Void) -> Self {
-        let serializer: Serializer = { (request, response, data) in
-            let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
-            let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
+        let responseSerializer = GenericResponseSerializer<T> { request, response, data in
+            let JSONResponseSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
+            let (JSON: AnyObject?, serializationError) = JSONResponseSerializer.serializeResponse(request, response, data)
 
             if let response = response, JSON: AnyObject = JSON {
                 return (T(response: response, representation: JSON), nil)
@@ -644,9 +642,7 @@ extension Alamofire.Request {
             }
         }
 
-        return response(serializer: serializer) { request, response, object, error in
-            completionHandler(request, response, object as? T, error)
-        }
+        return response(responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
 }
 ```
@@ -656,7 +652,7 @@ final class User: ResponseObjectSerializable {
     let username: String
     let name: String
 
-    required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+    @objc required init?(response: NSHTTPURLResponse, representation: AnyObject) {
         self.username = response.URL!.lastPathComponent!
         self.name = representation.valueForKeyPath("name") as! String
     }
@@ -665,7 +661,7 @@ final class User: ResponseObjectSerializable {
 
 ```swift
 Alamofire.request(.GET, "http://example.com/users/mattt")
-         .responseObject { _, _, user: User?, _ in
+         .responseObject { (_, _, user: User?, _) in
              println(user)
          }
 ```
@@ -679,9 +675,9 @@ The same approach can also be used to handle endpoints that return a representat
 
 extension Alamofire.Request {
     public func responseCollection<T: ResponseCollectionSerializable>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, [T]?, NSError?) -> Void) -> Self {
-        let serializer: Serializer = { request, response, data in
+        let responseSerializer = GenericResponseSerializer<[T]> { request, response, data in
             let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
-            let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
+            let (JSON: AnyObject?, serializationError) = JSONSerializer.serializeResponse(request, response, data)
 
             if let response = response, JSON: AnyObject = JSON {
                 return (T.collection(response: response, representation: JSON), nil)
@@ -690,9 +686,7 @@ extension Alamofire.Request {
             }
         }
 
-        return response(serializer: serializer) { request, response, object, error in
-            completionHandler(request, response, object as? [T], error)
-        }
+        return response(responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
 }
 ```
@@ -725,7 +719,7 @@ extension Alamofire.Request {
 
 ```swift
 Alamofire.request(.GET, "http://example.com/users")
-         .responseCollection { _, _, users: [User]?, _ in
+         .responseCollection { (_, _, users: [User]?, _) in
              println(users)
          }
 ```
