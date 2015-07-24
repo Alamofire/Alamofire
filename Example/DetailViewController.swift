@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import UIKit
 import Alamofire
+import UIKit
 
 class DetailViewController: UITableViewController {
     enum Sections: Int {
@@ -44,14 +44,14 @@ class DetailViewController: UITableViewController {
     var body: String?
     var elapsedTime: NSTimeInterval?
     var segueIdentifier: String?
-    
+
+    // MARK: View Lifecycle
+
     override func awakeFromNib() {
         super.awakeFromNib()
         self.refreshControl?.addTarget(self, action: "refresh", forControlEvents: .ValueChanged)
 
     }
-
-    // MARK: - UIViewController
 
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
@@ -59,7 +59,7 @@ class DetailViewController: UITableViewController {
         self.refresh()
     }
 
-    // MARK: - IBAction
+    // MARK: IBActions
 
     @IBAction func refresh() {
         if self.request == nil {
@@ -69,7 +69,7 @@ class DetailViewController: UITableViewController {
         self.refreshControl?.beginRefreshing()
 
         let start = CACurrentMediaTime()
-        self.request?.responseString { (request, response, body, error) in
+        self.request?.responseString { request, response, body, error in
             let end = CACurrentMediaTime()
             self.elapsedTime = end - start
 
@@ -116,9 +116,11 @@ class DetailViewController: UITableViewController {
 
         return ""
     }
+}
 
-    // MARK: UITableViewDataSource
+// MARK: - UITableViewDataSource
 
+extension DetailViewController: UITableViewDataSource {
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Sections(rawValue: section)! {
         case .Headers:
@@ -150,14 +152,16 @@ class DetailViewController: UITableViewController {
             return cell
         }
     }
+}
 
-    // MARK: UITableViewDelegate
+// MARK: - UITableViewDelegate
 
+extension DetailViewController: UITableViewDelegate {
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 2
     }
 
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String {
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if self.tableView(tableView, numberOfRowsInSection: section) == 0 {
             return ""
         }
@@ -179,7 +183,7 @@ class DetailViewController: UITableViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String {
+    override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if Sections(rawValue: section) == .Body, let elapsedTime = self.elapsedTime {
             let numberFormatter = NSNumberFormatter()
             numberFormatter.numberStyle = .DecimalStyle
@@ -190,4 +194,3 @@ class DetailViewController: UITableViewController {
         return ""
     }
 }
-

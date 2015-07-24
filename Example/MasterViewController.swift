@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import UIKit
 import Alamofire
+import UIKit
 
 class MasterViewController: UITableViewController {
 
@@ -30,13 +30,13 @@ class MasterViewController: UITableViewController {
     var detailViewController: DetailViewController? = nil
     var objects = NSMutableArray()
 
+    // MARK: - View Lifecycle
+
     override func awakeFromNib() {
         super.awakeFromNib()
 
         self.navigationItem.titleView = self.titleImageView
     }
-
-    // MARK: - UIViewController
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,7 +52,7 @@ class MasterViewController: UITableViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let detailViewController = segue.destinationViewController.topViewController as? DetailViewController {
             func requestForSegue(segue: UIStoryboardSegue) -> Request? {
-                switch segue.identifier as String! {
+                switch segue.identifier! {
                     case "GET":
                         detailViewController.segueIdentifier = "GET"
                         return Alamofire.request(.GET, "http://httpbin.org/get")
