@@ -182,7 +182,7 @@ class CacheTestCase: BaseTestCase {
         let request = self.manager.request(urlRequest)
         request.response(
             queue: queue,
-            serializer: Request.responseDataSerializer(),
+            responseSerializer: Request.dataResponseSerializer(),
             completionHandler: { _, response, _, _ in
                 completion(request.request, response)
             }

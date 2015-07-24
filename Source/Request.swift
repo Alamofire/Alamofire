@@ -134,56 +134,6 @@ public class Request {
         return self
     }
 
-    // MARK: - Response
-
-    /**
-        A closure used by response handlers that takes a request, response, and data and returns a serialized object and any error that occured in the process.
-    */
-    public typealias Serializer = (NSURLRequest, NSHTTPURLResponse?, NSData?) -> (AnyObject?, NSError?)
-
-    /**
-        Creates a response serializer that returns the associated data as-is.
-
-        :returns: A data response serializer.
-    */
-    public class func responseDataSerializer() -> Serializer {
-        return { request, response, data in
-            return (data, nil)
-        }
-    }
-
-    /**
-        Adds a handler to be called once the request has finished.
-
-        :param: completionHandler The code to be executed once the request has finished.
-
-        :returns: The request.
-    */
-    public func response(completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.responseDataSerializer(), completionHandler: completionHandler)
-    }
-
-    /**
-        Adds a handler to be called once the request has finished.
-
-        :param: queue The queue on which the completion handler is dispatched.
-        :param: serializer The closure responsible for serializing the request, response, and data.
-        :param: completionHandler The code to be executed once the request has finished.
-
-        :returns: The request.
-    */
-    public func response(queue: dispatch_queue_t? = nil, serializer: Serializer, completionHandler: (NSURLRequest, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        self.delegate.queue.addOperationWithBlock {
-            let (responseObject: AnyObject?, serializationError: NSError?) = serializer(self.request, self.response, self.delegate.data)
-
-            dispatch_async(queue ?? dispatch_get_main_queue()) {
-                completionHandler(self.request, self.response, responseObject, self.delegate.error ?? serializationError)
-            }
-        }
-
-        return self
-    }
-
     // MARK: - State
 
     /**

@@ -110,7 +110,7 @@ class RedirectResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
@@ -145,7 +145,7 @@ class RedirectResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
@@ -185,7 +185,7 @@ class RedirectResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
@@ -225,7 +225,7 @@ class RedirectResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
@@ -267,7 +267,7 @@ class RedirectResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When

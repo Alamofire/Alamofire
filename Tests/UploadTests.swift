@@ -186,7 +186,7 @@ class UploadDataTestCase: BaseTestCase {
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
         var responseRequest: NSURLRequest?
         var responseResponse: NSHTTPURLResponse?
-        var responseData: AnyObject?
+        var responseData: NSData?
         var responseError: NSError?
 
         // When
@@ -259,7 +259,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var formData: MultipartFormData?
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
@@ -316,7 +316,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
@@ -593,7 +593,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var data: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
