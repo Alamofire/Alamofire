@@ -17,6 +17,7 @@ Alamofire is an HTTP networking library written in Swift.
 - [x] Download using Request or Resume data
 - [x] Authentication with NSURLCredential
 - [x] HTTP Response Validation
+- [x] TLS Certificate and Public Key Pinning
 - [x] Progress Closure & NSProgress
 - [x] cURL Debug Output
 - [x] Comprehensive Unit Test Coverage
@@ -25,7 +26,7 @@ Alamofire is an HTTP networking library written in Swift.
 ## Requirements
 
 - iOS 7.0+ / Mac OS X 10.9+
-- Xcode 6.3
+- Xcode 6.4
 
 ## Communication
 
@@ -58,7 +59,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Alamofire', '~> 1.2'
+pod 'Alamofire', '~> 1.3'
 ```
 
 Then, run the following command:
@@ -81,7 +82,7 @@ $ brew install carthage
 To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" >= 1.2
+github "Alamofire/Alamofire" >= 1.3
 ```
 
 ### Manually
@@ -371,7 +372,7 @@ Alamofire.upload(
 #### Downloading a File
 
 ```swift
-Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: { temporaryURL, response in
+Alamofire.download(.GET, "http://httpbin.org/stream/100") { temporaryURL, response in
     let fileManager = NSFileManager.defaultManager()
     if let directoryURL = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as? NSURL {
         let pathComponent = response.suggestedFilename
@@ -379,7 +380,7 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: { tempora
     }
 
     return temporaryURL
-})
+}
 ```
 
 #### Using the Default Download Destination
@@ -470,7 +471,7 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .validate(statusCode: 200..<300)
          .validate(contentType: ["application/json"])
          .response { _, _, _, error in
-                  println(error)
+             println(error)
          }
 ```
 
