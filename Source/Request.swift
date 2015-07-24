@@ -29,6 +29,9 @@ public class Request {
 
     // MARK: - Properties
 
+    /// The delegate for the underlying task.
+    public let delegate: TaskDelegate
+
     /// The underlying task.
     public var task: NSURLSessionTask { return delegate.task }
 
@@ -43,8 +46,6 @@ public class Request {
 
     /// The progress of the request lifecycle.
     public var progress: NSProgress { return delegate.progress }
-
-    let delegate: TaskDelegate
 
     // MARK: - Lifecycle
 
@@ -168,9 +169,16 @@ public class Request {
 
     // MARK: - TaskDelegate
 
-    class TaskDelegate: NSObject, NSURLSessionTaskDelegate {
+    /**
+        The task delegate is responsible for handling all delegate callbacks for the underlying task as well as 
+        executing all operations attached to the serial operation queue upon task completion.
+    */
+    public class TaskDelegate: NSObject {
+
+        /// The serial operation queue used to execute all operations after the task completes.
+        public let queue: NSOperationQueue
+
         let task: NSURLSessionTask
-        let queue: NSOperationQueue
         let progress: NSProgress
 
         var data: NSData? { return nil }
