@@ -1,21 +1,26 @@
 ![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/assets/alamofire.png)
 
 [![Build Status](https://travis-ci.org/Alamofire/Alamofire.svg)](https://travis-ci.org/Alamofire/Alamofire)
+[![Cocoapods Compatible](https://img.shields.io/cocoapods/v/Alamofire.svg)](https://img.shields.io/cocoapods/v/Alamofire.svg)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![License](https://img.shields.io/cocoapods/l/Alamofire.svg?style=flat&color=gray)](http://cocoadocs.org/docsets/Alamofire)
+[![Platform](https://img.shields.io/cocoapods/p/Alamofire.svg?style=flat)](http://cocoadocs.org/docsets/Alamofire)
+[![Twitter](https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat)](http://twitter.com/AlamofireSF)
 
-Alamofire is an HTTP networking library written in Swift, from the [creator](https://github.com/mattt) of [AFNetworking](https://github.com/afnetworking/afnetworking).
+Alamofire is an HTTP networking library written in Swift.
 
 ## Features
 
 - [x] Chainable Request / Response methods
 - [x] URL / JSON / plist Parameter Encoding
-- [x] Upload File / Data / Stream
+- [x] Upload File / Data / Stream / MultipartFormData
 - [x] Download using Request or Resume data
 - [x] Authentication with NSURLCredential
 - [x] HTTP Response Validation
 - [x] Progress Closure & NSProgress
 - [x] cURL Debug Output
 - [x] Comprehensive Unit Test Coverage
-- [x] Complete Documentation
+- [x] [Complete Documentation](http://cocoadocs.org/docsets/Alamofire)
 
 ## Requirements
 
@@ -34,7 +39,7 @@ Alamofire is an HTTP networking library written in Swift, from the [creator](htt
 
 > **Embedded frameworks require a minimum deployment target of iOS 8 or OS X Mavericks.**
 >
-> To use Alamofire with a project targeting iOS 7, you must include the `Alamofire.swift` source file directly in your project. See the ['Source File'](#source-file) section for instructions.
+> To use Alamofire with a project targeting iOS 7, you must include all Swift files located inside the `Source` directory directly in your project. See the ['Source File'](#source-file) section for additional instructions.
 
 ### CocoaPods
 
@@ -64,7 +69,7 @@ $ pod install
 
 ### Carthage
 
-Carthage is a decentralized dependency manager that automates the process of adding frameworks to your Cocoa application.
+[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that automates the process of adding frameworks to your Cocoa application.
 
 You can install Carthage with [Homebrew](http://brew.sh/) using the following command:
 
@@ -83,7 +88,7 @@ github "Alamofire/Alamofire" >= 1.2
 
 If you prefer not to use either of the aforementioned dependency managers, you can integrate Alamofire into your project manually.
 
-### Embedded Framework
+#### Embedded Framework
 
 - Add Alamofire as a [submodule](http://git-scm.com/docs/git-submodule) by opening the Terminal, `cd`-ing into your top-level project directory, and entering the following command:
 
@@ -91,16 +96,29 @@ If you prefer not to use either of the aforementioned dependency managers, you c
 $ git submodule add https://github.com/Alamofire/Alamofire.git
 ```
 
-- Open the `Alamofire` folder, and drag `Alamofire.xcodeproj` into the file navigator of your app project.
-- In Xcode, navigate to the target configuration window by clicking on the blue project icon, and selecting the application target under the "Targets" heading in the sidebar.
-- Ensure that the deployment target of Alamofire.framework matches that of the application target.
-- In the tab bar at the top of that window, open the "Build Phases" panel.
-- Expand the "Target Dependencies" group, and add `Alamofire.framework`.
-- Click on the `+` button at the top left of the panel and select "New Copy Files Phase". Rename this new phase to "Copy Frameworks", set the "Destination" to "Frameworks", and add `Alamofire.framework`.
+- Open the new `Alamofire` folder, and drag the `Alamofire.xcodeproj` into the Project Navigator of your application's Xcode project.
+
+    > It should appear nested underneath your application's blue project icon. Whether it is above or below all the other Xcode groups does not matter.
+
+- Select the `Alamofire.xcodeproj` in the Project Navigator and verify the deployment target matches that of your application target.
+- Next, select your application project in the Project Navigator (blue project icon) to navigate to the target configuration window and select the application target under the "Targets" heading in the sidebar.
+- In the tab bar at the top of that window, open the "General" panel.
+- Click on the `+` button under the "Embedded Binaries" section.
+- You will see two different `Alamofire.xcodeproj` folders each with two different versions of the `Alamofire.framework` nested inside a `Products` folder.
+
+    > It does not matter which `Products` folder you choose from, but it does matter whether you choose the top or bottom `Alamofire.framework`. 
+    
+- Select the top `Alamofire.framework` for iOS and the bottom one for OS X.
+
+    > You can verify which one you selected by inspecting the build log for your project. The build target for `Alamofire` will be listed as either `Alamofire iOS` or `Alamofire OSX`.
+
+- And that's it!
+
+> The `Alamofire.framework` is automagically added as a target dependency, linked framework and embedded framework in a copy files build phase which is all you need to build on the simulator and a device.
 
 #### Source File
 
-For application targets that do not support embedded frameworks, such as iOS 7, Alamofire can be integrated by adding the `Alamofire.swift` source file directly into your project. Note that any calling conventions described in the ['Usage'](#usage) section with the `Alamofire` prefix would instead omit it (for example, `Alamofire.request` becomes `request`), since this functionality is incorporated into the top-level namespace.
+For application targets that do not support embedded frameworks, such as iOS 7, Alamofire can be integrated by adding all the Swift files located inside the `Source` directory (`Source/*.swift`) directly into your project. Note that you will no longer need to `import Alamofire` since you are not actually loading a framework. Additionally, any of the calling conventions described in the ['Usage'](#usage) section with the `Alamofire` prefix would instead omit it (for example, `Alamofire.request` becomes `request`), since this functionality is incorporated into the top-level namespace.
 
 ---
 
@@ -118,11 +136,11 @@ Alamofire.request(.GET, "http://httpbin.org/get")
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
-         .response { (request, response, data, error) in
-                     println(request)
-                     println(response)
-                     println(error)
-                   }
+         .response { request, response, data, error in
+              println(request)
+              println(response)
+              println(error)
+          }
 ```
 
 > Networking in Alamofire is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
@@ -142,8 +160,8 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get")
-         .responseString { (_, _, string, _) in
-                  println(string)
+         .responseString { _, _, string, _ in
+             println(string)
          }
 ```
 
@@ -151,8 +169,8 @@ Alamofire.request(.GET, "http://httpbin.org/get")
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get")
-         .responseJSON { (_, _, JSON, _) in
-                  println(JSON)
+         .responseJSON { _, _, JSON, _ in
+             println(JSON)
          }
 ```
 
@@ -162,11 +180,11 @@ Response handlers can even be chained:
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get")
-         .responseString { (_, _, string, _) in
-                  println(string)
+         .responseString { _, _, string, _ in
+             println(string)
          }
-         .responseJSON { (_, _, JSON, _) in
-                  println(JSON)
+         .responseJSON { _, _, JSON, _ in
+             println(JSON)
          }
 ```
 
@@ -232,12 +250,10 @@ Parameters can also be encoded as JSON, Property List, or any custom format, usi
 enum ParameterEncoding {
     case URL
     case JSON
-    case PropertyList(format: NSPropertyListFormat,
-                      options: NSPropertyListWriteOptions)
+    case PropertyList(format: NSPropertyListFormat, options: NSPropertyListWriteOptions)
+    case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?))
 
-    func encode(request: NSURLRequest,
-                parameters: [String: AnyObject]?) ->
-                    (NSURLRequest, NSError?)
+    func encode(request: NSURLRequest, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?)
     { ... }
 }
 ```
@@ -272,6 +288,24 @@ Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters, enco
 // HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
 ```
 
+### HTTP Headers
+
+Adding a custom HTTP header to a `Request` is supported directly in the global `request` method. This makes it easy to attach HTTP headers to a `Request` that can be constantly changing.
+
+> For HTTP headers that do not change, it is recommended to set them on the `NSURLSessionConfiguration` so they are automatically applied to any `NSURLSessionTask` created by the underlying `NSURLSession`.
+
+```swift
+let headers = [
+    "Authorization", "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
+    "Content-Type": "application/x-www-form-urlencoded"
+]
+
+Alamofire.request(.GET, "http://httpbin.org/get", headers: headers)
+         .responseJSON { _, _, JSON, _ in
+             println(JSON)
+         }
+```
+
 ### Caching
 
 Caching is handled on the system framework level by [`NSURLCache`](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLCache_Class/Reference/Reference.html#//apple_ref/occ/cl/NSURLCache).
@@ -283,27 +317,48 @@ Caching is handled on the system framework level by [`NSURLCache`](https://devel
 - File
 - Data
 - Stream
+- MultipartFormData
 
 #### Uploading a File
 
 ```swift
-let fileURL = NSBundle.mainBundle()
-                      .URLForResource("Default",
-                                      withExtension: "png")
-
+let fileURL = NSBundle.mainBundle().URLForResource("Default", withExtension: "png")
 Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
 ```
 
-#### Uploading w/Progress
+#### Uploading with Progress
 
 ```swift
 Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
-         .progress { (bytesWritten, totalBytesWritten, totalBytesExpectedToWrite) in
+         .progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
              println(totalBytesWritten)
          }
-         .responseJSON { (request, response, JSON, error) in
+         .responseJSON { request, response, JSON, error in
              println(JSON)
          }
+```
+
+#### Uploading MultipartFormData
+
+```swift
+Alamofire.upload(
+    .POST,
+    URLString: "http://httpbin.org/post",
+    multipartFormData: { multipartFormData in
+        multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
+        multipartFormData.appendBodyPart(fileURL: rainbowImageURL, name: "rainbow")
+    },
+    encodingCompletion: { encodingResult in
+    	switch encodingResult {
+    	case .Success(let upload, _, _):
+            upload.responseJSON { request, response, JSON, error in
+                println(JSON)
+            }
+    	case .Failure(let encodingError):
+    	    println(encodingError)
+    	}
+    }
+)
 ```
 
 ### Downloading
@@ -316,13 +371,10 @@ Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
 #### Downloading a File
 
 ```swift
-Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: { (temporaryURL, response) in
-    if let directoryURL = NSFileManager.defaultManager()
-                          .URLsForDirectory(.DocumentDirectory,
-                                            inDomains: .UserDomainMask)[0]
-                          as? NSURL {
+Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: { temporaryURL, response in
+    let fileManager = NSFileManager.defaultManager()
+    if let directoryURL = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as? NSURL {
         let pathComponent = response.suggestedFilename
-
         return directoryURL.URLByAppendingPathComponent(pathComponent!)
     }
 
@@ -334,7 +386,6 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: { (tempor
 
 ```swift
 let destination = Alamofire.Request.suggestedDownloadDestination(directory: .DocumentDirectory, domain: .UserDomainMask)
-
 Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
 ```
 
@@ -342,10 +393,10 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destinati
 
 ```swift
 Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
-         .progress { (bytesRead, totalBytesRead, totalBytesExpectedToRead) in
+         .progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
              println(totalBytesRead)
          }
-         .response { (request, response, _, error) in
+         .response { request, response, _, error in
              println(response)
          }
 ```
@@ -363,14 +414,33 @@ Authentication is handled on the system framework level by [`NSURLCredential` an
 
 #### HTTP Basic Authentication
 
+The `authenticate` method on a `Request` will automatically provide an `NSURLCredential` to an `NSURLAuthenticationChallenge` when appropriate:
+
 ```swift
 let user = "user"
 let password = "password"
 
 Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
          .authenticate(user: user, password: password)
-         .response {(request, response, _, error) in
+         .response { request, response, _, error in
              println(response)
+         }
+```
+
+Depending upon your server implementation, an `Authorization` header may also be appropriate:
+
+```swift
+let user = "user"
+let password = "password"
+
+let credentialData = "\(user):\(password)".dataUsingEncoding(NSUTF8StringEncoding)!
+let base64Credentials = credentialData.base64EncodedStringWithOptions(nil)
+
+let headers = ["Authorization": "Basic \(base64Credentials)"]
+
+Alamofire.request(.GET, "http://httpbin.org/basic-auth/user/password", headers: headers)
+         .responseJSON { _, _, JSON, _ in
+             println(JSON)
          }
 ```
 
@@ -384,7 +454,7 @@ let credential = NSURLCredential(user: user, password: password, persistence: .F
 
 Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
          .authenticate(usingCredential: credential)
-         .response {(request, response, _, error) in
+         .response { request, response, _, error in
              println(response)
          }
 ```
@@ -399,7 +469,7 @@ By default, Alamofire treats any completed request to be successful, regardless 
 Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .validate(statusCode: 200..<300)
          .validate(contentType: ["application/json"])
-         .response { (_, _, _, error) in
+         .response { _, _, _, error in
                   println(error)
          }
 ```
@@ -411,8 +481,8 @@ Automatically validates status code within `200...299` range, and that the `Cont
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .validate()
-         .response { (_, _, _, error) in
-                  println(error)
+         .response { _, _, _, error in
+             println(error)
          }
 ```
 
@@ -532,7 +602,7 @@ For example, here's how a response handler using [Ono](https://github.com/mattt/
 ```swift
 extension Request {
     class func XMLResponseSerializer() -> Serializer {
-        return { (request, response, data) in
+        return { request, response, data in
             if data == nil {
                 return (nil, nil)
             }
@@ -545,9 +615,9 @@ extension Request {
     }
 
     func responseXMLDocument(completionHandler: (NSURLRequest, NSHTTPURLResponse?, ONOXMLDocument?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.XMLResponseSerializer(), completionHandler: { (request, response, XML, error) in
+        return response(serializer: Request.XMLResponseSerializer()) { request, response, XML, error in
             completionHandler(request, response, XML as? ONOXMLDocument, error)
-        })
+        }
     }
 }
 ```
@@ -566,16 +636,17 @@ extension Alamofire.Request {
         let serializer: Serializer = { (request, response, data) in
             let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
             let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
-            if response != nil && JSON != nil {
-                return (T(response: response!, representation: JSON!), nil)
+
+            if let response = response, JSON: AnyObject = JSON {
+                return (T(response: response, representation: JSON), nil)
             } else {
                 return (nil, serializationError)
             }
         }
 
-        return response(serializer: serializer, completionHandler: { (request, response, object, error) in
+        return response(serializer: serializer) { request, response, object, error in
             completionHandler(request, response, object as? T, error)
-        })
+        }
     }
 }
 ```
@@ -586,15 +657,15 @@ final class User: ResponseObjectSerializable {
     let name: String
 
     required init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        self.username = response.URL!.lastPathComponent
-        self.name = representation.valueForKeyPath("name") as String
+        self.username = response.URL!.lastPathComponent!
+        self.name = representation.valueForKeyPath("name") as! String
     }
 }
 ```
 
 ```swift
 Alamofire.request(.GET, "http://example.com/users/mattt")
-         .responseObject { (_, _, user: User?, _) in
+         .responseObject { _, _, user: User?, _ in
              println(user)
          }
 ```
@@ -603,26 +674,60 @@ The same approach can also be used to handle endpoints that return a representat
 
 ```swift
 @objc public protocol ResponseCollectionSerializable {
-    class func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Self]
+    static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Self]
 }
 
 extension Alamofire.Request {
     public func responseCollection<T: ResponseCollectionSerializable>(completionHandler: (NSURLRequest, NSHTTPURLResponse?, [T]?, NSError?) -> Void) -> Self {
-        let serializer: Serializer = { (request, response, data) in
+        let serializer: Serializer = { request, response, data in
             let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
             let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
-            if response != nil && JSON != nil {
-                return (T.collection(response: response!, representation: JSON!), nil)
+
+            if let response = response, JSON: AnyObject = JSON {
+                return (T.collection(response: response, representation: JSON), nil)
             } else {
                 return (nil, serializationError)
             }
         }
 
-        return response(serializer: serializer, completionHandler: { (request, response, object, error) in
+        return response(serializer: serializer) { request, response, object, error in
             completionHandler(request, response, object as? [T], error)
-        })
+        }
     }
 }
+```
+
+```swift
+@objc final class User: ResponseObjectSerializable, ResponseCollectionSerializable {
+    let username: String
+    let name: String
+
+    required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        self.username = response.URL!.lastPathComponent!
+        self.name = representation.valueForKeyPath("name") as! String
+    }
+
+    static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [User] {
+        var users: [User] = []
+
+        if let representation = representation as? [[String: AnyObject]] {
+            for userRepresentation in representation {
+                if let user = User(response: response, representation: userRepresentation) {
+                    users.append(user)
+                }
+            }
+        }
+
+        return users
+    }
+}
+```
+
+```swift
+Alamofire.request(.GET, "http://example.com/users")
+         .responseCollection { _, _, users: [User]?, _ in
+             println(users)
+         }
 ```
 
 ### URLStringConvertible
@@ -712,7 +817,7 @@ enum Router: URLRequestConvertible {
 ```
 
 ```swift
-Alamofire.request(Router.Search(query: "foo bar", page: 1)) // ?q=foo+bar&offset=50
+Alamofire.request(Router.Search(query: "foo bar", page: 1)) // ?q=foo%20bar&offset=50
 ```
 
 #### CRUD & Authorization
@@ -800,7 +905,6 @@ Use AFNetworking for any of the following:
 - TLS verification, using `AFSecurityManager`
 - Situations requiring `NSOperation` or `NSURLConnection`, using `AFURLConnectionOperation`
 - Network reachability monitoring, using `AFNetworkReachabilityManager`
-- Multipart HTTP request construction, using `AFHTTPRequestSerializer`
 
 ### What's the origin of the name Alamofire?
 
@@ -808,13 +912,13 @@ Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu
 
 * * *
 
-## Contact
+## Credits
 
-Follow AFNetworking on Twitter ([@AFNetworking](https://twitter.com/AFNetworking))
+Alamofire is owned and maintained by the [Alamofire Software Foundation](http://alamofire.org). You can follow them on Twitter at [@AlamofireSF](https://twitter.com/AlamofireSF) for project updates and releases.
 
-### Creator
+### Security Disclosure
 
-- [Mattt Thompson](http://github.com/mattt) ([@mattt](https://twitter.com/mattt))
+If you believe you have identified a security vulnerability with Alamofire, you should report it as soon as possible via email to security@alamofire.org. Please do not post it to a public issue tracker.
 
 ## License
 

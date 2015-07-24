@@ -1,6 +1,6 @@
 // DetailViewController.swift
 //
-// Copyright (c) 2014–2015 Alamofire (http://alamofire.org)
+// Copyright (c) 2014–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -146,11 +146,11 @@ class DetailViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String {
-        if Sections(rawValue: section)! == .Body && self.elapsedTime != nil {
+        if Sections(rawValue: section) == .Body, let elapsedTime = self.elapsedTime {
             let numberFormatter = NSNumberFormatter()
             numberFormatter.numberStyle = .DecimalStyle
 
-            return "Elapsed Time: \(numberFormatter.stringFromNumber(self.elapsedTime!)) sec"
+            return "Elapsed Time: \(numberFormatter.stringFromNumber(elapsedTime)) sec"
         }
 
         return ""

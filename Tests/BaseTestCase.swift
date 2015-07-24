@@ -24,25 +24,11 @@ import Alamofire
 import Foundation
 import XCTest
 
-class TLSEvaluationTestCase: BaseTestCase {
-    func testThatExpiredSSLCertificateFailsEvaluation() {
-        // Given
-        let URL = "https://testssl-expire.disig.sk/"
-        let expectation = expectationWithDescription("\(URL)")
+class BaseTestCase: XCTestCase {
+    let defaultTimeout: NSTimeInterval = 10
 
-        var error: NSError?
-
-        // When
-        Alamofire.request(.GET, URL)
-            .response { _, _, _, responseError in
-                error = responseError
-                expectation.fulfill()
-            }
-
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
-
-        // Then
-        XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.code ?? -1, NSURLErrorServerCertificateUntrusted, "error should be NSURLErrorServerCertificateUntrusted")
+    func URLForResource(fileName: String, withExtension: String) -> NSURL {
+        let bundle = NSBundle(forClass: BaseTestCase.self)
+        return bundle.URLForResource(fileName, withExtension: withExtension)!
     }
 }
