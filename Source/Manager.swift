@@ -72,8 +72,9 @@ public class Manager {
 
                 var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
                 let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
+
                 if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
-                    return mutableUserAgent as NSString as! String
+                    return mutableUserAgent as String
                 }
             }
 
@@ -104,11 +105,15 @@ public class Manager {
     // MARK: - Lifecycle
 
     /**
-        :param: configuration The configuration used to construct the managed session.
+        Initializes the Manager instance with the given configuration and server trust policy.
+
+        :param: configuration The configuration used to construct the managed session. `nil` by default.
+        :param: serverTrustPolicyManager The server trust policy manager to use for evaluating all server trust challenges. `nil` by default.
     */
-    required public init(configuration: NSURLSessionConfiguration? = nil) {
+    required public init(configuration: NSURLSessionConfiguration? = nil, serverTrustPolicyManager: ServerTrustPolicyManager? = nil) {
         self.delegate = SessionDelegate()
         self.session = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        self.session.serverTrustPolicyManager = serverTrustPolicyManager
 
         self.delegate.sessionDidFinishEventsForBackgroundURLSession = { [weak self] session in
             if let strongSelf = self {
@@ -157,13 +162,14 @@ public class Manager {
         :returns: The created request.
     */
     public func request(URLRequest: URLRequestConvertible) -> Request {
-        var dataTask: NSURLSessionDataTask?
+        var dataTask: NSURLSessionDataTask!
+
         dispatch_sync(self.queue) {
             dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest)
         }
 
-        let request = Request(session: self.session, task: dataTask!)
-        self.delegate[request.delegate.task] = request.delegate
+        let request = Request(session: self.session, task: dataTask)
+        delegate[request.delegate.task] = request.delegate
 
         if self.startRequestsImmediately {
             request.resume()
@@ -218,11 +224,28 @@ public class Manager {
         }
 
         public func URLSession(session: NSURLSession, didReceiveChallenge challenge: NSURLAuthenticationChallenge, completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)) {
+            var disposition: NSURLSessionAuthChallengeDisposition = .PerformDefaultHandling
+            var credential: NSURLCredential!
+
             if let sessionDidReceiveChallenge = self.sessionDidReceiveChallenge {
-                completionHandler(sessionDidReceiveChallenge(session, challenge))
-            } else {
-                completionHandler(.PerformDefaultHandling, nil)
+                (disposition, credential) = sessionDidReceiveChallenge(session, challenge)
+            } else if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
+                let host = challenge.protectionSpace.host
+
+                if let
+                    serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicyForHost(host),
+                    serverTrust = challenge.protectionSpace.serverTrust
+                {
+                    if serverTrustPolicy.evaluateServerTrust(serverTrust, isValidForHost: host) {
+                        disposition = .UseCredential
+                        credential = NSURLCredential(forTrust: serverTrust)
+                    } else {
+                        disposition = .CancelAuthenticationChallenge
+                    }
+                }
             }
+
+            completionHandler(disposition, credential)
         }
 
         public func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
@@ -291,7 +314,6 @@ public class Manager {
                 taskDidComplete(session, task, error)
             } else if let delegate = self[task] {
                 delegate.URLSession(session, task: task, didCompleteWithError: error)
-
                 self[task] = nil
             }
         }

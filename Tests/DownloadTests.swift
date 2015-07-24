@@ -66,12 +66,8 @@ class DownloadInitializationTestCase: BaseTestCase {
 // MARK: -
 
 class DownloadResponseTestCase: BaseTestCase {
-    // MARK: - Properties
-
     let searchPathDirectory: NSSearchPathDirectory = .CachesDirectory
     let searchPathDomain: NSSearchPathDomainMask = .UserDomainMask
-
-    // MARK: - Tests
 
     func testDownloadRequest() {
         // Given
@@ -154,7 +150,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
         var responseRequest: NSURLRequest?
         var responseResponse: NSHTTPURLResponse?
-        var responseData: AnyObject?
+        var responseData: NSData?
         var responseError: NSError?
 
         // When
@@ -181,7 +177,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(responseRequest, "response request should not be nil")
-        XCTAssertNotNil(responseResponse, "response response should not be nil")
+        XCTAssertNotNil(responseResponse, "response should not be nil")
         XCTAssertNil(responseData, "response data should be nil")
         XCTAssertNil(responseError, "response error should be nil")
 
@@ -198,7 +194,8 @@ class DownloadResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
+        if let
+            lastByteValue = byteValues.last,
             lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
@@ -213,5 +210,127 @@ class DownloadResponseTestCase: BaseTestCase {
         var removalError: NSError?
         fileManager.removeItemAtURL(fileURL, error: &removalError)
         XCTAssertNil(removalError, "removal error should be nil")
+    }
+}
+
+// MARK: -
+
+class DownloadResumeDataTestCase: BaseTestCase {
+    let URLString = "https://upload.wikimedia.org/wikipedia/commons/6/69/NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg"
+    let destination: Request.DownloadFileDestination = {
+        let searchPathDirectory: NSSearchPathDirectory = .CachesDirectory
+        let searchPathDomain: NSSearchPathDomainMask = .UserDomainMask
+
+        return Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+    }()
+
+    func testThatImmediatelyCancelledDownloadDoesNotHaveResumeDataAvailable() {
+        // Given
+        let expectation = expectationWithDescription("Download should be cancelled")
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var data: AnyObject?
+        var error: NSError?
+
+        // When
+        let download = Alamofire.download(.GET, self.URLString, destination: self.destination)
+            .response { responseRequest, responseResponse, responseData, responseError in
+                request = responseRequest
+                response = responseResponse
+                data = responseData
+                error = responseError
+
+                expectation.fulfill()
+            }
+
+        download.cancel()
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNil(response, "response should be nil")
+        XCTAssertNil(data, "data should be nil")
+        XCTAssertNotNil(error, "error should not be nil")
+
+        XCTAssertNil(download.resumeData, "resume data should be nil")
+    }
+
+    func testThatCancelledDownloadResponseDataMatchesResumeData() {
+        // Given
+        let expectation = expectationWithDescription("Download should be cancelled")
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var data: AnyObject?
+        var error: NSError?
+
+        // When
+        let download = Alamofire.download(.GET, self.URLString, destination: self.destination)
+        download.progress { _, _, _ in
+            download.cancel()
+        }
+        download.response { responseRequest, responseResponse, responseData, responseError in
+            request = responseRequest
+            response = responseResponse
+            data = responseData
+            error = responseError
+
+            expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
+        XCTAssertNotNil(error, "error should not be nil")
+
+        XCTAssertNotNil(download.resumeData, "resume data should not be nil")
+
+        if let
+            responseData = data as? NSData,
+            resumeData = download.resumeData
+        {
+            XCTAssertEqual(responseData, resumeData, "response data should equal resume data")
+        } else {
+            XCTFail("response data or resume data was unexpectedly nil")
+        }
+    }
+
+    func testThatCancelledDownloadResumeDataIsAvailableWithJSONResponseSerializer() {
+        // Given
+        let expectation = expectationWithDescription("Download should be cancelled")
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var JSON: AnyObject?
+        var error: NSError?
+
+        // When
+        let download = Alamofire.download(.GET, self.URLString, destination: self.destination)
+        download.progress { _, _, _ in
+            download.cancel()
+        }
+        download.responseJSON { responseRequest, responseResponse, responseJSON, responseError in
+            request = responseRequest
+            response = responseResponse
+            JSON = responseJSON
+            error = responseError
+
+            expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNil(JSON, "JSON should be nil")
+        XCTAssertNotNil(error, "error should not be nil")
+
+        XCTAssertNotNil(download.resumeData, "resume data should not be nil")
     }
 }

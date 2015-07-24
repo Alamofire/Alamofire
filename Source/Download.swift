@@ -43,11 +43,13 @@ extension Manager {
         }
 
         let request = Request(session: self.session, task: downloadTask)
+
         if let downloadDelegate = request.delegate as? Request.DownloadTaskDelegate {
             downloadDelegate.downloadTaskDidFinishDownloadingToURL = { session, downloadTask, URL in
                 return destination(URL, downloadTask.response as! NSHTTPURLResponse)
             }
         }
+
         self.delegate[request.delegate.task] = request.delegate
 
         if self.startRequestsImmediately {
@@ -132,6 +134,17 @@ extension Request {
         }
     }
 
+    /// The resume data of the underlying download task if available after a failure.
+    public var resumeData: NSData? {
+        var data: NSData?
+
+        if let delegate = self.delegate as? DownloadTaskDelegate {
+            data = delegate.resumeData
+        }
+
+        return data
+    }
+
     // MARK: - DownloadTaskDelegate
 
     class DownloadTaskDelegate: TaskDelegate, NSURLSessionDownloadDelegate {
@@ -139,7 +152,7 @@ extension Request {
         var downloadProgress: ((Int64, Int64, Int64) -> Void)?
 
         var resumeData: NSData?
-        override var data: NSData? { return resumeData }
+        override var data: NSData? { return self.resumeData }
 
         // MARK: - NSURLSessionDownloadDelegate
 

@@ -137,26 +137,26 @@ class URLProtocolTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var string: AnyObject?
+        var data: NSData?
         var error: NSError?
 
         // When
         Alamofire.request(URLRequest)
-            .response { responseRequest, responseResponse, responseString, responseError in
+            .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
-                string = responseString
+                data = responseData
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(string, "string should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNil(error, "error should be nil")
 
         if let headers = response?.allHeaderFields as? [String: String] {
