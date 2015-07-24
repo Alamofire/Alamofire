@@ -68,7 +68,7 @@ class MasterViewController: UITableViewController {
                     case "DOWNLOAD":
                         detailViewController.segueIdentifier = "DOWNLOAD"
                         let destination = Alamofire.Request.suggestedDownloadDestination(directory: .CachesDirectory, domain: .UserDomainMask)
-                        return Alamofire.download(.GET, "http://httpbin.org/stream/1", destination)                    
+                        return Alamofire.download(.GET, "http://httpbin.org/stream/1", destination: destination)
                     default:
                         return nil
                 }
