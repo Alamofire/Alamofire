@@ -54,13 +54,21 @@ class MasterViewController: UITableViewController {
             func requestForSegue(segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier as String! {
                     case "GET":
+                        detailViewController.segueIdentifier = "GET"
                         return Alamofire.request(.GET, "http://httpbin.org/get")
                     case "POST":
+                        detailViewController.segueIdentifier = "POST"
                         return Alamofire.request(.POST, "http://httpbin.org/post")
                     case "PUT":
+                        detailViewController.segueIdentifier = "PUT"
                         return Alamofire.request(.PUT, "http://httpbin.org/put")
                     case "DELETE":
+                        detailViewController.segueIdentifier = "DELETE"
                         return Alamofire.request(.DELETE, "http://httpbin.org/delete")
+                    case "DOWNLOAD":
+                        detailViewController.segueIdentifier = "DOWNLOAD"
+                        let destination = Alamofire.Request.suggestedDownloadDestination(directory: .CachesDirectory, domain: .UserDomainMask)
+                        return Alamofire.download(.GET, "http://httpbin.org/stream/1", destination)                    
                     default:
                         return nil
                 }
