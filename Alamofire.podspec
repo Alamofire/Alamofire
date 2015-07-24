@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
   s.name = 'Alamofire'
-  s.version = '1.2.3'
+  s.version = '1.3.0'
   s.license = 'MIT'
   s.summary = 'Elegant HTTP Networking in Swift'
   s.homepage = 'https://github.com/Alamofire/Alamofire'
-  s.social_media_url = 'http://twitter.com/mattt'
+  s.social_media_url = 'http://twitter.com/AlamofireSF'
   s.authors = { 'Mattt Thompson' => 'm@mattt.me' }
   s.source = { :git => 'https://github.com/Alamofire/Alamofire.git', :tag => s.version }
 
