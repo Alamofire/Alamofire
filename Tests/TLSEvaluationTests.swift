@@ -69,25 +69,25 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     override func setUp() {
         super.setUp()
-        self.configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
+        configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
     }
 
     // MARK: Default Behavior Tests
 
     func testThatExpiredCertificateRequestFailsWithNoServerTrustPolicy() {
         // Given
-        let expectation = expectationWithDescription("\(self.URL)")
-        let manager = Manager(configuration: self.configuration)
+        let expectation = expectationWithDescription("\(URL)")
+        let manager = Manager(configuration: configuration)
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -98,23 +98,23 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWithDefaultServerTrustPolicy() {
         // Given
-        let policies = [self.host: ServerTrustPolicy.PerformDefaultEvaluation(validateHost: true)]
+        let policies = [host: ServerTrustPolicy.PerformDefaultEvaluation(validateHost: true)]
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -127,25 +127,25 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.Leaf]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
+            host: .PinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -156,25 +156,25 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.Leaf, TestCertificates.IntermediateCA, TestCertificates.RootCA]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
+            host: .PinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -185,25 +185,25 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.Leaf]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+            host: .PinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -213,25 +213,25 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.IntermediateCA]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+            host: .PinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -241,25 +241,25 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.RootCA]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+            host: .PinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
         
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -271,25 +271,25 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.Leaf]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: true, validateHost: true)
+            host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: true, validateHost: true)
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -300,25 +300,25 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.Leaf]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
+            host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -328,25 +328,25 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.IntermediateCA]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
+            host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -356,25 +356,25 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.RootCA]
         let policies: [String: ServerTrustPolicy] = [
-            self.host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
+            host: .PinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -384,23 +384,23 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenDisablingEvaluation() {
         // Given
-        let policies = [self.host: ServerTrustPolicy.DisableEvaluation]
+        let policies = [host: ServerTrustPolicy.DisableEvaluation]
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -411,28 +411,28 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenCustomEvaluationReturnsTrue() {
         // Given
         let policies = [
-            self.host: ServerTrustPolicy.CustomEvaluation { _, _ in
+            host: ServerTrustPolicy.CustomEvaluation { _, _ in
                 // Implement a custom evaluation routine here...
                 return true
             }
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -441,28 +441,28 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWhenCustomEvaluationReturnsFalse() {
         // Given
         let policies = [
-            self.host: ServerTrustPolicy.CustomEvaluation { _, _ in
+            host: ServerTrustPolicy.CustomEvaluation { _, _ in
                 // Implement a custom evaluation routine here...
                 return false
             }
         ]
 
         let manager = Manager(
-            configuration: self.configuration,
+            configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(self.URL)")
+        let expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
-        manager.request(.GET, self.URL)
+        manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")

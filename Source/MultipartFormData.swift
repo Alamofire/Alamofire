@@ -100,10 +100,10 @@ public class MultipartFormData {
     // MARK: - Properties
 
     /// The `Content-Type` header value containing the boundary used to generate the `multipart/form-data`.
-    public var contentType: String { return "multipart/form-data; boundary=\(self.boundary)" }
+    public var contentType: String { return "multipart/form-data; boundary=\(boundary)" }
 
     /// The content length of all body parts used to generate the `multipart/form-data` not including the boundaries.
-    public var contentLength: UInt64 { return self.bodyParts.reduce(0) { $0 + $1.bodyContentLength } }
+    public var contentLength: UInt64 { return bodyParts.reduce(0) { $0 + $1.bodyContentLength } }
 
     /// The boundary used to separate the body parts in the encoded form data.
     public let boundary: String
@@ -328,7 +328,7 @@ public class MultipartFormData {
     */
     public func appendBodyPart(#stream: NSInputStream, length: UInt64, headers: [String: String]) {
         let bodyPart = BodyPart(headers: headers, bodyStream: stream, bodyContentLength: length)
-        self.bodyParts.append(bodyPart)
+        bodyParts.append(bodyPart)
     }
 
     // MARK: - Data Encoding
@@ -343,16 +343,16 @@ public class MultipartFormData {
         :returns: EncodingResult containing an `NSData` object if the encoding succeeded, an `NSError` otherwise.
     */
     public func encode() -> EncodingResult {
-        if let bodyPartError = self.bodyPartError {
+        if let bodyPartError = bodyPartError {
             return .Failure(bodyPartError)
         }
 
         var encoded = NSMutableData()
 
-        self.bodyParts.first?.hasInitialBoundary = true
-        self.bodyParts.last?.hasFinalBoundary = true
+        bodyParts.first?.hasInitialBoundary = true
+        bodyParts.last?.hasFinalBoundary = true
 
-        for bodyPart in self.bodyParts {
+        for bodyPart in bodyParts {
             let encodedDataResult = encodeBodyPart(bodyPart)
 
             switch encodedDataResult {
@@ -377,7 +377,7 @@ public class MultipartFormData {
         :param: completionHandler A closure to be executed when writing is finished.
     */
     public func writeEncodedDataToDisk(fileURL: NSURL, completionHandler: (NSError?) -> Void) {
-        if let bodyPartError = self.bodyPartError {
+        if let bodyPartError = bodyPartError {
             completionHandler(bodyPartError)
             return
         }
@@ -481,8 +481,8 @@ public class MultipartFormData {
         let encoded = NSMutableData()
 
         while inputStream.hasBytesAvailable {
-            var buffer = [UInt8](count: self.streamBufferSize, repeatedValue: 0)
-            let bytesRead = inputStream.read(&buffer, maxLength: self.streamBufferSize)
+            var buffer = [UInt8](count: streamBufferSize, repeatedValue: 0)
+            let bytesRead = inputStream.read(&buffer, maxLength: streamBufferSize)
 
             if inputStream.streamError != nil {
                 error = inputStream.streamError
@@ -550,8 +550,8 @@ public class MultipartFormData {
         inputStream.open()
 
         while inputStream.hasBytesAvailable {
-            var buffer = [UInt8](count: self.streamBufferSize, repeatedValue: 0)
-            let bytesRead = inputStream.read(&buffer, maxLength: self.streamBufferSize)
+            var buffer = [UInt8](count: streamBufferSize, repeatedValue: 0)
+            let bytesRead = inputStream.read(&buffer, maxLength: streamBufferSize)
 
             if inputStream.streamError != nil {
                 error = inputStream.streamError
@@ -668,22 +668,22 @@ public class MultipartFormData {
     // MARK: - Private - Boundary Encoding
 
     private func initialBoundaryData() -> NSData {
-        return BoundaryGenerator.boundaryData(boundaryType: .Initial, boundary: self.boundary)
+        return BoundaryGenerator.boundaryData(boundaryType: .Initial, boundary: boundary)
     }
 
     private func encapsulatedBoundaryData() -> NSData {
-        return BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundary: self.boundary)
+        return BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundary: boundary)
     }
 
     private func finalBoundaryData() -> NSData {
-        return BoundaryGenerator.boundaryData(boundaryType: .Final, boundary: self.boundary)
+        return BoundaryGenerator.boundaryData(boundaryType: .Final, boundary: boundary)
     }
 
     // MARK: - Private - Errors
 
     private func setBodyPartError(error: NSError) {
-        if self.bodyPartError == nil {
-            self.bodyPartError = error
+        if bodyPartError == nil {
+            bodyPartError = error
         }
     }
 

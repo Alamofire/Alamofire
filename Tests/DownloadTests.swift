@@ -92,7 +92,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -100,7 +100,7 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
 
         let fileManager = NSFileManager.defaultManager()
-        let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as! NSURL
+        let directory = fileManager.URLsForDirectory(searchPathDirectory, inDomains: searchPathDomain)[0] as! NSURL
 
         var fileManagerError: NSError?
         if let contents = fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: .SkipsHiddenFiles, error: &fileManagerError) {
@@ -140,7 +140,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let URLString = "http://httpbin.org/bytes/\(randomBytes)"
 
         let fileManager = NSFileManager.defaultManager()
-        let directory = fileManager.URLsForDirectory(self.searchPathDirectory, inDomains: self.searchPathDomain)[0] as! NSURL
+        let directory = fileManager.URLsForDirectory(searchPathDirectory, inDomains: searchPathDomain)[0] as! NSURL
         let filename = "test_download_data"
         let fileURL = directory.URLByAppendingPathComponent(filename)
 
@@ -173,7 +173,7 @@ class DownloadResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(responseRequest, "response request should not be nil")
@@ -234,7 +234,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        let download = Alamofire.download(.GET, self.URLString, destination: self.destination)
+        let download = Alamofire.download(.GET, URLString, destination: destination)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -246,7 +246,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         download.cancel()
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -267,7 +267,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        let download = Alamofire.download(.GET, self.URLString, destination: self.destination)
+        let download = Alamofire.download(.GET, URLString, destination: destination)
         download.progress { _, _, _ in
             download.cancel()
         }
@@ -280,7 +280,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -310,7 +310,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        let download = Alamofire.download(.GET, self.URLString, destination: self.destination)
+        let download = Alamofire.download(.GET, URLString, destination: destination)
         download.progress { _, _, _ in
             download.cancel()
         }
@@ -323,7 +323,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")

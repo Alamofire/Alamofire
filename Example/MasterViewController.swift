@@ -35,15 +35,15 @@ class MasterViewController: UITableViewController {
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        self.navigationItem.titleView = self.titleImageView
+        navigationItem.titleView = titleImageView
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let split = self.splitViewController {
+        if let split = splitViewController {
             let controllers = split.viewControllers
-            self.detailViewController = controllers.last?.topViewController as? DetailViewController
+            detailViewController = controllers.last?.topViewController as? DetailViewController
         }
     }
 

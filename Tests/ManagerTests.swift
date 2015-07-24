@@ -45,7 +45,7 @@ class ManagerTestCase: BaseTestCase {
             }
             .resume()
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response, "response should not be nil")

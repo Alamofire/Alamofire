@@ -33,16 +33,16 @@ extension Manager {
 
         switch downloadable {
         case .Request(let request):
-            dispatch_sync(self.queue) {
+            dispatch_sync(queue) {
                 downloadTask = self.session.downloadTaskWithRequest(request)
             }
         case .ResumeData(let resumeData):
-            dispatch_sync(self.queue) {
+            dispatch_sync(queue) {
                 downloadTask = self.session.downloadTaskWithResumeData(resumeData)
             }
         }
 
-        let request = Request(session: self.session, task: downloadTask)
+        let request = Request(session: session, task: downloadTask)
 
         if let downloadDelegate = request.delegate as? Request.DownloadTaskDelegate {
             downloadDelegate.downloadTaskDidFinishDownloadingToURL = { session, downloadTask, URL in
@@ -50,9 +50,9 @@ extension Manager {
             }
         }
 
-        self.delegate[request.delegate.task] = request.delegate
+        delegate[request.delegate.task] = request.delegate
 
-        if self.startRequestsImmediately {
+        if startRequestsImmediately {
             request.resume()
         }
 
@@ -138,7 +138,7 @@ extension Request {
     public var resumeData: NSData? {
         var data: NSData?
 
-        if let delegate = self.delegate as? DownloadTaskDelegate {
+        if let delegate = delegate as? DownloadTaskDelegate {
             data = delegate.resumeData
         }
 
@@ -148,11 +148,11 @@ extension Request {
     // MARK: - DownloadTaskDelegate
 
     class DownloadTaskDelegate: TaskDelegate, NSURLSessionDownloadDelegate {
-        var downloadTask: NSURLSessionDownloadTask? { return self.task as? NSURLSessionDownloadTask }
+        var downloadTask: NSURLSessionDownloadTask? { return task as? NSURLSessionDownloadTask }
         var downloadProgress: ((Int64, Int64, Int64) -> Void)?
 
         var resumeData: NSData?
-        override var data: NSData? { return self.resumeData }
+        override var data: NSData? { return resumeData }
 
         // MARK: - NSURLSessionDownloadDelegate
 
@@ -165,35 +165,35 @@ extension Request {
         // MARK: Delegate Methods
 
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
-            if let downloadTaskDidFinishDownloadingToURL = self.downloadTaskDidFinishDownloadingToURL {
+            if let downloadTaskDidFinishDownloadingToURL = downloadTaskDidFinishDownloadingToURL {
                 let destination = downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
                 var fileManagerError: NSError?
 
                 NSFileManager.defaultManager().moveItemAtURL(location, toURL: destination, error: &fileManagerError)
 
                 if fileManagerError != nil {
-                    self.error = fileManagerError
+                    error = fileManagerError
                 }
             }
         }
 
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-            if let downloadTaskDidWriteData = self.downloadTaskDidWriteData {
+            if let downloadTaskDidWriteData = downloadTaskDidWriteData {
                 downloadTaskDidWriteData(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
             } else {
-                self.progress.totalUnitCount = totalBytesExpectedToWrite
-                self.progress.completedUnitCount = totalBytesWritten
+                progress.totalUnitCount = totalBytesExpectedToWrite
+                progress.completedUnitCount = totalBytesWritten
 
-                self.downloadProgress?(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
+                downloadProgress?(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
             }
         }
 
         func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
-            if let downloadTaskDidResumeAtOffset = self.downloadTaskDidResumeAtOffset {
+            if let downloadTaskDidResumeAtOffset = downloadTaskDidResumeAtOffset {
                 downloadTaskDidResumeAtOffset(session, downloadTask, fileOffset, expectedTotalBytes)
             } else {
-                self.progress.totalUnitCount = expectedTotalBytes
-                self.progress.completedUnitCount = fileOffset
+                progress.totalUnitCount = expectedTotalBytes
+                progress.completedUnitCount = fileOffset
             }
         }
     }

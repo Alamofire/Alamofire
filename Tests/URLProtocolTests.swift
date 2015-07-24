@@ -68,15 +68,15 @@ class ProxyURLProtocol: NSURLProtocol {
     // MARK: Loading Methods
 
     override func startLoading() {
-        var mutableRequest = self.request.mutableCopy() as! NSMutableURLRequest
+        var mutableRequest = request.mutableCopy() as! NSMutableURLRequest
         NSURLProtocol.setProperty(true, forKey: PropertyKeys.HandledByForwarderURLProtocol, inRequest: mutableRequest)
 
-        self.activeTask = self.session.dataTaskWithRequest(mutableRequest)
-        self.activeTask?.resume()
+        activeTask = session.dataTaskWithRequest(mutableRequest)
+        activeTask?.resume()
     }
 
     override func stopLoading() {
-        self.activeTask?.cancel()
+        activeTask?.cancel()
     }
 }
 
@@ -87,16 +87,16 @@ extension ProxyURLProtocol: NSURLSessionDelegate {
     // MARK: NSURLSessionDelegate
 
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        self.client?.URLProtocol(self, didLoadData: data)
+        client?.URLProtocol(self, didLoadData: data)
     }
 
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         if let response = task.response {
             let cachePolicy = task.originalRequest.cachePolicy
-            self.client?.URLProtocol(self, didReceiveResponse: response, cacheStoragePolicy: .NotAllowed)
+            client?.URLProtocol(self, didReceiveResponse: response, cacheStoragePolicy: .NotAllowed)
         }
 
-        self.client?.URLProtocolDidFinishLoading(self)
+        client?.URLProtocolDidFinishLoading(self)
     }
 }
 
@@ -151,7 +151,7 @@ class URLProtocolTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")

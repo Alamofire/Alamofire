@@ -121,7 +121,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
 
             let expectedData = (
                 BoundaryGenerator.boundary(boundaryType: .Initial, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"data\"\(self.CRLF)\(self.CRLF)" +
+                "Content-Disposition: form-data; name=\"data\"\(CRLF)\(CRLF)" +
                 "Lorem ipsum dolor sit amet." +
                 BoundaryGenerator.boundary(boundaryType: .Final, boundaryKey: boundary)
             ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
@@ -152,15 +152,15 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
 
             let expectedData = (
                 BoundaryGenerator.boundary(boundaryType: .Initial, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"french\"\(self.CRLF)\(self.CRLF)" +
+                "Content-Disposition: form-data; name=\"french\"\(CRLF)\(CRLF)" +
                 "français" +
                 BoundaryGenerator.boundary(boundaryType: .Encapsulated, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"japanese\"\(self.CRLF)" +
-                "Content-Type: text/plain\(self.CRLF)\(self.CRLF)" +
+                "Content-Disposition: form-data; name=\"japanese\"\(CRLF)" +
+                "Content-Type: text/plain\(CRLF)\(CRLF)" +
                 "日本語" +
                 BoundaryGenerator.boundary(boundaryType: .Encapsulated, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"emoji\"\(self.CRLF)" +
-                "Content-Type: text/plain\(self.CRLF)\(self.CRLF)" +
+                "Content-Disposition: form-data; name=\"emoji\"\(CRLF)" +
+                "Content-Type: text/plain\(CRLF)\(CRLF)" +
                 "😃👍🏻🍻🎉" +
                 BoundaryGenerator.boundary(boundaryType: .Final, boundaryKey: boundary)
             ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
@@ -188,8 +188,8 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             let expectedData = NSMutableData()
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: boundary))
             expectedData.appendData((
-                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(self.CRLF)" +
-                "Content-Type: image/png\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(CRLF)" +
+                "Content-Type: image/png\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedData.appendData(NSData(contentsOfURL: unicornImageURL)!)
@@ -220,15 +220,15 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             let expectedData = NSMutableData()
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: boundary))
             expectedData.appendData((
-                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(self.CRLF)" +
-                "Content-Type: image/png\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(CRLF)" +
+                "Content-Type: image/png\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedData.appendData(NSData(contentsOfURL: unicornImageURL)!)
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundaryKey: boundary))
             expectedData.appendData((
-                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(self.CRLF)" +
-                "Content-Type: image/jpeg\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(CRLF)" +
+                "Content-Type: image/jpeg\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedData.appendData(NSData(contentsOfURL: rainbowImageURL)!)
@@ -265,8 +265,8 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             let expectedData = NSMutableData()
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: boundary))
             expectedData.appendData((
-                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(self.CRLF)" +
-                "Content-Type: image/png\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(CRLF)" +
+                "Content-Type: image/png\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedData.appendData(NSData(contentsOfURL: unicornImageURL)!)
@@ -315,15 +315,15 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             let expectedData = NSMutableData()
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: boundary))
             expectedData.appendData((
-                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(self.CRLF)" +
-                "Content-Type: image/png\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(CRLF)" +
+                "Content-Type: image/png\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedData.appendData(NSData(contentsOfURL: unicornImageURL)!)
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundaryKey: boundary))
             expectedData.appendData((
-                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(self.CRLF)" +
-                "Content-Type: image/jpeg\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(CRLF)" +
+                "Content-Type: image/jpeg\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedData.appendData(NSData(contentsOfURL: rainbowImageURL)!)
@@ -367,21 +367,21 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             let expectedData = NSMutableData()
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: boundary))
             expectedData.appendData((
-                "Content-Disposition: form-data; name=\"lorem\"\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"lorem\"\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedData.appendData(loremData)
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundaryKey: boundary))
             expectedData.appendData((
-                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(self.CRLF)" +
-                "Content-Type: image/png\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(CRLF)" +
+                "Content-Type: image/png\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedData.appendData(NSData(contentsOfURL: unicornImageURL)!)
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundaryKey: boundary))
             expectedData.appendData((
-                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(self.CRLF)" +
-                "Content-Type: image/jpeg\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(CRLF)" +
+                "Content-Type: image/jpeg\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedData.appendData(NSData(contentsOfURL: rainbowImageURL)!)
@@ -415,7 +415,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -425,7 +425,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 
             let expectedFileData = (
                 BoundaryGenerator.boundary(boundaryType: .Initial, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"data\"\(self.CRLF)\(self.CRLF)" +
+                "Content-Disposition: form-data; name=\"data\"\(CRLF)\(CRLF)" +
                 "Lorem ipsum dolor sit amet." +
                 BoundaryGenerator.boundary(boundaryType: .Final, boundaryKey: boundary)
             ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
@@ -458,7 +458,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -468,13 +468,13 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 
             let expectedFileData = (
                 BoundaryGenerator.boundary(boundaryType: .Initial, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"french\"\(self.CRLF)\(self.CRLF)" +
+                "Content-Disposition: form-data; name=\"french\"\(CRLF)\(CRLF)" +
                 "français" +
                 BoundaryGenerator.boundary(boundaryType: .Encapsulated, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"japanese\"\(self.CRLF)\(self.CRLF)" +
+                "Content-Disposition: form-data; name=\"japanese\"\(CRLF)\(CRLF)" +
                 "日本語" +
                 BoundaryGenerator.boundary(boundaryType: .Encapsulated, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"emoji\"\(self.CRLF)\(self.CRLF)" +
+                "Content-Disposition: form-data; name=\"emoji\"\(CRLF)\(CRLF)" +
                 "😃👍🏻🍻🎉" +
                 BoundaryGenerator.boundary(boundaryType: .Final, boundaryKey: boundary)
             ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
@@ -502,7 +502,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -513,8 +513,8 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             let expectedFileData = NSMutableData()
             expectedFileData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: boundary))
             expectedFileData.appendData((
-                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(self.CRLF)" +
-                "Content-Type: image/png\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(CRLF)" +
+                "Content-Type: image/png\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedFileData.appendData(NSData(contentsOfURL: unicornImageURL)!)
@@ -546,7 +546,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -557,15 +557,15 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             let expectedFileData = NSMutableData()
             expectedFileData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: boundary))
             expectedFileData.appendData((
-                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(self.CRLF)" +
-                "Content-Type: image/png\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(CRLF)" +
+                "Content-Type: image/png\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedFileData.appendData(NSData(contentsOfURL: unicornImageURL)!)
             expectedFileData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundaryKey: boundary))
             expectedFileData.appendData((
-                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(self.CRLF)" +
-                "Content-Type: image/jpeg\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(CRLF)" +
+                "Content-Type: image/jpeg\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedFileData.appendData(NSData(contentsOfURL: rainbowImageURL)!)
@@ -604,7 +604,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -615,8 +615,8 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             let expectedFileData = NSMutableData()
             expectedFileData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: boundary))
             expectedFileData.appendData((
-                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(self.CRLF)" +
-                "Content-Type: image/png\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(CRLF)" +
+                "Content-Type: image/png\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedFileData.appendData(NSData(contentsOfURL: unicornImageURL)!)
@@ -666,7 +666,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -677,15 +677,15 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             let expectedFileData = NSMutableData()
             expectedFileData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: boundary))
             expectedFileData.appendData((
-                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(self.CRLF)" +
-                "Content-Type: image/png\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(CRLF)" +
+                "Content-Type: image/png\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedFileData.appendData(NSData(contentsOfURL: unicornImageURL)!)
             expectedFileData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundaryKey: boundary))
             expectedFileData.appendData((
-                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(self.CRLF)" +
-                "Content-Type: image/jpeg\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(CRLF)" +
+                "Content-Type: image/jpeg\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedFileData.appendData(NSData(contentsOfURL: rainbowImageURL)!)
@@ -730,7 +730,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -741,21 +741,21 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             let expectedFileData = NSMutableData()
             expectedFileData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Initial, boundaryKey: boundary))
             expectedFileData.appendData((
-                "Content-Disposition: form-data; name=\"lorem\"\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"lorem\"\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedFileData.appendData(loremData)
             expectedFileData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundaryKey: boundary))
             expectedFileData.appendData((
-                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(self.CRLF)" +
-                "Content-Type: image/png\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"unicorn\"; filename=\"unicorn.png\"\(CRLF)" +
+                "Content-Type: image/png\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedFileData.appendData(NSData(contentsOfURL: unicornImageURL)!)
             expectedFileData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Encapsulated, boundaryKey: boundary))
             expectedFileData.appendData((
-                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(self.CRLF)" +
-                "Content-Type: image/jpeg\(self.CRLF)\(self.CRLF)"
+                "Content-Disposition: form-data; name=\"rainbow\"; filename=\"rainbow.jpg\"\(CRLF)" +
+                "Content-Type: image/jpeg\(CRLF)\(CRLF)"
                 ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
             )
             expectedFileData.appendData(NSData(contentsOfURL: rainbowImageURL)!)
@@ -922,7 +922,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
@@ -950,7 +950,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")

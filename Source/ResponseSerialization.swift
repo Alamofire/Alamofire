@@ -65,7 +65,7 @@ extension Request {
         completionHandler: (NSURLRequest, NSHTTPURLResponse?, V?, NSError?) -> Void)
         -> Self
     {
-        self.delegate.queue.addOperationWithBlock {
+        delegate.queue.addOperationWithBlock {
             let result: V?
             let error: NSError?
 

@@ -100,7 +100,7 @@ class RequestResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -141,7 +141,7 @@ class RequestResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(responseRequest, "response request should not be nil")
@@ -211,7 +211,7 @@ class RequestResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(responseRequest, "response request should not be nil")
@@ -254,7 +254,7 @@ class RequestResponseTestCase: BaseTestCase {
 
 extension Request {
     private func preValidate(operation: Void -> Void) -> Self {
-        self.delegate.queue.addOperationWithBlock {
+        delegate.queue.addOperationWithBlock {
             operation()
         }
 
@@ -262,7 +262,7 @@ extension Request {
     }
 
     private func postValidate(operation: Void -> Void) -> Self {
-        self.delegate.queue.addOperationWithBlock {
+        delegate.queue.addOperationWithBlock {
             operation()
         }
 
@@ -294,7 +294,7 @@ class RequestExtensionTestCase: BaseTestCase {
                 expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         if responses.count == 3 {
@@ -329,7 +329,7 @@ class RequestDescriptionTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertEqual(initialRequestDescription, "GET http://httpbin.org/get", "incorrect request description")

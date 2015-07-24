@@ -50,12 +50,12 @@ class AuthenticationTestCase: BaseTestCase {
 class BasicAuthenticationTestCase: AuthenticationTestCase {
     override func setUp() {
         super.setUp()
-        self.URLString = "http://httpbin.org/basic-auth/\(self.user)/\(self.password)"
+        URLString = "http://httpbin.org/basic-auth/\(user)/\(password)"
     }
 
     func testHTTPBasicAuthenticationWithInvalidCredentials() {
         // Given
-        let expectation = expectationWithDescription("\(self.URLString) 401")
+        let expectation = expectationWithDescription("\(URLString) 401")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
@@ -63,7 +63,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, self.URLString)
+        Alamofire.request(.GET, URLString)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -74,7 +74,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -86,7 +86,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
     func testHTTPBasicAuthenticationWithValidCredentials() {
         // Given
-        let expectation = expectationWithDescription("\(self.URLString) 200")
+        let expectation = expectationWithDescription("\(URLString) 200")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
@@ -94,8 +94,8 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, self.URLString)
-            .authenticate(user: self.user, password: self.password)
+        Alamofire.request(.GET, URLString)
+            .authenticate(user: user, password: password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -105,7 +105,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -123,12 +123,12 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
     override func setUp() {
         super.setUp()
-        self.URLString = "http://httpbin.org/digest-auth/\(self.qop)/\(self.user)/\(self.password)"
+        URLString = "http://httpbin.org/digest-auth/\(qop)/\(user)/\(password)"
     }
 
     func testHTTPDigestAuthenticationWithInvalidCredentials() {
         // Given
-        let expectation = expectationWithDescription("\(self.URLString) 401")
+        let expectation = expectationWithDescription("\(URLString) 401")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
@@ -136,7 +136,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, self.URLString)
+        Alamofire.request(.GET, URLString)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -147,7 +147,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -159,7 +159,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
     func testHTTPDigestAuthenticationWithValidCredentials() {
         // Given
-        let expectation = expectationWithDescription("\(self.URLString) 200")
+        let expectation = expectationWithDescription("\(URLString) 200")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
@@ -167,8 +167,8 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, self.URLString)
-            .authenticate(user: self.user, password: self.password)
+        Alamofire.request(.GET, URLString)
+            .authenticate(user: user, password: password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -178,7 +178,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")

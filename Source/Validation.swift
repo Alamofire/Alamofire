@@ -39,7 +39,7 @@ extension Request {
         :returns: The request.
     */
     public func validate(validation: Validation) -> Self {
-        self.delegate.queue.addOperationWithBlock {
+        delegate.queue.addOperationWithBlock {
             if let response = self.response where self.delegate.error == nil && !validation(self.request, response) {
                 self.delegate.error = NSError(domain: AlamofireErrorDomain, code: -1, userInfo: nil)
             }
@@ -88,7 +88,7 @@ extension Request {
         }
 
         func matches(MIME: MIMEType) -> Bool {
-            switch (self.type, self.subtype) {
+            switch (type, subtype) {
             case (MIME.type, MIME.subtype), (MIME.type, "*"), ("*", MIME.subtype), ("*", "*"):
                 return true
             default:
