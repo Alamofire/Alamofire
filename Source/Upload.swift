@@ -1,4 +1,4 @@
-// Alamofire.swift
+// Upload.swift
 //
 // Copyright (c) 2014–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -35,29 +35,32 @@ extension Manager {
 
         switch uploadable {
         case .Data(let request, let data):
-            dispatch_sync(self.queue) {
+            dispatch_sync(queue) {
                 uploadTask = self.session.uploadTaskWithRequest(request, fromData: data)
             }
         case .File(let request, let fileURL):
-            dispatch_sync(self.queue) {
+            dispatch_sync(queue) {
                 uploadTask = self.session.uploadTaskWithRequest(request, fromFile: fileURL)
             }
         case .Stream(let request, let stream):
-            dispatch_sync(self.queue) {
+            dispatch_sync(queue) {
                 uploadTask = self.session.uploadTaskWithStreamedRequest(request)
             }
+
             HTTPBodyStream = stream
         }
 
-        let request = Request(session: self.session, task: uploadTask)
+        let request = Request(session: session, task: uploadTask)
+
         if HTTPBodyStream != nil {
             request.delegate.taskNeedNewBodyStream = { _, _ in
                 return HTTPBodyStream
             }
         }
-        self.delegate[request.delegate.task] = request.delegate
 
-        if self.startRequestsImmediately {
+        delegate[request.delegate.task] = request.delegate
+
+        if startRequestsImmediately {
             request.resume()
         }
 
@@ -127,6 +130,7 @@ extension Manager {
     */
     public func upload(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, data: NSData) -> Request {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+
         return upload(mutableURLRequest, data: data)
     }
 
@@ -160,6 +164,7 @@ extension Manager {
     */
     public func upload(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, stream: NSInputStream) -> Request {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
+
         return upload(mutableURLRequest, stream: stream)
     }
 
@@ -320,7 +325,7 @@ extension Request {
     // MARK: - UploadTaskDelegate
 
     class UploadTaskDelegate: DataTaskDelegate {
-        var uploadTask: NSURLSessionUploadTask? { return self.task as? NSURLSessionUploadTask }
+        var uploadTask: NSURLSessionUploadTask? { return task as? NSURLSessionUploadTask }
         var uploadProgress: ((Int64, Int64, Int64) -> Void)!
 
         // MARK: - NSURLSessionTaskDelegate
@@ -332,13 +337,13 @@ extension Request {
         // MARK: Delegate Methods
 
         func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-            if let taskDidSendBodyData = self.taskDidSendBodyData {
+            if let taskDidSendBodyData = taskDidSendBodyData {
                 taskDidSendBodyData(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
             } else {
-                self.progress.totalUnitCount = totalBytesExpectedToSend
-                self.progress.completedUnitCount = totalBytesSent
+                progress.totalUnitCount = totalBytesExpectedToSend
+                progress.completedUnitCount = totalBytesSent
 
-                self.uploadProgress?(bytesSent, totalBytesSent, totalBytesExpectedToSend)
+                uploadProgress?(bytesSent, totalBytesSent, totalBytesExpectedToSend)
             }
         }
     }

@@ -84,14 +84,14 @@ class CacheTestCase: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        self.URLCache = {
+        URLCache = {
             let capacity = 50 * 1024 * 1024 // MBs
             let URLCache = NSURLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
 
             return URLCache
         }()
 
-        self.manager = {
+        manager = {
             let configuration: NSURLSessionConfiguration = {
                 let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
                 configuration.HTTPAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
@@ -112,7 +112,7 @@ class CacheTestCase: BaseTestCase {
     override func tearDown() {
         super.tearDown()
 
-        self.URLCache.removeAllCachedResponses()
+        URLCache.removeAllCachedResponses()
     }
 
     // MARK: - Cache Priming Methods
@@ -132,7 +132,7 @@ class CacheTestCase: BaseTestCase {
         for cacheControl in CacheControl.allValues {
             dispatch_group_enter(dispatchGroup)
 
-            let request = self.startRequest(
+            let request = startRequest(
                 cacheControl: cacheControl,
                 queue: highPriorityDispatchQueue,
                 completion: { _, response in
@@ -143,7 +143,7 @@ class CacheTestCase: BaseTestCase {
                 }
             )
 
-            self.requests[cacheControl] = request
+            requests[cacheControl] = request
         }
 
         // Wait for all requests to complete
@@ -163,8 +163,8 @@ class CacheTestCase: BaseTestCase {
 
     func URLRequest(cacheControl cacheControl: String, cachePolicy: NSURLRequestCachePolicy) -> NSURLRequest {
         let parameters = ["Cache-Control": cacheControl]
-        let URL = NSURL(string: self.URLString)!
-        let URLRequest = NSMutableURLRequest(URL: URL, cachePolicy: cachePolicy, timeoutInterval: self.requestTimeout)
+        let URL = NSURL(string: URLString)!
+        let URLRequest = NSMutableURLRequest(URL: URL, cachePolicy: cachePolicy, timeoutInterval: requestTimeout)
         URLRequest.HTTPMethod = Method.GET.rawValue
 
         return ParameterEncoding.URL.encode(URLRequest, parameters: parameters).0
@@ -179,11 +179,11 @@ class CacheTestCase: BaseTestCase {
     {
         let urlRequest = URLRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)
 
-        let request = self.manager.request(urlRequest)
+        let request = manager.request(urlRequest)
         request.response(
-            queue: queue,
-            serializer: Request.responseDataSerializer(),
-            completionHandler: { _, response, _, _ in
+            queue,
+            responseSerializer: Request.dataResponseSerializer(),
+            completionHandler: { (_, response, data: NSData?, _) in
                 completion(request.request, response)
             }
         )
@@ -208,14 +208,14 @@ class CacheTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         verifyResponse(response, forCacheControl: cacheControl, isCachedResponse: shouldReturnCachedResponse)
     }
 
     func verifyResponse(response: NSHTTPURLResponse?, forCacheControl cacheControl: String, isCachedResponse: Bool) {
-        let cachedResponseTimestamp = self.timestamps[cacheControl]!
+        let cachedResponseTimestamp = timestamps[cacheControl]!
 
         if let
             response = response,
@@ -251,20 +251,20 @@ class CacheTestCase: BaseTestCase {
 
     func testURLCacheContainsCachedResponsesForAllRequests() {
         // Given
-        let publicRequest = self.requests[CacheControl.Public]!
-        let privateRequest = self.requests[CacheControl.Private]!
-        let maxAgeNonExpiredRequest = self.requests[CacheControl.MaxAgeNonExpired]!
-        let maxAgeExpiredRequest = self.requests[CacheControl.MaxAgeExpired]!
-        let noCacheRequest = self.requests[CacheControl.NoCache]!
-        let noStoreRequest = self.requests[CacheControl.NoStore]!
+        let publicRequest = requests[CacheControl.Public]!
+        let privateRequest = requests[CacheControl.Private]!
+        let maxAgeNonExpiredRequest = requests[CacheControl.MaxAgeNonExpired]!
+        let maxAgeExpiredRequest = requests[CacheControl.MaxAgeExpired]!
+        let noCacheRequest = requests[CacheControl.NoCache]!
+        let noStoreRequest = requests[CacheControl.NoStore]!
 
         // When
-        let publicResponse = self.URLCache.cachedResponseForRequest(publicRequest)
-        let privateResponse = self.URLCache.cachedResponseForRequest(privateRequest)
-        let maxAgeNonExpiredResponse = self.URLCache.cachedResponseForRequest(maxAgeNonExpiredRequest)
-        let maxAgeExpiredResponse = self.URLCache.cachedResponseForRequest(maxAgeExpiredRequest)
-        let noCacheResponse = self.URLCache.cachedResponseForRequest(noCacheRequest)
-        let noStoreResponse = self.URLCache.cachedResponseForRequest(noStoreRequest)
+        let publicResponse = URLCache.cachedResponseForRequest(publicRequest)
+        let privateResponse = URLCache.cachedResponseForRequest(privateRequest)
+        let maxAgeNonExpiredResponse = URLCache.cachedResponseForRequest(maxAgeNonExpiredRequest)
+        let maxAgeExpiredResponse = URLCache.cachedResponseForRequest(maxAgeExpiredRequest)
+        let noCacheResponse = URLCache.cachedResponseForRequest(noCacheRequest)
+        let noStoreResponse = URLCache.cachedResponseForRequest(noStoreRequest)
 
         // Then
         XCTAssertNotNil(publicResponse, "\(CacheControl.Public) response should not be nil")
@@ -340,7 +340,7 @@ class CacheTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+            waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
             // Then
             XCTAssertNil(response, "response should be nil")

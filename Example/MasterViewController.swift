@@ -20,8 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import UIKit
 import Alamofire
+import UIKit
 
 class MasterViewController: UITableViewController {
 
@@ -30,20 +30,26 @@ class MasterViewController: UITableViewController {
     var detailViewController: DetailViewController? = nil
     var objects = NSMutableArray()
 
+    // MARK: - View Lifecycle
+
     override func awakeFromNib() {
         super.awakeFromNib()
 
-        self.navigationItem.titleView = self.titleImageView
+        navigationItem.titleView = titleImageView
     }
-
-    // MARK: - UIViewController
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let split = self.splitViewController {
+        if let split = splitViewController {
             let controllers = split.viewControllers
-            detailViewController = (controllers.last as! UINavigationController).topViewController as? DetailViewController
+
+            if let
+                navigationController = controllers.last as? UINavigationController,
+                topViewController = navigationController.topViewController as? DetailViewController
+            {
+                detailViewController = topViewController
+            }
         }
     }
 
@@ -52,15 +58,23 @@ class MasterViewController: UITableViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let detailViewController = (segue.destinationViewController as! UINavigationController).topViewController as? DetailViewController {
             func requestForSegue(segue: UIStoryboardSegue) -> Request? {
-                switch segue.identifier as String! {
+                switch segue.identifier! {
                     case "GET":
+                        detailViewController.segueIdentifier = "GET"
                         return Alamofire.request(.GET, "https://httpbin.org/get")
                     case "POST":
+                        detailViewController.segueIdentifier = "POST"
                         return Alamofire.request(.POST, "https://httpbin.org/post")
                     case "PUT":
+                        detailViewController.segueIdentifier = "PUT"
                         return Alamofire.request(.PUT, "https://httpbin.org/put")
                     case "DELETE":
+                        detailViewController.segueIdentifier = "DELETE"
                         return Alamofire.request(.DELETE, "https://httpbin.org/delete")
+                    case "DOWNLOAD":
+                        detailViewController.segueIdentifier = "DOWNLOAD"
+                        let destination = Alamofire.Request.suggestedDownloadDestination(directory: .CachesDirectory, domain: .UserDomainMask)
+                        return Alamofire.download(.GET, "https://httpbin.org/stream/1", destination: destination)
                     default:
                         return nil
                 }

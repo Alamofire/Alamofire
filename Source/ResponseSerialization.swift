@@ -1,4 +1,4 @@
-// Alamofire.swift
+// ResponseSerialization.swift
 //
 // Copyright (c) 2014–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -22,9 +22,106 @@
 
 import Foundation
 
-// MARK: String
+// MARK: - ResponseSerializer
+
+/**
+    The type in which all response serializers must conform to in order to serialize a response.
+*/
+public protocol ResponseSerializer {
+    /// The type of serialized object to be created by this `ResponseSerializer`.
+    typealias SerializedObject
+
+    /// A closure used by response handlers that takes a request, response, and data and returns a serialized object and any error that occured in the process.
+    var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?) -> (SerializedObject?, NSError?) { get }
+}
+
+/**
+    A generic `ResponseSerializer` used to serialize a request, response, and data into a serialized object.
+*/
+public struct GenericResponseSerializer<T>: ResponseSerializer {
+    /// The type of serialized object to be created by this `ResponseSerializer`.
+    public typealias SerializedObject = T
+
+    /// A closure used by response handlers that takes a request, response, and data and returns a serialized object and any error that occured in the process.
+    public var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?) -> (SerializedObject?, NSError?)
+
+    /**
+        Initializes the `GenericResponseSerializer` instance with the given serialize response closure.
+
+        :param: serializeResponse The closure used to serialize the response.
+
+        :returns: The new generic response serializer instance.
+    */
+    public init(serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?) -> (SerializedObject?, NSError?)) {
+        self.serializeResponse = serializeResponse
+    }
+}
+
+// MARK: - Default
 
 extension Request {
+
+    /**
+        Adds a handler to be called once the request has finished.
+
+        :param: queue The queue on which the completion handler is dispatched.
+        :param: responseSerializer The response serializer responsible for serializing the request, response, and data.
+        :param: completionHandler The code to be executed once the request has finished.
+
+        :returns: The request.
+    */
+    public func response<T: ResponseSerializer, V where T.SerializedObject == V>(
+        queue: dispatch_queue_t? = nil,
+        responseSerializer: T,
+        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, V?, NSError?) -> Void)
+        -> Self
+    {
+        delegate.queue.addOperationWithBlock {
+            let result: V?
+            let error: NSError?
+
+            (result, error) = responseSerializer.serializeResponse(self.request, self.response, self.delegate.data)
+
+            dispatch_async(queue ?? dispatch_get_main_queue()) {
+                completionHandler(self.request, self.response, result, self.delegate.error ?? error)
+            }
+        }
+
+        return self
+    }
+}
+
+// MARK: - Data
+
+extension Request {
+
+    /**
+        Creates a response serializer that returns the associated data as-is.
+
+        :returns: A data response serializer.
+    */
+    public static func dataResponseSerializer() -> GenericResponseSerializer<NSData> {
+        return GenericResponseSerializer { request, response, data in
+            return (data, nil)
+        }
+    }
+
+    /**
+        Adds a handler to be called once the request has finished.
+
+        :param: completionHandler The code to be executed once the request has finished.
+
+        :returns: The request.
+    */
+    public func response(completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Void) -> Self {
+        return response(responseSerializer: Request.dataResponseSerializer(), completionHandler: completionHandler)
+    }
+}
+
+// MARK: - String
+
+extension Request {
+
     /**
         Creates a response serializer that returns a string initialized from the response data with the specified string encoding.
 
@@ -32,19 +129,17 @@ extension Request {
 
         - returns: A string response serializer.
     */
-    public class func stringResponseSerializer(var encoding encoding: NSStringEncoding? = nil) -> Serializer {
-        return { _, response, data in
+    public static func stringResponseSerializer(var encoding encoding: NSStringEncoding? = nil) -> GenericResponseSerializer<String> {
+        return GenericResponseSerializer { _, response, data in
             if data == nil || data?.length == 0 {
                 return (nil, nil)
             }
 
-            if encoding == nil {
-                if let encodingName = response?.textEncodingName {
-                    encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName))
-                }
+            if let encodingName = response?.textEncodingName where encoding == nil {
+                encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName))
             }
 
-            let string = NSString(data: data!, encoding: encoding ?? NSISOLatin1StringEncoding)
+            let string = NSString(data: data!, encoding: encoding ?? NSISOLatin1StringEncoding) as? String
 
             return (string, nil)
         }
@@ -58,16 +153,22 @@ extension Request {
 
         - returns: The request.
     */
-    public func responseString(encoding encoding: NSStringEncoding? = nil, completionHandler: (NSURLRequest?, NSHTTPURLResponse?, String?, NSError?) -> Void) -> Self  {
-        return response(serializer: Request.stringResponseSerializer(encoding: encoding), completionHandler: { request, response, string, error in
-            completionHandler(request, response, string as? String, error)
-        })
+    public func responseString(
+        encoding encoding: NSStringEncoding? = nil,
+        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, String?, NSError?) -> Void)
+        -> Self
+    {
+        return response(
+            responseSerializer: Request.stringResponseSerializer(encoding: encoding),
+            completionHandler: completionHandler
+        )
     }
 }
 
 // MARK: - JSON
 
 extension Request {
+
     /**
         Creates a response serializer that returns a JSON object constructed from the response data using `NSJSONSerialization` with the specified reading options.
 
@@ -75,8 +176,8 @@ extension Request {
 
         - returns: A JSON object response serializer.
     */
-    public class func JSONResponseSerializer(options options: NSJSONReadingOptions = .AllowFragments) -> Serializer {
-        return { request, response, data in
+    public static func JSONResponseSerializer(options options: NSJSONReadingOptions = .AllowFragments) -> GenericResponseSerializer<AnyObject> {
+        return GenericResponseSerializer { request, response, data in
             if data == nil || data?.length == 0 {
                 return (nil, nil)
             }
@@ -102,16 +203,22 @@ extension Request {
 
         - returns: The request.
     */
-    public func responseJSON(options options: NSJSONReadingOptions = .AllowFragments, completionHandler: (NSURLRequest?, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.JSONResponseSerializer(options: options), completionHandler: { request, response, JSON, error in
-            completionHandler(request, response, JSON, error)
-        })
+    public func responseJSON(
+        options options: NSJSONReadingOptions = .AllowFragments,
+        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void)
+        -> Self
+    {
+        return response(
+            responseSerializer: Request.JSONResponseSerializer(options: options),
+            completionHandler: completionHandler
+        )
     }
 }
 
 // MARK: - Property List
 
 extension Request {
+
     /**
         Creates a response serializer that returns an object constructed from the response data using `NSPropertyListSerialization` with the specified reading options.
 
@@ -119,8 +226,11 @@ extension Request {
 
         - returns: A property list object response serializer.
     */
-    public class func propertyListResponseSerializer(options options: NSPropertyListReadOptions = NSPropertyListReadOptions(rawValue: 0)) -> Serializer {
-        return { request, response, data in
+    public static func propertyListResponseSerializer(
+        options options: NSPropertyListReadOptions = NSPropertyListReadOptions())
+        -> GenericResponseSerializer<AnyObject>
+    {
+        return GenericResponseSerializer { request, response, data in
             if data == nil || data?.length == 0 {
                 return (nil, nil)
             }
@@ -146,9 +256,14 @@ extension Request {
 
         - returns: The request.
     */
-    public func responsePropertyList(options options: NSPropertyListReadOptions = NSPropertyListReadOptions(rawValue: 0), completionHandler: (NSURLRequest?, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void) -> Self {
-        return response(serializer: Request.propertyListResponseSerializer(options: options), completionHandler: { request, response, plist, error in
-            completionHandler(request, response, plist, error)
-        })
+    public func responsePropertyList(
+        options options: NSPropertyListReadOptions = NSPropertyListReadOptions(),
+        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, AnyObject?, NSError?) -> Void)
+        -> Self
+    {
+        return response(
+            responseSerializer: Request.propertyListResponseSerializer(options: options),
+            completionHandler: completionHandler
+        )
     }
 }

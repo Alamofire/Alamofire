@@ -2,9 +2,141 @@
 All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
+- `1.3.x` Releases - [1.3.0](#130)
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [1.3.0](https://github.com/Alamofire/Alamofire/releases/tag/1.3.0)
+Released on 2015-07-24. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.3.0).
+
+#### Added
+- Test case around `NSURLProtocol` checking header passthrough behaviors.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#473](https://github.com/Alamofire/Alamofire/issues/473).
+- Stream method on `Request` to receive data incrementally from data responses.
+  - Added by [Peter Sobot](https://github.com/psobot) in Pull Request
+  [#512](https://github.com/Alamofire/Alamofire/pull/512).
+- Example to the README demonstrating how to use the `responseCollection` serializer.
+  - Added by [Josh Brown](https://github.com/joshuatbrown) in Pull Request
+  [#532](https://github.com/Alamofire/Alamofire/pull/532).
+- Link to the README to the CocoaDocs documentation for Alamofire.
+  - Added by [Robert](https://github.com/rojotek) in Pull Request
+  [#541](https://github.com/Alamofire/Alamofire/pull/541).
+- Support for uploading `MultipartFormData` in-memory and streaming from disk.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#539](https://github.com/Alamofire/Alamofire/pull/539).
+- Tests for uploading `MultipartFormData` with complete code coverage.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#539](https://github.com/Alamofire/Alamofire/pull/539).
+- The iOS 8.4 simulator to the Travis CI builds by switching to the Xcode 6.4 build.
+  - Added by [Syo Ikeda](https://github.com/ikesyo) in Pull Request
+  [#568](https://github.com/Alamofire/Alamofire/pull/568).
+- Tests for the custom header support with complete code coverage.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#586](https://github.com/Alamofire/Alamofire/pull/586).
+- Section to the README about new HTTP header support in the global functions.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Basic auth `Authorization` header example to the README.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- TLS certificate and public key pinning support through the `ServerTrustPolicy`.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#581](https://github.com/Alamofire/Alamofire/pull/581).
+- Tests for TLS certificate and public key pinning with complete code coverage.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#581](https://github.com/Alamofire/Alamofire/pull/581).
+- Security section to the README detailing various server trust policies.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#581](https://github.com/Alamofire/Alamofire/pull/581).
+- The `resumeData` property to `Request` to expose outside data response serializer.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#595](https://github.com/Alamofire/Alamofire/pull/595).
+- Download request sample to iOS example app.
+  - Added by [Kengo Yokoyama](https://github.com/kentya6) in Pull Request
+  [#579](https://github.com/Alamofire/Alamofire/pull/579).
+
+#### Updated
+- The INFOPLIST_FILE Xcode project setting to be a relative path.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Exposed persistence parameter for basic auth credentials.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regard to Issue
+  [#537](https://github.com/Alamofire/Alamofire/issues/537).
+- The Travis CI builds to run a full `pod lib lint` pass on the source.
+  - Updated by [Kyle Fuller](https://github.com/kylef) in Pull Request
+  [#542](https://github.com/Alamofire/Alamofire/pull/542).
+- All cases of force unwrapping with optional binding and where clause when applicable.
+  - Updated by [Syo Ikeda](https://github.com/ikesyo) in Pull Request
+  [#557](https://github.com/Alamofire/Alamofire/pull/557).
+- The `ParameterEncoding` encode return tuple to return a mutable URL request.
+  - Updated by [Petr Korolev](https://github.com/skywinder) in Pull Request
+  [#478](https://github.com/Alamofire/Alamofire/pull/478).
+- The `URLRequest` convenience method to return a mutable `NSURLRequest`.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The `request` / `download` / `upload` methods to support custom headers.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#586](https://github.com/Alamofire/Alamofire/pull/586).
+- The global `request` / `download` / `upload` method external parameters convention.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#586](https://github.com/Alamofire/Alamofire/pull/586).
+- Response serialization to use generics and a `ResponseSerializer` protocol.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#593](https://github.com/Alamofire/Alamofire/pull/593).
+- Download task delegate to store resume data for a failed download if available.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#595](https://github.com/Alamofire/Alamofire/pull/595).
+- The `TaskDelegate.queue` to public to allow custom request extension operations.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#590](https://github.com/Alamofire/Alamofire/pull/590).
+- The README code samples for Advanced Response Serialization.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Removed
+- An unnecessary `NSURLSessionConfiguration` type declaration that can be inferred.
+  - Removed by [Avismara](https://github.com/avismarahl) in Pull Request
+  [#576](https://github.com/Alamofire/Alamofire/pull/576).
+- Unnecessary `respondsToSelector` overrides for `SessionDelegate` methods.
+  - Removed by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#590](https://github.com/Alamofire/Alamofire/pull/590).
+- Unnecessary calls to `self` throughout source, test and example logic.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- Random test suite basic auth failures by clearing credentials in `setUp` method.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+- Error where wildcard was failing due to missing response MIME type.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#598](https://github.com/Alamofire/Alamofire/pull/598).
+- Typo in the basic auth headers example code in the README.
+  - Fixed by [蒲公英の生活](https://github.com/fewspider) in Pull Request
+  [#605](https://github.com/Alamofire/Alamofire/pull/605).
+- Issue where the example app was printing elapsed time in optional form.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+
+#### Upgrade Notes
+There are a couple changes in the 1.3.0 release that are not fully backwards
+compatible and need to be called out.
+
+* The global `request` / `download` / `upload` external parameter naming conventions
+were not consistent nor did they match the `Manager` equivalents. By making them
+consistent across the board, this introduced the possibility that you "may" need to
+make slight modifications to your global function calls.
+* In order to support generic response serializers, the lowest level
+`Request.response` method had to be converted to a generic method leveraging the new
+`ResponseSerializer` protocol. This has many advantages, the most obvious being that
+the `response` convenience method now returns an `NSData?` optional instead of an
+`AnyObject?` optional. Nice!
+
+  > Please note that every effort is taken to maintain proper semantic versioning. In
+these two rare cases, it was deemed to be in the best interest of the community to
+slightly break semantic versioning to unify naming conventions as well as expose a
+much more powerful form of response serialization.
+
+  > If you have any issues, please don't hesitate to reach out through
+[GitHub](https://github.com/Alamofire/Alamofire/issues) or
+[Twitter](https://twitter.com/AlamofireSF).
 
 ---
 

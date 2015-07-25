@@ -14,7 +14,6 @@
 		F8111E1419A951050040E7D1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8111E1319A951050040E7D1 /* Images.xcassets */; };
 		F818D0E419CA8CFA006034B1 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E5419A95D7C0040E7D1 /* Alamofire.framework */; };
 		F818D0E619CA8D25006034B1 /* Alamofire.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E5419A95D7C0040E7D1 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F8E6024019CB3C0700A3E7F1 /* HTTPBin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6023F19CB3C0700A3E7F1 /* HTTPBin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,7 +77,6 @@
 		F8111E1119A951050040E7D1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F8111E1319A951050040E7D1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		F8111E4E19A95D7C0040E7D1 /* Alamofire.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Alamofire.xcodeproj; sourceTree = "<group>"; };
-		F8E6023F19CB3C0700A3E7F1 /* HTTPBin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPBin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,11 +112,8 @@
 			isa = PBXGroup;
 			children = (
 				F8111E0A19A951050040E7D1 /* AppDelegate.swift */,
-				F8111E0C19A951050040E7D1 /* MasterViewController.swift */,
 				F8111E0E19A951050040E7D1 /* DetailViewController.swift */,
-				F8E6023F19CB3C0700A3E7F1 /* HTTPBin.swift */,
-				F8111E1019A951050040E7D1 /* Main.storyboard */,
-				F8111E1319A951050040E7D1 /* Images.xcassets */,
+				F8111E0C19A951050040E7D1 /* MasterViewController.swift */,
 				F8111E0819A951050040E7D1 /* Supporting Files */,
 			);
 			name = Source;
@@ -129,6 +124,8 @@
 			isa = PBXGroup;
 			children = (
 				F8111E0919A951050040E7D1 /* Info.plist */,
+				F8111E1019A951050040E7D1 /* Main.storyboard */,
+				F8111E1319A951050040E7D1 /* Images.xcassets */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -254,7 +251,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8111E0F19A951050040E7D1 /* DetailViewController.swift in Sources */,
-				F8E6024019CB3C0700A3E7F1 /* HTTPBin.swift in Sources */,
 				F8111E0D19A951050040E7D1 /* MasterViewController.swift in Sources */,
 				F8111E0B19A951050040E7D1 /* AppDelegate.swift in Sources */,
 			);

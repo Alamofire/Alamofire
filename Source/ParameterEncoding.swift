@@ -1,4 +1,4 @@
-// Alamofire.swift
+// ParameterEncoding.swift
 //
 // Copyright (c) 2014–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -103,8 +103,7 @@ public enum ParameterEncoding {
                 }
             }
 
-            let method = Method(rawValue: mutableURLRequest.HTTPMethod)
-            if let method = method where encodesParametersInURL(method) {
+            if let method = Method(rawValue: mutableURLRequest.HTTPMethod) where encodesParametersInURL(method) {
                 if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
                     URLComponents.percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters!)
                     mutableURLRequest.URL = URLComponents.URL
@@ -120,12 +119,13 @@ public enum ParameterEncoding {
             do {
                 let options = NSJSONWritingOptions()
                 let data = try NSJSONSerialization.dataWithJSONObject(parameters!, options: options)
+
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 mutableURLRequest.HTTPBody = data
             } catch {
                 encodingError = error as NSError
             }
-        case .PropertyList(let (format, options)):
+        case .PropertyList(let format, let options):
             do {
                 let data = try NSPropertyListSerialization.dataWithPropertyList(parameters!, format: format, options: options)
                 mutableURLRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")

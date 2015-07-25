@@ -80,27 +80,27 @@ class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
         let URLString = "http://httpbin.org/get"
-        let serializer = Alamofire.Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
+        let serializer = Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
 
         let expectation = expectationWithDescription("GET request should succeed: \(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var string: AnyObject?
+        var string: String?
         var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
-            .response(serializer: serializer) { responseRequest, responseResponse, responseString, responseError in
+            .response(responseSerializer: serializer) { responseRequest, responseResponse, responseString, responseError in
                 request = responseRequest
                 response = responseResponse
                 string = responseString
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -120,7 +120,7 @@ class RequestResponseTestCase: BaseTestCase {
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
         var responseRequest: NSURLRequest?
         var responseResponse: NSHTTPURLResponse?
-        var responseData: AnyObject?
+        var responseData: NSData?
         var responseError: NSError?
 
         // When
@@ -141,7 +141,7 @@ class RequestResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(responseRequest, "response request should not be nil")
@@ -162,7 +162,8 @@ class RequestResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
+        if let
+            lastByteValue = byteValues.last,
             lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
@@ -188,7 +189,7 @@ class RequestResponseTestCase: BaseTestCase {
 
         var responseRequest: NSURLRequest?
         var responseResponse: NSHTTPURLResponse?
-        var responseData: AnyObject?
+        var responseData: NSData?
         var responseError: NSError?
 
         // When
@@ -210,7 +211,7 @@ class RequestResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(responseRequest, "response request should not be nil")
@@ -232,7 +233,8 @@ class RequestResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
+        if let
+            lastByteValue = byteValues.last,
             lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
@@ -243,6 +245,63 @@ class RequestResponseTestCase: BaseTestCase {
             XCTAssertEqual(accumulatedData.reduce(0) { $0 + $1.length }, lastByteValue.totalBytes, "accumulated data length should match byte count")
         } else {
             XCTFail("last item in bytesValues and progressValues should not be nil")
+        }
+    }
+}
+
+// MARK: -
+
+extension Request {
+    private func preValidate(operation: Void -> Void) -> Self {
+        delegate.queue.addOperationWithBlock {
+            operation()
+        }
+
+        return self
+    }
+
+    private func postValidate(operation: Void -> Void) -> Self {
+        delegate.queue.addOperationWithBlock {
+            operation()
+        }
+
+        return self
+    }
+}
+
+// MARK: -
+
+class RequestExtensionTestCase: BaseTestCase {
+    func testThatRequestExtensionHasAccessToTaskDelegateQueue() {
+        // Given
+        let URLString = "http://httpbin.org/get"
+        let expectation = expectationWithDescription("GET request should succeed: \(URLString)")
+
+        var responses: [String] = []
+
+        // When
+        Alamofire.request(.GET, URLString)
+            .preValidate {
+                responses.append("preValidate")
+            }
+            .validate()
+            .postValidate {
+                responses.append("postValidate")
+            }
+            .response { _, _, _, _ in
+                responses.append("response")
+                expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+
+        // Then
+        if responses.count == 3 {
+            XCTAssertEqual(responses[0], "preValidate", "response at index 0 should be preValidate")
+            XCTAssertEqual(responses[1], "postValidate", "response at index 1 should be postValidate")
+            XCTAssertEqual(responses[2], "response", "response at index 2 should be response")
+        } else {
+            XCTFail("responses count should be equal to 3")
         }
     }
 }
@@ -269,7 +328,7 @@ class RequestDescriptionTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertEqual(initialRequestDescription, "GET http://httpbin.org/get", "incorrect request description")
@@ -282,17 +341,17 @@ class RequestDescriptionTestCase: BaseTestCase {
 class RequestDebugDescriptionTestCase: BaseTestCase {
     // MARK: Properties
 
-    let manager: Alamofire.Manager = {
-        let manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+    let manager: Manager = {
+        let manager = Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
         manager.startRequestsImmediately = false
         return manager
     }()
 
-    let managerDisallowingCookies: Alamofire.Manager = {
+    let managerDisallowingCookies: Manager = {
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.HTTPShouldSetCookies = false
 
-        let manager = Alamofire.Manager(configuration: configuration)
+        let manager = Manager(configuration: configuration)
         manager.startRequestsImmediately = false
 
         return manager
@@ -354,6 +413,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
             NSHTTPCookieName: "foo",
             NSHTTPCookieValue: "bar",
         ]
+
         let cookie = NSHTTPCookie(properties: properties)!
         manager.session.configuration.HTTPCookieStorage?.setCookie(cookie)
 
