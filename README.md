@@ -577,8 +577,9 @@ extension Alamofire.Request {
         let serializer: Serializer = { (request, response, data) in
             let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
             let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
-            if response != nil && JSON != nil {
-                return (T(response: response!, representation: JSON!), nil)
+
+            if let response = response, JSON: AnyObject = JSON {
+                return (T(response: response, representation: JSON), nil)
             } else {
                 return (nil, serializationError)
             }
@@ -597,8 +598,8 @@ final class User: ResponseObjectSerializable {
     let name: String
 
     required init?(response: NSHTTPURLResponse, representation: AnyObject) {
-        self.username = response.URL!.lastPathComponent
-        self.name = representation.valueForKeyPath("name") as String
+        self.username = response.URL!.lastPathComponent!
+        self.name = representation.valueForKeyPath("name") as! String
     }
 }
 ```
@@ -614,7 +615,7 @@ The same approach can also be used to handle endpoints that return a representat
 
 ```swift
 @objc public protocol ResponseCollectionSerializable {
-    class func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Self]
+    static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [Self]
 }
 
 extension Alamofire.Request {
@@ -622,8 +623,9 @@ extension Alamofire.Request {
         let serializer: Serializer = { (request, response, data) in
             let JSONSerializer = Request.JSONResponseSerializer(options: .AllowFragments)
             let (JSON: AnyObject?, serializationError) = JSONSerializer(request, response, data)
-            if response != nil && JSON != nil {
-                return (T.collection(response: response!, representation: JSON!), nil)
+
+            if let response = response, JSON: AnyObject = JSON {
+                return (T.collection(response: response, representation: JSON), nil)
             } else {
                 return (nil, serializationError)
             }
@@ -634,6 +636,39 @@ extension Alamofire.Request {
         })
     }
 }
+```
+
+```swift
+@objc final class User: ResponseObjectSerializable, ResponseCollectionSerializable {
+    let username: String
+    let name: String
+
+    required init?(response: NSHTTPURLResponse, representation: AnyObject) {
+        self.username = response.URL!.lastPathComponent!
+        self.name = representation.valueForKeyPath("name") as! String
+    }
+
+    static func collection(#response: NSHTTPURLResponse, representation: AnyObject) -> [User] {
+        var users: [User] = []
+
+        if let representation = representation as? [[String: AnyObject]] {
+            for userRepresentation in representation {
+                if let user = User(response: response, representation: userRepresentation) {
+                    users.append(user)
+                }
+            }
+        }
+
+        return users
+    }
+}
+```
+
+```swift
+Alamofire.request(.GET, "http://example.com/users")
+         .responseCollection { (_, _, users: [User]?, _) in
+             println(users)
+         }
 ```
 
 ### URLStringConvertible
