@@ -34,9 +34,9 @@ public class ServerTrustPolicyManager {
         allows for scenarios such as using default evaluation for host1, certificate pinning for host2, public key 
         pinning for host3 and disabling evaluation for host4.
 
-        :param: policies A dictionary of all policies mapped to a particular host.
+        - parameter policies: A dictionary of all policies mapped to a particular host.
 
-        :returns: The new `ServerTrustPolicyManager` instance.
+        - returns: The new `ServerTrustPolicyManager` instance.
     */
     public init(policies: [String: ServerTrustPolicy]) {
         self.policies = policies
@@ -110,9 +110,9 @@ public enum ServerTrustPolicy {
     /**
         Returns all certificates within the given bundle with a `.cer` file extension.
 
-        :param: bundle The bundle to search for all `.cer` files.
+        - parameter bundle: The bundle to search for all `.cer` files.
 
-        :returns: All certificates within the given bundle.
+        - returns: All certificates within the given bundle.
     */
     public static func certificatesInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecCertificate] {
         var certificates: [SecCertificate] = []
@@ -132,9 +132,9 @@ public enum ServerTrustPolicy {
     /**
         Returns all public keys within the given bundle with a `.cer` file extension.
 
-        :param: bundle The bundle to search for all `*.cer` files.
+        - parameter bundle: The bundle to search for all `*.cer` files.
 
-        :returns: All public keys within the given bundle.
+        - returns: All public keys within the given bundle.
     */
     public static func publicKeysInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecKey] {
         var publicKeys: [SecKey] = []
@@ -153,10 +153,10 @@ public enum ServerTrustPolicy {
     /**
         Evaluates whether the server trust is valid for the given host.
 
-        :param: serverTrust The server trust to evaluate.
-        :param: host        The host of the challenge protection space.
+        - parameter serverTrust: The server trust to evaluate.
+        - parameter host:        The host of the challenge protection space.
 
-        :returns: Whether the server trust is valid.
+        - returns: Whether the server trust is valid.
     */
     public func evaluateServerTrust(serverTrust: SecTrust, isValidForHost host: String) -> Bool {
         var serverTrustIsValid = false

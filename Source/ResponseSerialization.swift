@@ -48,9 +48,9 @@ public struct GenericResponseSerializer<T>: ResponseSerializer {
     /**
         Initializes the `GenericResponseSerializer` instance with the given serialize response closure.
 
-        :param: serializeResponse The closure used to serialize the response.
+        - parameter serializeResponse: The closure used to serialize the response.
 
-        :returns: The new generic response serializer instance.
+        - returns: The new generic response serializer instance.
     */
     public init(serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?) -> (SerializedObject?, NSError?)) {
         self.serializeResponse = serializeResponse
@@ -64,11 +64,11 @@ extension Request {
     /**
         Adds a handler to be called once the request has finished.
 
-        :param: queue The queue on which the completion handler is dispatched.
-        :param: responseSerializer The response serializer responsible for serializing the request, response, and data.
-        :param: completionHandler The code to be executed once the request has finished.
+        - parameter queue: The queue on which the completion handler is dispatched.
+        - parameter responseSerializer: The response serializer responsible for serializing the request, response, and data.
+        - parameter completionHandler: The code to be executed once the request has finished.
 
-        :returns: The request.
+        - returns: The request.
     */
     public func response<T: ResponseSerializer, V where T.SerializedObject == V>(
         queue: dispatch_queue_t? = nil,
@@ -98,7 +98,7 @@ extension Request {
     /**
         Creates a response serializer that returns the associated data as-is.
 
-        :returns: A data response serializer.
+        - returns: A data response serializer.
     */
     public static func dataResponseSerializer() -> GenericResponseSerializer<NSData> {
         return GenericResponseSerializer { request, response, data in
@@ -109,9 +109,9 @@ extension Request {
     /**
         Adds a handler to be called once the request has finished.
 
-        :param: completionHandler The code to be executed once the request has finished.
+        - parameter completionHandler: The code to be executed once the request has finished.
 
-        :returns: The request.
+        - returns: The request.
     */
     public func response(completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Void) -> Self {
         return response(responseSerializer: Request.dataResponseSerializer(), completionHandler: completionHandler)
