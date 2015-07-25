@@ -33,11 +33,11 @@ class TLSEvaluationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 

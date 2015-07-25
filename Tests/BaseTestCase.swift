@@ -26,4 +26,9 @@ import XCTest
 
 class BaseTestCase: XCTestCase {
     let defaultTimeout: NSTimeInterval = 10
+
+    func URLForResource(fileName: String, withExtension: String) -> NSURL {
+        let bundle = NSBundle(forClass: BaseTestCase.self)
+        return bundle.URLForResource(fileName, withExtension: withExtension)!
+    }
 }

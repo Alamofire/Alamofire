@@ -30,11 +30,12 @@ class RequestInitializationTestCase: BaseTestCase {
         let URLString = "http://httpbin.org/"
 
         // When
-        let request = Alamofire.request(.GET, URLString: URLString)
+        let request = Alamofire.request(.GET, URLString)
 
         // Then
         XCTAssertNotNil(request.request, "request URL request should not be nil")
-        XCTAssertEqual(request.request?.URL?.URLString ?? "", URLString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.HTTPMethod ?? "", "GET", "request HTTP method should match expected value")
+        XCTAssertEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
         XCTAssertNil(request.response, "request response should be nil")
     }
 
@@ -43,13 +44,33 @@ class RequestInitializationTestCase: BaseTestCase {
         let URLString = "http://httpbin.org/get"
 
         // When
-        let request = Alamofire.request(.GET, URLString: URLString, parameters: ["foo": "bar"])
+        let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
 
         // Then
         XCTAssertNotNil(request.request, "request URL request should not be nil")
-        XCTAssertNotEqual(request.request?.URL?.URLString ?? "", URLString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.HTTPMethod ?? "", "GET", "request HTTP method should match expected value")
+        XCTAssertNotEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
         XCTAssertEqual(request.request?.URL?.query ?? "", "foo=bar", "query is incorrect")
         XCTAssertNil(request.response, "request response should be nil")
+    }
+
+    func testRequestClassMethodWithMethodURLParametersAndHeaders() {
+        // Given
+        let URLString = "http://httpbin.org/get"
+
+        // When
+        let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"], headers: ["Authorization": "123456"])
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request?.HTTPMethod ?? "", "GET", "request HTTP method should match expected value")
+        XCTAssertNotEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.URL?.query ?? "", "foo=bar", "query is incorrect")
+
+        let authorizationHeader = request.request?.valueForHTTPHeaderField("Authorization") ?? ""
+        XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
+
+        XCTAssertNil(request.response, "response should be nil")
     }
 }
 
@@ -69,7 +90,7 @@ class RequestResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URLString, parameters: ["foo": "bar"])
+        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
             .response(serializer: serializer) { responseRequest, responseResponse, responseString, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -103,7 +124,7 @@ class RequestResponseTestCase: BaseTestCase {
         var responseError: NSError?
 
         // When
-        let request = Alamofire.request(.GET, URLString: URLString)
+        let request = Alamofire.request(.GET, URLString)
         request.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
@@ -171,7 +192,7 @@ class RequestResponseTestCase: BaseTestCase {
         var responseError: NSError?
 
         // When
-        let request = Alamofire.request(.GET, URLString: URLString)
+        let request = Alamofire.request(.GET, URLString)
         request.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
@@ -232,7 +253,7 @@ class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
         let URLString = "http://httpbin.org/get"
-        let request = Alamofire.request(.GET, URLString: URLString)
+        let request = Alamofire.request(.GET, URLString)
         let initialRequestDescription = request.description
 
         let expectation = expectationWithDescription("Request description should update: \(URLString)")

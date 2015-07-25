@@ -63,7 +63,7 @@ public enum ParameterEncoding {
     /**
         Uses the associated closure value to construct a new request given an existing request and parameters.
     */
-    case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSURLRequest, NSError?))
+    case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?))
 
     /**
         Creates a URL request by encoding parameters and applying them onto an existing request.
@@ -73,12 +73,13 @@ public enum ParameterEncoding {
 
         - returns: A tuple containing the constructed request and the error that occurred during parameter encoding, if any.
     */
-    public func encode(URLRequest: URLRequestConvertible, parameters: [String: AnyObject]?) -> (NSURLRequest, NSError?) {
+    public func encode(URLRequest: URLRequestConvertible, parameters: [String: AnyObject]?) -> (NSMutableURLRequest, NSError?) {
+        var mutableURLRequest: NSMutableURLRequest = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
+
         if parameters == nil {
-            return (URLRequest.URLRequest, nil)
+            return (mutableURLRequest, nil)
         }
 
-        var mutableURLRequest: NSMutableURLRequest! = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
         var encodingError: NSError? = nil
 
         switch self {
@@ -87,10 +88,10 @@ public enum ParameterEncoding {
                 var components: [(String, String)] = []
                 for key in Array(parameters.keys).sort(<) {
                     let value: AnyObject! = parameters[key]
-                    components += self.queryComponents(key, value)
+                    components += queryComponents(key, value)
                 }
 
-                return "&".join(components.map{"\($0)=\($1)"} as [String])
+                return "&".join(components.map { "\($0)=\($1)" } as [String])
             }
 
             func encodesParametersInURL(method: Method) -> Bool {
@@ -103,9 +104,9 @@ public enum ParameterEncoding {
             }
 
             let method = Method(rawValue: mutableURLRequest.HTTPMethod)
-            if method != nil && encodesParametersInURL(method!) {
+            if let method = method where encodesParametersInURL(method) {
                 if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
-                    URLComponents.percentEncodedQuery = (URLComponents.percentEncodedQuery != nil ? URLComponents.percentEncodedQuery! + "&" : "") + query(parameters!)
+                    URLComponents.percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters!)
                     mutableURLRequest.URL = URLComponents.URL
                 }
             } else {
@@ -133,7 +134,7 @@ public enum ParameterEncoding {
                 encodingError = error as NSError
             }
         case .Custom(let closure):
-            return closure(mutableURLRequest, parameters)
+            (mutableURLRequest, encodingError) = closure(mutableURLRequest, parameters)
         }
 
         return (mutableURLRequest, encodingError)
@@ -150,7 +151,7 @@ public enum ParameterEncoding {
                 components += queryComponents("\(key)[]", value)
             }
         } else {
-            components.extend([(escape(key), escape("\(value)"))])
+            components.append((escape(key), escape("\(value)")))
         }
 
         return components

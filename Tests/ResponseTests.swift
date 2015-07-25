@@ -36,7 +36,7 @@ class JSONResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URLString, parameters: ["foo": "bar"])
+        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
             .responseJSON { responseRequest, responseResponse, responseJSON, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -44,7 +44,7 @@ class JSONResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -74,7 +74,7 @@ class JSONResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.POST, URLString: URLString, parameters: ["foo": "bar"])
+        Alamofire.request(.POST, URLString, parameters: ["foo": "bar"])
             .responseJSON { responseRequest, responseResponse, responseJSON, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -82,7 +82,7 @@ class JSONResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -118,7 +118,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URLString)
+        Alamofire.request(.GET, URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -126,7 +126,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -153,7 +153,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URLString)
+        Alamofire.request(.GET, URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -161,7 +161,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -193,7 +193,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URLString)
+        Alamofire.request(.GET, URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -201,7 +201,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -233,7 +233,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URLString)
+        Alamofire.request(.GET, URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -241,7 +241,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -275,7 +275,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URLString)
+        Alamofire.request(.GET, URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -283,7 +283,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 

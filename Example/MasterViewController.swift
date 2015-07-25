@@ -54,13 +54,13 @@ class MasterViewController: UITableViewController {
             func requestForSegue(segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier as String! {
                     case "GET":
-                        return Alamofire.request(.GET, URLString: "http://httpbin.org/get")
+                        return Alamofire.request(.GET, "https://httpbin.org/get")
                     case "POST":
-                        return Alamofire.request(.POST, URLString: "http://httpbin.org/post")
+                        return Alamofire.request(.POST, "https://httpbin.org/post")
                     case "PUT":
-                        return Alamofire.request(.PUT, URLString: "http://httpbin.org/put")
+                        return Alamofire.request(.PUT, "https://httpbin.org/put")
                     case "DELETE":
-                        return Alamofire.request(.DELETE, URLString: "http://httpbin.org/delete")
+                        return Alamofire.request(.DELETE, "https://httpbin.org/delete")
                     default:
                         return nil
                 }

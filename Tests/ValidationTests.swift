@@ -27,18 +27,18 @@ import XCTest
 class StatusCodeValidationTestCase: BaseTestCase {
     func testValidationForRequestWithAcceptableStatusCodeResponse() {
         // Given
-        let URL = "http://httpbin.org/status/200"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/status/200"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URLString)
             .validate(statusCode: 200..<300)
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -48,18 +48,18 @@ class StatusCodeValidationTestCase: BaseTestCase {
 
     func testValidationForRequestWithUnacceptableStatusCodeResponse() {
         // Given
-        let URL = "http://httpbin.org/status/404"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/status/404"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URLString)
             .validate(statusCode: [200])
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -70,18 +70,18 @@ class StatusCodeValidationTestCase: BaseTestCase {
 
     func testValidationForRequestWithNoAcceptableStatusCodes() {
         // Given
-        let URL = "http://httpbin.org/status/201"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/status/201"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URLString)
             .validate(statusCode: [])
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -96,18 +96,18 @@ class StatusCodeValidationTestCase: BaseTestCase {
 class ContentTypeValidationTestCase: BaseTestCase {
     func testValidationForRequestWithAcceptableContentTypeResponse() {
         // Given
-        let URL = "http://httpbin.org/ip"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/ip"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URLString)
             .validate(contentType: ["application/json"])
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -117,20 +117,20 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
     func testValidationForRequestWithAcceptableWildcardContentTypeResponse() {
         // Given
-        let URL = "http://httpbin.org/ip"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/ip"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URLString)
             .validate(contentType: ["*/*"])
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -140,18 +140,18 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
     func testValidationForRequestWithUnacceptableContentTypeResponse() {
         // Given
-        let URL = "http://httpbin.org/xml"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/xml"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URLString)
             .validate(contentType: ["application/octet-stream"])
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -162,18 +162,18 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
     func testValidationForRequestWithNoAcceptableContentTypeResponse() {
         // Given
-        let URL = "http://httpbin.org/xml"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/xml"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URLString)
             .validate(contentType: [])
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -188,19 +188,19 @@ class ContentTypeValidationTestCase: BaseTestCase {
 class MultipleValidationTestCase: BaseTestCase {
     func testValidationForRequestWithAcceptableStatusCodeAndContentTypeResponse() {
         // Given
-        let URL = "http://httpbin.org/ip"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/ip"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URLString)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -210,19 +210,19 @@ class MultipleValidationTestCase: BaseTestCase {
 
     func testValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponse() {
         // Given
-        let URL = "http://httpbin.org/xml"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/xml"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URLString)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -246,12 +246,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URL)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -261,18 +261,18 @@ class AutomaticValidationTestCase: BaseTestCase {
 
     func testValidationForRequestWithUnacceptableStatusCodeResponse() {
         // Given
-        let URL = "http://httpbin.org/status/404"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "http://httpbin.org/status/404"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URLString)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -292,12 +292,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URL)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -316,12 +316,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URL)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -340,12 +340,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: URL)
+        Alamofire.request(.GET, URL)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 

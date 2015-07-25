@@ -24,6 +24,47 @@ import Alamofire
 import Foundation
 import XCTest
 
+class DownloadInitializationTestCase: BaseTestCase {
+    let searchPathDirectory: NSSearchPathDirectory = .CachesDirectory
+    let searchPathDomain: NSSearchPathDomainMask = .UserDomainMask
+
+    func testDownloadClassMethodWithMethodURLAndDestination() {
+        // Given
+        let URLString = "http://httpbin.org/"
+        let destination = Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+
+        // When
+        let request = Alamofire.download(.GET, URLString, destination: destination)
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request?.HTTPMethod ?? "", "GET", "request HTTP method should be GET")
+        XCTAssertEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
+        XCTAssertNil(request.response, "response should be nil")
+    }
+
+    func testDownloadClassMethodWithMethodURLHeadersAndDestination() {
+        // Given
+        let URLString = "http://httpbin.org/"
+        let destination = Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+
+        // When
+        let request = Alamofire.download(.GET, URLString, headers: ["Authorization": "123456"], destination: destination)
+
+        // Then
+        XCTAssertNotNil(request.request, "request should not be nil")
+        XCTAssertEqual(request.request?.HTTPMethod ?? "", "GET", "request HTTP method should be GET")
+        XCTAssertEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
+
+        let authorizationHeader = request.request?.valueForHTTPHeaderField("Authorization") ?? ""
+        XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
+
+        XCTAssertNil(request.response, "response should be nil")
+    }
+}
+
+// MARK: -
+
 class DownloadResponseTestCase: BaseTestCase {
     // MARK: - Properties
 
@@ -46,14 +87,14 @@ class DownloadResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.download(.GET, URLString: URLString, destination: destination)
+        Alamofire.download(.GET, URLString, destination: destination)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -120,7 +161,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var responseError: NSError?
 
         // When
-        let download = Alamofire.download(.GET, URLString: URLString) { _, _ in
+        let download = Alamofire.download(.GET, URLString) { _, _ in
             return fileURL
         }
         download.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in

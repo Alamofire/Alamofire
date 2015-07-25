@@ -25,16 +25,12 @@ import Foundation
 import XCTest
 
 class AuthenticationTestCase: BaseTestCase {
-    // MARK: Properties
-
     let user = "user"
     let password = "password"
     var URLString = ""
 
-    // MARK: Setup and Teardown
-
-    override func tearDown() {
-        super.tearDown()
+    override func setUp() {
+        super.setUp()
 
         let credentialStorage = NSURLCredentialStorage.sharedCredentialStorage()
 
@@ -49,14 +45,10 @@ class AuthenticationTestCase: BaseTestCase {
 // MARK: -
 
 class BasicAuthenticationTestCase: AuthenticationTestCase {
-    // MARK: Setup and Teardown
-
     override func setUp() {
         super.setUp()
-        self.URLString = "http://httpbin.org/basic-auth/\(user)/\(password)"
+        self.URLString = "http://httpbin.org/basic-auth/\(self.user)/\(self.password)"
     }
-
-    // MARK: Tests
 
     func testHTTPBasicAuthenticationWithInvalidCredentials() {
         // Given
@@ -68,7 +60,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: self.URLString)
+        Alamofire.request(.GET, self.URLString)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -77,7 +69,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -99,7 +91,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: self.URLString)
+        Alamofire.request(.GET, self.URLString)
             .authenticate(user: self.user, password: self.password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -108,7 +100,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -124,18 +116,12 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 // MARK: -
 
 class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
-    // MARK: Properties
-
     let qop = "auth"
-
-    // MARK: Setup and Teardown
 
     override func setUp() {
         super.setUp()
-        self.URLString = "http://httpbin.org/digest-auth/\(qop)/\(user)/\(password)"
+        self.URLString = "http://httpbin.org/digest-auth/\(self.qop)/\(self.user)/\(self.password)"
     }
-
-    // MARK: Tests
 
     func testHTTPDigestAuthenticationWithInvalidCredentials() {
         // Given
@@ -147,7 +133,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: self.URLString)
+        Alamofire.request(.GET, self.URLString)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -156,7 +142,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
@@ -178,7 +164,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString: self.URLString)
+        Alamofire.request(.GET, self.URLString)
             .authenticate(user: self.user, password: self.password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -187,7 +173,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(self.defaultTimeout, handler: nil)
 
