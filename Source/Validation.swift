@@ -72,9 +72,9 @@ extension Request {
         let subtype: String
 
         init?(_ string: String) {
-            let components = string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                                   .substringToIndex(string.rangeOfString(";")?.endIndex ?? string.endIndex)
-                                   .componentsSeparatedByString("/")
+            let stripped = string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            let split = stripped.substringToIndex(stripped.rangeOfString(";")?.endIndex ?? stripped.endIndex)
+            let components = split.componentsSeparatedByString("/")
 
             if let
                 type = components.first,
@@ -141,7 +141,7 @@ extension Request {
     public func validate() -> Self {
         let acceptableStatusCodes: Range<Int> = 200..<300
         let acceptableContentTypes: [String] = {
-            if let accept = self.request?.valueForHTTPHeaderField("Accept") {
+            if let accept = request?.valueForHTTPHeaderField("Accept") {
                 return accept.componentsSeparatedByString(",")
             }
 
