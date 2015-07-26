@@ -27,7 +27,7 @@ import XCTest
 class RequestInitializationTestCase: BaseTestCase {
     func testRequestClassMethodWithMethodAndURL() {
         // Given
-        let URLString = "http://httpbin.org/"
+        let URLString = "https://httpbin.org/"
 
         // When
         let request = Alamofire.request(.GET, URLString)
@@ -41,7 +41,7 @@ class RequestInitializationTestCase: BaseTestCase {
 
     func testRequestClassMethodWithMethodAndURLAndParameters() {
         // Given
-        let URLString = "http://httpbin.org/get"
+        let URLString = "https://httpbin.org/get"
 
         // When
         let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -56,7 +56,7 @@ class RequestInitializationTestCase: BaseTestCase {
 
     func testRequestClassMethodWithMethodURLParametersAndHeaders() {
         // Given
-        let URLString = "http://httpbin.org/get"
+        let URLString = "https://httpbin.org/get"
 
         // When
         let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"], headers: ["Authorization": "123456"])
@@ -79,7 +79,7 @@ class RequestInitializationTestCase: BaseTestCase {
 class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
-        let URLString = "http://httpbin.org/get"
+        let URLString = "https://httpbin.org/get"
         let serializer = Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
 
         let expectation = expectationWithDescription("GET request should succeed: \(URLString)")
@@ -112,7 +112,7 @@ class RequestResponseTestCase: BaseTestCase {
     func testRequestResponseWithProgress() {
         // Given
         let randomBytes = 4 * 1024 * 1024
-        let URLString = "http://httpbin.org/bytes/\(randomBytes)"
+        let URLString = "https://httpbin.org/bytes/\(randomBytes)"
 
         let expectation = expectationWithDescription("Bytes download progress should be reported: \(URLString)")
 
@@ -179,7 +179,7 @@ class RequestResponseTestCase: BaseTestCase {
     func testRequestResponseWithStream() {
         // Given
         let randomBytes = 4 * 1024 * 1024
-        let URLString = "http://httpbin.org/bytes/\(randomBytes)"
+        let URLString = "https://httpbin.org/bytes/\(randomBytes)"
 
         let expectation = expectationWithDescription("Bytes download progress should be reported: \(URLString)")
 
@@ -274,7 +274,7 @@ extension Request {
 class RequestExtensionTestCase: BaseTestCase {
     func testThatRequestExtensionHasAccessToTaskDelegateQueue() {
         // Given
-        let URLString = "http://httpbin.org/get"
+        let URLString = "https://httpbin.org/get"
         let expectation = expectationWithDescription("GET request should succeed: \(URLString)")
 
         var responses: [String] = []
@@ -311,7 +311,7 @@ class RequestExtensionTestCase: BaseTestCase {
 class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
-        let URLString = "http://httpbin.org/get"
+        let URLString = "https://httpbin.org/get"
         let request = Alamofire.request(.GET, URLString)
         let initialRequestDescription = request.description
 
@@ -331,8 +331,8 @@ class RequestDescriptionTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
-        XCTAssertEqual(initialRequestDescription, "GET http://httpbin.org/get", "incorrect request description")
-        XCTAssertEqual(finalRequestDescription ?? "", "GET http://httpbin.org/get (\(response?.statusCode ?? -1))", "incorrect request description")
+        XCTAssertEqual(initialRequestDescription, "GET https://httpbin.org/get", "incorrect request description")
+        XCTAssertEqual(finalRequestDescription ?? "", "GET https://httpbin.org/get (\(response?.statusCode ?? -1))", "incorrect request description")
     }
 }
 
@@ -361,7 +361,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testGETRequestDebugDescription() {
         // Given
-        let URLString = "http://httpbin.org/get"
+        let URLString = "https://httpbin.org/get"
 
         // When
         let request = manager.request(.GET, URLString)
@@ -375,7 +375,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testPOSTRequestDebugDescription() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
 
         // When
         let request = manager.request(.POST, URLString)
@@ -389,7 +389,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testPOSTRequestWithJSONParametersDebugDescription() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
 
         // When
         let request = manager.request(.POST, URLString, parameters: ["foo": "bar"], encoding: .JSON)
@@ -405,7 +405,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testPOSTRequestWithCookieDebugDescription() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
 
         let properties = [
             NSHTTPCookieDomain: "httpbin.org",
@@ -430,7 +430,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testPOSTRequestWithCookiesDisabledDebugDescription() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
 
         let properties = [
             NSHTTPCookieDomain: "httpbin.org",

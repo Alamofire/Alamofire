@@ -25,7 +25,7 @@ import Foundation
 import XCTest
 
 class ParameterEncodingTestCase: BaseTestCase {
-    let URLRequest = NSURLRequest(URL: NSURL(string: "http://example.com/")!)
+    let URLRequest = NSURLRequest(URL: NSURL(string: "https://example.com/")!)
 }
 
 // MARK: -
@@ -317,7 +317,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodeStringForRequestWithPrecomposedQuery() {
         // Given
-        let URL = NSURL(string: "http://example.com/movies?hd=[1]")!
+        let URL = NSURL(string: "https://example.com/movies?hd=[1]")!
         let parameters = ["page": "0"]
 
         // When
@@ -329,7 +329,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodeStringWithPlusKeyStringWithPlusValueParameterForRequestWithPrecomposedQuery() {
         // Given
-        let URL = NSURL(string: "http://example.com/movie?hd=[1]")!
+        let URL = NSURL(string: "https://example.com/movie?hd=[1]")!
         let parameters = ["+foo+": "+bar+"]
 
         // When
@@ -549,7 +549,7 @@ class CustomParameterEncodingTestCase: ParameterEncodingTestCase {
         let encoding: ParameterEncoding = .Custom(encodingClosure)
 
         // Then
-        let URL = NSURL(string: "http://example.com")!
+        let URL = NSURL(string: "https://example.com")!
         let URLRequest = NSURLRequest(URL: URL)
         let parameters: [String: AnyObject] = [:]
 

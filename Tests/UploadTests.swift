@@ -27,7 +27,7 @@ import XCTest
 class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndFile() {
         // Given
-        let URLString = "http://httpbin.org/"
+        let URLString = "https://httpbin.org/"
         let imageURL = URLForResource("rainbow", withExtension: "jpg")
 
         // When
@@ -42,7 +42,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
 
     func testUploadClassMethodWithMethodURLHeadersAndFile() {
         // Given
-        let URLString = "http://httpbin.org/"
+        let URLString = "https://httpbin.org/"
         let imageURL = URLForResource("rainbow", withExtension: "jpg")
 
         // When
@@ -65,7 +65,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
 class UploadDataInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndData() {
         // Given
-        let URLString = "http://httpbin.org/"
+        let URLString = "https://httpbin.org/"
 
         // When
         let request = Alamofire.upload(.POST, URLString, data: NSData())
@@ -79,7 +79,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
 
     func testUploadClassMethodWithMethodURLHeadersAndData() {
         // Given
-        let URLString = "http://httpbin.org/"
+        let URLString = "https://httpbin.org/"
 
         // When
         let request = Alamofire.upload(.POST, URLString, headers: ["Authorization": "123456"], data: NSData())
@@ -101,7 +101,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
 class UploadStreamInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndStream() {
         // Given
-        let URLString = "http://httpbin.org/"
+        let URLString = "https://httpbin.org/"
         let imageURL = URLForResource("rainbow", withExtension: "jpg")
         let imageStream = NSInputStream(URL: imageURL)!
 
@@ -117,7 +117,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
 
     func testUploadClassMethodWithMethodURLHeadersAndStream() {
         // Given
-        let URLString = "http://httpbin.org/"
+        let URLString = "https://httpbin.org/"
         let imageURL = URLForResource("rainbow", withExtension: "jpg")
         let imageStream = NSInputStream(URL: imageURL)!
 
@@ -141,7 +141,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
 class UploadDataTestCase: BaseTestCase {
     func testUploadDataRequest() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
         let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
         let expectation = expectationWithDescription("Upload request should succeed: \(URLString)")
@@ -170,7 +170,7 @@ class UploadDataTestCase: BaseTestCase {
 
     func testUploadDataRequestWithProgress() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
         let data: NSData = {
             var text = ""
             for _ in 1...3_000 {
@@ -251,7 +251,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataSetsContentTypeHeader() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
         let uploadData = "upload_data".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
         let expectation = expectationWithDescription("multipart form data upload should succeed")
@@ -308,7 +308,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataSucceedsWithDefaultParameters() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
         let french = "français".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         let japanese = "日本語".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
@@ -363,7 +363,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataBelowMemoryThresholdStreamsFromMemory() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
         let french = "français".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         let japanese = "日本語".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
@@ -408,7 +408,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataBelowMemoryThresholdSetsContentTypeHeader() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
         let uploadData = "upload data".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
         let expectation = expectationWithDescription("multipart form data upload should succeed")
@@ -462,7 +462,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataAboveMemoryThresholdStreamsFromDisk() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
         let french = "français".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         let japanese = "日本語".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
@@ -512,7 +512,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataAboveMemoryThresholdSetsContentTypeHeader() {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
         let uploadData = "upload data".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
         let expectation = expectationWithDescription("multipart form data upload should succeed")
@@ -569,7 +569,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     private func executeMultipartFormDataUploadRequestWithProgress(streamFromDisk streamFromDisk: Bool) {
         // Given
-        let URLString = "http://httpbin.org/post"
+        let URLString = "https://httpbin.org/post"
         let loremData1: NSData = {
             var loremValues: [String] = []
             for _ in 1...1_500 {

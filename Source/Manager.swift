@@ -45,10 +45,10 @@ public class Manager {
         - returns: The default header values.
     */
     public static let defaultHTTPHeaders: [String: String] = {
-        // Accept-Encoding HTTP Header; see http://tools.ietf.org/html/rfc7230#section-4.2.3
+        // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
         let acceptEncoding: String = "gzip;q=1.0,compress;q=0.5"
 
-        // Accept-Language HTTP Header; see http://tools.ietf.org/html/rfc7231#section-5.3.5
+        // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
         let acceptLanguage: String = {
             var components: [String] = []
             for (index, languageCode) in (NSLocale.preferredLanguages() as [String]).enumerate() {
@@ -62,7 +62,7 @@ public class Manager {
             return ",".join(components)
         }()
 
-        // User-Agent Header; see http://tools.ietf.org/html/rfc7231#section-5.5.3
+        // User-Agent Header; see https://tools.ietf.org/html/rfc7231#section-5.5.3
         let userAgent: String = {
             if let info = NSBundle.mainBundle().infoDictionary {
                 let executable: AnyObject = info[kCFBundleExecutableKey as String] ?? "Unknown"

@@ -73,7 +73,7 @@ class CacheTestCase: BaseTestCase {
     var URLCache: NSURLCache!
     var manager: Manager!
 
-    let URLString = "http://httpbin.org/response-headers"
+    let URLString = "https://httpbin.org/response-headers"
     let requestTimeout: NSTimeInterval = 30
 
     var requests: [String: NSURLRequest] = [:]

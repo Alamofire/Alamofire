@@ -27,7 +27,7 @@ import XCTest
 class StatusCodeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeResponseSucceeds() {
         // Given
-        let URLString = "http://httpbin.org/status/200"
+        let URLString = "https://httpbin.org/status/200"
         let expectation = expectationWithDescription("request should return 200 status code")
 
         var error: NSError?
@@ -48,7 +48,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
-        let URLString = "http://httpbin.org/status/404"
+        let URLString = "https://httpbin.org/status/404"
         let expectation = expectationWithDescription("request should return 404 status code")
 
         var error: NSError?
@@ -70,7 +70,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithNoAcceptableStatusCodesFails() {
         // Given
-        let URLString = "http://httpbin.org/status/201"
+        let URLString = "https://httpbin.org/status/201"
         let expectation = expectationWithDescription("request should return 201 status code")
 
         var error: NSError?
@@ -96,7 +96,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
 class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableContentTypeResponseSucceeds() {
         // Given
-        let URLString = "http://httpbin.org/ip"
+        let URLString = "https://httpbin.org/ip"
         let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
@@ -117,7 +117,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
-        let URLString = "http://httpbin.org/ip"
+        let URLString = "https://httpbin.org/ip"
         let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
@@ -140,7 +140,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
-        let URLString = "http://httpbin.org/xml"
+        let URLString = "https://httpbin.org/xml"
         let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
@@ -162,7 +162,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseFails() {
         // Given
-        let URLString = "http://httpbin.org/xml"
+        let URLString = "https://httpbin.org/xml"
         let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
@@ -188,7 +188,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
 class MultipleValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
-        let URLString = "http://httpbin.org/ip"
+        let URLString = "https://httpbin.org/ip"
         let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
@@ -210,7 +210,7 @@ class MultipleValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFails() {
         // Given
-        let URLString = "http://httpbin.org/xml"
+        let URLString = "https://httpbin.org/xml"
         let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
@@ -237,7 +237,7 @@ class MultipleValidationTestCase: BaseTestCase {
 class AutomaticValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
-        let URL = NSURL(string: "http://httpbin.org/ip")!
+        let URL = NSURL(string: "https://httpbin.org/ip")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
@@ -261,7 +261,7 @@ class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
-        let URLString = "http://httpbin.org/status/404"
+        let URLString = "https://httpbin.org/status/404"
         let expectation = expectationWithDescription("request should return 404 status code")
 
         var error: NSError?
@@ -283,7 +283,7 @@ class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
-        let URL = NSURL(string: "http://httpbin.org/ip")!
+        let URL = NSURL(string: "https://httpbin.org/ip")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/*", forHTTPHeaderField: "Accept")
 
@@ -307,7 +307,7 @@ class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithAcceptableComplexContentTypeResponseSucceeds() {
         // Given
-        let URL = NSURL(string: "http://httpbin.org/xml")!
+        let URL = NSURL(string: "https://httpbin.org/xml")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
 
         let headerValue = "text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5"
@@ -333,7 +333,7 @@ class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
-        let URL = NSURL(string: "http://httpbin.org/xml")!
+        let URL = NSURL(string: "https://httpbin.org/xml")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 

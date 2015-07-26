@@ -25,7 +25,7 @@ import Foundation
 /**
     HTTP method definitions.
 
-    See http://tools.ietf.org/html/rfc7231#section-4.3
+    See https://tools.ietf.org/html/rfc7231#section-4.3
 */
 public enum Method: String {
     case OPTIONS, GET, HEAD, POST, PUT, PATCH, DELETE, TRACE, CONNECT

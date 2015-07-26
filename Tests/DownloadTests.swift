@@ -30,7 +30,7 @@ class DownloadInitializationTestCase: BaseTestCase {
 
     func testDownloadClassMethodWithMethodURLAndDestination() {
         // Given
-        let URLString = "http://httpbin.org/"
+        let URLString = "https://httpbin.org/"
         let destination = Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
 
         // When
@@ -45,7 +45,7 @@ class DownloadInitializationTestCase: BaseTestCase {
 
     func testDownloadClassMethodWithMethodURLHeadersAndDestination() {
         // Given
-        let URLString = "http://httpbin.org/"
+        let URLString = "https://httpbin.org/"
         let destination = Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
 
         // When
@@ -72,7 +72,7 @@ class DownloadResponseTestCase: BaseTestCase {
     func testDownloadRequest() {
         // Given
         let numberOfLines = 100
-        let URLString = "http://httpbin.org/stream/\(numberOfLines)"
+        let URLString = "https://httpbin.org/stream/\(numberOfLines)"
 
         let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
 
@@ -140,7 +140,7 @@ class DownloadResponseTestCase: BaseTestCase {
     func testDownloadRequestWithProgress() {
         // Given
         let randomBytes = 4 * 1024 * 1024
-        let URLString = "http://httpbin.org/bytes/\(randomBytes)"
+        let URLString = "https://httpbin.org/bytes/\(randomBytes)"
 
         let fileManager = NSFileManager.defaultManager()
         let directory = fileManager.URLsForDirectory(searchPathDirectory, inDomains: self.searchPathDomain)[0]

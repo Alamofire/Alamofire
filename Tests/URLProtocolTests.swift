@@ -123,7 +123,7 @@ class URLProtocolTestCase: BaseTestCase {
 
     func testThatURLProtocolReceivesRequestHeadersAndNotSessionConfigurationHeaders() {
         // Given
-        let URLString = "http://httpbin.org/response-headers"
+        let URLString = "https://httpbin.org/response-headers"
         let URL = NSURL(string: URLString)!
         let parameters = ["URLRequest-Header": "foobar"]
 

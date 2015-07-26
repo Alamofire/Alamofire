@@ -38,9 +38,9 @@ public protocol URLStringConvertible {
 
         Methods accepting a `URLStringConvertible` type parameter parse it according to RFCs 1738 and 1808.
 
-        See http://tools.ietf.org/html/rfc2396
-        See http://tools.ietf.org/html/rfc1738
-        See http://tools.ietf.org/html/rfc1808
+        See https://tools.ietf.org/html/rfc2396
+        See https://tools.ietf.org/html/rfc1738
+        See https://tools.ietf.org/html/rfc1808
     */
     var URLString: String { get }
 }

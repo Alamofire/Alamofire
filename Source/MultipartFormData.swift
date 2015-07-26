@@ -38,9 +38,9 @@ import CoreServices
     For more information on `multipart/form-data` in general, please refer to the RFC-2388 and RFC-2045 specs as well
     and the w3 form documentation.
 
-    - http://www.ietf.org/rfc/rfc2388.txt
-    - http://www.ietf.org/rfc/rfc2045.txt
-    - http://www.w3.org/TR/html401/interact/forms.html#h-17.13
+    - https://www.ietf.org/rfc/rfc2388.txt
+    - https://www.ietf.org/rfc/rfc2045.txt
+    - https://www.w3.org/TR/html401/interact/forms.html#h-17.13
 */
 public class MultipartFormData {
 
