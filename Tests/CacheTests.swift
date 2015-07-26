@@ -215,7 +215,10 @@ class CacheTestCase: BaseTestCase {
     }
 
     func verifyResponse(response: NSHTTPURLResponse?, forCacheControl cacheControl: String, isCachedResponse: Bool) {
-        let cachedResponseTimestamp = timestamps[cacheControl]!
+        guard let cachedResponseTimestamp = timestamps[cacheControl] else {
+            XCTFail("cached response timestamp should not be nil")
+            return
+        }
 
         if let
             response = response,
