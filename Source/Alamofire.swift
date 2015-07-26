@@ -76,12 +76,12 @@ extension NSURLRequest: URLStringConvertible {
 */
 public protocol URLRequestConvertible {
     /// The URL request.
-    var URLRequest: NSURLRequest { get }
+    var URLRequest: NSMutableURLRequest { get }
 }
 
 extension NSURLRequest: URLRequestConvertible {
-    public var URLRequest: NSURLRequest {
-        return self
+    public var URLRequest: NSMutableURLRequest {
+        return self.mutableCopy() as! NSMutableURLRequest
     }
 }
 

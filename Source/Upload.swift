@@ -265,7 +265,7 @@ extension Manager {
             let formData = MultipartFormData()
             multipartFormData(formData)
 
-            let URLRequestWithContentType = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
+            let URLRequestWithContentType = URLRequest.URLRequest
             URLRequestWithContentType.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
 
             if formData.contentLength < encodingMemoryThreshold {

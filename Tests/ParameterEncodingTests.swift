@@ -59,7 +59,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodeOneStringKeyStringValueParameterAppendedToQuery() {
         // Given
-        let mutableURLRequest = self.URLRequest.mutableCopy() as! NSMutableURLRequest
+        let mutableURLRequest = self.URLRequest.URLRequest
         let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false)!
         URLComponents.query = "baz=qux"
         mutableURLRequest.URL = URLComponents.URL
@@ -343,7 +343,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodeGETParametersInURL() {
         // Given
-        let mutableURLRequest = self.URLRequest.mutableCopy() as! NSMutableURLRequest
+        let mutableURLRequest = self.URLRequest.URLRequest
         mutableURLRequest.HTTPMethod = Method.GET.rawValue
         let parameters = ["foo": 1, "bar": 2]
 
@@ -358,7 +358,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodePOSTParametersInHTTPBody() {
         // Given
-        let mutableURLRequest = self.URLRequest.mutableCopy() as! NSMutableURLRequest
+        let mutableURLRequest = self.URLRequest.URLRequest
         mutableURLRequest.HTTPMethod = Method.POST.rawValue
         let parameters = ["foo": 1, "bar": 2]
 
@@ -540,7 +540,7 @@ class CustomParameterEncodingTestCase: ParameterEncodingTestCase {
     func testCustomParameterEncode() {
         // Given
         let encodingClosure: (URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?) = { URLRequest, parameters in
-            let mutableURLRequest = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
+            let mutableURLRequest = URLRequest.URLRequest.URLRequest
             mutableURLRequest.setValue("Xcode", forHTTPHeaderField: "User-Agent")
             return (mutableURLRequest, nil)
         }

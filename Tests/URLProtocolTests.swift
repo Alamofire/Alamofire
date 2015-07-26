@@ -68,7 +68,7 @@ class ProxyURLProtocol: NSURLProtocol {
     // MARK: Loading Methods
 
     override func startLoading() {
-        let mutableRequest = request.mutableCopy() as! NSMutableURLRequest
+        let mutableRequest = request.URLRequest
         NSURLProtocol.setProperty(true, forKey: PropertyKeys.HandledByForwarderURLProtocol, inRequest: mutableRequest)
 
         activeTask = session.dataTaskWithRequest(mutableRequest)
