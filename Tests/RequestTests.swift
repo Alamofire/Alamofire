@@ -425,10 +425,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
         XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
-
-        #if !os(OSX)
         XCTAssertEqual(components[5..<6], ["-b"], "command should contain -b flag")
-        #endif
     }
 
     func testPOSTRequestWithCookiesDisabledDebugDescription() {
