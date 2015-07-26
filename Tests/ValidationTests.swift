@@ -28,7 +28,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeResponseSucceeds() {
         // Given
         let URLString = "http://httpbin.org/status/200"
-        let expectation = expectationWithDescription("\(URLString)")
+        let expectation = expectationWithDescription("request should return 200 status code")
 
         var error: NSError?
 
@@ -49,7 +49,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
         let URLString = "http://httpbin.org/status/404"
-        let expectation = expectationWithDescription("\(URLString)")
+        let expectation = expectationWithDescription("request should return 404 status code")
 
         var error: NSError?
 
@@ -71,7 +71,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithNoAcceptableStatusCodesFails() {
         // Given
         let URLString = "http://httpbin.org/status/201"
-        let expectation = expectationWithDescription("\(URLString)")
+        let expectation = expectationWithDescription("request should return 201 status code")
 
         var error: NSError?
 
@@ -97,7 +97,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableContentTypeResponseSucceeds() {
         // Given
         let URLString = "http://httpbin.org/ip"
-        let expectation = expectationWithDescription("\(URLString)")
+        let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
 
@@ -118,7 +118,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
         let URLString = "http://httpbin.org/ip"
-        let expectation = expectationWithDescription("\(URLString)")
+        let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
 
@@ -141,7 +141,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
         let URLString = "http://httpbin.org/xml"
-        let expectation = expectationWithDescription("\(URLString)")
+        let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
 
@@ -163,7 +163,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseFails() {
         // Given
         let URLString = "http://httpbin.org/xml"
-        let expectation = expectationWithDescription("\(URLString)")
+        let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
 
@@ -189,7 +189,7 @@ class MultipleValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
         let URLString = "http://httpbin.org/ip"
-        let expectation = expectationWithDescription("\(URLString)")
+        let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
 
@@ -211,7 +211,7 @@ class MultipleValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFails() {
         // Given
         let URLString = "http://httpbin.org/xml"
-        let expectation = expectationWithDescription("\(URLString)")
+        let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
 
@@ -241,12 +241,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(mutableURLRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -262,7 +262,7 @@ class AutomaticValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
         let URLString = "http://httpbin.org/status/404"
-        let expectation = expectationWithDescription("\(URLString)")
+        let expectation = expectationWithDescription("request should return 404 status code")
 
         var error: NSError?
 
@@ -287,12 +287,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/*", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(mutableURLRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -309,14 +309,16 @@ class AutomaticValidationTestCase: BaseTestCase {
         // Given
         let URL = NSURL(string: "http://httpbin.org/xml")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
-        mutableURLRequest.setValue("text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL)")
+        let headerValue = "text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5"
+        mutableURLRequest.setValue(headerValue, forHTTPHeaderField: "Accept")
+
+        let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(mutableURLRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -335,7 +337,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
 
