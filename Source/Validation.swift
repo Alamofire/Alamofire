@@ -72,9 +72,11 @@ extension Request {
         let subtype: String
 
         init?(_ string: String) {
-            let stripped = string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-            let split = stripped.substringToIndex(stripped.rangeOfString(";")?.endIndex ?? stripped.endIndex)
-            let components = split.componentsSeparatedByString("/")
+            let components: [String] = {
+                let stripped = string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                let split = stripped.substringToIndex(stripped.rangeOfString(";")?.endIndex ?? stripped.endIndex)
+                return split.componentsSeparatedByString("/")
+            }()
 
             if let
                 type = components.first,
