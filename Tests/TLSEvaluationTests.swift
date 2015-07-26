@@ -90,7 +90,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.code ?? -1, NSURLErrorServerCertificateUntrusted, "error should be NSURLErrorServerCertificateUntrusted")
+        XCTAssertEqual(
+            error?.code ?? -1,
+            NSURLErrorServerCertificateUntrusted,
+            "error should be NSURLErrorServerCertificateUntrusted"
+        )
     }
 
     // MARK: Server Trust Policy - Perform Default Tests

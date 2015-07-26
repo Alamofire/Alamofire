@@ -35,26 +35,26 @@ public enum Method: String {
 
 /**
     Used to specify the way in which a set of parameters are applied to a URL request.
+
+    - URL:          A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` 
+                    requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header 
+                    field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. Since 
+                    there is no published specification for how to encode collection types, the convention of appending 
+                    `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square 
+                    brackets for nested dictionary values (`foo[bar]=baz`).
+    - JSON:         Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is set as 
+                    the body of the request. The `Content-Type` HTTP header field of an encoded request is set to 
+                    `application/json`.
+    - PropertyList: Uses `NSPropertyListSerialization` to create a plist representation of the parameters object, 
+                    according to the associated format and write options values, which is set as the body of the 
+                    request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
+    - Custom:       Uses the associated closure value to construct a new request given an existing request and 
+                    parameters.
 */
 public enum ParameterEncoding {
-    /**
-        A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
-    */
     case URL
-
-    /**
-        Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
-    */
     case JSON
-
-    /**
-        Uses `NSPropertyListSerialization` to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
-    */
     case PropertyList(NSPropertyListFormat, NSPropertyListWriteOptions)
-
-    /**
-        Uses the associated closure value to construct a new request given an existing request and parameters.
-    */
     case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?))
 
     /**
@@ -63,9 +63,14 @@ public enum ParameterEncoding {
         - parameter URLRequest: The request to have parameters applied
         - parameter parameters: The parameters to apply
 
-        - returns: A tuple containing the constructed request and the error that occurred during parameter encoding, if any.
+        - returns: A tuple containing the constructed request and the error that occurred during parameter encoding, 
+                   if any.
     */
-    public func encode(URLRequest: URLRequestConvertible, parameters: [String: AnyObject]?) -> (NSMutableURLRequest, NSError?) {
+    public func encode(
+        URLRequest: URLRequestConvertible,
+        parameters: [String: AnyObject]?)
+        -> (NSMutableURLRequest, NSError?)
+    {
         var mutableURLRequest = URLRequest.URLRequest
 
         if parameters == nil {
@@ -97,7 +102,10 @@ public enum ParameterEncoding {
 
             if let method = Method(rawValue: mutableURLRequest.HTTPMethod) where encodesParametersInURL(method) {
                 if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
-                    URLComponents.percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters!)
+                    let percentEncodedQuery = (
+                        (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters!)
+                    )
+                    URLComponents.percentEncodedQuery = percentEncodedQuery
                     mutableURLRequest.URL = URLComponents.URL
                 }
             } else {
@@ -105,7 +113,10 @@ public enum ParameterEncoding {
                     mutableURLRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                 }
 
-                mutableURLRequest.HTTPBody = query(parameters!).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+                mutableURLRequest.HTTPBody = query(parameters!).dataUsingEncoding(
+                    NSUTF8StringEncoding,
+                    allowLossyConversion: false
+                )
             }
         case .JSON:
             do {
@@ -119,7 +130,11 @@ public enum ParameterEncoding {
             }
         case .PropertyList(let format, let options):
             do {
-                let data = try NSPropertyListSerialization.dataWithPropertyList(parameters!, format: format, options: options)
+                let data = try NSPropertyListSerialization.dataWithPropertyList(
+                    parameters!,
+                    format: format,
+                    options: options
+                )
                 mutableURLRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
                 mutableURLRequest.HTTPBody = data
             } catch {

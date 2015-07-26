@@ -108,9 +108,10 @@ class URLProtocolTestCase: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        let protocolClasses: [AnyClass] = [ProxyURLProtocol.self]
-        Alamofire.Manager.sharedInstance.session.configuration.protocolClasses = protocolClasses
-        Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders = ["Session-Configuration-Header": "foo"]
+        let configuration = Alamofire.Manager.sharedInstance.session.configuration
+
+        configuration.protocolClasses = [ProxyURLProtocol.self]
+        configuration.HTTPAdditionalHeaders = ["Session-Configuration-Header": "foo"]
     }
 
     override func tearDown() {

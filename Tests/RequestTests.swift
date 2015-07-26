@@ -57,9 +57,10 @@ class RequestInitializationTestCase: BaseTestCase {
     func testRequestClassMethodWithMethodURLParametersAndHeaders() {
         // Given
         let URLString = "https://httpbin.org/get"
+        let headers = ["Authorization": "123456"]
 
         // When
-        let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"], headers: ["Authorization": "123456"])
+        let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"], headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -129,7 +130,10 @@ class RequestResponseTestCase: BaseTestCase {
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
 
-            let progress = (completedUnitCount: request.progress.completedUnitCount, totalUnitCount: request.progress.totalUnitCount)
+            let progress = (
+                completedUnitCount: request.progress.completedUnitCount,
+                totalUnitCount: request.progress.totalUnitCount
+            )
             progressValues.append(progress)
         }
         request.response { request, response, data, error in
@@ -157,8 +161,16 @@ class RequestResponseTestCase: BaseTestCase {
                 let progressValue = progressValues[index]
 
                 XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount, "total bytes should be equal to completed unit count")
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount, "total bytes expected should be equal to total unit count")
+                XCTAssertEqual(
+                    byteValue.totalBytes,
+                    progressValue.completedUnitCount,
+                    "total bytes should be equal to completed unit count"
+                )
+                XCTAssertEqual(
+                    byteValue.totalBytesExpected,
+                    progressValue.totalUnitCount,
+                    "total bytes expected should be equal to total unit count"
+                )
             }
         }
 
@@ -198,7 +210,10 @@ class RequestResponseTestCase: BaseTestCase {
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
 
-            let progress = (completedUnitCount: request.progress.completedUnitCount, totalUnitCount: request.progress.totalUnitCount)
+            let progress = (
+                completedUnitCount: request.progress.completedUnitCount,
+                totalUnitCount: request.progress.totalUnitCount
+            )
             progressValues.append(progress)
         }
         request.stream { accumulatedData.append($0) }
@@ -228,8 +243,16 @@ class RequestResponseTestCase: BaseTestCase {
                 let progressValue = progressValues[index]
 
                 XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount, "total bytes should be equal to completed unit count")
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount, "total bytes expected should be equal to total unit count")
+                XCTAssertEqual(
+                    byteValue.totalBytes,
+                    progressValue.completedUnitCount,
+                    "total bytes should be equal to completed unit count"
+                )
+                XCTAssertEqual(
+                    byteValue.totalBytesExpected,
+                    progressValue.totalUnitCount,
+                    "total bytes expected should be equal to total unit count"
+                )
             }
         }
 
@@ -241,8 +264,16 @@ class RequestResponseTestCase: BaseTestCase {
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
 
             XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
-            XCTAssertEqual(progressValueFractionalCompletion, 1.0, "progress value fractional completion should equal 1.0")
-            XCTAssertEqual(accumulatedData.reduce(0) { $0 + $1.length }, lastByteValue.totalBytes, "accumulated data length should match byte count")
+            XCTAssertEqual(
+                progressValueFractionalCompletion,
+                1.0,
+                "progress value fractional completion should equal 1.0"
+            )
+            XCTAssertEqual(
+                accumulatedData.reduce(0) { $0 + $1.length },
+                lastByteValue.totalBytes,
+                "accumulated data length should match byte count"
+            )
         } else {
             XCTFail("last item in bytesValues and progressValues should not be nil")
         }
@@ -332,7 +363,11 @@ class RequestDescriptionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(initialRequestDescription, "GET https://httpbin.org/get", "incorrect request description")
-        XCTAssertEqual(finalRequestDescription ?? "", "GET https://httpbin.org/get (\(response?.statusCode ?? -1))", "incorrect request description")
+        XCTAssertEqual(
+            finalRequestDescription ?? "",
+            "GET https://httpbin.org/get (\(response?.statusCode ?? -1))",
+            "incorrect request description"
+        )
     }
 }
 
@@ -398,8 +433,14 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
-        XCTAssertTrue(request.debugDescription.rangeOfString("-H \"Content-Type: application/json\"") != nil, "command should contain 'application/json' Content-Type")
-        XCTAssertTrue(request.debugDescription.rangeOfString("-d \"{\\\"foo\\\":\\\"bar\\\"}\"") != nil, "command data should contain JSON encoded parameters")
+        XCTAssertTrue(
+            request.debugDescription.rangeOfString("-H \"Content-Type: application/json\"") != nil,
+            "command should contain 'application/json' Content-Type"
+        )
+        XCTAssertTrue(
+            request.debugDescription.rangeOfString("-d \"{\\\"foo\\\":\\\"bar\\\"}\"") != nil,
+            "command data should contain JSON encoded parameters"
+        )
         XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
 
@@ -454,6 +495,8 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     // MARK: Test Helper Methods
 
     private func cURLCommandComponents(request: Request) -> [String] {
-        return request.debugDescription.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).filter { $0 != "" && $0 != "\\" }
+        let whitespaceCharacterSet = NSCharacterSet.whitespaceAndNewlineCharacterSet()
+        return request.debugDescription.componentsSeparatedByCharactersInSet(whitespaceCharacterSet)
+                                       .filter { $0 != "" && $0 != "\\" }
     }
 }

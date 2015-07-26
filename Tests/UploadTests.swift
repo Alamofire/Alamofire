@@ -195,7 +195,10 @@ class UploadDataTestCase: BaseTestCase {
             let bytes = (bytes: bytesWritten, totalBytes: totalBytesWritten, totalBytesExpected: totalBytesExpectedToWrite)
             byteValues.append(bytes)
 
-            let progress = (completedUnitCount: upload.progress.completedUnitCount, totalUnitCount: upload.progress.totalUnitCount)
+            let progress = (
+                completedUnitCount: upload.progress.completedUnitCount,
+                totalUnitCount: upload.progress.totalUnitCount
+            )
             progressValues.append(progress)
         }
         upload.response { request, response, data, error in
@@ -223,8 +226,16 @@ class UploadDataTestCase: BaseTestCase {
                 let progressValue = progressValues[index]
 
                 XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount, "total bytes should be equal to completed unit count")
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount, "total bytes expected should be equal to total unit count")
+                XCTAssertEqual(
+                    byteValue.totalBytes,
+                    progressValue.completedUnitCount,
+                    "total bytes should be equal to completed unit count"
+                )
+                XCTAssertEqual(
+                    byteValue.totalBytesExpected,
+                    progressValue.totalUnitCount,
+                    "total bytes expected should be equal to total unit count"
+                )
             }
         }
 
@@ -236,7 +247,11 @@ class UploadDataTestCase: BaseTestCase {
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
 
             XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
-            XCTAssertEqual(progressValueFractionalCompletion, 1.0, "progress value fractional completion should equal 1.0")
+            XCTAssertEqual(
+                progressValueFractionalCompletion,
+                1.0,
+                "progress value fractional completion should equal 1.0"
+            )
         } else {
             XCTFail("last item in bytesValues and progressValues should not be nil")
         }
@@ -506,7 +521,10 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             streamFilePath = streamFileURL?.path
         {
             XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
-            XCTAssertTrue(NSFileManager.defaultManager().fileExistsAtPath(streamFilePath), "stream file path should exist")
+            XCTAssertTrue(
+                NSFileManager.defaultManager().fileExistsAtPath(streamFilePath),
+                "stream file path should exist"
+            )
         }
     }
 
@@ -609,10 +627,17 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 switch result {
                 case .Success(let upload, _, _):
                     upload.progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
-                        let bytes = (bytes: bytesWritten, totalBytes: totalBytesWritten, totalBytesExpected: totalBytesExpectedToWrite)
+                        let bytes = (
+                            bytes: bytesWritten,
+                            totalBytes: totalBytesWritten,
+                            totalBytesExpected: totalBytesExpectedToWrite
+                        )
                         byteValues.append(bytes)
 
-                        let progress = (completedUnitCount: upload.progress.completedUnitCount, totalUnitCount: upload.progress.totalUnitCount)
+                        let progress = (
+                            completedUnitCount: upload.progress.completedUnitCount,
+                            totalUnitCount: upload.progress.totalUnitCount
+                        )
                         progressValues.append(progress)
                     }
                     upload.response { responseRequest, responseResponse, responseData, responseError in
@@ -645,8 +670,16 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 let progressValue = progressValues[index]
 
                 XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount, "total bytes should be equal to completed unit count")
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount, "total bytes expected should be equal to total unit count")
+                XCTAssertEqual(
+                    byteValue.totalBytes,
+                    progressValue.completedUnitCount,
+                    "total bytes should be equal to completed unit count"
+                )
+                XCTAssertEqual(
+                    byteValue.totalBytesExpected,
+                    progressValue.totalUnitCount,
+                    "total bytes expected should be equal to total unit count"
+                )
             }
         }
 
@@ -658,7 +691,11 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
 
             XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
-            XCTAssertEqual(progressValueFractionalCompletion, 1.0, "progress value fractional completion should equal 1.0")
+            XCTAssertEqual(
+                progressValueFractionalCompletion,
+                1.0,
+                "progress value fractional completion should equal 1.0"
+            )
         } else {
             XCTFail("last item in bytesValues and progressValues should not be nil")
         }

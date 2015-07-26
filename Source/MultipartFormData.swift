@@ -164,8 +164,8 @@ public class MultipartFormData {
         - Encoded data
         - Multipart form boundary
 
-        - parameter data: The data to encode into the multipart form data.
-        - parameter name: The name to associate with the data in the `Content-Disposition` HTTP header.
+        - parameter data:     The data to encode into the multipart form data.
+        - parameter name:     The name to associate with the data in the `Content-Disposition` HTTP header.
         - parameter mimeType: The MIME type to associate with the data content type in the `Content-Type` HTTP header.
     */
     public func appendBodyPart(data data: NSData, name: String, mimeType: String) {
@@ -350,7 +350,13 @@ public class MultipartFormData {
         - parameter fileName: The filename to associate with the stream content in the `Content-Disposition` HTTP header.
         - parameter mimeType: The MIME type to associate with the stream content in the `Content-Type` HTTP header.
     */
-    public func appendBodyPart(stream stream: NSInputStream, length: UInt64, name: String, fileName: String, mimeType: String) {
+    public func appendBodyPart(
+        stream stream: NSInputStream,
+        length: UInt64,
+        name: String,
+        fileName: String,
+        mimeType: String)
+    {
         let headers = contentHeaders(name: name, fileName: fileName, mimeType: mimeType)
         appendBodyPart(stream: stream, length: length, headers: headers)
     }
@@ -574,17 +580,29 @@ public class MultipartFormData {
         return nil
     }
 
-    private func writeInitialBoundaryDataForBodyPart(bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) -> NSError? {
+    private func writeInitialBoundaryDataForBodyPart(
+        bodyPart: BodyPart,
+        toOutputStream outputStream: NSOutputStream)
+        -> NSError?
+    {
         let initialData = bodyPart.hasInitialBoundary ? initialBoundaryData() : encapsulatedBoundaryData()
         return writeData(initialData, toOutputStream: outputStream)
     }
 
-    private func writeHeaderDataForBodyPart(bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) -> NSError? {
+    private func writeHeaderDataForBodyPart(
+        bodyPart: BodyPart,
+        toOutputStream outputStream: NSOutputStream)
+        -> NSError?
+    {
         let headerData = encodeHeaderDataForBodyPart(bodyPart)
         return writeData(headerData, toOutputStream: outputStream)
     }
 
-    private func writeBodyStreamForBodyPart(bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) -> NSError? {
+    private func writeBodyStreamForBodyPart(
+        bodyPart: BodyPart,
+        toOutputStream outputStream: NSOutputStream)
+        -> NSError?
+    {
         var error: NSError?
 
         let inputStream = bodyPart.bodyStream
@@ -624,7 +642,11 @@ public class MultipartFormData {
         return error
     }
 
-    private func writeFinalBoundaryDataForBodyPart(bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) -> NSError? {
+    private func writeFinalBoundaryDataForBodyPart(
+        bodyPart: BodyPart,
+        toOutputStream outputStream: NSOutputStream)
+        -> NSError?
+    {
         if bodyPart.hasFinalBoundary {
             return writeData(finalBoundaryData(), toOutputStream: outputStream)
         }

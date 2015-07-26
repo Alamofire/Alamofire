@@ -74,7 +74,10 @@ class DownloadResponseTestCase: BaseTestCase {
         let numberOfLines = 100
         let URLString = "https://httpbin.org/stream/\(numberOfLines)"
 
-        let destination = Alamofire.Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+        let destination = Alamofire.Request.suggestedDownloadDestination(
+            directory: searchPathDirectory,
+            domain: searchPathDomain
+        )
 
         let expectation = expectationWithDescription("Download request should download data to file: \(URLString)")
 
@@ -103,7 +106,11 @@ class DownloadResponseTestCase: BaseTestCase {
         let directory = fileManager.URLsForDirectory(searchPathDirectory, inDomains: self.searchPathDomain)[0]
 
         do {
-            let contents = try fileManager.contentsOfDirectoryAtURL(directory, includingPropertiesForKeys: nil, options: .SkipsHiddenFiles)
+            let contents = try fileManager.contentsOfDirectoryAtURL(
+                directory,
+                includingPropertiesForKeys: nil,
+                options: .SkipsHiddenFiles
+            )
 
             #if os(iOS)
             let suggestedFilename = "\(numberOfLines)"
@@ -116,7 +123,11 @@ class DownloadResponseTestCase: BaseTestCase {
             XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
 
             if let file = filteredContents.first as? NSURL {
-                XCTAssertEqual(file.lastPathComponent ?? "", "\(suggestedFilename)", "filename should be \(suggestedFilename)")
+                XCTAssertEqual(
+                    file.lastPathComponent ?? "",
+                    "\(suggestedFilename)",
+                    "filename should be \(suggestedFilename)"
+                )
 
                 if let data = NSData(contentsOfURL: file) {
                     XCTAssertGreaterThan(data.length, 0, "data length should be non-zero")
@@ -164,7 +175,10 @@ class DownloadResponseTestCase: BaseTestCase {
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
 
-            let progress = (completedUnitCount: download.progress.completedUnitCount, totalUnitCount: download.progress.totalUnitCount)
+            let progress = (
+                completedUnitCount: download.progress.completedUnitCount,
+                totalUnitCount: download.progress.totalUnitCount
+            )
             progressValues.append(progress)
         }
         download.response { request, response, data, error in
@@ -192,8 +206,16 @@ class DownloadResponseTestCase: BaseTestCase {
                 let progressValue = progressValues[index]
 
                 XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount, "total bytes should be equal to completed unit count")
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount, "total bytes expected should be equal to total unit count")
+                XCTAssertEqual(
+                    byteValue.totalBytes,
+                    progressValue.completedUnitCount,
+                    "total bytes should be equal to completed unit count"
+                )
+                XCTAssertEqual(
+                    byteValue.totalBytesExpected,
+                    progressValue.totalUnitCount,
+                    "total bytes expected should be equal to total unit count"
+                )
             }
         }
 
@@ -205,7 +227,11 @@ class DownloadResponseTestCase: BaseTestCase {
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
 
             XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
-            XCTAssertEqual(progressValueFractionalCompletion, 1.0, "progress value fractional completion should equal 1.0")
+            XCTAssertEqual(
+                progressValueFractionalCompletion,
+                1.0,
+                "progress value fractional completion should equal 1.0"
+            )
         } else {
             XCTFail("last item in bytesValues and progressValues should not be nil")
         }
