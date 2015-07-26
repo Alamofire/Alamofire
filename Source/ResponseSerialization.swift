@@ -131,7 +131,7 @@ extension Request {
     */
     public static func stringResponseSerializer(var encoding encoding: NSStringEncoding? = nil) -> GenericResponseSerializer<String> {
         return GenericResponseSerializer { _, response, data in
-            if data == nil || data?.length == 0 {
+            guard let data = data where data.length > 0 else {
                 return (nil, nil)
             }
 
@@ -139,7 +139,7 @@ extension Request {
                 encoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding(encodingName))
             }
 
-            let string = NSString(data: data!, encoding: encoding ?? NSISOLatin1StringEncoding) as? String
+            let string = NSString(data: data, encoding: encoding ?? NSISOLatin1StringEncoding) as? String
 
             return (string, nil)
         }
@@ -178,7 +178,7 @@ extension Request {
     */
     public static func JSONResponseSerializer(options options: NSJSONReadingOptions = .AllowFragments) -> GenericResponseSerializer<AnyObject> {
         return GenericResponseSerializer { request, response, data in
-            if data == nil || data?.length == 0 {
+            guard let data = data where data.length > 0 else {
                 return (nil, nil)
             }
 
@@ -186,7 +186,7 @@ extension Request {
             var serializationError: NSError?
 
             do {
-                JSON = try NSJSONSerialization.JSONObjectWithData(data!, options: options)
+                JSON = try NSJSONSerialization.JSONObjectWithData(data, options: options)
             } catch {
                 serializationError = error as NSError
             }
@@ -231,7 +231,7 @@ extension Request {
         -> GenericResponseSerializer<AnyObject>
     {
         return GenericResponseSerializer { request, response, data in
-            if data == nil || data?.length == 0 {
+            guard let data = data where data.length > 0 else {
                 return (nil, nil)
             }
 
@@ -239,7 +239,7 @@ extension Request {
             var propertyListSerializationError: NSError?
 
             do {
-                plist = try NSPropertyListSerialization.propertyListWithData(data!, options: options, format: nil)
+                plist = try NSPropertyListSerialization.propertyListWithData(data, options: options, format: nil)
             } catch {
                 propertyListSerializationError = error as NSError
             }
