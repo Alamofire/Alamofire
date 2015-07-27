@@ -178,7 +178,8 @@ public enum ServerTrustPolicy {
                 serverTrustIsValid = trustIsValid(serverTrust)
             } else {
                 let serverCertificatesDataArray = certificateDataForTrust(serverTrust)
-                let pinnedCertificatesDataArray = certificateDataForCertificates(pinnedCertificates)
+                // Superfluous “[] + ” below is workaround for Swift compiler crash. Remove when Apple fixes issue.
+                let pinnedCertificatesDataArray = certificateDataForCertificates([] + pinnedCertificates)
 
                 outerLoop: for serverCertificateData in serverCertificatesDataArray {
                     for pinnedCertificateData in pinnedCertificatesDataArray {
