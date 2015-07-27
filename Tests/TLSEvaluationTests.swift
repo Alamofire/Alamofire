@@ -35,7 +35,7 @@ private struct TestCertificates {
         let data = NSData(contentsOfFile: filePath)!
         let certificate = SecCertificateCreateWithData(nil, data)!
 
-        return certificate
+        return certificate.takeRetainedValue()
     }
 }
 
@@ -48,10 +48,10 @@ private struct TestPublicKeys {
 
     static func publicKeyForCertificate(certificate: SecCertificate) -> SecKey {
         let policy = SecPolicyCreateBasicX509()
-        var trust: SecTrust?
-        SecTrustCreateWithCertificates(certificate, policy, &trust)
+        var trust: Unmanaged<SecTrust>?
+        SecTrustCreateWithCertificates(certificate, policy.takeRetainedValue(), &trust)
 
-        let publicKey = SecTrustCopyPublicKey(trust!)!
+        let publicKey = SecTrustCopyPublicKey(trust!.takeRetainedValue()).takeRetainedValue()
 
         return publicKey
     }
