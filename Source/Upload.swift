@@ -287,19 +287,20 @@ extension Manager {
             URLRequestWithContentType.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
 
             if formData.contentLength < encodingMemoryThreshold {
-                let encodingResult = formData.encode()
+                do {
+                    let data = try formData.encode()
+                    let encodingResult = MultipartFormDataEncodingResult.Success(
+                        request: self.upload(URLRequestWithContentType, data: data),
+                        streamingFromDisk: false,
+                        streamFileURL: nil
+                    )
 
-                dispatch_async(dispatch_get_main_queue()) {
-                    switch encodingResult {
-                    case .Success(let data):
-                        let encodingResult = MultipartFormDataEncodingResult.Success(
-                            request: self.upload(URLRequestWithContentType, data: data),
-                            streamingFromDisk: false,
-                            streamFileURL: nil
-                        )
+                    dispatch_async(dispatch_get_main_queue()) {
                         encodingCompletion?(encodingResult)
-                    case .Failure(let error):
-                        encodingCompletion?(.Failure(error))
+                    }
+                } catch {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        encodingCompletion?(.Failure(error as NSError))
                     }
                 }
             } else {
@@ -311,20 +312,15 @@ extension Manager {
 
                 do {
                     try fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
+                    try formData.writeEncodedDataToDisk(fileURL)
 
-                    formData.writeEncodedDataToDisk(fileURL) { error in
-                        dispatch_async(dispatch_get_main_queue()) {
-                            if let error = error {
-                                encodingCompletion?(.Failure(error))
-                            } else {
-                                let encodingResult = MultipartFormDataEncodingResult.Success(
-                                    request: self.upload(URLRequestWithContentType, file: fileURL),
-                                    streamingFromDisk: true,
-                                    streamFileURL: fileURL
-                                )
-                                encodingCompletion?(encodingResult)
-                            }
-                        }
+                    dispatch_async(dispatch_get_main_queue()) {
+                        let encodingResult = MultipartFormDataEncodingResult.Success(
+                            request: self.upload(URLRequestWithContentType, file: fileURL),
+                            streamingFromDisk: true,
+                            streamFileURL: fileURL
+                        )
+                        encodingCompletion?(encodingResult)
                     }
                 } catch {
                     dispatch_async(dispatch_get_main_queue()) {

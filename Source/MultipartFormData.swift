@@ -46,14 +46,6 @@ public class MultipartFormData {
 
     // MARK: - Helper Types
 
-    /**
-        Used to specify whether encoding was successful.
-    */
-    public enum EncodingResult {
-        case Success(NSData)
-        case Failure(NSError)
-    }
-
     struct EncodingCharacters {
         static let CRLF = "\r\n"
     }
@@ -388,11 +380,13 @@ public class MultipartFormData {
         time. This method should only be used when the encoded data will have a small memory footprint. For large data 
         cases, please use the `writeEncodedDataToDisk(fileURL:completionHandler:)` method.
 
-        - returns: EncodingResult containing an `NSData` object if the encoding succeeded, an `NSError` otherwise.
+        - throws: An `NSError` if encoding encounters an error.
+
+        - returns: The encoded `NSData` if encoding is successful.
     */
-    public func encode() -> EncodingResult {
+    public func encode() throws -> NSData {
         if let bodyPartError = bodyPartError {
-            return .Failure(bodyPartError)
+            throw bodyPartError
         }
 
         let encoded = NSMutableData()
@@ -401,48 +395,34 @@ public class MultipartFormData {
         bodyParts.last?.hasFinalBoundary = true
 
         for bodyPart in bodyParts {
-            let encodedDataResult = encodeBodyPart(bodyPart)
-
-            switch encodedDataResult {
-            case .Failure:
-                return encodedDataResult
-            case let .Success(data):
-                encoded.appendData(data)
-            }
+            let encodedData = try encodeBodyPart(bodyPart)
+            encoded.appendData(encodedData)
         }
 
-        return .Success(encoded)
+        return encoded
     }
 
     /**
-        Writes the appended body parts into the given file URL asynchronously and calls the `completionHandler`
-        when finished.
+        Writes the appended body parts into the given file URL.
 
         This process is facilitated by reading and writing with input and output streams, respectively. Thus,
         this approach is very memory efficient and should be used for large body part data.
 
-        - parameter fileURL:           The file URL to write the multipart form data into.
-        - parameter completionHandler: A closure to be executed when writing is finished.
-    */
-    public func writeEncodedDataToDisk(fileURL: NSURL, completionHandler: (NSError?) -> Void) {
-        if let bodyPartError = bodyPartError {
-            completionHandler(bodyPartError)
-            return
-        }
+        - parameter fileURL: The file URL to write the multipart form data into.
 
-        var error: NSError?
+        - throws: An `NSError` if encoding encounters an error.
+    */
+    public func writeEncodedDataToDisk(fileURL: NSURL) throws {
+        if let bodyPartError = bodyPartError {
+            throw bodyPartError
+        }
 
         if let path = fileURL.path where NSFileManager.defaultManager().fileExistsAtPath(path) {
             let failureReason = "A file already exists at the given file URL: \(fileURL)"
-            error = errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
+            throw errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
         } else if !fileURL.fileURL {
             let failureReason = "The URL does not point to a valid file: \(fileURL)"
-            error = errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
-        }
-
-        if let error = error {
-            completionHandler(error)
-            return
+            throw errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
         }
 
         let outputStream: NSOutputStream
@@ -451,40 +431,26 @@ public class MultipartFormData {
             outputStream = possibleOutputStream
         } else {
             let failureReason = "Failed to create an output stream with the given URL: \(fileURL)"
-            let error = errorWithCode(NSURLErrorCannotOpenFile, failureReason: failureReason)
-
-            completionHandler(error)
-            return
+            throw errorWithCode(NSURLErrorCannotOpenFile, failureReason: failureReason)
         }
 
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            outputStream.scheduleInRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
-            outputStream.open()
+        outputStream.scheduleInRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+        outputStream.open()
 
-            self.bodyParts.first?.hasInitialBoundary = true
-            self.bodyParts.last?.hasFinalBoundary = true
+        self.bodyParts.first?.hasInitialBoundary = true
+        self.bodyParts.last?.hasFinalBoundary = true
 
-            var error: NSError?
-
-            for bodyPart in self.bodyParts {
-                if let writeError = self.writeBodyPart(bodyPart, toOutputStream: outputStream) {
-                    error = writeError
-                    break
-                }
-            }
-
-            outputStream.close()
-            outputStream.removeFromRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
-
-            dispatch_async(dispatch_get_main_queue()) {
-                completionHandler(error)
-            }
+        for bodyPart in self.bodyParts {
+            try writeBodyPart(bodyPart, toOutputStream: outputStream)
         }
+
+        outputStream.close()
+        outputStream.removeFromRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
     }
 
     // MARK: - Private - Body Part Encoding
 
-    private func encodeBodyPart(bodyPart: BodyPart) -> EncodingResult {
+    private func encodeBodyPart(bodyPart: BodyPart) throws -> NSData {
         let encoded = NSMutableData()
 
         let initialData = bodyPart.hasInitialBoundary ? initialBoundaryData() : encapsulatedBoundaryData()
@@ -493,20 +459,14 @@ public class MultipartFormData {
         let headerData = encodeHeaderDataForBodyPart(bodyPart)
         encoded.appendData(headerData)
 
-        let bodyStreamResult = encodeBodyStreamDataForBodyPart(bodyPart)
-
-        switch bodyStreamResult {
-        case .Failure:
-            return bodyStreamResult
-        case let .Success(data):
-            encoded.appendData(data)
-        }
+        let bodyStreamData = try encodeBodyStreamDataForBodyPart(bodyPart)
+        encoded.appendData(bodyStreamData)
 
         if bodyPart.hasFinalBoundary {
             encoded.appendData(finalBoundaryData())
         }
 
-        return .Success(encoded)
+        return encoded
     }
 
     private func encodeHeaderDataForBodyPart(bodyPart: BodyPart) -> NSData {
@@ -520,7 +480,7 @@ public class MultipartFormData {
         return headerText.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
     }
 
-    private func encodeBodyStreamDataForBodyPart(bodyPart: BodyPart) -> EncodingResult {
+    private func encodeBodyStreamDataForBodyPart(bodyPart: BodyPart) throws -> NSData {
         let inputStream = bodyPart.bodyStream
         inputStream.scheduleInRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
         inputStream.open()
@@ -552,59 +512,36 @@ public class MultipartFormData {
         inputStream.removeFromRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
 
         if let error = error {
-            return .Failure(error)
+            throw error
         }
 
-        return .Success(encoded)
+        return encoded
     }
 
     // MARK: - Private - Writing Body Part to Output Stream
 
-    private func writeBodyPart(bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) -> NSError? {
-        if let error = writeInitialBoundaryDataForBodyPart(bodyPart, toOutputStream: outputStream) {
-            return error
-        }
-
-        if let error = writeHeaderDataForBodyPart(bodyPart, toOutputStream: outputStream) {
-            return error
-        }
-
-        if let error = writeBodyStreamForBodyPart(bodyPart, toOutputStream: outputStream) {
-            return error
-        }
-
-        if let error = writeFinalBoundaryDataForBodyPart(bodyPart, toOutputStream: outputStream) {
-            return error
-        }
-
-        return nil
+    private func writeBodyPart(bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) throws {
+        try writeInitialBoundaryDataForBodyPart(bodyPart, toOutputStream: outputStream)
+        try writeHeaderDataForBodyPart(bodyPart, toOutputStream: outputStream)
+        try writeBodyStreamForBodyPart(bodyPart, toOutputStream: outputStream)
+        try writeFinalBoundaryDataForBodyPart(bodyPart, toOutputStream: outputStream)
     }
 
     private func writeInitialBoundaryDataForBodyPart(
         bodyPart: BodyPart,
         toOutputStream outputStream: NSOutputStream)
-        -> NSError?
+        throws
     {
         let initialData = bodyPart.hasInitialBoundary ? initialBoundaryData() : encapsulatedBoundaryData()
-        return writeData(initialData, toOutputStream: outputStream)
+        return try writeData(initialData, toOutputStream: outputStream)
     }
 
-    private func writeHeaderDataForBodyPart(
-        bodyPart: BodyPart,
-        toOutputStream outputStream: NSOutputStream)
-        -> NSError?
-    {
+    private func writeHeaderDataForBodyPart(bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) throws {
         let headerData = encodeHeaderDataForBodyPart(bodyPart)
-        return writeData(headerData, toOutputStream: outputStream)
+        return try writeData(headerData, toOutputStream: outputStream)
     }
 
-    private func writeBodyStreamForBodyPart(
-        bodyPart: BodyPart,
-        toOutputStream outputStream: NSOutputStream)
-        -> NSError?
-    {
-        var error: NSError?
-
+    private func writeBodyStreamForBodyPart(bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) throws {
         let inputStream = bodyPart.bodyStream
         inputStream.scheduleInRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
         inputStream.open()
@@ -613,9 +550,8 @@ public class MultipartFormData {
             var buffer = [UInt8](count: streamBufferSize, repeatedValue: 0)
             let bytesRead = inputStream.read(&buffer, maxLength: streamBufferSize)
 
-            if inputStream.streamError != nil {
-                error = inputStream.streamError
-                break
+            if let streamError = inputStream.streamError {
+                throw streamError
             }
 
             if bytesRead > 0 {
@@ -623,14 +559,10 @@ public class MultipartFormData {
                     buffer = Array(buffer[0..<bytesRead])
                 }
 
-                if let writeError = writeBuffer(&buffer, toOutputStream: outputStream) {
-                    error = writeError
-                    break
-                }
+                try writeBuffer(&buffer, toOutputStream: outputStream)
             } else if bytesRead < 0 {
                 let failureReason = "Failed to read from input stream: \(inputStream)"
-                error = errorWithCode(AlamofireInputStreamReadFailed, failureReason: failureReason)
-                break
+                throw errorWithCode(AlamofireInputStreamReadFailed, failureReason: failureReason)
             } else {
                 break
             }
@@ -638,49 +570,41 @@ public class MultipartFormData {
 
         inputStream.close()
         inputStream.removeFromRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
-
-        return error
     }
 
     private func writeFinalBoundaryDataForBodyPart(
         bodyPart: BodyPart,
         toOutputStream outputStream: NSOutputStream)
-        -> NSError?
+        throws
     {
         if bodyPart.hasFinalBoundary {
-            return writeData(finalBoundaryData(), toOutputStream: outputStream)
+            return try writeData(finalBoundaryData(), toOutputStream: outputStream)
         }
-
-        return nil
     }
 
     // MARK: - Private - Writing Buffered Data to Output Stream
 
-    private func writeData(data: NSData, toOutputStream outputStream: NSOutputStream) -> NSError? {
+    private func writeData(data: NSData, toOutputStream outputStream: NSOutputStream) throws {
         var buffer = [UInt8](count: data.length, repeatedValue: 0)
         data.getBytes(&buffer, length: data.length)
 
-        return writeBuffer(&buffer, toOutputStream: outputStream)
+        return try writeBuffer(&buffer, toOutputStream: outputStream)
     }
 
-    private func writeBuffer(inout buffer: [UInt8], toOutputStream outputStream: NSOutputStream) -> NSError? {
-        var error: NSError?
-
+    private func writeBuffer(inout buffer: [UInt8], toOutputStream outputStream: NSOutputStream) throws {
         var bytesToWrite = buffer.count
 
         while bytesToWrite > 0 {
             if outputStream.hasSpaceAvailable {
                 let bytesWritten = outputStream.write(buffer, maxLength: bytesToWrite)
 
-                if outputStream.streamError != nil {
-                    error = outputStream.streamError
-                    break
+                if let streamError = outputStream.streamError {
+                    throw streamError
                 }
 
                 if bytesWritten < 0 {
                     let failureReason = "Failed to write to output stream: \(outputStream)"
-                    error = errorWithCode(AlamofireOutputStreamWriteFailed, failureReason: failureReason)
-                    break
+                    throw errorWithCode(AlamofireOutputStreamWriteFailed, failureReason: failureReason)
                 }
 
                 bytesToWrite -= bytesWritten
@@ -688,13 +612,10 @@ public class MultipartFormData {
                 if bytesToWrite > 0 {
                     buffer = Array(buffer[bytesWritten..<buffer.count])
                 }
-            } else if outputStream.streamError != nil {
-                error = outputStream.streamError
-                break
+            } else if let streamError = outputStream.streamError {
+                throw streamError
             }
         }
-
-        return error
     }
 
     // MARK: - Private - Mime Type
