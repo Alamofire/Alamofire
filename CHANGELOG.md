@@ -128,6 +128,7 @@ make slight modifications to your global function calls.
 `ResponseSerializer` protocol. This has many advantages, the most obvious being that
 the `response` convenience method now returns an `NSData?` optional instead of an
 `AnyObject?` optional. Nice!
+* The return type for encoding was changed to use `NSMutableURLRequest`, instead of `NSURLRequest`. Method calls for encoding methods may need to be modified to use the new return type.
 
   > Please note that every effort is taken to maintain proper semantic versioning. In
 these two rare cases, it was deemed to be in the best interest of the community to
