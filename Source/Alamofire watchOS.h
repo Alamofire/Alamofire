@@ -22,10 +22,10 @@
 
 #import <WatchKit/WatchKit.h>
 
-//! Project version number for Swifty JSON watchOS.
+//! Project version number for Alamofire watchOS.
 FOUNDATION_EXPORT double Alamofire_watchOSVersionNumber;
 
-//! Project version string for Swifty JSON watchOS.
+//! Project version string for Alamofire watchOS.
 FOUNDATION_EXPORT const unsigned char Alamofire_watchOSVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <Swifty_JSON_watchOS/PublicHeader.h>
