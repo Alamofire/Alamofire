@@ -27,8 +27,8 @@ import XCTest
 class JSONResponseTestCase: BaseTestCase {
     func testGETRequestJSONResponse() {
         // Given
-        let URL = "http://httpbin.org/get"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/get"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
@@ -36,7 +36,7 @@ class JSONResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL, parameters: ["foo": "bar"])
+        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
             .responseJSON { responseRequest, responseResponse, responseJSON, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -54,7 +54,9 @@ class JSONResponseTestCase: BaseTestCase {
         XCTAssertNotNil(JSON, "JSON should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let args = JSON?["args"] as? NSObject {
+        // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
+        // - https://openradar.appspot.com/radar?id=5517037090635776
+        if let args = JSON?["args" as NSString] as? [String: String] {
             XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
         } else {
             XCTFail("args should not be nil")
@@ -63,8 +65,8 @@ class JSONResponseTestCase: BaseTestCase {
 
     func testPOSTRequestJSONResponse() {
         // Given
-        let URL = "http://httpbin.org/post"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/post"
+        let expectation = expectationWithDescription("\(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
@@ -72,7 +74,7 @@ class JSONResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.POST, URL, parameters: ["foo": "bar"])
+        Alamofire.request(.POST, URLString, parameters: ["foo": "bar"])
             .responseJSON { responseRequest, responseResponse, responseJSON, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -90,7 +92,9 @@ class JSONResponseTestCase: BaseTestCase {
         XCTAssertNotNil(JSON, "JSON should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let form = JSON?["form"] as? NSObject {
+        // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
+        // - https://openradar.appspot.com/radar?id=5517037090635776
+        if let form = JSON?["form" as NSString] as? [String: String] {
             XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
         } else {
             XCTFail("form should not be nil")
@@ -103,8 +107,8 @@ class JSONResponseTestCase: BaseTestCase {
 class RedirectResponseTestCase: BaseTestCase {
     func testThatRequestWillPerformHTTPRedirectionByDefault() {
         // Given
-        let redirectURLString = "http://www.apple.com"
-        let URLString = "http://httpbin.org/redirect-to?url=\(redirectURLString)"
+        let redirectURLString = "https://www.apple.com"
+        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
 
@@ -138,8 +142,8 @@ class RedirectResponseTestCase: BaseTestCase {
 
     func testThatRequestWillPerformRedirectionMultipleTimesByDefault() {
         // Given
-        let redirectURLString = "http://httpbin.org/get"
-        let URLString = "http://httpbin.org/redirect/5"
+        let redirectURLString = "https://httpbin.org/get"
+        let URLString = "https://httpbin.org/redirect/5"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
 
@@ -173,8 +177,8 @@ class RedirectResponseTestCase: BaseTestCase {
 
     func testThatTaskOverrideClosureCanPerformHTTPRedirection() {
         // Given
-        let redirectURLString = "http://www.apple.com"
-        let URLString = "http://httpbin.org/redirect-to?url=\(redirectURLString)"
+        let redirectURLString = "https://www.apple.com"
+        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
         let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
@@ -213,8 +217,8 @@ class RedirectResponseTestCase: BaseTestCase {
 
     func testThatTaskOverrideClosureCanCancelHTTPRedirection() {
         // Given
-        let redirectURLString = "http://www.apple.com"
-        let URLString = "http://httpbin.org/redirect-to?url=\(redirectURLString)"
+        let redirectURLString = "https://www.apple.com"
+        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = expectationWithDescription("Request should not redirect to \(redirectURLString)")
         let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
@@ -253,8 +257,8 @@ class RedirectResponseTestCase: BaseTestCase {
 
     func testThatTaskOverrideClosureIsCalledMultipleTimesForMultipleHTTPRedirects() {
         // Given
-        let redirectURLString = "http://httpbin.org/get"
-        let URLString = "http://httpbin.org/redirect/5"
+        let redirectURLString = "https://httpbin.org/get"
+        let URLString = "https://httpbin.org/redirect/5"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
         let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
