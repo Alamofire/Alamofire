@@ -314,8 +314,9 @@ public class Manager {
                 taskDidComplete(session, task, error)
             } else if let delegate = self[task] {
                 delegate.URLSession(session, task: task, didCompleteWithError: error)
-                self[task] = nil
             }
+
+            self[task] = nil
         }
 
         // MARK: - NSURLSessionDataDelegate
