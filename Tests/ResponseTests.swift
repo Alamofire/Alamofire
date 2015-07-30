@@ -32,16 +32,14 @@ class JSONResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var JSON: AnyObject?
-        var error: NSError?
+        var result: Result<AnyObject>!
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
-            .responseJSON { responseRequest, responseResponse, responseJSON, responseError in
+            .responseJSON { responseRequest, responseResponse, responseResult in
                 request = responseRequest
                 response = responseResponse
-                JSON = responseJSON
-                error = responseError
+                result = responseResult
 
                 expectation.fulfill()
             }
@@ -51,12 +49,11 @@ class JSONResponseTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(JSON, "JSON should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertTrue(result.isSuccess, "result should be success")
 
         // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
         // - https://openradar.appspot.com/radar?id=5517037090635776
-        if let args = JSON?["args" as NSString] as? [String: String] {
+        if let args = result.value?["args" as NSString] as? [String: String] {
             XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
         } else {
             XCTFail("args should not be nil")
@@ -70,16 +67,14 @@ class JSONResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var JSON: AnyObject?
-        var error: NSError?
+        var result: Result<AnyObject>!
 
         // When
         Alamofire.request(.POST, URLString, parameters: ["foo": "bar"])
-            .responseJSON { responseRequest, responseResponse, responseJSON, responseError in
+            .responseJSON { responseRequest, responseResponse, responseResult in
                 request = responseRequest
                 response = responseResponse
-                JSON = responseJSON
-                error = responseError
+                result = responseResult
 
                 expectation.fulfill()
             }
@@ -89,12 +84,11 @@ class JSONResponseTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(JSON, "JSON should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertTrue(result.isSuccess, "result should be success")
 
         // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
         // - https://openradar.appspot.com/radar?id=5517037090635776
-        if let form = JSON?["form" as NSString] as? [String: String] {
+        if let form = result.value?["form" as NSString] as? [String: String] {
             XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
         } else {
             XCTFail("form should not be nil")

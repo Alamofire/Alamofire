@@ -337,19 +337,17 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var JSON: AnyObject?
-        var error: NSError?
+        var result: Result<AnyObject>!
 
         // When
         let download = Alamofire.download(.GET, URLString, destination: destination)
         download.progress { _, _, _ in
             download.cancel()
         }
-        download.responseJSON { responseRequest, responseResponse, responseJSON, responseError in
+        download.responseJSON { responseRequest, responseResponse, responseResult in
             request = responseRequest
             response = responseResponse
-            JSON = responseJSON
-            error = responseError
+            result = responseResult
 
             expectation.fulfill()
         }
@@ -359,8 +357,10 @@ class DownloadResumeDataTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNil(JSON, "JSON should be nil")
-        XCTAssertNotNil(error, "error should not be nil")
+
+        XCTAssertTrue(result.isFailure, "result should be a failure")
+        XCTAssertNotNil(result.data, "data should not be nil")
+        XCTAssertNotNil(result.error, "error should not be nil")
 
         XCTAssertNotNil(download.resumeData, "resume data should not be nil")
     }

@@ -65,7 +65,11 @@ class StatusCodeValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+        }
     }
 
     func testThatValidationForRequestWithNoAcceptableStatusCodesFails() {
@@ -87,7 +91,11 @@ class StatusCodeValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+        }
     }
 }
 
@@ -157,7 +165,11 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+        }
     }
 
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseFails() {
@@ -179,7 +191,11 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+        }
     }
 }
 
@@ -208,7 +224,7 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFails() {
+    func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithStatusCodeError() {
         // Given
         let URLString = "https://httpbin.org/xml"
         let expectation = expectationWithDescription("request should succeed and return xml")
@@ -228,7 +244,38 @@ class MultipleValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+        }
+    }
+
+    func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithContentTypeError() {
+        // Given
+        let URLString = "https://httpbin.org/xml"
+        let expectation = expectationWithDescription("request should succeed and return xml")
+
+        var error: NSError?
+
+        // When
+        Alamofire.request(.GET, URLString)
+            .validate(contentType: ["application/octet-stream"])
+            .validate(statusCode: 400..<600)
+            .response { _, _, _, responseError in
+                error = responseError
+                expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(error, "error should not be nil")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+        }
     }
 }
 
@@ -278,7 +325,11 @@ class AutomaticValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+        }
     }
 
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
@@ -353,6 +404,10 @@ class AutomaticValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+        }
     }
 }
