@@ -263,7 +263,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             }
 
         waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
-        
+
         // Then
         XCTAssertNil(error, "error should be nil")
     }

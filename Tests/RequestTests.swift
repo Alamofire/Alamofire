@@ -81,21 +81,20 @@ class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
         let URLString = "https://httpbin.org/get"
-        let serializer = Request.stringResponseSerializer(encoding: NSUTF8StringEncoding)
 
         let expectation = expectationWithDescription("GET request should succeed: \(URLString)")
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var string: String?
+        var data: NSData?
         var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
-            .response(responseSerializer: serializer) { responseRequest, responseResponse, responseString, responseError in
+            .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
-                string = responseString
+                data = responseData
                 error = responseError
 
                 expectation.fulfill()
@@ -106,7 +105,7 @@ class RequestResponseTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(string, "string should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNil(error, "error should be nil")
     }
 
