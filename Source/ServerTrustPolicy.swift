@@ -122,7 +122,7 @@ public enum ServerTrustPolicy {
                 certificateData = NSData(contentsOfFile: path),
                 certificate = SecCertificateCreateWithData(nil, certificateData)
             {
-                certificates.append(certificate)
+                certificates.append(certificate.takeRetainedValue())
             }
         }
 
@@ -163,13 +163,13 @@ public enum ServerTrustPolicy {
 
         switch self {
         case let .PerformDefaultEvaluation(validateHost):
-            let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
+            let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString).takeRetainedValue() : SecPolicyCreateBasicX509().takeRetainedValue()
             SecTrustSetPolicies(serverTrust, [policy])
 
             serverTrustIsValid = trustIsValid(serverTrust)
         case let .PinCertificates(pinnedCertificates, validateCertificateChain, validateHost):
             if validateCertificateChain {
-                let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
+                let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString).takeRetainedValue() : SecPolicyCreateBasicX509().takeRetainedValue()
                 SecTrustSetPolicies(serverTrust, [policy])
 
                 SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates)
@@ -200,7 +200,7 @@ public enum ServerTrustPolicy {
             var certificateChainEvaluationPassed = true
 
             if validateCertificateChain {
-                let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
+                let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString).takeRetainedValue() : SecPolicyCreateBasicX509().takeRetainedValue()
                 SecTrustSetPolicies(serverTrust, [policy])
 
                 certificateChainEvaluationPassed = trustIsValid(serverTrust)
@@ -250,7 +250,7 @@ public enum ServerTrustPolicy {
 
         for index in 0..<SecTrustGetCertificateCount(trust) {
             if let certificate = SecTrustGetCertificateAtIndex(trust, index) {
-                certificates.append(certificate)
+                certificates.append(certificate.takeRetainedValue())
             }
         }
 
@@ -258,7 +258,7 @@ public enum ServerTrustPolicy {
     }
 
     private func certificateDataForCertificates(certificates: [SecCertificate]) -> [NSData] {
-        return certificates.map { SecCertificateCopyData($0) as NSData }
+        return certificates.map { SecCertificateCopyData($0).takeRetainedValue() as NSData }
     }
 
     // MARK: - Private - Public Key Extraction
@@ -268,7 +268,7 @@ public enum ServerTrustPolicy {
 
         for index in 0..<SecTrustGetCertificateCount(trust) {
             if let
-                certificate = SecTrustGetCertificateAtIndex(trust, index),
+                certificate :SecCertificate = SecTrustGetCertificateAtIndex(trust, index).takeRetainedValue(),
                 publicKey = publicKeyForCertificate(certificate)
             {
                 publicKeys.append(publicKey)
@@ -281,12 +281,12 @@ public enum ServerTrustPolicy {
     private static func publicKeyForCertificate(certificate: SecCertificate) -> SecKey? {
         var publicKey: SecKey?
 
-        let policy = SecPolicyCreateBasicX509()
-        var trust: SecTrust?
+        let policy = SecPolicyCreateBasicX509().takeRetainedValue()
+        var trust: Unmanaged<SecTrust>?
         let trustCreationStatus = SecTrustCreateWithCertificates(certificate, policy, &trust)
 
         if let trust = trust where trustCreationStatus == errSecSuccess {
-            publicKey = SecTrustCopyPublicKey(trust)
+            publicKey = SecTrustCopyPublicKey(trust.takeRetainedValue()).takeRetainedValue()
         }
 
         return publicKey
