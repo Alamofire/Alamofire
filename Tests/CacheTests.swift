@@ -181,7 +181,7 @@ class CacheTestCase: BaseTestCase {
 
         let request = manager.request(urlRequest)
         request.response(
-            queue,
+            queue: queue,
             completionHandler: { _, response, data, _ in
                 completion(request.request, response)
             }

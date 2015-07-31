@@ -74,7 +74,7 @@ extension Request {
         - returns: The request.
     */
     public func response(
-        queue: dispatch_queue_t? = nil,
+        queue queue: dispatch_queue_t? = nil,
         completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Void)
         -> Self
     {
@@ -98,7 +98,7 @@ extension Request {
         - returns: The request.
     */
     public func response<T: ResponseSerializer, V where T.SerializedObject == V>(
-        queue: dispatch_queue_t? = nil,
+        queue queue: dispatch_queue_t? = nil,
         responseSerializer: T,
         completionHandler: (NSURLRequest?, NSHTTPURLResponse?, Result<V>) -> Void)
         -> Self
