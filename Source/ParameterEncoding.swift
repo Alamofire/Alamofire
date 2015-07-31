@@ -25,73 +25,70 @@ import Foundation
 /**
     HTTP method definitions.
 
-    See http://tools.ietf.org/html/rfc7231#section-4.3
+    See https://tools.ietf.org/html/rfc7231#section-4.3
 */
 public enum Method: String {
-    case OPTIONS = "OPTIONS"
-    case GET = "GET"
-    case HEAD = "HEAD"
-    case POST = "POST"
-    case PUT = "PUT"
-    case PATCH = "PATCH"
-    case DELETE = "DELETE"
-    case TRACE = "TRACE"
-    case CONNECT = "CONNECT"
+    case OPTIONS, GET, HEAD, POST, PUT, PATCH, DELETE, TRACE, CONNECT
 }
 
 // MARK: - ParameterEncoding
 
 /**
     Used to specify the way in which a set of parameters are applied to a URL request.
+
+    - URL:          A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` 
+                    requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header 
+                    field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. Since 
+                    there is no published specification for how to encode collection types, the convention of appending 
+                    `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square 
+                    brackets for nested dictionary values (`foo[bar]=baz`).
+    - JSON:         Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is set as 
+                    the body of the request. The `Content-Type` HTTP header field of an encoded request is set to 
+                    `application/json`.
+    - PropertyList: Uses `NSPropertyListSerialization` to create a plist representation of the parameters object, 
+                    according to the associated format and write options values, which is set as the body of the 
+                    request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
+    - Custom:       Uses the associated closure value to construct a new request given an existing request and 
+                    parameters.
 */
 public enum ParameterEncoding {
-    /**
-        A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
-    */
     case URL
-
-    /**
-        Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
-    */
     case JSON
-
-    /**
-        Uses `NSPropertyListSerialization` to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
-    */
     case PropertyList(NSPropertyListFormat, NSPropertyListWriteOptions)
-
-    /**
-        Uses the associated closure value to construct a new request given an existing request and parameters.
-    */
     case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?))
 
     /**
         Creates a URL request by encoding parameters and applying them onto an existing request.
 
-        :param: URLRequest The request to have parameters applied
-        :param: parameters The parameters to apply
+        - parameter URLRequest: The request to have parameters applied
+        - parameter parameters: The parameters to apply
 
-        :returns: A tuple containing the constructed request and the error that occurred during parameter encoding, if any.
+        - returns: A tuple containing the constructed request and the error that occurred during parameter encoding, 
+                   if any.
     */
-    public func encode(URLRequest: URLRequestConvertible, parameters: [String: AnyObject]?) -> (NSMutableURLRequest, NSError?) {
-        var mutableURLRequest: NSMutableURLRequest = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
+    public func encode(
+        URLRequest: URLRequestConvertible,
+        parameters: [String: AnyObject]?)
+        -> (NSMutableURLRequest, NSError?)
+    {
+        var mutableURLRequest = URLRequest.URLRequest
 
         if parameters == nil {
             return (mutableURLRequest, nil)
         }
 
-        var error: NSError? = nil
+        var encodingError: NSError? = nil
 
         switch self {
         case .URL:
             func query(parameters: [String: AnyObject]) -> String {
                 var components: [(String, String)] = []
-                for key in sorted(Array(parameters.keys), <) {
+                for key in Array(parameters.keys).sort(<) {
                     let value: AnyObject! = parameters[key]
                     components += queryComponents(key, value)
                 }
 
-                return join("&", components.map { "\($0)=\($1)" } as [String])
+                return "&".join(components.map { "\($0)=\($1)" } as [String])
             }
 
             func encodesParametersInURL(method: Method) -> Bool {
@@ -105,7 +102,10 @@ public enum ParameterEncoding {
 
             if let method = Method(rawValue: mutableURLRequest.HTTPMethod) where encodesParametersInURL(method) {
                 if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
-                    URLComponents.percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters!)
+                    let percentEncodedQuery = (
+                        (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters!)
+                    )
+                    URLComponents.percentEncodedQuery = percentEncodedQuery
                     mutableURLRequest.URL = URLComponents.URL
                 }
             } else {
@@ -113,25 +113,38 @@ public enum ParameterEncoding {
                     mutableURLRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                 }
 
-                mutableURLRequest.HTTPBody = query(parameters!).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
+                mutableURLRequest.HTTPBody = query(parameters!).dataUsingEncoding(
+                    NSUTF8StringEncoding,
+                    allowLossyConversion: false
+                )
             }
         case .JSON:
-            let options = NSJSONWritingOptions.allZeros
+            do {
+                let options = NSJSONWritingOptions()
+                let data = try NSJSONSerialization.dataWithJSONObject(parameters!, options: options)
 
-            if let data = NSJSONSerialization.dataWithJSONObject(parameters!, options: options, error: &error) {
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 mutableURLRequest.HTTPBody = data
+            } catch {
+                encodingError = error as NSError
             }
-        case .PropertyList(let (format, options)):
-            if let data = NSPropertyListSerialization.dataWithPropertyList(parameters!, format: format, options: options, error: &error) {
+        case .PropertyList(let format, let options):
+            do {
+                let data = try NSPropertyListSerialization.dataWithPropertyList(
+                    parameters!,
+                    format: format,
+                    options: options
+                )
                 mutableURLRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
                 mutableURLRequest.HTTPBody = data
+            } catch {
+                encodingError = error as NSError
             }
         case .Custom(let closure):
-            (mutableURLRequest, error) = closure(mutableURLRequest, parameters)
+            (mutableURLRequest, encodingError) = closure(mutableURLRequest, parameters)
         }
 
-        return (mutableURLRequest, error)
+        return (mutableURLRequest, encodingError)
     }
 
     func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
@@ -152,43 +165,28 @@ public enum ParameterEncoding {
     }
 
     /**
-        Returns a percent escaped string following RFC 3986 for query string formatting.
+        Returns a percent escaped string following RFC 3986 for a query string key or value.
 
         RFC 3986 states that the following characters are "reserved" characters.
 
         - General Delimiters: ":", "#", "[", "]", "@", "?", "/"
         - Sub-Delimiters: "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "="
 
-        Core Foundation interprets RFC 3986 in terms of legal and illegal characters.
-
-        - Legal Numbers: "0123456789"
-        - Legal Letters: "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        - Legal Characters: "!", "$", "&", "'", "(", ")", "*", "+", ",", "-",
-                            ".", "/", ":", ";", "=", "?", "@", "_", "~", "\""
-        - Illegal Characters: All characters not listed as Legal
-
-        While the Core Foundation `CFURLCreateStringByAddingPercentEscapes` documentation states
-        that it follows RFC 3986, the headers actually point out that it follows RFC 2396. This
-        explains why it does not consider "[", "]" and "#" to be "legal" characters even though 
-        they are specified as "reserved" characters in RFC 3986. The following rdar has been filed
-        to hopefully get the documentation updated.
-
-        - https://openradar.appspot.com/radar?id=5058257274011648
-
         In RFC 3986 - Section 3.4, it states that the "?" and "/" characters should not be escaped to allow
         query strings to include a URL. Therefore, all "reserved" characters with the exception of "?" and "/"
         should be percent escaped in the query string.
 
-        :param: string The string to be percent escaped.
+        - parameter string: The string to be percent escaped.
 
-        :returns: The percent escaped string.
+        - returns: The percent escaped string.
     */
     func escape(string: String) -> String {
-        let generalDelimiters = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
-        let subDelimiters = "!$&'()*+,;="
+        let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
+        let subDelimitersToEncode = "!$&'()*+,;="
 
-        let legalURLCharactersToBeEscaped: CFStringRef = generalDelimiters + subDelimiters
+        let allowedCharacterSet = NSCharacterSet.URLQueryAllowedCharacterSet().mutableCopy() as! NSMutableCharacterSet
+        allowedCharacterSet.removeCharactersInString(generalDelimitersToEncode + subDelimitersToEncode)
 
-        return CFURLCreateStringByAddingPercentEscapes(nil, string, nil, legalURLCharactersToBeEscaped, CFStringBuiltInEncodings.UTF8.rawValue) as String
+        return string.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacterSet) ?? ""
     }
 }
