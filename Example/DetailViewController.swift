@@ -75,7 +75,7 @@ class DetailViewController: UITableViewController {
         refreshControl?.beginRefreshing()
 
         let start = CACurrentMediaTime()
-        request?.responseString { request, response, body, error in
+        request?.responseString { request, response, result in
             let end = CACurrentMediaTime()
             self.elapsedTime = end - start
 
@@ -86,7 +86,7 @@ class DetailViewController: UITableViewController {
             if let segueIdentifier = self.segueIdentifier {
                 switch segueIdentifier {
                 case "GET", "POST", "PUT", "DELETE":
-                    self.body = body
+                    self.body = result.value
                 case "DOWNLOAD":
                     self.body = self.downloadedBodyString()
                 default:
