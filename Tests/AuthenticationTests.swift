@@ -33,13 +33,10 @@ class AuthenticationTestCase: BaseTestCase {
         super.setUp()
 
         let credentialStorage = NSURLCredentialStorage.sharedCredentialStorage()
-        let allCredentials = credentialStorage.allCredentials as! [NSURLProtectionSpace: AnyObject]
 
-        for (protectionSpace, credentials) in allCredentials {
-            if let credentials = credentials as? [String: NSURLCredential] {
-                for (user, credential) in credentials {
-                    credentialStorage.removeCredential(credential, forProtectionSpace: protectionSpace)
-                }
+        for (protectionSpace, credentials) in credentialStorage.allCredentials {
+            for (_, credential) in credentials {
+                credentialStorage.removeCredential(credential, forProtectionSpace: protectionSpace)
             }
         }
     }
@@ -50,7 +47,7 @@ class AuthenticationTestCase: BaseTestCase {
 class BasicAuthenticationTestCase: AuthenticationTestCase {
     override func setUp() {
         super.setUp()
-        URLString = "http://httpbin.org/basic-auth/\(user)/\(password)"
+        URLString = "https://httpbin.org/basic-auth/\(user)/\(password)"
     }
 
     func testHTTPBasicAuthenticationWithInvalidCredentials() {
@@ -123,7 +120,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
     override func setUp() {
         super.setUp()
-        URLString = "http://httpbin.org/digest-auth/\(qop)/\(user)/\(password)"
+        URLString = "https://httpbin.org/digest-auth/\(qop)/\(user)/\(password)"
     }
 
     func testHTTPDigestAuthenticationWithInvalidCredentials() {

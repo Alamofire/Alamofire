@@ -42,7 +42,7 @@ extension Manager {
             dispatch_sync(queue) {
                 uploadTask = self.session.uploadTaskWithRequest(request, fromFile: fileURL)
             }
-        case .Stream(let request, var stream):
+        case .Stream(let request, let stream):
             dispatch_sync(queue) {
                 uploadTask = self.session.uploadTaskWithStreamedRequest(request)
             }
@@ -74,10 +74,10 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: URLRequest The URL request
-        :param: file The file to upload
+        - parameter URLRequest: The URL request
+        - parameter file:       The file to upload
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
     public func upload(URLRequest: URLRequestConvertible, file: NSURL) -> Request {
         return upload(.File(URLRequest.URLRequest, file))
@@ -88,14 +88,20 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: method The HTTP method.
-        :param: URLString The URL string.
-        :param: headers The HTTP headers. `nil` by default.
-        :param: file The file to upload.
+        - parameter method:    The HTTP method.
+        - parameter URLString: The URL string.
+        - parameter headers:   The HTTP headers. `nil` by default.
+        - parameter file:      The file to upload
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
-    public func upload(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, file: NSURL) -> Request {
+    public func upload(
+        method: Method,
+        _ URLString: URLStringConvertible,
+        headers: [String: String]? = nil,
+        file: NSURL)
+        -> Request
+    {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
         return upload(mutableURLRequest, file: file)
     }
@@ -107,10 +113,10 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: URLRequest The URL request.
-        :param: data The data to upload.
+        - parameter URLRequest: The URL request.
+        - parameter data:       The data to upload.
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
     public func upload(URLRequest: URLRequestConvertible, data: NSData) -> Request {
         return upload(.Data(URLRequest.URLRequest, data))
@@ -121,14 +127,20 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: method The HTTP method.
-        :param: URLString The URL string.
-        :param: headers The HTTP headers. `nil` by default.
-        :param: data The data to upload.
+        - parameter method:    The HTTP method.
+        - parameter URLString: The URL string.
+        - parameter headers:   The HTTP headers. `nil` by default.
+        - parameter data:      The data to upload
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
-    public func upload(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, data: NSData) -> Request {
+    public func upload(
+        method: Method,
+        _ URLString: URLStringConvertible,
+        headers: [String: String]? = nil,
+        data: NSData)
+        -> Request
+    {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
 
         return upload(mutableURLRequest, data: data)
@@ -141,10 +153,10 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: URLRequest The URL request.
-        :param: stream The stream to upload.
+        - parameter URLRequest: The URL request.
+        - parameter stream:     The stream to upload.
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
     public func upload(URLRequest: URLRequestConvertible, stream: NSInputStream) -> Request {
         return upload(.Stream(URLRequest.URLRequest, stream))
@@ -155,14 +167,20 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: method The HTTP method.
-        :param: URLString The URL string.
-        :param: headers The HTTP headers. `nil` by default.
-        :param: stream The stream to upload.
+        - parameter method:    The HTTP method.
+        - parameter URLString: The URL string.
+        - parameter headers:   The HTTP headers. `nil` by default.
+        - parameter stream:    The stream to upload.
 
-        :returns: The created upload request.
+        - returns: The created upload request.
     */
-    public func upload(method: Method, _ URLString: URLStringConvertible, headers: [String: String]? = nil, stream: NSInputStream) -> Request {
+    public func upload(
+        method: Method,
+        _ URLString: URLStringConvertible,
+        headers: [String: String]? = nil,
+        stream: NSInputStream)
+        -> Request
+    {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
 
         return upload(mutableURLRequest, stream: stream)
@@ -205,13 +223,13 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: method                  The HTTP method.
-        :param: URLString               The URL string.
-        :param: headers                 The HTTP headers. `nil` by default.
-        :param: multipartFormData       The closure used to append body parts to the `MultipartFormData`.
-        :param: encodingMemoryThreshold The encoding memory threshold in bytes. `MultipartFormDataEncodingMemoryThreshold`
-                                        by default.
-        :param: encodingCompletion      The closure called when the `MultipartFormData` encoding is complete.
+        - parameter method:                  The HTTP method.
+        - parameter URLString:               The URL string.
+        - parameter headers:                 The HTTP headers. `nil` by default.
+        - parameter multipartFormData:       The closure used to append body parts to the `MultipartFormData`.
+        - parameter encodingMemoryThreshold: The encoding memory threshold in bytes.
+                                             `MultipartFormDataEncodingMemoryThreshold` by default.
+        - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
     */
     public func upload(
         method: Method,
@@ -249,11 +267,11 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        :param: URLRequest              The URL request.
-        :param: multipartFormData       The closure used to append body parts to the `MultipartFormData`.
-        :param: encodingMemoryThreshold The encoding memory threshold in bytes. `MultipartFormDataEncodingMemoryThreshold`
-                                        by default.
-        :param: encodingCompletion      The closure called when the `MultipartFormData` encoding is complete.
+        - parameter URLRequest:              The URL request.
+        - parameter multipartFormData:       The closure used to append body parts to the `MultipartFormData`.
+        - parameter encodingMemoryThreshold: The encoding memory threshold in bytes.
+                                             `MultipartFormDataEncodingMemoryThreshold` by default.
+        - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
     */
     public func upload(
         URLRequest: URLRequestConvertible,
@@ -265,52 +283,48 @@ extension Manager {
             let formData = MultipartFormData()
             multipartFormData(formData)
 
-            let URLRequestWithContentType = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
+            let URLRequestWithContentType = URLRequest.URLRequest
             URLRequestWithContentType.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
 
             if formData.contentLength < encodingMemoryThreshold {
-                let encodingResult = formData.encode()
+                do {
+                    let data = try formData.encode()
+                    let encodingResult = MultipartFormDataEncodingResult.Success(
+                        request: self.upload(URLRequestWithContentType, data: data),
+                        streamingFromDisk: false,
+                        streamFileURL: nil
+                    )
 
-                dispatch_async(dispatch_get_main_queue()) {
-                    switch encodingResult {
-                    case .Success(let data):
-                        let encodingResult = MultipartFormDataEncodingResult.Success(
-                            request: self.upload(URLRequestWithContentType, data: data),
-                            streamingFromDisk: false,
-                            streamFileURL: nil
-                        )
+                    dispatch_async(dispatch_get_main_queue()) {
                         encodingCompletion?(encodingResult)
-                    case .Failure(let error):
-                        encodingCompletion?(.Failure(error))
+                    }
+                } catch {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        encodingCompletion?(.Failure(error as NSError))
                     }
                 }
             } else {
                 let fileManager = NSFileManager.defaultManager()
-                let tempDirectoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory())!
+                let tempDirectoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
                 let directoryURL = tempDirectoryURL.URLByAppendingPathComponent("com.alamofire.manager/multipart.form.data")
                 let fileName = NSUUID().UUIDString
                 let fileURL = directoryURL.URLByAppendingPathComponent(fileName)
 
-                var error: NSError?
+                do {
+                    try fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
+                    try formData.writeEncodedDataToDisk(fileURL)
 
-                if fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil, error: &error) {
-                    formData.writeEncodedDataToDisk(fileURL) { error in
-                        dispatch_async(dispatch_get_main_queue()) {
-                            if let error = error {
-                                encodingCompletion?(.Failure(error))
-                            } else {
-                                let encodingResult = MultipartFormDataEncodingResult.Success(
-                                    request: self.upload(URLRequestWithContentType, file: fileURL),
-                                    streamingFromDisk: true,
-                                    streamFileURL: fileURL
-                                )
-                                encodingCompletion?(encodingResult)
-                            }
-                        }
-                    }
-                } else {
                     dispatch_async(dispatch_get_main_queue()) {
-                        encodingCompletion?(.Failure(error!))
+                        let encodingResult = MultipartFormDataEncodingResult.Success(
+                            request: self.upload(URLRequestWithContentType, file: fileURL),
+                            streamingFromDisk: true,
+                            streamFileURL: fileURL
+                        )
+                        encodingCompletion?(encodingResult)
+                    }
+                } catch {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        encodingCompletion?(.Failure(error as NSError))
                     }
                 }
             }
@@ -336,7 +350,13 @@ extension Request {
 
         // MARK: Delegate Methods
 
-        func URLSession(session: NSURLSession, task: NSURLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        func URLSession(
+            session: NSURLSession,
+            task: NSURLSessionTask,
+            didSendBodyData bytesSent: Int64,
+            totalBytesSent: Int64,
+            totalBytesExpectedToSend: Int64)
+        {
             if let taskDidSendBodyData = taskDidSendBodyData {
                 taskDidSendBodyData(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
             } else {
