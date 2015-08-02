@@ -30,23 +30,18 @@ import Foundation
     - Failure: The request encountered an error resulting in a failure. The associated values are the original data 
                provided by the server as well as the error that caused the failure.
 */
-public enum Result<Value> {
+public enum Result<Value> : BooleanType {
     case Success(Value)
     case Failure(NSData?, NSError)
-
+    
     /// Returns `true` if the result is a success, `false` otherwise.
-    public var isSuccess: Bool {
+    public var boolValue : Bool {
         switch self {
         case .Success:
             return true
         case .Failure:
             return false
         }
-    }
-
-    /// Returns `true` if the result is a failure, `false` otherwise.
-    public var isFailure: Bool {
-        return !isSuccess
     }
 
     /// Returns the associated value if the result is a success, `nil` otherwise.
