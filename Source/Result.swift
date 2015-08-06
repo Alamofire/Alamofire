@@ -79,3 +79,36 @@ public enum Result<Value> {
         }
     }
 }
+
+// MARK: - CustomStringConvertible
+
+extension Result: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .Success:
+            return "SUCCESS"
+        case .Failure:
+            return "FAILURE"
+        }
+    }
+}
+
+// MARK: - CustomDebugStringConvertible
+
+extension Result: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .Success(let value):
+            return "SUCCESS: \(value)"
+        case .Failure(let data, let error):
+            if let
+                data = data,
+                utf8Data = NSString(data: data, encoding: NSUTF8StringEncoding)
+            {
+                return "FAILURE: \(error) \(utf8Data)"
+            } else {
+                return "FAILURE with Error: \(error)"
+            }
+        }
+    }
+}
