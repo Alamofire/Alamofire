@@ -163,17 +163,17 @@ public enum ServerTrustPolicy {
 
         switch self {
         case let .PerformDefaultEvaluation(validateHost):
-            let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
+            let policy = validateHost ? SecPolicyCreateSSL(true, host as CFString) : SecPolicyCreateBasicX509()
             SecTrustSetPolicies(serverTrust, [policy])
 
             serverTrustIsValid = trustIsValid(serverTrust)
         case let .PinCertificates(pinnedCertificates, validateCertificateChain, validateHost):
             if validateCertificateChain {
-                let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
+                let policy = validateHost ? SecPolicyCreateSSL(true, host as CFString) : SecPolicyCreateBasicX509()
                 SecTrustSetPolicies(serverTrust, [policy])
 
                 SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates)
-                SecTrustSetAnchorCertificatesOnly(serverTrust, 1)
+                SecTrustSetAnchorCertificatesOnly(serverTrust, true)
 
                 serverTrustIsValid = trustIsValid(serverTrust)
             } else {
@@ -200,7 +200,7 @@ public enum ServerTrustPolicy {
             var certificateChainEvaluationPassed = true
 
             if validateCertificateChain {
-                let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
+                let policy = validateHost ? SecPolicyCreateSSL(true, host as CFString) : SecPolicyCreateBasicX509()
                 SecTrustSetPolicies(serverTrust, [policy])
 
                 certificateChainEvaluationPassed = trustIsValid(serverTrust)

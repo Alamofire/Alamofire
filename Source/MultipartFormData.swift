@@ -256,16 +256,17 @@ public class MultipartFormData {
 
         var isReachable = false
 
-        do {
-            try fileURL.checkResourceIsReachable()
-            isReachable = true
-        } catch {
-            // No-op
+        if #available(OSX 10.10, *) {
+            var error: NSError?;
+            isReachable = fileURL.checkPromisedItemIsReachableAndReturnError(&error)
+        } else {
+            // Assume reachability on platforms where it's not possible to detect failure.
+            isReachable = true;
         }
 
         guard isReachable else {
-            let error = Error.errorWithCode(NSURLErrorBadURL, failureReason: "The file URL is not reachable: \(fileURL)")
-            setBodyPartError(error)
+            let reachabilityError = Error.errorWithCode(NSURLErrorBadURL, failureReason: "The file URL is not reachable: \(fileURL)")
+            setBodyPartError(reachabilityError)
             return
         }
 
