@@ -75,6 +75,17 @@
 		4CE272501AF88FB500F1D59A /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
 		4DD67C241A5C58FB00ED2280 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
+		E4202FCF1B667AA100C997FB /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C3F1AF89E0700BABAE5 /* Upload.swift */; };
+		E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
+		E4202FD11B667AA100C997FB /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C391AF899EC00BABAE5 /* Request.swift */; };
+		E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */; };
+		E4202FD31B667AA100C997FB /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C361AF8932A00BABAE5 /* Manager.swift */; };
+		E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
+		E4202FD51B667AA100C997FB /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */; };
+		E4202FD61B667AA100C997FB /* ServerTrustPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */; };
+		E4202FD71B667AA100C997FB /* Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C3C1AF89D4900BABAE5 /* Download.swift */; };
+		E4202FD81B667AA100C997FB /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C421AF89F0900BABAE5 /* Validation.swift */; };
+		E46F6FB41B6689FB0069F543 /* Alamofire watchOS.h in Headers */ = {isa = PBXBuildFile; fileRef = E46F6FB31B6689400069F543 /* Alamofire watchOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8111E3919A95C8B0040E7D1 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F8111E6019A9674D0040E7D1 /* DownloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */; };
 		F8111E6119A9674D0040E7D1 /* ParameterEncodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */; };
@@ -150,6 +161,8 @@
 		4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseSerialization.swift; sourceTree = "<group>"; };
 		4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParameterEncoding.swift; sourceTree = "<group>"; };
 		4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4202FE01B667AA100C997FB /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E46F6FB31B6689400069F543 /* Alamofire watchOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Alamofire watchOS.h"; sourceTree = "<group>"; };
 		F8111E3319A95C8B0040E7D1 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3719A95C8B0040E7D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F8111E3819A95C8B0040E7D1 /* Alamofire.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Alamofire.h; sourceTree = "<group>"; };
@@ -170,6 +183,13 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		4DD67C071A5C55C900ED2280 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E4202FD91B667AA100C997FB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -367,6 +387,7 @@
 				F8111E3E19A95C8B0040E7D1 /* Alamofire iOS Tests.xctest */,
 				4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */,
 				F829C6B21A7A94F100A2CD59 /* Alamofire OSX Tests.xctest */,
+				E4202FE01B667AA100C997FB /* Alamofire.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -386,6 +407,7 @@
 			isa = PBXGroup;
 			children = (
 				F8111E3819A95C8B0040E7D1 /* Alamofire.h */,
+				E46F6FB31B6689400069F543 /* Alamofire watchOS.h */,
 				F8111E3719A95C8B0040E7D1 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -422,6 +444,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E4202FDA1B667AA100C997FB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E46F6FB41B6689FB0069F543 /* Alamofire watchOS.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F8111E3019A95C8B0040E7D1 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -449,6 +479,24 @@
 			name = "Alamofire OSX";
 			productName = AlamofireOSX;
 			productReference = 4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		E4202FCD1B667AA100C997FB /* Alamofire watchOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E4202FDD1B667AA100C997FB /* Build configuration list for PBXNativeTarget "Alamofire watchOS" */;
+			buildPhases = (
+				E4202FCE1B667AA100C997FB /* Sources */,
+				E4202FD91B667AA100C997FB /* Frameworks */,
+				E4202FDA1B667AA100C997FB /* Headers */,
+				E4202FDC1B667AA100C997FB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Alamofire watchOS";
+			productName = Alamofire;
+			productReference = E4202FE01B667AA100C997FB /* Alamofire.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		F8111E3219A95C8B0040E7D1 /* Alamofire iOS */ = {
@@ -545,12 +593,20 @@
 				4DD67C0A1A5C55C900ED2280 /* Alamofire OSX */,
 				F8111E3D19A95C8B0040E7D1 /* Alamofire iOS Tests */,
 				F829C6B11A7A94F100A2CD59 /* Alamofire OSX Tests */,
+				E4202FCD1B667AA100C997FB /* Alamofire watchOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		4DD67C091A5C55C900ED2280 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E4202FDC1B667AA100C997FB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -631,6 +687,23 @@
 				4CDE2C3E1AF89D4900BABAE5 /* Download.swift in Sources */,
 				4CDE2C441AF89F0900BABAE5 /* Validation.swift in Sources */,
 				4C0E5BF91B673D3400816CCC /* Result.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E4202FCE1B667AA100C997FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E4202FCF1B667AA100C997FB /* Upload.swift in Sources */,
+				E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */,
+				E4202FD11B667AA100C997FB /* Request.swift in Sources */,
+				E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */,
+				E4202FD31B667AA100C997FB /* Manager.swift in Sources */,
+				E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */,
+				E4202FD51B667AA100C997FB /* MultipartFormData.swift in Sources */,
+				E4202FD61B667AA100C997FB /* ServerTrustPolicy.swift in Sources */,
+				E4202FD71B667AA100C997FB /* Download.swift in Sources */,
+				E4202FD81B667AA100C997FB /* Validation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -759,6 +832,56 @@
 				PRODUCT_NAME = Alamofire;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		E4202FDE1B667AA100C997FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = Source/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULE_NAME = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.alamofire.Alamofire;
+				PRODUCT_NAME = Alamofire;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		E4202FDF1B667AA100C997FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = Source/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULE_NAME = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.alamofire.Alamofire;
+				PRODUCT_NAME = Alamofire;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Release;
 		};
@@ -974,6 +1097,15 @@
 			buildConfigurations = (
 				4DD67C1F1A5C55C900ED2280 /* Debug */,
 				4DD67C201A5C55C900ED2280 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E4202FDD1B667AA100C997FB /* Build configuration list for PBXNativeTarget "Alamofire watchOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E4202FDE1B667AA100C997FB /* Debug */,
+				E4202FDF1B667AA100C997FB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
