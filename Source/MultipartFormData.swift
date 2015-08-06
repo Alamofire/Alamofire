@@ -261,7 +261,7 @@ public class MultipartFormData {
             isReachable = fileURL.checkPromisedItemIsReachableAndReturnError(&error)
         } else {
             // Assume reachability on platforms where it's not possible to detect failure.
-            isReachable = true;
+            isReachable = true
         }
 
         guard isReachable else {
