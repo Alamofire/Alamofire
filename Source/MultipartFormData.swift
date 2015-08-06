@@ -254,13 +254,10 @@ public class MultipartFormData {
         //              Check 2 - is file URL reachable?
         //============================================================
 
-        var isReachable = false
+        var isReachable = true
 
-        do {
-            try fileURL.checkResourceIsReachable()
-            isReachable = true
-        } catch {
-            // No-op
+        if #available(OSX 10.10, *) {
+            isReachable = fileURL.checkPromisedItemIsReachableAndReturnError(nil)
         }
 
         guard isReachable else {

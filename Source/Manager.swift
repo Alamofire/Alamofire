@@ -72,7 +72,7 @@ public class Manager {
                 var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
                 let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
 
-                if CFStringTransform(mutableUserAgent, nil, transform, 0) == 1 {
+                if CFStringTransform(mutableUserAgent, UnsafeMutablePointer<CFRange>(nil), transform, false) {
                     return mutableUserAgent as String
                 }
             }
