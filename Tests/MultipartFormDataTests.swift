@@ -869,7 +869,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
     func testThatAppendingFileBodyPartThatIsNotReachableReturnsError() {
         // Given
-        let fileURL = NSURL(fileURLWithPath: NSTemporaryDirectory().stringByAppendingPathComponent("does_not_exist.jpg"))
+        let fileURL = NSURL(fileURLWithPath: NSString(string: NSTemporaryDirectory()).stringByAppendingPathComponent("does_not_exist.jpg"))
         let multipartFormData = MultipartFormData()
         multipartFormData.appendBodyPart(fileURL: fileURL, name: "empty_data")
 
