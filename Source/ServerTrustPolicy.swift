@@ -34,9 +34,9 @@ public class ServerTrustPolicyManager {
         allows for scenarios such as using default evaluation for host1, certificate pinning for host2, public key 
         pinning for host3 and disabling evaluation for host4.
 
-        :param: policies A dictionary of all policies mapped to a particular host.
+        - parameter policies: A dictionary of all policies mapped to a particular host.
 
-        :returns: The new `ServerTrustPolicyManager` instance.
+        - returns: The new `ServerTrustPolicyManager` instance.
     */
     public init(policies: [String: ServerTrustPolicy]) {
         self.policies = policies
@@ -59,7 +59,7 @@ extension NSURLSession {
             return objc_getAssociatedObject(self, &AssociatedKeys.ManagerKey) as? ServerTrustPolicyManager
         }
         set (manager) {
-            objc_setAssociatedObject(self, &AssociatedKeys.ManagerKey, manager, UInt(OBJC_ASSOCIATION_RETAIN_NONATOMIC))
+            objc_setAssociatedObject(self, &AssociatedKeys.ManagerKey, manager, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
@@ -110,17 +110,17 @@ public enum ServerTrustPolicy {
     /**
         Returns all certificates within the given bundle with a `.cer` file extension.
 
-        :param: bundle The bundle to search for all `.cer` files.
+        - parameter bundle: The bundle to search for all `.cer` files.
 
-        :returns: All certificates within the given bundle.
+        - returns: All certificates within the given bundle.
     */
     public static func certificatesInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecCertificate] {
         var certificates: [SecCertificate] = []
 
-        for path in bundle.pathsForResourcesOfType(".cer", inDirectory: nil) as! [String] {
+        for path in bundle.pathsForResourcesOfType(".cer", inDirectory: nil) {
             if let
                 certificateData = NSData(contentsOfFile: path),
-                certificate = SecCertificateCreateWithData(nil, certificateData)?.takeRetainedValue()
+                certificate = SecCertificateCreateWithData(nil, certificateData)
             {
                 certificates.append(certificate)
             }
@@ -132,14 +132,14 @@ public enum ServerTrustPolicy {
     /**
         Returns all public keys within the given bundle with a `.cer` file extension.
 
-        :param: bundle The bundle to search for all `*.cer` files.
+        - parameter bundle: The bundle to search for all `*.cer` files.
 
-        :returns: All public keys within the given bundle.
+        - returns: All public keys within the given bundle.
     */
     public static func publicKeysInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecKey] {
         var publicKeys: [SecKey] = []
 
-        for certificate in certificatesInBundle(bundle: bundle) {
+        for certificate in certificatesInBundle(bundle) {
             if let publicKey = publicKeyForCertificate(certificate) {
                 publicKeys.append(publicKey)
             }
@@ -153,32 +153,39 @@ public enum ServerTrustPolicy {
     /**
         Evaluates whether the server trust is valid for the given host.
 
-        :param: serverTrust The server trust to evaluate.
-        :param: host        The host of the challenge protection space.
+        - parameter serverTrust: The server trust to evaluate.
+        - parameter host:        The host of the challenge protection space.
 
-        :returns: Whether the server trust is valid.
+        - returns: Whether the server trust is valid.
     */
     public func evaluateServerTrust(serverTrust: SecTrust, isValidForHost host: String) -> Bool {
         var serverTrustIsValid = false
 
         switch self {
         case let .PerformDefaultEvaluation(validateHost):
-            let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
-            SecTrustSetPolicies(serverTrust, [policy.takeRetainedValue()])
+            let policy = validateHost ? SecPolicyCreateSSL(true, host as CFString) : SecPolicyCreateBasicX509()
+            SecTrustSetPolicies(serverTrust, [policy])
 
             serverTrustIsValid = trustIsValid(serverTrust)
         case let .PinCertificates(pinnedCertificates, validateCertificateChain, validateHost):
             if validateCertificateChain {
-                let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
-                SecTrustSetPolicies(serverTrust, [policy.takeRetainedValue()])
+                let policy = validateHost ? SecPolicyCreateSSL(true, host as CFString) : SecPolicyCreateBasicX509()
+                SecTrustSetPolicies(serverTrust, [policy])
 
                 SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates)
-                SecTrustSetAnchorCertificatesOnly(serverTrust, 1)
+                SecTrustSetAnchorCertificatesOnly(serverTrust, true)
 
                 serverTrustIsValid = trustIsValid(serverTrust)
             } else {
                 let serverCertificatesDataArray = certificateDataForTrust(serverTrust)
-                let pinnedCertificatesDataArray = certificateDataForCertificates(pinnedCertificates)
+
+                //======================================================================================================
+                // The following `[] +` is a temporary workaround for a Swift 2.0 compiler error. This workaround should
+                // be removed once the following radar has been resolved:
+                //   - http://openradar.appspot.com/radar?id=6082025006039040
+                //======================================================================================================
+
+                let pinnedCertificatesDataArray = certificateDataForCertificates([] + pinnedCertificates)
 
                 outerLoop: for serverCertificateData in serverCertificatesDataArray {
                     for pinnedCertificateData in pinnedCertificatesDataArray {
@@ -193,14 +200,13 @@ public enum ServerTrustPolicy {
             var certificateChainEvaluationPassed = true
 
             if validateCertificateChain {
-                let policy = validateHost ? SecPolicyCreateSSL(1, host as CFString) : SecPolicyCreateBasicX509()
-                SecTrustSetPolicies(serverTrust, [policy.takeRetainedValue()])
+                let policy = validateHost ? SecPolicyCreateSSL(true, host as CFString) : SecPolicyCreateBasicX509()
+                SecTrustSetPolicies(serverTrust, [policy])
 
                 certificateChainEvaluationPassed = trustIsValid(serverTrust)
             }
 
             if certificateChainEvaluationPassed {
-                let serverKeys = ServerTrustPolicy.publicKeysForTrust(serverTrust)
                 outerLoop: for serverPublicKey in ServerTrustPolicy.publicKeysForTrust(serverTrust) as [AnyObject] {
                     for pinnedPublicKey in pinnedPublicKeys as [AnyObject] {
                         if serverPublicKey.isEqual(pinnedPublicKey) {
@@ -243,15 +249,16 @@ public enum ServerTrustPolicy {
         var certificates: [SecCertificate] = []
 
         for index in 0..<SecTrustGetCertificateCount(trust) {
-            let certificate = SecTrustGetCertificateAtIndex(trust, index).takeUnretainedValue()
-            certificates.append(certificate)
+            if let certificate = SecTrustGetCertificateAtIndex(trust, index) {
+                certificates.append(certificate)
+            }
         }
 
         return certificateDataForCertificates(certificates)
     }
 
     private func certificateDataForCertificates(certificates: [SecCertificate]) -> [NSData] {
-        return certificates.map { SecCertificateCopyData($0).takeRetainedValue() as NSData }
+        return certificates.map { SecCertificateCopyData($0) as NSData }
     }
 
     // MARK: - Private - Public Key Extraction
@@ -260,9 +267,10 @@ public enum ServerTrustPolicy {
         var publicKeys: [SecKey] = []
 
         for index in 0..<SecTrustGetCertificateCount(trust) {
-            let certificate = SecTrustGetCertificateAtIndex(trust, index).takeUnretainedValue()
-
-            if let publicKey = publicKeyForCertificate(certificate) {
+            if let
+                certificate = SecTrustGetCertificateAtIndex(trust, index),
+                publicKey = publicKeyForCertificate(certificate)
+            {
                 publicKeys.append(publicKey)
             }
         }
@@ -273,12 +281,12 @@ public enum ServerTrustPolicy {
     private static func publicKeyForCertificate(certificate: SecCertificate) -> SecKey? {
         var publicKey: SecKey?
 
-        let policy = SecPolicyCreateBasicX509().takeRetainedValue()
-        var unmanagedTrust: Unmanaged<SecTrust>?
-        let trustCreationStatus = SecTrustCreateWithCertificates(certificate, policy, &unmanagedTrust)
+        let policy = SecPolicyCreateBasicX509()
+        var trust: SecTrust?
+        let trustCreationStatus = SecTrustCreateWithCertificates(certificate, policy, &trust)
 
-        if let trust = unmanagedTrust?.takeRetainedValue() where trustCreationStatus == errSecSuccess {
-            publicKey = SecTrustCopyPublicKey(trust).takeRetainedValue()
+        if let trust = trust where trustCreationStatus == errSecSuccess {
+            publicKey = SecTrustCopyPublicKey(trust)
         }
 
         return publicKey

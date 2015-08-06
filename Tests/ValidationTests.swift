@@ -27,13 +27,13 @@ import XCTest
 class StatusCodeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeResponseSucceeds() {
         // Given
-        let URL = "http://httpbin.org/status/200"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/status/200"
+        let expectation = expectationWithDescription("request should return 200 status code")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString)
             .validate(statusCode: 200..<300)
             .response { _, _, _, responseError in
                 error = responseError
@@ -48,13 +48,13 @@ class StatusCodeValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
-        let URL = "http://httpbin.org/status/404"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/status/404"
+        let expectation = expectationWithDescription("request should return 404 status code")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString)
             .validate(statusCode: [200])
             .response { _, _, _, responseError in
                 error = responseError
@@ -65,18 +65,22 @@ class StatusCodeValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+        }
     }
 
     func testThatValidationForRequestWithNoAcceptableStatusCodesFails() {
         // Given
-        let URL = "http://httpbin.org/status/201"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/status/201"
+        let expectation = expectationWithDescription("request should return 201 status code")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString)
             .validate(statusCode: [])
             .response { _, _, _, responseError in
                 error = responseError
@@ -87,7 +91,11 @@ class StatusCodeValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+        }
     }
 }
 
@@ -96,13 +104,13 @@ class StatusCodeValidationTestCase: BaseTestCase {
 class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableContentTypeResponseSucceeds() {
         // Given
-        let URL = "http://httpbin.org/ip"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/ip"
+        let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString)
             .validate(contentType: ["application/json"])
             .response { _, _, _, responseError in
                 error = responseError
@@ -117,13 +125,13 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
-        let URL = "http://httpbin.org/ip"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/ip"
+        let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString)
             .validate(contentType: ["*/*"])
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
@@ -140,13 +148,13 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
-        let URL = "http://httpbin.org/xml"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/xml"
+        let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString)
             .validate(contentType: ["application/octet-stream"])
             .response { _, _, _, responseError in
                 error = responseError
@@ -157,18 +165,22 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+        }
     }
 
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseFails() {
         // Given
-        let URL = "http://httpbin.org/xml"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/xml"
+        let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString)
             .validate(contentType: [])
             .response { _, _, _, responseError in
                 error = responseError
@@ -179,7 +191,11 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+        }
     }
 }
 
@@ -188,13 +204,13 @@ class ContentTypeValidationTestCase: BaseTestCase {
 class MultipleValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
-        let URL = "http://httpbin.org/ip"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/ip"
+        let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .response { _, _, _, responseError in
@@ -208,15 +224,15 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFails() {
+    func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithStatusCodeError() {
         // Given
-        let URL = "http://httpbin.org/xml"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/xml"
+        let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
             .response { _, _, _, responseError in
@@ -228,7 +244,38 @@ class MultipleValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.domain ?? "", AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+        }
+    }
+
+    func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithContentTypeError() {
+        // Given
+        let URLString = "https://httpbin.org/xml"
+        let expectation = expectationWithDescription("request should succeed and return xml")
+
+        var error: NSError?
+
+        // When
+        Alamofire.request(.GET, URLString)
+            .validate(contentType: ["application/octet-stream"])
+            .validate(statusCode: 400..<600)
+            .response { _, _, _, responseError in
+                error = responseError
+                expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(error, "error should not be nil")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+        }
     }
 }
 
@@ -237,16 +284,16 @@ class MultipleValidationTestCase: BaseTestCase {
 class AutomaticValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
-        let URL = NSURL(string: "http://httpbin.org/ip")!
+        let URL = NSURL(string: "https://httpbin.org/ip")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(mutableURLRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -261,13 +308,13 @@ class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
-        let URL = "http://httpbin.org/status/404"
-        let expectation = expectationWithDescription("\(URL)")
+        let URLString = "https://httpbin.org/status/404"
+        let expectation = expectationWithDescription("request should return 404 status code")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(.GET, URLString)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -278,21 +325,25 @@ class AutomaticValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+        }
     }
 
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
-        let URL = NSURL(string: "http://httpbin.org/ip")!
+        let URL = NSURL(string: "https://httpbin.org/ip")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/*", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("request should succeed and return ip")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(mutableURLRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -307,16 +358,18 @@ class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithAcceptableComplexContentTypeResponseSucceeds() {
         // Given
-        let URL = NSURL(string: "http://httpbin.org/xml")!
+        let URL = NSURL(string: "https://httpbin.org/xml")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
-        mutableURLRequest.setValue("text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL)")
+        let headerValue = "text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5"
+        mutableURLRequest.setValue(headerValue, forHTTPHeaderField: "Accept")
+
+        let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URL)
+        Alamofire.request(mutableURLRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -331,11 +384,11 @@ class AutomaticValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
-        let URL = NSURL(string: "http://httpbin.org/xml")!
+        let URL = NSURL(string: "https://httpbin.org/xml")!
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = expectationWithDescription("request should succeed and return xml")
 
         var error: NSError?
 
@@ -351,6 +404,10 @@ class AutomaticValidationTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error!.domain, AlamofireErrorDomain, "error should be in Alamofire error domain")
+
+        if let error = error {
+            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+        }
     }
 }

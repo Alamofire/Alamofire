@@ -30,7 +30,7 @@ class ManagerTestCase: BaseTestCase {
         let manager = Alamofire.Manager()
         manager.startRequestsImmediately = false
 
-        let URL = NSURL(string: "http://httpbin.org/get")!
+        let URL = NSURL(string: "https://httpbin.org/get")!
         let URLRequest = NSURLRequest(URL: URL)
 
         let expectation = expectationWithDescription("\(URL)")
@@ -57,7 +57,7 @@ class ManagerTestCase: BaseTestCase {
         var manager: Manager? = Alamofire.Manager()
         manager?.startRequestsImmediately = false
 
-        let URL = NSURL(string: "http://httpbin.org/get")!
+        let URL = NSURL(string: "https://httpbin.org/get")!
         let URLRequest = NSURLRequest(URL: URL)
 
         // When
@@ -74,7 +74,7 @@ class ManagerTestCase: BaseTestCase {
         var manager: Manager? = Alamofire.Manager()
         manager!.startRequestsImmediately = false
 
-        let URL = NSURL(string: "http://httpbin.org/get")!
+        let URL = NSURL(string: "https://httpbin.org/get")!
         let URLRequest = NSURLRequest(URL: URL)
 
         // When

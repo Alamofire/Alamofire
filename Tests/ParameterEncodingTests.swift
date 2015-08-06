@@ -25,7 +25,7 @@ import Foundation
 import XCTest
 
 class ParameterEncodingTestCase: BaseTestCase {
-    let URLRequest = NSURLRequest(URL: NSURL(string: "http://example.com/")!)
+    let URLRequest = NSURLRequest(URL: NSURL(string: "https://example.com/")!)
 }
 
 // MARK: -
@@ -40,7 +40,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testURLParameterEncodeNilParameters() {
         // Given
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: nil)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: nil)
 
         // Then
         XCTAssertNil(URLRequest.URL?.query, "query should be nil")
@@ -51,7 +51,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": "bar"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "foo=bar", "query is incorrect")
@@ -59,7 +59,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodeOneStringKeyStringValueParameterAppendedToQuery() {
         // Given
-        var mutableURLRequest = self.URLRequest.mutableCopy() as! NSMutableURLRequest
+        let mutableURLRequest = self.URLRequest.URLRequest
         let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false)!
         URLComponents.query = "baz=qux"
         mutableURLRequest.URL = URLComponents.URL
@@ -67,7 +67,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": "bar"]
 
         // When
-        let (URLRequest, error) = encoding.encode(mutableURLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(mutableURLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "baz=qux&foo=bar", "query is incorrect")
@@ -78,7 +78,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": "bar", "baz": "qux"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "baz=qux&foo=bar", "query is incorrect")
@@ -89,7 +89,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": 1]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "foo=1", "query is incorrect")
@@ -100,7 +100,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": 1.1]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "foo=1.1", "query is incorrect")
@@ -111,7 +111,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": true]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "foo=1", "query is incorrect")
@@ -122,7 +122,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": ["a", 1, true]]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "foo%5B%5D=a&foo%5B%5D=1&foo%5B%5D=1", "query is incorrect")
@@ -133,7 +133,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": ["bar": 1]]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "foo%5Bbar%5D=1", "query is incorrect")
@@ -144,7 +144,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": ["bar": ["baz": 1]]]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "foo%5Bbar%5D%5Bbaz%5D=1", "query is incorrect")
@@ -155,10 +155,11 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": ["bar": ["baz": ["a", 1, true]]]]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
-        XCTAssertEqual(URLRequest.URL?.query ?? "", "foo%5Bbar%5D%5Bbaz%5D%5B%5D=a&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1", "query is incorrect")
+        let expectedQuery = "foo%5Bbar%5D%5Bbaz%5D%5B%5D=a&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1"
+        XCTAssertEqual(URLRequest.URL?.query ?? "", expectedQuery, "query is incorrect")
     }
 
     // MARK: Tests - All Reserved / Unreserved / Illegal Characters According to RFC 3986
@@ -170,10 +171,11 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["reserved": "\(generalDelimiters)\(subDelimiters)"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
-        XCTAssertEqual(URLRequest.URL?.query ?? "", "reserved=%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D", "query is incorrect")
+        let expectedQuery = "reserved=%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D"
+        XCTAssertEqual(URLRequest.URL?.query ?? "", expectedQuery, "query is incorrect")
     }
 
     func testThatReservedCharactersQuestionMarkAndForwardSlashAreNotPercentEscaped() {
@@ -181,7 +183,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["reserved": "?/"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "reserved=?/", "query is incorrect")
@@ -192,7 +194,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["numbers": "0123456789"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "numbers=0123456789", "query is incorrect")
@@ -203,7 +205,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["lowercase": "abcdefghijklmnopqrstuvwxyz"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "lowercase=abcdefghijklmnopqrstuvwxyz", "query is incorrect")
@@ -214,7 +216,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["uppercase": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "uppercase=ABCDEFGHIJKLMNOPQRSTUVWXYZ", "query is incorrect")
@@ -225,10 +227,11 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["illegal": " \"#%<>[]\\^`{}|"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
-        XCTAssertEqual(URLRequest.URL?.query ?? "", "illegal=%20%22%23%25%3C%3E%5B%5D%5C%5E%60%7B%7D%7C", "query is incorrect")
+        let expectedQuery = "illegal=%20%22%23%25%3C%3E%5B%5D%5C%5E%60%7B%7D%7C"
+        XCTAssertEqual(URLRequest.URL?.query ?? "", expectedQuery, "query is incorrect")
     }
 
     // MARK: Tests - Special Character Queries
@@ -238,7 +241,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo&bar": "baz&qux", "foobar": "bazqux"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "foo%26bar=baz%26qux&foobar=bazqux", "query is incorrect")
@@ -249,7 +252,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["?foo?": "?bar?"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "?foo?=?bar?", "query is incorrect")
@@ -260,7 +263,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": "/bar/baz/qux"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "foo=/bar/baz/qux", "query is incorrect")
@@ -271,7 +274,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = [" foo ": " bar "]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "%20foo%20=%20bar%20", "query is incorrect")
@@ -282,7 +285,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["+foo+": "+bar+"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "%2Bfoo%2B=%2Bbar%2B", "query is incorrect")
@@ -293,7 +296,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["percent": "%25"]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "percent=%2525", "query is incorrect")
@@ -309,19 +312,27 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         ]
 
         // When
-        let (URLRequest, error) = encoding.encode(self.URLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
-        XCTAssertEqual(URLRequest.URL?.query ?? "", "arabic=%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9&emoji=%F0%9F%98%83&french=fran%C3%A7ais&japanese=%E6%97%A5%E6%9C%AC%E8%AA%9E", "query is incorrect")
+        let expectedParameterValues = [
+            "arabic=%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9",
+            "emoji=%F0%9F%98%83",
+            "french=fran%C3%A7ais",
+            "japanese=%E6%97%A5%E6%9C%AC%E8%AA%9E"
+        ]
+
+        let expectedQuery = "&".join(expectedParameterValues)
+        XCTAssertEqual(URLRequest.URL?.query ?? "", expectedQuery, "query is incorrect")
     }
 
     func testURLParameterEncodeStringForRequestWithPrecomposedQuery() {
         // Given
-        let URL = NSURL(string: "http://example.com/movies?hd=[1]")!
+        let URL = NSURL(string: "https://example.com/movies?hd=[1]")!
         let parameters = ["page": "0"]
 
         // When
-        let (URLRequest, error) = encoding.encode(NSURLRequest(URL: URL), parameters: parameters)
+        let (URLRequest, _) = encoding.encode(NSURLRequest(URL: URL), parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "hd=%5B1%5D&page=0", "query is incorrect")
@@ -329,11 +340,11 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodeStringWithPlusKeyStringWithPlusValueParameterForRequestWithPrecomposedQuery() {
         // Given
-        let URL = NSURL(string: "http://example.com/movie?hd=[1]")!
+        let URL = NSURL(string: "https://example.com/movie?hd=[1]")!
         let parameters = ["+foo+": "+bar+"]
 
         // When
-        let (URLRequest, error) = encoding.encode(NSURLRequest(URL: URL), parameters: parameters)
+        let (URLRequest, _) = encoding.encode(NSURLRequest(URL: URL), parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "hd=%5B1%5D&%2Bfoo%2B=%2Bbar%2B", "query is incorrect")
@@ -343,12 +354,12 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodeGETParametersInURL() {
         // Given
-        var mutableURLRequest = self.URLRequest.mutableCopy() as! NSMutableURLRequest
+        let mutableURLRequest = self.URLRequest.URLRequest
         mutableURLRequest.HTTPMethod = Method.GET.rawValue
         let parameters = ["foo": 1, "bar": 2]
 
         // When
-        let (URLRequest, error) = encoding.encode(mutableURLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(mutableURLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "bar=2&foo=1", "query is incorrect")
@@ -358,15 +369,19 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testURLParameterEncodePOSTParametersInHTTPBody() {
         // Given
-        var mutableURLRequest = self.URLRequest.mutableCopy() as! NSMutableURLRequest
+        let mutableURLRequest = self.URLRequest.URLRequest
         mutableURLRequest.HTTPMethod = Method.POST.rawValue
         let parameters = ["foo": 1, "bar": 2]
 
         // When
-        let (URLRequest, error) = encoding.encode(mutableURLRequest, parameters: parameters)
+        let (URLRequest, _) = encoding.encode(mutableURLRequest, parameters: parameters)
 
         // Then
-        XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type") ?? "", "application/x-www-form-urlencoded", "Content-Type should be application/x-www-form-urlencoded")
+        XCTAssertEqual(
+            URLRequest.valueForHTTPHeaderField("Content-Type") ?? "",
+            "application/x-www-form-urlencoded",
+            "Content-Type should be application/x-www-form-urlencoded"
+        )
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
 
         if let
@@ -420,14 +435,25 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertNil(error, "error should be nil")
         XCTAssertNil(URLRequest.URL?.query, "query should be nil")
         XCTAssertNotNil(URLRequest.valueForHTTPHeaderField("Content-Type"), "Content-Type should not be nil")
-        XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type") ?? "", "application/json", "Content-Type should be application/json")
+        XCTAssertEqual(
+            URLRequest.valueForHTTPHeaderField("Content-Type") ?? "",
+            "application/json",
+            "Content-Type should be application/json"
+        )
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
 
-        if let
-            HTTPBody = URLRequest.HTTPBody,
-            JSON = NSJSONSerialization.JSONObjectWithData(HTTPBody, options: .AllowFragments, error: nil) as? NSObject
-        {
-            XCTAssertEqual(JSON, parameters as NSObject, "HTTPBody JSON does not equal parameters")
+        if let HTTPBody = URLRequest.HTTPBody {
+            do {
+                let JSON = try NSJSONSerialization.JSONObjectWithData(HTTPBody, options: .AllowFragments)
+
+                if let JSON = JSON as? NSObject {
+                    XCTAssertEqual(JSON, parameters as NSObject, "HTTPBody JSON does not equal parameters")
+                } else {
+                    XCTFail("JSON should be an NSObject")
+                }
+            } catch {
+                XCTFail("JSON should not be nil")
+            }
         } else {
             XCTFail("JSON should not be nil")
         }
@@ -474,16 +500,28 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertNil(error, "error should be nil")
         XCTAssertNil(URLRequest.URL?.query, "query should be nil")
         XCTAssertNotNil(URLRequest.valueForHTTPHeaderField("Content-Type"), "Content-Type should not be nil")
-        XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type") ?? "", "application/x-plist", "Content-Type should be application/x-plist")
+        XCTAssertEqual(
+            URLRequest.valueForHTTPHeaderField("Content-Type") ?? "",
+            "application/x-plist",
+            "Content-Type should be application/x-plist"
+        )
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
 
-        if let
-            HTTPBody = URLRequest.HTTPBody,
-            plist = NSPropertyListSerialization.propertyListWithData(HTTPBody, options: 0, format: nil, error: nil) as? NSObject
-        {
-            XCTAssertEqual(plist, parameters as NSObject, "HTTPBody plist does not equal parameters")
-        } else {
-            XCTFail("plist should not be nil")
+        if let HTTPBody = URLRequest.HTTPBody {
+            do {
+                let plist = try NSPropertyListSerialization.propertyListWithData(
+                    HTTPBody,
+                    options: NSPropertyListReadOptions.Immutable,
+                    format: nil
+                )
+                if let plist = plist as? NSObject {
+                    XCTAssertEqual(plist, parameters as NSObject, "HTTPBody plist does not equal parameters")
+                } else {
+                    XCTFail("plist should be an NSObject")
+                }
+            } catch {
+                XCTFail("plist should not be nil")
+            }
         }
     }
 
@@ -504,17 +542,27 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertNil(error, "error should be nil")
         XCTAssertNil(URLRequest.URL?.query, "query should be nil")
         XCTAssertNotNil(URLRequest.valueForHTTPHeaderField("Content-Type"), "Content-Type should not be nil")
-        XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type") ?? "", "application/x-plist", "Content-Type should be application/x-plist")
+        XCTAssertEqual(
+            URLRequest.valueForHTTPHeaderField("Content-Type") ?? "",
+            "application/x-plist",
+            "Content-Type should be application/x-plist"
+        )
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
 
-        if let
-            HTTPBody = URLRequest.HTTPBody,
-            plist = NSPropertyListSerialization.propertyListWithData(HTTPBody, options: 0, format: nil, error: nil) as? NSObject
-        {
-            XCTAssertTrue(plist.valueForKey("date") is NSDate, "date is not NSDate")
-            XCTAssertTrue(plist.valueForKey("data") is NSData, "data is not NSData")
+        if let HTTPBody = URLRequest.HTTPBody {
+            do {
+                let plist = try NSPropertyListSerialization.propertyListWithData(
+                    HTTPBody,
+                    options: NSPropertyListReadOptions.Immutable,
+                    format: nil
+                )
+                XCTAssertTrue(plist.valueForKey("date") is NSDate, "date is not NSDate")
+                XCTAssertTrue(plist.valueForKey("data") is NSData, "data is not NSData")
+            } catch {
+                XCTFail("plist should not be nil")
+            }
         } else {
-            XCTFail("plist should not be nil")
+            XCTFail("HTTPBody should not be nil")
         }
     }
 }
@@ -527,7 +575,7 @@ class CustomParameterEncodingTestCase: ParameterEncodingTestCase {
     func testCustomParameterEncode() {
         // Given
         let encodingClosure: (URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?) = { URLRequest, parameters in
-            let mutableURLRequest = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
+            let mutableURLRequest = URLRequest.URLRequest.URLRequest
             mutableURLRequest.setValue("Xcode", forHTTPHeaderField: "User-Agent")
             return (mutableURLRequest, nil)
         }
@@ -536,10 +584,14 @@ class CustomParameterEncodingTestCase: ParameterEncodingTestCase {
         let encoding: ParameterEncoding = .Custom(encodingClosure)
 
         // Then
-        let URL = NSURL(string: "http://example.com")!
+        let URL = NSURL(string: "https://example.com")!
         let URLRequest = NSURLRequest(URL: URL)
         let parameters: [String: AnyObject] = [:]
 
-        XCTAssertEqual(encoding.encode(URLRequest, parameters: parameters).0, encodingClosure(URLRequest, parameters).0, "URLRequest should be equal")
+        XCTAssertEqual(
+            encoding.encode(URLRequest, parameters: parameters).0,
+            encodingClosure(URLRequest, parameters).0,
+            "URLRequest should be equal"
+        )
     }
 }

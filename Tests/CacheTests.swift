@@ -73,7 +73,7 @@ class CacheTestCase: BaseTestCase {
     var URLCache: NSURLCache!
     var manager: Manager!
 
-    let URLString = "http://httpbin.org/response-headers"
+    let URLString = "https://httpbin.org/response-headers"
     let requestTimeout: NSTimeInterval = 30
 
     var requests: [String: NSURLRequest] = [:]
@@ -161,7 +161,7 @@ class CacheTestCase: BaseTestCase {
 
     // MARK: - Request Helper Methods
 
-    func URLRequest(#cacheControl: String, cachePolicy: NSURLRequestCachePolicy) -> NSURLRequest {
+    func URLRequest(cacheControl cacheControl: String, cachePolicy: NSURLRequestCachePolicy) -> NSURLRequest {
         let parameters = ["Cache-Control": cacheControl]
         let URL = NSURL(string: URLString)!
         let URLRequest = NSMutableURLRequest(URL: URL, cachePolicy: cachePolicy, timeoutInterval: requestTimeout)
@@ -171,10 +171,10 @@ class CacheTestCase: BaseTestCase {
     }
 
     func startRequest(
-        #cacheControl: String,
+        cacheControl cacheControl: String,
         cachePolicy: NSURLRequestCachePolicy = .UseProtocolCachePolicy,
         queue: dispatch_queue_t = dispatch_get_main_queue(),
-        completion: (NSURLRequest, NSHTTPURLResponse?) -> Void)
+        completion: (NSURLRequest?, NSHTTPURLResponse?) -> Void)
         -> NSURLRequest
     {
         let urlRequest = URLRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)
@@ -182,8 +182,7 @@ class CacheTestCase: BaseTestCase {
         let request = manager.request(urlRequest)
         request.response(
             queue: queue,
-            responseSerializer: Request.dataResponseSerializer(),
-            completionHandler: { _, response, _, _ in
+            completionHandler: { _, response, data, _ in
                 completion(request.request, response)
             }
         )
@@ -194,7 +193,7 @@ class CacheTestCase: BaseTestCase {
     // MARK: - Test Execution and Verification
 
     func executeTest(
-        #cachePolicy: NSURLRequestCachePolicy,
+        cachePolicy cachePolicy: NSURLRequestCachePolicy,
         cacheControl: String,
         shouldReturnCachedResponse: Bool)
     {
@@ -203,7 +202,7 @@ class CacheTestCase: BaseTestCase {
         var response: NSHTTPURLResponse?
 
         // When
-        let request = startRequest(cacheControl: cacheControl, cachePolicy: cachePolicy) { _, responseResponse in
+        startRequest(cacheControl: cacheControl, cachePolicy: cachePolicy) { _, responseResponse in
             response = responseResponse
             expectation.fulfill()
         }
@@ -215,7 +214,10 @@ class CacheTestCase: BaseTestCase {
     }
 
     func verifyResponse(response: NSHTTPURLResponse?, forCacheControl cacheControl: String, isCachedResponse: Bool) {
-        let cachedResponseTimestamp = timestamps[cacheControl]!
+        guard let cachedResponseTimestamp = timestamps[cacheControl] else {
+            XCTFail("cached response timestamp should not be nil")
+            return
+        }
 
         if let
             response = response,
@@ -335,7 +337,7 @@ class CacheTestCase: BaseTestCase {
             var response: NSHTTPURLResponse?
 
             // When
-            let request = startRequest(cacheControl: CacheControl.NoStore, cachePolicy: cachePolicy) { _, responseResponse in
+            startRequest(cacheControl: CacheControl.NoStore, cachePolicy: cachePolicy) { _, responseResponse in
                 response = responseResponse
                 expectation.fulfill()
             }
