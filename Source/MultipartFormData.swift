@@ -254,16 +254,7 @@ public class MultipartFormData {
         //              Check 2 - is file URL reachable?
         //============================================================
 
-        var isReachable = false
-
-        do {
-            try fileURL.checkResourceIsReachable()
-            isReachable = true
-        } catch {
-            // No-op
-        }
-
-        guard isReachable else {
+        guard fileURL.checkResourceIsReachableAndReturnError(nil) else {
             let error = Error.errorWithCode(NSURLErrorBadURL, failureReason: "The file URL is not reachable: \(fileURL)")
             setBodyPartError(error)
             return

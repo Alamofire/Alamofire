@@ -268,8 +268,9 @@ class RequestResponseTestCase: BaseTestCase {
                 1.0,
                 "progress value fractional completion should equal 1.0"
             )
+			
             XCTAssertEqual(
-                accumulatedData.reduce(0) { $0 + $1.length },
+                accumulatedData.reduce(Int64(0)) { $0 + $1.length },
                 lastByteValue.totalBytes,
                 "accumulated data length should match byte count"
             )
