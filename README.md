@@ -392,6 +392,38 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destinati
          }
 ```
 
+#### Accessing Resume Data for Failed Downloads
+
+```swift
+Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
+         .response { request, response, data, error in
+             if let
+                 data = data,
+                 resumeDataString = NSString(data: data, encoding: NSUTF8StringEncoding)
+             {
+                 print("Resume Data: \(resumeDataString)")
+             } else {
+                 print("Resume Data was empty")
+             }
+         }
+```
+
+> The `data` parameter is automatically populated with the `resumeData` if available.
+
+```swift
+let download = Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
+download.response { request, response, data, error in
+    if let
+        resumeData = download.resumeData,
+        resumeDataString = NSString(data: data, encoding: NSUTF8StringEncoding)
+    {
+        print("Resume Data: \(resumeDataString)")
+    } else {
+        print("Resume Data was empty")
+    }
+}
+```
+
 ### Authentication
 
 Authentication is handled on the system framework level by [`NSURLCredential` and `NSURLAuthenticationChallenge`](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLAuthenticationChallenge_Class/Reference/Reference.html).
