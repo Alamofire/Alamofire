@@ -57,6 +57,8 @@
 		4C812C641B535F6D0017E0BF /* root-ca-disig.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C812C5F1B535F6D0017E0BF /* root-ca-disig.cer */; };
 		4C812C651B535F6D0017E0BF /* testssl-expire.disig.sk.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C812C601B535F6D0017E0BF /* testssl-expire.disig.sk.cer */; };
 		4C812C661B535F6D0017E0BF /* testssl-expire.disig.sk.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4C812C601B535F6D0017E0BF /* testssl-expire.disig.sk.cer */; };
+		4CA028C51B7466C500C84163 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA028C41B7466C500C84163 /* ResultTests.swift */; };
+		4CA028C61B7466C500C84163 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA028C41B7466C500C84163 /* ResultTests.swift */; };
 		4CCFA79A1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */; };
 		4CCFA79B1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */; };
 		4CDE2C371AF8932A00BABAE5 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C361AF8932A00BABAE5 /* Manager.swift */; };
@@ -154,6 +156,7 @@
 		4C812C5E1B535F6D0017E0BF /* intermediate-ca-disig.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "intermediate-ca-disig.cer"; path = "disig.sk/intermediate-ca-disig.cer"; sourceTree = "<group>"; };
 		4C812C5F1B535F6D0017E0BF /* root-ca-disig.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "root-ca-disig.cer"; path = "disig.sk/root-ca-disig.cer"; sourceTree = "<group>"; };
 		4C812C601B535F6D0017E0BF /* testssl-expire.disig.sk.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "testssl-expire.disig.sk.cer"; path = "disig.sk/testssl-expire.disig.sk.cer"; sourceTree = "<group>"; };
+		4CA028C41B7466C500C84163 /* ResultTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLProtocolTests.swift; sourceTree = "<group>"; };
 		4CDE2C361AF8932A00BABAE5 /* Manager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 		4CDE2C391AF899EC00BABAE5 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
@@ -230,6 +233,7 @@
 				F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */,
 				F8111E5D19A9674D0040E7D1 /* RequestTests.swift */,
 				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
+				4CA028C41B7466C500C84163 /* ResultTests.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -735,6 +739,7 @@
 				4C3238E71B3604DB00FE04AE /* MultipartFormDataTests.swift in Sources */,
 				4C33A1431B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBA1B1A865A00C1B34D /* CacheTests.swift in Sources */,
+				4CA028C51B7466C500C84163 /* ResultTests.swift in Sources */,
 				4CCFA79A1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
 				F86AEFE71AE6A312007D9C76 /* TLSEvaluationTests.swift in Sources */,
 				F8858DDD19A96B4300F55F93 /* RequestTests.swift in Sources */,
@@ -756,6 +761,7 @@
 				4C3238E81B3604DB00FE04AE /* MultipartFormDataTests.swift in Sources */,
 				4C33A1441B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBB1B1A865A00C1B34D /* CacheTests.swift in Sources */,
+				4CA028C61B7466C500C84163 /* ResultTests.swift in Sources */,
 				4CCFA79B1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
 				F829C6BE1A7A950600A2CD59 /* ParameterEncodingTests.swift in Sources */,
 				F829C6BF1A7A950600A2CD59 /* RequestTests.swift in Sources */,
