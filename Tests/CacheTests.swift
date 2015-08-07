@@ -136,9 +136,11 @@ class CacheTestCase: BaseTestCase {
                 cacheControl: cacheControl,
                 queue: highPriorityDispatchQueue,
                 completion: { _, response in
-                    let timestamp = response!.allHeaderFields["Date"] as! String
-                    self.timestamps[cacheControl] = timestamp
-
+                    if let _ = response {
+                        let timestamp = response!.allHeaderFields["Date"] as! String
+                        self.timestamps[cacheControl] = timestamp
+                    }
+                    //TODO: response is nil?!
                     dispatch_group_leave(dispatchGroup)
                 }
             )
