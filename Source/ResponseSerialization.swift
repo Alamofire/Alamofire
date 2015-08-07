@@ -22,7 +22,7 @@
 
 import Foundation
 
-// MARK: - ResponseSerializer
+// MARK: ResponseSerializer
 
 /**
     The type in which all response serializers must conform to in order to serialize a response.
@@ -36,6 +36,8 @@ public protocol ResponseSerializer {
     */
     var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?) -> Result<SerializedObject> { get }
 }
+
+// MARK: -
 
 /**
     A generic `ResponseSerializer` used to serialize a request, response, and data into a serialized object.
@@ -129,7 +131,7 @@ extension Request {
         - returns: A data response serializer.
     */
     public static func dataResponseSerializer() -> GenericResponseSerializer<NSData> {
-        return GenericResponseSerializer { request, response, data in
+        return GenericResponseSerializer { _, _, data in
             guard let validData = data else {
                 let failureReason = "Data could not be serialized. Input data was nil."
                 let error = Error.errorWithCode(.DataSerializationFailed, failureReason: failureReason)
@@ -170,8 +172,8 @@ extension Request {
         -> GenericResponseSerializer<String>
     {
         return GenericResponseSerializer { _, response, data in
-            guard let validData = data where validData.length > 0 else {
-                let failureReason = "String could not be serialized. Input data was nil or contained zero bytes."
+            guard let validData = data else {
+                let failureReason = "String could not be serialized because input data was nil."
                 let error = Error.errorWithCode(.StringSerializationFailed, failureReason: failureReason)
                 return .Failure(data, error)
             }
@@ -234,9 +236,9 @@ extension Request {
         options options: NSJSONReadingOptions = .AllowFragments)
         -> GenericResponseSerializer<AnyObject>
     {
-        return GenericResponseSerializer { request, response, data in
-            guard let validData = data where validData.length > 0 else {
-                let failureReason = "JSON could not be serialized. Input data was nil or contained zero bytes."
+        return GenericResponseSerializer { _, _, data in
+            guard let validData = data else {
+                let failureReason = "JSON could not be serialized because input data was nil."
                 let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
                 return .Failure(data, error)
             }
@@ -288,9 +290,9 @@ extension Request {
         options options: NSPropertyListReadOptions = NSPropertyListReadOptions())
         -> GenericResponseSerializer<AnyObject>
     {
-        return GenericResponseSerializer { request, response, data in
-            guard let validData = data where validData.length > 0 else {
-                let failureReason = "Property list could not be serialized. Input data was nil or contained zero bytes."
+        return GenericResponseSerializer { _, _, data in
+            guard let validData = data else {
+                let failureReason = "Property list could not be serialized because input data was nil."
                 let error = Error.errorWithCode(.PropertyListSerializationFailed, failureReason: failureReason)
                 return .Failure(data, error)
             }
