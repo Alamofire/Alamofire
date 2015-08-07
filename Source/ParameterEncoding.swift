@@ -102,9 +102,7 @@ public enum ParameterEncoding {
 
             if let method = Method(rawValue: mutableURLRequest.HTTPMethod) where encodesParametersInURL(method) {
                 if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
-                    let percentEncodedQuery = (
-                        (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters!)
-                    )
+                    let percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters!)
                     URLComponents.percentEncodedQuery = percentEncodedQuery
                     mutableURLRequest.URL = URLComponents.URL
                 }
