@@ -128,6 +128,34 @@ class ResultTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(result.error, "result error should not be nil for failure case")
     }
+    
+    // Mark - Extract Value Tests 
+    
+    func testThatUnwrapValueReturnsValueForSuccessCase() {
+        // Given
+        // When
+        let result = Result.Success("success")
+        
+        do {
+            let value = try result.unwrapValue()
+            XCTAssertEqual(value ?? "", "success", "result value should match expected value")
+        } catch _ {
+            XCTFail("failure should not be called")
+        }
+    }
+
+    func testThatUnwrapValueThrowsForFailureCase() {
+        // Given
+        // When
+        let result = Result<String>.Failure(nil, error)
+        
+        do {
+            let _ = try result.unwrapValue()
+            XCTFail("try should fail and catch should be called")
+        } catch {
+            XCTAssertNotNil(error as NSError, "result error should not be nil for failure case")
+        }
+    }
 
     // MARK: - Description Tests
 
