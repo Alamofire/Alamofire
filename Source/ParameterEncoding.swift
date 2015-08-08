@@ -73,7 +73,7 @@ public enum ParameterEncoding {
     {
         var mutableURLRequest = URLRequest.URLRequest
 
-        if parameters == nil {
+        guard let parameters = parameters else {
             return (mutableURLRequest, nil)
         }
 
@@ -102,7 +102,7 @@ public enum ParameterEncoding {
 
             if let method = Method(rawValue: mutableURLRequest.HTTPMethod) where encodesParametersInURL(method) {
                 if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
-                    let percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters!)
+                    let percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)
                     URLComponents.percentEncodedQuery = percentEncodedQuery
                     mutableURLRequest.URL = URLComponents.URL
                 }
@@ -111,7 +111,7 @@ public enum ParameterEncoding {
                     mutableURLRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                 }
 
-                mutableURLRequest.HTTPBody = query(parameters!).dataUsingEncoding(
+                mutableURLRequest.HTTPBody = query(parameters).dataUsingEncoding(
                     NSUTF8StringEncoding,
                     allowLossyConversion: false
                 )
@@ -119,7 +119,7 @@ public enum ParameterEncoding {
         case .JSON:
             do {
                 let options = NSJSONWritingOptions()
-                let data = try NSJSONSerialization.dataWithJSONObject(parameters!, options: options)
+                let data = try NSJSONSerialization.dataWithJSONObject(parameters, options: options)
 
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 mutableURLRequest.HTTPBody = data
@@ -129,7 +129,7 @@ public enum ParameterEncoding {
         case .PropertyList(let format, let options):
             do {
                 let data = try NSPropertyListSerialization.dataWithPropertyList(
-                    parameters!,
+                    parameters,
                     format: format,
                     options: options
                 )
