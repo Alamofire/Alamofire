@@ -1010,6 +1010,13 @@ Use AFNetworking for any of the following:
 
 Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu.edu/wildseed/alamofire.html), a hybrid variant of the Bluebonnet, the official state flower of Texas.
 
+## Open Rdars
+
+The following rdars have some affect on the current implementation of Alamofire.
+
+* [rdar://22024442](http://openradar.appspot.com/radar?id=6082025006039040) - Array of [SecCertificate] crashing Swift 2.0 compiler in optimized builds
+* [rdar://21349340](https://openradar.appspot.com/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
+
 * * *
 
 ## Credits
