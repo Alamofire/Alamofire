@@ -224,21 +224,34 @@ public class Manager {
 
         // MARK: Override Closures
 
-        /// NSURLSessionDelegate override closure for `URLSession:didBecomeInvalidWithError:` method.
+        /// Overrides default behavior for NSURLSessionDelegate method `URLSession:didBecomeInvalidWithError:`.
         public var sessionDidBecomeInvalidWithError: ((NSURLSession, NSError?) -> Void)?
 
-        /// NSURLSessionDelegate override closure for `URLSession:didReceiveChallenge:completionHandler:` method.
+        /// Overrides default behavior for NSURLSessionDelegate method `URLSession:didReceiveChallenge:completionHandler:`.
         public var sessionDidReceiveChallenge: ((NSURLSession, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential?))?
 
-        /// NSURLSessionDelegate override closure for `URLSessionDidFinishEventsForBackgroundURLSession:` method.
+        /// Overrides default behavior for NSURLSessionDelegate method `URLSessionDidFinishEventsForBackgroundURLSession:`.
         public var sessionDidFinishEventsForBackgroundURLSession: ((NSURLSession) -> Void)?
 
         // MARK: Delegate Methods
 
+        /**
+            Tells the delegate that the session has been invalidated.
+
+            - parameter session: The session object that was invalidated.
+            - parameter error:   The error that caused invalidation, or nil if the invalidation was explicit.
+        */
         public func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
             sessionDidBecomeInvalidWithError?(session, error)
         }
 
+        /**
+            Requests credentials from the delegate in response to a session-level authentication request from the remote server.
+
+            - parameter session:           The session containing the task that requested authentication.
+            - parameter challenge:         An object that contains the request for authentication.
+            - parameter completionHandler: A handler that your delegate method must call providing the disposition and credential.
+        */
         public func URLSession(
             session: NSURLSession,
             didReceiveChallenge challenge: NSURLAuthenticationChallenge,
@@ -268,6 +281,11 @@ public class Manager {
             completionHandler(disposition, credential)
         }
 
+        /**
+            Tells the delegate that all messages enqueued for a session have been delivered.
+
+            - parameter session: The session that no longer has any outstanding requests.
+        */
         public func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
             sessionDidFinishEventsForBackgroundURLSession?(session)
         }
@@ -293,6 +311,17 @@ public class Manager {
 
         // MARK: Delegate Methods
 
+        /**
+            Tells the delegate that the remote server requested an HTTP redirect.
+
+            - parameter session:           The session containing the task whose request resulted in a redirect.
+            - parameter task:              The task whose request resulted in a redirect.
+            - parameter response:          An object containing the server’s response to the original request.
+            - parameter request:           A URL request object filled out with the new location.
+            - parameter completionHandler: A closure that your handler should call with either the value of the request 
+                                           parameter, a modified URL request object, or NULL to refuse the redirect and 
+                                           return the body of the redirect response.
+        */
         public func URLSession(
             session: NSURLSession,
             task: NSURLSessionTask,
@@ -309,6 +338,14 @@ public class Manager {
             completionHandler(redirectRequest)
         }
 
+        /**
+            Requests credentials from the delegate in response to an authentication request from the remote server.
+
+            - parameter session:           The session containing the task whose request requires authentication.
+            - parameter task:              The task whose request requires authentication.
+            - parameter challenge:         An object that contains the request for authentication.
+            - parameter completionHandler: A handler that your delegate method must call providing the disposition and credential.
+        */
         public func URLSession(
             session: NSURLSession,
             task: NSURLSessionTask,
@@ -329,6 +366,13 @@ public class Manager {
             }
         }
 
+        /**
+            Tells the delegate when a task requires a new request body stream to send to the remote server.
+
+            - parameter session:           The session containing the task that needs a new body stream.
+            - parameter task:              The task that needs a new body stream.
+            - parameter completionHandler: A completion handler that your delegate method should call with the new body stream.
+        */
         public func URLSession(
             session: NSURLSession,
             task: NSURLSessionTask,
@@ -341,6 +385,15 @@ public class Manager {
             }
         }
 
+        /**
+            Periodically informs the delegate of the progress of sending body content to the server.
+
+            - parameter session:                  The session containing the data task.
+            - parameter task:                     The data task.
+            - parameter bytesSent:                The number of bytes sent since the last time this delegate method was called.
+            - parameter totalBytesSent:           The total number of bytes sent so far.
+            - parameter totalBytesExpectedToSend: The expected length of the body data.
+        */
         public func URLSession(
             session: NSURLSession,
             task: NSURLSessionTask,
@@ -361,6 +414,13 @@ public class Manager {
             }
         }
 
+        /**
+            Tells the delegate that the task finished transferring data.
+
+            - parameter session: The session containing the task whose request finished transferring data.
+            - parameter task:    The task whose request finished transferring data.
+            - parameter error:   If an error occurred, an error object indicating how the transfer failed, otherwise nil.
+        */
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
             if let taskDidComplete = taskDidComplete {
                 taskDidComplete(session, task, error)
@@ -389,6 +449,16 @@ public class Manager {
 
         // MARK: Delegate Methods
 
+        /**
+            Tells the delegate that the data task received the initial reply (headers) from the server.
+
+            - parameter session:           The session containing the data task that received an initial reply.
+            - parameter dataTask:          The data task that received an initial reply.
+            - parameter response:          A URL response object populated with headers.
+            - parameter completionHandler: A completion handler that your code calls to continue the transfer, passing a 
+                                           constant to indicate whether the transfer should continue as a data task or 
+                                           should become a download task.
+        */
         public func URLSession(
             session: NSURLSession,
             dataTask: NSURLSessionDataTask,
@@ -404,6 +474,13 @@ public class Manager {
             completionHandler(disposition)
         }
 
+        /**
+            Tells the delegate that the data task was changed to a download task.
+
+            - parameter session:      The session containing the task that was replaced by a download task.
+            - parameter dataTask:     The data task that was replaced by a download task.
+            - parameter downloadTask: The new download task that replaced the data task.
+        */
         public func URLSession(
             session: NSURLSession,
             dataTask: NSURLSessionDataTask,
@@ -417,6 +494,13 @@ public class Manager {
             }
         }
 
+        /**
+            Tells the delegate that the data task has received some of the expected data.
+
+            - parameter session:  The session containing the data task that provided data.
+            - parameter dataTask: The data task that provided data.
+            - parameter data:     A data object containing the transferred data.
+        */
         public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
             if let dataTaskDidReceiveData = dataTaskDidReceiveData {
                 dataTaskDidReceiveData(session, dataTask, data)
@@ -425,6 +509,19 @@ public class Manager {
             }
         }
 
+        /**
+            Asks the delegate whether the data (or upload) task should store the response in the cache.
+
+            - parameter session:           The session containing the data (or upload) task.
+            - parameter dataTask:          The data (or upload) task.
+            - parameter proposedResponse:  The default caching behavior. This behavior is determined based on the current 
+                                           caching policy and the values of certain received headers, such as the Pragma 
+                                           and Cache-Control headers.
+            - parameter completionHandler: A block that your handler must call, providing either the original proposed 
+                                           response, a modified version of that response, or NULL to prevent caching the 
+                                           response. If your delegate implements this method, it must call this completion 
+                                           handler; otherwise, your app leaks memory.
+        */
         public func URLSession(
             session: NSURLSession,
             dataTask: NSURLSessionDataTask,
@@ -460,6 +557,15 @@ public class Manager {
 
         // MARK: Delegate Methods
 
+        /**
+            Tells the delegate that a download task has finished downloading.
+
+            - parameter session:      The session containing the download task that finished.
+            - parameter downloadTask: The download task that finished.
+            - parameter location:     A file URL for the temporary file. Because the file is temporary, you must either 
+                                      open the file for reading or move it to a permanent location in your app’s sandbox 
+                                      container directory before returning from this delegate method.
+        */
         public func URLSession(
             session: NSURLSession,
             downloadTask: NSURLSessionDownloadTask,
@@ -472,6 +578,18 @@ public class Manager {
             }
         }
 
+        /**
+            Periodically informs the delegate about the download’s progress.
+
+            - parameter session:                   The session containing the download task.
+            - parameter downloadTask:              The download task.
+            - parameter bytesWritten:              The number of bytes transferred since the last time this delegate 
+                                                   method was called.
+            - parameter totalBytesWritten:         The total number of bytes transferred so far.
+            - parameter totalBytesExpectedToWrite: The expected length of the file, as provided by the Content-Length 
+                                                   header. If this header was not provided, the value is 
+                                                   `NSURLSessionTransferSizeUnknown`.
+        */
         public func URLSession(
             session: NSURLSession,
             downloadTask: NSURLSessionDownloadTask,
@@ -492,6 +610,18 @@ public class Manager {
             }
         }
 
+        /**
+            Tells the delegate that the download task has resumed downloading.
+
+            - parameter session:            The session containing the download task that finished.
+            - parameter downloadTask:       The download task that resumed. See explanation in the discussion.
+            - parameter fileOffset:         If the file's cache policy or last modified date prevents reuse of the 
+                                            existing content, then this value is zero. Otherwise, this value is an 
+                                            integer representing the number of bytes on disk that do not need to be 
+                                            retrieved again.
+            - parameter expectedTotalBytes: The expected length of the file, as provided by the Content-Length header. 
+                                            If this header was not provided, the value is NSURLSessionTransferSizeUnknown.
+        */
         public func URLSession(
             session: NSURLSession,
             downloadTask: NSURLSessionDownloadTask,
