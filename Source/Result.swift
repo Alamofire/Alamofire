@@ -33,6 +33,15 @@ import Foundation
 public enum Result<Value> {
     case Success(Value)
     case Failure(NSData?, NSError)
+    
+    public func unwrapValue() throws -> Value {
+        switch self {
+        case .Success(let value):
+            return value
+        case .Failure(_, let error):
+            throw error
+        }
+    }
 
     /// Returns `true` if the result is a success, `false` otherwise.
     public var isSuccess: Bool {
