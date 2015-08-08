@@ -27,6 +27,26 @@ import XCTest
 class ResultTestCase: BaseTestCase {
     let error = Error.errorWithCode(.StatusCodeValidationFailed, failureReason: "Status code validation failed")
 
+    // MARK: - Initializer Tests
+
+    func testThatValueInitializerReturnsSuccessResult() {
+        // Given
+        // When
+        let result = Result(value: "success")
+
+        // Then
+        XCTAssertTrue(result.isSuccess, "result is success should be true for value initializer")
+    }
+
+    func testThatDataErrorInitializerReturnsFailureResult() {
+        // Given
+        // When
+        let result = Result<String>(data: nil, error: error)
+
+        // Then
+        XCTAssertTrue(result.isFailure, "result is failure should be true for data and error initializer")
+    }
+
     // MARK: - Is Success Tests
 
     func testThatIsSuccessPropertyReturnsTrueForSuccessCase() {

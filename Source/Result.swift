@@ -34,6 +34,29 @@ public enum Result<Value> {
     case Success(Value)
     case Failure(NSData?, NSError)
 
+    /**
+        Creates a `.Success` result with the given value.
+
+        - parameter value: The value to store in the `.Success`.
+
+        - returns: A new `.Success` result.
+    */
+    public init(value: Value) {
+        self = .Success(value)
+    }
+
+    /**
+        Creates a `.Failure` result with the given data and error.
+
+        - parameter data:  The data optional to store in the `.Failure`.
+        - parameter error: The error to store in the `.Failure`.
+
+        - returns: A new `.Failure` result.
+    */
+    public init(data: NSData?, error: NSError) {
+        self = .Failure(data, error)
+    }
+
     /// Returns `true` if the result is a success, `false` otherwise.
     public var isSuccess: Bool {
         switch self {
