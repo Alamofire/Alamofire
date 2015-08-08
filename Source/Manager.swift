@@ -509,5 +509,12 @@ public class Manager {
                 )
             }
         }
+
+        // MARK: - NSURLSessionStreamDelegate
+
+        var _streamTaskReadClosed: Any?
+        var _streamTaskWriteClosed: Any?
+        var _streamTaskBetterRouteDiscovered: Any?
+        var _streamTaskDidBecomeInputStream: Any?
     }
 }
