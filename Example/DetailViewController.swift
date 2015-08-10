@@ -79,8 +79,10 @@ class DetailViewController: UITableViewController {
             let end = CACurrentMediaTime()
             self.elapsedTime = end - start
 
-            for (field, value) in response!.allHeaderFields {
-                self.headers["\(field)"] = "\(value)"
+            if let response = response {
+                for (field, value) in response.allHeaderFields {
+                    self.headers["\(field)"] = "\(value)"
+                }
             }
 
             if let segueIdentifier = self.segueIdentifier {
