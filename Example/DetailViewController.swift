@@ -68,14 +68,14 @@ class DetailViewController: UITableViewController {
     // MARK: IBActions
 
     @IBAction func refresh() {
-        if request == nil {
+        guard let request = request else {
             return
         }
 
         refreshControl?.beginRefreshing()
 
         let start = CACurrentMediaTime()
-        request?.responseString { request, response, result in
+        request.responseString { request, response, result in
             let end = CACurrentMediaTime()
             self.elapsedTime = end - start
 
