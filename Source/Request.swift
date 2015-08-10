@@ -205,7 +205,7 @@ public class Request {
                 operationQueue.maxConcurrentOperationCount = 1
                 operationQueue.suspended = true
 
-                if #available(OSX 10.10, *) {
+                if #available(OSX 10.10, iOS 8.0, *) {
                     operationQueue.qualityOfService = NSQualityOfService.Utility
                 }
 
