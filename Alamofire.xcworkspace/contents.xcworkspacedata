@@ -2,12 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Alamofire.playground">
-   </FileRef>
-   <FileRef
       location = "group:Alamofire.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:iOS Example.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Alamofire.playground">
    </FileRef>
 </Workspace>
