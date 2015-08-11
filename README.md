@@ -677,7 +677,7 @@ extension Request {
                     return .Success(responseObject)
                 } else {
                     let failureReason = "JSON could not be serialized into response object: \(value)"
-                    let error = Error.errorWithCode(.StringSerializationFailed, failureReason: failureReason)
+                    let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
                     return .Failure(data, error)
                 }
             case .Failure(let data, let error):
@@ -728,7 +728,7 @@ extension Alamofire.Request {
                     return .Success(T.collection(response: response, representation: value))
                 } else {
                     let failureReason = "Response collection could not be serialized due to nil response"
-                    let error = Error.errorWithCode(.StringSerializationFailed, failureReason: failureReason)
+                    let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
                     return .Failure(data, error)
                 }
             case .Failure(let data, let error):
