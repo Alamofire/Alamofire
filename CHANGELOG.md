@@ -2,12 +2,22 @@
 All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
-- `1.3.x` Releases - [1.3.0](#130)
+- `1.3.x` Releases - [1.3.0](#130) | [1.3.1](#131)
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [1.3.1](https://github.com/Alamofire/Alamofire/releases/tag/1.3.1)
+Released on 2015-08-10. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A1.3.1).
+
+#### Fixed
+- Issue where a completed task was not released by the `SessionDelegate` if the
+task override closure was set.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#622](https://github.com/Alamofire/Alamofire/issues/622).
 
 ## [1.3.0](https://github.com/Alamofire/Alamofire/releases/tag/1.3.0)
 Released on 2015-07-24. All issues associated with this milestone can be found using this 
