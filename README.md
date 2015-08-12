@@ -978,6 +978,8 @@ let manager = Manager(
 )
 ```
 
+> Make sure to keep a reference to the new `Manager` instance, otherwise your requests will all get cancelled when your `manager` is deallocated.
+
 These server trust policies will result in the following behavior:
 
 * `test.example.com` will always use certificate pinning with certificate chain and host validation enabled thus requiring the following criteria to be met to allow the TLS handshake to succeed:
