@@ -77,7 +77,12 @@ public enum ParameterEncoding {
         var mutableURLRequest: NSMutableURLRequest = URLRequest.URLRequest.mutableCopy() as! NSMutableURLRequest
 
         if parameters == nil {
+          switch self {
+          case .Custom(_):
+            break
+          default:
             return (mutableURLRequest, nil)
+          }
         }
 
         var error: NSError? = nil
