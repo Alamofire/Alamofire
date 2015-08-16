@@ -215,7 +215,7 @@ public class Request {
 
         deinit {
             queue.cancelAllOperations()
-            queue.suspended = true
+            queue.suspended = false
         }
 
         // MARK: - NSURLSessionTaskDelegate
