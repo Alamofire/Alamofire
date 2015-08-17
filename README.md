@@ -1029,8 +1029,9 @@ Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu
 
 The following rdars have some affect on the current implementation of Alamofire.
 
-* [rdar://22024442](http://openradar.appspot.com/radar?id=6082025006039040) - Array of [SecCertificate] crashing Swift 2.0 compiler in optimized builds
-* [rdar://21349340](https://openradar.appspot.com/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
+* [rdar://22024442](http://www.openradar.me/radar?id=6082025006039040) - Array of [SecCertificate] crashing Swift 2.0 compiler in optimized builds
+* [rdar://21349340](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
+* [rdar://22307360](http://www.openradar.me/radar?id=4895563208196096) - Swift #available check not working properly with min deployment target
 
 * * *
 
