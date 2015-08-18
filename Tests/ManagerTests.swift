@@ -160,7 +160,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
                 result = responseResult
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
