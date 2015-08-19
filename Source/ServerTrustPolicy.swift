@@ -42,7 +42,7 @@ public class ServerTrustPolicyManager {
         self.policies = policies
     }
 
-    func serverTrustPolicyForHost(host: String) -> ServerTrustPolicy? {
+    public func serverTrustPolicyForHost(host: String) -> ServerTrustPolicy? {
         return policies[host]
     }
 }
