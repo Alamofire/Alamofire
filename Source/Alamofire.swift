@@ -81,6 +81,12 @@ extension NSURLRequest: URLRequestConvertible {
     }
 }
 
+extension NSMutableURLRequest {
+    public override var URLRequest: NSMutableURLRequest {
+        return self
+    }
+}
+
 // MARK: - Convenience
 
 func URLRequest(
