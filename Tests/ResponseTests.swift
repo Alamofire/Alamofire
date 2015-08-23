@@ -52,7 +52,7 @@ class ResponseDataTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess, "result should be success")
         XCTAssertNotNil(result.value, "result value should not be nil")
         XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertNil(result.error, "result error should be nil")
+        XCTAssertTrue(result.error == nil, "result error should be nil")
     }
 
     func testThatResponseDataReturnsFailureResultWithOptionalDataAndError() {
@@ -82,7 +82,7 @@ class ResponseDataTestCase: BaseTestCase {
         XCTAssertTrue(result.isFailure, "result should be a failure")
         XCTAssertNil(result.value, "result value should not be nil")
         XCTAssertNotNil(result.data, "result data should be nil")
-        XCTAssertNotNil(result.error, "result error should be nil")
+        XCTAssertTrue(result.error != nil, "result error should not be nil")
     }
 }
 
@@ -116,7 +116,7 @@ class ResponseStringTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess, "result should be success")
         XCTAssertNotNil(result.value, "result value should not be nil")
         XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertNil(result.error, "result error should be nil")
+        XCTAssertTrue(result.error == nil, "result error should be nil")
     }
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
@@ -146,7 +146,7 @@ class ResponseStringTestCase: BaseTestCase {
         XCTAssertTrue(result.isFailure, "result should be a failure")
         XCTAssertNil(result.value, "result value should not be nil")
         XCTAssertNotNil(result.data, "result data should be nil")
-        XCTAssertNotNil(result.error, "result error should be nil")
+        XCTAssertTrue(result.error != nil, "result error should not be nil")
     }
 }
 
@@ -180,7 +180,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess, "result should be success")
         XCTAssertNotNil(result.value, "result value should not be nil")
         XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertNil(result.error, "result error should be nil")
+        XCTAssertTrue(result.error == nil, "result error should be nil")
     }
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
@@ -210,7 +210,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertTrue(result.isFailure, "result should be a failure")
         XCTAssertNil(result.value, "result value should not be nil")
         XCTAssertNotNil(result.data, "result data should be nil")
-        XCTAssertNotNil(result.error, "result error should be nil")
+        XCTAssertTrue(result.error != nil, "result error should not be nil")
     }
 
     func testThatResponseJSONReturnsSuccessResultForGETRequest() {

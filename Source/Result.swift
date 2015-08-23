@@ -32,7 +32,7 @@ import Foundation
 */
 public enum Result<Value> {
     case Success(Value)
-    case Failure(NSData?, NSError)
+    case Failure(NSData?, ErrorType)
 
     /// Returns `true` if the result is a success, `false` otherwise.
     public var isSuccess: Bool {
@@ -70,7 +70,7 @@ public enum Result<Value> {
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    public var error: NSError? {
+    public var error: ErrorType? {
         switch self {
         case .Success:
             return nil

@@ -360,7 +360,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         XCTAssertTrue(result.isFailure, "result should be a failure")
         XCTAssertNotNil(result.data, "data should not be nil")
-        XCTAssertNotNil(result.error, "error should not be nil")
+        XCTAssertTrue(result.error != nil, "error should not be nil")
 
         XCTAssertNotNil(download.resumeData, "resume data should not be nil")
     }

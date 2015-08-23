@@ -117,7 +117,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result.Success("success")
 
         // Then
-        XCTAssertNil(result.error, "result error should be nil for success case")
+        XCTAssertTrue(result.error == nil, "result error should be nil for success case")
     }
 
     func testThatErrorPropertyReturnsErrorForFailureCase() {
@@ -126,7 +126,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.Failure(nil, error)
 
         // Then
-        XCTAssertNotNil(result.error, "result error should not be nil for failure case")
+        XCTAssertTrue(result.error != nil, "result error should not be nil for failure case")
     }
 
     // MARK: - Description Tests
