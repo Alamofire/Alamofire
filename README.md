@@ -636,12 +636,11 @@ extension Request {
                 return .Failure(data, error)
             }
 
-            var XMLSerializationError: NSError?
-
-            if let XML = ONOXMLDocument(data: validData, error: &XMLSerializationError) {
+            do {
+                let XML = try ONOXMLDocument(data: validData)
                 return .Success(XML)
-            } else {
-                return .Failure(data, XMLSerializationError!)
+            } catch {
+                return .Failure(data, error as NSError)
             }
         }
     }
