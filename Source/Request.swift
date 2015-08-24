@@ -444,7 +444,7 @@ extension Request: CustomStringConvertible {
             components.append("(\(response.statusCode))")
         }
 
-        return " ".join(components)
+        return components.joinWithSeparator(" ")
     }
 }
 
@@ -526,7 +526,7 @@ extension Request: CustomDebugStringConvertible {
 
         components.append("\"\(URL!.absoluteString)\"")
 
-        return " \\\n\t".join(components)
+        return components.joinWithSeparator(" \\\n\t")
     }
 
     /// The textual representation used when written to an output stream, in the form of a cURL command.
