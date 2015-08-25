@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 #### 2.x Releases
 
-- `2.0.x` Releases - [2.0.0-beta.1](#200-beta1)
+- `2.0.x` Releases - [2.0.0-beta.1](#200-beta1) | [2.0.0-beta.2](#200-beta2)
 
 #### 1.x Releases
 
@@ -14,6 +14,66 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [2.0.0-beta.2](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.2)
+Released on 2015-08-24. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0-beta.2).
+
+#### Added
+
+- Host and certificate chain validation section to the README.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Tests verifying configuration headers are sent with all configuration types.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#692](https://github.com/Alamofire/Alamofire/issues/692).
+- New rdar to the list in the README about the #available check issue.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Override for `NSMutableURLRequest` for the `URLRequestConvertible` protocol.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+
+- The README to note that CocoaPods 0.38.2 is required.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#682](https://github.com/Alamofire/Alamofire/issues/682).
+- The README to include note about keeping a reference to the `Manager`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#681](https://github.com/Alamofire/Alamofire/issues/681).
+- Server trust host validation over to use SSL policy evaluation.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The documentation for the `URLRequestConvertible` section in the README.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The `ServerTrustPolicyManager` to be more flexible by using `public` ACL.
+  - Updated by [Jan Riehn](https://github.com/jriehn) in Pull Request
+  [#696](https://github.com/Alamofire/Alamofire/pull/696).
+- The `ServerTrustPolicyManager` policies property to use `public` ACL and
+added docstrings.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The Ono response serializer example for Swift 2.0 in the README.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#700](https://github.com/Alamofire/Alamofire/issues/700).
+- `Result` failure case to store an `ErrorType` instead of `NSError`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#703](https://github.com/Alamofire/Alamofire/issues/703).
+- All source code to compile with Xcode 7 beta 6.
+  - Updated by [Michael Gray](https://github.com/mishagray) in Pull Request
+  [#707](https://github.com/Alamofire/Alamofire/pull/707).
+
+#### Removed
+
+- The `required` declaration on the `Manager` init method.
+  - Removed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#672](https://github.com/Alamofire/Alamofire/issues/672).
+
+#### Fixed
+
+- Issue where the `TaskDelegate` operation queue would leak if the task was
+never started.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+- Compiler issue on OS X target when creating background configurations
+in the test suite.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#693](https://github.com/Alamofire/Alamofire/issues/693).
 
 ## [2.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.1)
 Released on 2015-08-10. All issues associated with this milestone can be found using this 
