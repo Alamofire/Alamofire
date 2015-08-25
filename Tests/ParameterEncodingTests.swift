@@ -322,7 +322,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
             "japanese=%E6%97%A5%E6%9C%AC%E8%AA%9E"
         ]
 
-        let expectedQuery = "&".join(expectedParameterValues)
+        let expectedQuery = expectedParameterValues.joinWithSeparator("&")
         XCTAssertEqual(URLRequest.URL?.query ?? "", expectedQuery, "query is incorrect")
     }
 
