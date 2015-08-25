@@ -594,7 +594,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 loremValues.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
             }
 
-            return " ".join(loremValues).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            return loremValues.joinWithSeparator(" ").dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         }()
         let loremData2: NSData = {
             var loremValues: [String] = []
@@ -602,7 +602,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 loremValues.append("Lorem ipsum dolor sit amet, nam no graeco recusabo appellantur.")
             }
 
-            return " ".join(loremValues).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            return loremValues.joinWithSeparator(" ").dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         }()
 
         let expectation = expectationWithDescription("multipart form data upload should succeed")

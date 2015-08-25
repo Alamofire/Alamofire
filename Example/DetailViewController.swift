@@ -148,7 +148,7 @@ extension DetailViewController {
         switch Sections(rawValue: indexPath.section)! {
         case .Headers:
             let cell = tableView.dequeueReusableCellWithIdentifier("Header")!
-            let field = headers.keys.array.sort(<)[indexPath.row]
+            let field = headers.keys.sort(<)[indexPath.row]
             let value = headers[field]
 
             cell.textLabel?.text = field
