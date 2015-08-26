@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 #### 2.x Releases
 
-- `2.0.x` Releases - [2.0.0-beta.1](#200-beta1) | [2.0.0-beta.2](#200-beta2)
+- `2.0.x` Releases - [2.0.0-beta.1](#200-beta1) | [2.0.0-beta.2](#200-beta2) | [2.0.0-beta.3](#200-beta3)
 
 #### 1.x Releases
 
@@ -15,12 +15,19 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.0.0-beta.3](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.3)
+Released on 2015-08-25.
+
+#### Removed
+- The override for `NSMutableURLRequest` for the `URLRequestConvertible` protocol
+conformance that could cause unwanted URL request referencing.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
 ## [2.0.0-beta.2](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.2)
 Released on 2015-08-24. All issues associated with this milestone can be found using this 
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0-beta.2).
 
 #### Added
-
 - Host and certificate chain validation section to the README.
   - Added by [Christian Noon](https://github.com/cnoon).
 - Tests verifying configuration headers are sent with all configuration types.
@@ -32,7 +39,6 @@ Released on 2015-08-24. All issues associated with this milestone can be found u
   - Added by [Christian Noon](https://github.com/cnoon).
 
 #### Updated
-
 - The README to note that CocoaPods 0.38.2 is required.
   - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#682](https://github.com/Alamofire/Alamofire/issues/682).
@@ -60,13 +66,11 @@ added docstrings.
   [#707](https://github.com/Alamofire/Alamofire/pull/707).
 
 #### Removed
-
 - The `required` declaration on the `Manager` init method.
   - Removed by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#672](https://github.com/Alamofire/Alamofire/issues/672).
 
 #### Fixed
-
 - Issue where the `TaskDelegate` operation queue would leak if the task was
 never started.
   - Fixed by [Christian Noon](https://github.com/cnoon).
