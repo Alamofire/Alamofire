@@ -933,6 +933,21 @@ These server trust policies will result in the following behavior:
 * `insecure.expired-apis.com` will never evaluate the certificate chain and will always allow the TLS handshake to succeed.
 * All other hosts will use the default evaluation provided by Apple.
 
+For more flexible server trust policies for broader scope rather than per host basis, or even for wildcard support , `ServerTrustPolicyManager` can inherited  , and `serverTrustPolicyForHost` can be overriden.
+
+```swift
+class CustomServerTrustPolicyManager: ServerTrustPolicyManager {
+
+    init() {
+        super.init(policies: [:]) // Empty policiy list
+    }
+    override func serverTrustPolicyForHost(host: String) -> ServerTrustPolicy? {
+        return .DisableEvaluation
+    }
+}
+```
+This is a naive implemetation that disables evaluation for all hosts.
+
 * * *
 
 ## FAQ
