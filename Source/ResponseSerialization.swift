@@ -106,11 +106,13 @@ extension Request {
         -> Self
     {
         delegate.queue.addOperationWithBlock {
-            var result = responseSerializer.serializeResponse(self.request, self.response, self.delegate.data)
-
-            if let error = self.delegate.error {
-                result = .Failure(self.delegate.data, error)
-            }
+            let result: Result<T.SerializedObject> = {
+                if let error = self.delegate.error {
+                    return .Failure(self.delegate.data, error)
+                } else {
+                    return responseSerializer.serializeResponse(self.request, self.response, self.delegate.data)
+                }
+            }()
 
             dispatch_async(queue ?? dispatch_get_main_queue()) {
                 completionHandler(self.request, self.response, result)
