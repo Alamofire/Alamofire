@@ -106,7 +106,6 @@ extension Request {
         -> Self
     {
         delegate.queue.addOperationWithBlock {
-            
             let result: Result<T.SerializedObject> = {
                 if let error = self.delegate.error {
                     return .Failure(self.delegate.data, error)
