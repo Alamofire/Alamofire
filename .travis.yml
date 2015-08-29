@@ -1,23 +1,22 @@
 language: objective-c
-osx_image: xcode6.4
-branches:
-  except:
-    - swift-2.0
+osx_image: xcode7
 env:
   global:
   - LC_CTYPE=en_US.UTF-8
   - LANG=en_US.UTF-8
   matrix:
-    - DESTINATION="OS=8.1,name=iPhone 5" SCHEME="Alamofire iOS" SDK=iphonesimulator8.4 BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="OS=8.2,name=iPhone 5S" SCHEME="Alamofire iOS" SDK=iphonesimulator8.4 BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="OS=8.3,name=iPhone 6" SCHEME="Alamofire iOS" SDK=iphonesimulator8.4 BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="OS=8.4,name=iPhone 6 Plus" SCHEME="Alamofire iOS" SDK=iphonesimulator8.4 BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="arch=x86_64" SCHEME="Alamofire OSX" SDK=macosx10.10 BUILD_EXAMPLE="NO" POD_LINT="YES"
+    - DESTINATION="OS=8.1,name=iPhone 4S" SCHEME="Alamofire iOS" SDK=iphonesimulator9.0 BUILD_EXAMPLE="YES" POD_LINT="YES"
+    - DESTINATION="OS=8.2,name=iPhone 5" SCHEME="Alamofire iOS" SDK=iphonesimulator9.0 BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - DESTINATION="OS=8.3,name=iPhone 5S" SCHEME="Alamofire iOS" SDK=iphonesimulator9.0 BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - DESTINATION="OS=8.4,name=iPhone 6" SCHEME="Alamofire iOS" SDK=iphonesimulator9.0 BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - DESTINATION="OS=9.0,name=iPhone 6 Plus" SCHEME="Alamofire iOS" SDK=iphonesimulator9.0 BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - DESTINATION="arch=x86_64" SCHEME="Alamofire OSX" SDK=macosx10.11 BUILD_EXAMPLE="NO" POD_LINT="NO"
 before_install:
   - gem install cocoapods --no-rdoc --no-ri --no-document --quiet
   - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
 script:
   - set -o pipefail
+  - xcodebuild -version
   - xcodebuild -project Alamofire.xcodeproj -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" 
     -configuration Debug ONLY_ACTIVE_ARCH=NO test | xcpretty -c
   - xcodebuild -project Alamofire.xcodeproj -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" 
@@ -31,5 +30,5 @@ script:
       -configuration Release ONLY_ACTIVE_ARCH=NO build | xcpretty -c; 
     fi
   - if [ $POD_LINT == "YES" ]; then
-      pod lib lint;
+      pod lib lint --quick;
     fi
