@@ -83,7 +83,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         Alamofire.download(.GET, URLString, destination: destination)
@@ -165,7 +165,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var responseRequest: NSURLRequest?
         var responseResponse: NSHTTPURLResponse?
         var responseData: NSData?
-        var responseError: NSError?
+        var responseError: ErrorType?
 
         // When
         let download = Alamofire.download(.GET, URLString) { _, _ in
@@ -262,7 +262,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: AnyObject?
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         let download = Alamofire.download(.GET, URLString, destination: destination)
@@ -295,7 +295,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: AnyObject?
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         let download = Alamofire.download(.GET, URLString, destination: destination)

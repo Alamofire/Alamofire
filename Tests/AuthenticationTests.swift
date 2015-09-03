@@ -57,7 +57,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -78,7 +78,10 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         XCTAssertNil(response, "response should be nil")
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.code ?? 0, -999, "error should be NSURLErrorDomain Code -999 'cancelled'")
+
+        if let code = (error as? NSError)?.code {
+            XCTAssertEqual(code, -999, "error should be NSURLErrorDomain Code -999 'cancelled'")
+        }
     }
 
     func testHTTPBasicAuthenticationWithValidCredentials() {
@@ -88,7 +91,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -130,7 +133,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -151,7 +154,10 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         XCTAssertNil(response, "response should be nil")
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.code ?? 0, -999, "error should be NSURLErrorDomain Code -999 'cancelled'")
+
+        if let code = (error as? NSError)?.code {
+            XCTAssertEqual(code, -999, "error should be NSURLErrorDomain Code -999 'cancelled'")
+        }
     }
 
     func testHTTPDigestAuthenticationWithValidCredentials() {
@@ -161,7 +167,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         Alamofire.request(.GET, URLString)

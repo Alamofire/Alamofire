@@ -202,7 +202,7 @@ extension Manager {
     */
     public enum MultipartFormDataEncodingResult {
         case Success(request: Request, streamingFromDisk: Bool, streamFileURL: NSURL?)
-        case Failure(NSError)
+        case Failure(ErrorType)
     }
 
     /**

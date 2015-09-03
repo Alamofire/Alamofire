@@ -77,7 +77,7 @@ extension Request {
     */
     public func response(
         queue queue: dispatch_queue_t? = nil,
-        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Void)
+        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, ErrorType?) -> Void)
         -> Self
     {
         delegate.queue.addOperationWithBlock {

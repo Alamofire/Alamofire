@@ -77,7 +77,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let expectation = expectationWithDescription("\(URL)")
         let manager = Manager(configuration: configuration)
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -90,11 +90,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(
-            error?.code ?? -1,
-            NSURLErrorServerCertificateUntrusted,
-            "error should be NSURLErrorServerCertificateUntrusted"
-        )
+
+        if let code = (error as? NSError)?.code {
+            XCTAssertEqual(code, NSURLErrorServerCertificateUntrusted, "code should be untrusted server certficate")
+        } else {
+            XCTFail("error should be an NSError")
+        }
     }
 
     // MARK: Server Trust Policy - Perform Default Tests
@@ -108,7 +109,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -121,7 +122,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.code ?? -1, NSURLErrorCancelled, "error should be NSURLErrorCancelled")
+
+        if let code = (error as? NSError)?.code {
+            XCTAssertEqual(code, NSURLErrorCancelled, "code should be cancelled")
+        } else {
+            XCTFail("error should be an NSError")
+        }
     }
 
     // MARK: Server Trust Policy - Certificate Pinning Tests
@@ -139,7 +145,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -152,7 +158,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.code ?? -1, NSURLErrorCancelled, "error should be NSURLErrorCancelled")
+
+        if let code = (error as? NSError)?.code {
+            XCTAssertEqual(code, NSURLErrorCancelled, "code should be cancelled")
+        } else {
+            XCTFail("error should be an NSError")
+        }
     }
 
     func testThatExpiredCertificateRequestFailsWhenPinningAllCertificatesWithCertificateChainValidation() {
@@ -168,7 +179,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -181,7 +192,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.code ?? -1, NSURLErrorCancelled, "error should be NSURLErrorCancelled")
+
+        if let code = (error as? NSError)?.code {
+            XCTAssertEqual(code, NSURLErrorCancelled, "code should be cancelled")
+        } else {
+            XCTFail("error should be an NSError")
+        }
     }
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningLeafCertificateWithoutCertificateChainValidation() {
@@ -197,7 +213,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -225,7 +241,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -253,7 +269,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -283,7 +299,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -296,7 +312,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.code ?? -1, NSURLErrorCancelled, "error should be NSURLErrorCancelled")
+
+        if let code = (error as? NSError)?.code {
+            XCTAssertEqual(code, NSURLErrorCancelled, "code should be cancelled")
+        } else {
+            XCTFail("error should be an NSError")
+        }
     }
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyWithoutCertificateChainValidation() {
@@ -312,7 +333,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -340,7 +361,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -368,7 +389,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -394,7 +415,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -426,7 +447,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -456,7 +477,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         )
 
         let expectation = expectationWithDescription("\(URL)")
-        var error: NSError?
+        var error: ErrorType?
 
         // When
         manager.request(.GET, URL)
@@ -469,6 +490,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.code ?? -1, NSURLErrorCancelled, "error should be NSURLErrorCancelled")
+
+        if let code = (error as? NSError)?.code {
+            XCTAssertEqual(code, NSURLErrorCancelled, "code should be cancelled")
+        } else {
+            XCTFail("error should be an NSError")
+        }
     }
 }
