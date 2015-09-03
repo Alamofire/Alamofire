@@ -47,6 +47,9 @@ public class Request {
 
     /// The progress of the request lifecycle.
     public var progress: NSProgress { return delegate.progress }
+    
+    /// Whether to remove keys from response dictionaries in JSON responses. `false` by default.
+    public var removeJSONKeysWithNullValues: Bool = false
 
     // MARK: - Lifecycle
 
