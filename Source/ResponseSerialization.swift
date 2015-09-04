@@ -142,7 +142,7 @@ extension Request {
             }
             return final as! T
         } else if let array = json as? [AnyObject] {
-            return Array(array.lazy.filter { !($0 is NSNull) }.map { self.removeNulls($0) }) as! T
+            return array.map { self.removeNulls($0) } as! T
         }
         return json
     }
