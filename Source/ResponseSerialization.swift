@@ -134,13 +134,11 @@ extension Request {
     - returns: The collection type with all `NSNull` values removed from it (if a dictionary) and all subdictionaries.
     */
     private func removeNulls<T>(json: T) -> T {
-        if let dict = json as? [String: AnyObject] {
-            var final = [String: AnyObject]()
-            for (key, value) in dict {
-                if value is NSNull { continue }
-                final[key] = removeNulls(value)
+        if var dict = json as? [String: AnyObject] {
+            for (key, value) in dict where value is NSNull {
+                dict.removeValueForKey(key)
             }
-            return final as! T
+            return dict as! T
         } else if let array = json as? [AnyObject] {
             return array.map { self.removeNulls($0) } as! T
         }
