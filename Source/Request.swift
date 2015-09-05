@@ -23,7 +23,7 @@
 import Foundation
 
 /**
-    Responsible for sending a request and receiving the response and associated data from the server, as well as 
+    Responsible for sending a request and receiving the response and associated data from the server, as well as
     managing its underlying `NSURLSessionTask`.
 */
 public class Request {
@@ -103,12 +103,12 @@ public class Request {
     // MARK: - Progress
 
     /**
-        Sets a closure to be called periodically during the lifecycle of the request as data is written to or read 
+        Sets a closure to be called periodically during the lifecycle of the request as data is written to or read
         from the server.
 
-        - For uploads, the progress closure returns the bytes written, total bytes written, and total bytes expected 
+        - For uploads, the progress closure returns the bytes written, total bytes written, and total bytes expected
           to write.
-        - For downloads and data tasks, the progress closure returns the bytes read, total bytes read, and total bytes 
+        - For downloads and data tasks, the progress closure returns the bytes read, total bytes read, and total bytes
           expected to read.
 
         - parameter closure: The code to be executed periodically during the lifecycle of the request.
@@ -130,8 +130,8 @@ public class Request {
     /**
         Sets a closure to be called periodically during the lifecycle of the request as data is read from the server.
 
-        This closure returns the bytes most recently received from the server, not including data from previous calls. 
-        If this closure is set, data will only be available within this closure, and will not be saved elsewhere. It is 
+        This closure returns the bytes most recently received from the server, not including data from previous calls.
+        If this closure is set, data will only be available within this closure, and will not be saved elsewhere. It is
         also important to note that the `response` closure will be called with nil `responseData`.
 
         - parameter closure: The code to be executed periodically during the lifecycle of the request.
@@ -181,7 +181,7 @@ public class Request {
     // MARK: - TaskDelegate
 
     /**
-        The task delegate is responsible for handling all delegate callbacks for the underlying task as well as 
+        The task delegate is responsible for handling all delegate callbacks for the underlying task as well as
         executing all operations attached to the serial operation queue upon task completion.
     */
     public class TaskDelegate: NSObject {
@@ -426,7 +426,7 @@ public class Request {
 extension Request: CustomStringConvertible {
 
     /**
-        The textual representation used when written to an output stream, which includes the HTTP method and URL, as 
+        The textual representation used when written to an output stream, which includes the HTTP method and URL, as
         well as the response status code if a response has been received.
     */
     public var description: String {
@@ -450,21 +450,17 @@ extension Request: CustomStringConvertible {
 
 // MARK: - CustomDebugStringConvertible
 
-extension Request: CustomDebugStringConvertible {
-    func cURLRepresentation() -> String {
+extension NSURLRequest {
+    func cURLRepresentation(withURLSession session: NSURLSession? = nil, credential: NSURLCredential? = nil) -> String {
         var components = ["$ curl -i"]
 
-        guard let request = self.request else {
-            return "$ curl command could not be created"
-        }
+        let URL = self.URL
 
-        let URL = request.URL
-
-        if let HTTPMethod = request.HTTPMethod where HTTPMethod != "GET" {
+        if let HTTPMethod = self.HTTPMethod where HTTPMethod != "GET" {
             components.append("-X \(HTTPMethod)")
         }
 
-        if let credentialStorage = self.session.configuration.URLCredentialStorage {
+        if let credentialStorage = session?.configuration.URLCredentialStorage {
             let protectionSpace = NSURLProtectionSpace(
                 host: URL!.host!,
                 port: URL!.port?.integerValue ?? 0,
@@ -478,15 +474,15 @@ extension Request: CustomDebugStringConvertible {
                     components.append("-u \(credential.user!):\(credential.password!)")
                 }
             } else {
-                if let credential = delegate.credential {
-                    components.append("-u \(credential.user!):\(credential.password!)")
+                if credential != nil {
+                    components.append("-u \(credential!.user!):\(credential!.password!)")
                 }
             }
         }
 
-        if session.configuration.HTTPShouldSetCookies {
+        if session != nil && session!.configuration.HTTPShouldSetCookies {
             if let
-                cookieStorage = session.configuration.HTTPCookieStorage,
+                cookieStorage = session!.configuration.HTTPCookieStorage,
                 cookies = cookieStorage.cookiesForURL(URL!) where !cookies.isEmpty
             {
                 let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value ?? String());" }
@@ -494,7 +490,7 @@ extension Request: CustomDebugStringConvertible {
             }
         }
 
-        if let headerFields = request.allHTTPHeaderFields {
+        if let headerFields = self.allHTTPHeaderFields {
             for (field, value) in headerFields {
                 switch field {
                 case "Cookie":
@@ -505,7 +501,7 @@ extension Request: CustomDebugStringConvertible {
             }
         }
 
-        if let additionalHeaders = session.configuration.HTTPAdditionalHeaders {
+        if let additionalHeaders = session?.configuration.HTTPAdditionalHeaders {
             for (field, value) in additionalHeaders {
                 switch field {
                 case "Cookie":
@@ -517,7 +513,7 @@ extension Request: CustomDebugStringConvertible {
         }
 
         if let
-            HTTPBodyData = request.HTTPBody,
+            HTTPBodyData = self.HTTPBody,
             HTTPBody = NSString(data: HTTPBodyData, encoding: NSUTF8StringEncoding)
         {
             let escapedBody = HTTPBody.stringByReplacingOccurrencesOfString("\"", withString: "\\\"")
@@ -529,8 +525,15 @@ extension Request: CustomDebugStringConvertible {
         return components.joinWithSeparator(" \\\n\t")
     }
 
+}
+
+extension Request: CustomDebugStringConvertible {
+
     /// The textual representation used when written to an output stream, in the form of a cURL command.
     public var debugDescription: String {
-        return cURLRepresentation()
+        guard let request = self.request else {
+            return "$ curl command could not be created"
+        }
+        return request.cURLRepresentation(withURLSession: session, credential: delegate.credential)
     }
 }
