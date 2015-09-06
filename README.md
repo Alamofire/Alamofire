@@ -987,6 +987,22 @@ These server trust policies will result in the following behavior:
 * `insecure.expired-apis.com` will never evaluate the certificate chain and will always allow the TLS handshake to succeed.
 * All other hosts will use the default evaluation provided by Apple.
 
+##### Subclassing Server Trust Policy Manager
+
+If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcarded domains), then subclass the `ServerTrustPolicyManager` and override the `serverTrustPolicyForHost` method with your own custom implementation.
+
+```swift
+class CustomServerTrustPolicyManager: ServerTrustPolicyManager {
+    override func serverTrustPolicyForHost(host: String) -> ServerTrustPolicy? {
+        var policy: ServerTrustPolicy?
+
+        // Implement your custom domain matching behavior...
+
+        return policy
+    }
+}
+```
+
 #### Validating the Host
 
 The `.PerformDefaultEvaluation`, `.PinCertificates` and `.PinPublicKeys` server trust policies all take a `validateHost` parameter. Setting the value to `true` will cause the server trust evaluation to verify that hostname in the certificate matches the hostname of the challenge. If they do not match, evaluation will fail. A `validateHost` value of `false` will still evaluate the full certificate chain, but will not validate the hostname of the leaf certificate.
