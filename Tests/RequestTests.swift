@@ -278,7 +278,7 @@ class RequestResponseTestCase: BaseTestCase {
         }
     }
 
-    func testThatPOSTRequestWithUnicodeParametersEncodesAndTransmitsParametersAsExpected() {
+    func testPOSTRequestWithUnicodeParameters() {
         // Given
         let URLString = "https://httpbin.org/post"
         let parameters = [
@@ -320,7 +320,7 @@ class RequestResponseTestCase: BaseTestCase {
             XCTAssertEqual(form["arabic"], parameters["arabic"], "arabic parameter value should match form value")
             XCTAssertEqual(form["emoji"], parameters["emoji"], "emoji parameter value should match form value")
         } else {
-            XCTFail("headers parameter in JSON should not be nil")
+            XCTFail("form parameter in JSON should not be nil")
         }
     }
 
