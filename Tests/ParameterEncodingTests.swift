@@ -379,7 +379,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         // Then
         XCTAssertEqual(
             URLRequest.valueForHTTPHeaderField("Content-Type") ?? "",
-            "application/x-www-form-urlencoded",
+            "application/x-www-form-urlencoded; charset=utf-8",
             "Content-Type should be application/x-www-form-urlencoded"
         )
         XCTAssertNotNil(URLRequest.HTTPBody, "HTTPBody should not be nil")
