@@ -242,6 +242,102 @@ class DownloadResponseTestCase: BaseTestCase {
             XCTFail("file manager should remove item at URL: \(fileURL)")
         }
     }
+
+    func testDownloadRequestWithParameters() {
+        // Given
+        let fileURL: NSURL = {
+            let cachesDirectory = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first!
+            let cachesURL = NSURL(fileURLWithPath: cachesDirectory, isDirectory: true)
+            let fileURL = cachesURL.URLByAppendingPathComponent("\(NSUUID().UUIDString).json")
+
+            return fileURL
+        }()
+
+        let URLString = "https://httpbin.org/get"
+        let parameters = ["foo": "bar"]
+        let destination: Request.DownloadFileDestination = { _, _ in fileURL }
+        let expectation = expectationWithDescription("Download request should download data to file: \(fileURL)")
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var error: ErrorType?
+
+        // When
+        Alamofire.download(.GET, URLString, parameters: parameters, destination: destination)
+            .response { responseRequest, responseResponse, _, responseError in
+                request = responseRequest
+                response = responseResponse
+                error = responseError
+
+                expectation.fulfill()
+            }
+
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNil(error, "error should be nil")
+
+        if let
+            data = NSData(contentsOfURL: fileURL),
+            JSONObject = try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0)),
+            JSON = JSONObject as? [String: AnyObject],
+            args = JSON["args"] as? [String: String]
+        {
+            XCTAssertEqual(args["foo"], "bar", "foo parameter should equal bar")
+        } else {
+            XCTFail("args parameter in JSON should not be nil")
+        }
+    }
+
+    func testDownloadRequestWithHeaders() {
+        // Given
+        let fileURL: NSURL = {
+            let cachesDirectory = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first!
+            let cachesURL = NSURL(fileURLWithPath: cachesDirectory, isDirectory: true)
+            let fileURL = cachesURL.URLByAppendingPathComponent("\(NSUUID().UUIDString).json")
+
+            return fileURL
+        }()
+
+        let URLString = "https://httpbin.org/get"
+        let headers = ["Authorization": "123456"]
+        let destination: Request.DownloadFileDestination = { _, _ in fileURL }
+        let expectation = expectationWithDescription("Download request should download data to file: \(fileURL)")
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var error: ErrorType?
+
+        // When
+        Alamofire.download(.GET, URLString, headers: headers, destination: destination)
+            .response { responseRequest, responseResponse, _, responseError in
+                request = responseRequest
+                response = responseResponse
+                error = responseError
+
+                expectation.fulfill()
+            }
+
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNil(error, "error should be nil")
+
+        if let
+            data = NSData(contentsOfURL: fileURL),
+            JSONObject = try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0)),
+            JSON = JSONObject as? [String: AnyObject],
+            headers = JSON["headers"] as? [String: String]
+        {
+            XCTAssertEqual(headers["Authorization"], "123456", "Authorization parameter should equal 123456")
+        } else {
+            XCTFail("headers parameter in JSON should not be nil")
+        }
+    }
 }
 
 // MARK: -

@@ -145,7 +145,7 @@ public class Manager {
     // MARK: - Request
 
     /**
-        Creates a request for the specified method, URL string, parameters, and parameter encoding.
+        Creates a request for the specified method, URL string, parameters, parameter encoding and headers.
 
         - parameter method:     The HTTP method.
         - parameter URLString:  The URL string.
