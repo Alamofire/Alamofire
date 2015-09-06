@@ -277,6 +277,52 @@ class RequestResponseTestCase: BaseTestCase {
             XCTFail("last item in bytesValues and progressValues should not be nil")
         }
     }
+
+    func testThatPOSTRequestWithUnicodeParametersEncodesAndTransmitsParametersAsExpected() {
+        // Given
+        let URLString = "https://httpbin.org/post"
+        let parameters = [
+            "french": "français",
+            "japanese": "日本語",
+            "arabic": "العربية",
+            "emoji": "😃"
+        ]
+
+        let expectation = expectationWithDescription("request should succeed")
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var result: Result<AnyObject>?
+
+        // When
+        Alamofire.request(.POST, URLString, parameters: parameters)
+            .responseJSON { responseRequest, responseResponse, responseResult in
+                request = responseRequest
+                response = responseResponse
+                result = responseResult
+
+                expectation.fulfill()
+            }
+
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(result, "result should be nil")
+
+        if let
+            JSON = result?.value as? [String: AnyObject],
+            form = JSON["form"] as? [String: String]
+        {
+            XCTAssertEqual(form["french"], parameters["french"], "french parameter value should match form value")
+            XCTAssertEqual(form["japanese"], parameters["japanese"], "japanese parameter value should match form value")
+            XCTAssertEqual(form["arabic"], parameters["arabic"], "arabic parameter value should match form value")
+            XCTAssertEqual(form["emoji"], parameters["emoji"], "emoji parameter value should match form value")
+        } else {
+            XCTFail("headers parameter in JSON should not be nil")
+        }
+    }
 }
 
 // MARK: -
