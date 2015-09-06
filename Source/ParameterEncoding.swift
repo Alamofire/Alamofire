@@ -36,23 +36,32 @@ public enum Method: String {
 /**
     Used to specify the way in which a set of parameters are applied to a URL request.
 
-    - URL:          A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` 
-                    requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header 
-                    field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. Since 
-                    there is no published specification for how to encode collection types, the convention of appending 
-                    `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square 
-                    brackets for nested dictionary values (`foo[bar]=baz`).
-    - JSON:         Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is set as 
-                    the body of the request. The `Content-Type` HTTP header field of an encoded request is set to 
-                    `application/json`.
-    - PropertyList: Uses `NSPropertyListSerialization` to create a plist representation of the parameters object, 
-                    according to the associated format and write options values, which is set as the body of the 
-                    request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
-    - Custom:       Uses the associated closure value to construct a new request given an existing request and 
-                    parameters.
+    - `URL`:             Creates a query string to be set as or appended to any existing URL query for `GET`, `HEAD`, 
+                         and `DELETE` requests, or set as the body for requests with any other HTTP method. The 
+                         `Content-Type` HTTP header field of an encoded request with HTTP body is set to
+                         `application/x-www-form-urlencoded; charset=utf-8`. Since there is no published specification
+                         for how to encode collection types, the convention of appending `[]` to the key for array
+                         values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested
+                         dictionary values (`foo[bar]=baz`).
+
+    - `URLEncodedInURL`: Creates query string to be set as or appended to any existing URL query. Uses the same
+                         implementation as the `.URL` case, but always applies the encoded result to the URL.
+
+    - `JSON`:            Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is 
+                         set as the body of the request. The `Content-Type` HTTP header field of an encoded request is 
+                         set to `application/json`.
+
+    - `PropertyList`:    Uses `NSPropertyListSerialization` to create a plist representation of the parameters object,
+                         according to the associated format and write options values, which is set as the body of the
+                         request. The `Content-Type` HTTP header field of an encoded request is set to
+                         `application/x-plist`.
+
+    - `Custom`:          Uses the associated closure value to construct a new request given an existing request and
+                         parameters.
 */
 public enum ParameterEncoding {
     case URL
+    case URLEncodedInURL
     case JSON
     case PropertyList(NSPropertyListFormat, NSPropertyListWriteOptions)
     case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?))
@@ -80,7 +89,7 @@ public enum ParameterEncoding {
         var encodingError: NSError? = nil
 
         switch self {
-        case .URL:
+        case .URL, .URLEncodedInURL:
             func query(parameters: [String: AnyObject]) -> String {
                 var components: [(String, String)] = []
                 for key in Array(parameters.keys).sort(<) {
@@ -92,6 +101,13 @@ public enum ParameterEncoding {
             }
 
             func encodesParametersInURL(method: Method) -> Bool {
+                switch self {
+                case .URLEncodedInURL:
+                    return true
+                default:
+                    break
+                }
+
                 switch method {
                 case .GET, .HEAD, .DELETE:
                     return true
