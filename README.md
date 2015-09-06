@@ -1009,27 +1009,6 @@ In order to keep Alamofire focused specifically on core networking implementatio
 
 * [AlamofireImage](https://github.com/Alamofire/AlamofireImage) - An image library including image response serializers, `UIImage` and `UIImageView` extensions, custom image filters, an auto-purging in-memory cache and a priority-based image downloading system.
 
-## FAQ
-
-### When should I use Alamofire?
-
-If you're starting a new project in Swift, and want to take full advantage of its conventions and language features, Alamofire is a great choice. Although not as fully-featured as AFNetworking, Alamofire is much nicer to work with, and should satisfy the vast majority of networking use cases.
-
-> It's important to note that two libraries aren't mutually exclusive: AFNetworking and Alamofire can peacefully exist in the same code base.
-
-### When should I use AFNetworking?
-
-AFNetworking remains the premiere networking library available for OS X and iOS, and can easily be used in Swift, just like any other Objective-C code. AFNetworking is stable and reliable, and isn't going anywhere.
-
-Use AFNetworking for any of the following:
-
-- UIKit extensions, such as asynchronously loading images to `UIImageView`
-- Network reachability monitoring, using `AFNetworkReachabilityManager`
-
-### What's the origin of the name Alamofire?
-
-Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu.edu/wildseed/alamofire.html), a hybrid variant of the Bluebonnet, the official state flower of Texas.
-
 ## Open Rdars
 
 The following rdars have some affect on the current implementation of Alamofire.
@@ -1037,6 +1016,12 @@ The following rdars have some affect on the current implementation of Alamofire.
 * [rdar://22024442](http://www.openradar.me/radar?id=6082025006039040) - Array of [SecCertificate] crashing Swift 2.0 compiler in optimized builds
 * [rdar://21349340](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
 * [rdar://22307360](http://www.openradar.me/radar?id=4895563208196096) - Swift #available check not working properly with min deployment target
+
+## FAQ
+
+### What's the origin of the name Alamofire?
+
+Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu.edu/wildseed/alamofire.html), a hybrid variant of the Bluebonnet, the official state flower of Texas.
 
 ---
 
