@@ -33,7 +33,7 @@ private struct TestCertificates {
     static let IntermediateCA2 = TestCertificates.certificateWithFileName("alamofire-signing-ca2")
 
     // Leaf Certificates - Signed by CA1
-    static let LeafWildcard = TestCertificates.certificateWithFileName("*.alamofire.org")
+    static let LeafWildcard = TestCertificates.certificateWithFileName("wildcard.alamofire.org")
     static let LeafMultipleDNSNames = TestCertificates.certificateWithFileName("multiple-dns-names")
     static let LeafSignedByCA1 = TestCertificates.certificateWithFileName("signed-by-ca1")
     static let LeafDNSNameAndURI = TestCertificates.certificateWithFileName("test.alamofire.org")
