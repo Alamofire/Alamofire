@@ -62,7 +62,9 @@ extension Manager {
     // MARK: Request
 
     /**
-        Creates a download request using the shared manager instance for the specified method and URL string.
+        Creates a download request for the specified method, URL string, headers and destination.
+
+        If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
         - parameter method:      The HTTP method.
         - parameter URLString:   The URL string.
