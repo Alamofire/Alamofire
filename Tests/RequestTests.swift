@@ -323,6 +323,69 @@ class RequestResponseTestCase: BaseTestCase {
             XCTFail("headers parameter in JSON should not be nil")
         }
     }
+
+    func testPOSTRequestWithBase64EncodedImages() {
+        // Given
+        let URLString = "https://httpbin.org/post"
+
+        let pngBase64EncodedString: String = {
+            let URL = URLForResource("rainbow", withExtension: "jpg")
+            let data = NSData(contentsOfURL: URL)!
+            let image = UIImage(data: data)!
+            let pngData = UIImagePNGRepresentation(image)!
+
+            return pngData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        }()
+
+        let jpegBase64EncodedString: String = {
+            let URL = URLForResource("rainbow", withExtension: "jpg")
+            let data = NSData(contentsOfURL: URL)!
+            let image = UIImage(data: data)!
+            let pngData = UIImageJPEGRepresentation(image, 0.8)!
+
+            return pngData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        }()
+
+        let parameters = [
+            "email": "user@alamofire.org",
+            "png_image": pngBase64EncodedString,
+            "jpeg_image": jpegBase64EncodedString
+        ]
+
+        let expectation = expectationWithDescription("request should succeed")
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var result: Result<AnyObject>?
+
+        // When
+        Alamofire.request(.POST, URLString, parameters: parameters)
+            .responseJSON { responseRequest, responseResponse, responseResult in
+                request = responseRequest
+                response = responseResponse
+                result = responseResult
+
+                expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(result, "result should be nil")
+
+        if let
+            JSON = result?.value as? [String: AnyObject],
+            form = JSON["form"] as? [String: String]
+        {
+            XCTAssertEqual(form["email"], parameters["email"], "email parameter value should match form value")
+            XCTAssertEqual(form["png_image"], parameters["png_image"], "png_image parameter value should match form value")
+            XCTAssertEqual(form["jpeg_image"], parameters["jpeg_image"], "jpeg_image parameter value should match form value")
+        } else {
+            XCTFail("form parameter in JSON should not be nil")
+        }
+    }
 }
 
 // MARK: -
