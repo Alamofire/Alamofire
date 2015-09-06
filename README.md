@@ -322,6 +322,12 @@ Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
 Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
          .progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
              print(totalBytesWritten)
+
+             // This closure is NOT called on the main queue for performance
+             // reasons. To update your ui, dispatch to the main queue.
+             dispatch_async(dispatch_get_main_queue) {
+                 print("Total bytes written on main queue: \(totalBytesWritten)")
+             }
          }
          .responseJSON { request, response, result in
              debugPrint(result)
@@ -385,6 +391,12 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destinati
 Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
          .progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
              print(totalBytesRead)
+
+             // This closure is NOT called on the main queue for performance
+             // reasons. To update your ui, dispatch to the main queue.
+             dispatch_async(dispatch_get_main_queue) {
+                 print("Total bytes read on main queue: \(totalBytesRead)")
+             }
          }
          .response { request, response, _, error in
              print(response)
