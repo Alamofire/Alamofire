@@ -286,7 +286,9 @@ extension Manager {
             let URLRequestWithContentType = URLRequest.URLRequest
             URLRequestWithContentType.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
 
-            if formData.contentLength < encodingMemoryThreshold {
+            let isBackgroundSession = self.session.configuration.identifier != nil
+
+            if formData.contentLength < encodingMemoryThreshold && !isBackgroundSession {
                 do {
                     let data = try formData.encode()
                     let encodingResult = MultipartFormDataEncodingResult.Success(
