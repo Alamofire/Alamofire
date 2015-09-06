@@ -69,6 +69,17 @@ class DownloadResponseTestCase: BaseTestCase {
     let searchPathDirectory: NSSearchPathDirectory = .CachesDirectory
     let searchPathDomain: NSSearchPathDomainMask = .UserDomainMask
 
+    let cachesURL: NSURL = {
+        let cachesDirectory = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first!
+        let cachesURL = NSURL(fileURLWithPath: cachesDirectory, isDirectory: true)
+
+        return cachesURL
+    }()
+
+    var randomCachesFileURL: NSURL {
+        return cachesURL.URLByAppendingPathComponent("\(NSUUID().UUIDString).json")
+    }
+
     func testDownloadRequest() {
         // Given
         let numberOfLines = 100
@@ -245,17 +256,11 @@ class DownloadResponseTestCase: BaseTestCase {
 
     func testDownloadRequestWithParameters() {
         // Given
-        let fileURL: NSURL = {
-            let cachesDirectory = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first!
-            let cachesURL = NSURL(fileURLWithPath: cachesDirectory, isDirectory: true)
-            let fileURL = cachesURL.URLByAppendingPathComponent("\(NSUUID().UUIDString).json")
-
-            return fileURL
-        }()
-
+        let fileURL = randomCachesFileURL
         let URLString = "https://httpbin.org/get"
         let parameters = ["foo": "bar"]
         let destination: Request.DownloadFileDestination = { _, _ in fileURL }
+
         let expectation = expectationWithDescription("Download request should download data to file: \(fileURL)")
 
         var request: NSURLRequest?
@@ -293,17 +298,11 @@ class DownloadResponseTestCase: BaseTestCase {
 
     func testDownloadRequestWithHeaders() {
         // Given
-        let fileURL: NSURL = {
-            let cachesDirectory = NSSearchPathForDirectoriesInDomains(.CachesDirectory, .UserDomainMask, true).first!
-            let cachesURL = NSURL(fileURLWithPath: cachesDirectory, isDirectory: true)
-            let fileURL = cachesURL.URLByAppendingPathComponent("\(NSUUID().UUIDString).json")
-
-            return fileURL
-        }()
-
+        let fileURL = randomCachesFileURL
         let URLString = "https://httpbin.org/get"
         let headers = ["Authorization": "123456"]
         let destination: Request.DownloadFileDestination = { _, _ in fileURL }
+
         let expectation = expectationWithDescription("Download request should download data to file: \(fileURL)")
 
         var request: NSURLRequest?
