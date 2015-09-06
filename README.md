@@ -555,7 +555,7 @@ let manager = Alamofire.Manager(configuration: configuration)
 #### Creating a Manager with Background Configuration
 
 ```swift
-let configuration = NSURLSessionConfiguration.backgroundSessionConfiguration("com.example.app.background")
+let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier("com.example.app.background")
 let manager = Alamofire.Manager(configuration: configuration)
 ```
 
