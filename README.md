@@ -1001,7 +1001,13 @@ There are several cases where it may make sense to disable certificate chain val
 
 > It is recommended that `validateCertificateChain` always be set to `true` in production environments.
 
-* * *
+---
+
+## Component Libraries
+
+In order to keep Alamofire focused specifically on core networking implementations, additional component libraries have been created by the [Alamofire Software Foundation](https://github.com/Alamofire/Foundation) to bring additional functionality to the Alamofire ecosystem.
+
+* [AlamofireImage](https://github.com/Alamofire/AlamofireImage) - An image library including image response serializers, `UIImage` and `UIImageView` extensions, custom image filters, an auto-purging in-memory cache and a priority-based image downloading system.
 
 ## FAQ
 
@@ -1032,7 +1038,7 @@ The following rdars have some affect on the current implementation of Alamofire.
 * [rdar://21349340](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
 * [rdar://22307360](http://www.openradar.me/radar?id=4895563208196096) - Swift #available check not working properly with min deployment target
 
-* * *
+---
 
 ## Credits
 
