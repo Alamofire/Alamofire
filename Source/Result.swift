@@ -78,6 +78,16 @@ public enum Result<Value> {
             return error
         }
     }
+    
+    public func map<U>(transform: (Value -> U)) -> Result<U> {
+        switch self {
+        case .Success(let value):
+            let new = transform(value)
+            return .Success(new)
+        case .Failure(let data, let error):
+            return .Failure(data, error)
+        }
+    }
 }
 
 // MARK: - CustomStringConvertible

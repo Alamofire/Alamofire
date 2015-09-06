@@ -97,6 +97,9 @@ public class Manager {
 
     /// Whether to start requests immediately after being constructed. `true` by default.
     public var startRequestsImmediately: Bool = true
+    
+    /// Whether to remove keys from response dictionaries in JSON responses. `false` by default.
+    public var removeJSONKeysWithNullValues: Bool = false
 
     /**
         The background completion handler closure provided by the UIApplicationDelegate 
@@ -190,6 +193,8 @@ public class Manager {
         if startRequestsImmediately {
             request.resume()
         }
+        
+        request.removeJSONKeysWithNullValues = removeJSONKeysWithNullValues
 
         return request
     }

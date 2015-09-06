@@ -110,16 +110,39 @@ extension Request {
                 if let error = self.delegate.error {
                     return .Failure(self.delegate.data, error)
                 } else {
-                    return responseSerializer.serializeResponse(self.request, self.response, self.delegate.data)
+                    let result = responseSerializer.serializeResponse(self.request, self.response, self.delegate.data)
+                    if self.removeJSONKeysWithNullValues {
+                        return result.map(self.removeNulls)
+                    } else {
+                        return result
+                    }
                 }
             }()
-
             dispatch_async(queue ?? dispatch_get_main_queue()) {
                 completionHandler(self.request, self.response, result)
             }
         }
 
         return self
+    }
+    
+    /**
+    Removes all dictionary keys that have `NSNull()` as the value.
+    
+    - parameter json: A JSON collection type (Array or Dictionary).
+    
+    - returns: The collection type with all `NSNull` values removed from it (if a dictionary) and all subdictionaries.
+    */
+    private func removeNulls<T>(json: T) -> T {
+        if var dict = json as? [String: AnyObject] {
+            for (key, value) in dict where value is NSNull {
+                dict.removeValueForKey(key)
+            }
+            return dict as! T
+        } else if let array = json as? [AnyObject] {
+            return array.map { self.removeNulls($0) } as! T
+        }
+        return json
     }
 }
 
