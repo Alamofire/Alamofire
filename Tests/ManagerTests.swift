@@ -124,16 +124,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
                     configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
                 case .Background:
                     let identifier = "com.alamofire.test.manager-configuration-tests"
-
-                    #if os(iOS) || os(watchOS)
-                        configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(identifier)
-                    #else
-                        if #available(OSX 10.10, *) {
-                            configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(identifier)
-                        } else {
-                            configuration = NSURLSessionConfiguration.backgroundSessionConfiguration(identifier)
-                        }
-                    #endif
+                    configuration = NSURLSessionConfiguration.backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier)
                 }
 
                 var headers = Alamofire.Manager.defaultHTTPHeaders

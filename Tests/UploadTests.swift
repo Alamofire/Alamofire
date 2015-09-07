@@ -585,12 +585,12 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
-        let identifier = "com.alamofire.uploadtests.\(NSUUID().UUIDString)"
+        let manager: Manager = {
+            let identifier = "com.alamofire.uploadtests.\(NSUUID().UUIDString)"
+            let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier)
 
-        let manager = Manager(
-            configuration: NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(identifier),
-            serverTrustPolicyManager: nil
-        )
+            return Manager(configuration: configuration, serverTrustPolicyManager: nil)
+        }()
 
         let URLString = "https://httpbin.org/post"
         let french = "français".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
