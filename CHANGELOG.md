@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 #### 2.x Releases
 
-- `2.0.x` Releases - [2.0.0-beta.1](#200-beta1) | [2.0.0-beta.2](#200-beta2) | [2.0.0-beta.3](#200-beta3)
+- `2.0.x` Releases - [2.0.0-beta.1](#200-beta1) | [2.0.0-beta.2](#200-beta2) | [2.0.0-beta.3](#200-beta3) | [2.0.0-beta.4](#200-beta4)
 
 #### 1.x Releases
 
@@ -14,6 +14,72 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [2.0.0-beta.4](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.4)
+Released on 2015-09-06. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0-beta.4).
+
+#### Added
+
+- The `parameters` and `encoding` parameters to download APIs.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#719](https://github.com/Alamofire/Alamofire/issues/719).
+- Section to the README about wildcard domain matching with server trust policies.
+  - Added by [Sai](https://github.com/sai-prasanna) in Pull Request
+  [#718](https://github.com/Alamofire/Alamofire/pull/718).
+- A UTF-8 charset to Content-Type header for a URL encoded body.
+  - Added by [Cheolhee Han](https://github.com/cheolhee) in Pull Request
+  [#731](https://github.com/Alamofire/Alamofire/pull/731).
+- Tests around posting unicode parameters with URL encoding.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Pull Request
+  [#731](https://github.com/Alamofire/Alamofire/pull/731).
+- Tests for uploading base 64 encoded image data inside JSON.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#738](https://github.com/Alamofire/Alamofire/issues/738).
+- An Alamofire 2.0 migration guide document to the new Documentation folder.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- A Migration Guides section to the README with link to 2.0 guide.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+
+- Response serialization to prevent unnecessary call to response serializer.
+  - Updated by [Julien Ducret](https://github.com/brocoo) in Pull Request
+  [#716](https://github.com/Alamofire/Alamofire/pull/716).
+- Travis-CI yaml file to support iOS 9, OSX 10.11 and Xcode 7.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Result types to store an `ErrorType` instead of `NSError`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#732](https://github.com/Alamofire/Alamofire/issues/732).
+- Docstrings on the download method to be more accurate.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The README to require Xcode 7 beta 6.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The background session section of the README to use non-deprecated API.
+  - Updated by [David F. Muir V](https://github.com/dfmuir) in Pull Request
+  [#724](https://github.com/Alamofire/Alamofire/pull/724).
+- The playground to use the `Result` type.
+  - Updated by [Jonas Schmid](https://github.com/jschmid) in Pull Request
+  [#726](https://github.com/Alamofire/Alamofire/pull/726).
+- Updated progress code samples in the README to show how to call onto the main queue.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Removed
+
+- The AFNetworking sections from the FAQ in the README.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+
+- Issue on Windows where the wildcarded cert name in the test suite included asterisk.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#723](https://github.com/Alamofire/Alamofire/issues/723).
+- Crash when multipart form data was uploaded from in-memory data on background session.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#740](https://github.com/Alamofire/Alamofire/issues/740).
+- Issue where the background session completion handler was not called on the main queue.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#728](https://github.com/Alamofire/Alamofire/issues/728).
 
 ## [2.0.0-beta.3](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.3)
 Released on 2015-08-25.
