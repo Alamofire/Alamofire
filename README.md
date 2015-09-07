@@ -27,6 +27,10 @@ Alamofire is an HTTP networking library written in Swift.
 - iOS 8.0+ / Mac OS X 10.9+ / watchOS 2
 - Xcode 7.0 beta 6+
 
+## Migration Guides
+
+- [Alamofire 2.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/swift-2.0/Documentation/Alamofire%202.0%20Migration%20Guide.md)
+
 ## Communication
 
 - If you **need help**, use [Stack Overflow](http://stackoverflow.com/questions/tagged/alamofire). (Tag 'alamofire')
