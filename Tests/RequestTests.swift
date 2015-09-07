@@ -329,21 +329,17 @@ class RequestResponseTestCase: BaseTestCase {
         let URLString = "https://httpbin.org/post"
 
         let pngBase64EncodedString: String = {
-            let URL = URLForResource("rainbow", withExtension: "jpg")
+            let URL = URLForResource("unicorn", withExtension: "png")
             let data = NSData(contentsOfURL: URL)!
-            let image = UIImage(data: data)!
-            let pngData = UIImagePNGRepresentation(image)!
 
-            return pngData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            return data.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         }()
 
         let jpegBase64EncodedString: String = {
             let URL = URLForResource("rainbow", withExtension: "jpg")
             let data = NSData(contentsOfURL: URL)!
-            let image = UIImage(data: data)!
-            let pngData = UIImageJPEGRepresentation(image, 0.8)!
 
-            return pngData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+            return data.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
         }()
 
         let parameters = [
