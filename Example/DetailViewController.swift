@@ -68,25 +68,27 @@ class DetailViewController: UITableViewController {
     // MARK: IBActions
 
     @IBAction func refresh() {
-        if request == nil {
+        guard let request = request else {
             return
         }
 
         refreshControl?.beginRefreshing()
 
         let start = CACurrentMediaTime()
-        request?.responseString { request, response, body, error in
+        request.responseString { request, response, result in
             let end = CACurrentMediaTime()
             self.elapsedTime = end - start
 
-            for (field, value) in response!.allHeaderFields {
-                self.headers["\(field)"] = "\(value)"
+            if let response = response {
+                for (field, value) in response.allHeaderFields {
+                    self.headers["\(field)"] = "\(value)"
+                }
             }
 
             if let segueIdentifier = self.segueIdentifier {
                 switch segueIdentifier {
                 case "GET", "POST", "PUT", "DELETE":
-                    self.body = body
+                    self.body = result.value
                 case "DOWNLOAD":
                     self.body = self.downloadedBodyString()
                 default:
@@ -101,23 +103,29 @@ class DetailViewController: UITableViewController {
 
     private func downloadedBodyString() -> String {
         let fileManager = NSFileManager.defaultManager()
-        let cachesDirectory = fileManager.URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask)[0] as! NSURL
+        let cachesDirectory = fileManager.URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask)[0]
 
-        if let
-            contents = fileManager.contentsOfDirectoryAtURL(
+        do {
+            let contents = try fileManager.contentsOfDirectoryAtURL(
                 cachesDirectory,
                 includingPropertiesForKeys: nil,
-                options: .SkipsHiddenFiles,
-                error: nil
-            ),
-            fileURL = contents.first as? NSURL,
-            data = NSData(contentsOfURL: fileURL),
-            json: AnyObject = NSJSONSerialization.JSONObjectWithData(data, options: nil, error: nil),
-            prettyData = NSJSONSerialization.dataWithJSONObject(json, options: .PrettyPrinted, error: nil),
-            prettyString = NSString(data: prettyData, encoding: NSUTF8StringEncoding) as? String
-        {
-            fileManager.removeItemAtURL(fileURL, error: nil)
-            return prettyString
+                options: .SkipsHiddenFiles
+            )
+
+            if let
+                fileURL = contents.first,
+                data = NSData(contentsOfURL: fileURL)
+            {
+                let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions())
+                let prettyData = try NSJSONSerialization.dataWithJSONObject(json, options: .PrettyPrinted)
+
+                if let prettyString = NSString(data: prettyData, encoding: NSUTF8StringEncoding) as? String {
+                    try fileManager.removeItemAtURL(fileURL)
+                    return prettyString
+                }
+            }
+        } catch {
+            // No-op
         }
 
         return ""
@@ -126,23 +134,21 @@ class DetailViewController: UITableViewController {
 
 // MARK: - UITableViewDataSource
 
-extension DetailViewController: UITableViewDataSource {
+extension DetailViewController {
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Sections(rawValue: section)! {
         case .Headers:
             return headers.count
         case .Body:
             return body == nil ? 0 : 1
-        default:
-            return 0
         }
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         switch Sections(rawValue: indexPath.section)! {
         case .Headers:
-            let cell = tableView.dequeueReusableCellWithIdentifier("Header") as! UITableViewCell
-            let field = headers.keys.array.sorted(<)[indexPath.row]
+            let cell = tableView.dequeueReusableCellWithIdentifier("Header")!
+            let field = headers.keys.sort(<)[indexPath.row]
             let value = headers[field]
 
             cell.textLabel?.text = field
@@ -150,8 +156,7 @@ extension DetailViewController: UITableViewDataSource {
 
             return cell
         case .Body:
-            let cell = tableView.dequeueReusableCellWithIdentifier("Body") as! UITableViewCell
-
+            let cell = tableView.dequeueReusableCellWithIdentifier("Body")!
             cell.textLabel?.text = body
 
             return cell
@@ -161,7 +166,7 @@ extension DetailViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 
-extension DetailViewController: UITableViewDelegate {
+extension DetailViewController {
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 2
     }

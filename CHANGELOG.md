@@ -2,10 +2,248 @@
 All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
+#### 2.x Releases
+
+- `2.0.x` Releases - [2.0.0-beta.1](#200-beta1) | [2.0.0-beta.2](#200-beta2) | [2.0.0-beta.3](#200-beta3) | [2.0.0-beta.4](#200-beta4)
+
+#### 1.x Releases
+
 - `1.3.x` Releases - [1.3.0](#130) | [1.3.1](#131)
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [2.0.0-beta.4](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.4)
+Released on 2015-09-06. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0-beta.4).
+
+#### Added
+
+- The `parameters` and `encoding` parameters to download APIs.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#719](https://github.com/Alamofire/Alamofire/issues/719).
+- Section to the README about wildcard domain matching with server trust policies.
+  - Added by [Sai](https://github.com/sai-prasanna) in Pull Request
+  [#718](https://github.com/Alamofire/Alamofire/pull/718).
+- A UTF-8 charset to Content-Type header for a URL encoded body.
+  - Added by [Cheolhee Han](https://github.com/cheolhee) in Pull Request
+  [#731](https://github.com/Alamofire/Alamofire/pull/731).
+- Tests around posting unicode parameters with URL encoding.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Pull Request
+  [#731](https://github.com/Alamofire/Alamofire/pull/731).
+- Tests for uploading base 64 encoded image data inside JSON.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#738](https://github.com/Alamofire/Alamofire/issues/738).
+- An Alamofire 2.0 migration guide document to the new Documentation folder.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- A Migration Guides section to the README with link to 2.0 guide.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+
+- Response serialization to prevent unnecessary call to response serializer.
+  - Updated by [Julien Ducret](https://github.com/brocoo) in Pull Request
+  [#716](https://github.com/Alamofire/Alamofire/pull/716).
+- Travis-CI yaml file to support iOS 9, OSX 10.11 and Xcode 7.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Result types to store an `ErrorType` instead of `NSError`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#732](https://github.com/Alamofire/Alamofire/issues/732).
+- Docstrings on the download method to be more accurate.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The README to require Xcode 7 beta 6.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The background session section of the README to use non-deprecated API.
+  - Updated by [David F. Muir V](https://github.com/dfmuir) in Pull Request
+  [#724](https://github.com/Alamofire/Alamofire/pull/724).
+- The playground to use the `Result` type.
+  - Updated by [Jonas Schmid](https://github.com/jschmid) in Pull Request
+  [#726](https://github.com/Alamofire/Alamofire/pull/726).
+- Updated progress code samples in the README to show how to call onto the main queue.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Removed
+
+- The AFNetworking sections from the FAQ in the README.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+
+- Issue on Windows where the wildcarded cert name in the test suite included asterisk.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#723](https://github.com/Alamofire/Alamofire/issues/723).
+- Crash when multipart form data was uploaded from in-memory data on background session.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#740](https://github.com/Alamofire/Alamofire/issues/740).
+- Issue where the background session completion handler was not called on the main queue.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#728](https://github.com/Alamofire/Alamofire/issues/728).
+
+## [2.0.0-beta.3](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.3)
+Released on 2015-08-25.
+
+#### Removed
+- The override for `NSMutableURLRequest` for the `URLRequestConvertible` protocol
+conformance that could cause unwanted URL request referencing.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
+## [2.0.0-beta.2](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.2)
+Released on 2015-08-24. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0-beta.2).
+
+#### Added
+- Host and certificate chain validation section to the README.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Tests verifying configuration headers are sent with all configuration types.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#692](https://github.com/Alamofire/Alamofire/issues/692).
+- New rdar to the list in the README about the #available check issue.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Override for `NSMutableURLRequest` for the `URLRequestConvertible` protocol.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- The README to note that CocoaPods 0.38.2 is required.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#682](https://github.com/Alamofire/Alamofire/issues/682).
+- The README to include note about keeping a reference to the `Manager`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#681](https://github.com/Alamofire/Alamofire/issues/681).
+- Server trust host validation over to use SSL policy evaluation.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The documentation for the `URLRequestConvertible` section in the README.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The `ServerTrustPolicyManager` to be more flexible by using `public` ACL.
+  - Updated by [Jan Riehn](https://github.com/jriehn) in Pull Request
+  [#696](https://github.com/Alamofire/Alamofire/pull/696).
+- The `ServerTrustPolicyManager` policies property to use `public` ACL and
+added docstrings.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The Ono response serializer example for Swift 2.0 in the README.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#700](https://github.com/Alamofire/Alamofire/issues/700).
+- `Result` failure case to store an `ErrorType` instead of `NSError`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#703](https://github.com/Alamofire/Alamofire/issues/703).
+- All source code to compile with Xcode 7 beta 6.
+  - Updated by [Michael Gray](https://github.com/mishagray) in Pull Request
+  [#707](https://github.com/Alamofire/Alamofire/pull/707).
+
+#### Removed
+- The `required` declaration on the `Manager` init method.
+  - Removed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#672](https://github.com/Alamofire/Alamofire/issues/672).
+
+#### Fixed
+- Issue where the `TaskDelegate` operation queue would leak if the task was
+never started.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+- Compiler issue on OS X target when creating background configurations
+in the test suite.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#693](https://github.com/Alamofire/Alamofire/issues/693).
+
+## [2.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0-beta.1)
+Released on 2015-08-10. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0-beta.1).
+
+#### Added
+- A `watchOS` deployment target to the podspec.
+  - Added by [Kyle Fuller](https://github.com/kylef) in Pull Request
+  [#574](https://github.com/Alamofire/Alamofire/pull/574).
+- Full screen support in the iOS Example App.
+  - Added by [Corinne Krych](https://github.com/corinnekrych) in Pull Request
+  [#612](https://github.com/Alamofire/Alamofire/pull/612).
+- Temporary workaround for `SecCertificate` array compiler crash.
+  - Added by [Robert Rasmussen](https://github.com/robrasmussen) in Issue
+  [#610](https://github.com/Alamofire/Alamofire/issues/610).
+- `Result` and `Error` types to refactor response validation and serialization.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#627](https://github.com/Alamofire/Alamofire/pull/627).
+- Tests around response data, string and json serialization result behavior.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#627](https://github.com/Alamofire/Alamofire/pull/627).
+- `CustomStringConvertible` and `CustomDebugStringConvertible` conformance
+to the `Result` enumeration.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#648](https://github.com/Alamofire/Alamofire/pull/648).
+- A Resume Data section to the README inside the Downloads section.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#648](https://github.com/Alamofire/Alamofire/pull/648).
+- A `watchOS` framework target to the project.
+  - Added by [Tobias Ottenweller](https://github.com/tomco) in Pull Request
+  [#616](https://github.com/Alamofire/Alamofire/pull/616).
+- `Result` tests pushing code coverage for `Result` enum to 100%.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Tests around all response serializer usage.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Public docstrings for all public `SessionDelegate` methods.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- A section to the README that calls out all open rdars affecting Alamofire.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Test for wildcard validation that contains response with nil MIME type.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#662](https://github.com/Alamofire/Alamofire/pull/662).
+- Support for stream tasks in iOS 9+ and OSX 10.11+.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#659](https://github.com/Alamofire/Alamofire/pull/659).
+
+#### Updated
+- All logic to compile against Swift 2.0.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- All logic to use the latest Swift 2.0 conventions.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- All public docstrings to the latest Swift 2.0 syntax.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- `URLRequestConvertible` to return an `NSMutableURLRequest`.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- All HTTP requests to HTTPS to better align with ATS.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The `escape` method in `ParameterEncoding` to use non-deprecated methods.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- All source code and docstrings to fit roughly within 120 characters.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The `MultipartFormData` encoding to leverage Swift 2.0 error handling.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- All README code samples to match the latest Swift 2.0 API changes.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#648](https://github.com/Alamofire/Alamofire/pull/648).
+- All frameworks to enable code coverage generation.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- All frameworks to set the enable testability flag to YES for release builds.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regard to Issue
+  [#652](https://github.com/Alamofire/Alamofire/issues/652).
+- `ParameterEncoding` to leverage guard for parameters to increase safety.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- iOS Example App to use optional bind around response to safely extract headers.
+  - Updated by [John Pope](https://github.com/johndpope) in Pull Request
+  [#665](https://github.com/Alamofire/Alamofire/pull/665).
+- The `queryComponents` and `escape` methods in `ParameterEncoding` to `public` to
+better support `.Custom` encoding.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#660](https://github.com/Alamofire/Alamofire/pull/660).
+- The static error convenience functions to a public ACL.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#668](https://github.com/Alamofire/Alamofire/issues/668).
+
+#### Removed
+- Explicit string values in `ParameterEncoding` since they are now implied.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+- An OSX cookie check in the `CustomDebugStringConvertible` conformance of a `Request`.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- Issue in automatic validation tests where mutable URL request was not used.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+- Potential crash cases in Validation MIME type logic exposed by chaining.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+- Compiler issue in the iOS Example App around `Result` type usage.
+  - Fixed by [Jan Kase](https://github.com/jankase) in Pull Request
+  [#639](https://github.com/Alamofire/Alamofire/pull/639).
+- The error code in the custom response serializers section of the README.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
 
 ---
 

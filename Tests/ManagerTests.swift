@@ -30,7 +30,7 @@ class ManagerTestCase: BaseTestCase {
         let manager = Alamofire.Manager()
         manager.startRequestsImmediately = false
 
-        let URL = NSURL(string: "http://httpbin.org/get")!
+        let URL = NSURL(string: "https://httpbin.org/get")!
         let URLRequest = NSURLRequest(URL: URL)
 
         let expectation = expectationWithDescription("\(URL)")
@@ -57,7 +57,7 @@ class ManagerTestCase: BaseTestCase {
         var manager: Manager? = Alamofire.Manager()
         manager?.startRequestsImmediately = false
 
-        let URL = NSURL(string: "http://httpbin.org/get")!
+        let URL = NSURL(string: "https://httpbin.org/get")!
         let URLRequest = NSURLRequest(URL: URL)
 
         // When
@@ -74,7 +74,7 @@ class ManagerTestCase: BaseTestCase {
         var manager: Manager? = Alamofire.Manager()
         manager!.startRequestsImmediately = false
 
-        let URL = NSURL(string: "http://httpbin.org/get")!
+        let URL = NSURL(string: "https://httpbin.org/get")!
         let URLRequest = NSURLRequest(URL: URL)
 
         // When
@@ -86,5 +86,92 @@ class ManagerTestCase: BaseTestCase {
         let state = request.task.state
         XCTAssertTrue(state == .Canceling || state == .Completed, "state should be .Canceling or .Completed")
         XCTAssertNil(manager, "manager should be nil")
+    }
+}
+
+// MARK: -
+
+class ManagerConfigurationHeadersTestCase: BaseTestCase {
+    enum ConfigurationType {
+        case Default, Ephemeral, Background
+    }
+
+    func testThatDefaultConfigurationHeadersAreSentWithRequest() {
+        // Given, When, Then
+        executeAuthorizationHeaderTestForConfigurationType(.Default)
+    }
+
+    func testThatEphemeralConfigurationHeadersAreSentWithRequest() {
+        // Given, When, Then
+        executeAuthorizationHeaderTestForConfigurationType(.Ephemeral)
+    }
+
+    func testThatBackgroundConfigurationHeadersAreSentWithRequest() {
+        // Given, When, Then
+        executeAuthorizationHeaderTestForConfigurationType(.Background)
+    }
+
+    private func executeAuthorizationHeaderTestForConfigurationType(type: ConfigurationType) {
+        // Given
+        let manager: Manager = {
+            let configuration: NSURLSessionConfiguration = {
+                let configuration: NSURLSessionConfiguration
+
+                switch type {
+                case .Default:
+                    configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+                case .Ephemeral:
+                    configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
+                case .Background:
+                    let identifier = "com.alamofire.test.manager-configuration-tests"
+                    configuration = NSURLSessionConfiguration.backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier)
+                }
+
+                var headers = Alamofire.Manager.defaultHTTPHeaders
+                headers["Authorization"] = "Bearer 123456"
+                configuration.HTTPAdditionalHeaders = headers
+
+                return configuration
+            }()
+
+            return Manager(configuration: configuration)
+        }()
+
+        let expectation = expectationWithDescription("request should complete successfully")
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var result: Result<AnyObject>?
+
+        // When
+        manager.request(.GET, "https://httpbin.org/headers")
+            .responseJSON { responseRequest, responseResponse, responseResult in
+                request = responseRequest
+                response = responseResponse
+                result = responseResult
+
+                expectation.fulfill()
+            }
+
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+
+        if let result = result {
+            XCTAssertTrue(result.isSuccess, "result should be a success")
+
+            if let
+                headers = result.value?["headers" as NSString] as? [String: String],
+                authorization = headers["Authorization"]
+            {
+                XCTAssertEqual(authorization, "Bearer 123456", "authorization header value does not match")
+            } else {
+                XCTFail("failed to extract authorization header value")
+            }
+        } else {
+            XCTFail("result should not be nil")
+        }
     }
 }
