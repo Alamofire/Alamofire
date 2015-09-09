@@ -352,7 +352,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     // MARK: Tests - Varying HTTP Methods
 
-    func testURLParameterEncodeGETParametersInURL() {
+    func testThatURLParameterEncodingEncodesGETParametersInURL() {
         // Given
         let mutableURLRequest = self.URLRequest.URLRequest
         mutableURLRequest.HTTPMethod = Method.GET.rawValue
@@ -367,7 +367,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         XCTAssertNil(URLRequest.HTTPBody, "HTTPBody should be nil")
     }
 
-    func testURLParameterEncodePOSTParametersInHTTPBody() {
+    func testThatURLParameterEncodingEncodesPOSTParametersInHTTPBody() {
         // Given
         let mutableURLRequest = self.URLRequest.URLRequest
         mutableURLRequest.HTTPMethod = Method.POST.rawValue
@@ -392,6 +392,21 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         } else {
             XCTFail("decoded http body should not be nil")
         }
+    }
+
+    func testThatURLEncodedInURLParameterEncodingEncodesPOSTParametersInURL() {
+        // Given
+        let mutableURLRequest = self.URLRequest.URLRequest
+        mutableURLRequest.HTTPMethod = Method.POST.rawValue
+        let parameters = ["foo": 1, "bar": 2]
+
+        // When
+        let (URLRequest, _) = ParameterEncoding.URLEncodedInURL.encode(mutableURLRequest, parameters: parameters)
+
+        // Then
+        XCTAssertEqual(URLRequest.URL?.query ?? "", "bar=2&foo=1", "query is incorrect")
+        XCTAssertNil(URLRequest.valueForHTTPHeaderField("Content-Type"), "Content-Type should be nil")
+        XCTAssertNil(URLRequest.HTTPBody, "HTTPBody should be nil")
     }
 }
 
