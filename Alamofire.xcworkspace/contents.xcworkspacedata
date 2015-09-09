@@ -10,4 +10,7 @@
    <FileRef
       location = "group:Alamofire.playground">
    </FileRef>
+   <FileRef
+      location = "group:Pods/Pods.xcodeproj">
+   </FileRef>
 </Workspace>

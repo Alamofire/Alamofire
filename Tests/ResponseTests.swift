@@ -23,6 +23,7 @@
 import Alamofire
 import Foundation
 import XCTest
+import Result
 
 class ResponseDataTestCase: BaseTestCase {
     func testThatResponseDataReturnsSuccessResultWithValidData() {

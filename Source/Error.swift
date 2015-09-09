@@ -64,3 +64,19 @@ public struct Error {
         return NSError(domain: Domain, code: code, userInfo: userInfo)
     }
 }
+
+private let DataErrorKey = "data"
+
+extension NSError {
+    var data: NSData? {
+        return self.userInfo[DataErrorKey] as? NSData
+    }
+
+    func withData(data: NSData?) -> NSError {
+        var mutableUserInfo = self.userInfo
+        if let data = data {
+            mutableUserInfo[DataErrorKey] = data
+        }
+        return NSError(domain: self.domain, code: self.code, userInfo: mutableUserInfo)
+    }
+}

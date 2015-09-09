@@ -23,6 +23,7 @@
 @testable import Alamofire
 import Foundation
 import XCTest
+import Result
 
 class ManagerTestCase: BaseTestCase {
 
