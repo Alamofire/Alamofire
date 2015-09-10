@@ -1,10 +1,10 @@
 ![Alamofire: Result<Elegant> Networking in Swift](https://cloud.githubusercontent.com/assets/858090/9784273/86d5894a-57aa-11e5-8428-9ad85baad64c.gif)
 
-[![Build Status](https://travis-ci.org/Alamofire/Alamofire.svg)](https://travis-ci.org/Alamofire/Alamofire)
+[![Build Status](https://travis-ci.org/Karumi/Alamofire-Result.svg)](https://travis-ci.org/Karumi/Alamofire-Result)
 [![Cocoapods Compatible](https://img.shields.io/cocoapods/v/Alamofire.svg)](https://img.shields.io/cocoapods/v/Alamofire.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Platform](https://img.shields.io/cocoapods/p/Alamofire.svg?style=flat)](http://cocoadocs.org/docsets/Alamofire)
-[![Twitter](https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat)](http://twitter.com/AlamofireSF)
+[![Twitter](https://img.shields.io/badge/twitter-@goKarumi-blue.svg?style=flat)](http://twitter.com/goKarumi)
 
 Alamofire+Result is a Fork of Alamofire an HTTP networking library written in Swift with the combination of antitypical/Result to be handle network result in a functional way.
 
