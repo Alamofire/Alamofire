@@ -25,7 +25,7 @@ Alamofire is an HTTP networking library written in Swift.
 ## Requirements
 
 - iOS 8.0+ / Mac OS X 10.9+ / watchOS 2
-- Xcode 7.0 beta 6+
+- Xcode 7.0+
 
 ## Migration Guides
 
@@ -243,6 +243,7 @@ Parameters can also be encoded as JSON, Property List, or any custom format, usi
 ```swift
 enum ParameterEncoding {
     case URL
+    case URLEncodedInURL
     case JSON
     case PropertyList(format: NSPropertyListFormat, options: NSPropertyListWriteOptions)
     case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?))
@@ -253,6 +254,7 @@ enum ParameterEncoding {
 ```
 
 - `URL`: A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. _Since there is no published specification for how to encode collection types, Alamofire follows the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`)._
+- `URLEncodedInURL`: Creates query string to be set as or appended to any existing URL query. Uses the same implementation as the `.URL` case, but always applies the encoded result to the URL.
 - `JSON`: Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
 - `PropertyList`: Uses `NSPropertyListSerialization` to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
 - `Custom`: Uses the associated closure value to construct a new request given an existing request and parameters.
