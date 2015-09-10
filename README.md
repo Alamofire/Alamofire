@@ -29,7 +29,7 @@ Alamofire is an HTTP networking library written in Swift.
 
 ## Migration Guides
 
-- [Alamofire 2.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/swift-2.0/Documentation/Alamofire%202.0%20Migration%20Guide.md)
+- [Alamofire 2.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%202.0%20Migration%20Guide.md)
 
 ## Communication
 
