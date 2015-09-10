@@ -21,7 +21,6 @@ Released on 2015-09-09. All issues associated with this milestone can be found u
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0).
 
 #### Added
-
 - A new `URLEncodedInURL` case to the `ParameterEncoding` for encoding in the URL.
   - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#742](https://github.com/Alamofire/Alamofire/pull/742).
@@ -33,7 +32,6 @@ Released on 2015-09-06. All issues associated with this milestone can be found u
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.0-beta.4).
 
 #### Added
-
 - The `parameters` and `encoding` parameters to download APIs.
   - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#719](https://github.com/Alamofire/Alamofire/issues/719).
@@ -55,7 +53,6 @@ Released on 2015-09-06. All issues associated with this milestone can be found u
   - Added by [Christian Noon](https://github.com/cnoon).
 
 #### Updated
-
 - Response serialization to prevent unnecessary call to response serializer.
   - Updated by [Julien Ducret](https://github.com/brocoo) in Pull Request
   [#716](https://github.com/Alamofire/Alamofire/pull/716).
@@ -78,12 +75,10 @@ Released on 2015-09-06. All issues associated with this milestone can be found u
   - Updated by [Christian Noon](https://github.com/cnoon).
 
 #### Removed
-
 - The AFNetworking sections from the FAQ in the README.
   - Removed by [Christian Noon](https://github.com/cnoon).
 
 #### Fixed
-
 - Issue on Windows where the wildcarded cert name in the test suite included asterisk.
   - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#723](https://github.com/Alamofire/Alamofire/issues/723).
