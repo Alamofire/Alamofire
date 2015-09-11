@@ -85,7 +85,7 @@ $ brew install carthage
 To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" "swift-2.0"
+github "Alamofire/Alamofire" ~> 2.0
 ```
 
 ### Manually
