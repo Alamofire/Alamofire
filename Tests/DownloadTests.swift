@@ -123,7 +123,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 options: .SkipsHiddenFiles
             )
 
-            #if os(iOS)
+            #if os(iOS) || os(tvOS)
             let suggestedFilename = "\(numberOfLines)"
             #elseif os(OSX)
             let suggestedFilename = "\(numberOfLines).json"
