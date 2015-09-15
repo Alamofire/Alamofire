@@ -7,20 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		18C008DB1BA4E6850062B893 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		18C008DC1BA4E6DD0062B893 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* Error.swift */; };
-		18C008DD1BA4E6ED0062B893 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C361AF8932A00BABAE5 /* Manager.swift */; };
-		18C008DE1BA4E6F30062B893 /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
-		18C008DF1BA4E6F60062B893 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C391AF899EC00BABAE5 /* Request.swift */; };
-		18C008E01BA4E6F90062B893 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E5BF71B673D3400816CCC /* Result.swift */; };
-		18C008E11BA4E6FD0062B893 /* Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C3C1AF89D4900BABAE5 /* Download.swift */; };
-		18C008E21BA4E7000062B893 /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */; };
-		18C008E31BA4E7030062B893 /* ResponseSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */; };
-		18C008E41BA4E7070062B893 /* ServerTrustPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */; };
-		18C008E51BA4E7070062B893 /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C83F41A1B749E0E00203445 /* Stream.swift */; };
-		18C008E61BA4E7070062B893 /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C3F1AF89E0700BABAE5 /* Upload.swift */; };
-		18C008E71BA4E7070062B893 /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C421AF89F0900BABAE5 /* Validation.swift */; };
-		18C008E81BA4E7160062B893 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
 		4C0B58391B747A4400C0B99C /* ResponseSerializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */; };
 		4C0B583A1B747A4400C0B99C /* ResponseSerializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */; };
 		4C0E5BF81B673D3400816CCC /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E5BF71B673D3400816CCC /* Result.swift */; };
@@ -209,7 +195,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		18C008D31BA4E6300062B893 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseSerializationTests.swift; sourceTree = "<group>"; };
 		4C0E5BF71B673D3400816CCC /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		4C1DC8531B68908E00476DE3 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
@@ -1047,6 +1032,7 @@
 		4CF627001BA7CB3E0011A099 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1069,6 +1055,7 @@
 		4CF627011BA7CB3E0011A099 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
@@ -1440,6 +1427,7 @@
 				4CF627011BA7CB3E0011A099 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4CF627051BA7CB3E0011A099 /* Build configuration list for PBXNativeTarget "Alamofire tvOS Tests" */ = {
 			isa = XCConfigurationList;
@@ -1448,6 +1436,7 @@
 				4CF627031BA7CB3E0011A099 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		4DD67C1E1A5C55C900ED2280 /* Build configuration list for PBXNativeTarget "Alamofire OSX" */ = {
 			isa = XCConfigurationList;
