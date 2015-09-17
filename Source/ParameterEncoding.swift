@@ -31,7 +31,7 @@ public enum Method: String {
     case OPTIONS, GET, HEAD, POST, PUT, PATCH, DELETE, TRACE, CONNECT
 }
 
-// MARK: - ParameterEncoding
+// MARK: ParameterEncoding
 
 /**
     Used to specify the way in which a set of parameters are applied to a URL request.
