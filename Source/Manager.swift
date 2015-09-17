@@ -651,15 +651,15 @@ public class Manager {
         public override func respondsToSelector(selector: Selector) -> Bool {
             switch selector {
             case "URLSession:didBecomeInvalidWithError:":
-                return (self.sessionDidBecomeInvalidWithError != nil)
+                return sessionDidBecomeInvalidWithError != nil
             case "URLSession:didReceiveChallenge:completionHandler:":
-                return (self.sessionDidReceiveChallenge != nil)
+                return sessionDidReceiveChallenge != nil
             case "URLSessionDidFinishEventsForBackgroundURLSession:":
-                return (self.sessionDidFinishEventsForBackgroundURLSession != nil)
+                return sessionDidFinishEventsForBackgroundURLSession != nil
             case "URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:":
-                return (self.taskWillPerformHTTPRedirection != nil)
+                return taskWillPerformHTTPRedirection != nil
             case "URLSession:dataTask:didReceiveResponse:completionHandler:":
-                return (self.dataTaskDidReceiveResponse != nil)
+                return dataTaskDidReceiveResponse != nil
             default:
                 return self.dynamicType.instancesRespondToSelector(selector)
             }
