@@ -3,18 +3,35 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 2.x Releases
-
-- `2.0.x` Releases - [2.0.0](#200)
+- `2.0.x` Releases - [2.0.0](#200) | [2.0.1](#201)
 - `2.0.0` Betas - [2.0.0-beta.1](#200-beta1) | [2.0.0-beta.2](#200-beta2) | [2.0.0-beta.3](#200-beta3) | [2.0.0-beta.4](#200-beta4)
 
 #### 1.x Releases
-
 - `1.3.x` Releases - [1.3.0](#130) | [1.3.1](#131)
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [2.0.1](https://github.com/Alamofire/Alamofire/releases/tag/2.0.1)
+Released on 2015-09-16. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.1).
+
+#### Updated
+- The CocoaPods installation instructions in the README.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The Carthage installation instructions in the README.
+  - Updated by [Gustavo Barbosa](https://github.com/barbosa) in Pull Request
+  [#759](https://github.com/Alamofire/Alamofire/pull/759).
+
+#### Fixed
+- The link to the 2.0 migration guide in the README.
+  - Fixed by [Dwight Watson](https://github.com/dwightwatson) in Pull Request
+  [#750](https://github.com/Alamofire/Alamofire/pull/750).
+- Issue where NTLM authentication credentials were not used for authentication challenges.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#721](https://github.com/Alamofire/Alamofire/pull/721).
 
 ## [2.0.0](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0)
 Released on 2015-09-09. All issues associated with this milestone can be found using this 
