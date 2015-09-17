@@ -660,8 +660,6 @@ public class Manager {
                 return (self.taskWillPerformHTTPRedirection != nil)
             case "URLSession:dataTask:didReceiveResponse:completionHandler:":
                 return (self.dataTaskDidReceiveResponse != nil)
-            case "URLSession:dataTask:willCacheResponse:completionHandler:":
-                return (self.dataTaskWillCacheResponse != nil)
             default:
                 return self.dynamicType.instancesRespondToSelector(selector)
             }
