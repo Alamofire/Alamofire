@@ -27,6 +27,7 @@
 		4C33A1441B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C33A1421B52089C00873DFF /* ServerTrustPolicyTests.swift */; };
 		4C341BBA1B1A865A00C1B34D /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
 		4C341BBB1B1A865A00C1B34D /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
+		4C3C53B21BAC5D40004F7F68 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */; settings = {ASSET_TAGS = (); }; };
 		4C7C8D221B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7C8D211B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4C7C8D231B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7C8D211B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4C811F8D1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */; };
@@ -221,6 +222,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C3C53B21BAC5D40004F7F68 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
