@@ -118,7 +118,7 @@ $ git submodule add https://github.com/Alamofire/Alamofire.git
 
 - And that's it!
 
-> The `Alamofire.framework` is automagically added as a target dependency, linked framework and embedded framework in a copy files build phase which is all you need to build on the simulator and a device.> > 
+> The `Alamofire.framework` is automagically added as a target dependency, linked framework and embedded framework in a copy files build phase which is all you need to build on the simulator and a device.
 
 ---
 
