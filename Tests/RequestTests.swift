@@ -87,7 +87,7 @@ class RequestResponseTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -293,7 +293,7 @@ class RequestResponseTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<AnyObject>?
+        var result: Result<AnyObject, NSError>?
 
         // When
         Alamofire.request(.POST, URLString, parameters: parameters)
@@ -356,7 +356,7 @@ class RequestResponseTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<AnyObject>?
+        var result: Result<AnyObject, NSError>?
 
         // When
         Alamofire.request(.POST, URLString, parameters: parameters)

@@ -39,8 +39,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
         XCTAssertNotNil(result.value, "result value should not be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error == nil, "result error should be nil")
+        XCTAssertNil(result.error, "result error should be nil")
     }
 
     func testThatDataResponseSerializerFailsWhenDataIsNil() {
@@ -53,10 +52,9 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? NSError {
+        if let error = result.error {
             XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
             XCTAssertEqual(error.code, Error.Code.DataSerializationFailed.rawValue, "error code should match expected value")
         } else {
@@ -76,10 +74,9 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? NSError {
+        if let error = result.error {
             XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
             XCTAssertEqual(error.code, Error.Code.StringSerializationFailed.rawValue, "error code should match expected value")
         } else {
@@ -87,7 +84,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    func testThatStringResponseSerializerSucceedsWhenDataIsEmpty() {
+    func testThatStringResponseSerializerFailsWhenDataIsEmpty() {
         // Given
         let serializer = Request.stringResponseSerializer()
 
@@ -95,10 +92,9 @@ class ResponseSerializationTestCase: BaseTestCase {
         let result = serializer.serializeResponse(nil, nil, NSData())
 
         // Then
-        XCTAssertTrue(result.isSuccess, "result is success should be true")
-        XCTAssertNotNil(result.value, "result value should not be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error == nil, "result error should be nil")
+        XCTAssertTrue(result.isFailure, "result is failure should be true")
+        XCTAssertNil(result.value, "result value should be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
     }
 
     func testThatStringResponseSerializerSucceedsWithUTF8DataAndNoProvidedEncoding() {
@@ -111,8 +107,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
         XCTAssertNotNil(result.value, "result value should not be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error == nil, "result error should be nil")
+        XCTAssertNil(result.error, "result error should be nil")
     }
 
     func testThatStringResponseSerializerSucceedsWithUTF8DataAndUTF8ProvidedEncoding() {
@@ -125,8 +120,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
         XCTAssertNotNil(result.value, "result value should not be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error == nil, "result error should be nil")
+        XCTAssertNil(result.error, "result error should be nil")
     }
 
     func testThatStringResponseSerializerSucceedsWithUTF8DataUsingResponseTextEncodingName() {
@@ -145,8 +139,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
         XCTAssertNotNil(result.value, "result value should not be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error == nil, "result error should be nil")
+        XCTAssertNil(result.error, "result error should be nil")
     }
 
     func testThatStringResponseSerializerFailsWithUTF32DataAndUTF8ProvidedEncoding() {
@@ -160,10 +153,9 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNotNil(result.data, "result data should not be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? NSError {
+        if let error = result.error {
             XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
             XCTAssertEqual(error.code, Error.Code.StringSerializationFailed.rawValue, "error code should match expected value")
         } else {
@@ -188,10 +180,9 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNotNil(result.data, "result data should not be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? NSError {
+        if let error = result.error {
             XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
             XCTAssertEqual(error.code, Error.Code.StringSerializationFailed.rawValue, "error code should match expected value")
         } else {
@@ -211,10 +202,9 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? NSError {
+        if let error = result.error {
             XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
             XCTAssertEqual(error.code, Error.Code.JSONSerializationFailed.rawValue, "error code should match expected value")
         } else {
@@ -232,12 +222,11 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNotNil(result.data, "result data should not be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? NSError {
-            XCTAssertEqual(error.domain, NSCocoaErrorDomain, "error domain should match expected value")
-            XCTAssertEqual(error.code, 3840, "error code should match expected value")
+        if let error = result.error {
+            XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
+            XCTAssertEqual(error.code, Error.Code.JSONSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -254,8 +243,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
         XCTAssertNotNil(result.value, "result value should not be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error == nil, "result error should be nil")
+        XCTAssertNil(result.error, "result error should be nil")
     }
 
     func testThatJSONResponseSerializerFailsWhenDataIsInvalidJSON() {
@@ -269,10 +257,9 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNotNil(result.data, "result data should not be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? NSError {
+        if let error = result.error {
             XCTAssertEqual(error.domain, NSCocoaErrorDomain, "error domain should match expected value")
             XCTAssertEqual(error.code, 3840, "error code should match expected value")
         } else {
@@ -292,10 +279,9 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? NSError {
+        if let error = result.error {
             XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
             XCTAssertEqual(error.code, Error.Code.PropertyListSerializationFailed.rawValue, "error code should match expected value")
         } else {
@@ -313,12 +299,11 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNotNil(result.data, "result data should not be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? NSError {
-            XCTAssertEqual(error.domain, NSCocoaErrorDomain, "error domain should match expected value")
-            XCTAssertEqual(error.code, 3840, "error code should match expected value")
+        if let error = result.error {
+            XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
+            XCTAssertEqual(error.code, Error.Code.PropertyListSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -335,8 +320,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
         XCTAssertNotNil(result.value, "result value should not be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error == nil, "result error should be nil")
+        XCTAssertNil(result.error, "result error should be nil")
     }
 
     func testThatPropertyListResponseSerializerFailsWhenDataIsInvalidPropertyListData() {
@@ -350,10 +334,9 @@ class ResponseSerializationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNotNil(result.data, "result data should not be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? NSError {
+        if let error = result.error {
             XCTAssertEqual(error.domain, NSCocoaErrorDomain, "error domain should match expected value")
             XCTAssertEqual(error.code, 3840, "error code should match expected value")
         } else {

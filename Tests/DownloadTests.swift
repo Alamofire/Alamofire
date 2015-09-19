@@ -94,7 +94,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.download(.GET, URLString, destination: destination)
@@ -265,7 +265,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.download(.GET, URLString, parameters: parameters, destination: destination)
@@ -307,7 +307,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.download(.GET, URLString, headers: headers, destination: destination)
@@ -357,7 +357,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: AnyObject?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         let download = Alamofire.download(.GET, URLString, destination: destination)
@@ -390,7 +390,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: AnyObject?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         let download = Alamofire.download(.GET, URLString, destination: destination)
@@ -433,7 +433,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<AnyObject>!
+        var result: Result<AnyObject, NSError>?
 
         // When
         let download = Alamofire.download(.GET, URLString, destination: destination)
@@ -456,9 +456,12 @@ class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNotNil(data, "data should not be nil")
 
-        XCTAssertTrue(result.isFailure, "result should be a failure")
-        XCTAssertNotNil(result.data, "data should not be nil")
-        XCTAssertTrue(result.error != nil, "error should not be nil")
+        if let result = result {
+            XCTAssertTrue(result.isFailure, "result should be a failure")
+            XCTAssertTrue(result.error != nil, "error should not be nil")
+        } else {
+            XCTFail("result should not be nil")
+        }
 
         XCTAssertNotNil(download.resumeData, "resume data should not be nil")
     }

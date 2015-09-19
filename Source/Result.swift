@@ -30,9 +30,9 @@ import Foundation
     - Failure: The request encountered an error resulting in a failure. The associated values are the original data 
                provided by the server as well as the error that caused the failure.
 */
-public enum Result<Value> {
+public enum Result<Value, Error: ErrorType> {
     case Success(Value)
-    case Failure(NSData?, ErrorType)
+    case Failure(Error)
 
     /// Returns `true` if the result is a success, `false` otherwise.
     public var isSuccess: Bool {
@@ -59,22 +59,12 @@ public enum Result<Value> {
         }
     }
 
-    /// Returns the associated data value if the result is a failure, `nil` otherwise.
-    public var data: NSData? {
-        switch self {
-        case .Success:
-            return nil
-        case .Failure(let data, _):
-            return data
-        }
-    }
-
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    public var error: ErrorType? {
+    public var error: Error? {
         switch self {
         case .Success:
             return nil
-        case .Failure(_, let error):
+        case .Failure(let error):
             return error
         }
     }
@@ -100,15 +90,8 @@ extension Result: CustomDebugStringConvertible {
         switch self {
         case .Success(let value):
             return "SUCCESS: \(value)"
-        case .Failure(let data, let error):
-            if let
-                data = data,
-                utf8Data = NSString(data: data, encoding: NSUTF8StringEncoding)
-            {
-                return "FAILURE: \(error) \(utf8Data)"
-            } else {
-                return "FAILURE with Error: \(error)"
-            }
+        case .Failure(let error):
+            return "FAILURE: \(error)"
         }
     }
 }

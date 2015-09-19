@@ -33,7 +33,7 @@ class ResponseDataTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<NSData>!
+        var result: Result<NSData, NSError>?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -52,11 +52,7 @@ class ResponseDataTestCase: BaseTestCase {
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNotNil(data, "data should not be nil")
-
-        XCTAssertTrue(result.isSuccess, "result should be success")
-        XCTAssertNotNil(result.value, "result value should not be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error == nil, "result error should be nil")
+        XCTAssertTrue(result?.isSuccess ?? false, "result should be success")
     }
 
     func testThatResponseDataReturnsFailureResultWithOptionalDataAndError() {
@@ -67,7 +63,7 @@ class ResponseDataTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<NSData>!
+        var result: Result<NSData, NSError>?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -86,11 +82,7 @@ class ResponseDataTestCase: BaseTestCase {
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNil(response, "response should be nil")
         XCTAssertNotNil(data, "data should not be nil")
-
-        XCTAssertTrue(result.isFailure, "result should be a failure")
-        XCTAssertNil(result.value, "result value should not be nil")
-        XCTAssertNotNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertTrue(result?.isFailure ?? false, "result should be failure")
     }
 }
 
@@ -105,7 +97,7 @@ class ResponseStringTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<String>!
+        var result: Result<String, NSError>?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -124,11 +116,7 @@ class ResponseStringTestCase: BaseTestCase {
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNotNil(data, "data should not be nil")
-
-        XCTAssertTrue(result.isSuccess, "result should be success")
-        XCTAssertNotNil(result.value, "result value should not be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error == nil, "result error should be nil")
+        XCTAssertTrue(result?.isSuccess ?? false, "result should be success")
     }
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
@@ -139,7 +127,7 @@ class ResponseStringTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<String>!
+        var result: Result<String, NSError>?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -158,11 +146,7 @@ class ResponseStringTestCase: BaseTestCase {
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNil(response, "response should be nil")
         XCTAssertNotNil(data, "data should not be nil")
-
-        XCTAssertTrue(result.isFailure, "result should be a failure")
-        XCTAssertNil(result.value, "result value should not be nil")
-        XCTAssertNotNil(result.data, "result data should not be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertTrue(result?.isFailure ?? false, "result should be failure")
     }
 }
 
@@ -177,7 +161,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<AnyObject>!
+        var result: Result<AnyObject, NSError>?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -196,11 +180,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNotNil(data, "data should not be nil")
-
-        XCTAssertTrue(result.isSuccess, "result should be success")
-        XCTAssertNotNil(result.value, "result value should not be nil")
-        XCTAssertNil(result.data, "result data should be nil")
-        XCTAssertTrue(result.error == nil, "result error should be nil")
+        XCTAssertTrue(result?.isSuccess ?? false, "result should be success")
     }
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
@@ -211,7 +191,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<AnyObject>!
+        var result: Result<AnyObject, NSError>?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -230,11 +210,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNil(response, "response should be nil")
         XCTAssertNotNil(data, "data should not be nil")
-
-        XCTAssertTrue(result.isFailure, "result should be a failure")
-        XCTAssertNil(result.value, "result value should not be nil")
-        XCTAssertNotNil(result.data, "result data should not be nil")
-        XCTAssertTrue(result.error != nil, "result error should not be nil")
+        XCTAssertTrue(result?.isFailure ?? false, "result should be failure")
     }
 
     func testThatResponseJSONReturnsSuccessResultForGETRequest() {
@@ -245,7 +221,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<AnyObject>!
+        var result: Result<AnyObject, NSError>?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -264,11 +240,11 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertTrue(result.isSuccess, "result should be success")
+        XCTAssertTrue(result?.isSuccess ?? false, "result should be success")
 
         // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
         // - https://openradar.appspot.com/radar?id=5517037090635776
-        if let args = result.value?["args" as NSString] as? [String: String] {
+        if let args = result?.value?["args" as NSString] as? [String: String] {
             XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
         } else {
             XCTFail("args should not be nil")
@@ -283,7 +259,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<AnyObject>!
+        var result: Result<AnyObject, NSError>?
 
         // When
         Alamofire.request(.POST, URLString, parameters: ["foo": "bar"])
@@ -302,11 +278,11 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertTrue(result.isSuccess, "result should be success")
+        XCTAssertTrue(result?.isSuccess ?? false, "result should be success")
 
         // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
         // - https://openradar.appspot.com/radar?id=5517037090635776
-        if let form = result.value?["form" as NSString] as? [String: String] {
+        if let form = result?.value?["form" as NSString] as? [String: String] {
             XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
         } else {
             XCTFail("form should not be nil")
@@ -327,7 +303,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -362,7 +338,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -402,7 +378,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -442,7 +418,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -484,7 +460,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString)

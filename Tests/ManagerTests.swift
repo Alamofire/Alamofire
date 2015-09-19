@@ -142,7 +142,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var result: Result<AnyObject>?
+        var result: Result<AnyObject, NSError>?
 
         // When
         manager.request(.GET, "https://httpbin.org/headers")

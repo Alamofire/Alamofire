@@ -193,7 +193,7 @@ public class Request {
         let progress: NSProgress
 
         var data: NSData? { return nil }
-        var error: ErrorType?
+        var error: NSError?
 
         var credential: NSURLCredential?
 
