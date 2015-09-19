@@ -432,6 +432,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
+        var data: NSData?
         var result: Result<AnyObject>!
 
         // When
@@ -439,9 +440,10 @@ class DownloadResumeDataTestCase: BaseTestCase {
         download.progress { _, _, _ in
             download.cancel()
         }
-        download.responseJSON { responseRequest, responseResponse, responseResult in
+        download.responseJSON { responseRequest, responseResponse, responseData, responseResult in
             request = responseRequest
             response = responseResponse
+            data = responseData
             result = responseResult
 
             expectation.fulfill()
@@ -452,6 +454,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
 
         XCTAssertTrue(result.isFailure, "result should be a failure")
         XCTAssertNotNil(result.data, "data should not be nil")

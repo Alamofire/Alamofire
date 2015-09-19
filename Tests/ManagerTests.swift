@@ -141,13 +141,15 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
+        var data: NSData?
         var result: Result<AnyObject>?
 
         // When
         manager.request(.GET, "https://httpbin.org/headers")
-            .responseJSON { responseRequest, responseResponse, responseResult in
+            .responseJSON { responseRequest, responseResponse, responseData, responseResult in
                 request = responseRequest
                 response = responseResponse
+                data = responseData
                 result = responseResult
 
                 expectation.fulfill()
@@ -158,6 +160,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
 
         if let result = result {
             XCTAssertTrue(result.isSuccess, "result should be a success")

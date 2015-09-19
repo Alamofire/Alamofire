@@ -292,13 +292,15 @@ class RequestResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
+        var data: NSData?
         var result: Result<AnyObject>?
 
         // When
         Alamofire.request(.POST, URLString, parameters: parameters)
-            .responseJSON { responseRequest, responseResponse, responseResult in
+            .responseJSON { responseRequest, responseResponse, responseData, responseResult in
                 request = responseRequest
                 response = responseResponse
+                data = responseData
                 result = responseResult
 
                 expectation.fulfill()
@@ -309,6 +311,7 @@ class RequestResponseTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNotNil(result, "result should be nil")
 
         if let
@@ -352,13 +355,15 @@ class RequestResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
+        var data: NSData?
         var result: Result<AnyObject>?
 
         // When
         Alamofire.request(.POST, URLString, parameters: parameters)
-            .responseJSON { responseRequest, responseResponse, responseResult in
+            .responseJSON { responseRequest, responseResponse, responseData, responseResult in
                 request = responseRequest
                 response = responseResponse
+                data = responseData
                 result = responseResult
 
                 expectation.fulfill()
@@ -369,6 +374,7 @@ class RequestResponseTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNotNil(result, "result should be nil")
 
         if let

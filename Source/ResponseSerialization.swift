@@ -102,7 +102,7 @@ extension Request {
     public func response<T: ResponseSerializer, V where T.SerializedObject == V>(
         queue queue: dispatch_queue_t? = nil,
         responseSerializer: T,
-        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, Result<V>) -> Void)
+        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, Result<V>) -> Void)
         -> Self
     {
         delegate.queue.addOperationWithBlock {
@@ -115,7 +115,7 @@ extension Request {
             }()
 
             dispatch_async(queue ?? dispatch_get_main_queue()) {
-                completionHandler(self.request, self.response, result)
+                completionHandler(self.request, self.response, self.delegate.data, result)
             }
         }
 
@@ -151,7 +151,7 @@ extension Request {
 
         - returns: The request.
     */
-    public func responseData(completionHandler: (NSURLRequest?, NSHTTPURLResponse?, Result<NSData>) -> Void) -> Self {
+    public func responseData(completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, Result<NSData>) -> Void) -> Self {
         return response(responseSerializer: Request.dataResponseSerializer(), completionHandler: completionHandler)
     }
 }
@@ -212,7 +212,7 @@ extension Request {
     */
     public func responseString(
         encoding encoding: NSStringEncoding? = nil,
-        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, Result<String>) -> Void)
+        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, Result<String>) -> Void)
         -> Self
     {
         return response(
@@ -266,7 +266,7 @@ extension Request {
     */
     public func responseJSON(
         options options: NSJSONReadingOptions = .AllowFragments,
-        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, Result<AnyObject>) -> Void)
+        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, Result<AnyObject>) -> Void)
         -> Self
     {
         return response(
@@ -320,7 +320,7 @@ extension Request {
     */
     public func responsePropertyList(
         options options: NSPropertyListReadOptions = NSPropertyListReadOptions(),
-        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, Result<AnyObject>) -> Void)
+        completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, Result<AnyObject>) -> Void)
         -> Self
     {
         return response(
