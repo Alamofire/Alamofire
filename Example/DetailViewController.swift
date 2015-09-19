@@ -75,7 +75,7 @@ class DetailViewController: UITableViewController {
         refreshControl?.beginRefreshing()
 
         let start = CACurrentMediaTime()
-        request.responseString { request, response, result in
+        request.responseString { request, response, _, result in
             let end = CACurrentMediaTime()
             self.elapsedTime = end - start
 
