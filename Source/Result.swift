@@ -73,6 +73,8 @@ public enum Result<Value, Error: ErrorType> {
 // MARK: - CustomStringConvertible
 
 extension Result: CustomStringConvertible {
+    /// The textual representation used when written to an output stream, which includes whether the result was a 
+    /// success or failure.
     public var description: String {
         switch self {
         case .Success:
@@ -86,6 +88,8 @@ extension Result: CustomStringConvertible {
 // MARK: - CustomDebugStringConvertible
 
 extension Result: CustomDebugStringConvertible {
+    /// The debug textual representation used when written to an output stream, which includes whether the result was a
+    /// success or failure in addition to the value or error.
     public var debugDescription: String {
         switch self {
         case .Success(let value):
