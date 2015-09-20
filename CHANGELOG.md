@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 2.x Releases
-- `2.0.x` Releases - [2.0.0](#200) | [2.0.1](#201)
+- `2.0.x` Releases - [2.0.0](#200) | [2.0.1](#201) | [2.0.2](#202)
 - `2.0.0` Betas - [2.0.0-beta.1](#200-beta1) | [2.0.0-beta.2](#200-beta2) | [2.0.0-beta.3](#200-beta3) | [2.0.0-beta.4](#200-beta4)
 
 #### 1.x Releases
@@ -13,6 +13,23 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [2.0.2](https://github.com/Alamofire/Alamofire/releases/tag/2.0.2)
+Released on 2015-09-20. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.2).
+
+#### Updated
+- The Embedded Framework documentation to include `git init` info.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#782](https://github.com/Alamofire/Alamofire/issues/782).
+
+#### Fixed
+- Alamofire iOS framework target by adding Alamofire iOS Tests as Target Dependency.
+  - Fixed by [Nicky Gerritsen](https://github.com/nickygerritsen) in Pull Request
+  [#780](https://github.com/Alamofire/Alamofire/pull/780).
+- Percent encoding issue for long Chinese strings using URL parameter encoding.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#206](https://github.com/Alamofire/Alamofire/issues/206).
 
 ## [2.0.1](https://github.com/Alamofire/Alamofire/releases/tag/2.0.1)
 Released on 2015-09-16. All issues associated with this milestone can be found using this 
