@@ -30,6 +30,8 @@ import Foundation
 public protocol ResponseSerializer {
     /// The type of serialized object to be created by this `ResponseSerializer`.
     typealias SerializedObject
+
+    /// The type of error to be created by this `ResponseSerializer` if serialization fails.
     typealias Error: ErrorType
 
     /**
