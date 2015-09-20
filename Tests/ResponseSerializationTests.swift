@@ -325,7 +325,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatPropertyListResponseSerializerFailsWhenDataIsInvalidPropertyListData() {
         // Given
-        let serializer = Request.JSONResponseSerializer()
+        let serializer = Request.propertyListResponseSerializer()
         let data = "definitely not valid plist data".dataUsingEncoding(NSUTF8StringEncoding)!
 
         // When
