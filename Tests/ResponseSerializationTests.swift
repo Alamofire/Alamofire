@@ -34,7 +34,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let data = "data".dataUsingEncoding(NSUTF8StringEncoding)!
 
         // When
-        let result = serializer.serializeResponse(nil, nil, data)
+        let result = serializer.serializeResponse(nil, nil, data, nil)
 
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
@@ -47,7 +47,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let serializer = Request.dataResponseSerializer()
 
         // When
-        let result = serializer.serializeResponse(nil, nil, nil)
+        let result = serializer.serializeResponse(nil, nil, nil, nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
@@ -69,7 +69,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let serializer = Request.stringResponseSerializer()
 
         // When
-        let result = serializer.serializeResponse(nil, nil, nil)
+        let result = serializer.serializeResponse(nil, nil, nil, nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
@@ -89,7 +89,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let serializer = Request.stringResponseSerializer()
 
         // When
-        let result = serializer.serializeResponse(nil, nil, NSData())
+        let result = serializer.serializeResponse(nil, nil, NSData(), nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
@@ -102,7 +102,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let data = "data".dataUsingEncoding(NSUTF8StringEncoding)!
 
         // When
-        let result = serializer.serializeResponse(nil, nil, data)
+        let result = serializer.serializeResponse(nil, nil, data, nil)
 
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
@@ -115,7 +115,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let data = "data".dataUsingEncoding(NSUTF8StringEncoding)!
 
         // When
-        let result = serializer.serializeResponse(nil, nil, data)
+        let result = serializer.serializeResponse(nil, nil, data, nil)
 
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
@@ -134,7 +134,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         )
 
         // When
-        let result = serializer.serializeResponse(nil, response, data)
+        let result = serializer.serializeResponse(nil, response, data, nil)
 
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
@@ -148,7 +148,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let data = "random data".dataUsingEncoding(NSUTF32StringEncoding)!
 
         // When
-        let result = serializer.serializeResponse(nil, nil, data)
+        let result = serializer.serializeResponse(nil, nil, data, nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
@@ -175,7 +175,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         )
 
         // When
-        let result = serializer.serializeResponse(nil, response, data)
+        let result = serializer.serializeResponse(nil, response, data, nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
@@ -197,7 +197,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let serializer = Request.JSONResponseSerializer()
 
         // When
-        let result = serializer.serializeResponse(nil, nil, nil)
+        let result = serializer.serializeResponse(nil, nil, nil, nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
@@ -217,7 +217,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let serializer = Request.JSONResponseSerializer()
 
         // When
-        let result = serializer.serializeResponse(nil, nil, NSData())
+        let result = serializer.serializeResponse(nil, nil, NSData(), nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
@@ -238,7 +238,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let data = "{\"json\": true}".dataUsingEncoding(NSUTF8StringEncoding)!
 
         // When
-        let result = serializer.serializeResponse(nil, nil, data)
+        let result = serializer.serializeResponse(nil, nil, data, nil)
 
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
@@ -252,7 +252,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let data = "definitely not valid json".dataUsingEncoding(NSUTF8StringEncoding)!
 
         // When
-        let result = serializer.serializeResponse(nil, nil, data)
+        let result = serializer.serializeResponse(nil, nil, data, nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
@@ -274,7 +274,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let serializer = Request.propertyListResponseSerializer()
 
         // When
-        let result = serializer.serializeResponse(nil, nil, nil)
+        let result = serializer.serializeResponse(nil, nil, nil, nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
@@ -294,7 +294,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let serializer = Request.propertyListResponseSerializer()
 
         // When
-        let result = serializer.serializeResponse(nil, nil, NSData())
+        let result = serializer.serializeResponse(nil, nil, NSData(), nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
@@ -315,7 +315,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let data = NSKeyedArchiver.archivedDataWithRootObject(["foo": "bar"])
 
         // When
-        let result = serializer.serializeResponse(nil, nil, data)
+        let result = serializer.serializeResponse(nil, nil, data, nil)
 
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true")
@@ -329,7 +329,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         let data = "definitely not valid plist data".dataUsingEncoding(NSUTF8StringEncoding)!
 
         // When
-        let result = serializer.serializeResponse(nil, nil, data)
+        let result = serializer.serializeResponse(nil, nil, data, nil)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")

@@ -35,9 +35,9 @@ public protocol ResponseSerializer {
     typealias Error: ErrorType
 
     /**
-        A closure used by response handlers that takes a request, response, and data and returns a result.
+        A closure used by response handlers that takes a request, response, data and error and returns a result.
     */
-    var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?) -> Result<SerializedObject, Error> { get }
+    var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Result<SerializedObject, Error> { get }
 }
 
 // MARK: -
@@ -53,9 +53,9 @@ public struct GenericResponseSerializer<T, E: ErrorType>: ResponseSerializer {
     public typealias Error = E
 
     /**
-        A closure used by response handlers that takes a request, response, and data and returns a result.
+        A closure used by response handlers that takes a request, response, data and error and returns a result.
     */
-    public var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?) -> Result<T, E>
+    public var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Result<T, E>
 
     /**
         Initializes the `GenericResponseSerializer` instance with the given serialize response closure.
@@ -64,7 +64,7 @@ public struct GenericResponseSerializer<T, E: ErrorType>: ResponseSerializer {
 
         - returns: The new generic response serializer instance.
     */
-    public init(serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?) -> Result<T, E>) {
+    public init(serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Result<T, E>) {
         self.serializeResponse = serializeResponse
     }
 }
@@ -112,7 +112,12 @@ extension Request {
         -> Self
     {
         delegate.queue.addOperationWithBlock {
-            let result = responseSerializer.serializeResponse(self.request, self.response, self.delegate.data)
+            let result = responseSerializer.serializeResponse(
+                self.request,
+                self.response,
+                self.delegate.data,
+                self.delegate.error
+            )
 
             dispatch_async(queue ?? dispatch_get_main_queue()) {
                 completionHandler(self.request, self.response, self.delegate.data, result)
@@ -133,7 +138,9 @@ extension Request {
         - returns: A data response serializer.
     */
     public static func dataResponseSerializer() -> GenericResponseSerializer<NSData, NSError> {
-        return GenericResponseSerializer { _, _, data in
+        return GenericResponseSerializer { _, _, data, error in
+            guard error == nil else { return .Failure(error!) }
+
             guard let validData = data where validData.length > 0 else {
                 let failureReason = "Data could not be serialized. Input data was nil or zero length."
                 let error = Error.errorWithCode(.DataSerializationFailed, failureReason: failureReason)
@@ -178,7 +185,9 @@ extension Request {
         var encoding encoding: NSStringEncoding? = nil)
         -> GenericResponseSerializer<String, NSError>
     {
-        return GenericResponseSerializer { _, response, data in
+        return GenericResponseSerializer { _, response, data, error in
+            guard error == nil else { return .Failure(error!) }
+
             guard let validData = data where validData.length > 0 else {
                 let failureReason = "String could not be serialized. Input data was nil or zero length."
                 let error = Error.errorWithCode(.StringSerializationFailed, failureReason: failureReason)
@@ -243,7 +252,9 @@ extension Request {
         options options: NSJSONReadingOptions = .AllowFragments)
         -> GenericResponseSerializer<AnyObject, NSError>
     {
-        return GenericResponseSerializer { _, _, data in
+        return GenericResponseSerializer { _, _, data, error in
+            guard error == nil else { return .Failure(error!) }
+
             guard let validData = data where validData.length > 0 else {
                 let failureReason = "JSON could not be serialized. Input data was nil or zero length."
                 let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
@@ -297,7 +308,9 @@ extension Request {
         options options: NSPropertyListReadOptions = NSPropertyListReadOptions())
         -> GenericResponseSerializer<AnyObject, NSError>
     {
-        return GenericResponseSerializer { _, _, data in
+        return GenericResponseSerializer { _, _, data, error in
+            guard error == nil else { return .Failure(error!) }
+
             guard let validData = data where validData.length > 0 else {
                 let failureReason = "Property list could not be serialized. Input data was nil or zero length."
                 let error = Error.errorWithCode(.PropertyListSerializationFailed, failureReason: failureReason)
