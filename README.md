@@ -179,6 +179,8 @@ Alamofire.request(.GET, "http://httpbin.org/get")
          .responseJSON { _, _, result in
              print(result)
              debugPrint(result)
+             
+             print("Parsed JSON: \(result.value)")
          }
 ```
 
