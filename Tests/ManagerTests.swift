@@ -20,11 +20,117 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Alamofire
+@testable import Alamofire
 import Foundation
 import XCTest
 
 class ManagerTestCase: BaseTestCase {
+
+    // MARK: Initialization Tests
+
+    func testInitializerWithDefaultArguments() {
+        // Given, When
+        let manager = Manager()
+
+        // Then
+        XCTAssertNotNil(manager.session.delegate, "session delegate should not be nil")
+        XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
+        XCTAssertNil(manager.session.serverTrustPolicyManager, "session server trust policy manager should be nil")
+    }
+
+    func testInitializerWithSpecifiedArguments() {
+        // Given
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let delegate = Manager.SessionDelegate()
+        let serverTrustPolicyManager = ServerTrustPolicyManager(policies: [:])
+
+        // When
+        let manager = Manager(
+            configuration: configuration,
+            delegate: delegate,
+            serverTrustPolicyManager: serverTrustPolicyManager
+        )
+
+        // Then
+        XCTAssertNotNil(manager.session.delegate, "session delegate should not be nil")
+        XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
+        XCTAssertNotNil(manager.session.serverTrustPolicyManager, "session server trust policy manager should not be nil")
+    }
+
+    func testThatFailableInitializerSucceedsWithDefaultArguments() {
+        // Given
+        let delegate = Manager.SessionDelegate()
+        let session: NSURLSession = {
+            let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+            return NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        }()
+
+        // When
+        let manager = Manager(session: session, delegate: delegate)
+
+        // Then
+        if let manager = manager {
+            XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
+            XCTAssertNil(manager.session.serverTrustPolicyManager, "session server trust policy manager should be nil")
+        } else {
+            XCTFail("manager should not be nil")
+        }
+    }
+
+    func testThatFailableInitializerSucceedsWithSpecifiedArguments() {
+        // Given
+        let delegate = Manager.SessionDelegate()
+        let session: NSURLSession = {
+            let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+            return NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        }()
+
+        let serverTrustPolicyManager = ServerTrustPolicyManager(policies: [:])
+
+        // When
+        let manager = Manager(session: session, delegate: delegate, serverTrustPolicyManager: serverTrustPolicyManager)
+
+        // Then
+        if let manager = manager {
+            XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
+            XCTAssertNotNil(manager.session.serverTrustPolicyManager, "session server trust policy manager should not be nil")
+        } else {
+            XCTFail("manager should not be nil")
+        }
+    }
+
+    func testThatFailableInitializerFailsWithWhenDelegateDoesNotEqualSessionDelegate() {
+        // Given
+        let delegate = Manager.SessionDelegate()
+        let session: NSURLSession = {
+            let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+            return NSURLSession(configuration: configuration, delegate: Manager.SessionDelegate(), delegateQueue: nil)
+        }()
+
+        // When
+        let manager = Manager(session: session, delegate: delegate)
+
+        // Then
+        XCTAssertNil(manager, "manager should be nil")
+    }
+
+    func testThatFailableInitializerFailsWhenSessionDelegateIsNil() {
+        // Given
+        let delegate = Manager.SessionDelegate()
+        let session: NSURLSession = {
+            let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+            return NSURLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
+        }()
+
+        // When
+        let manager = Manager(session: session, delegate: delegate)
+
+        // Then
+        XCTAssertNil(manager, "manager should be nil")
+    }
+
+    // MARK: Start Requests Immediately Tests
+
     func testSetStartRequestsImmediatelyToFalseAndResumeRequest() {
         // Given
         let manager = Alamofire.Manager()
@@ -51,6 +157,8 @@ class ManagerTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(response?.statusCode == 200, "response status code should be 200")
     }
+
+    // MARK: Deinitialization Tests
 
     func testReleasingManagerWithPendingRequestDeinitializesSuccessfully() {
         // Given
