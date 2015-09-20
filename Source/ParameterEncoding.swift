@@ -212,6 +212,34 @@ public enum ParameterEncoding {
         let allowedCharacterSet = NSCharacterSet.URLQueryAllowedCharacterSet().mutableCopy() as! NSMutableCharacterSet
         allowedCharacterSet.removeCharactersInString(generalDelimitersToEncode + subDelimitersToEncode)
 
-        return string.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacterSet) ?? ""
+        //==========================================================================================================
+        //
+        //  Batching is required for escaping due to an internal bug in iOS 8.1 and 8.2. Encoding more than a few
+        //  hundred Chinense characters causes various malloc error crashes. To avoid this issue until iOS 8 is no
+        //  longer supported, batching MUST be used for encoding. This introduces roughly a 20% overhead. For more
+        //  info, please refer to:
+        //
+        //      - https://github.com/Alamofire/Alamofire/issues/206
+        //
+        //==========================================================================================================
+
+        let batchSize = 50
+        var index = string.startIndex
+
+        var escaped = ""
+
+        while index != string.endIndex {
+            let startIndex = index
+            let endIndex = index.advancedBy(batchSize, limit: string.endIndex)
+            let range = Range(start: startIndex, end: endIndex)
+
+            let substring = string.substringWithRange(range)
+
+            escaped += substring.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacterSet) ?? substring
+
+            index = endIndex
+        }
+
+        return escaped
     }
 }

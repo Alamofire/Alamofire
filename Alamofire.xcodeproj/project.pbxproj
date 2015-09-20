@@ -28,6 +28,8 @@
 		4C341BBA1B1A865A00C1B34D /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
 		4C341BBB1B1A865A00C1B34D /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
 		4C3C53B21BAC5D40004F7F68 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */; settings = {ASSET_TAGS = (); }; };
+		4C4CBE7B1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4CBE7A1BAF700C0024D659 /* String+AlamofireTests.swift */; settings = {ASSET_TAGS = (); }; };
+		4C4CBE7C1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4CBE7A1BAF700C0024D659 /* String+AlamofireTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4C7C8D221B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7C8D211B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4C7C8D231B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7C8D211B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4C811F8D1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */; };
@@ -149,6 +151,7 @@
 		4C33A1241B5207DB00873DFF /* unicorn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unicorn.png; sourceTree = "<group>"; };
 		4C33A1421B52089C00873DFF /* ServerTrustPolicyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustPolicyTests.swift; sourceTree = "<group>"; };
 		4C341BB91B1A865A00C1B34D /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
+		4C4CBE7A1BAF700C0024D659 /* String+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+AlamofireTests.swift"; sourceTree = "<group>"; };
 		4C7C8D211B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSURLSessionConfiguration+AlamofireTests.swift"; sourceTree = "<group>"; };
 		4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustPolicy.swift; sourceTree = "<group>"; };
 		4C812C3A1B535F220017E0BF /* alamofire-root-ca.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "alamofire-root-ca.cer"; path = "alamofire.org/alamofire-root-ca.cer"; sourceTree = "<group>"; };
@@ -348,6 +351,7 @@
 			isa = PBXGroup;
 			children = (
 				4C7C8D211B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift */,
+				4C4CBE7A1BAF700C0024D659 /* String+AlamofireTests.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -765,6 +769,7 @@
 				4C3238E71B3604DB00FE04AE /* MultipartFormDataTests.swift in Sources */,
 				4C33A1431B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBA1B1A865A00C1B34D /* CacheTests.swift in Sources */,
+				4C4CBE7B1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */,
 				4CA028C51B7466C500C84163 /* ResultTests.swift in Sources */,
 				4CCFA79A1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
 				F86AEFE71AE6A312007D9C76 /* TLSEvaluationTests.swift in Sources */,
@@ -789,6 +794,7 @@
 				4C3238E81B3604DB00FE04AE /* MultipartFormDataTests.swift in Sources */,
 				4C33A1441B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBB1B1A865A00C1B34D /* CacheTests.swift in Sources */,
+				4C4CBE7C1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */,
 				4CA028C61B7466C500C84163 /* ResultTests.swift in Sources */,
 				4CCFA79B1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
 				F829C6BE1A7A950600A2CD59 /* ParameterEncodingTests.swift in Sources */,

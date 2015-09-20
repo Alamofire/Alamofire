@@ -31,8 +31,6 @@ class ParameterEncodingTestCase: BaseTestCase {
 // MARK: -
 
 class URLParameterEncodingTestCase: ParameterEncodingTestCase {
-    // MARK: Properties
-
     let encoding: ParameterEncoding = .URL
 
     // MARK: Tests - Parameter Types
@@ -348,6 +346,23 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "hd=%5B1%5D&%2Bfoo%2B=%2Bbar%2B", "query is incorrect")
+    }
+
+    func testURLParameterEncodeStringWithThousandsOfChineseCharacters() {
+        // Given
+        let repeatedCount = 2_000
+        let URL = NSURL(string: "https://example.com/movies")!
+        let parameters = ["chinese": String(count: repeatedCount, repeatedString: "一二三四五六七八九十")]
+
+        // When
+        let (URLRequest, _) = encoding.encode(NSURLRequest(URL: URL), parameters: parameters)
+
+        // Then
+        var expected = "chinese="
+        for _ in 0..<repeatedCount {
+            expected += "%E4%B8%80%E4%BA%8C%E4%B8%89%E5%9B%9B%E4%BA%94%E5%85%AD%E4%B8%83%E5%85%AB%E4%B9%9D%E5%8D%81"
+        }
+        XCTAssertEqual(URLRequest.URL?.query ?? "", expected, "query is incorrect")
     }
 
     // MARK: Tests - Varying HTTP Methods
