@@ -269,6 +269,16 @@ class ResponseJSONTestCase: BaseTestCase {
 // MARK: -
 
 class RedirectResponseTestCase: BaseTestCase {
+
+    // MARK: Setup and Teardown
+
+    override func tearDown() {
+        super.tearDown()
+        Alamofire.Manager.sharedInstance.delegate.taskWillPerformHTTPRedirection = nil
+    }
+
+    // MARK: Tests
+
     func testThatRequestWillPerformHTTPRedirectionByDefault() {
         // Given
         let redirectURLString = "https://www.apple.com"
@@ -460,5 +470,62 @@ class RedirectResponseTestCase: BaseTestCase {
         XCTAssertEqual(response?.URL?.URLString ?? "", redirectURLString, "response URL should match the redirect URL")
         XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
         XCTAssertEqual(totalRedirectCount, 5, "total redirect count should be 5")
+    }
+
+    func testThatRedirectedRequestContainsAllHeadersFromOriginalRequest() {
+        // Given
+        let redirectURLString = "https://httpbin.org/get"
+        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
+        let headers = [
+            "Authorization": "1234",
+            "Custom-Header": "foobar",
+        ]
+
+        // NOTE: It appears that most headers are maintained during a redirect with the exception of the `Authorization`
+        // header. It appears that Apple's strips the `Authorization` header from the redirected URL request. If you
+        // need to maintain the `Authorization` header, you need to manually append it to the redirected request.
+
+        Alamofire.Manager.sharedInstance.delegate.taskWillPerformHTTPRedirection = { session, task, response, request in
+            var redirectedRequest = request
+
+            if let
+                originalRequest = task.originalRequest,
+                headers = originalRequest.allHTTPHeaderFields,
+                authorizationHeaderValue = headers["Authorization"]
+            {
+                let mutableRequest = request.mutableCopy() as! NSMutableURLRequest
+                mutableRequest.setValue(authorizationHeaderValue, forHTTPHeaderField: "Authorization")
+                redirectedRequest = mutableRequest
+            }
+
+            return redirectedRequest
+        }
+
+        let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
+
+        var response: Response<AnyObject, NSError>?
+
+        // When
+        Alamofire.request(.GET, URLString, headers: headers)
+            .responseJSON { closureResponse in
+                response = closureResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response?.request, "request should not be nil")
+        XCTAssertNotNil(response?.response, "response should not be nil")
+        XCTAssertNotNil(response?.data, "data should not be nil")
+        XCTAssertTrue(response?.result.isSuccess ?? false, "response result should be a success")
+
+        if let
+            JSON = response?.result.value as? [String: AnyObject],
+            headers = JSON["headers"] as? [String: String]
+        {
+            XCTAssertEqual(headers["Custom-Header"], "foobar", "Custom-Header should be equal to foobar")
+            XCTAssertEqual(headers["Authorization"], "1234", "Authorization header should be equal to 1234")
+        }
     }
 }
