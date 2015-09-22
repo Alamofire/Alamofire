@@ -28,6 +28,9 @@
 		4C341BBA1B1A865A00C1B34D /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
 		4C341BBB1B1A865A00C1B34D /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
 		4C3C53B21BAC5D40004F7F68 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */; settings = {ASSET_TAGS = (); }; };
+		4C3C53DF1BADEF79004F7F68 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3C53DE1BADEF79004F7F68 /* Response.swift */; settings = {ASSET_TAGS = (); }; };
+		4C3C53E01BADEF79004F7F68 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3C53DE1BADEF79004F7F68 /* Response.swift */; settings = {ASSET_TAGS = (); }; };
+		4C3C53E11BADEF79004F7F68 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3C53DE1BADEF79004F7F68 /* Response.swift */; settings = {ASSET_TAGS = (); }; };
 		4C7C8D221B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7C8D211B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4C7C8D231B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7C8D211B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift */; settings = {ASSET_TAGS = (); }; };
 		4C811F8D1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */; };
@@ -149,6 +152,7 @@
 		4C33A1241B5207DB00873DFF /* unicorn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = unicorn.png; sourceTree = "<group>"; };
 		4C33A1421B52089C00873DFF /* ServerTrustPolicyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustPolicyTests.swift; sourceTree = "<group>"; };
 		4C341BB91B1A865A00C1B34D /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
+		4C3C53DE1BADEF79004F7F68 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
 		4C7C8D211B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSURLSessionConfiguration+AlamofireTests.swift"; sourceTree = "<group>"; };
 		4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustPolicy.swift; sourceTree = "<group>"; };
 		4C812C3A1B535F220017E0BF /* alamofire-root-ca.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "alamofire-root-ca.cer"; path = "alamofire.org/alamofire-root-ca.cer"; sourceTree = "<group>"; };
@@ -379,6 +383,7 @@
 				4CDE2C361AF8932A00BABAE5 /* Manager.swift */,
 				4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */,
 				4CDE2C391AF899EC00BABAE5 /* Request.swift */,
+				4C3C53DE1BADEF79004F7F68 /* Response.swift */,
 				4C0E5BF71B673D3400816CCC /* Result.swift */,
 			);
 			name = Core;
@@ -708,6 +713,7 @@
 				4CDE2C471AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8551B68908E00476DE3 /* Error.swift in Sources */,
 				4CDE2C381AF8932A00BABAE5 /* Manager.swift in Sources */,
+				4C3C53E01BADEF79004F7F68 /* Response.swift in Sources */,
 				4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */,
 				4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
 				4C811F8E1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,
@@ -728,6 +734,7 @@
 				4CEC605A1B745C9100E684F4 /* Error.swift in Sources */,
 				E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */,
 				E4202FD31B667AA100C997FB /* Manager.swift in Sources */,
+				4C3C53E11BADEF79004F7F68 /* Response.swift in Sources */,
 				4CEC605B1B745C9100E684F4 /* Result.swift in Sources */,
 				E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */,
 				E4202FD51B667AA100C997FB /* MultipartFormData.swift in Sources */,
@@ -748,6 +755,7 @@
 				4CDE2C461AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8541B68908E00476DE3 /* Error.swift in Sources */,
 				4CDE2C371AF8932A00BABAE5 /* Manager.swift in Sources */,
+				4C3C53DF1BADEF79004F7F68 /* Response.swift in Sources */,
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
 				4C23EB431B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
 				4C811F8D1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,

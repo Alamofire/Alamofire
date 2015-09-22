@@ -429,38 +429,29 @@ class DownloadResumeDataTestCase: BaseTestCase {
     func testThatCancelledDownloadResumeDataIsAvailableWithJSONResponseSerializer() {
         // Given
         let expectation = expectationWithDescription("Download should be cancelled")
-
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
-        var result: Result<AnyObject, NSError>?
+        var response: Response<AnyObject, NSError>?
 
         // When
         let download = Alamofire.download(.GET, URLString, destination: destination)
         download.progress { _, _, _ in
             download.cancel()
         }
-        download.responseJSON { responseRequest, responseResponse, responseData, responseResult in
-            request = responseRequest
-            response = responseResponse
-            data = responseData
-            result = responseResult
-
+        download.responseJSON { closureResponse in
+            response = closureResponse
             expectation.fulfill()
         }
 
         waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-
-        if let result = result {
-            XCTAssertTrue(result.isFailure, "result should be a failure")
-            XCTAssertTrue(result.error != nil, "error should not be nil")
+        if let response = response {
+            XCTAssertNotNil(response.request, "request should not be nil")
+            XCTAssertNotNil(response.response, "response should not be nil")
+            XCTAssertNotNil(response.data, "data should not be nil")
+            XCTAssertTrue(response.result.isFailure, "result should be failure")
+            XCTAssertNotNil(response.result.error, "result error should not be nil")
         } else {
-            XCTFail("result should not be nil")
+            XCTFail("response should not be nil")
         }
 
         XCTAssertNotNil(download.resumeData, "resume data should not be nil")
