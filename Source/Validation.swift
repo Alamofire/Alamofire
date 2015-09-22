@@ -32,7 +32,7 @@ extension Request {
     */
     public enum ValidationResult {
         case Success
-        case Failure(ErrorType)
+        case Failure(NSError)
     }
 
     /**

@@ -139,31 +139,26 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
 
         let expectation = expectationWithDescription("request should complete successfully")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var result: Result<AnyObject>?
+        var response: Response<AnyObject, NSError>?
 
         // When
         manager.request(.GET, "https://httpbin.org/headers")
-            .responseJSON { responseRequest, responseResponse, responseResult in
-                request = responseRequest
-                response = responseResponse
-                result = responseResult
-
+            .responseJSON { closureResponse in
+                response = closureResponse
                 expectation.fulfill()
             }
 
         waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-
-        if let result = result {
-            XCTAssertTrue(result.isSuccess, "result should be a success")
+        if let response = response {
+            XCTAssertNotNil(response.request, "request should not be nil")
+            XCTAssertNotNil(response.response, "response should not be nil")
+            XCTAssertNotNil(response.data, "data should not be nil")
+            XCTAssertTrue(response.result.isSuccess, "result should be a success")
 
             if let
-                headers = result.value?["headers" as NSString] as? [String: String],
+                headers = response.result.value?["headers" as NSString] as? [String: String],
                 authorization = headers["Authorization"]
             {
                 XCTAssertEqual(authorization, "Bearer 123456", "authorization header value does not match")
@@ -171,7 +166,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
                 XCTFail("failed to extract authorization header value")
             }
         } else {
-            XCTFail("result should not be nil")
+            XCTFail("response should not be nil")
         }
     }
 }

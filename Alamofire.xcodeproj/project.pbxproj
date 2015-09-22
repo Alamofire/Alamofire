@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		4C0B58391B747A4400C0B99C /* ResponseSerializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */; };
 		4C0B583A1B747A4400C0B99C /* ResponseSerializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */; };
+		4C0B62511BB1001C009302D3 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B62501BB1001C009302D3 /* Response.swift */; settings = {ASSET_TAGS = (); }; };
+		4C0B62521BB1001C009302D3 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B62501BB1001C009302D3 /* Response.swift */; settings = {ASSET_TAGS = (); }; };
+		4C0B62531BB1001C009302D3 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B62501BB1001C009302D3 /* Response.swift */; settings = {ASSET_TAGS = (); }; };
 		4C0E5BF81B673D3400816CCC /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E5BF71B673D3400816CCC /* Result.swift */; };
 		4C0E5BF91B673D3400816CCC /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E5BF71B673D3400816CCC /* Result.swift */; };
 		4C1DC8541B68908E00476DE3 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* Error.swift */; };
@@ -142,6 +145,7 @@
 
 /* Begin PBXFileReference section */
 		4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseSerializationTests.swift; sourceTree = "<group>"; };
+		4C0B62501BB1001C009302D3 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
 		4C0E5BF71B673D3400816CCC /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		4C1DC8531B68908E00476DE3 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormData.swift; sourceTree = "<group>"; };
@@ -383,6 +387,7 @@
 				4CDE2C361AF8932A00BABAE5 /* Manager.swift */,
 				4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */,
 				4CDE2C391AF899EC00BABAE5 /* Request.swift */,
+				4C0B62501BB1001C009302D3 /* Response.swift */,
 				4C0E5BF71B673D3400816CCC /* Result.swift */,
 			);
 			name = Core;
@@ -712,6 +717,7 @@
 				4CDE2C471AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8551B68908E00476DE3 /* Error.swift in Sources */,
 				4CDE2C381AF8932A00BABAE5 /* Manager.swift in Sources */,
+				4C0B62521BB1001C009302D3 /* Response.swift in Sources */,
 				4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */,
 				4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
 				4C811F8E1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,
@@ -732,6 +738,7 @@
 				4CEC605A1B745C9100E684F4 /* Error.swift in Sources */,
 				E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */,
 				E4202FD31B667AA100C997FB /* Manager.swift in Sources */,
+				4C0B62531BB1001C009302D3 /* Response.swift in Sources */,
 				4CEC605B1B745C9100E684F4 /* Result.swift in Sources */,
 				E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */,
 				E4202FD51B667AA100C997FB /* MultipartFormData.swift in Sources */,
@@ -752,6 +759,7 @@
 				4CDE2C461AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8541B68908E00476DE3 /* Error.swift in Sources */,
 				4CDE2C371AF8932A00BABAE5 /* Manager.swift in Sources */,
+				4C0B62511BB1001C009302D3 /* Response.swift in Sources */,
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
 				4C23EB431B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
 				4C811F8D1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,

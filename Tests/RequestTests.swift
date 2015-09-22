@@ -87,7 +87,7 @@ class RequestResponseTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -290,37 +290,36 @@ class RequestResponseTestCase: BaseTestCase {
 
         let expectation = expectationWithDescription("request should succeed")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var result: Result<AnyObject>?
+        var response: Response<AnyObject, NSError>?
 
         // When
         Alamofire.request(.POST, URLString, parameters: parameters)
-            .responseJSON { responseRequest, responseResponse, responseResult in
-                request = responseRequest
-                response = responseResponse
-                result = responseResult
-
+            .responseJSON { closureResponse in
+                response = closureResponse
                 expectation.fulfill()
             }
 
         waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(result, "result should be nil")
+        if let response = response {
+            XCTAssertNotNil(response.request, "request should not be nil")
+            XCTAssertNotNil(response.response, "response should not be nil")
+            XCTAssertNotNil(response.data, "data should not be nil")
 
-        if let
-            JSON = result?.value as? [String: AnyObject],
-            form = JSON["form"] as? [String: String]
-        {
-            XCTAssertEqual(form["french"], parameters["french"], "french parameter value should match form value")
-            XCTAssertEqual(form["japanese"], parameters["japanese"], "japanese parameter value should match form value")
-            XCTAssertEqual(form["arabic"], parameters["arabic"], "arabic parameter value should match form value")
-            XCTAssertEqual(form["emoji"], parameters["emoji"], "emoji parameter value should match form value")
+            if let
+                JSON = response.result.value as? [String: AnyObject],
+                form = JSON["form"] as? [String: String]
+            {
+                XCTAssertEqual(form["french"], parameters["french"], "french parameter value should match form value")
+                XCTAssertEqual(form["japanese"], parameters["japanese"], "japanese parameter value should match form value")
+                XCTAssertEqual(form["arabic"], parameters["arabic"], "arabic parameter value should match form value")
+                XCTAssertEqual(form["emoji"], parameters["emoji"], "emoji parameter value should match form value")
+            } else {
+                XCTFail("form parameter in JSON should not be nil")
+            }
         } else {
-            XCTFail("form parameter in JSON should not be nil")
+            XCTFail("response should not be nil")
         }
     }
 
@@ -350,36 +349,36 @@ class RequestResponseTestCase: BaseTestCase {
 
         let expectation = expectationWithDescription("request should succeed")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var result: Result<AnyObject>?
+        var response: Response<AnyObject, NSError>?
 
         // When
         Alamofire.request(.POST, URLString, parameters: parameters)
-            .responseJSON { responseRequest, responseResponse, responseResult in
-                request = responseRequest
-                response = responseResponse
-                result = responseResult
-
+            .responseJSON { closureResponse in
+                response = closureResponse
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(result, "result should be nil")
+        if let response = response {
+            XCTAssertNotNil(response.request, "request should not be nil")
+            XCTAssertNotNil(response.response, "response should not be nil")
+            XCTAssertNotNil(response.data, "data should not be nil")
+            XCTAssertTrue(response.result.isSuccess, "result should be success")
 
-        if let
-            JSON = result?.value as? [String: AnyObject],
-            form = JSON["form"] as? [String: String]
-        {
-            XCTAssertEqual(form["email"], parameters["email"], "email parameter value should match form value")
-            XCTAssertEqual(form["png_image"], parameters["png_image"], "png_image parameter value should match form value")
-            XCTAssertEqual(form["jpeg_image"], parameters["jpeg_image"], "jpeg_image parameter value should match form value")
+            if let
+                JSON = response.result.value as? [String: AnyObject],
+                form = JSON["form"] as? [String: String]
+            {
+                XCTAssertEqual(form["email"], parameters["email"], "email parameter value should match form value")
+                XCTAssertEqual(form["png_image"], parameters["png_image"], "png_image parameter value should match form value")
+                XCTAssertEqual(form["jpeg_image"], parameters["jpeg_image"], "jpeg_image parameter value should match form value")
+            } else {
+                XCTFail("form parameter in JSON should not be nil")
+            }
         } else {
-            XCTFail("form parameter in JSON should not be nil")
+            XCTFail("response should not be nil")
         }
     }
 }
