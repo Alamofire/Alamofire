@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
+#### 3.x Releases
+- `3.0.0` Betas - [3.0.0-beta.1](#300-beta1)
+
 #### 2.x Releases
 - `2.0.x` Releases - [2.0.0](#200) | [2.0.1](#201) | [2.0.2](#202)
 - `2.0.0` Betas - [2.0.0-beta.1](#200-beta1) | [2.0.0-beta.2](#200-beta2) | [2.0.0-beta.3](#200-beta3) | [2.0.0-beta.4](#200-beta4)
@@ -11,6 +14,46 @@ All notable changes to this project will be documented in this file.
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [3.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/3.0.0-beta.1)
+Released on 2015-09-21.
+
+#### Added
+- A new `Response` struct to simplify response serialization.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#792](https://github.com/Alamofire/Alamofire/pull/792).
+- A new initializer to the `Manager` allowing dependency injection of the
+underlying `NSURLSession`.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#795](https://github.com/Alamofire/Alamofire/pull/795).
+- Tests around the new `Manager` initialization methods.
+
+#### Updated
+- Result type to take two generic parameters (`Value` and `Error`) where `Error`
+conforms to `ErrorType`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#791](https://github.com/Alamofire/Alamofire/pull/791).
+- All response serializers to now return the original server data as `NSData?`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#791](https://github.com/Alamofire/Alamofire/pull/791).
+- The `TaskDelegate` to store an error as an `NSError` instead of `ErrorType`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#791](https://github.com/Alamofire/Alamofire/pull/791).
+- The `ValidationResult` failure case to require an `NSError` instead of `ErrorType`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#791](https://github.com/Alamofire/Alamofire/pull/791).
+- All tests around response serialization and `Result` type usage.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#791](https://github.com/Alamofire/Alamofire/pull/791).
+- All response serializers to use the new `Response` type.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request  - 
+  [#792](https://github.com/Alamofire/Alamofire/pull/792).
+- The designated initializer for a `Manager` to accept a `SessionDelegate` parameter
+allowing dependency injection for better background session support.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#795](https://github.com/Alamofire/Alamofire/pull/795).
 
 ---
 
