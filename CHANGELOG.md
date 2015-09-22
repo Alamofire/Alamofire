@@ -18,7 +18,8 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [3.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/3.0.0-beta.1)
-Released on 2015-09-21.
+Released on 2015-09-21. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.0.0-beta.1).
 
 #### Added
 - A new `Response` struct to simplify response serialization.
