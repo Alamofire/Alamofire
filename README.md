@@ -1079,6 +1079,8 @@ The following rdars have some affect on the current implementation of Alamofire.
 * [rdar://21349340](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
 * [rdar://22307360](http://www.openradar.me/radar?id=4895563208196096) - Swift #available check not working properly with min deployment target
 
+    > Resolved in Xcode 7.1 beta 2. Will remove once Xcode 7.1 is out of beta.
+
 ## FAQ
 
 ### What's the origin of the name Alamofire?
