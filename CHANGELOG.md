@@ -2,19 +2,124 @@
 All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
-#### 2.x Releases
+#### 3.x Releases
+- `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2)
 
-- `2.0.x` Releases - [2.0.0](#200)
+#### 2.x Releases
+- `2.0.x` Releases - [2.0.0](#200) | [2.0.1](#201) | [2.0.2](#202)
 - `2.0.0` Betas - [2.0.0-beta.1](#200-beta1) | [2.0.0-beta.2](#200-beta2) | [2.0.0-beta.3](#200-beta3) | [2.0.0-beta.4](#200-beta4)
 
 #### 1.x Releases
-
 - `1.3.x` Releases - [1.3.0](#130) | [1.3.1](#131)
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [3.0.0-beta.2](https://github.com/Alamofire/Alamofire/releases/tag/3.0.0-beta.2)
+Released on 2015-09-26. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.0.0-beta.2).
+
+#### Added
+- Tests around the header behavior for redirected requests.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#798](https://github.com/Alamofire/Alamofire/issues/798).
+- A migration guide for Alamofire 3.0 documenting all API changes.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- `Response` initializer to have `internal` ACL.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- All sample code in the README to conform to the Alamofire 3.0 APIs.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- URL percent escaping to only batch on OS's where required improving
+overall performance.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Basic auth example in the README to compile on Swift 2.0.
+  - Updated by [David F. Muir V](https://github.com/dfmuir) in Pull Request
+  [#810](https://github.com/Alamofire/Alamofire/issues/810).
+
+#### Fixed
+- Compiler errors in the playground due to the new response serializer APIs.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+
+## [3.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/3.0.0-beta.1)
+Released on 2015-09-21. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.0.0-beta.1).
+
+#### Added
+- A new `Response` struct to simplify response serialization.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#792](https://github.com/Alamofire/Alamofire/pull/792).
+- A new initializer to the `Manager` allowing dependency injection of the
+underlying `NSURLSession`.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#795](https://github.com/Alamofire/Alamofire/pull/795).
+- Tests around the new `Manager` initialization methods.
+
+#### Updated
+- Result type to take two generic parameters (`Value` and `Error`) where `Error`
+conforms to `ErrorType`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#791](https://github.com/Alamofire/Alamofire/pull/791).
+- All response serializers to now return the original server data as `NSData?`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#791](https://github.com/Alamofire/Alamofire/pull/791).
+- The `TaskDelegate` to store an error as an `NSError` instead of `ErrorType`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#791](https://github.com/Alamofire/Alamofire/pull/791).
+- The `ValidationResult` failure case to require an `NSError` instead of `ErrorType`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#791](https://github.com/Alamofire/Alamofire/pull/791).
+- All tests around response serialization and `Result` type usage.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#791](https://github.com/Alamofire/Alamofire/pull/791).
+- All response serializers to use the new `Response` type.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request  - 
+  [#792](https://github.com/Alamofire/Alamofire/pull/792).
+- The designated initializer for a `Manager` to accept a `SessionDelegate` parameter
+allowing dependency injection for better background session support.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#795](https://github.com/Alamofire/Alamofire/pull/795).
+
+---
+
+## [2.0.2](https://github.com/Alamofire/Alamofire/releases/tag/2.0.2)
+Released on 2015-09-20. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.2).
+
+#### Updated
+- The Embedded Framework documentation to include `git init` info.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#782](https://github.com/Alamofire/Alamofire/issues/782).
+
+#### Fixed
+- Alamofire iOS framework target by adding Alamofire iOS Tests as Target Dependency.
+  - Fixed by [Nicky Gerritsen](https://github.com/nickygerritsen) in Pull Request
+  [#780](https://github.com/Alamofire/Alamofire/pull/780).
+- Percent encoding issue for long Chinese strings using URL parameter encoding.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#206](https://github.com/Alamofire/Alamofire/issues/206).
+
+## [2.0.1](https://github.com/Alamofire/Alamofire/releases/tag/2.0.1)
+Released on 2015-09-16. All issues associated with this milestone can be found using this 
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A2.0.1).
+
+#### Updated
+- The CocoaPods installation instructions in the README.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The Carthage installation instructions in the README.
+  - Updated by [Gustavo Barbosa](https://github.com/barbosa) in Pull Request
+  [#759](https://github.com/Alamofire/Alamofire/pull/759).
+
+#### Fixed
+- The link to the 2.0 migration guide in the README.
+  - Fixed by [Dwight Watson](https://github.com/dwightwatson) in Pull Request
+  [#750](https://github.com/Alamofire/Alamofire/pull/750).
+- Issue where NTLM authentication credentials were not used for authentication challenges.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#721](https://github.com/Alamofire/Alamofire/pull/721).
 
 ## [2.0.0](https://github.com/Alamofire/Alamofire/releases/tag/2.0.0)
 Released on 2015-09-09. All issues associated with this milestone can be found using this 

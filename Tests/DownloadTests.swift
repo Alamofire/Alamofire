@@ -94,7 +94,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.download(.GET, URLString, destination: destination)
@@ -265,7 +265,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.download(.GET, URLString, parameters: parameters, destination: destination)
@@ -307,7 +307,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.download(.GET, URLString, headers: headers, destination: destination)
@@ -357,7 +357,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: AnyObject?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         let download = Alamofire.download(.GET, URLString, destination: destination)
@@ -390,7 +390,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: AnyObject?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         let download = Alamofire.download(.GET, URLString, destination: destination)
@@ -429,33 +429,30 @@ class DownloadResumeDataTestCase: BaseTestCase {
     func testThatCancelledDownloadResumeDataIsAvailableWithJSONResponseSerializer() {
         // Given
         let expectation = expectationWithDescription("Download should be cancelled")
-
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var result: Result<AnyObject>!
+        var response: Response<AnyObject, NSError>?
 
         // When
         let download = Alamofire.download(.GET, URLString, destination: destination)
         download.progress { _, _, _ in
             download.cancel()
         }
-        download.responseJSON { responseRequest, responseResponse, responseResult in
-            request = responseRequest
-            response = responseResponse
-            result = responseResult
-
+        download.responseJSON { closureResponse in
+            response = closureResponse
             expectation.fulfill()
         }
 
         waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-
-        XCTAssertTrue(result.isFailure, "result should be a failure")
-        XCTAssertNotNil(result.data, "data should not be nil")
-        XCTAssertTrue(result.error != nil, "error should not be nil")
+        if let response = response {
+            XCTAssertNotNil(response.request, "request should not be nil")
+            XCTAssertNotNil(response.response, "response should not be nil")
+            XCTAssertNotNil(response.data, "data should not be nil")
+            XCTAssertTrue(response.result.isFailure, "result should be failure")
+            XCTAssertNotNil(response.result.error, "result error should not be nil")
+        } else {
+            XCTFail("response should not be nil")
+        }
 
         XCTAssertNotNil(download.resumeData, "resume data should not be nil")
     }

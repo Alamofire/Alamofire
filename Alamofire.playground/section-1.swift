@@ -6,8 +6,6 @@ import XCPlayground
 XCPSetExecutionShouldContinueIndefinitely()
 
 Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
-    .responseString { request, response, result in
-        print(request)
-        print(response)
-        debugPrint(result)
+    .responseJSON { response in
+        debugPrint(response)
     }
