@@ -163,20 +163,34 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 
 **Built-in Response Methods**
 
+- `response()`
 - `responseData()`
 - `responseString(encoding: NSStringEncoding)`
 - `responseJSON(options: NSJSONReadingOptions)`
 - `responsePropertyList(options: NSPropertyListReadOptions)`
+
+#### Response Handler
+
+```swift
+Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+         .response { request, response, data, error in
+             print(request)
+             print(response)
+             print(data)
+             print(error)
+          }
+```
+
+> The `response` serializer does NOT evaluate any of the response data. It merely forwards on all the information directly from the URL session delegate. We strongly encourage you to leverage the other responser serializers taking advantage of `Response` and `Result` types.
 
 #### Response Data Handler
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .responseData { response in
-             print(request)
-             print(response)
-             print(data)
-             print(error)
+             print(response.request)
+             print(response.response)
+             print(response.result)
           }
 ```
 
