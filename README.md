@@ -511,13 +511,13 @@ let user = "user"
 let password = "password"
 
 let credentialData = "\(user):\(password)".dataUsingEncoding(NSUTF8StringEncoding)!
-let base64Credentials = credentialData.base64EncodedStringWithOptions(nil)
+let base64Credentials = credentialData.base64EncodedStringWithOptions([])
 
 let headers = ["Authorization": "Basic \(base64Credentials)"]
 
 Alamofire.request(.GET, "http://httpbin.org/basic-auth/user/password", headers: headers)
          .responseJSON { response in
-             debugPrint(result)
+             debugPrint(response)
          }
 ```
 
