@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.0.0` Betas - [3.0.0-beta.1](#300-beta1)
+- `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2)
 
 #### 2.x Releases
 - `2.0.x` Releases - [2.0.0](#200) | [2.0.1](#201) | [2.0.2](#202)
@@ -16,6 +16,33 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [3.0.0-beta.2](https://github.com/Alamofire/Alamofire/releases/tag/3.0.0-beta.2)
+Released on 2015-09-26. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.0.0-beta.2).
+
+#### Added
+- Tests around the header behavior for redirected requests.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#798](https://github.com/Alamofire/Alamofire/issues/798).
+- A migration guide for Alamofire 3.0 documenting all API changes.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- `Response` initializer to have `internal` ACL.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- All sample code in the README to conform to the Alamofire 3.0 APIs.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- URL percent escaping to only batch on OS's where required improving
+overall performance.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Basic auth example in the README to compile on Swift 2.0.
+  - Updated by [David F. Muir V](https://github.com/dfmuir) in Pull Request
+  [#810](https://github.com/Alamofire/Alamofire/issues/810).
+
+#### Fixed
+- Compiler errors in the playground due to the new response serializer APIs.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
 
 ## [3.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/3.0.0-beta.1)
 Released on 2015-09-21. All issues associated with this milestone can be found using this
