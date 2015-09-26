@@ -485,7 +485,9 @@ class RedirectResponseTestCase: BaseTestCase {
         // header. It appears that Apple's strips the `Authorization` header from the redirected URL request. If you
         // need to maintain the `Authorization` header, you need to manually append it to the redirected request.
 
-        Alamofire.Manager.sharedInstance.delegate.taskWillPerformHTTPRedirection = { session, task, response, request in
+        let manager = Manager(configuration: NSURLSessionConfiguration.ephemeralSessionConfiguration())
+
+        manager.delegate.taskWillPerformHTTPRedirection = { session, task, response, request in
             var redirectedRequest = request
 
             if let
@@ -506,7 +508,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.request(.GET, URLString, headers: headers)
+        manager.request(.GET, URLString, headers: headers)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
