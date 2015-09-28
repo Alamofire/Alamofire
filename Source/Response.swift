@@ -47,7 +47,7 @@ public struct Response<Value, Error: ErrorType> {
     
         - returns: the new `Response` instance.
     */
-    init(request: NSURLRequest?, response: NSHTTPURLResponse?, data: NSData?, result: Result<Value, Error>) {
+    public init(request: NSURLRequest?, response: NSHTTPURLResponse?, data: NSData?, result: Result<Value, Error>) {
         self.request = request
         self.response = response
         self.data = data
