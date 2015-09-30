@@ -412,12 +412,10 @@ Alamofire.upload(
 ```swift
 Alamofire.download(.GET, "http://httpbin.org/stream/100") { temporaryURL, response in
     let fileManager = NSFileManager.defaultManager()
-    if let directoryURL = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as? NSURL {
-        let pathComponent = response.suggestedFilename
-        return directoryURL.URLByAppendingPathComponent(pathComponent!)
-    }
-
-    return temporaryURL
+    let directoryURL = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]
+    let pathComponent = response.suggestedFilename
+    
+    return directoryURL.URLByAppendingPathComponent(pathComponent)
 }
 ```
 
