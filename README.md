@@ -143,13 +143,12 @@ Alamofire.request(.GET, "http://httpbin.org/get")
 
 ```swift
 Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
-         .responseJSON { response in
-             print(response.request)  // original URL request
-             print(response.response) // URL response
-             print(response.data)     // server data
-             print(response.result)   // result of response serialization
+         .responseJSON { (request, response, result) in
+             print(request)  // original URL request
+             print(response) // URL response
+             print(result)   // result of response serialization
 
-             if let JSON = response.result.value {
+             if let JSON = result.value {
                  print("JSON: \(JSON)")
              }
          }
