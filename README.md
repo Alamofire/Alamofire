@@ -435,12 +435,16 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destinati
 
              // This closure is NOT called on the main queue for performance
              // reasons. To update your ui, dispatch to the main queue.
-             dispatch_async(dispatch_get_main_queue) {
+             dispatch_async(dispatch_get_main_queue()) {
                  print("Total bytes read on main queue: \(totalBytesRead)")
              }
          }
-         .responseData { response in
-             print(response)
+         .response { _, _, _, error in
+             if let error = error {
+                 print("Failed with error: \(error)")
+             } else {
+                 print("Downloaded file successfully")
+             }
          }
 ```
 
@@ -448,9 +452,9 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destinati
 
 ```swift
 Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
-         .responseData { response in
+         .response { _, _, data, _ in
              if let
-                 data = response.data,
+                 data = data,
                  resumeDataString = NSString(data: data, encoding: NSUTF8StringEncoding)
              {
                  print("Resume Data: \(resumeDataString)")
@@ -464,7 +468,7 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destinati
 
 ```swift
 let download = Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
-download.responseData { _ in
+download.response { _, _, _, _ in
     if let
         resumeData = download.resumeData,
         resumeDataString = NSString(data: resumeData, encoding: NSUTF8StringEncoding)
