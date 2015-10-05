@@ -57,7 +57,7 @@ These changes allow Alamofire to return the original server data in both cases. 
 
 ### Response
 
-In order to avoid constantly having to change the response serializer completion closure signatures, ALamofire 3.0 introduces a `Response` struct. All response serializers (with the exception of `response`) return a generic `Response` struct.
+In order to avoid constantly having to change the response serializer completion closure signatures, Alamofire 3.0 introduces a `Response` struct. All response serializers (with the exception of `response`) return a generic `Response` struct.
 
 ```swift
 public struct Response<Value, Error: ErrorType> {
