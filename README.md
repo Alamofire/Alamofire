@@ -74,7 +74,7 @@ $ pod install
 
 ### Carthage
 
-[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that automates the process of adding frameworks to your Cocoa application.
+[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks.
 
 You can install Carthage with [Homebrew](http://brew.sh/) using the following command:
 
@@ -88,6 +88,8 @@ To integrate Alamofire into your Xcode project using Carthage, specify it in you
 ```ogdl
 github "Alamofire/Alamofire" ~> 3.0
 ```
+
+Run `carthage` to build the framework and drag the built `Alamofire.framework` into your Xcode project.
 
 ### Manually
 
