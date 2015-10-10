@@ -92,7 +92,8 @@ public enum ParameterEncoding {
         case .URL, .URLEncodedInURL:
             func query(parameters: [String: AnyObject]) -> String {
                 var components: [(String, String)] = []
-                for key in Array(parameters.keys).sort(<) {
+
+                for key in parameters.keys.sort(<) {
                     let value = parameters[key]!
                     components += queryComponents(key, value)
                 }
@@ -174,6 +175,7 @@ public enum ParameterEncoding {
     */
     public func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
         var components: [(String, String)] = []
+
         if let dictionary = value as? [String: AnyObject] {
             for (nestedKey, value) in dictionary {
                 components += queryComponents("\(key)[\(nestedKey)]", value)
