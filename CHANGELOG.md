@@ -22,11 +22,6 @@ All notable changes to this project will be documented in this file.
 Released on 2015-10-10. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.0.0).
 
-#### Added
-- Added `BITCODE_GENERATION_MODE` user defined setting for Carthage.
-  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
-  [#835](https://github.com/Alamofire/Alamofire/issues/835).
-
 #### Updated
 - `Downloading a File` code sample in the README to compile against Swift 2.0.
   - Updated by [Screon](https://github.com/Screon) in Pull Request
@@ -45,6 +40,9 @@ Released on 2015-10-10. All issues associated with this milestone can be found u
 - Small typo in the Alamofire 3.0 Migration Guide `Response` section.
   - Fixed by [neugartf](https://github.com/neugartf) in Pull Request
   [#826](https://github.com/Alamofire/Alamofire/pull/826).
+- User defined `BITCODE_GENERATION_MODE` setting for Carthage builds.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#835](https://github.com/Alamofire/Alamofire/issues/835).
 
 ---
 
