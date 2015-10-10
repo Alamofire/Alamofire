@@ -30,5 +30,5 @@ script:
       -configuration Release ONLY_ACTIVE_ARCH=NO build | xcpretty -c; 
     fi
   - if [ $POD_LINT == "YES" ]; then
-      pod lib lint --quick;
+      pod lib lint;
     fi
