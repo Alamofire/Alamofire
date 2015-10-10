@@ -48,13 +48,13 @@ Alamofire is an HTTP networking library written in Swift.
 
 ### CocoaPods
 
-[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects.
-
-CocoaPods 0.38.2 is required to build Alamofire on the `swift-2.0` branch. It adds support for Xcode 7, Swift 2.0 and embedded frameworks. You can install it with the following command:
+[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
 
 ```bash
 $ gem install cocoapods
 ```
+
+> CocoaPods 0.39.0+ is required to build Alamofire 3.0.0+.
 
 To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
@@ -74,7 +74,7 @@ $ pod install
 
 ### Carthage
 
-[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that automates the process of adding frameworks to your Cocoa application.
+[Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks.
 
 You can install Carthage with [Homebrew](http://brew.sh/) using the following command:
 
@@ -88,6 +88,8 @@ To integrate Alamofire into your Xcode project using Carthage, specify it in you
 ```ogdl
 github "Alamofire/Alamofire" ~> 3.0
 ```
+
+Run `carthage` to build the framework and drag the built `Alamofire.framework` into your Xcode project.
 
 ### Manually
 
