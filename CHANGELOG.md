@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
+- `3.0.x` Releases - [3.0.0](#300)
 - `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2) | [3.0.0-beta.3](#300-beta3)
 
 #### 2.x Releases
@@ -14,6 +15,36 @@ All notable changes to this project will be documented in this file.
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [3.0.0](https://github.com/Alamofire/Alamofire/releases/tag/3.0.0)
+Released on 2015-10-10. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.0.0).
+
+#### Added
+- Added `BITCODE_GENERATION_MODE` user defined setting for Carthage.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#835](https://github.com/Alamofire/Alamofire/issues/835).
+
+#### Updated
+- `Downloading a File` code sample in the README to compile against Swift 2.0.
+  - Updated by [Screon](https://github.com/Screon) in Pull Request
+  [#827](https://github.com/Alamofire/Alamofire/pull/827).
+- Download code samples in the README to use `response` serializer.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- CocoaPods and Carthage installation instructions for 3.0.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Carthage description and installation instructions in the README.
+  - Updated by [Ashton Williams](https://github.com/Ashton-W) in Pull Request
+  [#843](https://github.com/Alamofire/Alamofire/pull/843).
+- URL encoding internals to leverage the dictionary keys lazy evaluation.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- Small typo in the Alamofire 3.0 Migration Guide `Response` section.
+  - Fixed by [neugartf](https://github.com/neugartf) in Pull Request
+  [#826](https://github.com/Alamofire/Alamofire/pull/826).
 
 ---
 
