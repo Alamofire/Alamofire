@@ -67,15 +67,3 @@ extension Result {
         }
     }
 }
-
-extension Result where Error: NSError {
-    /// Returns the associated data value if the result is a failure, `nil` otherwise.
-    public var data: NSData? {
-        switch self {
-        case .Success:
-            return nil
-        case .Failure(let error):
-            return error.data
-        }
-    }
-}
