@@ -1,10 +1,18 @@
 PODS:
-  - Result (0.6-beta.1)
+  - Alamofire+Result (3.0.0):
+    - Result (~> 0.6.0-beta.4)
+  - Result (0.6.0-beta.4)
 
 DEPENDENCIES:
-  - Result (~> 0.6-beta.1)
+  - Alamofire+Result (from `./`)
+  - Result (= 0.6.0-beta.4)
+
+EXTERNAL SOURCES:
+  Alamofire+Result:
+    :path: "./"
 
 SPEC CHECKSUMS:
-  Result: af24e3e57ab81005ec4221a53fd36dc1e7a52869
+  Alamofire+Result: 09398e0f3617755d119512f21fce5b76c13af357
+  Result: f7927152cbaec0c043abb06ba0bc432678818418
 
-COCOAPODS: 0.38.2
+COCOAPODS: 0.39.0

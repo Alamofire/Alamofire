@@ -3,9 +3,9 @@ xcodeproj 'Alamofire.xcodeproj'
 source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 
-target 'Alamofire iOS' do
+target 'Alamofire iOS', :exclusive => true do
     platform :ios, '8.0'
-    pod 'Result', '~> 0.6.0-beta.4'
+    pod 'Result', '0.6.0-beta.4'
 end
 
 target 'Alamofire iOS Tests', :exclusive => true do
@@ -19,13 +19,13 @@ target 'iOS Example', :exclusive => true do
     pod "Alamofire+Result", :path => "./"
 end
 
-target 'Alamofire OSX' do
-    platform :osx, '10.09'
-    pod 'Result', '~> 0.6.0-beta.4'
+target 'Alamofire OSX', :exclusive => true do
+    platform :osx, '10.10'
+    pod 'Result', '0.6.0-beta.4'
 end
 
 target 'Alamofire OSX Tests', :exclusive => true do
-    platform :ios, '8.0'
+    platform :osx, '10.10'
     pod "Alamofire+Result", :path => "./"
 end
 

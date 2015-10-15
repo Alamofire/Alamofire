@@ -36,12 +36,34 @@ extension Result {
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    public var error: ErrorType? {
+    public var error: Error? {
         switch self {
         case .Success:
             return nil
         case .Failure(let error):
             return error
+        }
+    }
+
+    /// The textual representation used when written to an output stream, which includes whether the result was a
+    /// success or failure.
+    public var description: String {
+        switch self {
+        case .Success:
+            return "SUCCESS"
+        case .Failure:
+            return "FAILURE"
+        }
+    }
+
+    /// The debug textual representation used when written to an output stream, which includes whether the result was a
+    /// success or failure in addition to the value or error.
+    public var debugDescription: String {
+        switch self {
+        case .Success(let value):
+            return "SUCCESS: \(value)"
+        case .Failure(let error):
+            return "FAILURE: \(error)"
         }
     }
 }
