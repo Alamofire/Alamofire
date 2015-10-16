@@ -65,7 +65,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Alamofire', '~> 3.0'
+pod 'Alamofire-Result', '~> 3.0.0-karumi'
 ```
 
 Then, run the following command:
@@ -88,7 +88,7 @@ $ brew install carthage
 To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" ~> 3.0
+github "Karumi/Alamofire-Result" ~> 3.0
 ```
 
 Run `carthage` to build the framework and drag the built `Alamofire.framework` into your Xcode project.
@@ -108,7 +108,7 @@ $ git init
 - Add Alamofire as a git [submodule](http://git-scm.com/docs/git-submodule) by running the following command:
 
 ```bash
-$ git submodule add https://github.com/Alamofire/Alamofire.git
+$ git submodule add https://github.com/Karumi/Alamofire-Result.git
 ```
 
 - Open the new `Alamofire` folder, and drag the `Alamofire.xcodeproj` into the Project Navigator of your application's Xcode project.
@@ -138,7 +138,7 @@ $ git submodule add https://github.com/Alamofire/Alamofire.git
 ### Making a Request
 
 ```swift
-import Alamofire
+import Alamofire_Result
 
 Alamofire.request(.GET, "http://httpbin.org/get")
 ```
@@ -146,7 +146,7 @@ Alamofire.request(.GET, "http://httpbin.org/get")
 ### Response Handling
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+Alamofire_Result.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .responseJSON { response in
              print(response.request)  // original URL request
              print(response.response) // URL response
@@ -176,7 +176,7 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 #### Response Handler
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+Alamofire_Result.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .response { request, response, data, error in
              print(request)
              print(response)
@@ -190,7 +190,7 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 #### Response Data Handler
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+Alamofire_Result.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .responseData { response in
              print(response.request)
              print(response.response)
@@ -201,7 +201,7 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 #### Response String Handler
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get")
+Alamofire_Result.request(.GET, "http://httpbin.org/get")
          .responseString { response in
              print("Success: \(response.result.isSuccess)")
              print("Response String: \(response.result.value)")
@@ -211,7 +211,7 @@ Alamofire.request(.GET, "http://httpbin.org/get")
 #### Response JSON Handler
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get")
+Alamofire_Result.request(.GET, "http://httpbin.org/get")
          .responseJSON { response in
              debugPrint(response)
          }
@@ -222,7 +222,7 @@ Alamofire.request(.GET, "http://httpbin.org/get")
 Response handlers can even be chained:
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get")
+Alamofire_Result.request(.GET, "http://httpbin.org/get")
          .responseString { response in
              print("Response String: \(response.result.value)")
          }
@@ -233,7 +233,7 @@ Alamofire.request(.GET, "http://httpbin.org/get")
 
 ### HTTP Methods
 
-`Alamofire.Method` lists the HTTP methods defined in [RFC 7231 §4.3](http://tools.ietf.org/html/rfc7231#section-4.3):
+`Alamofire_Result.Method` lists the HTTP methods defined in [RFC 7231 §4.3](http://tools.ietf.org/html/rfc7231#section-4.3):
 
 ```swift
 public enum Method: String {
@@ -244,11 +244,11 @@ public enum Method: String {
 These values can be passed as the first argument of the `Alamofire.request` method:
 
 ```swift
-Alamofire.request(.POST, "http://httpbin.org/post")
+Alamofire_Result.request(.POST, "http://httpbin.org/post")
 
-Alamofire.request(.PUT, "http://httpbin.org/put")
+Alamofire_Result.request(.PUT, "http://httpbin.org/put")
 
-Alamofire.request(.DELETE, "http://httpbin.org/delete")
+Alamofire_Result.request(.DELETE, "http://httpbin.org/delete")
 ```
 
 ### Parameters
@@ -256,7 +256,7 @@ Alamofire.request(.DELETE, "http://httpbin.org/delete")
 #### GET Request With URL-Encoded Parameters
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+Alamofire_Result.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 // http://httpbin.org/get?foo=bar
 ```
 
@@ -273,7 +273,7 @@ let parameters = [
     ]
 ]
 
-Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters)
+Alamofire_Result.request(.POST, "http://httpbin.org/post", parameters: parameters)
 // HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
 ```
 
@@ -321,7 +321,7 @@ let parameters = [
     ]
 ]
 
-Alamofire.request(.POST, "http://httpbin.org/post", parameters: parameters, encoding: .JSON)
+Alamofire_Result.request(.POST, "http://httpbin.org/post", parameters: parameters, encoding: .JSON)
 // HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
 ```
 
@@ -337,7 +337,7 @@ let headers = [
     "Content-Type": "application/x-www-form-urlencoded"
 ]
 
-Alamofire.request(.GET, "http://httpbin.org/get", headers: headers)
+Alamofire_Result.request(.GET, "http://httpbin.org/get", headers: headers)
          .responseJSON { response in
              debugPrint(response)
          }
@@ -360,13 +360,13 @@ Caching is handled on the system framework level by [`NSURLCache`](https://devel
 
 ```swift
 let fileURL = NSBundle.mainBundle().URLForResource("Default", withExtension: "png")
-Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
+Alamofire_Result.upload(.POST, "http://httpbin.org/post", file: fileURL)
 ```
 
 #### Uploading with Progress
 
 ```swift
-Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
+Alamofire_Result.upload(.POST, "http://httpbin.org/post", file: fileURL)
          .progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
              print(totalBytesWritten)
 
@@ -384,7 +384,7 @@ Alamofire.upload(.POST, "http://httpbin.org/post", file: fileURL)
 #### Uploading MultipartFormData
 
 ```swift
-Alamofire.upload(
+Alamofire_Result.upload(
     .POST,
     "http://httpbin.org/post",
     multipartFormData: { multipartFormData in
@@ -414,7 +414,7 @@ Alamofire.upload(
 #### Downloading a File
 
 ```swift
-Alamofire.download(.GET, "http://httpbin.org/stream/100") { temporaryURL, response in
+Alamofire_Result.download(.GET, "http://httpbin.org/stream/100") { temporaryURL, response in
     let fileManager = NSFileManager.defaultManager()
     let directoryURL = fileManager.URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0]
     let pathComponent = response.suggestedFilename
@@ -426,14 +426,14 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100") { temporaryURL, respon
 #### Using the Default Download Destination
 
 ```swift
-let destination = Alamofire.Request.suggestedDownloadDestination(directory: .DocumentDirectory, domain: .UserDomainMask)
-Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
+let destination = Alamofire_Result.Request.suggestedDownloadDestination(directory: .DocumentDirectory, domain: .UserDomainMask)
+Alamofire_Result.download(.GET, "http://httpbin.org/stream/100", destination: destination)
 ```
 
 #### Downloading a File w/Progress
 
 ```swift
-Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
+Alamofire_Result.download(.GET, "http://httpbin.org/stream/100", destination: destination)
          .progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
              print(totalBytesRead)
 
@@ -455,7 +455,7 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destinati
 #### Accessing Resume Data for Failed Downloads
 
 ```swift
-Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
+Alamofire_Result.download(.GET, "http://httpbin.org/stream/100", destination: destination)
          .response { _, _, data, _ in
              if let
                  data = data,
@@ -471,7 +471,7 @@ Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destinati
 > The `data` parameter is automatically populated with the `resumeData` if available.
 
 ```swift
-let download = Alamofire.download(.GET, "http://httpbin.org/stream/100", destination: destination)
+let download = Alamofire_Result.download(.GET, "http://httpbin.org/stream/100", destination: destination)
 download.response { _, _, _, _ in
     if let
         resumeData = download.resumeData,
@@ -503,7 +503,7 @@ The `authenticate` method on a `Request` will automatically provide an `NSURLCre
 let user = "user"
 let password = "password"
 
-Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
+Alamofire_Result.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
          .authenticate(user: user, password: password)
          .responseJSON { response in
              debugPrint(response)
@@ -521,7 +521,7 @@ let base64Credentials = credentialData.base64EncodedStringWithOptions([])
 
 let headers = ["Authorization": "Basic \(base64Credentials)"]
 
-Alamofire.request(.GET, "http://httpbin.org/basic-auth/user/password", headers: headers)
+Alamofire_Result.request(.GET, "http://httpbin.org/basic-auth/user/password", headers: headers)
          .responseJSON { response in
              debugPrint(response)
          }
@@ -535,7 +535,7 @@ let password = "password"
 
 let credential = NSURLCredential(user: user, password: password, persistence: .ForSession)
 
-Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
+Alamofire_Result.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
          .authenticate(usingCredential: credential)
          .responseJSON { response in
              debugPrint(response)
@@ -549,7 +549,7 @@ By default, Alamofire treats any completed request to be successful, regardless 
 #### Manual Validation
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+Alamofire_Result.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .validate(statusCode: 200..<300)
          .validate(contentType: ["application/json"])
          .response { response in
@@ -562,7 +562,7 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 Automatically validates status code within `200...299` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+Alamofire_Result.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
          .validate()
          .responseJSON { response in
              switch response.result {
@@ -577,7 +577,7 @@ Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 ### Printable
 
 ```swift
-let request = Alamofire.request(.GET, "http://httpbin.org/ip")
+let request = Alamofire_Result.request(.GET, "http://httpbin.org/ip")
 
 print(request)
 // GET http://httpbin.org/ip (200)
@@ -586,7 +586,7 @@ print(request)
 ### DebugPrintable
 
 ```swift
-let request = Alamofire.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
+let request = Alamofire_Result.request(.GET, "http://httpbin.org/get", parameters: ["foo": "bar"])
 
 debugPrint(request)
 ```
@@ -617,16 +617,16 @@ this framework, it is recommended that you be familiar with the concepts and cap
 
 ### Manager
 
-Top-level convenience methods like `Alamofire.request` use a shared instance of `Alamofire.Manager`, which is configured with the default `NSURLSessionConfiguration`.
+Top-level convenience methods like `Alamofire_Result.request` use a shared instance of `Alamofire_Result.Manager`, which is configured with the default `NSURLSessionConfiguration`.
 
 As such, the following two statements are equivalent:
 
 ```swift
-Alamofire.request(.GET, "http://httpbin.org/get")
+Alamofire_Result.request(.GET, "http://httpbin.org/get")
 ```
 
 ```swift
-let manager = Alamofire.Manager.sharedInstance
+let manager = Alamofire_Result.Manager.sharedInstance
 manager.request(NSURLRequest(URL: NSURL(string: "http://httpbin.org/get")!))
 ```
 
@@ -636,40 +636,40 @@ Applications can create managers for background and ephemeral sessions, as well 
 
 ```swift
 let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-let manager = Alamofire.Manager(configuration: configuration)
+let manager = Alamofire_Result.Manager(configuration: configuration)
 ```
 
 #### Creating a Manager with Background Configuration
 
 ```swift
 let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier("com.example.app.background")
-let manager = Alamofire.Manager(configuration: configuration)
+let manager = Alamofire_Result.Manager(configuration: configuration)
 ```
 
 #### Creating a Manager with Ephemeral Configuration
 
 ```swift
 let configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
-let manager = Alamofire.Manager(configuration: configuration)
+let manager = Alamofire_Result.Manager(configuration: configuration)
 ```
 
 #### Modifying Session Configuration
 
 ```swift
-var defaultHeaders = Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders ?? [:]
+var defaultHeaders = Alamofire_Result.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders ?? [:]
 defaultHeaders["DNT"] = "1 (Do Not Track Enabled)"
 
 let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
 configuration.HTTPAdditionalHeaders = defaultHeaders
 
-let manager = Alamofire.Manager(configuration: configuration)
+let manager = Alamofire_Result.Manager(configuration: configuration)
 ```
 
 > This is **not** recommended for `Authorization` or `Content-Type` headers. Instead, use `URLRequestConvertible` and `ParameterEncoding`, respectively.
 
 ### Request
 
-The result of a `request`, `upload`, or `download` method is an instance of `Alamofire.Request`. A request is always created using a constructor method from an owning manager, and never initialized directly.
+The result of a `request`, `upload`, or `download` method is an instance of `Alamofire_Result.Request`. A request is always created using a constructor method from an owning manager, and never initialized directly.
 
 Methods like `authenticate`, `validate` and `responseData` return the caller in order to facilitate chaining.
 
@@ -683,7 +683,7 @@ Requests can be suspended, resumed, and cancelled:
 
 #### Creating a Custom Response Serializer
 
-Alamofire provides built-in response serialization for strings, JSON, and property lists, but others can be added in extensions on `Alamofire.Request`.
+Alamofire provides built-in response serialization for strings, JSON, and property lists, but others can be added in extensions on `Alamofire_Result.Request`.
 
 For example, here's how a response handler using [Ono](https://github.com/mattt/Ono) might be implemented:
 
@@ -845,16 +845,16 @@ Types adopting the `URLStringConvertible` protocol can be used to construct URL 
 
 ```swift
 let string = NSString(string: "http://httpbin.org/post")
-Alamofire.request(.POST, string)
+Alamofire_Result.request(.POST, string)
 
 let URL = NSURL(string: string)!
-Alamofire.request(.POST, URL)
+Alamofire_Result.request(.POST, URL)
 
 let URLRequest = NSURLRequest(URL: URL)
-Alamofire.request(.POST, URLRequest) // overrides `HTTPMethod` of `URLRequest`
+Alamofire_Result.request(.POST, URLRequest) // overrides `HTTPMethod` of `URLRequest`
 
 let URLComponents = NSURLComponents(URL: URL, resolvingAgainstBaseURL: true)
-Alamofire.request(.POST, URLComponents)
+Alamofire_Result.request(.POST, URLComponents)
 ```
 
 Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLStringConvertible` as a convenient way to map domain-specific models to server resources.
@@ -873,7 +873,7 @@ extension User: URLStringConvertible {
 
 ```swift
 let user = User(username: "mattt")
-Alamofire.request(.GET, user) // http://example.com/users/mattt
+Alamofire_Result.request(.GET, user) // http://example.com/users/mattt
 ```
 
 ### URLRequestConvertible
@@ -895,7 +895,7 @@ do {
 
 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-Alamofire.request(mutableURLRequest)
+Alamofire_Result.request(mutableURLRequest)
 ```
 
 Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLRequestConvertible` as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage authentication credentials and other state.
@@ -931,7 +931,7 @@ enum Router: URLRequestConvertible {
 ```
 
 ```swift
-Alamofire.request(Router.Search(query: "foo bar", page: 1)) // ?q=foo%20bar&offset=50
+Alamofire_Result.request(Router.Search(query: "foo bar", page: 1)) // ?q=foo%20bar&offset=50
 ```
 
 #### CRUD & Authorization
@@ -985,9 +985,9 @@ enum Router: URLRequestConvertible {
 
         switch self {
         case .CreateUser(let parameters):
-            return Alamofire.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
+            return Alamofire_Result.ParameterEncoding.JSON.encode(mutableURLRequest, parameters: parameters).0
         case .UpdateUser(_, let parameters):
-            return Alamofire.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+            return Alamofire_Result.ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
         default:
             return mutableURLRequest
         }
@@ -996,7 +996,7 @@ enum Router: URLRequestConvertible {
 ```
 
 ```swift
-Alamofire.request(Router.ReadUser("mattt")) // GET /users/mattt
+Alamofire_Result.request(Router.ReadUser("mattt")) // GET /users/mattt
 ```
 
 ### Security
