@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.social_media_url = 'http://twitter.com/goKarumi'
   s.authors = { 'Alamofire Software Foundation' => 'info@alamofire.org',
                 'Karumi'                        => 'hello@karumi.com' }
-  s.source = { :git => 'git@github.com:Karumi/Alamofire-Result.git', :tag => s.version }
+  s.source = { :git => 'https://github.com/Karumi/Alamofire-Result.git', :tag => s.version }
 
   s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.10'
