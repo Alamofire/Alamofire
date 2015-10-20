@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Alamofire-Result'
-  s.version = '3.0.0-karumi'
+  s.version = '3.0.0-karumi.1'
   s.license = 'MIT'
   s.summary = 'Result<Elegant> HTTP Networking in Swift'
   s.homepage = 'https://github.com/Karumi/Alamofire-Result'
