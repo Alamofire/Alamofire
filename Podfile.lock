@@ -1,18 +1,18 @@
 PODS:
-  - Alamofire+Result (3.0.0):
+  - Alamofire-Result (3.0.0-karumi):
     - Result (~> 0.6.0-beta.4)
   - Result (0.6.0-beta.4)
 
 DEPENDENCIES:
-  - Alamofire+Result (from `./`)
+  - Alamofire-Result (from `./`)
   - Result (= 0.6.0-beta.4)
 
 EXTERNAL SOURCES:
-  Alamofire+Result:
+  Alamofire-Result:
     :path: "./"
 
 SPEC CHECKSUMS:
-  Alamofire+Result: 09398e0f3617755d119512f21fce5b76c13af357
+  Alamofire-Result: 27a9eab3798f2f71a2d8a7da8ddf02dde6a4882b
   Result: f7927152cbaec0c043abb06ba0bc432678818418
 
 COCOAPODS: 0.39.0
