@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.0.x` Releases - [3.0.0](#300)
+- `3.0.x` Releases - [3.0.0](#300) | [3.0.1](#301)
 - `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2) | [3.0.0-beta.3](#300-beta3)
 
 #### 2.x Releases
@@ -17,6 +17,18 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [3.0.1](https://github.com/Alamofire/Alamofire/releases/tag/3.0.1)
+Released on 2015-10-19. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.0.1).
+
+#### Added
+- Tests around content type validation with accept parameters.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- Content type validation issue where parameter parsing on `;` was incorrect.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
 
 ## [3.0.0](https://github.com/Alamofire/Alamofire/releases/tag/3.0.0)
 Released on 2015-10-10. All issues associated with this milestone can be found using this
