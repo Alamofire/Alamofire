@@ -94,7 +94,7 @@ extension Request {
         init?(_ string: String) {
             let components: [String] = {
                 let stripped = string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                let split = stripped.substringToIndex(stripped.rangeOfString(";")?.endIndex ?? stripped.endIndex)
+                let split = stripped.substringToIndex(stripped.rangeOfString(";")?.startIndex ?? stripped.endIndex)
                 return split.componentsSeparatedByString("/")
             }()
 

@@ -116,6 +116,8 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(.GET, URLString)
             .validate(contentType: ["application/json"])
+            .validate(contentType: ["application/json;charset=utf8"])
+            .validate(contentType: ["application/json;q=0.8;charset=utf8"])
             .response { _, _, _, responseError in
                 error = responseError
                 expectation.fulfill()
