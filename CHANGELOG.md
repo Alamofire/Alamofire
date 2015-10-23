@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
+- `3.1.x` Releases - [3.1.0](#310)
 - `3.0.x` Releases - [3.0.0](#300) | [3.0.1](#301)
 - `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2) | [3.0.0-beta.3](#300-beta3)
 
@@ -15,6 +16,32 @@ All notable changes to this project will be documented in this file.
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [3.1.0](https://github.com/Alamofire/Alamofire/releases/tag/3.1.0)
+Released on 2015-10-22. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.1.0).
+
+#### Added
+- New tvOS framework and test targets to the project.
+  - Added by [Bob Scarano](https://github.com/bscarano) in Pull Request
+  [#767](https://github.com/Alamofire/Alamofire/pull/767).
+- The tvOS deployment target to the podspec.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- The `BITCODE_GENERATION_MODE` user defined setting to tvOS framework target.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- The README to include tvOS and bumped the required version of Xcode.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The default tvOS and watchOS deployment targets in the Xcode project.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The `APPLICATION_EXTENSION_API_ONLY` enabled flag to `YES` in the tvOS framework target.
+  - Updated by [James Barrow](https://github.com/Baza207) in Pull Request
+  [#771](https://github.com/Alamofire/Alamofire/pull/771).
+- The Travis-CI yaml file to run watchOS and tvOS builds and tests on xcode7.1 osx_image.
+  - Updated by [Christian Noon](https://github.com/cnoon).
 
 ---
 
