@@ -220,12 +220,6 @@ class ContentTypeValidationTestCase: BaseTestCase {
             .validate(contentType: [])
             .response { _, response, data, responseError in
                 error = responseError
-
-                print(response)
-                if let data = data {
-                    print(String(data: data, encoding: NSUTF8StringEncoding)!)
-                }
-
                 expectation.fulfill()
             }
 
