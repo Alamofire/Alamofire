@@ -86,7 +86,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -118,7 +118,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -154,7 +154,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -188,7 +188,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -222,7 +222,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -250,7 +250,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -278,7 +278,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -308,7 +308,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -342,7 +342,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -370,7 +370,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -398,7 +398,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -424,7 +424,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -456,7 +456,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNil(error, "error should be nil")
@@ -486,7 +486,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")

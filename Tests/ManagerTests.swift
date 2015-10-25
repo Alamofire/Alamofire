@@ -151,7 +151,7 @@ class ManagerTestCase: BaseTestCase {
             }
             .resume()
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response, "response should not be nil")
@@ -256,7 +256,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         if let response = response {
