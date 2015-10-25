@@ -348,7 +348,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, "NSCocoaErrorDomain", "error domain should match expected value")
+            XCTAssertEqual(error.domain, NSCocoaErrorDomain, "error domain should match expected value")
             XCTAssertEqual(error.code, 3840, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
@@ -486,7 +486,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, "NSCocoaErrorDomain", "error domain should match expected value")
+            XCTAssertEqual(error.domain, NSCocoaErrorDomain, "error domain should match expected value")
             XCTAssertEqual(error.code, 3840, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
