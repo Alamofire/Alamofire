@@ -208,6 +208,33 @@ class ContentTypeValidationTestCase: BaseTestCase {
         }
     }
 
+    func testThatValidationForRequestWithNoAcceptableContentTypeResponseSucceedsWhenNoDataIsReturned() {
+        // Given
+        let URLString = "https://httpbin.org/status/204"
+        let expectation = expectationWithDescription("request should succeed and return no data")
+
+        var error: NSError?
+
+        // When
+        Alamofire.request(.GET, URLString)
+            .validate(contentType: [])
+            .response { _, response, data, responseError in
+                error = responseError
+
+                print(response)
+                if let data = data {
+                    print(String(data: data, encoding: NSUTF8StringEncoding)!)
+                }
+
+                expectation.fulfill()
+            }
+
+        waitForExpectationsWithTimeout(timeout, handler: nil)
+
+        // Then
+        XCTAssertNil(error, "error should be nil")
+    }
+
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
         class MockManager: Manager {
