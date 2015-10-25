@@ -204,7 +204,7 @@ extension Request {
 
             let actualEncoding = encoding ?? NSISOLatin1StringEncoding
 
-            if let string = NSString(data: validData, encoding: actualEncoding) as? String {
+            if let string = String(data: validData, encoding: actualEncoding) {
                 return .Success(string)
             } else {
                 let failureReason = "String could not be serialized with encoding: \(actualEncoding)"

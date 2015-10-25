@@ -401,7 +401,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
         if let
             HTTPBody = URLRequest.HTTPBody,
-            decodedHTTPBody = NSString(data: HTTPBody, encoding: NSUTF8StringEncoding)
+            decodedHTTPBody = String(data: HTTPBody, encoding: NSUTF8StringEncoding)
         {
             XCTAssertEqual(decodedHTTPBody, "bar=2&foo=1", "HTTPBody is incorrect")
         } else {
