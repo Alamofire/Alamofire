@@ -261,8 +261,8 @@ extension Request {
 
             guard response?.statusCode ?? -1 != 204 else { return .Success(NSNull()) }
 
-            guard let validData = data else {
-                let failureReason = "JSON could not be serialized. Input data was nil."
+            guard let validData = data where validData.length > 0 else {
+                let failureReason = "JSON could not be serialized. Input data was nil or zero length."
                 let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
                 return .Failure(error)
             }
@@ -317,8 +317,8 @@ extension Request {
 
             guard response?.statusCode ?? -1 != 204 else { return .Success(NSNull()) }
 
-            guard let validData = data else {
-                let failureReason = "Property list could not be serialized. Input data was nil."
+            guard let validData = data where validData.length > 0 else {
+                let failureReason = "Property list could not be serialized. Input data was nil or zero length."
                 let error = Error.errorWithCode(.PropertyListSerializationFailed, failureReason: failureReason)
                 return .Failure(error)
             }
