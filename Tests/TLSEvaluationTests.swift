@@ -75,7 +75,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWithNoServerTrustPolicy() {
         // Given
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         let manager = Manager(configuration: configuration)
         var error: NSError?
 
@@ -83,7 +83,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -108,14 +108,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -144,14 +144,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -178,14 +178,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -212,14 +212,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -240,14 +240,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -268,14 +268,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -298,14 +298,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -332,14 +332,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -360,14 +360,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -388,14 +388,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -414,14 +414,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -446,14 +446,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
@@ -476,14 +476,14 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        let expectation = expectationWithDescription("\(URL)")
+        weak var expectation = expectationWithDescription("\(URL)")
         var error: NSError?
 
         // When
         manager.request(.GET, URL)
             .response { _, _, _, responseError in
                 error = responseError
-                expectation.fulfill()
+                expectation?.fulfill()
             }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
