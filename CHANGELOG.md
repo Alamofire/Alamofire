@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.1.x` Releases - [3.1.0](#310)
+- `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311)
 - `3.0.x` Releases - [3.0.0](#300) | [3.0.1](#301)
 - `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2) | [3.0.0-beta.3](#300-beta3)
 
@@ -18,6 +18,40 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [3.1.1](https://github.com/Alamofire/Alamofire/releases/tag/3.1.1)
+Released on 2015-10-31. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.1.1).
+
+#### Added
+- Support for 204 response status codes in the response serializers.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#889](https://github.com/Alamofire/Alamofire/pull/889).
+- ATS section to the README explaining how to configure the settings.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#876](https://github.com/Alamofire/Alamofire/issues/876).
+
+#### Updated
+- Several unnecessary uses of `NSString` with `String`.
+  - Updated by [Nicholas Maccharoli](https://github.com/Nirma) in Pull Request
+  [#885](https://github.com/Alamofire/Alamofire/pull/885).
+- Content type validation to always succeeds when server data is `nil` or zero length.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#890](https://github.com/Alamofire/Alamofire/pull/890).
+
+
+#### Removed
+- The mention of rdar://22307360 from the README since Xcode 7.1 has been released.
+  - Removed by [Elvis Nuñez](https://github.com/3lvis) in Pull Request
+  [#891](https://github.com/Alamofire/Alamofire/pull/891).
+- An unnecessary availability check now that Xcode 7.1 is out of beta.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+- The playground from the project due to instability reasons.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+- The data length checks in the `responseData` and `responseString` serializers.
+  - Removed by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#889](https://github.com/Alamofire/Alamofire/pull/889).
+
 
 ## [3.1.0](https://github.com/Alamofire/Alamofire/releases/tag/3.1.0)
 Released on 2015-10-22. All issues associated with this milestone can be found using this
