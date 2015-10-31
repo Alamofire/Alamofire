@@ -39,7 +39,6 @@ Released on 2015-10-31. All issues associated with this milestone can be found u
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#890](https://github.com/Alamofire/Alamofire/pull/890).
 
-
 #### Removed
 - The mention of rdar://22307360 from the README since Xcode 7.1 has been released.
   - Removed by [Elvis Nuñez](https://github.com/3lvis) in Pull Request
@@ -51,7 +50,6 @@ Released on 2015-10-31. All issues associated with this milestone can be found u
 - The data length checks in the `responseData` and `responseString` serializers.
   - Removed by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#889](https://github.com/Alamofire/Alamofire/pull/889).
-
 
 ## [3.1.0](https://github.com/Alamofire/Alamofire/releases/tag/3.1.0)
 Released on 2015-10-22. All issues associated with this milestone can be found using this
