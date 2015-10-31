@@ -148,7 +148,7 @@ extension Request {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .Failure(error!) }
 
-            guard response?.statusCode ?? -1 != 204 else { return .Success(NSData()) }
+            if let response = response where response.statusCode == 204 { return .Success(NSData()) }
 
             guard let validData = data else {
                 let failureReason = "Data could not be serialized. Input data was nil."
@@ -192,7 +192,7 @@ extension Request {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .Failure(error!) }
 
-            guard response?.statusCode ?? -1 != 204 else { return .Success("") }
+            if let response = response where response.statusCode == 204 { return .Success("") }
 
             guard let validData = data else {
                 let failureReason = "String could not be serialized. Input data was nil."
@@ -259,7 +259,7 @@ extension Request {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .Failure(error!) }
 
-            guard response?.statusCode ?? -1 != 204 else { return .Success(NSNull()) }
+            if let response = response where response.statusCode == 204 { return .Success(NSNull()) }
 
             guard let validData = data where validData.length > 0 else {
                 let failureReason = "JSON could not be serialized. Input data was nil or zero length."
@@ -315,7 +315,7 @@ extension Request {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .Failure(error!) }
 
-            guard response?.statusCode ?? -1 != 204 else { return .Success(NSNull()) }
+            if let response = response where response.statusCode == 204 { return .Success(NSNull()) }
 
             guard let validData = data where validData.length > 0 else {
                 let failureReason = "Property list could not be serialized. Input data was nil or zero length."
