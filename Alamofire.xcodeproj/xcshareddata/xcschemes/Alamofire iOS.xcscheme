@@ -52,11 +52,6 @@
                BlueprintName = "Alamofire iOS Tests"
                ReferencedContainer = "container:Alamofire.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "TLSEvaluationExpiredLeafCertificateTestCase">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>
