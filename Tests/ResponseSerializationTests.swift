@@ -83,6 +83,47 @@ class ResponseSerializationTestCase: BaseTestCase {
         }
     }
 
+    func testThatDataResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
+        // Given
+        let serializer = Request.dataResponseSerializer()
+        let URL = NSURL(string: "https://httpbin.org/get")!
+        let response = NSHTTPURLResponse(URL: URL, statusCode: 200, HTTPVersion: "HTTP/1.1", headerFields: nil)
+
+        // When
+        let result = serializer.serializeResponse(nil, response, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isFailure, "result is failure should be true")
+        XCTAssertNil(result.value, "result value should be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
+
+        if let error = result.error {
+            XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
+            XCTAssertEqual(error.code, Error.Code.DataSerializationFailed.rawValue, "error code should match expected value")
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
+
+    func testThatDataResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
+        // Given
+        let serializer = Request.dataResponseSerializer()
+        let URL = NSURL(string: "https://httpbin.org/get")!
+        let response = NSHTTPURLResponse(URL: URL, statusCode: 204, HTTPVersion: "HTTP/1.1", headerFields: nil)
+
+        // When
+        let result = serializer.serializeResponse(nil, response, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isSuccess, "result is success should be true")
+        XCTAssertNotNil(result.value, "result value should not be nil")
+        XCTAssertNil(result.error, "result error should be nil")
+
+        if let data = result.value {
+            XCTAssertEqual(data.length, 0, "data length should be zero")
+        }
+    }
+
     // MARK: - String Response Serializer Tests
 
     func testThatStringResponseSerializerFailsWhenDataIsNil() {
@@ -105,7 +146,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    func testThatStringResponseSerializerFailsWhenDataIsEmpty() {
+    func testThatStringResponseSerializerSucceedsWhenDataIsEmpty() {
         // Given
         let serializer = Request.stringResponseSerializer()
 
@@ -113,9 +154,9 @@ class ResponseSerializationTestCase: BaseTestCase {
         let result = serializer.serializeResponse(nil, nil, NSData(), nil)
 
         // Then
-        XCTAssertTrue(result.isFailure, "result is failure should be true")
-        XCTAssertNil(result.value, "result value should be nil")
-        XCTAssertNotNil(result.error, "result error should not be nil")
+        XCTAssertTrue(result.isSuccess, "result is success should be true")
+        XCTAssertNotNil(result.value, "result value should not be nil")
+        XCTAssertNil(result.error, "result error should be nil")
     }
 
     func testThatStringResponseSerializerSucceedsWithUTF8DataAndNoProvidedEncoding() {
@@ -231,6 +272,47 @@ class ResponseSerializationTestCase: BaseTestCase {
         }
     }
 
+    func testThatStringResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
+        // Given
+        let serializer = Request.stringResponseSerializer()
+        let URL = NSURL(string: "https://httpbin.org/get")!
+        let response = NSHTTPURLResponse(URL: URL, statusCode: 200, HTTPVersion: "HTTP/1.1", headerFields: nil)
+
+        // When
+        let result = serializer.serializeResponse(nil, response, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isFailure, "result is failure should be true")
+        XCTAssertNil(result.value, "result value should be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
+
+        if let error = result.error {
+            XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
+            XCTAssertEqual(error.code, Error.Code.StringSerializationFailed.rawValue, "error code should match expected value")
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
+
+    func testThatStringResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
+        // Given
+        let serializer = Request.stringResponseSerializer()
+        let URL = NSURL(string: "https://httpbin.org/get")!
+        let response = NSHTTPURLResponse(URL: URL, statusCode: 204, HTTPVersion: "HTTP/1.1", headerFields: nil)
+
+        // When
+        let result = serializer.serializeResponse(nil, response, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isSuccess, "result is success should be true")
+        XCTAssertNotNil(result.value, "result value should not be nil")
+        XCTAssertNil(result.error, "result error should be nil")
+
+        if let string = result.value {
+            XCTAssertEqual(string, "", "string should be equal to empty string")
+        }
+    }
+
     // MARK: - JSON Response Serializer Tests
 
     func testThatJSONResponseSerializerFailsWhenDataIsNil() {
@@ -328,6 +410,47 @@ class ResponseSerializationTestCase: BaseTestCase {
         }
     }
 
+    func testThatJSONResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
+        // Given
+        let serializer = Request.JSONResponseSerializer()
+        let URL = NSURL(string: "https://httpbin.org/get")!
+        let response = NSHTTPURLResponse(URL: URL, statusCode: 200, HTTPVersion: "HTTP/1.1", headerFields: nil)
+
+        // When
+        let result = serializer.serializeResponse(nil, response, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isFailure, "result is failure should be true")
+        XCTAssertNil(result.value, "result value should be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
+
+        if let error = result.error {
+            XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
+            XCTAssertEqual(error.code, Error.Code.JSONSerializationFailed.rawValue, "error code should match expected value")
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
+
+    func testThatJSONResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
+        // Given
+        let serializer = Request.JSONResponseSerializer()
+        let URL = NSURL(string: "https://httpbin.org/get")!
+        let response = NSHTTPURLResponse(URL: URL, statusCode: 204, HTTPVersion: "HTTP/1.1", headerFields: nil)
+
+        // When
+        let result = serializer.serializeResponse(nil, response, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isSuccess, "result is success should be true")
+        XCTAssertNotNil(result.value, "result value should not be nil")
+        XCTAssertNil(result.error, "result error should be nil")
+
+        if let json = result.value as? NSNull {
+            XCTAssertEqual(json, NSNull(), "json should be equal to NSNull")
+        }
+    }
+
     // MARK: - Property List Response Serializer Tests
 
     func testThatPropertyListResponseSerializerFailsWhenDataIsNil() {
@@ -422,6 +545,47 @@ class ResponseSerializationTestCase: BaseTestCase {
             XCTAssertEqual(error.code, self.error.code, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
+        }
+    }
+
+    func testThatPropertyListResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
+        // Given
+        let serializer = Request.propertyListResponseSerializer()
+        let URL = NSURL(string: "https://httpbin.org/get")!
+        let response = NSHTTPURLResponse(URL: URL, statusCode: 200, HTTPVersion: "HTTP/1.1", headerFields: nil)
+
+        // When
+        let result = serializer.serializeResponse(nil, response, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isFailure, "result is failure should be true")
+        XCTAssertNil(result.value, "result value should be nil")
+        XCTAssertNotNil(result.error, "result error should not be nil")
+
+        if let error = result.error {
+            XCTAssertEqual(error.domain, Error.Domain, "error domain should match expected value")
+            XCTAssertEqual(error.code, Error.Code.PropertyListSerializationFailed.rawValue, "error code should match expected value")
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
+
+    func testThatPropertyListResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
+        // Given
+        let serializer = Request.propertyListResponseSerializer()
+        let URL = NSURL(string: "https://httpbin.org/get")!
+        let response = NSHTTPURLResponse(URL: URL, statusCode: 204, HTTPVersion: "HTTP/1.1", headerFields: nil)
+
+        // When
+        let result = serializer.serializeResponse(nil, response, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isSuccess, "result is success should be true")
+        XCTAssertNotNil(result.value, "result value should not be nil")
+        XCTAssertNil(result.error, "result error should be nil")
+
+        if let plist = result.value as? NSNull {
+            XCTAssertEqual(plist, NSNull(), "plist should be equal to NSNull")
         }
     }
 }

@@ -1,5 +1,5 @@
 PODS:
-  - Alamofire-Result (3.0.0-karumi):
+  - Alamofire-Result (3.1.1-karumi):
     - Result (~> 0.6.0-beta.4)
   - Result (0.6.0-beta.4)
 
@@ -12,7 +12,7 @@ EXTERNAL SOURCES:
     :path: "./"
 
 SPEC CHECKSUMS:
-  Alamofire-Result: 27a9eab3798f2f71a2d8a7da8ddf02dde6a4882b
+  Alamofire-Result: 29d9be3871a669dfadd2694b5a094218bc3b80e7
   Result: f7927152cbaec0c043abb06ba0bc432678818418
 
 COCOAPODS: 0.39.0

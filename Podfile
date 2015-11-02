@@ -29,6 +29,7 @@ target 'Alamofire OSX Tests', :exclusive => true do
     pod "Alamofire-Result", :path => "./"
 end
 
-#target 'Alamofire watchOS' do
-#	platform :watchos, '2.0'
-#end
+target 'Alamofire watchOS', :exclusive => true do
+	platform :watchos, '2.0'
+    pod 'Result', '0.6.0-beta.4'
+end
