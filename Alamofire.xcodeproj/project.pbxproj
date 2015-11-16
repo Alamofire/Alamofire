@@ -143,6 +143,7 @@
 		4CF627351BA7CC300011A099 /* unicorn.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1241B5207DB00873DFF /* unicorn.png */; };
 		4DD67C241A5C58FB00ED2280 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
+		72998D731BF26173006D3F69 /* Info-tvOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 72998D721BF26173006D3F69 /* Info-tvOS.plist */; };
 		8035DB621BAB492500466CB3 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */; };
 		E4202FCF1B667AA100C997FB /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C3F1AF89E0700BABAE5 /* Upload.swift */; };
 		E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
@@ -244,6 +245,7 @@
 		4CF626EF1BA7CB3E0011A099 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CF626F81BA7CB3E0011A099 /* Alamofire tvOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Alamofire tvOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		72998D721BF26173006D3F69 /* Info-tvOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-tvOS.plist"; sourceTree = "<group>"; };
 		E4202FE01B667AA100C997FB /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3319A95C8B0040E7D1 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3719A95C8B0040E7D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -521,6 +523,7 @@
 			children = (
 				F8111E3819A95C8B0040E7D1 /* Alamofire.h */,
 				F8111E3719A95C8B0040E7D1 /* Info.plist */,
+				72998D721BF26173006D3F69 /* Info-tvOS.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -813,6 +816,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72998D731BF26173006D3F69 /* Info-tvOS.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1061,7 +1065,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = Source/Info.plist;
+				INFOPLIST_FILE = "Source/Info-tvOS.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.alamofire.Alamofire;
@@ -1088,7 +1092,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = Source/Info.plist;
+				INFOPLIST_FILE = "Source/Info-tvOS.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.alamofire.Alamofire;
