@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312)
+- `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313)
 - `3.0.x` Releases - [3.0.0](#300) | [3.0.1](#301)
 - `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2) | [3.0.0-beta.3](#300-beta3)
 
@@ -19,6 +19,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.1.3](https://github.com/Alamofire/Alamofire/releases/tag/3.1.3)
+Released on 2015-11-22. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.1.3).
+
+#### Added
+- Custom `Info.plist` for tvOS setting the `UIRequiredDeviceCapabilities` to `arm64`.
+  - Added by [Simon Støvring](https://github.com/simonbs) in Pull Request
+  [#913](https://github.com/Alamofire/Alamofire/pull/913).
+
+#### Updated
+- All code samples in the README to use `https` instead of `http`.
+  - Updated by [Tomonobu Sato](https://github.com/tmnb) in Pull Request
+  [#912](https://github.com/Alamofire/Alamofire/pull/912).
+
 ## [3.1.2](https://github.com/Alamofire/Alamofire/releases/tag/3.1.2)
 Released on 2015-11-06. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.1.2).
@@ -29,11 +43,6 @@ Released on 2015-11-06. All issues associated with this milestone can be found u
   [#903](https://github.com/Alamofire/Alamofire/pull/903).
 - Code signing on watchOS and tvOS simulators builds to not sign simulator builds.
   - Updated by [Christian Noon](https://github.com/cnoon).
-
-#### Fixed
-- Issue where TLS tests were calling expectations after waiting for timeout.
-  - Fixed by [Dominic Jodoin](https://github.com/cotsog) in Pull Request
-  [#904](https://github.com/Alamofire/Alamofire/pull/904).
 
 ## [3.1.1](https://github.com/Alamofire/Alamofire/releases/tag/3.1.1)
 Released on 2015-10-31. All issues associated with this milestone can be found using this
