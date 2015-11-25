@@ -209,10 +209,7 @@ public class Manager {
     */
     public func request(URLRequest: URLRequestConvertible) -> Request {
         var dataTask: NSURLSessionDataTask!
-
-        dispatch_sync(queue) {
-            dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest)
-        }
+        dispatch_sync(queue) { dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest) }
 
         let request = Request(session: session, task: dataTask)
         delegate[request.delegate.task] = request.delegate
@@ -236,17 +233,13 @@ public class Manager {
         subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
                 var subdelegate: Request.TaskDelegate?
-                dispatch_sync(subdelegateQueue) {
-                    subdelegate = self.subdelegates[task.taskIdentifier]
-                }
+                dispatch_sync(subdelegateQueue) { subdelegate = self.subdelegates[task.taskIdentifier] }
 
                 return subdelegate
             }
 
             set {
-                dispatch_barrier_async(subdelegateQueue) {
-                    self.subdelegates[task.taskIdentifier] = newValue
-                }
+                dispatch_barrier_async(subdelegateQueue) { self.subdelegates[task.taskIdentifier] = newValue }
             }
         }
 
