@@ -90,7 +90,11 @@ public enum ParameterEncoding {
 
         switch self {
         case .URL, .URLEncodedInURL:
-            func query(parameters: [String: AnyObject]) -> String {
+            func query(parameters: [String: AnyObject]) -> String? {
+                guard parameters.count > 0 else {
+                    return nil
+                }
+                
                 var components: [(String, String)] = []
 
                 for key in parameters.keys.sort(<) {
@@ -98,7 +102,9 @@ public enum ParameterEncoding {
                     components += queryComponents(key, value)
                 }
 
-                return (components.map { "\($0)=\($1)" } as [String]).joinWithSeparator("&")
+                let query = (components.map { "\($0)=\($1)" } as [String]).joinWithSeparator("&")
+                
+                return query
             }
 
             func encodesParametersInURL(method: Method) -> Bool {
@@ -117,24 +123,26 @@ public enum ParameterEncoding {
                 }
             }
 
-            if let method = Method(rawValue: mutableURLRequest.HTTPMethod) where encodesParametersInURL(method) {
-                if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
-                    let percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)
-                    URLComponents.percentEncodedQuery = percentEncodedQuery
-                    mutableURLRequest.URL = URLComponents.URL
-                }
-            } else {
-                if mutableURLRequest.valueForHTTPHeaderField("Content-Type") == nil {
-                    mutableURLRequest.setValue(
-                        "application/x-www-form-urlencoded; charset=utf-8",
-                        forHTTPHeaderField: "Content-Type"
+            if let queryString = query(parameters) {
+                if let method = Method(rawValue: mutableURLRequest.HTTPMethod) where encodesParametersInURL(method) {
+                    if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
+                        let percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + queryString
+                        URLComponents.percentEncodedQuery = percentEncodedQuery
+                        mutableURLRequest.URL = URLComponents.URL
+                    }
+                } else {
+                    if mutableURLRequest.valueForHTTPHeaderField("Content-Type") == nil {
+                        mutableURLRequest.setValue(
+                            "application/x-www-form-urlencoded; charset=utf-8",
+                            forHTTPHeaderField: "Content-Type"
+                        )
+                    }
+                    
+                    mutableURLRequest.HTTPBody = queryString.dataUsingEncoding(
+                        NSUTF8StringEncoding,
+                        allowLossyConversion: false
                     )
                 }
-
-                mutableURLRequest.HTTPBody = query(parameters).dataUsingEncoding(
-                    NSUTF8StringEncoding,
-                    allowLossyConversion: false
-                )
             }
         case .JSON:
             do {
