@@ -89,7 +89,7 @@ To integrate Alamofire into your Xcode project using Carthage, specify it in you
 github "Alamofire/Alamofire" ~> 3.0
 ```
 
-Run `carthage` to build the framework and drag the built `Alamofire.framework` into your Xcode project.
+Run `carthage update` to build the framework and drag the built `Alamofire.framework` into your Xcode project.
 
 ### Manually
 
