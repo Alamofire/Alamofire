@@ -144,6 +144,13 @@
 		4DD67C241A5C58FB00ED2280 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
 		8035DB621BAB492500466CB3 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */; };
+		B39E2F951C1A744F002DA1A9 /* certDER.cer in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F831C1A72F8002DA1A9 /* certDER.cer */; };
+		B39E2F961C1A744F002DA1A9 /* certDER.crt in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F841C1A72F8002DA1A9 /* certDER.crt */; };
+		B39E2F971C1A744F002DA1A9 /* certDER.der in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F851C1A72F8002DA1A9 /* certDER.der */; };
+		B39E2F981C1A744F002DA1A9 /* certPEM.cer in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F861C1A72F8002DA1A9 /* certPEM.cer */; };
+		B39E2F991C1A744F002DA1A9 /* certPEM.crt in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F871C1A72F8002DA1A9 /* certPEM.crt */; };
+		B39E2F9B1C1A744F002DA1A9 /* randomGibberish.crt in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F891C1A72F8002DA1A9 /* randomGibberish.crt */; };
+		B39E2F9C1C1A744F002DA1A9 /* keyDER.der in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F8A1C1A72F8002DA1A9 /* keyDER.der */; };
 		E4202FCF1B667AA100C997FB /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C3F1AF89E0700BABAE5 /* Upload.swift */; };
 		E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
 		E4202FD11B667AA100C997FB /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C391AF899EC00BABAE5 /* Request.swift */; };
@@ -246,6 +253,13 @@
 		4CF626F81BA7CB3E0011A099 /* Alamofire tvOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Alamofire tvOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		72998D721BF26173006D3F69 /* Info-tvOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-tvOS.plist"; sourceTree = "<group>"; };
+		B39E2F831C1A72F8002DA1A9 /* certDER.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = certDER.cer; path = selfSignedAndMalformedCerts/certDER.cer; sourceTree = "<group>"; };
+		B39E2F841C1A72F8002DA1A9 /* certDER.crt */ = {isa = PBXFileReference; lastKnownFileType = file; name = certDER.crt; path = selfSignedAndMalformedCerts/certDER.crt; sourceTree = "<group>"; };
+		B39E2F851C1A72F8002DA1A9 /* certDER.der */ = {isa = PBXFileReference; lastKnownFileType = file; name = certDER.der; path = selfSignedAndMalformedCerts/certDER.der; sourceTree = "<group>"; };
+		B39E2F861C1A72F8002DA1A9 /* certPEM.cer */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = certPEM.cer; path = selfSignedAndMalformedCerts/certPEM.cer; sourceTree = "<group>"; };
+		B39E2F871C1A72F8002DA1A9 /* certPEM.crt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = certPEM.crt; path = selfSignedAndMalformedCerts/certPEM.crt; sourceTree = "<group>"; };
+		B39E2F891C1A72F8002DA1A9 /* randomGibberish.crt */ = {isa = PBXFileReference; lastKnownFileType = file; name = randomGibberish.crt; path = selfSignedAndMalformedCerts/randomGibberish.crt; sourceTree = "<group>"; };
+		B39E2F8A1C1A72F8002DA1A9 /* keyDER.der */ = {isa = PBXFileReference; lastKnownFileType = file; name = keyDER.der; path = selfSignedAndMalformedCerts/keyDER.der; sourceTree = "<group>"; };
 		E4202FE01B667AA100C997FB /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3319A95C8B0040E7D1 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3719A95C8B0040E7D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -362,6 +376,7 @@
 		4C33A1171B5207DB00873DFF /* Certificates */ = {
 			isa = PBXGroup;
 			children = (
+				B39E2F821C1A72E5002DA1A9 /* Varying Encoding Types and Extensions */,
 				4C812C391B535F060017E0BF /* alamofire.org */,
 				4C812C381B535F000017E0BF /* disig.sk */,
 			);
@@ -482,6 +497,20 @@
 				4CDE2C421AF89F0900BABAE5 /* Validation.swift */,
 			);
 			name = Features;
+			sourceTree = "<group>";
+		};
+		B39E2F821C1A72E5002DA1A9 /* Varying Encoding Types and Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B39E2F831C1A72F8002DA1A9 /* certDER.cer */,
+				B39E2F841C1A72F8002DA1A9 /* certDER.crt */,
+				B39E2F851C1A72F8002DA1A9 /* certDER.der */,
+				B39E2F861C1A72F8002DA1A9 /* certPEM.cer */,
+				B39E2F871C1A72F8002DA1A9 /* certPEM.crt */,
+				B39E2F891C1A72F8002DA1A9 /* randomGibberish.crt */,
+				B39E2F8A1C1A72F8002DA1A9 /* keyDER.der */,
+			);
+			name = "Varying Encoding Types and Extensions";
 			sourceTree = "<group>";
 		};
 		F8111E2919A95C8B0040E7D1 = {
@@ -825,21 +854,28 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C812C3B1B535F220017E0BF /* alamofire-root-ca.cer in Resources */,
+				B39E2F971C1A744F002DA1A9 /* certDER.der in Resources */,
 				4C812C4B1B535F400017E0BF /* signed-by-ca1.cer in Resources */,
 				4C812C541B535F540017E0BF /* expired.cer in Resources */,
 				4C812C491B535F400017E0BF /* multiple-dns-names.cer in Resources */,
 				4C812C4D1B535F400017E0BF /* test.alamofire.org.cer in Resources */,
+				B39E2F981C1A744F002DA1A9 /* certPEM.cer in Resources */,
 				4C812C411B535F2E0017E0BF /* alamofire-signing-ca2.cer in Resources */,
+				B39E2F961C1A744F002DA1A9 /* certDER.crt in Resources */,
 				4C33A13B1B5207DB00873DFF /* unicorn.png in Resources */,
 				4C812C561B535F540017E0BF /* missing-dns-name-and-uri.cer in Resources */,
 				4C812C581B535F540017E0BF /* signed-by-ca2.cer in Resources */,
 				4C812C651B535F6D0017E0BF /* testssl-expire.disig.sk.cer in Resources */,
+				B39E2F951C1A744F002DA1A9 /* certDER.cer in Resources */,
 				4C812C611B535F6D0017E0BF /* intermediate-ca-disig.cer in Resources */,
 				4C33A1391B5207DB00873DFF /* rainbow.jpg in Resources */,
 				4C812C631B535F6D0017E0BF /* root-ca-disig.cer in Resources */,
 				4C812C5C1B535F540017E0BF /* valid-uri.cer in Resources */,
+				B39E2F9B1C1A744F002DA1A9 /* randomGibberish.crt in Resources */,
 				4C812C3F1B535F2E0017E0BF /* alamofire-signing-ca1.cer in Resources */,
+				B39E2F9C1C1A744F002DA1A9 /* keyDER.der in Resources */,
 				4C812C5A1B535F540017E0BF /* valid-dns-name.cer in Resources */,
+				B39E2F991C1A744F002DA1A9 /* certPEM.crt in Resources */,
 				4C812C471B535F400017E0BF /* wildcard.alamofire.org.cer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
