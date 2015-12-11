@@ -82,7 +82,7 @@ public enum ParameterEncoding {
     {
         var mutableURLRequest = URLRequest.URLRequest
 
-        guard let parameters = parameters else {
+        guard let parameters = parameters where !parameters.isEmpty else {
             return (mutableURLRequest, nil)
         }
 
