@@ -1101,6 +1101,9 @@ If you run into this problem (high probability with self-signed certificates), y
 				<false/>
 				<key>NSIncludesSubdomains</key>
 				<true/>
+				 <!--Optional: Specify minimum TLS version-->
+                		<key>NSTemporaryExceptionMinimumTLSVersion</key>
+                		<string>TLSv1.2</string>
 			</dict>
 		</dict>
 	</dict>
