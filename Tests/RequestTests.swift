@@ -23,6 +23,7 @@
 import Alamofire
 import Foundation
 import XCTest
+import Result
 
 class RequestInitializationTestCase: BaseTestCase {
     func testRequestClassMethodWithMethodAndURL() {
