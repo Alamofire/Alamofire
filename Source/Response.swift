@@ -21,6 +21,7 @@
 // THE SOFTWARE.
 
 import Foundation
+import Result
 
 /// Used to store all response data returned from a completed `Request`.
 public struct Response<Value, Error: ErrorType> {

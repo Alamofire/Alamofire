@@ -23,6 +23,7 @@
 @testable import Alamofire
 import Foundation
 import XCTest
+import Result
 
 class ResultTestCase: BaseTestCase {
     let error = Error.errorWithCode(.StatusCodeValidationFailed, failureReason: "Status code validation failed")

@@ -21,6 +21,7 @@
 // THE SOFTWARE.
 
 import Foundation
+import Result
 
 // MARK: ResponseSerializer
 
