@@ -33,7 +33,7 @@ struct BoundaryGenerator {
         case Initial, Encapsulated, Final
     }
 
-    static func boundary(#boundaryType: BoundaryType, boundaryKey: String) -> String {
+    static func boundary(boundaryType boundaryType: BoundaryType, boundaryKey: String) -> String {
         let boundary: String
 
         switch boundaryType {
@@ -48,7 +48,7 @@ struct BoundaryGenerator {
         return boundary
     }
 
-    static func boundaryData(#boundaryType: BoundaryType, boundaryKey: String) -> NSData {
+    static func boundaryData(boundaryType boundaryType: BoundaryType, boundaryKey: String) -> NSData {
         return BoundaryGenerator.boundary(
             boundaryType: boundaryType,
             boundaryKey: boundaryKey
@@ -57,11 +57,15 @@ struct BoundaryGenerator {
 }
 
 private func temporaryFileURL() -> NSURL {
-    let tempDirectoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory())!
+    let tempDirectoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
     let directoryURL = tempDirectoryURL.URLByAppendingPathComponent("com.alamofire.test/multipart.form.data")
 
     let fileManager = NSFileManager.defaultManager()
-    fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil, error: nil)
+    do {
+        try fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
+    } catch {
+        // No-op - will cause tests to fail, not crash
+    }
 
     let fileName = NSUUID().UUIDString
     let fileURL = directoryURL.URLByAppendingPathComponent(fileName)
@@ -108,15 +112,23 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
     func testEncodingDataBodyPart() {
         // Given
         let multipartFormData = MultipartFormData()
+
         let data = "Lorem ipsum dolor sit amet.".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        multipartFormData.appendBodyPart(data: data, name: "data")
+
+        var encodedData: NSData?
 
         // When
-        multipartFormData.appendBodyPart(data: data, name: "data")
-        let encodingResult = multipartFormData.encode()
+        do {
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op
+        }
 
         // Then
-        switch encodingResult {
-        case .Success(let data):
+        XCTAssertNotNil(encodedData, "encoded data should not be nil")
+
+        if let encodedData = encodedData {
             let boundary = multipartFormData.boundary
 
             let expectedData = (
@@ -126,28 +138,35 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
                 BoundaryGenerator.boundary(boundaryType: .Final, boundaryKey: boundary)
             ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
-            XCTAssertEqual(data, expectedData, "data should match expected data")
-        case .Failure:
-            XCTFail("encoding result should not be .Failure")
+            XCTAssertEqual(encodedData, expectedData, "encoded data should match expected data")
         }
     }
 
     func testEncodingMultipleDataBodyParts() {
         // Given
         let multipartFormData = MultipartFormData()
+
         let french = "français".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         let japanese = "日本語".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         let emoji = "😃👍🏻🍻🎉".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
-        // When
         multipartFormData.appendBodyPart(data: french, name: "french")
         multipartFormData.appendBodyPart(data: japanese, name: "japanese", mimeType: "text/plain")
         multipartFormData.appendBodyPart(data: emoji, name: "emoji", mimeType: "text/plain")
-        let encodingResult = multipartFormData.encode()
+        
+        var encodedData: NSData?
+
+        // When
+        do {
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op
+        }
 
         // Then
-        switch encodingResult {
-        case .Success(let data):
+        XCTAssertNotNil(encodedData, "encoded data should not be nil")
+
+        if let encodedData = encodedData {
             let boundary = multipartFormData.boundary
 
             let expectedData = (
@@ -165,24 +184,30 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
                 BoundaryGenerator.boundary(boundaryType: .Final, boundaryKey: boundary)
             ).dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
-            XCTAssertEqual(data, expectedData, "data should match expected data")
-        case .Failure:
-            XCTFail("encoding result should not be .Failure")
+            XCTAssertEqual(encodedData, expectedData, "encoded data should match expected data")
         }
     }
 
     func testEncodingFileBodyPart() {
         // Given
         let multipartFormData = MultipartFormData()
+
         let unicornImageURL = URLForResource("unicorn", withExtension: "png")
+        multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
+
+        var encodedData: NSData?
 
         // When
-        multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
-        let encodingResult = multipartFormData.encode()
+        do {
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op
+        }
 
         // Then
-        switch encodingResult {
-        case .Success(let data):
+        XCTAssertNotNil(encodedData, "encoded data should not be nil")
+
+        if let encodedData = encodedData {
             let boundary = multipartFormData.boundary
 
             let expectedData = NSMutableData()
@@ -195,26 +220,33 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             expectedData.appendData(NSData(contentsOfURL: unicornImageURL)!)
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Final, boundaryKey: boundary))
 
-            XCTAssertEqual(data, expectedData, "data should match expected data")
-        case .Failure:
-            XCTFail("encoding result should not be .Failure")
+            XCTAssertEqual(encodedData, expectedData, "data should match expected data")
         }
     }
 
     func testEncodingMultipleFileBodyParts() {
         // Given
         let multipartFormData = MultipartFormData()
+
         let unicornImageURL = URLForResource("unicorn", withExtension: "png")
         let rainbowImageURL = URLForResource("rainbow", withExtension: "jpg")
 
-        // When
         multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
         multipartFormData.appendBodyPart(fileURL: rainbowImageURL, name: "rainbow")
-        let encodingResult = multipartFormData.encode()
+
+        var encodedData: NSData?
+
+        // When
+        do {
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op
+        }
 
         // Then
-        switch encodingResult {
-        case .Success(let data):
+        XCTAssertNotNil(encodedData, "encoded data should not be nil")
+
+        if let encodedData = encodedData {
             let boundary = multipartFormData.boundary
 
             let expectedData = NSMutableData()
@@ -234,20 +266,18 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             expectedData.appendData(NSData(contentsOfURL: rainbowImageURL)!)
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Final, boundaryKey: boundary))
 
-            XCTAssertEqual(data, expectedData, "data should match expected data")
-        case .Failure:
-            XCTFail("encoding result should not be .Failure")
+            XCTAssertEqual(encodedData, expectedData, "data should match expected data")
         }
     }
 
     func testEncodingStreamBodyPart() {
         // Given
         let multipartFormData = MultipartFormData()
+
         let unicornImageURL = URLForResource("unicorn", withExtension: "png")
         let unicornDataLength = UInt64(NSData(contentsOfURL: unicornImageURL)!.length)
         let unicornStream = NSInputStream(URL: unicornImageURL)!
 
-        // When
         multipartFormData.appendBodyPart(
             stream: unicornStream,
             length: unicornDataLength,
@@ -255,11 +285,20 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             fileName: "unicorn.png",
             mimeType: "image/png"
         )
-        let encodingResult = multipartFormData.encode()
+
+        var encodedData: NSData?
+
+        // When
+        do {
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op
+        }
 
         // Then
-        switch encodingResult {
-        case .Success(let data):
+        XCTAssertNotNil(encodedData, "encoded data should not be nil")
+
+        if let encodedData = encodedData {
             let boundary = multipartFormData.boundary
 
             let expectedData = NSMutableData()
@@ -272,9 +311,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             expectedData.appendData(NSData(contentsOfURL: unicornImageURL)!)
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Final, boundaryKey: boundary))
 
-            XCTAssertEqual(data, expectedData, "data should match expected data")
-        case .Failure:
-            XCTFail("encoding result should not be .Failure")
+            XCTAssertEqual(encodedData, expectedData, "data should match expected data")
         }
     }
 
@@ -290,7 +327,6 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         let rainbowDataLength = UInt64(NSData(contentsOfURL: rainbowImageURL)!.length)
         let rainbowStream = NSInputStream(URL: rainbowImageURL)!
 
-        // When
         multipartFormData.appendBodyPart(
             stream: unicornStream,
             length: unicornDataLength,
@@ -305,11 +341,20 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             fileName: "rainbow.jpg",
             mimeType: "image/jpeg"
         )
-        let encodingResult = multipartFormData.encode()
+
+        var encodedData: NSData?
+
+        // When
+        do {
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op
+        }
 
         // Then
-        switch encodingResult {
-        case .Success(let data):
+        XCTAssertNotNil(encodedData, "encoded data should not be nil")
+
+        if let encodedData = encodedData {
             let boundary = multipartFormData.boundary
 
             let expectedData = NSMutableData()
@@ -329,9 +374,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             expectedData.appendData(NSData(contentsOfURL: rainbowImageURL)!)
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Final, boundaryKey: boundary))
 
-            XCTAssertEqual(data, expectedData, "data should match expected data")
-        case .Failure:
-            XCTFail("encoding result should not be .Failure")
+            XCTAssertEqual(encodedData, expectedData, "data should match expected data")
         }
     }
 
@@ -347,7 +390,6 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         let rainbowDataLength = UInt64(NSData(contentsOfURL: rainbowImageURL)!.length)
         let rainbowStream = NSInputStream(URL: rainbowImageURL)!
 
-        // When
         multipartFormData.appendBodyPart(data: loremData, name: "lorem")
         multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
         multipartFormData.appendBodyPart(
@@ -357,11 +399,20 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             fileName: "rainbow.jpg",
             mimeType: "image/jpeg"
         )
-        let encodingResult = multipartFormData.encode()
+
+        var encodedData: NSData?
+
+        // When
+        do {
+            encodedData = try multipartFormData.encode()
+        } catch {
+            // No-op
+        }
 
         // Then
-        switch encodingResult {
-        case .Success(let data):
+        XCTAssertNotNil(encodedData, "encoded data should not be nil")
+
+        if let encodedData = encodedData {
             let boundary = multipartFormData.boundary
 
             let expectedData = NSMutableData()
@@ -387,9 +438,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
             expectedData.appendData(NSData(contentsOfURL: rainbowImageURL)!)
             expectedData.appendData(BoundaryGenerator.boundaryData(boundaryType: .Final, boundaryKey: boundary))
 
-            XCTAssertEqual(data, expectedData, "data should match expected data")
-        case .Failure:
-            XCTFail("encoding result should not be .Failure")
+            XCTAssertEqual(encodedData, expectedData, "data should match expected data")
         }
     }
 }
@@ -401,21 +450,20 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 
     func testWritingEncodedDataBodyPartToDisk() {
         // Given
-        let expectation = expectationWithDescription("multipart form data should be written to disk")
         let fileURL = temporaryFileURL()
         let multipartFormData = MultipartFormData()
+
         let data = "Lorem ipsum dolor sit amet.".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        multipartFormData.appendBodyPart(data: data, name: "data")
 
         var encodingError: NSError?
 
         // When
-        multipartFormData.appendBodyPart(data: data, name: "data")
-        multipartFormData.writeEncodedDataToDisk(fileURL) { error in
-            encodingError = error
-            expectation.fulfill()
+        do {
+            try multipartFormData.writeEncodedDataToDisk(fileURL)
+        } catch {
+            encodingError = error as NSError
         }
-
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -438,27 +486,25 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 
     func testWritingMultipleEncodedDataBodyPartsToDisk() {
         // Given
-        let expectation = expectationWithDescription("multipart form data should be written to disk")
         let fileURL = temporaryFileURL()
-
         let multipartFormData = MultipartFormData()
+
         let french = "français".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         let japanese = "日本語".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
         let emoji = "😃👍🏻🍻🎉".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
 
-        var encodingError: NSError?
-
-        // When
         multipartFormData.appendBodyPart(data: french, name: "french")
         multipartFormData.appendBodyPart(data: japanese, name: "japanese")
         multipartFormData.appendBodyPart(data: emoji, name: "emoji")
 
-        multipartFormData.writeEncodedDataToDisk(fileURL) { error in
-            encodingError = error
-            expectation.fulfill()
-        }
+        var encodingError: NSError?
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        // When
+        do {
+            try multipartFormData.writeEncodedDataToDisk(fileURL)
+        } catch {
+            encodingError = error as NSError
+        }
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -487,22 +533,20 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 
     func testWritingEncodedFileBodyPartToDisk() {
         // Given
-        let expectation = expectationWithDescription("multipart form data should be written to disk")
         let fileURL = temporaryFileURL()
-
         let multipartFormData = MultipartFormData()
+
         let unicornImageURL = URLForResource("unicorn", withExtension: "png")
+        multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
 
         var encodingError: NSError?
 
         // When
-        multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
-        multipartFormData.writeEncodedDataToDisk(fileURL) { error in
-            encodingError = error
-            expectation.fulfill()
+        do {
+            try multipartFormData.writeEncodedDataToDisk(fileURL)
+        } catch {
+            encodingError = error as NSError
         }
-
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -528,25 +572,23 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 
     func testWritingMultipleEncodedFileBodyPartsToDisk() {
         // Given
-        let expectation = expectationWithDescription("multipart form data should be written to disk")
         let fileURL = temporaryFileURL()
-
         let multipartFormData = MultipartFormData()
+
         let unicornImageURL = URLForResource("unicorn", withExtension: "png")
         let rainbowImageURL = URLForResource("rainbow", withExtension: "jpg")
+
+        multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
+        multipartFormData.appendBodyPart(fileURL: rainbowImageURL, name: "rainbow")
 
         var encodingError: NSError?
 
         // When
-        multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
-        multipartFormData.appendBodyPart(fileURL: rainbowImageURL, name: "rainbow")
-
-        multipartFormData.writeEncodedDataToDisk(fileURL) { error in
-            encodingError = error
-            expectation.fulfill()
+        do {
+            try multipartFormData.writeEncodedDataToDisk(fileURL)
+        } catch {
+            encodingError = error as NSError
         }
-
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -579,18 +621,13 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 
     func testWritingEncodedStreamBodyPartToDisk() {
         // Given
-        let expectation = expectationWithDescription("multipart form data should be written to disk")
         let fileURL = temporaryFileURL()
-
         let multipartFormData = MultipartFormData()
 
         let unicornImageURL = URLForResource("unicorn", withExtension: "png")
         let unicornDataLength = UInt64(NSData(contentsOfURL: unicornImageURL)!.length)
         let unicornStream = NSInputStream(URL: unicornImageURL)!
 
-        var encodingError: NSError?
-
-        // When
         multipartFormData.appendBodyPart(
             stream: unicornStream,
             length: unicornDataLength,
@@ -599,12 +636,14 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             mimeType: "image/png"
         )
 
-        multipartFormData.writeEncodedDataToDisk(fileURL) { error in
-            encodingError = error
-            expectation.fulfill()
-        }
+        var encodingError: NSError?
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        // When
+        do {
+            try multipartFormData.writeEncodedDataToDisk(fileURL)
+        } catch {
+            encodingError = error as NSError
+        }
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -630,9 +669,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 
     func testWritingMultipleEncodedStreamBodyPartsToDisk() {
         // Given
-        let expectation = expectationWithDescription("multipart form data should be written to disk")
         let fileURL = temporaryFileURL()
-
         let multipartFormData = MultipartFormData()
 
         let unicornImageURL = URLForResource("unicorn", withExtension: "png")
@@ -643,9 +680,6 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         let rainbowDataLength = UInt64(NSData(contentsOfURL: rainbowImageURL)!.length)
         let rainbowStream = NSInputStream(URL: rainbowImageURL)!
 
-        var encodingError: NSError?
-
-        // When
         multipartFormData.appendBodyPart(
             stream: unicornStream,
             length: unicornDataLength,
@@ -661,12 +695,15 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             mimeType: "image/jpeg"
         )
 
-        multipartFormData.writeEncodedDataToDisk(fileURL) { error in
-            encodingError = error
-            expectation.fulfill()
-        }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        var encodingError: NSError?
+
+        // When
+        do {
+            try multipartFormData.writeEncodedDataToDisk(fileURL)
+        } catch {
+            encodingError = error as NSError
+        }
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -699,9 +736,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 
     func testWritingMultipleEncodedBodyPartsWithVaryingTypesToDisk() {
         // Given
-        let expectation = expectationWithDescription("multipart form data should be written to disk")
         let fileURL = temporaryFileURL()
-
         let multipartFormData = MultipartFormData()
 
         let loremData = "Lorem ipsum.".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
@@ -712,9 +747,6 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         let rainbowDataLength = UInt64(NSData(contentsOfURL: rainbowImageURL)!.length)
         let rainbowStream = NSInputStream(URL: rainbowImageURL)!
 
-        var encodingError: NSError?
-
-        // When
         multipartFormData.appendBodyPart(data: loremData, name: "lorem")
         multipartFormData.appendBodyPart(fileURL: unicornImageURL, name: "unicorn")
         multipartFormData.appendBodyPart(
@@ -725,12 +757,14 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             mimeType: "image/jpeg"
         )
 
-        multipartFormData.writeEncodedDataToDisk(fileURL) { error in
-            encodingError = error
-            expectation.fulfill()
-        }
+        var encodingError: NSError?
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        // When
+        do {
+            try multipartFormData.writeEncodedDataToDisk(fileURL)
+        } catch {
+            encodingError = error as NSError
+        }
 
         // Then
         XCTAssertNil(encodingError, "encoding error should be nil")
@@ -775,29 +809,27 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Given 
         let fileURL = NSURL(string: "")!
         let multipartFormData = MultipartFormData()
-
-        var error: NSError?
-
-        // When
         multipartFormData.appendBodyPart(fileURL: fileURL, name: "empty_data")
 
-        switch multipartFormData.encode() {
-        case .Failure(let encodingError):
-            error = encodingError
-        default:
-            break
+        var encodingError: NSError?
+
+        // When
+        do {
+            try multipartFormData.encode()
+        } catch {
+            encodingError = error as NSError
         }
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = error {
+        if let error = encodingError {
             XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
-            if let failureReason = error.userInfo?[NSLocalizedFailureReasonErrorKey] as? String {
+            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
                 let expectedFailureReason = "Failed to extract the fileName of the provided URL: \(fileURL)"
-                XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
+                XCTAssertEqual(failureReason, expectedFailureReason, "failure reason does not match expected value")
             } else {
                 XCTFail("failure reason should not be nil")
             }
@@ -806,30 +838,28 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
     func testThatAppendingFileBodyPartThatIsNotFileURLReturnsError() {
         // Given
-        let fileURL = NSURL(string: "http://example.com/image.jpg")!
+        let fileURL = NSURL(string: "https://example.com/image.jpg")!
         let multipartFormData = MultipartFormData()
-
-        var error: NSError?
-
-        // When
         multipartFormData.appendBodyPart(fileURL: fileURL, name: "empty_data")
 
-        switch multipartFormData.encode() {
-        case .Failure(let encodingError):
-            error = encodingError
-        default:
-            break
+        var encodingError: NSError?
+
+        // When
+        do {
+            try multipartFormData.encode()
+        } catch {
+            encodingError = error as NSError
         }
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = error {
+        if let error = encodingError {
             XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
-            if let failureReason = error.userInfo?[NSLocalizedFailureReasonErrorKey] as? String {
-                let expectedFailureReason = "The URL does not point to a file URL: \(fileURL)"
+            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
+                let expectedFailureReason = "The file URL does not point to a file URL: \(fileURL)"
                 XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
             } else {
                 XCTFail("failure reason should not be nil")
@@ -839,30 +869,29 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
     func testThatAppendingFileBodyPartThatIsNotReachableReturnsError() {
         // Given
-        let fileURL = NSURL(fileURLWithPath: NSTemporaryDirectory().stringByAppendingPathComponent("does_not_exist.jpg"))!
+        let filePath = (NSTemporaryDirectory() as NSString).stringByAppendingPathComponent("does_not_exist.jpg")
+        let fileURL = NSURL(fileURLWithPath: filePath)
         let multipartFormData = MultipartFormData()
-
-        var error: NSError?
-
-        // When
         multipartFormData.appendBodyPart(fileURL: fileURL, name: "empty_data")
 
-        switch multipartFormData.encode() {
-        case .Failure(let encodingError):
-            error = encodingError
-        default:
-            break
+        var encodingError: NSError?
+
+        // When
+        do {
+            try multipartFormData.encode()
+        } catch {
+            encodingError = error as NSError
         }
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = error {
+        if let error = encodingError {
             XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
-            if let failureReason = error.userInfo?[NSLocalizedFailureReasonErrorKey] as? String {
-                let expectedFailureReason = "The URL is not reachable: \(fileURL)"
+            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
+                let expectedFailureReason = "The file URL is not reachable: \(fileURL)"
                 XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
             } else {
                 XCTFail("failure reason should not be nil")
@@ -872,30 +901,28 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
     func testThatAppendingFileBodyPartThatIsDirectoryReturnsError() {
         // Given
-        let directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)!
+        let directoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         let multipartFormData = MultipartFormData()
-
-        var error: NSError?
-
-        // When
         multipartFormData.appendBodyPart(fileURL: directoryURL, name: "empty_data")
 
-        switch multipartFormData.encode() {
-        case .Failure(let encodingError):
-            error = encodingError
-        default:
-            break
+        var encodingError: NSError?
+
+        // When
+        do {
+            try multipartFormData.encode()
+        } catch {
+            encodingError = error as NSError
         }
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = error {
+        if let error = encodingError {
             XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
-            if let failureReason = error.userInfo?[NSLocalizedFailureReasonErrorKey] as? String {
-                let expectedFailureReason = "The URL is a directory, not a file: \(directoryURL)"
+            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
+                let expectedFailureReason = "The file URL is a directory, not a file: \(directoryURL)"
                 XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
             } else {
                 XCTFail("failure reason should not be nil")
@@ -905,26 +932,31 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
     func testThatWritingEncodedDataToExistingFileURLFails() {
         // Given
-        let expectation = expectationWithDescription("multipart form data should fail when writing to disk")
-
         let fileURL = temporaryFileURL()
-        "dummy data".writeToURL(fileURL, atomically: true, encoding: NSUTF8StringEncoding, error: nil)
+
+        var writerError: NSError?
+
+        do {
+            try "dummy data".writeToURL(fileURL, atomically: true, encoding: NSUTF8StringEncoding)
+        } catch {
+            writerError = error as NSError
+        }
 
         let multipartFormData = MultipartFormData()
         let data = "Lorem ipsum dolor sit amet.".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        multipartFormData.appendBodyPart(data: data, name: "data")
 
         var encodingError: NSError?
 
         // When
-        multipartFormData.appendBodyPart(data: data, name: "data")
-        multipartFormData.writeEncodedDataToDisk(fileURL) { error in
-            encodingError = error
-            expectation.fulfill()
+        do {
+            try multipartFormData.writeEncodedDataToDisk(fileURL)
+        } catch {
+            encodingError = error as NSError
         }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
-
         // Then
+        XCTAssertNil(writerError, "writer error should be nil")
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
         if let encodingError = encodingError {
@@ -935,22 +967,20 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
     func testThatWritingEncodedDataToBadURLFails() {
         // Given
-        let expectation = expectationWithDescription("multipart form data should fail when writing to disk")
         let fileURL = NSURL(string: "/this/is/not/a/valid/url")!
 
         let multipartFormData = MultipartFormData()
         let data = "Lorem ipsum dolor sit amet.".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        multipartFormData.appendBodyPart(data: data, name: "data")
 
         var encodingError: NSError?
 
         // When
-        multipartFormData.appendBodyPart(data: data, name: "data")
-        multipartFormData.writeEncodedDataToDisk(fileURL) { error in
-            encodingError = error
-            expectation.fulfill()
+        do {
+            try multipartFormData.writeEncodedDataToDisk(fileURL)
+        } catch {
+            encodingError = error as NSError
         }
-
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
 
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")

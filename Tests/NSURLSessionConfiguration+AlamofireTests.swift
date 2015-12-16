@@ -1,4 +1,4 @@
-// BaseTestCase.swift
+// NSURLSessionConfiguration+AlamofireTests.swift
 //
 // Copyright (c) 2014–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -20,15 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Alamofire
 import Foundation
-import XCTest
 
-class BaseTestCase: XCTestCase {
-    let timeout: NSTimeInterval = 30.0
+extension NSURLSessionConfiguration {
+    static func backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier: String) -> NSURLSessionConfiguration {
+        let configuration: NSURLSessionConfiguration
 
-    func URLForResource(fileName: String, withExtension: String) -> NSURL {
-        let bundle = NSBundle(forClass: BaseTestCase.self)
-        return bundle.URLForResource(fileName, withExtension: withExtension)!
+        if #available(OSX 10.10, *) {
+            configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(identifier)
+        } else {
+            configuration = NSURLSessionConfiguration.backgroundSessionConfiguration(identifier)
+        }
+
+        return configuration
     }
 }

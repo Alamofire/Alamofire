@@ -1,4 +1,4 @@
-// BaseTestCase.swift
+// NSURLSessionConfiguration+AlamofireTests.swift
 //
 // Copyright (c) 2014–2015 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -20,15 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import Alamofire
 import Foundation
-import XCTest
 
-class BaseTestCase: XCTestCase {
-    let timeout: NSTimeInterval = 30.0
-
-    func URLForResource(fileName: String, withExtension: String) -> NSURL {
-        let bundle = NSBundle(forClass: BaseTestCase.self)
-        return bundle.URLForResource(fileName, withExtension: withExtension)!
+extension String {
+    init(count: Int, repeatedString: String) {
+        var value = ""
+        for _ in 0..<count { value += repeatedString }
+        self = value
     }
 }
