@@ -25,7 +25,7 @@ Alamofire is an HTTP networking library written in Swift.
 ## Requirements
 
 - iOS 8.0+ / Mac OS X 10.9+ / tvOS 9.0+ / watchOS 2.0+
-- Xcode 7.1+
+- Xcode 7.2+
 
 ## Migration Guides
 
@@ -1126,7 +1126,6 @@ In order to keep Alamofire focused specifically on core networking implementatio
 
 The following rdars have some affect on the current implementation of Alamofire.
 
-* [rdar://22024442](http://www.openradar.me/radar?id=6082025006039040) - Array of [SecCertificate] crashing Swift 2.0 compiler in optimized builds
 * [rdar://21349340](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
 
 ## FAQ

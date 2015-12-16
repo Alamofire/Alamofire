@@ -193,14 +193,7 @@ public enum ServerTrustPolicy {
                 serverTrustIsValid = trustIsValid(serverTrust)
             } else {
                 let serverCertificatesDataArray = certificateDataForTrust(serverTrust)
-
-                //======================================================================================================
-                // The following `[] +` is a temporary workaround for a Swift 2.0 compiler error. This workaround should
-                // be removed once the following radar has been resolved:
-                //   - http://openradar.appspot.com/radar?id=6082025006039040
-                //======================================================================================================
-
-                let pinnedCertificatesDataArray = certificateDataForCertificates([] + pinnedCertificates)
+                let pinnedCertificatesDataArray = certificateDataForCertificates(pinnedCertificates)
 
                 outerLoop: for serverCertificateData in serverCertificatesDataArray {
                     for pinnedCertificateData in pinnedCertificatesDataArray {
