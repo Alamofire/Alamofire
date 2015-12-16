@@ -285,11 +285,13 @@ extension Request {
         - returns: The request.
     */
     public func responseJSON(
-        options options: NSJSONReadingOptions = .AllowFragments,
+        queue queue: dispatch_queue_t? = nil,
+        options: NSJSONReadingOptions = .AllowFragments,
         completionHandler: Response<AnyObject, NSError> -> Void)
         -> Self
     {
         return response(
+            queue: queue,
             responseSerializer: Request.JSONResponseSerializer(options: options),
             completionHandler: completionHandler
         )
