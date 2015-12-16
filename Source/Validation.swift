@@ -32,7 +32,7 @@ extension Request {
     */
     public enum ValidationResult {
         case Success
-        case Failure(ErrorType)
+        case Failure(NSError)
     }
 
     /**
@@ -94,7 +94,7 @@ extension Request {
         init?(_ string: String) {
             let components: [String] = {
                 let stripped = string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                let split = stripped.substringToIndex(stripped.rangeOfString(";")?.endIndex ?? stripped.endIndex)
+                let split = stripped.substringToIndex(stripped.rangeOfString(";")?.startIndex ?? stripped.endIndex)
                 return split.componentsSeparatedByString("/")
             }()
 
@@ -130,6 +130,8 @@ extension Request {
     */
     public func validate<S : SequenceType where S.Generator.Element == String>(contentType acceptableContentTypes: S) -> Self {
         return validate { _, response in
+            guard let validData = self.delegate.data where validData.length > 0 else { return .Success }
+
             if let
                 responseContentType = response.MIMEType,
                 responseMIMEType = MIMEType(responseContentType)

@@ -193,7 +193,7 @@ public class Request {
         let progress: NSProgress
 
         var data: NSData? { return nil }
-        var error: ErrorType?
+        var error: NSError?
 
         var credential: NSURLCredential?
 
@@ -518,7 +518,7 @@ extension Request: CustomDebugStringConvertible {
 
         if let
             HTTPBodyData = request.HTTPBody,
-            HTTPBody = NSString(data: HTTPBodyData, encoding: NSUTF8StringEncoding)
+            HTTPBody = String(data: HTTPBodyData, encoding: NSUTF8StringEncoding)
         {
             let escapedBody = HTTPBody.stringByReplacingOccurrencesOfString("\"", withString: "\\\"")
             components.append("-d \"\(escapedBody)\"")

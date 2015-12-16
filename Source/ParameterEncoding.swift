@@ -31,28 +31,37 @@ public enum Method: String {
     case OPTIONS, GET, HEAD, POST, PUT, PATCH, DELETE, TRACE, CONNECT
 }
 
-// MARK: - ParameterEncoding
+// MARK: ParameterEncoding
 
 /**
     Used to specify the way in which a set of parameters are applied to a URL request.
 
-    - URL:          A query string to be set as or appended to any existing URL query for `GET`, `HEAD`, and `DELETE` 
-                    requests, or set as the body for requests with any other HTTP method. The `Content-Type` HTTP header 
-                    field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded`. Since 
-                    there is no published specification for how to encode collection types, the convention of appending 
-                    `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square 
-                    brackets for nested dictionary values (`foo[bar]=baz`).
-    - JSON:         Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is set as 
-                    the body of the request. The `Content-Type` HTTP header field of an encoded request is set to 
-                    `application/json`.
-    - PropertyList: Uses `NSPropertyListSerialization` to create a plist representation of the parameters object, 
-                    according to the associated format and write options values, which is set as the body of the 
-                    request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
-    - Custom:       Uses the associated closure value to construct a new request given an existing request and 
-                    parameters.
+    - `URL`:             Creates a query string to be set as or appended to any existing URL query for `GET`, `HEAD`, 
+                         and `DELETE` requests, or set as the body for requests with any other HTTP method. The 
+                         `Content-Type` HTTP header field of an encoded request with HTTP body is set to
+                         `application/x-www-form-urlencoded; charset=utf-8`. Since there is no published specification
+                         for how to encode collection types, the convention of appending `[]` to the key for array
+                         values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested
+                         dictionary values (`foo[bar]=baz`).
+
+    - `URLEncodedInURL`: Creates query string to be set as or appended to any existing URL query. Uses the same
+                         implementation as the `.URL` case, but always applies the encoded result to the URL.
+
+    - `JSON`:            Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is 
+                         set as the body of the request. The `Content-Type` HTTP header field of an encoded request is 
+                         set to `application/json`.
+
+    - `PropertyList`:    Uses `NSPropertyListSerialization` to create a plist representation of the parameters object,
+                         according to the associated format and write options values, which is set as the body of the
+                         request. The `Content-Type` HTTP header field of an encoded request is set to
+                         `application/x-plist`.
+
+    - `Custom`:          Uses the associated closure value to construct a new request given an existing request and
+                         parameters.
 */
 public enum ParameterEncoding {
     case URL
+    case URLEncodedInURL
     case JSON
     case PropertyList(NSPropertyListFormat, NSPropertyListWriteOptions)
     case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?))
@@ -73,17 +82,18 @@ public enum ParameterEncoding {
     {
         var mutableURLRequest = URLRequest.URLRequest
 
-        guard let parameters = parameters else {
+        guard let parameters = parameters where !parameters.isEmpty else {
             return (mutableURLRequest, nil)
         }
 
         var encodingError: NSError? = nil
 
         switch self {
-        case .URL:
+        case .URL, .URLEncodedInURL:
             func query(parameters: [String: AnyObject]) -> String {
                 var components: [(String, String)] = []
-                for key in Array(parameters.keys).sort(<) {
+
+                for key in parameters.keys.sort(<) {
                     let value = parameters[key]!
                     components += queryComponents(key, value)
                 }
@@ -92,6 +102,13 @@ public enum ParameterEncoding {
             }
 
             func encodesParametersInURL(method: Method) -> Bool {
+                switch self {
+                case .URLEncodedInURL:
+                    return true
+                default:
+                    break
+                }
+
                 switch method {
                 case .GET, .HEAD, .DELETE:
                     return true
@@ -158,6 +175,7 @@ public enum ParameterEncoding {
     */
     public func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
         var components: [(String, String)] = []
+
         if let dictionary = value as? [String: AnyObject] {
             for (nestedKey, value) in dictionary {
                 components += queryComponents("\(key)[\(nestedKey)]", value)
@@ -196,6 +214,38 @@ public enum ParameterEncoding {
         let allowedCharacterSet = NSCharacterSet.URLQueryAllowedCharacterSet().mutableCopy() as! NSMutableCharacterSet
         allowedCharacterSet.removeCharactersInString(generalDelimitersToEncode + subDelimitersToEncode)
 
-        return string.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacterSet) ?? ""
+        var escaped = ""
+
+        //==========================================================================================================
+        //
+        //  Batching is required for escaping due to an internal bug in iOS 8.1 and 8.2. Encoding more than a few
+        //  hundred Chinense characters causes various malloc error crashes. To avoid this issue until iOS 8 is no
+        //  longer supported, batching MUST be used for encoding. This introduces roughly a 20% overhead. For more
+        //  info, please refer to:
+        //
+        //      - https://github.com/Alamofire/Alamofire/issues/206
+        //
+        //==========================================================================================================
+
+        if #available(iOS 8.3, OSX 10.10, *) {
+            escaped = string.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacterSet) ?? string
+        } else {
+            let batchSize = 50
+            var index = string.startIndex
+
+            while index != string.endIndex {
+                let startIndex = index
+                let endIndex = index.advancedBy(batchSize, limit: string.endIndex)
+                let range = Range(start: startIndex, end: endIndex)
+
+                let substring = string.substringWithRange(range)
+
+                escaped += substring.stringByAddingPercentEncodingWithAllowedCharacters(allowedCharacterSet) ?? substring
+
+                index = endIndex
+            }
+        }
+
+        return escaped
     }
 }

@@ -1386,3 +1386,28 @@ class ServerTrustPolicyCustomEvaluationTestCase: ServerTrustPolicyTestCase {
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 }
+
+// MARK: -
+
+class ServerTrustPolicyCertificatesInBundleTestCase: ServerTrustPolicyTestCase {
+    func testOnlyValidCertificatesAreDetected() {
+        // Given
+        // Files present in bundle in the form of type+encoding+extension [key|cert][DER|PEM].[cer|crt|der|key|pem]
+        // certDER.cer: DER-encoded well-formed certificate
+        // certDER.crt: DER-encoded well-formed certificate
+        // certDER.der: DER-encoded well-formed certificate
+        // certPEM.*: PEM-encoded well-formed certificates, expected to fail: Apple API only handles DER encoding
+        // devURandomGibberish.crt: Random data, should fail
+        // keyDER.der: DER-encoded key, not a certificate, should fail
+
+        // When
+        let certificates = ServerTrustPolicy.certificatesInBundle(
+            NSBundle(forClass: ServerTrustPolicyCertificatesInBundleTestCase.self)
+        )
+
+        // Then
+        // Expectation: 15 well-formed certificates in the test bundle outside the scope of this test + 3 valid
+        // certificates (certDER.*) = 18.
+        XCTAssertEqual(certificates.count, 18, "Expected 18 well-formed certificates")
+    }
+}

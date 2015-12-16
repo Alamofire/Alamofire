@@ -148,7 +148,13 @@ Encoding `MultipartFormData` previous returned an `EncodingResult` to encapsulat
 
 ### Parameter Encoding
 
+#### ACL Updates
+
 The `ParameterEncoding` enumeration implementation was previously hidden behind `internal` and `private` ACLs. Alamofire 2.0 opens up the `queryComponents` and `escape` methods to make it much easier to implement `.Custom` cases.
+
+#### Encoding in the URL
+
+In the previous versions of Alamofire, `.URL` encoding would automatically append the query string to either the URL or HTTP body depending on which HTTP method was set in the `NSURLRequest`. While this satisfies the majority of common use cases, it made it quite difficult to append query string parameter to a URL for HTTP methods such as `PUT` and `POST`. In Alamofire 2.0, we've added a second URL encoding case, `.URLEncodedInURL`, that always appends the query string to the URL regardless of HTTP method.
 
 ### Server Trust Policies
 

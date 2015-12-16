@@ -7,7 +7,4 @@
    <FileRef
       location = "group:iOS Example.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:Alamofire.playground">
-   </FileRef>
 </Workspace>

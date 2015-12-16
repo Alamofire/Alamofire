@@ -57,7 +57,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -71,7 +71,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -79,7 +79,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let code = (error as? NSError)?.code {
+        if let code = error?.code {
             XCTAssertEqual(code, -999, "error should be NSURLErrorDomain Code -999 'cancelled'")
         }
     }
@@ -91,7 +91,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -105,7 +105,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -133,7 +133,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -147,7 +147,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -155,7 +155,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let code = (error as? NSError)?.code {
+        if let code = error?.code {
             XCTAssertEqual(code, -999, "error should be NSURLErrorDomain Code -999 'cancelled'")
         }
     }
@@ -167,7 +167,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var request: NSURLRequest?
         var response: NSHTTPURLResponse?
         var data: NSData?
-        var error: ErrorType?
+        var error: NSError?
 
         // When
         Alamofire.request(.GET, URLString)
@@ -181,7 +181,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(defaultTimeout, handler: nil)
+        waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
