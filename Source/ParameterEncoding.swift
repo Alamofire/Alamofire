@@ -60,8 +60,7 @@ public enum Method: String {
                          parameters.
 */
 public enum ParameterEncoding {
-    case URL
-    case URLEncodedInURL
+    case URL(URLEncodedInURL: Bool, squareBrackets: Bool)
     case JSON
     case PropertyList(NSPropertyListFormat, NSPropertyListWriteOptions)
     case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?))
@@ -89,25 +88,20 @@ public enum ParameterEncoding {
         var encodingError: NSError? = nil
 
         switch self {
-        case .URL, .URLEncodedInURL:
+        case .URL(let URLEncodedInURL, let squareBrackets):
             func query(parameters: [String: AnyObject]) -> String {
                 var components: [(String, String)] = []
 
                 for key in parameters.keys.sort(<) {
                     let value = parameters[key]!
-                    components += queryComponents(key, value)
+                    components += queryComponents(key, value, includeSquareBrackets: squareBrackets)
                 }
 
                 return (components.map { "\($0)=\($1)" } as [String]).joinWithSeparator("&")
             }
 
             func encodesParametersInURL(method: Method) -> Bool {
-                switch self {
-                case .URLEncodedInURL:
-                    return true
-                default:
-                    break
-                }
+                if URLEncodedInURL { return true }
 
                 switch method {
                 case .GET, .HEAD, .DELETE:
@@ -173,16 +167,16 @@ public enum ParameterEncoding {
 
         - returns: The percent-escaped, URL encoded query string components.
     */
-    public func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
+    public func queryComponents(key: String, _ value: AnyObject, includeSquareBrackets: Bool) -> [(String, String)] {
         var components: [(String, String)] = []
 
         if let dictionary = value as? [String: AnyObject] {
             for (nestedKey, value) in dictionary {
-                components += queryComponents("\(key)[\(nestedKey)]", value)
+                components += queryComponents("\(key)[\(nestedKey)]", value, includeSquareBrackets: includeSquareBrackets)
             }
         } else if let array = value as? [AnyObject] {
             for value in array {
-                components += queryComponents("\(key)[]", value)
+                components += queryComponents("\(key)" + (includeSquareBrackets ? "[]" : ""), value, includeSquareBrackets: includeSquareBrackets)
             }
         } else {
             components.append((escape(key), escape("\(value)")))
