@@ -31,7 +31,7 @@ class ParameterEncodingTestCase: BaseTestCase {
 // MARK: -
 
 class URLParameterEncodingTestCase: ParameterEncodingTestCase {
-    let encoding: ParameterEncoding = .URL
+    let encoding: ParameterEncoding = .URL(URLEncodedInURL: false, squareBrackets: true)
 
     // MARK: Tests - Parameter Types
 
@@ -427,7 +427,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let parameters = ["foo": 1, "bar": 2]
 
         // When
-        let (URLRequest, _) = ParameterEncoding.URLEncodedInURL.encode(mutableURLRequest, parameters: parameters)
+        let (URLRequest, _) = ParameterEncoding.URL(URLEncodedInURL: true, squareBrackets: true).encode(mutableURLRequest, parameters: parameters)
 
         // Then
         XCTAssertEqual(URLRequest.URL?.query ?? "", "bar=2&foo=1", "query is incorrect")

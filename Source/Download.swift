@@ -80,7 +80,7 @@ extension Manager {
         method: Method,
         _ URLString: URLStringConvertible,
         parameters: [String: AnyObject]? = nil,
-        encoding: ParameterEncoding = .URL,
+        encoding: ParameterEncoding = .URL(URLEncodedInURL: false, squareBrackets: true),
         headers: [String: String]? = nil,
         destination: Request.DownloadFileDestination)
         -> Request

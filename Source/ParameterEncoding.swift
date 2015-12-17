@@ -36,32 +36,29 @@ public enum Method: String {
 /**
     Used to specify the way in which a set of parameters are applied to a URL request.
 
-    - `URL`:             Creates a query string to be set as or appended to any existing URL query for `GET`, `HEAD`, 
-                         and `DELETE` requests, or set as the body for requests with any other HTTP method. The 
-                         `Content-Type` HTTP header field of an encoded request with HTTP body is set to
-                         `application/x-www-form-urlencoded; charset=utf-8`. Since there is no published specification
-                         for how to encode collection types, the convention of appending `[]` to the key for array
-                         values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested
-                         dictionary values (`foo[bar]=baz`).
+    - `URL(URLEncodedInURL, squareBrackets)`: Creates a query string to be set as or appended to any existing URL query for `GET`, `HEAD`,
+                                              and `DELETE` requests, or set as the body for requests with any other HTTP method. The
+											  `Content-Type` HTTP header field of an encoded request with HTTP body is set to
+                                              `application/x-www-form-urlencoded; charset = utf-8`. `URLEncodedInURL` determines whether the
+											  encoding is applied to the full URL or just its parameters. Since there is no published 
+											  specification for how to encode collection types, you can specify whether to appending `[]` to
+											  the key for array values (`foo[]=1&foo[]=2`) with the `squareBrackets` parameter. Dictionary
+											  keys are always appended to their parameter names (`foo[bar]=baz`).
 
-    - `URLEncodedInURL`: Creates query string to be set as or appended to any existing URL query. Uses the same
-                         implementation as the `.URL` case, but always applies the encoded result to the URL.
+    - `JSON`:                                 Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is
+                                              set as the body of the request. The `Content-Type` HTTP header field of an encoded request is
+						                      set to `application/json`.
 
-    - `JSON`:            Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is 
-                         set as the body of the request. The `Content-Type` HTTP header field of an encoded request is 
-                         set to `application/json`.
+    - `PropertyList`:                         Uses `NSPropertyListSerialization` to create a plist representation of the parameters object,
+											  according to the associated format and write options values, which is set as the body of the
+											  request. The `Content-Type` HTTP header field of an encoded request is set to
+                                              `application/x-plist`.
 
-    - `PropertyList`:    Uses `NSPropertyListSerialization` to create a plist representation of the parameters object,
-                         according to the associated format and write options values, which is set as the body of the
-                         request. The `Content-Type` HTTP header field of an encoded request is set to
-                         `application/x-plist`.
-
-    - `Custom`:          Uses the associated closure value to construct a new request given an existing request and
-                         parameters.
+    - `Custom`:                               Uses the associated closure value to construct a new request given an existing request and
+                                              parameters.
 */
 public enum ParameterEncoding {
-    case URL
-    case URLEncodedInURL
+    case URL(URLEncodedInURL: Bool, squareBrackets: Bool)
     case JSON
     case PropertyList(NSPropertyListFormat, NSPropertyListWriteOptions)
     case Custom((URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?))
@@ -89,25 +86,20 @@ public enum ParameterEncoding {
         var encodingError: NSError? = nil
 
         switch self {
-        case .URL, .URLEncodedInURL:
+        case .URL(let URLEncodedInURL, let squareBrackets):
             func query(parameters: [String: AnyObject]) -> String {
                 var components: [(String, String)] = []
 
                 for key in parameters.keys.sort(<) {
                     let value = parameters[key]!
-                    components += queryComponents(key, value)
+                    components += queryComponents(key, value, includeSquareBrackets: squareBrackets)
                 }
 
                 return (components.map { "\($0)=\($1)" } as [String]).joinWithSeparator("&")
             }
 
             func encodesParametersInURL(method: Method) -> Bool {
-                switch self {
-                case .URLEncodedInURL:
-                    return true
-                default:
-                    break
-                }
+                if URLEncodedInURL { return true }
 
                 switch method {
                 case .GET, .HEAD, .DELETE:
@@ -173,16 +165,16 @@ public enum ParameterEncoding {
 
         - returns: The percent-escaped, URL encoded query string components.
     */
-    public func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
+    public func queryComponents(key: String, _ value: AnyObject, includeSquareBrackets: Bool) -> [(String, String)] {
         var components: [(String, String)] = []
 
         if let dictionary = value as? [String: AnyObject] {
             for (nestedKey, value) in dictionary {
-                components += queryComponents("\(key)[\(nestedKey)]", value)
+                components += queryComponents("\(key)[\(nestedKey)]", value, includeSquareBrackets: includeSquareBrackets)
             }
         } else if let array = value as? [AnyObject] {
             for value in array {
-                components += queryComponents("\(key)[]", value)
+                components += queryComponents("\(key)" + (includeSquareBrackets ? "[]" : ""), value, includeSquareBrackets: includeSquareBrackets)
             }
         } else {
             components.append((escape(key), escape("\(value)")))

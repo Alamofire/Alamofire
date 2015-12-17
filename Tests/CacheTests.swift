@@ -167,7 +167,7 @@ class CacheTestCase: BaseTestCase {
         let URLRequest = NSMutableURLRequest(URL: URL, cachePolicy: cachePolicy, timeoutInterval: requestTimeout)
         URLRequest.HTTPMethod = Method.GET.rawValue
 
-        return ParameterEncoding.URL.encode(URLRequest, parameters: parameters).0
+        return ParameterEncoding.URL(URLEncodedInURL: false, squareBrackets: true).encode(URLRequest, parameters: parameters).0
     }
 
     func startRequest(
