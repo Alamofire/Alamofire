@@ -131,7 +131,7 @@ class URLProtocolTestCase: BaseTestCase {
         let mutableURLRequest = NSMutableURLRequest(URL: URL)
         mutableURLRequest.HTTPMethod = Method.GET.rawValue
 
-        let URLRequest = ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+        let URLRequest = ParameterEncoding.URL(URLEncodedInURL: false, squareBrackets: true).encode(mutableURLRequest, parameters: parameters).0
 
         let expectation = expectationWithDescription("GET request should succeed")
 
