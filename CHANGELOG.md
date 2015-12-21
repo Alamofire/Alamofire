@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313)
+- `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313) | [3.1.4](#314)
 - `3.0.x` Releases - [3.0.0](#300) | [3.0.1](#301)
 - `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2) | [3.0.0-beta.3](#300-beta3)
 
@@ -18,6 +18,40 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [3.1.4](https://github.com/Alamofire/Alamofire/releases/tag/3.1.4)
+Released on 2015-12-16. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.1.4).
+
+#### Added
+- `NSTemporaryExceptionMinimumTLSVersion` documentation to the ATS section in the README.
+  - Added by [Marandon Antoine](https://github.com/ntnmrndn) in Pull Request
+  [#952](https://github.com/Alamofire/Alamofire/pull/952).
+- Added `ReleaseTest` configuration to allow running tests against optimized build.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- Carthage instructions in the README to clearly callout the `carthage update` command.
+  - Updated by [vlad](https://github.com/vlastachu) in Pull Request
+  [#955](https://github.com/Alamofire/Alamofire/pull/955).
+- `ParameterEncoding` to early out when passed an empty parameters dictionary.
+  - Updated by [Anthony Miller](https://github.com/AnthonyMDev) in Pull Request
+  [#954](https://github.com/Alamofire/Alamofire/pull/954).  
+- The `certificatesInBundle` to support `cer`, `crt` and `der` extensions.
+  - Updated by [Jacob Jennings](https://github.com/jacobjennings) in Pull Request
+  [#956](https://github.com/Alamofire/Alamofire/pull/956).
+- The `ENABLE_TESTABILITY` flag to `NO` for Release configuration and disabled tests for
+  non-test builds to better support Carthage.
+  - Updated by [Jed Lewison](https://github.com/jedlewison) in Pull Request
+  [#953](https://github.com/Alamofire/Alamofire/pull/953).
+- The server certificates for the TLS tests and added all certificates to all test targets.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The Travis-CI configuration to Xcode 7.2, iOS 9.2, tvOS 9.1 and watchOS 2.1.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Removed
+- `SecCertificate` array Swift workaround in `ServerTrustPolicy` for Xcode 7.2.
+  - Removed by [Christian Noon](https://github.com/cnoon).
 
 ## [3.1.3](https://github.com/Alamofire/Alamofire/releases/tag/3.1.3)
 Released on 2015-11-22. All issues associated with this milestone can be found using this
