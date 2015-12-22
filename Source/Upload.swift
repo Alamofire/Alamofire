@@ -27,6 +27,7 @@ extension Manager {
         case Data(NSURLRequest, NSData)
         case File(NSURLRequest, NSURL)
         case Stream(NSURLRequest, NSInputStream)
+        case URL(NSURLRequest)
     }
 
     private func upload(uploadable: Uploadable) -> Request {
@@ -46,8 +47,12 @@ extension Manager {
             dispatch_sync(queue) {
                 uploadTask = self.session.uploadTaskWithStreamedRequest(request)
             }
-
             HTTPBodyStream = stream
+        case .URL(let request):
+            dispatch_sync(queue) {
+                uploadTask = self.session.uploadTaskWithRequest(request, fromData: NSData())
+            }
+            
         }
 
         let request = Request(session: session, task: uploadTask)
@@ -121,7 +126,23 @@ extension Manager {
     public func upload(URLRequest: URLRequestConvertible, data: NSData) -> Request {
         return upload(.Data(URLRequest.URLRequest, data))
     }
+    
+    // MARK: URLRequest
+    
+    /**
+    Creates a request for uploading data to the specified URL request.
+    
+    If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    
+    - parameter URLRequest: The URL request.
+    
+    - returns: The created upload request.
+    */
 
+    public func upload(URLRequest: URLRequestConvertible) -> Request {
+        return upload(.URL(URLRequest.URLRequest))
+    }
+    
     /**
         Creates a request for uploading data to the specified URL request.
 
