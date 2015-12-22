@@ -215,6 +215,20 @@ public func upload(URLRequest: URLRequestConvertible, data: NSData) -> Request {
     return Manager.sharedInstance.upload(URLRequest, data: data)
 }
 
+// MARK: URLRequest
+
+/**
+ Creates an upload request using the shared manager instance for the specified URL request
+ 
+ - parameter URLRequest: The URL request.
+ 
+ - returns: The created upload request.
+ */
+
+public func upload(URLRequest: URLRequestConvertible) -> Request {
+    return Manager.sharedInstance.upload(URLRequest)
+}
+
 // MARK: Stream
 
 /**
