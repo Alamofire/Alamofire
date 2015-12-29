@@ -21,11 +21,15 @@
 // THE SOFTWARE.
 
 import UIKit
+import Alamofire
+
+public let BackgroundSessionId = "com.alamofire.example"
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
 
     var window: UIWindow?
+    var manager: Manager?
 
     // MARK: - UIApplicationDelegate
 
@@ -38,6 +42,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         let navigationController = splitViewController.viewControllers.last as! UINavigationController
         navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem()
         splitViewController.delegate = self
+
+        // Create or reconnect to background session
+        let config = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(BackgroundSessionId)
+        
+        manager = Manager(configuration:config)
 
         return true
     }
@@ -58,4 +67,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
 
         return false
     }
+    
+    func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
+        Manager.backgroundSession(identifier)?.backgroundCompletionHandler = completionHandler
+    }
+
 }

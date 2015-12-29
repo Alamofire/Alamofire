@@ -42,15 +42,13 @@ extension Manager {
             }
         }
 
-        let request = Request(session: session, task: downloadTask)
+        let request = Request(session: self, task: downloadTask)
 
         if let downloadDelegate = request.delegate as? Request.DownloadTaskDelegate {
             downloadDelegate.downloadTaskDidFinishDownloadingToURL = { session, downloadTask, URL in
                 return destination(URL, downloadTask.response as! NSHTTPURLResponse)
             }
         }
-
-        delegate[request.delegate.task] = request.delegate
 
         if startRequestsImmediately {
             request.resume()
