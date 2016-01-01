@@ -642,4 +642,31 @@ class CustomParameterEncodingTestCase: ParameterEncodingTestCase {
             "the encoded URL should match the expected value"
         )
     }
+
+    func testCustomParameterEncodeWithoutParameters() {
+        // Given
+        let encodingClosure: (URLRequestConvertible, [String: AnyObject]?) -> (NSMutableURLRequest, NSError?) = { URLRequest, _ in
+            var URLString = URLRequest.URLRequest.URLString + "?"
+
+            URLString += "foo=bar"
+
+            let mutableURLRequest = URLRequest.URLRequest
+            mutableURLRequest.URL = NSURL(string: URLString)!
+
+            return (mutableURLRequest, nil)
+        }
+
+        // When
+        let encoding: ParameterEncoding = .Custom(encodingClosure)
+
+        // Then
+        let URL = NSURL(string: "https://example.com")!
+        let URLRequest = NSURLRequest(URL: URL)
+
+        XCTAssertEqual(
+            encoding.encode(URLRequest, parameters: nil).0.URLString,
+            "https://example.com?foo=bar",
+            "the encoded URL should match the expected value"
+        )
+    }
 }
