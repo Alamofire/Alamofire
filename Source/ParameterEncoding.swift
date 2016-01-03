@@ -82,8 +82,15 @@ public enum ParameterEncoding {
     {
         var mutableURLRequest = URLRequest.URLRequest
 
-        guard let parameters = parameters where !parameters.isEmpty else {
-            return (mutableURLRequest, nil)
+        let validParameters: [String: AnyObject]
+
+        if case .Custom = self {
+            validParameters = parameters ?? [:]
+        } else {
+            guard let parameters = parameters where !parameters.isEmpty else {
+                return (mutableURLRequest, nil)
+            }
+            validParameters = parameters
         }
 
         var encodingError: NSError? = nil
@@ -93,8 +100,8 @@ public enum ParameterEncoding {
             func query(parameters: [String: AnyObject]) -> String {
                 var components: [(String, String)] = []
 
-                for key in parameters.keys.sort(<) {
-                    let value = parameters[key]!
+                for key in validParameters.keys.sort(<) {
+                    let value = validParameters[key]!
                     components += queryComponents(key, value)
                 }
 
@@ -119,7 +126,7 @@ public enum ParameterEncoding {
 
             if let method = Method(rawValue: mutableURLRequest.HTTPMethod) where encodesParametersInURL(method) {
                 if let URLComponents = NSURLComponents(URL: mutableURLRequest.URL!, resolvingAgainstBaseURL: false) {
-                    let percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)
+                    let percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(validParameters)
                     URLComponents.percentEncodedQuery = percentEncodedQuery
                     mutableURLRequest.URL = URLComponents.URL
                 }
@@ -131,7 +138,7 @@ public enum ParameterEncoding {
                     )
                 }
 
-                mutableURLRequest.HTTPBody = query(parameters).dataUsingEncoding(
+                mutableURLRequest.HTTPBody = query(validParameters).dataUsingEncoding(
                     NSUTF8StringEncoding,
                     allowLossyConversion: false
                 )
@@ -139,7 +146,7 @@ public enum ParameterEncoding {
         case .JSON:
             do {
                 let options = NSJSONWritingOptions()
-                let data = try NSJSONSerialization.dataWithJSONObject(parameters, options: options)
+                let data = try NSJSONSerialization.dataWithJSONObject(validParameters, options: options)
 
                 mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 mutableURLRequest.HTTPBody = data
@@ -149,7 +156,7 @@ public enum ParameterEncoding {
         case .PropertyList(let format, let options):
             do {
                 let data = try NSPropertyListSerialization.dataWithPropertyList(
-                    parameters,
+                    validParameters,
                     format: format,
                     options: options
                 )
@@ -159,7 +166,7 @@ public enum ParameterEncoding {
                 encodingError = error as NSError
             }
         case .Custom(let closure):
-            (mutableURLRequest, encodingError) = closure(mutableURLRequest, parameters)
+            (mutableURLRequest, encodingError) = closure(mutableURLRequest, validParameters)
         }
 
         return (mutableURLRequest, encodingError)
