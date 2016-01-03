@@ -26,18 +26,32 @@ import Foundation
     Responsible for sending a request and receiving the response and associated data from the server, as well as 
     managing its underlying `NSURLSessionTask`.
 */
-public class Request {
+
+/**
+    // MARK: - Equitable
+*/
+public func == (lhs: Request, rhs: Request) -> Bool {
+    return lhs.task.taskIdentifier == rhs.task.taskIdentifier &&
+        lhs.session == rhs.session
+}
+
+public class Request : Equatable {
 
     // MARK: - Properties
 
     /// The delegate for the underlying task.
-    public let delegate: TaskDelegate
+    public internal(set) var delegate: TaskDelegate
 
     /// The underlying task.
     public var task: NSURLSessionTask { return delegate.task }
 
     /// The session belonging to the underlying task.
-    public let session: NSURLSession
+    private weak var manager:Manager?
+    public var session: NSURLSession? {
+        get {
+            return manager?.session
+        }
+    }
 
     /// The request sent or to be sent to the server.
     public var request: NSURLRequest? { return task.originalRequest }
@@ -50,8 +64,8 @@ public class Request {
 
     // MARK: - Lifecycle
 
-    init(session: NSURLSession, task: NSURLSessionTask) {
-        self.session = session
+    init(session: Manager, task: NSURLSessionTask) {
+        self.manager = session
 
         switch task {
         case is NSURLSessionUploadTask:
@@ -63,8 +77,98 @@ public class Request {
         default:
             self.delegate = TaskDelegate(task: task)
         }
+        
+        session.delegate[task] = self
     }
 
+    deinit {
+        clearOutContextData()
+        manager?.delegate[task] = nil
+    }
+    
+    // MARK: - Data storage associated with task, persisted if task for background session
+    
+    private var contextData:Dictionary<String, NSCoding> = [:]
+    private var contextLock = NSLock()
+    public subscript(key:String) -> NSCoding? {
+        get {
+            var data:NSCoding?
+            
+            contextLock.lock()
+            defer {
+                contextLock.unlock()
+            }
+            data = contextData[key]
+            if data == nil {
+                if session?.configuration.identifier != nil {
+                    data = readContextData(key)
+                    contextData[key] = data
+                }
+            }
+
+            return data
+        }
+        set {
+            contextLock.lock()
+            defer {
+                contextLock.unlock()
+            }
+            contextData[key] = newValue
+            if session?.configuration.identifier != nil {
+                try! writeContextData(key, data: newValue)
+            }
+        }
+    }
+    
+    lazy private var contextFolderURL:NSURL? = {
+        guard let session = self.session else {
+            return nil
+        }
+        let root = NSURL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.DocumentDirectory,.UserDomainMask,true)[0])
+        let taskDirectory = root
+            .URLByAppendingPathComponent("com.alamofire.sessions")
+            .URLByAppendingPathComponent(session.configuration.identifier!)
+            .URLByAppendingPathComponent(self.task.taskIdentifier.description)
+        
+        try! NSFileManager.defaultManager().createDirectoryAtURL(taskDirectory, withIntermediateDirectories: true, attributes: nil)
+
+        return taskDirectory
+    }()
+    
+    private func writeContextData(key:String, data:NSCoding?) throws {
+        guard let url = contextFolderURL?.URLByAppendingPathComponent(key) else {
+            return
+        }
+        
+        if let d = data {
+            NSKeyedArchiver.archiveRootObject(d, toFile: url.path!)
+        } else {
+            try NSFileManager.defaultManager().removeItemAtPath(url.path!)
+        }
+    }
+    
+    private func readContextData(key:String) -> NSCoding? {
+        guard let url = contextFolderURL?.URLByAppendingPathComponent(key) else {
+            return nil
+        }
+        return NSKeyedUnarchiver.unarchiveObjectWithFile(url.path!) as? NSCoding
+    }
+    
+    private func clearOutContextData() {
+        if let _ = session?.configuration.identifier {
+            if let url = contextFolderURL {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                    if let files = try? NSFileManager.defaultManager().contentsOfDirectoryAtURL(url, includingPropertiesForKeys:[NSURLPathKey], options:NSDirectoryEnumerationOptions.SkipsHiddenFiles) {
+                        for f in files {
+                            try! NSFileManager.defaultManager().removeItemAtURL(f)
+                        }
+                    }
+                    try! NSFileManager.defaultManager().removeItemAtURL(url)
+                }
+            }
+        }
+    }
+        
     // MARK: - Authentication
 
     /**
@@ -454,6 +558,10 @@ extension Request: CustomDebugStringConvertible {
     func cURLRepresentation() -> String {
         var components = ["$ curl -i"]
 
+        guard let session = self.session else {
+            return "$ curl command could not be created"
+        }
+
         guard let request = self.request else {
             return "$ curl command could not be created"
         }
@@ -464,7 +572,7 @@ extension Request: CustomDebugStringConvertible {
             components.append("-X \(HTTPMethod)")
         }
 
-        if let credentialStorage = self.session.configuration.URLCredentialStorage {
+        if let credentialStorage = self.session!.configuration.URLCredentialStorage {
             let protectionSpace = NSURLProtectionSpace(
                 host: URL!.host!,
                 port: URL!.port?.integerValue ?? 0,

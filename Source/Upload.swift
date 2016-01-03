@@ -50,15 +50,13 @@ extension Manager {
             HTTPBodyStream = stream
         }
 
-        let request = Request(session: session, task: uploadTask)
+        let request = Request(session: self, task: uploadTask)
 
         if HTTPBodyStream != nil {
             request.delegate.taskNeedNewBodyStream = { _, _ in
                 return HTTPBodyStream
             }
         }
-
-        delegate[request.delegate.task] = request.delegate
 
         if startRequestsImmediately {
             request.resume()
@@ -286,9 +284,7 @@ extension Manager {
             let URLRequestWithContentType = URLRequest.URLRequest
             URLRequestWithContentType.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
 
-            let isBackgroundSession = self.session.configuration.identifier != nil
-
-            if formData.contentLength < encodingMemoryThreshold && !isBackgroundSession {
+            if formData.contentLength < encodingMemoryThreshold && !self.isBackgroundSession {
                 do {
                     let data = try formData.encode()
                     let encodingResult = MultipartFormDataEncodingResult.Success(

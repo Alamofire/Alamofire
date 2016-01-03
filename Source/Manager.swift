@@ -25,6 +25,47 @@ import Foundation
 /**
     Responsible for creating and managing `Request` objects, as well as their underlying `NSURLSession`.
 */
+
+
+private class Weak<T: AnyObject> {
+    weak var value:T?
+    init(value:T) {
+        self.value = value
+    }
+}
+
+internal class WeakDictionary<TKey:Hashable, TValue:AnyObject> {
+
+    private var lock:NSLock?
+    init(threadSafe:Bool = true) {
+        if threadSafe {
+            lock = NSLock()
+        }
+    }
+    
+    private var dictionary:Dictionary<TKey,Weak<TValue>> = [:]
+    subscript(key:TKey) -> TValue? {
+        get {
+            lock?.lock()
+            defer {
+                lock?.unlock()
+            }
+            return dictionary[key]?.value
+        }
+        set {
+            lock?.lock()
+            defer {
+                lock?.unlock()
+            }
+            if let value = newValue {
+                dictionary[key] = Weak(value: value)
+            } else {
+                dictionary.removeValueForKey(key)
+            }
+        }
+    }
+}
+
 public class Manager {
 
     // MARK: - Properties
@@ -40,6 +81,59 @@ public class Manager {
         return Manager(configuration: configuration)
     }()
 
+    // MARK: - Background session tracking and completion handler assignment
+    private static var backgroundSessions = WeakDictionary<String,Weak<Manager>>()
+    
+    public static func backgroundSession(sessionId:String) -> Manager? {
+        return backgroundSessions[sessionId]?.value
+    }
+
+    // MARK: - Task querying
+
+    /**
+        Collates all the tasks associated with session and passes to handle closure. Collation may
+     occur asynchronously if first time used on session for background
+    */
+    public func getAllRequestsWithCompletionHandler(filter:(Request)->Bool = { r in true }, handler:([Request])->Void) {
+        if isBackgroundSession && !hasQueriedTasks {
+            self.session.getTasksWithCompletionHandler
+                { (dataTasks, uploadTasks, downloadTasks) in
+                    var req = self.getRequests(filter, tasks:dataTasks)
+                    req += self.getRequests(filter, tasks:uploadTasks)
+                    req += self.getRequests(filter, tasks:downloadTasks)
+                    handler(req)
+                    self.hasQueriedTasks = true
+            }
+        } else {
+            handler(delegate.knownRequests)
+        }
+    }
+    
+    /**
+        Set when a query of tasks is made to iOS, this only needs doing once so flag is used to indicate
+     that call has been made and further requests can rely on tasks held in delegate
+    */
+    private var hasQueriedTasks = false
+    
+    /**
+        Helper for getting requests
+    */
+    private func getRequests(filter:(Request)->Bool, tasks:[NSURLSessionTask]) -> [Request] {
+        var requests = [Request]()
+        for task in tasks {
+            var request:Request?
+            if let r = self.delegate[task] {
+                request = r
+            } else {
+                request = Request(session: self, task: task)
+            }
+            if filter(request!) {
+                requests.append(request!)
+            }
+        }
+        return requests
+    }
+    
     /**
         Creates default values for the "Accept-Encoding", "Accept-Language" and "User-Agent" headers.
     */
@@ -93,7 +187,7 @@ public class Manager {
     public let session: NSURLSession
 
     /// The session delegate handling all the task and session delegate callbacks.
-    public let delegate: SessionDelegate
+    public var delegate: SessionDelegate
 
     /// Whether to start requests immediately after being constructed. `true` by default.
     public var startRequestsImmediately: Bool = true
@@ -111,6 +205,17 @@ public class Manager {
     */
     public var backgroundCompletionHandler: (() -> Void)?
 
+    /**
+     The background reconnection handler closure will be called for each Request reconsituted in response to
+     delegate calls for tasks initiated to allow task delegate re-configuration to take place.
+     
+     There is also getAllRequestsWithCompletionHandler to get array of tasks to process and re-connect. This will
+     reconstitute any tasks running in the background from previous app session if needed.
+     
+     `nil` by default.
+     */
+    public var backgroundReconnectionHandler: ((Request) -> Void)?
+    
     // MARK: - Lifecycle
 
     /**
@@ -132,7 +237,6 @@ public class Manager {
     {
         self.delegate = delegate
         self.session = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
-
         commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
     }
 
@@ -162,6 +266,10 @@ public class Manager {
     private func commonInit(serverTrustPolicyManager serverTrustPolicyManager: ServerTrustPolicyManager?) {
         session.serverTrustPolicyManager = serverTrustPolicyManager
 
+        if let sessionId = backgroundSessionId {
+            Manager.backgroundSessions[sessionId] = Weak<Manager>(value: self)
+        }
+        
         delegate.sessionDidFinishEventsForBackgroundURLSession = { [weak self] session in
             guard let strongSelf = self else { return }
             dispatch_async(dispatch_get_main_queue()) { strongSelf.backgroundCompletionHandler?() }
@@ -169,9 +277,23 @@ public class Manager {
     }
 
     deinit {
+        if let sessionId = backgroundSessionId {
+            Manager.backgroundSessions[sessionId] = nil
+        }
+
         session.invalidateAndCancel()
     }
-
+    
+    public var isBackgroundSession:Bool {
+        return session.configuration.identifier != nil
+    }
+    
+    public var backgroundSessionId:String? {
+        get {
+            return session.configuration.identifier
+        }
+    }
+    
     // MARK: - Request
 
     /**
@@ -211,8 +333,7 @@ public class Manager {
         var dataTask: NSURLSessionDataTask!
         dispatch_sync(queue) { dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest) }
 
-        let request = Request(session: session, task: dataTask)
-        delegate[request.delegate.task] = request.delegate
+        let request = Request(session: self, task: dataTask)
 
         if startRequestsImmediately {
             request.resume()
@@ -220,29 +341,64 @@ public class Manager {
 
         return request
     }
-
+    
     // MARK: - SessionDelegate
 
     /**
         Responsible for handling all delegate callbacks for the underlying session.
     */
     public final class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
-        private var subdelegates: [Int: Request.TaskDelegate] = [:]
+        private var requests = WeakDictionary<Int,Request>(threadSafe:false)
         private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_CONCURRENT)
 
-        subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
+        private var knownRequests:[Request] {
             get {
-                var subdelegate: Request.TaskDelegate?
-                dispatch_sync(subdelegateQueue) { subdelegate = self.subdelegates[task.taskIdentifier] }
-
-                return subdelegate
+                var results = [Request]()
+                dispatch_sync(subdelegateQueue) {
+                    for wr in self.requests.dictionary.values {
+                        if let r = wr.value {
+                            results.append(r)
+                        }
+                    }
+                }
+                
+                return results
             }
-
-            set {
-                dispatch_barrier_async(subdelegateQueue) { self.subdelegates[task.taskIdentifier] = newValue }
+        }
+        
+        subscript(task: NSURLSessionTask, sessionId:String?) -> Request.TaskDelegate? {
+            get {
+                var request: Request?
+                dispatch_sync(subdelegateQueue) {
+                    request = self.requests[task.taskIdentifier]
+                    if request == nil && sessionId != nil {
+                        if let session = Manager.backgroundSession(sessionId!) {
+                            request = Request(session: session, task: task)
+                            if let reconnect = session.backgroundReconnectionHandler {
+                                reconnect(request!)
+                            }
+                            self.requests[task.taskIdentifier] = request
+                        }
+                    }
+                }
+                
+                return request?.delegate
             }
         }
 
+        internal subscript(task:NSURLSessionTask) -> Request? {
+            get {
+                var request: Request?
+                dispatch_sync(subdelegateQueue) {
+                    request = self.requests[task.taskIdentifier]
+                }
+                return request
+            }
+            set {
+                dispatch_barrier_async(subdelegateQueue) { self.requests[task.taskIdentifier] = newValue }
+            }
+        }
+        
         /**
             Initializes the `SessionDelegate` instance.
 
@@ -386,7 +542,7 @@ public class Manager {
         {
             if let taskDidReceiveChallenge = taskDidReceiveChallenge {
                 completionHandler(taskDidReceiveChallenge(session, task, challenge))
-            } else if let delegate = self[task] {
+            } else if let delegate = self[task, session.configuration.identifier] {
                 delegate.URLSession(
                     session,
                     task: task,
@@ -412,7 +568,7 @@ public class Manager {
         {
             if let taskNeedNewBodyStream = taskNeedNewBodyStream {
                 completionHandler(taskNeedNewBodyStream(session, task))
-            } else if let delegate = self[task] {
+            } else if let delegate = self[task, session.configuration.identifier] {
                 delegate.URLSession(session, task: task, needNewBodyStream: completionHandler)
             }
         }
@@ -435,7 +591,7 @@ public class Manager {
         {
             if let taskDidSendBodyData = taskDidSendBodyData {
                 taskDidSendBodyData(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
-            } else if let delegate = self[task] as? Request.UploadTaskDelegate {
+            } else if let delegate = self[task, session.configuration.identifier] as? Request.UploadTaskDelegate {
                 delegate.URLSession(
                     session,
                     task: task,
@@ -456,11 +612,9 @@ public class Manager {
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
             if let taskDidComplete = taskDidComplete {
                 taskDidComplete(session, task, error)
-            } else if let delegate = self[task] {
+            } else if let delegate = self[task, session.configuration.identifier] {
                 delegate.URLSession(session, task: task, didCompleteWithError: error)
             }
-
-            self[task] = nil
         }
 
         // MARK: - NSURLSessionDataDelegate
@@ -522,7 +676,7 @@ public class Manager {
                 dataTaskDidBecomeDownloadTask(session, dataTask, downloadTask)
             } else {
                 let downloadDelegate = Request.DownloadTaskDelegate(task: downloadTask)
-                self[downloadTask] = downloadDelegate
+                self[downloadTask]!.delegate = downloadDelegate
             }
         }
 
@@ -536,7 +690,7 @@ public class Manager {
         public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
             if let dataTaskDidReceiveData = dataTaskDidReceiveData {
                 dataTaskDidReceiveData(session, dataTask, data)
-            } else if let delegate = self[dataTask] as? Request.DataTaskDelegate {
+            } else if let delegate = self[dataTask, session.configuration.identifier] as? Request.DataTaskDelegate {
                 delegate.URLSession(session, dataTask: dataTask, didReceiveData: data)
             }
         }
@@ -562,7 +716,7 @@ public class Manager {
         {
             if let dataTaskWillCacheResponse = dataTaskWillCacheResponse {
                 completionHandler(dataTaskWillCacheResponse(session, dataTask, proposedResponse))
-            } else if let delegate = self[dataTask] as? Request.DataTaskDelegate {
+            } else if let delegate = self[dataTask, session.configuration.identifier] as? Request.DataTaskDelegate {
                 delegate.URLSession(
                     session,
                     dataTask: dataTask,
@@ -605,7 +759,7 @@ public class Manager {
         {
             if let downloadTaskDidFinishDownloadingToURL = downloadTaskDidFinishDownloadingToURL {
                 downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
-            } else if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
+            } else if let delegate = self[downloadTask, session.configuration.identifier] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(session, downloadTask: downloadTask, didFinishDownloadingToURL: location)
             }
         }
@@ -631,7 +785,7 @@ public class Manager {
         {
             if let downloadTaskDidWriteData = downloadTaskDidWriteData {
                 downloadTaskDidWriteData(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
-            } else if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
+            } else if let delegate = self[downloadTask, session.configuration.identifier] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(
                     session,
                     downloadTask: downloadTask,
@@ -662,7 +816,7 @@ public class Manager {
         {
             if let downloadTaskDidResumeAtOffset = downloadTaskDidResumeAtOffset {
                 downloadTaskDidResumeAtOffset(session, downloadTask, fileOffset, expectedTotalBytes)
-            } else if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
+            } else if let delegate = self[downloadTask, session.configuration.identifier] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(
                     session,
                     downloadTask: downloadTask,

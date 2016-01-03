@@ -45,9 +45,7 @@ extension Manager {
             }
         }
 
-        let request = Request(session: session, task: streamTask)
-
-        delegate[request.delegate.task] = request.delegate
+        let request = Request(session: self, task: streamTask)
 
         if startRequestsImmediately {
             request.resume()
