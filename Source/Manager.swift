@@ -48,18 +48,9 @@ public class Manager {
         let acceptEncoding: String = "gzip;q=1.0,compress;q=0.5"
 
         // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
-        let acceptLanguage: String = {
-            var components: [String] = []
-            for (index, languageCode) in (NSLocale.preferredLanguages() as [String]).enumerate() {
-                let q = 1.0 - (Double(index) * 0.1)
-                components.append("\(languageCode);q=\(q)")
-                if q <= 0.5 {
-                    break
-                }
-            }
-
-            return components.joinWithSeparator(",")
-        }()
+        let acceptLanguage: String = NSLocale.preferredLanguages().prefix(5).enumerate().map { index, languageCode in
+            "\(languageCode);q=\(1.0 - Double(index) * 0.1)"
+            }.joinWithSeparator(",")
 
         // User-Agent Header; see https://tools.ietf.org/html/rfc7231#section-5.5.3
         let userAgent: String = {
