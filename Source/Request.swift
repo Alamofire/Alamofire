@@ -458,7 +458,9 @@ extension Request: CustomDebugStringConvertible {
             return "$ curl command could not be created"
         }
 
-        let URL = request.URL
+        guard let URL = request.URL, host = URL.host else {
+            return "$ curl command could not be created"
+        }
 
         if let HTTPMethod = request.HTTPMethod where HTTPMethod != "GET" {
             components.append("-X \(HTTPMethod)")
@@ -466,10 +468,10 @@ extension Request: CustomDebugStringConvertible {
 
         if let credentialStorage = self.session.configuration.URLCredentialStorage {
             let protectionSpace = NSURLProtectionSpace(
-                host: URL!.host!,
-                port: URL!.port?.integerValue ?? 0,
-                `protocol`: URL!.scheme,
-                realm: URL!.host!,
+                host: host,
+                port: URL.port?.integerValue ?? 0,
+                `protocol`: URL.scheme ?? "http",
+                realm: host,
                 authenticationMethod: NSURLAuthenticationMethodHTTPBasic
             )
 
@@ -487,7 +489,7 @@ extension Request: CustomDebugStringConvertible {
         if session.configuration.HTTPShouldSetCookies {
             if let
                 cookieStorage = session.configuration.HTTPCookieStorage,
-                cookies = cookieStorage.cookiesForURL(URL!) where !cookies.isEmpty
+                cookies = cookieStorage.cookiesForURL(URL) where !cookies.isEmpty
             {
                 let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value ?? String());" }
                 components.append("-b \"\(string.substringToIndex(string.endIndex.predecessor()))\"")
@@ -524,7 +526,7 @@ extension Request: CustomDebugStringConvertible {
             components.append("-d \"\(escapedBody)\"")
         }
 
-        components.append("\"\(URL!.absoluteString)\"")
+        components.append("\"\(URL.absoluteString)\"")
 
         return components.joinWithSeparator(" \\\n\t")
     }
