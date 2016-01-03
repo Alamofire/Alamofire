@@ -595,6 +595,18 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         XCTAssertTrue(cookieComponents.isEmpty, "command should not contain -b flag")
     }
 
+    func testThatRequestWithInvalidURLDebugDescription() {
+        // Given
+        let URLString = "invalid_url"
+
+        // When
+        let request = manager.request(.GET, URLString)
+        let debugDescription = request.debugDescription
+
+        // Then
+        XCTAssertNotNil(debugDescription, "debugDescription should not crash")
+    }
+
     // MARK: Test Helper Methods
 
     private func cURLCommandComponents(request: Request) -> [String] {
