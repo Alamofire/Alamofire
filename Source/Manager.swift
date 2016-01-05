@@ -22,6 +22,10 @@
 
 import Foundation
 
+protocol SessionDelegateRetryProtocol:class {
+    func retry(URLRequest: URLRequestConvertible, del: Request.TaskDelegate)
+}
+
 /**
     Responsible for creating and managing `Request` objects, as well as their underlying `NSURLSession`.
 */
@@ -158,6 +162,7 @@ public class Manager {
             guard let strongSelf = self else { return }
             dispatch_async(dispatch_get_main_queue()) { strongSelf.backgroundCompletionHandler?() }
         }
+        self.delegate.retryDelegate = self
     }
 
     deinit {
@@ -221,6 +226,7 @@ public class Manager {
     public final class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
         private var subdelegates: [Int: Request.TaskDelegate] = [:]
         private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_CONCURRENT)
+        private weak var retryDelegate: SessionDelegateRetryProtocol?
 
         subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
@@ -449,7 +455,13 @@ public class Manager {
             if let taskDidComplete = taskDidComplete {
                 taskDidComplete(session, task, error)
             } else if let delegate = self[task] {
-                delegate.URLSession(session, task: task, didCompleteWithError: error)
+                if delegate.retries > 0 && error != nil {
+                    delegate.retries--
+                    print("retry: \(delegate.retries)")
+                    self.retryDelegate?.retry(task.originalRequest!, del: delegate)
+                } else {
+                    delegate.URLSession(session, task: task, didCompleteWithError: error)
+                }
             }
 
             self[task] = nil
@@ -689,5 +701,17 @@ public class Manager {
                 return self.dynamicType.instancesRespondToSelector(selector)
             }
         }
+    }
+}
+
+extension Manager : SessionDelegateRetryProtocol {
+    
+    func retry(URLRequest: URLRequestConvertible, del: Request.TaskDelegate) {
+        var dataTask: NSURLSessionDataTask!
+        dispatch_sync(queue) { dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest) }
+        
+        let request = Request(session: session, task: dataTask, delegate: del)
+        delegate[request.delegate.task] = request.delegate
+        request.resume()
     }
 }
