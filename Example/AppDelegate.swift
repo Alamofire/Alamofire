@@ -23,9 +23,10 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate,NSURLSessionDelegate {
 
     var window: UIWindow?
+    var session: NSURLSession!
 
     // MARK: - UIApplicationDelegate
 
@@ -39,8 +40,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem()
         splitViewController.delegate = self
 
+//         session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: nil)
+//        session.dataTaskWithRequest(NSURLRequest(URL: NSURL(string: "http://cms.neulion.com.cn:7000/iptv-admin/resources/AuthRS/getAuthToken2?username=cpuser&password=neu123456&format=json")!)).resume()
         return true
     }
+//    
+//    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+//    print("")
+//    }
 
     // MARK: - UISplitViewControllerDelegate
 

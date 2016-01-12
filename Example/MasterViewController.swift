@@ -53,6 +53,9 @@ class MasterViewController: UITableViewController {
         }
     }
 
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+    }
     // MARK: - UIStoryboardSegue
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
@@ -62,6 +65,10 @@ class MasterViewController: UITableViewController {
         {
             func requestForSegue(segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier! {
+                case "c1":
+                    detailViewController.segueIdentifier = "c1"
+                    return Alamofire.request(.GET, "http://cms.neulion.com.cn:7000/iptv-admin/resources/AuthRS/getAuthToken2?username=cpuser&password=neu123456&format=json",parameters: ["a1":"b1"])
+
                 case "GET":
                     detailViewController.segueIdentifier = "GET"
                     return Alamofire.request(.GET, "https://httpbin.org/get")
@@ -86,7 +93,9 @@ class MasterViewController: UITableViewController {
                 }
             }
 
+            
             if let request = requestForSegue(segue) {
+                return;
                 detailViewController.request = request
             }
         }

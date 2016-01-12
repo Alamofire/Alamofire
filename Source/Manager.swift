@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 
 import Foundation
-
+//cactus 封装了NSURLSession以及相对应的代理方法
 /**
     Responsible for creating and managing `Request` objects, as well as their underlying `NSURLSession`.
 */
@@ -71,7 +71,7 @@ public class Manager {
 
                 var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); OS \(os))") as CFMutableString
                 let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
-
+                //cactus http://nshipster.cn/cfstringtransform/
                 if CFStringTransform(mutableUserAgent, UnsafeMutablePointer<CFRange>(nil), transform, false) {
                     return mutableUserAgent as String
                 }
@@ -87,13 +87,13 @@ public class Manager {
         ]
     }()
 
-    let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
+    let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL) //cactus 实现session线程安全的队列
 
     /// The underlying session.
-    public let session: NSURLSession
+    public let session: NSURLSession //cactus NSURLSession类型发送请求并且得到NSURLSessionTask
 
     /// The session delegate handling all the task and session delegate callbacks.
-    public let delegate: SessionDelegate
+    public let delegate: SessionDelegate //cactus session的代理
 
     /// Whether to start requests immediately after being constructed. `true` by default.
     public var startRequestsImmediately: Bool = true
@@ -109,7 +109,9 @@ public class Manager {
     
         `nil` by default.
     */
-    public var backgroundCompletionHandler: (() -> Void)?
+    public var backgroundCompletionHandler: (() -> Void)? //cactus 后台运行完成后的回调的closure
+    //Cactus+ backgroundCompletionHandler 加个seesion参数，不加的话其实也拿到的
+    
 
     // MARK: - Lifecycle
 
@@ -209,7 +211,7 @@ public class Manager {
     */
     public func request(URLRequest: URLRequestConvertible) -> Request {
         var dataTask: NSURLSessionDataTask!
-        dispatch_sync(queue) { dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest) }
+        dispatch_sync(queue) { dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest) }//cactus 实现session线程安全的队列
 
         let request = Request(session: session, task: dataTask)
         delegate[request.delegate.task] = request.delegate
@@ -229,7 +231,7 @@ public class Manager {
     public final class SessionDelegate: NSObject, NSURLSessionDelegate, NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate {
         private var subdelegates: [Int: Request.TaskDelegate] = [:]
         private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_CONCURRENT)
-
+//cactus subdelegateQueue则是保证对字典的线程安全
         subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
                 var subdelegate: Request.TaskDelegate?
@@ -267,12 +269,14 @@ public class Manager {
 
         // MARK: Delegate Methods
 
+        
         /**
             Tells the delegate that the session has been invalidated.
 
             - parameter session: The session object that was invalidated.
             - parameter error:   The error that caused invalidation, or nil if the invalidation was explicit.
         */
+        //cactus 当不再需要连接调用Session的invalidateAndCancel直接关闭，或者调用finishTasksAndInvalidate等待当前Task结束后关闭。这时Delegate会收到URLSession:didBecomeInvalidWithError:这个事件。
         public func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
             sessionDidBecomeInvalidWithError?(session, error)
         }
@@ -284,6 +288,7 @@ public class Manager {
             - parameter challenge:         An object that contains the request for authentication.
             - parameter completionHandler: A handler that your delegate method must call providing the disposition and credential.
         */
+        //cactus 是用NSURLSessionDataTask发起https请求。在ssl握手阶段，会调用2次下面的
         public func URLSession(
             session: NSURLSession,
             didReceiveChallenge challenge: NSURLAuthenticationChallenge,
@@ -354,6 +359,7 @@ public class Manager {
                                            parameter, a modified URL request object, or NULL to refuse the redirect and 
                                            return the body of the redirect response.
         */
+        //cactus 是否需要重定向URL
         public func URLSession(
             session: NSURLSession,
             task: NSURLSessionTask,
@@ -453,6 +459,7 @@ public class Manager {
             - parameter task:    The task whose request finished transferring data.
             - parameter error:   If an error occurred, an error object indicating how the transfer failed, otherwise nil.
         */
+        //cactus 任务暂停或结束（成功或者失败都会调用）
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
             if let taskDidComplete = taskDidComplete {
                 taskDidComplete(session, task, error)
@@ -491,6 +498,7 @@ public class Manager {
                                            constant to indicate whether the transfer should continue as a data task or 
                                            should become a download task.
         */
+        //cactus 接收到服务器的响应
         public func URLSession(
             session: NSURLSession,
             dataTask: NSURLSessionDataTask,
@@ -533,6 +541,7 @@ public class Manager {
             - parameter dataTask: The data task that provided data.
             - parameter data:     A data object containing the transferred data.
         */
+        //cactus  接收到服务器的数据
         public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
             if let dataTaskDidReceiveData = dataTaskDidReceiveData {
                 dataTaskDidReceiveData(session, dataTask, data)
@@ -598,6 +607,7 @@ public class Manager {
                                       open the file for reading or move it to a permanent location in your app’s sandbox 
                                       container directory before returning from this delegate method.
         */
+        //cactus 下载完成的通知
         public func URLSession(
             session: NSURLSession,
             downloadTask: NSURLSessionDownloadTask,
@@ -622,6 +632,7 @@ public class Manager {
                                                    header. If this header was not provided, the value is 
                                                    `NSURLSessionTransferSizeUnknown`.
         */
+         //cactus 下载进度变化的通知
         public func URLSession(
             session: NSURLSession,
             downloadTask: NSURLSessionDownloadTask,
@@ -654,6 +665,7 @@ public class Manager {
             - parameter expectedTotalBytes: The expected length of the file, as provided by the Content-Length header. 
                                             If this header was not provided, the value is NSURLSessionTransferSizeUnknown.
         */
+        //cactus 下载进度恢复的通知
         public func URLSession(
             session: NSURLSession,
             downloadTask: NSURLSessionDownloadTask,

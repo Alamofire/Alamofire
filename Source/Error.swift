@@ -23,6 +23,7 @@
 import Foundation
 
 /// The `Error` struct provides a convenience for creating custom Alamofire NSErrors.
+//cactus 用于生成NSError错误对象, 包含一些常用网络错误 如数据错误 服务器状态错误,解析序列错误等
 public struct Error {
     /// The domain used for creating all Alamofire errors.
     public static let Domain = "com.alamofire.error"
