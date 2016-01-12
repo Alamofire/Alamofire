@@ -64,6 +64,11 @@ class DetailViewController: UITableViewController {
 
         refresh()
     }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+    }
 
     // MARK: IBActions
 
@@ -71,6 +76,11 @@ class DetailViewController: UITableViewController {
         guard let request = request else {
             return
         }
+        let shoppingList = ["Eggs", "Milk",]
+        print(shoppingList.isEmpty)
+        var sss = ["ss": "dd"]
+        sss["ss"] = "sss"
+//        shoppingList.removeAll()
 
         refreshControl?.beginRefreshing()
 
@@ -80,14 +90,20 @@ class DetailViewController: UITableViewController {
             self.elapsedTime = end - start
 
             if let response = response.response {
-                for (field, value) in response.allHeaderFields {
-                    self.headers["\(field)"] = "\(value)"
-                }
+//                for (field, value) in response.allHeaderFields {
+//                    self.headers["\(field)"] = "\(value)"
+//                }
+                //cactus
+                self.headers = response.allHeaderFields.reduce([String: String](), combine: { (var ca:[String: String], obj:(NSObject, AnyObject)) -> [String:String] in
+                    ca["\(obj.0)"] = "\(obj.1)"
+                    return ca
+                })
+//                self.headers = response.allHeaderFields.reduce([String: String](), combine: { $0["\($1.0)"] = "\($1.1)"})
             }
 
             if let segueIdentifier = self.segueIdentifier {
                 switch segueIdentifier {
-                case "GET", "POST", "PUT", "DELETE":
+                case "GET", "POST", "PUT", "DELETE","c1":
                     self.body = response.result.value
                 case "DOWNLOAD":
                     self.body = self.downloadedBodyString()
@@ -99,6 +115,8 @@ class DetailViewController: UITableViewController {
             self.tableView.reloadData()
             self.refreshControl?.endRefreshing()
         }
+        
+//        request.responseString { response in}
     }
 
     private func downloadedBodyString() -> String {

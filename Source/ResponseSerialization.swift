@@ -148,6 +148,7 @@ extension Request {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .Failure(error!) }
 
+            //cactus 执行成功但是没有数据
             if let response = response where response.statusCode == 204 { return .Success(NSData()) }
 
             guard let validData = data else {

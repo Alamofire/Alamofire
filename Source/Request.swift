@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 
 import Foundation
-
+//cactus 封装了NSURLSessionTask以及Task的基本的代理方法
 /**
     Responsible for sending a request and receiving the response and associated data from the server, as well as 
     managing its underlying `NSURLSessionTask`.
@@ -170,6 +170,7 @@ public class Request {
             downloadDelegate = delegate as? DownloadTaskDelegate,
             downloadTask = downloadDelegate.downloadTask
         {
+            //Cactus 取消下载
             downloadTask.cancelByProducingResumeData { data in
                 downloadDelegate.resumeData = data
             }

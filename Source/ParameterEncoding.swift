@@ -21,7 +21,7 @@
 // THE SOFTWARE.
 
 import Foundation
-
+//cactus 负责对HTTP请求的参数进行编码
 /**
     HTTP method definitions.
 
@@ -59,6 +59,7 @@ public enum Method: String {
     - `Custom`:          Uses the associated closure value to construct a new request given an existing request and
                          parameters.
 */
+//cactus 网络请求时的HTTP的content-type 如application/x-www-form-urlencoded; charset=utf-8, application/json等
 public enum ParameterEncoding {
     case URL
     case URLEncodedInURL
