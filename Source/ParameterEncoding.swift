@@ -173,6 +173,7 @@ public enum ParameterEncoding {
 
         - returns: The percent-escaped, URL encoded query string components.
     */
+	@warn_unused_result
     public func queryComponents(key: String, _ value: AnyObject) -> [(String, String)] {
         var components: [(String, String)] = []
 
@@ -207,6 +208,7 @@ public enum ParameterEncoding {
 
         - returns: The percent-escaped string.
     */
+	@warn_unused_result
     public func escape(string: String) -> String {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="

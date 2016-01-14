@@ -185,6 +185,7 @@ extension Request {
 
         - returns: A string response serializer.
     */
+	@warn_unused_result
     public static func stringResponseSerializer(
         var encoding encoding: NSStringEncoding? = nil)
         -> ResponseSerializer<String, NSError>
@@ -252,6 +253,7 @@ extension Request {
 
         - returns: A JSON object response serializer.
     */
+	@warn_unused_result
     public static func JSONResponseSerializer(
         options options: NSJSONReadingOptions = .AllowFragments)
         -> ResponseSerializer<AnyObject, NSError>
@@ -308,6 +310,7 @@ extension Request {
 
         - returns: A property list object response serializer.
     */
+	@warn_unused_result
     public static func propertyListResponseSerializer(
         options options: NSPropertyListReadOptions = NSPropertyListReadOptions())
         -> ResponseSerializer<AnyObject, NSError>

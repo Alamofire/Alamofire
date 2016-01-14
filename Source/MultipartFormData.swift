@@ -54,11 +54,13 @@ public class MultipartFormData {
         enum BoundaryType {
             case Initial, Encapsulated, Final
         }
-
+		
+		@warn_unused_result
         static func randomBoundary() -> String {
             return String(format: "alamofire.boundary.%08x%08x", arc4random(), arc4random())
         }
 
+		@warn_unused_result
         static func boundaryData(boundaryType boundaryType: BoundaryType, boundary: String) -> NSData {
             let boundaryText: String
 

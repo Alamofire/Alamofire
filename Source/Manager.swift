@@ -177,6 +177,7 @@ public class Manager {
 
         - returns: The created request.
     */
+	@warn_unused_result
     public func request(
         method: Method,
         _ URLString: URLStringConvertible,
@@ -199,6 +200,7 @@ public class Manager {
 
         - returns: The created request.
     */
+	@warn_unused_result
     public func request(URLRequest: URLRequestConvertible) -> Request {
         var dataTask: NSURLSessionDataTask!
         dispatch_sync(queue) { dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest) }

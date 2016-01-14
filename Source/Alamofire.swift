@@ -83,6 +83,7 @@ extension NSURLRequest: URLRequestConvertible {
 
 // MARK: - Convenience
 
+@warn_unused_result
 func URLRequest(
     method: Method,
     _ URLString: URLStringConvertible,
@@ -115,6 +116,7 @@ func URLRequest(
 
     - returns: The created request.
 */
+@warn_unused_result
 public func request(
     method: Method,
     _ URLString: URLStringConvertible,
@@ -141,6 +143,7 @@ public func request(
 
     - returns: The created request.
 */
+@warn_unused_result
 public func request(URLRequest: URLRequestConvertible) -> Request {
     return Manager.sharedInstance.request(URLRequest.URLRequest)
 }

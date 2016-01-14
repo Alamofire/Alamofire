@@ -50,6 +50,7 @@ extension Request {
 
         - returns: The request.
     */
+	@warn_unused_result
     public func validate(validation: Validation) -> Self {
         delegate.queue.addOperationWithBlock {
             if let
@@ -74,6 +75,7 @@ extension Request {
 
         - returns: The request.
     */
+	@warn_unused_result
     public func validate<S: SequenceType where S.Generator.Element == Int>(statusCode acceptableStatusCode: S) -> Self {
         return validate { _, response in
             if acceptableStatusCode.contains(response.statusCode) {
@@ -128,6 +130,7 @@ extension Request {
 
         - returns: The request.
     */
+	@warn_unused_result
     public func validate<S : SequenceType where S.Generator.Element == String>(contentType acceptableContentTypes: S) -> Self {
         return validate { _, response in
             guard let validData = self.delegate.data where validData.length > 0 else { return .Success }
@@ -174,6 +177,7 @@ extension Request {
 
         - returns: The request.
     */
+	@warn_unused_result
     public func validate() -> Self {
         let acceptableStatusCodes: Range<Int> = 200..<300
         let acceptableContentTypes: [String] = {

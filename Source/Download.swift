@@ -143,6 +143,7 @@ extension Request {
 
         - returns: A download file destination closure.
     */
+	@warn_unused_result
     public class func suggestedDownloadDestination(
         directory directory: NSSearchPathDirectory = .DocumentDirectory,
         domain: NSSearchPathDomainMask = .UserDomainMask)
