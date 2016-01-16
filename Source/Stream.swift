@@ -45,7 +45,7 @@ extension Manager {
             }
         }
 
-        let request = Request(session: session, task: streamTask)
+        let request = Request(manager: self, task: streamTask)
 
         delegate[request.delegate.task] = request.delegate
 

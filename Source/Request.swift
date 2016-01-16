@@ -36,8 +36,13 @@ public class Request {
     /// The underlying task.
     public var task: NSURLSessionTask { return delegate.task }
 
+    /// The manager belonging to this Request.
+    public let manager: Manager
+    
     /// The session belonging to the underlying task.
-    public let session: NSURLSession
+    public var session: NSURLSession {
+        return manager.session
+    }
 
     /// The request sent or to be sent to the server.
     public var request: NSURLRequest? { return task.originalRequest }
@@ -50,8 +55,9 @@ public class Request {
 
     // MARK: - Lifecycle
 
-    init(session: NSURLSession, task: NSURLSessionTask) {
-        self.session = session
+    init(manager: Manager, task: NSURLSessionTask) {
+        
+        self.manager = manager
 
         switch task {
         case is NSURLSessionUploadTask:
@@ -63,6 +69,7 @@ public class Request {
         default:
             self.delegate = TaskDelegate(task: task)
         }
+        
     }
 
     // MARK: - Authentication
