@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313) | [3.1.4](#314)
+- `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313) | [3.1.4](#314) | [3.1.5](#315)
 - `3.0.x` Releases - [3.0.0](#300) | [3.0.1](#301)
 - `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2) | [3.0.0-beta.3](#300-beta3)
 
@@ -18,6 +18,27 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [3.1.5](https://github.com/Alamofire/Alamofire/releases/tag/3.1.5)
+Released on 2016-1-17. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.1.5).
+
+#### Added
+- `Package.swift` to the project to support Swift Package Manager (SPM).
+  - Added by [Kyle Fuller](https://github.com/kylef) in Pull Request
+  [#979](https://github.com/Alamofire/Alamofire/pull/979).
+- Safeguards to the `Request` class's `debugDescription` property.
+  - Added by [tokorom](https://github.com/tokorom) in Pull Request
+  [#983](https://github.com/Alamofire/Alamofire/pull/983).
+
+#### Updated
+- `Accept-Language` header generation to use functional style.
+  - Updated by [Dapeng Gao](https://github.com/dapenggao) in Pull Request
+  [#982](https://github.com/Alamofire/Alamofire/pull/982).
+- `Accept-Encoding` and `Accept-Language` header values to have separator spaces between values.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Copyright headers to include 2016! 🎉🎉🎉
+  - Updated by [Christian Noon](https://github.com/cnoon).
 
 ## [3.1.4](https://github.com/Alamofire/Alamofire/releases/tag/3.1.4)
 Released on 2015-12-16. All issues associated with this milestone can be found using this
