@@ -439,7 +439,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var totalRedirectCount = 0
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, request in
-            ++totalRedirectCount
+            totalRedirectCount += 1
             return request
         }
 
