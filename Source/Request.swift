@@ -470,7 +470,7 @@ extension Request: CustomDebugStringConvertible {
             let protectionSpace = NSURLProtectionSpace(
                 host: host,
                 port: URL.port?.integerValue ?? 0,
-                `protocol`: URL.scheme,
+                protocol: URL.scheme,
                 realm: host,
                 authenticationMethod: NSURLAuthenticationMethodHTTPBasic
             )
