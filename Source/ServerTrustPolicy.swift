@@ -53,6 +53,7 @@ public class ServerTrustPolicyManager {
 
         - returns: The server trust policy for the given host if found.
     */
+	@warn_unused_result
     public func serverTrustPolicyForHost(host: String) -> ServerTrustPolicy? {
         return policies[host]
     }
@@ -125,6 +126,7 @@ public enum ServerTrustPolicy {
 
         - returns: All certificates within the given bundle.
     */
+	@warn_unused_result
     public static func certificatesInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecCertificate] {
         var certificates: [SecCertificate] = []
 
@@ -151,6 +153,7 @@ public enum ServerTrustPolicy {
 
         - returns: All public keys within the given bundle.
     */
+	@warn_unused_result
     public static func publicKeysInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecKey] {
         var publicKeys: [SecKey] = []
 
@@ -173,6 +176,7 @@ public enum ServerTrustPolicy {
 
         - returns: Whether the server trust is valid.
     */
+	@warn_unused_result
     public func evaluateServerTrust(serverTrust: SecTrust, isValidForHost host: String) -> Bool {
         var serverTrustIsValid = false
 

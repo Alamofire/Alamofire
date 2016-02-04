@@ -64,6 +64,7 @@ extension Manager {
 
         :returns: The created stream request.
     */
+	@warn_unused_result
     public func stream(hostName hostName: String, port: Int) -> Request {
         return stream(.Stream(hostName, port))
     }
@@ -75,6 +76,7 @@ extension Manager {
 
         - returns: The created stream request.
     */
+	@warn_unused_result
     public func stream(netService netService: NSNetService) -> Request {
         return stream(.NetService(netService))
     }
