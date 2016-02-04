@@ -47,21 +47,26 @@ public class Request {
 
     /// The progress of the request lifecycle.
     public var progress: NSProgress { return delegate.progress }
-
+    
     // MARK: - Lifecycle
 
-    init(session: NSURLSession, task: NSURLSessionTask) {
+    init(session: NSURLSession, task: NSURLSessionTask, delegate: TaskDelegate? = nil) {
         self.session = session
 
-        switch task {
-        case is NSURLSessionUploadTask:
-            self.delegate = UploadTaskDelegate(task: task)
-        case is NSURLSessionDataTask:
-            self.delegate = DataTaskDelegate(task: task)
-        case is NSURLSessionDownloadTask:
-            self.delegate = DownloadTaskDelegate(task: task)
-        default:
-            self.delegate = TaskDelegate(task: task)
+        if let delegate = delegate {
+            delegate.task = task
+            self.delegate = delegate
+        } else {
+            switch task {
+            case is NSURLSessionUploadTask:
+                self.delegate = UploadTaskDelegate(task: task)
+            case is NSURLSessionDataTask:
+                self.delegate = DataTaskDelegate(task: task)
+            case is NSURLSessionDownloadTask:
+                self.delegate = DownloadTaskDelegate(task: task)
+            default:
+                self.delegate = TaskDelegate(task: task)
+            }
         }
     }
 
@@ -161,6 +166,13 @@ public class Request {
     public func resume() {
         task.resume()
     }
+  
+    public func retry(take: Int) -> Self {
+        self.delegate.retries = take
+        return self
+    }
+    
+    
 
     /**
         Cancels the request.
@@ -189,11 +201,13 @@ public class Request {
         /// The serial operation queue used to execute all operations after the task completes.
         public let queue: NSOperationQueue
 
-        let task: NSURLSessionTask
+        var task: NSURLSessionTask
         let progress: NSProgress
 
         var data: NSData? { return nil }
         var error: NSError?
+        
+        var retries = 0
 
         var credential: NSURLCredential?
 
