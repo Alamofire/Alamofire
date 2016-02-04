@@ -87,7 +87,11 @@ extension Request {
         -> Self
     {
         delegate.queue.addOperationWithBlock {
-            dispatch_async(queue ?? dispatch_get_main_queue()) {
+            if let queue = queue ?? self.manager.completionQueue {
+                dispatch_async(queue) {
+                    completionHandler(self.request, self.response, self.delegate.data, self.delegate.error)
+                }
+            } else {
                 completionHandler(self.request, self.response, self.delegate.data, self.delegate.error)
             }
         }
@@ -112,6 +116,7 @@ extension Request {
         -> Self
     {
         delegate.queue.addOperationWithBlock {
+            
             let result = responseSerializer.serializeResponse(
                 self.request,
                 self.response,
@@ -119,16 +124,26 @@ extension Request {
                 self.delegate.error
             )
 
-            dispatch_async(queue ?? dispatch_get_main_queue()) {
+            if let queue = queue ?? self.manager.completionQueue {
+                dispatch_async(queue) {
+                    let response = Response<T.SerializedObject, T.ErrorObject>(
+                        request: self.request,
+                        response: self.response,
+                        data: self.delegate.data,
+                        result: result
+                    )
+                    completionHandler(response)
+                }
+            } else {
                 let response = Response<T.SerializedObject, T.ErrorObject>(
                     request: self.request,
                     response: self.response,
                     data: self.delegate.data,
                     result: result
                 )
-
                 completionHandler(response)
             }
+            
         }
 
         return self

@@ -79,8 +79,12 @@ public class Manager {
         ]
     }()
 
+    /// The queue to synchronize the creation of NSURLSessionDataTask objects.
     let queue = dispatch_queue_create(nil, DISPATCH_QUEUE_SERIAL)
 
+    /// The queue to dispatch to in response methods. Response methods will not dispatch if set to nil.
+    public var completionQueue : dispatch_queue_t? = dispatch_get_main_queue()
+    
     /// The underlying session.
     public let session: NSURLSession
 
@@ -114,7 +118,7 @@ public class Manager {
                                               default.
         - parameter serverTrustPolicyManager: The server trust policy manager to use for evaluating all server trust 
                                               challenges. `nil` by default.
-
+    
         - returns: The new `Manager` instance.
     */
     public init(
@@ -124,7 +128,7 @@ public class Manager {
     {
         self.delegate = delegate
         self.session = NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
-
+        
         commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
     }
 
@@ -148,6 +152,29 @@ public class Manager {
 
         guard delegate === session.delegate else { return nil }
 
+        commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
+    }
+
+    /**
+     Initializes the `Manager` instance with the specified session and server trust policy.
+     
+     - parameter session:                  The URL session.
+     - parameter serverTrustPolicyManager: The server trust policy manager to use for evaluating all server trust
+     challenges. `nil` by default.
+     
+     - returns: The new `Manager` instance if the URL session's delegate matches the delegate parameter.
+     */
+    public init(
+        session: NSURLSession,
+        serverTrustPolicyManager: ServerTrustPolicyManager? = nil)
+    {
+        guard let delegate = session.delegate as? SessionDelegate else {
+            fatalError("'session' needs an delegate of type 'Manager.SessionDelegate'.")
+        }
+        
+        self.delegate = delegate
+        self.session = session
+        
         commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
     }
 
@@ -203,7 +230,7 @@ public class Manager {
         var dataTask: NSURLSessionDataTask!
         dispatch_sync(queue) { dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest) }
 
-        let request = Request(session: session, task: dataTask)
+        let request = Request(manager: self, task: dataTask)
         delegate[request.delegate.task] = request.delegate
 
         if startRequestsImmediately {

@@ -42,7 +42,7 @@ extension Manager {
             }
         }
 
-        let request = Request(session: session, task: downloadTask)
+        let request = Request(manager: self, task: downloadTask)
 
         if let downloadDelegate = request.delegate as? Request.DownloadTaskDelegate {
             downloadDelegate.downloadTaskDidFinishDownloadingToURL = { session, downloadTask, URL in

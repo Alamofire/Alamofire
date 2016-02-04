@@ -239,7 +239,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                     dataTask = self.session.dataTaskWithRequest(URLRequest.URLRequest)
                 }
 
-                let request = MockRequest(session: session, task: dataTask)
+                let request = MockRequest(manager: self, task: dataTask)
                 delegate[request.delegate.task] = request.delegate
 
                 if startRequestsImmediately {
