@@ -195,7 +195,7 @@ extension Request {
         - returns: A string response serializer.
     */
     public static func stringResponseSerializer(
-        var encoding encoding: NSStringEncoding? = nil)
+        encoding encoding: NSStringEncoding? = nil)
         -> ResponseSerializer<String, NSError>
     {
         return ResponseSerializer { _, response, data, error in
@@ -208,14 +208,16 @@ extension Request {
                 let error = Error.errorWithCode(.StringSerializationFailed, failureReason: failureReason)
                 return .Failure(error)
             }
-
-            if let encodingName = response?.textEncodingName where encoding == nil {
-                encoding = CFStringConvertEncodingToNSStringEncoding(
+            
+            var convertedEncoding = encoding
+            
+            if let encodingName = response?.textEncodingName where convertedEncoding == nil {
+                convertedEncoding = CFStringConvertEncodingToNSStringEncoding(
                     CFStringConvertIANACharSetNameToEncoding(encodingName)
                 )
             }
 
-            let actualEncoding = encoding ?? NSISOLatin1StringEncoding
+            let actualEncoding = convertedEncoding ?? NSISOLatin1StringEncoding
 
             if let string = String(data: validData, encoding: actualEncoding) {
                 return .Success(string)
