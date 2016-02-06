@@ -14,6 +14,7 @@ Pod::Spec.new do |s|
   s.watchos.deployment_target = '2.0'
 
   s.source_files = 'Source/*.swift'
+  s.watchos.exclude_files = 'Source/NetworkReachabilityManager.swift'
 
   s.requires_arc = true
 end
