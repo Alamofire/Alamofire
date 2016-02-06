@@ -33,6 +33,9 @@
 		4C3D00541C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */; };
 		4C3D00551C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */; };
 		4C3D00561C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */; };
+		4C3D00581C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */; };
+		4C3D00591C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */; };
+		4C3D005A1C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */; };
 		4C4CBE7B1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4CBE7A1BAF700C0024D659 /* String+AlamofireTests.swift */; };
 		4C4CBE7C1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4CBE7A1BAF700C0024D659 /* String+AlamofireTests.swift */; };
 		4C743CF61C22772D00BCB23E /* certDER.cer in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F831C1A72F8002DA1A9 /* certDER.cer */; };
@@ -239,6 +242,7 @@
 		4C33A1421B52089C00873DFF /* ServerTrustPolicyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustPolicyTests.swift; sourceTree = "<group>"; };
 		4C341BB91B1A865A00C1B34D /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkReachabilityManager.swift; sourceTree = "<group>"; };
+		4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkReachabilityManagerTests.swift; sourceTree = "<group>"; };
 		4C4CBE7A1BAF700C0024D659 /* String+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+AlamofireTests.swift"; sourceTree = "<group>"; };
 		4C7C8D211B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSURLSessionConfiguration+AlamofireTests.swift"; sourceTree = "<group>"; };
 		4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustPolicy.swift; sourceTree = "<group>"; };
@@ -372,6 +376,7 @@
 				4C341BB91B1A865A00C1B34D /* CacheTests.swift */,
 				F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */,
 				4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */,
+				4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */,
 				4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */,
 				4C33A1421B52089C00873DFF /* ServerTrustPolicyTests.swift */,
 				F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */,
@@ -982,6 +987,7 @@
 				4CF627161BA7CC240011A099 /* ManagerTests.swift in Sources */,
 				4CF6271A1BA7CC240011A099 /* ResultTests.swift in Sources */,
 				4CF6271B1BA7CC240011A099 /* NSURLSessionConfiguration+AlamofireTests.swift in Sources */,
+				4C3D005A1C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift in Sources */,
 				4CF6271F1BA7CC240011A099 /* ResponseSerializationTests.swift in Sources */,
 				4CF6271D1BA7CC240011A099 /* DownloadTests.swift in Sources */,
 			);
@@ -1072,6 +1078,7 @@
 				F8AE910219D28DCC0078C7B2 /* ValidationTests.swift in Sources */,
 				F8111E6119A9674D0040E7D1 /* ParameterEncodingTests.swift in Sources */,
 				F8111E6419A9674D0040E7D1 /* UploadTests.swift in Sources */,
+				4C3D00581C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift in Sources */,
 				F8111E6019A9674D0040E7D1 /* DownloadTests.swift in Sources */,
 				4C7C8D221B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift in Sources */,
 			);
@@ -1097,6 +1104,7 @@
 				F829C6C31A7A950600A2CD59 /* DownloadTests.swift in Sources */,
 				F829C6C41A7A950600A2CD59 /* AuthenticationTests.swift in Sources */,
 				F829C6C51A7A950600A2CD59 /* ValidationTests.swift in Sources */,
+				4C3D00591C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift in Sources */,
 				F86AEFE81AE6A315007D9C76 /* TLSEvaluationTests.swift in Sources */,
 				4C7C8D231B9D0D9000948136 /* NSURLSessionConfiguration+AlamofireTests.swift in Sources */,
 			);
