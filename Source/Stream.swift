@@ -24,7 +24,7 @@ import Foundation
 
 #if !os(watchOS)
 
-@available(iOS 9.0, OSX 10.11, *)
+@available(iOS 9.0, OSX 10.11, tvOS 9.0, *)
 extension Manager {
     private enum Streamable {
         case Stream(String, Int)
@@ -82,7 +82,7 @@ extension Manager {
 
 // MARK: -
 
-@available(iOS 9.0, OSX 10.11, *)
+@available(iOS 9.0, OSX 10.11, tvOS 9.0, *)
 extension Manager.SessionDelegate: NSURLSessionStreamDelegate {
 
     // MARK: Override Closures
