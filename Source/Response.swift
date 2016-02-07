@@ -36,6 +36,9 @@ public struct Response<Value, Error: ErrorType> {
     /// The result of response serialization.
     public let result: Result<Value, Error>
 
+    /// The timeline of the complete lifecycle of the `Request`.
+    public let timeline: Timeline
+
     /**
         Initializes the `Response` instance with the specified URL request, URL response, server data and response
         serialization result.
@@ -44,14 +47,22 @@ public struct Response<Value, Error: ErrorType> {
         - parameter response: The server's response to the URL request.
         - parameter data:     The data returned by the server.
         - parameter result:   The result of response serialization.
-    
+        - parameter timeline: The timeline of the complete lifecycle of the `Request`.
+
         - returns: the new `Response` instance.
     */
-    public init(request: NSURLRequest?, response: NSHTTPURLResponse?, data: NSData?, result: Result<Value, Error>) {
+    public init(
+        request: NSURLRequest?,
+        response: NSHTTPURLResponse?,
+        data: NSData?,
+        result: Result<Value, Error>,
+        timeline: Timeline)
+    {
         self.request = request
         self.response = response
         self.data = data
         self.result = result
+        self.timeline = timeline
     }
 }
 
@@ -77,6 +88,7 @@ extension Response: CustomDebugStringConvertible {
         output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
         output.append("[Data]: \(data?.length ?? 0) bytes")
         output.append("[Result]: \(result.debugDescription)")
+        output.append("[Timeline]: \(timeline.debugDescription)")
 
         return output.joinWithSeparator("\n")
     }
