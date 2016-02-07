@@ -42,6 +42,9 @@ public struct Timeline {
     /// The time interval in seconds from the time the request started to the time the request completed.
     public let requestDuration: NSTimeInterval
 
+    /// The time interval in seconds from the time the request completed to the time response serialization completed.
+    public let serializationDuration: NSTimeInterval
+
     /// The time interval in seconds from the time the request started to the time response serialization completed.
     public let totalDuration: NSTimeInterval
 
@@ -58,6 +61,7 @@ public struct Timeline {
 
         self.latency = initialResponseTime - requestStartTime
         self.requestDuration = requestCompletedTime - requestStartTime
+        self.serializationDuration = serializationCompletedTime - requestCompletedTime
         self.totalDuration = serializationCompletedTime - requestStartTime
     }
 }
@@ -70,11 +74,13 @@ extension Timeline: CustomStringConvertible {
     public var description: String {
         let latency = String(format: "%.3f", self.latency)
         let requestDuration = String(format: "%.3f", self.requestDuration)
+        let serializationDuration = String(format: "%.3f", self.serializationDuration)
         let totalDuration = String(format: "%.3f", self.totalDuration)
 
         let timings = [
             "\"Latency\": \(latency) secs",
             "\"Request Duration\": \(requestDuration) secs",
+            "\"Serialization Duration\": \(serializationDuration) secs",
             "\"Total Duration\": \(totalDuration) secs"
         ]
 
@@ -96,6 +102,7 @@ extension Timeline: CustomDebugStringConvertible {
             "\"Serialization Completed Time\": \(serializationCompletedTime)",
             "\"Latency\": \(latency) secs",
             "\"Request Duration\": \(requestDuration) secs",
+            "\"Serialization Duration\": \(serializationDuration) secs",
             "\"Total Duration\": \(totalDuration) secs"
         ]
 
