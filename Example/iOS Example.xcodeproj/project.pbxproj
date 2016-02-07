@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		31E476781C55DDC400968569 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 31E476771C55DDC400968569 /* Images.xcassets */; };
-		31E4767B1C55DDE100968569 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 31E476791C55DDE100968569 /* Main.storyboard */; };
-		31E4767F1C55DE5400968569 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E4767C1C55DE5400968569 /* AppDelegate.swift */; };
-		31E476801C55DE5400968569 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E4767D1C55DE5400968569 /* DetailViewController.swift */; };
-		31E476811C55DE5400968569 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E4767E1C55DE5400968569 /* MasterViewController.swift */; };
 		31E476821C55DE6D00968569 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31E4766A1C55DD5900968569 /* Alamofire.framework */; };
 		31E476831C55DE6D00968569 /* Alamofire.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 31E4766A1C55DD5900968569 /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4C6D2C801C67EFE100846168 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6D2C7D1C67EFE100846168 /* AppDelegate.swift */; };
+		4C6D2C811C67EFE100846168 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6D2C7E1C67EFE100846168 /* DetailViewController.swift */; };
+		4C6D2C821C67EFE100846168 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C6D2C7F1C67EFE100846168 /* MasterViewController.swift */; };
+		4C6D2C8F1C67EFEC00846168 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C6D2C8C1C67EFEC00846168 /* Images.xcassets */; };
+		4C6D2C981C67F03B00846168 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4C6D2C961C67F03B00846168 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,13 +91,13 @@
 
 /* Begin PBXFileReference section */
 		31E4765F1C55DD5900968569 /* Alamofire.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Alamofire.xcodeproj; path = ../Alamofire.xcodeproj; sourceTree = "<group>"; };
-		31E476771C55DDC400968569 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = SOURCE_ROOT; };
-		31E4767A1C55DDE100968569 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
-		31E4767C1C55DE5400968569 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = SOURCE_ROOT; };
-		31E4767D1C55DE5400968569 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = SOURCE_ROOT; };
-		31E4767E1C55DE5400968569 /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = SOURCE_ROOT; };
+		4C6D2C7D1C67EFE100846168 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Source/AppDelegate.swift; sourceTree = SOURCE_ROOT; };
+		4C6D2C7E1C67EFE100846168 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DetailViewController.swift; path = Source/DetailViewController.swift; sourceTree = SOURCE_ROOT; };
+		4C6D2C7F1C67EFE100846168 /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MasterViewController.swift; path = Source/MasterViewController.swift; sourceTree = SOURCE_ROOT; };
+		4C6D2C8C1C67EFEC00846168 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Resources/Images.xcassets; sourceTree = SOURCE_ROOT; };
+		4C6D2C8D1C67EFEC00846168 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = SOURCE_ROOT; };
+		4C6D2C971C67F03B00846168 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		F8111E0519A951050040E7D1 /* iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F8111E0919A951050040E7D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +126,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		4C6D2C951C67F03B00846168 /* Base.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				4C6D2C961C67F03B00846168 /* Main.storyboard */,
+			);
+			name = Base.lproj;
+			path = Resources/Base.lproj;
+			sourceTree = SOURCE_ROOT;
+		};
 		F8111DFC19A951050040E7D1 = {
 			isa = PBXGroup;
 			children = (
@@ -146,9 +155,9 @@
 		F8111E0719A951050040E7D1 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				31E4767C1C55DE5400968569 /* AppDelegate.swift */,
-				31E4767D1C55DE5400968569 /* DetailViewController.swift */,
-				31E4767E1C55DE5400968569 /* MasterViewController.swift */,
+				4C6D2C7D1C67EFE100846168 /* AppDelegate.swift */,
+				4C6D2C7E1C67EFE100846168 /* DetailViewController.swift */,
+				4C6D2C7F1C67EFE100846168 /* MasterViewController.swift */,
 				F8111E0819A951050040E7D1 /* Supporting Files */,
 			);
 			name = Source;
@@ -158,9 +167,9 @@
 		F8111E0819A951050040E7D1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				F8111E0919A951050040E7D1 /* Info.plist */,
-				31E476791C55DDE100968569 /* Main.storyboard */,
-				31E476771C55DDC400968569 /* Images.xcassets */,
+				4C6D2C8D1C67EFEC00846168 /* Info.plist */,
+				4C6D2C8C1C67EFEC00846168 /* Images.xcassets */,
+				4C6D2C951C67F03B00846168 /* Base.lproj */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -283,8 +292,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				31E476781C55DDC400968569 /* Images.xcassets in Resources */,
-				31E4767B1C55DDE100968569 /* Main.storyboard in Resources */,
+				4C6D2C8F1C67EFEC00846168 /* Images.xcassets in Resources */,
+				4C6D2C981C67F03B00846168 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -295,9 +304,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				31E4767F1C55DE5400968569 /* AppDelegate.swift in Sources */,
-				31E476801C55DE5400968569 /* DetailViewController.swift in Sources */,
-				31E476811C55DE5400968569 /* MasterViewController.swift in Sources */,
+				4C6D2C801C67EFE100846168 /* AppDelegate.swift in Sources */,
+				4C6D2C821C67EFE100846168 /* MasterViewController.swift in Sources */,
+				4C6D2C811C67EFE100846168 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,10 +321,10 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		31E476791C55DDE100968569 /* Main.storyboard */ = {
+		4C6D2C961C67F03B00846168 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				31E4767A1C55DDE100968569 /* Base */,
+				4C6D2C971C67F03B00846168 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -410,7 +419,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INFOPLIST_FILE = Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "iOS Example";
@@ -425,7 +434,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
+				INFOPLIST_FILE = Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "iOS Example";
