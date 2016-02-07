@@ -25,16 +25,16 @@ import Foundation
 /// Responsible for computing the timing metrics for the complete lifecycle of a `Request`.
 public struct Timeline {
     /// The time the request was initialized.
-    public let requestStartTime: NSDate
+    public let requestStartTime: CFAbsoluteTime
 
     /// The time the first bytes were received from or sent to the server.
-    public let initialResponseTime: NSDate
+    public let initialResponseTime: CFAbsoluteTime
 
     /// The time when the request was completed.
-    public let requestCompletedTime: NSDate
+    public let requestCompletedTime: CFAbsoluteTime
 
     /// The time when the response serialization was completed.
-    public let serializationCompletedTime: NSDate
+    public let serializationCompletedTime: CFAbsoluteTime
 
     /// The time interval in seconds from the time the request started to the initial response from the server.
     public let latency: NSTimeInterval
@@ -46,19 +46,19 @@ public struct Timeline {
     public let totalDuration: NSTimeInterval
 
     init(
-        requestStartTime: NSDate,
-        initialResponseTime: NSDate,
-        requestCompletedTime: NSDate,
-        serializationCompletedTime: NSDate)
+        requestStartTime: CFAbsoluteTime,
+        initialResponseTime: CFAbsoluteTime,
+        requestCompletedTime: CFAbsoluteTime,
+        serializationCompletedTime: CFAbsoluteTime)
     {
         self.requestStartTime = requestStartTime
         self.initialResponseTime = initialResponseTime
         self.requestCompletedTime = requestCompletedTime
         self.serializationCompletedTime = serializationCompletedTime
 
-        self.latency = initialResponseTime.timeIntervalSinceDate(requestStartTime)
-        self.requestDuration = requestCompletedTime.timeIntervalSinceDate(requestStartTime)
-        self.totalDuration = serializationCompletedTime.timeIntervalSinceDate(requestStartTime)
+        self.latency = initialResponseTime - requestStartTime
+        self.requestDuration = requestCompletedTime - requestStartTime
+        self.totalDuration = serializationCompletedTime - requestStartTime
     }
 }
 
@@ -90,10 +90,10 @@ extension Timeline: CustomDebugStringConvertible {
     /// duration and the total duration.
     public var debugDescription: String {
         let timings = [
-            "\"Request Start Time\": \(requestStartTime.timeIntervalSince1970)",
-            "\"Initial Response Time\": \(initialResponseTime.timeIntervalSince1970)",
-            "\"Request Completed Time\": \(requestCompletedTime.timeIntervalSince1970)",
-            "\"Serialization Completed Time\": \(serializationCompletedTime.timeIntervalSince1970)",
+            "\"Request Start Time\": \(requestStartTime)",
+            "\"Initial Response Time\": \(initialResponseTime)",
+            "\"Request Completed Time\": \(requestCompletedTime)",
+            "\"Serialization Completed Time\": \(serializationCompletedTime)",
             "\"Latency\": \(latency) secs",
             "\"Request Duration\": \(requestDuration) secs",
             "\"Total Duration\": \(totalDuration) secs"

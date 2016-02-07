@@ -48,8 +48,8 @@ public class Request {
     /// The progress of the request lifecycle.
     public var progress: NSProgress { return delegate.progress }
 
-    var startTime: NSDate?
-    var endTime: NSDate?
+    var startTime: CFAbsoluteTime?
+    var endTime: CFAbsoluteTime?
 
     // MARK: - Lifecycle
 
@@ -67,7 +67,7 @@ public class Request {
             delegate = TaskDelegate(task: task)
         }
 
-        delegate.queue.addOperationWithBlock { self.endTime = NSDate() }
+        delegate.queue.addOperationWithBlock { self.endTime = CFAbsoluteTimeGetCurrent() }
     }
 
     // MARK: - Authentication
@@ -157,7 +157,7 @@ public class Request {
         Resumes the request.
     */
     public func resume() {
-        if startTime == nil { startTime = NSDate() }
+        if startTime == nil { startTime = CFAbsoluteTimeGetCurrent() }
 
         task.resume()
         NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidResume, object: task)
@@ -206,7 +206,7 @@ public class Request {
         var data: NSData? { return nil }
         var error: NSError?
 
-        var initialResponseTime: NSDate?
+        var initialResponseTime: CFAbsoluteTime?
         var credential: NSURLCredential?
 
         init(task: NSURLSessionTask) {
@@ -393,7 +393,7 @@ public class Request {
         }
 
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-            if initialResponseTime == nil { initialResponseTime = NSDate() }
+            if initialResponseTime == nil { initialResponseTime = CFAbsoluteTimeGetCurrent() }
 
             if let dataTaskDidReceiveData = dataTaskDidReceiveData {
                 dataTaskDidReceiveData(session, dataTask, data)

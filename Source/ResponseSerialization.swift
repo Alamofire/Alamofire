@@ -119,14 +119,14 @@ extension Request {
                 self.delegate.error
             )
 
-            let requestCompletedTime = self.endTime ?? NSDate()
+            let requestCompletedTime = self.endTime ?? CFAbsoluteTimeGetCurrent()
             let initialResponseTime = self.delegate.initialResponseTime ?? requestCompletedTime
 
             let timeline = Timeline(
-                requestStartTime: self.startTime ?? NSDate(),
+                requestStartTime: self.startTime ?? CFAbsoluteTimeGetCurrent(),
                 initialResponseTime: initialResponseTime,
                 requestCompletedTime: requestCompletedTime,
-                serializationCompletedTime: NSDate()
+                serializationCompletedTime: CFAbsoluteTimeGetCurrent()
             )
 
             let response = Response<T.SerializedObject, T.ErrorObject>(
