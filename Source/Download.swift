@@ -211,6 +211,8 @@ extension Request {
             totalBytesWritten: Int64,
             totalBytesExpectedToWrite: Int64)
         {
+            if initialResponseTime == nil { initialResponseTime = CFAbsoluteTimeGetCurrent() }
+
             if let downloadTaskDidWriteData = downloadTaskDidWriteData {
                 downloadTaskDidWriteData(
                     session,

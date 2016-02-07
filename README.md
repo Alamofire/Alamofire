@@ -572,6 +572,25 @@ Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
          }
 ```
 
+### Timeline
+
+Alamofire collects timings throughout the lifecycle of a `Request` and creates a `Timeline` object exposed as a property on a `Response`.
+
+```swift
+Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
+         .validate()
+         .responseJSON { response in
+             print(response.timeline)
+         }
+```
+
+The above reports the following `Timeline` info:
+
+- `Latency`: 0.428 seconds
+- `Request Duration`: 0.428 seconds
+- `Serialization Duration`: 0.001 seconds
+- `Total Duration`: 0.429 seconds
+
 ### Printable
 
 ```swift
