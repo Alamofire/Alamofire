@@ -48,6 +48,9 @@ public class Request {
     /// The progress of the request lifecycle.
     public var progress: NSProgress { return delegate.progress }
 
+    var startTime: CFAbsoluteTime?
+    var endTime: CFAbsoluteTime?
+
     // MARK: - Lifecycle
 
     init(session: NSURLSession, task: NSURLSessionTask) {
@@ -55,14 +58,16 @@ public class Request {
 
         switch task {
         case is NSURLSessionUploadTask:
-            self.delegate = UploadTaskDelegate(task: task)
+            delegate = UploadTaskDelegate(task: task)
         case is NSURLSessionDataTask:
-            self.delegate = DataTaskDelegate(task: task)
+            delegate = DataTaskDelegate(task: task)
         case is NSURLSessionDownloadTask:
-            self.delegate = DownloadTaskDelegate(task: task)
+            delegate = DownloadTaskDelegate(task: task)
         default:
-            self.delegate = TaskDelegate(task: task)
+            delegate = TaskDelegate(task: task)
         }
+
+        delegate.queue.addOperationWithBlock { self.endTime = CFAbsoluteTimeGetCurrent() }
     }
 
     // MARK: - Authentication
@@ -152,6 +157,8 @@ public class Request {
         Resumes the request.
     */
     public func resume() {
+        if startTime == nil { startTime = CFAbsoluteTimeGetCurrent() }
+
         task.resume()
         NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidResume, object: task)
     }
@@ -199,6 +206,7 @@ public class Request {
         var data: NSData? { return nil }
         var error: NSError?
 
+        var initialResponseTime: CFAbsoluteTime?
         var credential: NSURLCredential?
 
         init(task: NSURLSessionTask) {
@@ -385,6 +393,8 @@ public class Request {
         }
 
         func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
+            if initialResponseTime == nil { initialResponseTime = CFAbsoluteTimeGetCurrent() }
+
             if let dataTaskDidReceiveData = dataTaskDidReceiveData {
                 dataTaskDidReceiveData(session, dataTask, data)
             } else {
