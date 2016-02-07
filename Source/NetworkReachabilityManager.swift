@@ -23,10 +23,6 @@
 import Foundation
 import SystemConfiguration
 
-/// Notification posted when network reachability status changes. The notification `object` contains the update
-/// network reachability status as an `NSNumber` which will need to be converted.
-public let NetworkReachabilityStatusDidChangeNotification = "com.alamofire.network.reachability.status.did.change"
-
 /**
     Defines the various states of network reachability.
 
@@ -179,9 +175,14 @@ public class NetworkReachabilityManager {
         listener?(networkReachabilityStatus)
 
         dispatch_async(dispatch_get_main_queue()) {
+            let userInfo: [NSObject: AnyObject] = [
+                Notifications.NetworkReachability.StatusDidChangeUserInfoStatusKey: networkReachabilityStatus.rawValue
+            ]
+
             NSNotificationCenter.defaultCenter().postNotificationName(
-                NetworkReachabilityStatusDidChangeNotification,
-                object: networkReachabilityStatus.rawValue
+                Notifications.NetworkReachability.StatusDidChange,
+                object: self,
+                userInfo: userInfo
             )
         }
     }

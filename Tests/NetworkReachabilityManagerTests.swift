@@ -117,10 +117,14 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
 
         var networkReachabilityStatus: NetworkReachabilityStatus?
 
-        expectationForNotification(NetworkReachabilityStatusDidChangeNotification, object: nil) { notification in
+        expectationForNotification(Notifications.NetworkReachability.StatusDidChange, object: nil) { notification in
             if let
-                value = (notification.object as? NSNumber)?.integerValue,
-                status = NetworkReachabilityStatus(rawValue: value)
+                object = notification.object,
+                userInfo = notification.userInfo,
+                number = userInfo[Notifications.NetworkReachability.StatusDidChangeUserInfoStatusKey],
+                statusValue = (number as? NSNumber)?.integerValue,
+                status = NetworkReachabilityStatus(rawValue: statusValue)
+                where manager === object
             {
                 networkReachabilityStatus = status
                 return true
@@ -143,10 +147,14 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
 
         var networkReachabilityStatus: NetworkReachabilityStatus?
 
-        expectationForNotification(NetworkReachabilityStatusDidChangeNotification, object: nil) { notification in
+        expectationForNotification(Notifications.NetworkReachability.StatusDidChange, object: nil) { notification in
             if let
-                value = (notification.object as? NSNumber)?.integerValue,
-                status = NetworkReachabilityStatus(rawValue: value)
+                object = notification.object,
+                userInfo = notification.userInfo,
+                number = userInfo[Notifications.NetworkReachability.StatusDidChangeUserInfoStatusKey],
+                statusValue = (number as? NSNumber)?.integerValue,
+                status = NetworkReachabilityStatus(rawValue: statusValue)
+                where manager === object
             {
                 networkReachabilityStatus = status
                 return true
