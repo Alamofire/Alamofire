@@ -153,7 +153,7 @@ public class Request {
     */
     public func resume() {
         task.resume()
-        NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidResume, object: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidResume, object: task)
     }
 
     /**
@@ -161,7 +161,7 @@ public class Request {
     */
     public func suspend() {
         task.suspend()
-        NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidSuspend, object: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidSuspend, object: task)
     }
 
     /**
@@ -179,7 +179,7 @@ public class Request {
             task.cancel()
         }
 
-        NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidCancel, object: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidCancel, object: task)
     }
 
     // MARK: - TaskDelegate
