@@ -149,17 +149,19 @@ public class Request {
     // MARK: - State
 
     /**
-        Suspends the request.
-    */
-    public func suspend() {
-        task.suspend()
-    }
-
-    /**
         Resumes the request.
     */
     public func resume() {
         task.resume()
+        NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidResume, object: task)
+    }
+
+    /**
+        Suspends the request.
+    */
+    public func suspend() {
+        task.suspend()
+        NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidSuspend, object: task)
     }
 
     /**
@@ -176,6 +178,8 @@ public class Request {
         } else {
             task.cancel()
         }
+
+        NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidCancel, object: task)
     }
 
     // MARK: - TaskDelegate
