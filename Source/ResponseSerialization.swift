@@ -123,7 +123,7 @@ extension Request {
             let initialResponseTime = self.delegate.initialResponseTime ?? requestCompletedTime
 
             let timeline = Timeline(
-                requestStartTime: self.startTime,
+                requestStartTime: self.startTime ?? NSDate(),
                 initialResponseTime: initialResponseTime,
                 requestCompletedTime: requestCompletedTime,
                 serializationCompletedTime: NSDate()

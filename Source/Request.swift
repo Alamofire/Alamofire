@@ -48,7 +48,7 @@ public class Request {
     /// The progress of the request lifecycle.
     public var progress: NSProgress { return delegate.progress }
 
-    let startTime: NSDate
+    var startTime: NSDate?
     var endTime: NSDate?
 
     // MARK: - Lifecycle
@@ -66,8 +66,6 @@ public class Request {
         default:
             delegate = TaskDelegate(task: task)
         }
-
-        startTime = NSDate()
 
         delegate.queue.addOperationWithBlock { self.endTime = NSDate() }
     }
@@ -159,6 +157,8 @@ public class Request {
         Resumes the request.
     */
     public func resume() {
+        if startTime == nil { startTime = NSDate() }
+
         task.resume()
         NSNotificationCenter.defaultCenter().postNotificationName(NotificationNames.TaskDidResume, object: task)
     }
