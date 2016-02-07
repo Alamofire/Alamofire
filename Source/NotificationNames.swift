@@ -26,4 +26,5 @@ public struct NotificationNames {
     public static let TaskDidResume = "com.alamofire.task.did.resume"
     public static let TaskDidSuspend = "com.alamofire.task.did.suspend"
     public static let TaskDidCancel = "com.alamofire.task.did.cancel"
+    public static let TaskDidComplete = "com.alamofire.task.did.complete"
 }
