@@ -1147,6 +1147,8 @@ manager?.listener = { status in
 manager?.startListening()
 ```
 
+> Make sure to remember to retain the `manager` in the above example, or no status changes will be reported.
+
 There are some important things to remember when using network reachability to determine what to do next.
 
 * **Do NOT** use Reachability to determine if a network request should be sent.
