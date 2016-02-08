@@ -24,21 +24,6 @@ import Foundation
 import SystemConfiguration
 
 /**
-    Defines the various states of network reachability.
-
-    - Unknown:         It is unknown whether the network is reachable.
-    - NotReachable:    The network is not reachable.
-    - ReachableOnWWAN: The network is reachable over the WWAN connection.
-    - ReachableOnWiFi: The network is reachable over the WiFi connection.
-*/
-public enum NetworkReachabilityStatus: Int {
-    case Unknown         = -1
-    case NotReachable    = 0
-    case ReachableOnWWAN = 1
-    case ReachableOnWiFi = 2
-}
-
-/**
     The `NetworkReachabilityManager` class listens for reachability changes of hosts and addresses for both WWAN and
     WiFi network interfaces.
 
@@ -47,6 +32,31 @@ public enum NetworkReachabilityStatus: Int {
     request, as it's possible that an initial request may be required to establish reachability.
 */
 public class NetworkReachabilityManager {
+    /**
+        Defines the various states of network reachability.
+
+        - Unknown:         It is unknown whether the network is reachable.
+        - NotReachable:    The network is not reachable.
+        - ReachableOnWWAN: The network is reachable over the WWAN connection.
+        - ReachableOnWiFi: The network is reachable over the WiFi connection.
+    */
+    public enum NetworkReachabilityStatus {
+        case Unknown
+        case NotReachable
+        case Reachable(ConnectionType)
+    }
+
+    /**
+        Defines the various connection types detected by reachability flags.
+
+        - EthernetOrWiFi: The connection type is either over Ethernet or WiFi.
+        - WWAN:           The connection type is a WWAN connection.
+    */
+    public enum ConnectionType {
+        case EthernetOrWiFi
+        case WWAN
+    }
+
     /// A closure executed when the network reachability status changes. The closure takes a single argument: the 
     /// network reachability status.
     public typealias Listener = NetworkReachabilityStatus -> Void
@@ -54,13 +64,13 @@ public class NetworkReachabilityManager {
     // MARK: - Properties
 
     /// Whether the network is currently reachable.
-    public var isReachable: Bool { return isReachableOnWWAN || isReachableOnWiFi }
+    public var isReachable: Bool { return isReachableOnWWAN || isReachableOnEthernetOrWiFi }
 
     /// Whether the network is currently reachable over the WWAN interface.
-    public var isReachableOnWWAN: Bool { return networkReachabilityStatus == .ReachableOnWWAN }
+    public var isReachableOnWWAN: Bool { return networkReachabilityStatus == .Reachable(.WWAN) }
 
-    /// Whether the network is currently reachable over the WiFi interface.
-    public var isReachableOnWiFi: Bool { return networkReachabilityStatus == .ReachableOnWiFi }
+    /// Whether the network is currently reachable over Ethernet or WiFi interface.
+    public var isReachableOnEthernetOrWiFi: Bool { return networkReachabilityStatus == .Reachable(.EthernetOrWiFi) }
 
     /// The current network reachability status.
     public var networkReachabilityStatus: NetworkReachabilityStatus {
@@ -170,21 +180,7 @@ public class NetworkReachabilityManager {
         guard previousFlags != flags else { return }
         previousFlags = flags
 
-        let networkReachabilityStatus = networkReachabilityStatusForFlags(flags)
-
-        listener?(networkReachabilityStatus)
-
-        dispatch_async(dispatch_get_main_queue()) {
-            let userInfo: [NSObject: AnyObject] = [
-                Notifications.NetworkReachability.StatusDidChangeUserInfoStatusKey: networkReachabilityStatus.rawValue
-            ]
-
-            NSNotificationCenter.defaultCenter().postNotificationName(
-                Notifications.NetworkReachability.StatusDidChange,
-                object: self,
-                userInfo: userInfo
-            )
-        }
+        listener?(networkReachabilityStatusForFlags(flags))
     }
 
     // MARK: - Internal - Network Reachability Status
@@ -194,16 +190,45 @@ public class NetworkReachabilityManager {
 
         var networkStatus: NetworkReachabilityStatus = .NotReachable
 
-        if !flags.contains(.ConnectionRequired) { networkStatus = .ReachableOnWiFi }
+        if !flags.contains(.ConnectionRequired) { networkStatus = .Reachable(.EthernetOrWiFi) }
 
         if flags.contains(.ConnectionOnDemand) || flags.contains(.ConnectionOnTraffic) {
-            if !flags.contains(.InterventionRequired) { networkStatus = .ReachableOnWiFi }
+            if !flags.contains(.InterventionRequired) { networkStatus = .Reachable(.EthernetOrWiFi) }
         }
 
         #if os(iOS)
-            if flags.contains(.IsWWAN) { networkStatus = .ReachableOnWWAN }
+            if flags.contains(.IsWWAN) { networkStatus = .Reachable(.WWAN) }
         #endif
 
         return networkStatus
+    }
+}
+
+// MARK: -
+
+extension NetworkReachabilityManager.NetworkReachabilityStatus: Equatable {}
+
+/**
+    Returns whether the two network reachability status values are equal.
+
+    - parameter lhs: The left-hand side value to compare.
+    - parameter rhs: The right-hand side value to compare.
+
+    - returns: `true` if the two values are equal, `false` otherwise.
+*/
+public func ==(
+    lhs: NetworkReachabilityManager.NetworkReachabilityStatus,
+    rhs: NetworkReachabilityManager.NetworkReachabilityStatus)
+    -> Bool
+{
+    switch (lhs, rhs) {
+    case (.Unknown, .Unknown):
+        return true
+    case (.NotReachable, .NotReachable):
+        return true
+    case let (.Reachable(lhsConnectionType), .Reachable(rhsConnectionType)):
+        return lhsConnectionType == rhsConnectionType
+    default:
+        return false
     }
 }

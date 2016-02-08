@@ -42,17 +42,4 @@ public struct Notifications {
         /// completed `NSURLSessionTask`.
         public static let DidComplete = "com.alamofire.notifications.task.didComplete"
     }
-
-    /// Used as a namespace for all `NetworkReachability` related notifications.
-    public struct NetworkReachability {
-        /// Notification posted when network reachability status changes. The notification `object` contains the
-        /// `NetworkReachabilityManager` reporting the status change. The `userInfo` dictionary contains the
-        /// `StatusDidChangeUserInfoStatusKey` whose value is the network reachability status as an `NSNumber` which 
-        /// will need to be converted.
-        public static let StatusDidChange = "com.alamofire.notifications.networkReachability.statusDidChange"
-
-        /// The network reachability status user info key for the `StatusDidChange` notification containing the
-        /// `NetworkReachabilityStatus` rawValue as an `NSNumber`.
-        public static let StatusDidChangeUserInfoStatusKey = "NetworkReachabilityStatus"
-    }
 }

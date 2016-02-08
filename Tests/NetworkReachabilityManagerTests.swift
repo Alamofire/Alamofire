@@ -50,10 +50,10 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         let manager = NetworkReachabilityManager(host: "localhost")
 
         // Then
-        XCTAssertEqual(manager?.networkReachabilityStatus, .ReachableOnWiFi)
+        XCTAssertEqual(manager?.networkReachabilityStatus, .Reachable(.EthernetOrWiFi))
         XCTAssertEqual(manager?.isReachable, true)
         XCTAssertEqual(manager?.isReachableOnWWAN, false)
-        XCTAssertEqual(manager?.isReachableOnWiFi, true)
+        XCTAssertEqual(manager?.isReachableOnEthernetOrWiFi, true)
     }
 
     func testThatAddressManagerStartsWithUnknownStatus() {
@@ -61,10 +61,10 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         let manager = NetworkReachabilityManager()
 
         // Then
-        XCTAssertEqual(manager?.networkReachabilityStatus, .ReachableOnWiFi)
+        XCTAssertEqual(manager?.networkReachabilityStatus, .Reachable(.EthernetOrWiFi))
         XCTAssertEqual(manager?.isReachable, true)
         XCTAssertEqual(manager?.isReachableOnWWAN, false)
-        XCTAssertEqual(manager?.isReachableOnWiFi, true)
+        XCTAssertEqual(manager?.isReachableOnEthernetOrWiFi, true)
     }
 
     // MARK: - Tests - Listener
@@ -74,7 +74,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         let manager = NetworkReachabilityManager(host: "localhost")
         let expectation = expectationWithDescription("listener closure should be executed")
 
-        var networkReachabilityStatus: NetworkReachabilityStatus?
+        var networkReachabilityStatus: NetworkReachabilityManager.NetworkReachabilityStatus?
 
         manager?.listener = { status in
             networkReachabilityStatus = status
@@ -86,7 +86,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(networkReachabilityStatus, .ReachableOnWiFi)
+        XCTAssertEqual(networkReachabilityStatus, .Reachable(.EthernetOrWiFi))
     }
 
     func testThatAddressManagerIsNotifiedWhenStartListeningIsCalled() {
@@ -94,7 +94,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         let manager = NetworkReachabilityManager()
         let expectation = expectationWithDescription("listener closure should be executed")
 
-        var networkReachabilityStatus: NetworkReachabilityStatus?
+        var networkReachabilityStatus: NetworkReachabilityManager.NetworkReachabilityStatus?
 
         manager?.listener = { status in
             networkReachabilityStatus = status
@@ -106,69 +106,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(networkReachabilityStatus, .ReachableOnWiFi)
-    }
-
-    // MARK: - Tests - Notifications
-
-    func testThatHostManagerSendsStatusNotificationWhenStartListeningIsCalled() {
-        // Given
-        let manager = NetworkReachabilityManager(host: "localhost")
-
-        var networkReachabilityStatus: NetworkReachabilityStatus?
-
-        expectationForNotification(Notifications.NetworkReachability.StatusDidChange, object: nil) { notification in
-            if let
-                object = notification.object,
-                userInfo = notification.userInfo,
-                number = userInfo[Notifications.NetworkReachability.StatusDidChangeUserInfoStatusKey],
-                statusValue = (number as? NSNumber)?.integerValue,
-                status = NetworkReachabilityStatus(rawValue: statusValue)
-                where manager === object
-            {
-                networkReachabilityStatus = status
-                return true
-            }
-
-            return false
-        }
-
-        // When
-        manager?.startListening()
-        waitForExpectationsWithTimeout(timeout, handler: nil)
-
-        // Then
-        XCTAssertEqual(networkReachabilityStatus, .ReachableOnWiFi)
-    }
-
-    func testThatAddressManagerSendsStatusNotificationWhenStartListeningIsCalled() {
-        // Given
-        let manager = NetworkReachabilityManager()
-
-        var networkReachabilityStatus: NetworkReachabilityStatus?
-
-        expectationForNotification(Notifications.NetworkReachability.StatusDidChange, object: nil) { notification in
-            if let
-                object = notification.object,
-                userInfo = notification.userInfo,
-                number = userInfo[Notifications.NetworkReachability.StatusDidChangeUserInfoStatusKey],
-                statusValue = (number as? NSNumber)?.integerValue,
-                status = NetworkReachabilityStatus(rawValue: statusValue)
-                where manager === object
-            {
-                networkReachabilityStatus = status
-                return true
-            }
-
-            return false
-        }
-
-        // When
-        manager?.startListening()
-        waitForExpectationsWithTimeout(timeout, handler: nil)
-
-        // Then
-        XCTAssertEqual(networkReachabilityStatus, .ReachableOnWiFi)
+        XCTAssertEqual(networkReachabilityStatus, .Reachable(.EthernetOrWiFi))
     }
 
     // MARK: - Tests - Network Reachability Status
@@ -206,7 +144,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         let networkReachabilityStatus = manager?.networkReachabilityStatusForFlags(flags)
 
         // Then
-        XCTAssertEqual(networkReachabilityStatus, .ReachableOnWiFi)
+        XCTAssertEqual(networkReachabilityStatus, .Reachable(.EthernetOrWiFi))
     }
 
     func testThatManagerReturnsReachableOnWiFiStatusWhenConnectionIsOnDemand() {
@@ -218,7 +156,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         let networkReachabilityStatus = manager?.networkReachabilityStatusForFlags(flags)
 
         // Then
-        XCTAssertEqual(networkReachabilityStatus, .ReachableOnWiFi)
+        XCTAssertEqual(networkReachabilityStatus, .Reachable(.EthernetOrWiFi))
     }
 
     func testThatManagerReturnsReachableOnWiFiStatusWhenConnectionIsOnTraffic() {
@@ -230,7 +168,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         let networkReachabilityStatus = manager?.networkReachabilityStatusForFlags(flags)
 
         // Then
-        XCTAssertEqual(networkReachabilityStatus, .ReachableOnWiFi)
+        XCTAssertEqual(networkReachabilityStatus, .Reachable(.EthernetOrWiFi))
     }
 
 #if os(iOS)
@@ -243,7 +181,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         let networkReachabilityStatus = manager?.networkReachabilityStatusForFlags(flags)
 
         // Then
-        XCTAssertEqual(networkReachabilityStatus, .ReachableOnWWAN)
+        XCTAssertEqual(networkReachabilityStatus, .Reachable(.WWAN))
     }
 #endif
 }
