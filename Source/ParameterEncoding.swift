@@ -69,8 +69,8 @@ public enum ParameterEncoding {
     /**
         Creates a URL request by encoding parameters and applying them onto an existing request.
 
-        - parameter URLRequest: The request to have parameters applied
-        - parameter parameters: The parameters to apply
+        - parameter URLRequest: The request to have parameters applied.
+        - parameter parameters: The parameters to apply.
 
         - returns: A tuple containing the constructed request and the error that occurred during parameter encoding, 
                    if any.
