@@ -162,6 +162,7 @@ public class NetworkReachabilityManager {
         let queueEnabled = SCNetworkReachabilitySetDispatchQueue(reachability, listenerQueue)
 
         dispatch_async(listenerQueue) {
+            self.previousFlags = SCNetworkReachabilityFlags()
             self.notifyListener(self.flags ?? SCNetworkReachabilityFlags())
         }
 
