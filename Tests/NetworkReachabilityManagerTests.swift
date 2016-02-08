@@ -56,7 +56,18 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         XCTAssertEqual(manager?.isReachableOnEthernetOrWiFi, true)
     }
 
-    func testThatAddressManagerStartsWithUnknownStatus() {
+    func testThatHostManagerStartsWithReachableStatus() {
+        // Given, When
+        let manager = NetworkReachabilityManager(host: "localhost")
+
+        // Then
+        XCTAssertEqual(manager?.networkReachabilityStatus, .Reachable(.EthernetOrWiFi))
+        XCTAssertEqual(manager?.isReachable, true)
+        XCTAssertEqual(manager?.isReachableOnWWAN, false)
+        XCTAssertEqual(manager?.isReachableOnEthernetOrWiFi, true)
+    }
+
+    func testThatAddressManagerStartsWithReachableStatus() {
         // Given, When
         let manager = NetworkReachabilityManager()
 
