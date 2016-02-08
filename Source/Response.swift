@@ -47,7 +47,7 @@ public struct Response<Value, Error: ErrorType> {
         - parameter response: The server's response to the URL request.
         - parameter data:     The data returned by the server.
         - parameter result:   The result of response serialization.
-        - parameter timeline: The timeline of the complete lifecycle of the `Request`.
+        - parameter timeline: The timeline of the complete lifecycle of the `Request`. Defaults to `Timeline()`.
 
         - returns: the new `Response` instance.
     */
@@ -56,7 +56,7 @@ public struct Response<Value, Error: ErrorType> {
         response: NSHTTPURLResponse?,
         data: NSData?,
         result: Result<Value, Error>,
-        timeline: Timeline)
+        timeline: Timeline = Timeline())
     {
         self.request = request
         self.response = response
