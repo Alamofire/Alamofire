@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
+- `3.2.x` Releases - [3.2.0](#320)
 - `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313) | [3.1.4](#314) | [3.1.5](#315)
 - `3.0.x` Releases - [3.0.0](#300) | [3.0.1](#301)
 - `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2) | [3.0.0-beta.3](#300-beta3)
@@ -19,8 +20,48 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.2.0](https://github.com/Alamofire/Alamofire/releases/tag/3.2.0)
+Released on 2016-02-07. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.2.0).
+
+#### Added
+- Notifications that post when an `NSURLSessionTask` changes state to allow support for the 
+  network activity indicator.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- `Timeline` struct to capture timings throughout the lifecycle of a `Request`.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1054](https://github.com/Alamofire/Alamofire/issues/1054).
+- A new `Timeline` section to the README.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1054](https://github.com/Alamofire/Alamofire/issues/1054).
+- `NetworkReachabilityManager` to listen for reachability status changes.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1053](https://github.com/Alamofire/Alamofire/issues/1053).
+- Unit tests for all the testable network reachability manager APIs.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1053](https://github.com/Alamofire/Alamofire/issues/1053).
+- A new `Network Reachability` section to the README.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1053](https://github.com/Alamofire/Alamofire/issues/1053).
+
+#### Updated
+- The `NSURLSessionStream` APIs to support `tvOS`.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The `ParameterEncoding` encode method to allow empty parameters to still be encoded.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Regards to Issues
+  [#1032](https://github.com/Alamofire/Alamofire/issues/1032) and
+  [#1049](https://github.com/Alamofire/Alamofire/issues/1049).
+
+#### Fixed
+- Broken CocoaDocs generation by moving iOS Example project into Examples folder.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#1027](https://github.com/Alamofire/Alamofire/issues/1027) in Regards to Issue
+  [#1025](https://github.com/Alamofire/Alamofire/issues/1025).
+
+---
+
 ## [3.1.5](https://github.com/Alamofire/Alamofire/releases/tag/3.1.5)
-Released on 2016-1-17. All issues associated with this milestone can be found using this
+Released on 2016-01-17. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.1.5).
 
 #### Added
