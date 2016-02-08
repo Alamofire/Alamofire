@@ -142,6 +142,7 @@
 		4CEC605A1B745C9100E684F4 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* Error.swift */; };
 		4CEC605B1B745C9100E684F4 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E5BF71B673D3400816CCC /* Result.swift */; };
 		4CEC605C1B745C9B00E684F4 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4CEE82AD1C6813CF00E9C9F0 /* NetworkReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */; };
 		4CF626F91BA7CB3E0011A099 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF626EF1BA7CB3E0011A099 /* Alamofire.framework */; };
 		4CF627061BA7CBE30011A099 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4CF627071BA7CBF60011A099 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
@@ -1036,6 +1037,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C574E6D1C67D207000B3128 /* Timeline.swift in Sources */,
+				4CEE82AD1C6813CF00E9C9F0 /* NetworkReachabilityManager.swift in Sources */,
 				E4202FCF1B667AA100C997FB /* Upload.swift in Sources */,
 				E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */,
 				E4202FD11B667AA100C997FB /* Request.swift in Sources */,
