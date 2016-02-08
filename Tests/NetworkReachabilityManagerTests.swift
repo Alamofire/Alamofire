@@ -67,6 +67,28 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         XCTAssertEqual(manager?.isReachableOnEthernetOrWiFi, true)
     }
 
+    func testThatHostManagerCanBeDeinitialized() {
+        // Given
+        var manager: NetworkReachabilityManager? = NetworkReachabilityManager(host: "localhost")
+
+        // When
+        manager = nil
+
+        // Then
+        XCTAssertNil(manager)
+    }
+
+    func testThatAddressManagerCanBeDeinitialized() {
+        // Given
+        var manager: NetworkReachabilityManager? = NetworkReachabilityManager()
+
+        // When
+        manager = nil
+
+        // Then
+        XCTAssertNil(manager)
+    }
+
     // MARK: - Tests - Listener
 
     func testThatHostManagerIsNotifiedWhenStartListeningIsCalled() {
