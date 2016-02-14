@@ -1,0 +1,25 @@
+//
+//  Put this file alongside to the other both, as it contains what
+//  both have in common. Don't rename this file.
+//
+//  Copyright (c) 2014-2015 Marius Rackwitz. All rights reserved.
+//
+
+// Make it universal
+SUPPORTED_PLATFORMS                    = macosx iphonesimulator iphoneos watchos watchsimulator appletvos appletvsimulator
+VALID_ARCHS[sdk=macosx*]               = i386 x86_64
+VALID_ARCHS[sdk=iphoneos*]             = arm64 armv7 armv7s
+VALID_ARCHS[sdk=iphonesimulator*]      = i386 x86_64
+VALID_ARCHS[sdk=watchos*]              = armv7k
+VALID_ARCHS[sdk=watchsimulator*]       = i386
+VALID_ARCHS[sdk=appletv*]              = arm64
+VALID_ARCHS[sdk=appletvsimulator*]     = x86_64
+
+// Dynamic linking uses different default copy paths
+LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]           = $(inherited) '@executable_path/../Frameworks' '@loader_path/Frameworks'
+LD_RUNPATH_SEARCH_PATHS[sdk=iphoneos*]         = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
+LD_RUNPATH_SEARCH_PATHS[sdk=iphonesimulator*]  = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
+LD_RUNPATH_SEARCH_PATHS[sdk=watchos*]          = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
+LD_RUNPATH_SEARCH_PATHS[sdk=watchsimulator*]   = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
+LD_RUNPATH_SEARCH_PATHS[sdk=appletvos*]        = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
+LD_RUNPATH_SEARCH_PATHS[sdk=appletvsimulator*] = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
