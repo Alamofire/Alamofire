@@ -22,6 +22,10 @@
 
 import Foundation
 
+struct Alamofire {
+    static let ios7workaround = Manager.sharedInstance
+}
+
 // MARK: - URLStringConvertible
 
 /**
