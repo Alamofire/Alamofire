@@ -52,10 +52,24 @@ class MasterViewController: UITableViewController {
             }
         }
     }
+    
+    let queue = NSOperationQueue.mainQueue()
+    
 
     // MARK: - UIStoryboardSegue
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        let request = RequestOperation(successBlock: { (response, json) -> () in
+            print("json \(json)")
+        }) { (response) -> () in
+            print("Error")
+        }
+        
+        queue.addOperations([request], waitUntilFinished: false)
+    
+        request.performSelector("cancel", withObject: nil, afterDelay: 0.2)
+        
         if let
             navigationController = segue.destinationViewController as? UINavigationController,
             detailViewController = navigationController.topViewController as? DetailViewController

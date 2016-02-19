@@ -165,6 +165,11 @@
 		4DD67C241A5C58FB00ED2280 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
 		8035DB621BAB492500466CB3 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */; };
+		BD4A173F1C55405D00BC9A06 /* RequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4A173E1C55405D00BC9A06 /* RequestOperation.swift */; };
+		BD4A17401C55405D00BC9A06 /* RequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4A173E1C55405D00BC9A06 /* RequestOperation.swift */; };
+		BD4A17411C55405D00BC9A06 /* RequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4A173E1C55405D00BC9A06 /* RequestOperation.swift */; };
+		BD4A17421C55405D00BC9A06 /* RequestOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4A173E1C55405D00BC9A06 /* RequestOperation.swift */; };
+		BDEAB9DF1C63E0CC00045D56 /* AlamofireWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEAB9DE1C63E0CC00045D56 /* AlamofireWrapper.swift */; };
 		E4202FCF1B667AA100C997FB /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C3F1AF89E0700BABAE5 /* Upload.swift */; };
 		E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
 		E4202FD11B667AA100C997FB /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C391AF899EC00BABAE5 /* Request.swift */; };
@@ -274,6 +279,8 @@
 		B39E2F871C1A72F8002DA1A9 /* certPEM.crt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = certPEM.crt; path = selfSignedAndMalformedCerts/certPEM.crt; sourceTree = "<group>"; };
 		B39E2F891C1A72F8002DA1A9 /* randomGibberish.crt */ = {isa = PBXFileReference; lastKnownFileType = file; name = randomGibberish.crt; path = selfSignedAndMalformedCerts/randomGibberish.crt; sourceTree = "<group>"; };
 		B39E2F8A1C1A72F8002DA1A9 /* keyDER.der */ = {isa = PBXFileReference; lastKnownFileType = file; name = keyDER.der; path = selfSignedAndMalformedCerts/keyDER.der; sourceTree = "<group>"; };
+		BD4A173E1C55405D00BC9A06 /* RequestOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestOperation.swift; sourceTree = "<group>"; };
+		BDEAB9DE1C63E0CC00045D56 /* AlamofireWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlamofireWrapper.swift; sourceTree = "<group>"; };
 		E4202FE01B667AA100C997FB /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3319A95C8B0040E7D1 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8111E3719A95C8B0040E7D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -495,6 +502,7 @@
 				4CDE2C391AF899EC00BABAE5 /* Request.swift */,
 				4C0B62501BB1001C009302D3 /* Response.swift */,
 				4C0E5BF71B673D3400816CCC /* Result.swift */,
+				BD4A173E1C55405D00BC9A06 /* RequestOperation.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -557,6 +565,7 @@
 				4CDE2C481AF8A14A00BABAE5 /* Core */,
 				4CDE2C491AF8A14E00BABAE5 /* Features */,
 				F8111E3619A95C8B0040E7D1 /* Supporting Files */,
+				BDEAB9DE1C63E0CC00045D56 /* AlamofireWrapper.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -948,6 +957,7 @@
 				4C80F9F81BB730EF001B46D2 /* Response.swift in Sources */,
 				4CF627091BA7CBF60011A099 /* Manager.swift in Sources */,
 				4CF6270F1BA7CBF60011A099 /* ResponseSerialization.swift in Sources */,
+				BD4A17411C55405D00BC9A06 /* RequestOperation.swift in Sources */,
 				4CF6270B1BA7CBF60011A099 /* Request.swift in Sources */,
 				4CF6270A1BA7CBF60011A099 /* ParameterEncoding.swift in Sources */,
 				4CF627101BA7CBF60011A099 /* ServerTrustPolicy.swift in Sources */,
@@ -994,6 +1004,7 @@
 				4C0B62521BB1001C009302D3 /* Response.swift in Sources */,
 				4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */,
 				4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
+				BD4A17401C55405D00BC9A06 /* RequestOperation.swift in Sources */,
 				4C811F8E1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,
 				4C83F41C1B749E0E00203445 /* Stream.swift in Sources */,
 				4CDE2C3E1AF89D4900BABAE5 /* Download.swift in Sources */,
@@ -1015,6 +1026,7 @@
 				4C0B62531BB1001C009302D3 /* Response.swift in Sources */,
 				4CEC605B1B745C9100E684F4 /* Result.swift in Sources */,
 				E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */,
+				BD4A17421C55405D00BC9A06 /* RequestOperation.swift in Sources */,
 				E4202FD51B667AA100C997FB /* MultipartFormData.swift in Sources */,
 				4C83F41D1B749E0E00203445 /* Stream.swift in Sources */,
 				E4202FD61B667AA100C997FB /* ServerTrustPolicy.swift in Sources */,
@@ -1029,6 +1041,7 @@
 			files = (
 				4CDE2C401AF89E0700BABAE5 /* Upload.swift in Sources */,
 				4CE2724F1AF88FB500F1D59A /* ParameterEncoding.swift in Sources */,
+				BDEAB9DF1C63E0CC00045D56 /* AlamofireWrapper.swift in Sources */,
 				4CDE2C3A1AF899EC00BABAE5 /* Request.swift in Sources */,
 				4CDE2C461AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8541B68908E00476DE3 /* Error.swift in Sources */,
@@ -1036,6 +1049,7 @@
 				4C0B62511BB1001C009302D3 /* Response.swift in Sources */,
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
 				4C23EB431B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
+				BD4A173F1C55405D00BC9A06 /* RequestOperation.swift in Sources */,
 				4C811F8D1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,
 				4C83F41B1B749E0E00203445 /* Stream.swift in Sources */,
 				4CDE2C3D1AF89D4900BABAE5 /* Download.swift in Sources */,
