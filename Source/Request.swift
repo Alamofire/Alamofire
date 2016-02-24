@@ -470,8 +470,7 @@ extension Request: CustomDebugStringConvertible {
 
         guard let
             request = self.request,
-            URL = request.URL,
-            host = URL.host
+            URL = request.URL
         else {
             return "$ curl command could not be created"
         }
@@ -480,7 +479,8 @@ extension Request: CustomDebugStringConvertible {
             components.append("-X \(HTTPMethod)")
         }
 
-        if let credentialStorage = self.session.configuration.URLCredentialStorage {
+        if let credentialStorage = self.session.configuration.URLCredentialStorage,
+            let host = URL.host {
             let protectionSpace = NSURLProtectionSpace(
                 host: host,
                 port: URL.port?.integerValue ?? 0,
