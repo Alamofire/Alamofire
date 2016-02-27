@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.2.x` Releases - [3.2.0](#320)
+- `3.2.x` Releases - [3.2.0](#320) | [3.2.1](#321)
 - `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313) | [3.1.4](#314) | [3.1.5](#315)
 - `3.0.x` Releases - [3.0.0](#300) | [3.0.1](#301)
 - `3.0.0` Betas - [3.0.0-beta.1](#300-beta1) | [3.0.0-beta.2](#300-beta2) | [3.0.0-beta.3](#300-beta3)
@@ -19,6 +19,22 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [3.2.1](https://github.com/Alamofire/Alamofire/releases/tag/3.2.1)
+Released on 2016-02-27. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.2.1).
+
+#### Updated
+- `StringResponseSerializer` implementation to build with the latest Swift toolchain.
+  - Updated by [Chris Cieslak](https://github.com/vivid-cieslak) in Pull Request
+  [#1050](https://github.com/Alamofire/Alamofire/pull/1050).
+- Expanded the Component Libraries section and moved it up in the README.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- Issue where JSON and plist custom content types were not retained during parameter encoding.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1088](https://github.com/Alamofire/Alamofire/pull/1088).
 
 ## [3.2.0](https://github.com/Alamofire/Alamofire/releases/tag/3.2.0)
 Released on 2016-02-07. All issues associated with this milestone can be found using this
