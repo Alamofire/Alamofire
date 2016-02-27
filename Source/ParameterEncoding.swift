@@ -142,7 +142,10 @@ public enum ParameterEncoding {
                 let options = NSJSONWritingOptions()
                 let data = try NSJSONSerialization.dataWithJSONObject(parameters, options: options)
 
-                mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                if mutableURLRequest.valueForHTTPHeaderField("Content-Type") == nil {
+                    mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                }
+
                 mutableURLRequest.HTTPBody = data
             } catch {
                 encodingError = error as NSError
@@ -154,7 +157,11 @@ public enum ParameterEncoding {
                     format: format,
                     options: options
                 )
-                mutableURLRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
+
+                if mutableURLRequest.valueForHTTPHeaderField("Content-Type") == nil {
+                    mutableURLRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
+                }
+
                 mutableURLRequest.HTTPBody = data
             } catch {
                 encodingError = error as NSError

@@ -499,6 +499,22 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
             XCTFail("JSON should not be nil")
         }
     }
+
+    func testJSONParameterEncodeParametersRetainsCustomContentType() {
+        // Given
+        let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: "https://example.com/")!)
+        mutableURLRequest.setValue("application/custom-json-type+json", forHTTPHeaderField: "Content-Type")
+
+        let parameters = ["foo": "bar"]
+
+        // When
+        let (URLRequest, error) = encoding.encode(mutableURLRequest, parameters: parameters)
+
+        // Then
+        XCTAssertNil(error)
+        XCTAssertNil(URLRequest.URL?.query)
+        XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type"), "application/custom-json-type+json")
+    }
 }
 
 // MARK: -
@@ -605,6 +621,22 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
         } else {
             XCTFail("HTTPBody should not be nil")
         }
+    }
+
+    func testPropertyListParameterEncodeParametersRetainsCustomContentType() {
+        // Given
+        let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: "https://example.com/")!)
+        mutableURLRequest.setValue("application/custom-plist-type+plist", forHTTPHeaderField: "Content-Type")
+
+        let parameters = ["foo": "bar"]
+
+        // When
+        let (URLRequest, error) = encoding.encode(mutableURLRequest, parameters: parameters)
+
+        // Then
+        XCTAssertNil(error)
+        XCTAssertNil(URLRequest.URL?.query)
+        XCTAssertEqual(URLRequest.valueForHTTPHeaderField("Content-Type"), "application/custom-plist-type+plist")
     }
 }
 
