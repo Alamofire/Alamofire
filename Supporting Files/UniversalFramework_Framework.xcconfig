@@ -1,0 +1,32 @@
+//
+//  Inherit from this config in your framework target.
+//
+//  Copyright (c) 2014-2015 Marius Rackwitz. All rights reserved.
+//
+
+#include "UniversalFramework_Base.xcconfig"
+
+// OSX-specific default settings
+FRAMEWORK_VERSION[sdk=macosx*]                = A
+COMBINE_HIDPI_IMAGES[sdk=macosx*]             = YES
+
+// iOS-specific default settings
+CODE_SIGN_IDENTITY[sdk=iphoneos*]             = iPhone Developer
+TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]  = 1,2
+TARGETED_DEVICE_FAMILY[sdk=iphone*]           = 1,2
+
+// TV-specific default settings
+TARGETED_DEVICE_FAMILY[sdk=appletvsimulator*] = 3
+TARGETED_DEVICE_FAMILY[sdk=appletv*]          = 3
+
+// Watch-specific default settings
+TARGETED_DEVICE_FAMILY[sdk=watchsimulator*]   = 4
+TARGETED_DEVICE_FAMILY[sdk=watch*]            = 4
+
+ENABLE_BITCODE[sdk=macosx*]                   = NO
+ENABLE_BITCODE[sdk=watchsimulator*]           = YES
+ENABLE_BITCODE[sdk=watch*]                    = YES
+ENABLE_BITCODE[sdk=iphonesimulator*]          = YES
+ENABLE_BITCODE[sdk=iphone*]                   = YES
+ENABLE_BITCODE[sdk=appletvsimulator*]         = YES
+ENABLE_BITCODE[sdk=appletv*]                  = YES
