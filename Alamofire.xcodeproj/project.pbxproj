@@ -180,6 +180,13 @@
 		4DD67C241A5C58FB00ED2280 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
 		8035DB621BAB492500466CB3 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */; };
+		861C29FA1C921CA800A85A53 /* Retry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C29F91C921CA800A85A53 /* Retry.swift */; };
+		861C29FB1C921CA800A85A53 /* Retry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C29F91C921CA800A85A53 /* Retry.swift */; };
+		861C29FC1C921CA800A85A53 /* Retry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C29F91C921CA800A85A53 /* Retry.swift */; };
+		861C29FD1C921CA800A85A53 /* Retry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C29F91C921CA800A85A53 /* Retry.swift */; };
+		861C2A001C923F6900A85A53 /* RetryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C29FE1C923F3C00A85A53 /* RetryTests.swift */; };
+		861C2A011C923F6900A85A53 /* RetryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C29FE1C923F3C00A85A53 /* RetryTests.swift */; };
+		861C2A021C923F6A00A85A53 /* RetryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C29FE1C923F3C00A85A53 /* RetryTests.swift */; };
 		E4202FCF1B667AA100C997FB /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C3F1AF89E0700BABAE5 /* Upload.swift */; };
 		E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
 		E4202FD11B667AA100C997FB /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C391AF899EC00BABAE5 /* Request.swift */; };
@@ -286,6 +293,8 @@
 		4CF626F81BA7CB3E0011A099 /* Alamofire tvOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Alamofire tvOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		72998D721BF26173006D3F69 /* Info-tvOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-tvOS.plist"; sourceTree = "<group>"; };
+		861C29F91C921CA800A85A53 /* Retry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Retry.swift; sourceTree = "<group>"; };
+		861C29FE1C923F3C00A85A53 /* RetryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetryTests.swift; sourceTree = "<group>"; };
 		B39E2F831C1A72F8002DA1A9 /* certDER.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = certDER.cer; path = selfSignedAndMalformedCerts/certDER.cer; sourceTree = "<group>"; };
 		B39E2F841C1A72F8002DA1A9 /* certDER.crt */ = {isa = PBXFileReference; lastKnownFileType = file; name = certDER.crt; path = selfSignedAndMalformedCerts/certDER.crt; sourceTree = "<group>"; };
 		B39E2F851C1A72F8002DA1A9 /* certDER.der */ = {isa = PBXFileReference; lastKnownFileType = file; name = certDER.der; path = selfSignedAndMalformedCerts/certDER.der; sourceTree = "<group>"; };
@@ -394,6 +403,7 @@
 				F8111E5F19A9674D0040E7D1 /* UploadTests.swift */,
 				4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */,
 				F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */,
+				861C29FE1C923F3C00A85A53 /* RetryTests.swift */,
 			);
 			name = Features;
 			sourceTree = "<group>";
@@ -532,6 +542,7 @@
 				4C574E691C67D207000B3128 /* Timeline.swift */,
 				4CDE2C3F1AF89E0700BABAE5 /* Upload.swift */,
 				4CDE2C421AF89F0900BABAE5 /* Validation.swift */,
+				861C29F91C921CA800A85A53 /* Retry.swift */,
 			);
 			name = Features;
 			sourceTree = "<group>";
@@ -972,6 +983,7 @@
 				4C80F9F81BB730EF001B46D2 /* Response.swift in Sources */,
 				4CB9282B1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				4CF627091BA7CBF60011A099 /* Manager.swift in Sources */,
+				861C29FC1C921CA800A85A53 /* Retry.swift in Sources */,
 				4CF6270F1BA7CBF60011A099 /* ResponseSerialization.swift in Sources */,
 				4CF6270B1BA7CBF60011A099 /* Request.swift in Sources */,
 				4C3D00561C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
@@ -990,6 +1002,7 @@
 				4CF627211BA7CC240011A099 /* TLSEvaluationTests.swift in Sources */,
 				4CF627221BA7CC240011A099 /* UploadTests.swift in Sources */,
 				4C80F9F91BB730F6001B46D2 /* String+AlamofireTests.swift in Sources */,
+				861C2A021C923F6A00A85A53 /* RetryTests.swift in Sources */,
 				4CF6271E1BA7CC240011A099 /* MultipartFormDataTests.swift in Sources */,
 				4CF627201BA7CC240011A099 /* ServerTrustPolicyTests.swift in Sources */,
 				4CF627241BA7CC240011A099 /* ValidationTests.swift in Sources */,
@@ -1022,6 +1035,7 @@
 				4C0B62521BB1001C009302D3 /* Response.swift in Sources */,
 				4CB9282A1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */,
+				861C29FB1C921CA800A85A53 /* Retry.swift in Sources */,
 				4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
 				4C811F8E1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,
 				4C3D00551C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
@@ -1046,6 +1060,7 @@
 				E4202FD31B667AA100C997FB /* Manager.swift in Sources */,
 				4C0B62531BB1001C009302D3 /* Response.swift in Sources */,
 				4CB9282C1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
+				861C29FD1C921CA800A85A53 /* Retry.swift in Sources */,
 				4CEC605B1B745C9100E684F4 /* Result.swift in Sources */,
 				E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */,
 				E4202FD51B667AA100C997FB /* MultipartFormData.swift in Sources */,
@@ -1070,6 +1085,7 @@
 				4C0B62511BB1001C009302D3 /* Response.swift in Sources */,
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
 				4C23EB431B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
+				861C29FA1C921CA800A85A53 /* Retry.swift in Sources */,
 				4C811F8D1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,
 				4C3D00541C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
 				4C83F41B1B749E0E00203445 /* Stream.swift in Sources */,
@@ -1088,6 +1104,7 @@
 				4C33A1431B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBA1B1A865A00C1B34D /* CacheTests.swift in Sources */,
 				4C4CBE7B1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */,
+				861C2A001C923F6900A85A53 /* RetryTests.swift in Sources */,
 				4CA028C51B7466C500C84163 /* ResultTests.swift in Sources */,
 				4CCFA79A1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
 				F86AEFE71AE6A312007D9C76 /* TLSEvaluationTests.swift in Sources */,
@@ -1114,6 +1131,7 @@
 				4C33A1441B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBB1B1A865A00C1B34D /* CacheTests.swift in Sources */,
 				4C4CBE7C1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */,
+				861C2A011C923F6900A85A53 /* RetryTests.swift in Sources */,
 				4CA028C61B7466C500C84163 /* ResultTests.swift in Sources */,
 				4CCFA79B1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
 				F829C6BE1A7A950600A2CD59 /* ParameterEncodingTests.swift in Sources */,

@@ -86,12 +86,23 @@ extension Request {
         completionHandler: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Void)
         -> Self
     {
-        delegate.queue.addOperationWithBlock {
+        response() { (request: Request) -> Void in
             dispatch_async(queue ?? dispatch_get_main_queue()) {
-                completionHandler(self.request, self.response, self.delegate.data, self.delegate.error)
+                completionHandler(request.request, request.response, request.delegate.data, request.delegate.error)
             }
-        }
 
+        }
+        return self
+    }
+
+    public func response(
+        completionHandler: (Request) -> Void)
+        -> Self
+    {
+        delegate.responseHandlers.append(completionHandler)
+        delegate.queue.addOperationWithBlock {
+            completionHandler(self)
+        }
         return self
     }
 
@@ -111,28 +122,28 @@ extension Request {
         completionHandler: Response<T.SerializedObject, T.ErrorObject> -> Void)
         -> Self
     {
-        delegate.queue.addOperationWithBlock {
+        response() { (request: Request) -> Void in
             let result = responseSerializer.serializeResponse(
-                self.request,
-                self.response,
-                self.delegate.data,
-                self.delegate.error
+                request.request,
+                request.response,
+                request.delegate.data,
+                request.delegate.error
             )
 
-            let requestCompletedTime = self.endTime ?? CFAbsoluteTimeGetCurrent()
-            let initialResponseTime = self.delegate.initialResponseTime ?? requestCompletedTime
+            let requestCompletedTime = request.endTime ?? CFAbsoluteTimeGetCurrent()
+            let initialResponseTime = request.delegate.initialResponseTime ?? requestCompletedTime
 
             let timeline = Timeline(
-                requestStartTime: self.startTime ?? CFAbsoluteTimeGetCurrent(),
+                requestStartTime: request.startTime ?? CFAbsoluteTimeGetCurrent(),
                 initialResponseTime: initialResponseTime,
                 requestCompletedTime: requestCompletedTime,
                 serializationCompletedTime: CFAbsoluteTimeGetCurrent()
             )
 
             let response = Response<T.SerializedObject, T.ErrorObject>(
-                request: self.request,
-                response: self.response,
-                data: self.delegate.data,
+                request: request.request,
+                response: request.response,
+                data: request.delegate.data,
                 result: result,
                 timeline: timeline
             )
