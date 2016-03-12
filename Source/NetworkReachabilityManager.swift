@@ -114,14 +114,14 @@ public class NetworkReachabilityManager {
     }
 
     /**
-        Creates a `NetworkReachabilityManager` instance with the default socket address (`sockaddr_in6`).
+        Creates a `NetworkReachabilityManager` instance with the default socket address (`sockaddr_in`).
 
         - returns: The new `NetworkReachabilityManager` instance.
      */
     public convenience init?() {
-        var address = sockaddr_in6()
-        address.sin6_len = UInt8(sizeofValue(address))
-        address.sin6_family = sa_family_t(AF_INET6)
+        var address = sockaddr_in()
+        address.sin_len = UInt8(sizeofValue(address))
+        address.sin_family = sa_family_t(AF_INET)
 
         guard let reachability = withUnsafePointer(&address, {
             SCNetworkReachabilityCreateWithAddress(nil, UnsafePointer($0))
