@@ -32,7 +32,7 @@ script:
 
   # Build Framework in Debug and Run Tests if specified
   - if [ $RUN_TESTS == "YES" ]; then
-      killall "Simulator"
+      killall "Simulator";
       xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO test | xcpretty -c;
     else
       xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
@@ -40,7 +40,7 @@ script:
 
   # Build Framework in ReleaseTest and Run Tests if specified
   - if [ $RUN_TESTS == "YES" ]; then
-      killall "Simulator"
+      killall  "Simulator";
       xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration ReleaseTest ONLY_ACTIVE_ARCH=NO test | xcpretty -c;
     else
       xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration ReleaseTest ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
