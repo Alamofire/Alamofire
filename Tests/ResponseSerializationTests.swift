@@ -357,7 +357,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
-        let serializer = Request.stringResponseSerializer()
+        let serializer = Request.JSONResponseSerializer()
         let data = "{\"json\": true}".dataUsingEncoding(NSUTF8StringEncoding)!
 
         // When
