@@ -97,8 +97,8 @@ extension Request {
 
     /**
         Adds a handler to be called once the request has finished.
-
-        - parameter queue:              The queue on which the completion handler is dispatched.
+        - parameter queue_in            The queue on which the serializer is dispatched.
+        - parameter queue_out           The queue on which the completion handler is dispatched.
         - parameter responseSerializer: The response serializer responsible for serializing the request, response, 
                                         and data.
         - parameter completionHandler:  The code to be executed once the request has finished.
@@ -106,29 +106,47 @@ extension Request {
         - returns: The request.
     */
     public func response<T: ResponseSerializerType>(
-        queue queue: dispatch_queue_t? = nil,
+        queue_in queue_in: dispatch_queue_t? = nil,
+        queue_out: dispatch_queue_t? = nil,
         responseSerializer: T,
         completionHandler: Response<T.SerializedObject, T.ErrorObject> -> Void)
         -> Self
     {
         delegate.queue.addOperationWithBlock {
+            if queue_in != nil {
+                dispatch_async(queue_in!) {
+                    self.serializeResponse(queue: queue_out, responseSerializer: responseSerializer, completionHandler: completionHandler)
+                }
+            } else {
+                self.serializeResponse(queue: queue_out, responseSerializer: responseSerializer, completionHandler: completionHandler)
+            }
+        }
+
+        return self
+    }
+    
+    private func serializeResponse<T: ResponseSerializerType>(
+        queue queue: dispatch_queue_t? = nil,
+        responseSerializer: T,
+        completionHandler: Response<T.SerializedObject, T.ErrorObject> -> Void)
+        {
             let result = responseSerializer.serializeResponse(
                 self.request,
                 self.response,
                 self.delegate.data,
                 self.delegate.error
             )
-
+            
             let requestCompletedTime = self.endTime ?? CFAbsoluteTimeGetCurrent()
             let initialResponseTime = self.delegate.initialResponseTime ?? requestCompletedTime
-
+            
             let timeline = Timeline(
                 requestStartTime: self.startTime ?? CFAbsoluteTimeGetCurrent(),
                 initialResponseTime: initialResponseTime,
                 requestCompletedTime: requestCompletedTime,
                 serializationCompletedTime: CFAbsoluteTimeGetCurrent()
             )
-
+            
             let response = Response<T.SerializedObject, T.ErrorObject>(
                 request: self.request,
                 response: self.response,
@@ -136,11 +154,8 @@ extension Request {
                 result: result,
                 timeline: timeline
             )
-
+            
             dispatch_async(queue ?? dispatch_get_main_queue()) { completionHandler(response) }
-        }
-
-        return self
     }
 }
 
