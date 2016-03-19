@@ -254,6 +254,9 @@ public class Manager {
         /// Overrides default behavior for NSURLSessionDelegate method `URLSession:didReceiveChallenge:completionHandler:`.
         public var sessionDidReceiveChallenge: ((NSURLSession, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential?))?
 
+        /// Overrides all behavior for NSURLSessionDelegate method `URLSession:didReceiveChallenge:completionHandler:` and requires the caller to call the `completionHandler`.
+        public var sessionDidReceiveChallengeWithCompletion: ((NSURLSession, NSURLAuthenticationChallenge, (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) -> Void)?
+
         /// Overrides default behavior for NSURLSessionDelegate method `URLSessionDidFinishEventsForBackgroundURLSession:`.
         public var sessionDidFinishEventsForBackgroundURLSession: ((NSURLSession) -> Void)?
 
@@ -281,6 +284,11 @@ public class Manager {
             didReceiveChallenge challenge: NSURLAuthenticationChallenge,
             completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void))
         {
+            guard sessionDidReceiveChallengeWithCompletion == nil else {
+                sessionDidReceiveChallengeWithCompletion?(session, challenge, completionHandler)
+                return
+            }
+
             var disposition: NSURLSessionAuthChallengeDisposition = .PerformDefaultHandling
             var credential: NSURLCredential?
 
@@ -321,11 +329,23 @@ public class Manager {
         /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:`.
         public var taskWillPerformHTTPRedirection: ((NSURLSession, NSURLSessionTask, NSHTTPURLResponse, NSURLRequest) -> NSURLRequest?)?
 
+        /// Overrides all behavior for NSURLSessionTaskDelegate method `URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:` and
+        /// requires the caller to call the `completionHandler`.
+        public var taskWillPerformHTTPRedirectionWithCompletion: ((NSURLSession, NSURLSessionTask, NSHTTPURLResponse, NSURLRequest, NSURLRequest? -> Void) -> Void)?
+
         /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didReceiveChallenge:completionHandler:`.
         public var taskDidReceiveChallenge: ((NSURLSession, NSURLSessionTask, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential?))?
 
+        /// Overrides all behavior for NSURLSessionTaskDelegate method `URLSession:task:didReceiveChallenge:completionHandler:` and 
+        /// requires the caller to call the `completionHandler`.
+        public var taskDidReceiveChallengeWithCompletion: ((NSURLSession, NSURLSessionTask, NSURLAuthenticationChallenge, (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) -> Void)?
+
         /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:session:task:needNewBodyStream:`.
-        public var taskNeedNewBodyStream: ((NSURLSession, NSURLSessionTask) -> NSInputStream!)?
+        public var taskNeedNewBodyStream: ((NSURLSession, NSURLSessionTask) -> NSInputStream?)?
+
+        /// Overrides all behavior for NSURLSessionTaskDelegate method `URLSession:session:task:needNewBodyStream:` and 
+        /// requires the caller to call the `completionHandler`.
+        public var taskNeedNewBodyStreamWithCompletion: ((NSURLSession, NSURLSessionTask, NSInputStream? -> Void) -> Void)?
 
         /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:`.
         public var taskDidSendBodyData: ((NSURLSession, NSURLSessionTask, Int64, Int64, Int64) -> Void)?
@@ -351,8 +371,13 @@ public class Manager {
             task: NSURLSessionTask,
             willPerformHTTPRedirection response: NSHTTPURLResponse,
             newRequest request: NSURLRequest,
-            completionHandler: ((NSURLRequest?) -> Void))
+            completionHandler: NSURLRequest? -> Void)
         {
+            guard taskWillPerformHTTPRedirectionWithCompletion == nil else {
+                taskWillPerformHTTPRedirectionWithCompletion?(session, task, response, request, completionHandler)
+                return
+            }
+
             var redirectRequest: NSURLRequest? = request
 
             if let taskWillPerformHTTPRedirection = taskWillPerformHTTPRedirection {
@@ -374,8 +399,13 @@ public class Manager {
             session: NSURLSession,
             task: NSURLSessionTask,
             didReceiveChallenge challenge: NSURLAuthenticationChallenge,
-            completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void))
+            completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void)
         {
+            guard taskDidReceiveChallengeWithCompletion == nil else {
+                taskDidReceiveChallengeWithCompletion?(session, task, challenge, completionHandler)
+                return
+            }
+
             if let taskDidReceiveChallenge = taskDidReceiveChallenge {
                 completionHandler(taskDidReceiveChallenge(session, task, challenge))
             } else if let delegate = self[task] {
@@ -400,8 +430,13 @@ public class Manager {
         public func URLSession(
             session: NSURLSession,
             task: NSURLSessionTask,
-            needNewBodyStream completionHandler: ((NSInputStream?) -> Void))
+            needNewBodyStream completionHandler: NSInputStream? -> Void)
         {
+            guard taskNeedNewBodyStreamWithCompletion == nil else {
+                taskNeedNewBodyStreamWithCompletion?(session, task, completionHandler)
+                return
+            }
+
             if let taskNeedNewBodyStream = taskNeedNewBodyStream {
                 completionHandler(taskNeedNewBodyStream(session, task))
             } else if let delegate = self[task] {
@@ -464,6 +499,10 @@ public class Manager {
         /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didReceiveResponse:completionHandler:`.
         public var dataTaskDidReceiveResponse: ((NSURLSession, NSURLSessionDataTask, NSURLResponse) -> NSURLSessionResponseDisposition)?
 
+        /// Overrides all behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didReceiveResponse:completionHandler:` and 
+        /// requires caller to call the `completionHandler`.
+        public var dataTaskDidReceiveResponseWithCompletion: ((NSURLSession, NSURLSessionDataTask, NSURLResponse, NSURLSessionResponseDisposition -> Void) -> Void)?
+
         /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didBecomeDownloadTask:`.
         public var dataTaskDidBecomeDownloadTask: ((NSURLSession, NSURLSessionDataTask, NSURLSessionDownloadTask) -> Void)?
 
@@ -471,7 +510,11 @@ public class Manager {
         public var dataTaskDidReceiveData: ((NSURLSession, NSURLSessionDataTask, NSData) -> Void)?
 
         /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:willCacheResponse:completionHandler:`.
-        public var dataTaskWillCacheResponse: ((NSURLSession, NSURLSessionDataTask, NSCachedURLResponse) -> NSCachedURLResponse!)?
+        public var dataTaskWillCacheResponse: ((NSURLSession, NSURLSessionDataTask, NSCachedURLResponse) -> NSCachedURLResponse?)?
+
+        /// Overrides all behavior for NSURLSessionDataDelegate method `URLSession:dataTask:willCacheResponse:completionHandler:` and 
+        /// requires caller to call the `completionHandler`.
+        public var dataTaskWillCacheResponseWithCompletion: ((NSURLSession, NSURLSessionDataTask, NSCachedURLResponse, NSCachedURLResponse? -> Void) -> Void)?
 
         // MARK: Delegate Methods
 
@@ -489,8 +532,13 @@ public class Manager {
             session: NSURLSession,
             dataTask: NSURLSessionDataTask,
             didReceiveResponse response: NSURLResponse,
-            completionHandler: ((NSURLSessionResponseDisposition) -> Void))
+            completionHandler: NSURLSessionResponseDisposition -> Void)
         {
+            guard dataTaskDidReceiveResponseWithCompletion == nil else {
+                dataTaskDidReceiveResponseWithCompletion?(session, dataTask, response, completionHandler)
+                return
+            }
+
             var disposition: NSURLSessionResponseDisposition = .Allow
 
             if let dataTaskDidReceiveResponse = dataTaskDidReceiveResponse {
@@ -552,8 +600,13 @@ public class Manager {
             session: NSURLSession,
             dataTask: NSURLSessionDataTask,
             willCacheResponse proposedResponse: NSCachedURLResponse,
-            completionHandler: ((NSCachedURLResponse?) -> Void))
+            completionHandler: NSCachedURLResponse? -> Void)
         {
+            guard dataTaskWillCacheResponseWithCompletion == nil else {
+                dataTaskWillCacheResponseWithCompletion?(session, dataTask, proposedResponse, completionHandler)
+                return
+            }
+
             if let dataTaskWillCacheResponse = dataTaskWillCacheResponse {
                 completionHandler(dataTaskWillCacheResponse(session, dataTask, proposedResponse))
             } else if let delegate = self[dataTask] as? Request.DataTaskDelegate {
