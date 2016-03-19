@@ -199,6 +199,8 @@ public class Request {
 
         /// The serial operation queue used to execute all operations after the task completes.
         public let queue: NSOperationQueue
+        /// A collection of response handlers that can be copied if the request needs to be retried
+        var responseHandlers: [Request -> Void] = Array()
 
         let task: NSURLSessionTask
         let progress: NSProgress

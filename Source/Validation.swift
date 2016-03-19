@@ -51,12 +51,12 @@ extension Request {
         - returns: The request.
     */
     public func validate(validation: Validation) -> Self {
-        delegate.queue.addOperationWithBlock {
+        response() { (request: Request) -> Void in
             if let
-                response = self.response where self.delegate.error == nil,
-                case let .Failure(error) = validation(self.request, response)
+                response = request.response where request.delegate.error == nil,
+                case let .Failure(error) = validation(request.request, response)
             {
-                self.delegate.error = error
+                request.delegate.error = error
             }
         }
 
