@@ -377,7 +377,8 @@ public class Manager {
             completionHandler: ((NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void))
         {
             if let taskDidReceiveChallenge = taskDidReceiveChallenge {
-                completionHandler(taskDidReceiveChallenge(session, task, challenge))
+                let challengeInfo = taskDidReceiveChallenge(session, task, challenge)
+                completionHandler(challengeInfo.0, challengeInfo.1)
             } else if let delegate = self[task] {
                 delegate.URLSession(
                     session,
@@ -676,16 +677,20 @@ public class Manager {
         // MARK: - NSObject
 
         public override func respondsToSelector(selector: Selector) -> Bool {
+            #if !os(OSX)
+                if selector == #selector(NSURLSessionDelegate.URLSessionDidFinishEventsForBackgroundURLSession(_:)) {
+                    return sessionDidFinishEventsForBackgroundURLSession != nil
+                }
+            #endif
+
             switch selector {
-            case "URLSession:didBecomeInvalidWithError:":
+            case #selector(NSURLSessionDelegate.URLSession(_:didBecomeInvalidWithError:)):
                 return sessionDidBecomeInvalidWithError != nil
-            case "URLSession:didReceiveChallenge:completionHandler:":
+            case #selector(NSURLSessionDelegate.URLSession(_:didReceiveChallenge:completionHandler:)):
                 return sessionDidReceiveChallenge != nil
-            case "URLSessionDidFinishEventsForBackgroundURLSession:":
-                return sessionDidFinishEventsForBackgroundURLSession != nil
-            case "URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:":
+            case #selector(NSURLSessionTaskDelegate.URLSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)):
                 return taskWillPerformHTTPRedirection != nil
-            case "URLSession:dataTask:didReceiveResponse:completionHandler:":
+            case #selector(NSURLSessionDataDelegate.URLSession(_:dataTask:didReceiveResponse:completionHandler:)):
                 return dataTaskDidReceiveResponse != nil
             default:
                 return self.dynamicType.instancesRespondToSelector(selector)
