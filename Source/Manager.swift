@@ -742,7 +742,7 @@ public class Manager {
             case #selector(NSURLSessionDelegate.URLSession(_:didReceiveChallenge:completionHandler:)):
                 return sessionDidReceiveChallenge != nil
             case #selector(NSURLSessionTaskDelegate.URLSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)):
-                return taskWillPerformHTTPRedirection != nil
+                return (taskWillPerformHTTPRedirection != nil || taskWillPerformHTTPRedirectionWithCompletion != nil)
             case #selector(NSURLSessionDataDelegate.URLSession(_:dataTask:didReceiveResponse:completionHandler:)):
                 return dataTaskDidReceiveResponse != nil
             default:
