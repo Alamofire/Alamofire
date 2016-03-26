@@ -522,15 +522,24 @@ class RedirectResponseTestCase: BaseTestCase {
 
     func testThatTaskOverrideClosureIsCalledMultipleTimesForMultipleHTTPRedirects() {
         // Given
+        let redirectCount = 5
         let redirectURLString = "https://httpbin.org/get"
-        let URLString = "https://httpbin.org/redirect/5"
+        let URLString = "https://httpbin.org/redirect/\(redirectCount)"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
-        var totalRedirectCount = 0
+        var redirectExpectations = [XCTestExpectation]()
+        for index in 0..<redirectCount {
+            redirectExpectations.insert(expectationWithDescription("Redirect #\(index) callback was received"), atIndex: 0)
+        }
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, request in
-            totalRedirectCount += 1
+            if let redirectExpectation = redirectExpectations.popLast() {
+                redirectExpectation.fulfill()
+            } else {
+                XCTFail("Too many redirect callbacks were received")
+            }
+
             return request
         }
 
@@ -560,20 +569,29 @@ class RedirectResponseTestCase: BaseTestCase {
 
         XCTAssertEqual(response?.URL?.URLString ?? "", redirectURLString, "response URL should match the redirect URL")
         XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
-        XCTAssertEqual(totalRedirectCount, 5, "total redirect count should be 5")
     }
 
     func testThatTaskOverrideClosureWithCompletionIsCalledMultipleTimesForMultipleHTTPRedirects() {
         // Given
+        let redirectCount = 5
         let redirectURLString = "https://httpbin.org/get"
-        let URLString = "https://httpbin.org/redirect/5"
+        let URLString = "https://httpbin.org/redirect/\(redirectCount)"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
-        var totalRedirectCount = 0
+
+        var redirectExpectations = [XCTestExpectation]()
+        for index in 0..<redirectCount {
+            redirectExpectations.insert(expectationWithDescription("Redirect #\(index) callback was received"), atIndex: 0)
+        }
 
         delegate.taskWillPerformHTTPRedirectionWithCompletion = {_, _, _, request, completion in
-            totalRedirectCount += 1
+            if let redirectExpectation = redirectExpectations.popLast() {
+                redirectExpectation.fulfill()
+            } else {
+                XCTFail("Too many redirect callbacks were received")
+            }
+
             completion(request)
         }
 
@@ -603,7 +621,6 @@ class RedirectResponseTestCase: BaseTestCase {
 
         XCTAssertEqual(response?.URL?.URLString ?? "", redirectURLString, "response URL should match the redirect URL")
         XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
-        XCTAssertEqual(totalRedirectCount, 5, "total redirect count should be 5")
     }
 
     func testThatRedirectedRequestContainsAllHeadersFromOriginalRequest() {
