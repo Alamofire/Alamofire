@@ -222,6 +222,12 @@ public class Manager {
         private var subdelegates: [Int: Request.TaskDelegate] = [:]
         private let subdelegateQueue = dispatch_queue_create(nil, DISPATCH_QUEUE_CONCURRENT)
 
+        /***
+         By default, the session delegate executes a delegate block property if it exists and then stops.
+         If set to 'false' default delegation will continue after calling the block.
+         */
+        private let delegateBlocksPreventsDefaultDelegation: Bool
+
         subscript(task: NSURLSessionTask) -> Request.TaskDelegate? {
             get {
                 var subdelegate: Request.TaskDelegate?
@@ -240,7 +246,8 @@ public class Manager {
 
             - returns: The new `SessionDelegate` instance.
         */
-        public override init() {
+        public init(delegateBlocksPreventsDefaultDelegation: Bool = false) {
+            self.delegateBlocksPreventsDefaultDelegation = delegateBlocksPreventsDefaultDelegation
             super.init()
         }
 
@@ -326,7 +333,7 @@ public class Manager {
 
         // MARK: Override Closures
 
-        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:`.
+        /// Optionally overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:`.
         public var taskWillPerformHTTPRedirection: ((NSURLSession, NSURLSessionTask, NSHTTPURLResponse, NSURLRequest) -> NSURLRequest?)?
 
         /// Overrides all behavior for NSURLSessionTaskDelegate method `URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:` and
@@ -347,10 +354,10 @@ public class Manager {
         /// requires the caller to call the `completionHandler`.
         public var taskNeedNewBodyStreamWithCompletion: ((NSURLSession, NSURLSessionTask, NSInputStream? -> Void) -> Void)?
 
-        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:`.
+        /// Optionally overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:`.
         public var taskDidSendBodyData: ((NSURLSession, NSURLSessionTask, Int64, Int64, Int64) -> Void)?
 
-        /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didCompleteWithError:`.
+        /// Optionally overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didCompleteWithError:`.
         public var taskDidComplete: ((NSURLSession, NSURLSessionTask, NSError?) -> Void)?
 
         // MARK: Delegate Methods
@@ -463,7 +470,12 @@ public class Manager {
         {
             if let taskDidSendBodyData = taskDidSendBodyData {
                 taskDidSendBodyData(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
-            } else if let delegate = self[task] as? Request.UploadTaskDelegate {
+                if delegateBlocksPreventsDefaultDelegation {
+                    return
+                }
+            }
+
+            if let delegate = self[task] as? Request.UploadTaskDelegate {
                 delegate.URLSession(
                     session,
                     task: task,
@@ -484,7 +496,12 @@ public class Manager {
         public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
             if let taskDidComplete = taskDidComplete {
                 taskDidComplete(session, task, error)
-            } else if let delegate = self[task] {
+                if delegateBlocksPreventsDefaultDelegation {
+                    return
+                }
+            }
+
+            if let delegate = self[task] {
                 delegate.URLSession(session, task: task, didCompleteWithError: error)
             }
 
@@ -504,10 +521,10 @@ public class Manager {
         /// requires caller to call the `completionHandler`.
         public var dataTaskDidReceiveResponseWithCompletion: ((NSURLSession, NSURLSessionDataTask, NSURLResponse, NSURLSessionResponseDisposition -> Void) -> Void)?
 
-        /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didBecomeDownloadTask:`.
+        /// Optionally overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didBecomeDownloadTask:`.
         public var dataTaskDidBecomeDownloadTask: ((NSURLSession, NSURLSessionDataTask, NSURLSessionDownloadTask) -> Void)?
 
-        /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didReceiveData:`.
+        /// Optionally overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didReceiveData:`.
         public var dataTaskDidReceiveData: ((NSURLSession, NSURLSessionDataTask, NSData) -> Void)?
 
         /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:willCacheResponse:completionHandler:`.
@@ -563,10 +580,13 @@ public class Manager {
         {
             if let dataTaskDidBecomeDownloadTask = dataTaskDidBecomeDownloadTask {
                 dataTaskDidBecomeDownloadTask(session, dataTask, downloadTask)
-            } else {
-                let downloadDelegate = Request.DownloadTaskDelegate(task: downloadTask)
-                self[downloadTask] = downloadDelegate
+                if delegateBlocksPreventsDefaultDelegation {
+                    return
+                }
             }
+
+            let downloadDelegate = Request.DownloadTaskDelegate(task: downloadTask)
+            self[downloadTask] = downloadDelegate
         }
 
         /**
@@ -579,7 +599,12 @@ public class Manager {
         public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
             if let dataTaskDidReceiveData = dataTaskDidReceiveData {
                 dataTaskDidReceiveData(session, dataTask, data)
-            } else if let delegate = self[dataTask] as? Request.DataTaskDelegate {
+                if delegateBlocksPreventsDefaultDelegation {
+                    return
+                }
+            }
+
+            if let delegate = self[dataTask] as? Request.DataTaskDelegate {
                 delegate.URLSession(session, dataTask: dataTask, didReceiveData: data)
             }
         }
@@ -626,13 +651,13 @@ public class Manager {
 
         // MARK: Override Closures
 
-        /// Overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didFinishDownloadingToURL:`.
+        /// Optionally overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didFinishDownloadingToURL:`.
         public var downloadTaskDidFinishDownloadingToURL: ((NSURLSession, NSURLSessionDownloadTask, NSURL) -> Void)?
 
-        /// Overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:`.
+        /// Optionally overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:`.
         public var downloadTaskDidWriteData: ((NSURLSession, NSURLSessionDownloadTask, Int64, Int64, Int64) -> Void)?
 
-        /// Overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:`.
+        /// Optionally overrides default behavior for NSURLSessionDownloadDelegate method `URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:`.
         public var downloadTaskDidResumeAtOffset: ((NSURLSession, NSURLSessionDownloadTask, Int64, Int64) -> Void)?
 
         // MARK: Delegate Methods
@@ -653,7 +678,12 @@ public class Manager {
         {
             if let downloadTaskDidFinishDownloadingToURL = downloadTaskDidFinishDownloadingToURL {
                 downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
-            } else if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
+                if delegateBlocksPreventsDefaultDelegation {
+                    return
+                }
+            }
+
+            if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(session, downloadTask: downloadTask, didFinishDownloadingToURL: location)
             }
         }
@@ -679,7 +709,12 @@ public class Manager {
         {
             if let downloadTaskDidWriteData = downloadTaskDidWriteData {
                 downloadTaskDidWriteData(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
-            } else if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
+                if delegateBlocksPreventsDefaultDelegation {
+                    return
+                }
+            }
+
+            if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(
                     session,
                     downloadTask: downloadTask,
@@ -710,7 +745,12 @@ public class Manager {
         {
             if let downloadTaskDidResumeAtOffset = downloadTaskDidResumeAtOffset {
                 downloadTaskDidResumeAtOffset(session, downloadTask, fileOffset, expectedTotalBytes)
-            } else if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
+                if delegateBlocksPreventsDefaultDelegation {
+                    return
+                }
+            }
+
+            if let delegate = self[downloadTask] as? Request.DownloadTaskDelegate {
                 delegate.URLSession(
                     session,
                     downloadTask: downloadTask,
