@@ -38,6 +38,83 @@ class SessionDelegateTestCase: BaseTestCase {
         super.tearDown()
     }
 
+    // MARK: - Tests - Session Invalidation
+
+    func testThatSessionDidBecomeInvalidWithErrorClosureIsCalledWhenSet() {
+        // Given
+        let expectation = expectationWithDescription("Override closure should be called")
+
+        var overrideClosureCalled = false
+        var invalidationError: NSError?
+
+        manager.delegate.sessionDidBecomeInvalidWithError = { _, error in
+            overrideClosureCalled = true
+            invalidationError = error
+
+            expectation.fulfill()
+        }
+
+        // When
+        manager.session.invalidateAndCancel()
+        waitForExpectationsWithTimeout(timeout, handler: nil)
+
+        // Then
+        XCTAssertTrue(overrideClosureCalled)
+        XCTAssertNil(invalidationError)
+    }
+
+    // MARK: - Tests - Session Challenges
+
+    func testThatSessionDidReceiveChallengeClosureIsCalledWhenSet() {
+        // Given
+        let expectation = expectationWithDescription("Override closure should be called")
+
+        var overrideClosureCalled = false
+        var response: NSHTTPURLResponse?
+
+        manager.delegate.sessionDidReceiveChallenge = { session, challenge in
+            overrideClosureCalled = true
+            return (.PerformDefaultHandling, nil)
+        }
+
+        // When
+        manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
+            response = closureResponse.response
+            expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(timeout, handler: nil)
+
+        // Then
+        XCTAssertTrue(overrideClosureCalled)
+        XCTAssertEqual(response?.statusCode, 200)
+    }
+
+    func testThatSessionDidReceiveChallengeWithCompletionClosureIsCalledWhenSet() {
+        // Given
+        let expectation = expectationWithDescription("Override closure should be called")
+
+        var overrideClosureCalled = false
+        var response: NSHTTPURLResponse?
+
+        manager.delegate.sessionDidReceiveChallengeWithCompletion = { session, challenge, completion in
+            overrideClosureCalled = true
+            completion(.PerformDefaultHandling, nil)
+        }
+
+        // When
+        manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
+            response = closureResponse.response
+            expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(timeout, handler: nil)
+
+        // Then
+        XCTAssertTrue(overrideClosureCalled)
+        XCTAssertEqual(response?.statusCode, 200)
+    }
+
     // MARK: - Tests - Redirects
 
     func testThatRequestWillPerformHTTPRedirectionByDefault() {
@@ -437,5 +514,57 @@ class SessionDelegateTestCase: BaseTestCase {
             XCTAssertEqual(headers["Custom-Header"], "foobar", "Custom-Header should be equal to foobar")
             XCTAssertEqual(headers["Authorization"], "1234", "Authorization header should be equal to 1234")
         }
+    }
+
+    // MARK: - Tests - Data Task Responses
+
+    func testThatDataTaskDidReceiveResponseClosureIsCalledWhenSet() {
+        // Given
+        let expectation = expectationWithDescription("Override closure should be called")
+
+        var overrideClosureCalled = false
+        var response: NSHTTPURLResponse?
+
+        manager.delegate.dataTaskDidReceiveResponse = { session, task, response in
+            overrideClosureCalled = true
+            return .Allow
+        }
+
+        // When
+        manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
+            response = closureResponse.response
+            expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(timeout, handler: nil)
+
+        // Then
+        XCTAssertTrue(overrideClosureCalled)
+        XCTAssertEqual(response?.statusCode, 200)
+    }
+
+    func testThatDataTaskDidReceiveResponseWithCompletionClosureIsCalledWhenSet() {
+        // Given
+        let expectation = expectationWithDescription("Override closure should be called")
+
+        var overrideClosureCalled = false
+        var response: NSHTTPURLResponse?
+
+        manager.delegate.dataTaskDidReceiveResponseWithCompletion = { session, task, response, completion in
+            overrideClosureCalled = true
+            completion(.Allow)
+        }
+
+        // When
+        manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
+            response = closureResponse.response
+            expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(timeout, handler: nil)
+
+        // Then
+        XCTAssertTrue(overrideClosureCalled)
+        XCTAssertEqual(response?.statusCode, 200)
     }
 }
