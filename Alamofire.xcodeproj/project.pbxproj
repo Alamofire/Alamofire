@@ -117,6 +117,9 @@
 		4C83F41B1B749E0E00203445 /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C83F41A1B749E0E00203445 /* Stream.swift */; };
 		4C83F41C1B749E0E00203445 /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C83F41A1B749E0E00203445 /* Stream.swift */; };
 		4C83F41D1B749E0E00203445 /* Stream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C83F41A1B749E0E00203445 /* Stream.swift */; };
+		4C9DCE781CB1BCE2003E6463 /* SessionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */; };
+		4C9DCE791CB1BCE2003E6463 /* SessionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */; };
+		4C9DCE7A1CB1BCE2003E6463 /* SessionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */; };
 		4CA028C51B7466C500C84163 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA028C41B7466C500C84163 /* ResultTests.swift */; };
 		4CA028C61B7466C500C84163 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA028C41B7466C500C84163 /* ResultTests.swift */; };
 		4CB928291C66BFBC00CE5F08 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB928281C66BFBC00CE5F08 /* Notifications.swift */; };
@@ -272,6 +275,7 @@
 		4C812C5F1B535F6D0017E0BF /* root-ca-disig.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "root-ca-disig.cer"; path = "disig.sk/root-ca-disig.cer"; sourceTree = "<group>"; };
 		4C812C601B535F6D0017E0BF /* testssl-expire.disig.sk.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "testssl-expire.disig.sk.cer"; path = "disig.sk/testssl-expire.disig.sk.cer"; sourceTree = "<group>"; };
 		4C83F41A1B749E0E00203445 /* Stream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stream.swift; sourceTree = "<group>"; };
+		4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionDelegateTests.swift; sourceTree = "<group>"; };
 		4CA028C41B7466C500C84163 /* ResultTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		4CB928281C66BFBC00CE5F08 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLProtocolTests.swift; sourceTree = "<group>"; };
@@ -377,6 +381,7 @@
 				F8111E5D19A9674D0040E7D1 /* RequestTests.swift */,
 				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
 				4CA028C41B7466C500C84163 /* ResultTests.swift */,
+				4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -989,6 +994,7 @@
 				4CF627181BA7CC240011A099 /* RequestTests.swift in Sources */,
 				4CF627211BA7CC240011A099 /* TLSEvaluationTests.swift in Sources */,
 				4CF627221BA7CC240011A099 /* UploadTests.swift in Sources */,
+				4C9DCE7A1CB1BCE2003E6463 /* SessionDelegateTests.swift in Sources */,
 				4C80F9F91BB730F6001B46D2 /* String+AlamofireTests.swift in Sources */,
 				4CF6271E1BA7CC240011A099 /* MultipartFormDataTests.swift in Sources */,
 				4CF627201BA7CC240011A099 /* ServerTrustPolicyTests.swift in Sources */,
@@ -1087,6 +1093,7 @@
 				4C3238E71B3604DB00FE04AE /* MultipartFormDataTests.swift in Sources */,
 				4C33A1431B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBA1B1A865A00C1B34D /* CacheTests.swift in Sources */,
+				4C9DCE781CB1BCE2003E6463 /* SessionDelegateTests.swift in Sources */,
 				4C4CBE7B1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */,
 				4CA028C51B7466C500C84163 /* ResultTests.swift in Sources */,
 				4CCFA79A1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
@@ -1113,6 +1120,7 @@
 				4C3238E81B3604DB00FE04AE /* MultipartFormDataTests.swift in Sources */,
 				4C33A1441B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBB1B1A865A00C1B34D /* CacheTests.swift in Sources */,
+				4C9DCE791CB1BCE2003E6463 /* SessionDelegateTests.swift in Sources */,
 				4C4CBE7C1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */,
 				4CA028C61B7466C500C84163 /* ResultTests.swift in Sources */,
 				4CCFA79B1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
