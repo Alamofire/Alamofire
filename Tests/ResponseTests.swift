@@ -269,12 +269,15 @@ class ResponseJSONTestCase: BaseTestCase {
 // MARK: -
 
 class RedirectResponseTestCase: BaseTestCase {
+    var manager: Alamofire.Manager!
 
-    // MARK: Setup and Teardown
+    override func setUp() {
+        super.setUp()
+        manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.ephemeralSessionConfiguration())
+    }
 
     override func tearDown() {
         super.tearDown()
-        Alamofire.Manager.sharedInstance.delegate.taskWillPerformHTTPRedirection = nil
     }
 
     // MARK: Tests
@@ -292,7 +295,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        manager.request(.GET, URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -327,7 +330,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        manager.request(.GET, URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -355,9 +358,11 @@ class RedirectResponseTestCase: BaseTestCase {
         let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
-        let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
+        let callbackExpectation = expectationWithDescription("Redirect callback should be made")
+        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, request in
+            callbackExpectation.fulfill()
             return request
         }
 
@@ -367,7 +372,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        manager.request(.GET, URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -389,16 +394,18 @@ class RedirectResponseTestCase: BaseTestCase {
         XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
     }
 
-    func testThatTaskOverrideClosureCanCancelHTTPRedirection() {
+    func testThatTaskOverrideClosureWithCompletionCanPerformHTTPRedirection() {
         // Given
         let redirectURLString = "https://www.apple.com"
         let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
-        let expectation = expectationWithDescription("Request should not redirect to \(redirectURLString)")
-        let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
+        let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
+        let callbackExpectation = expectationWithDescription("Redirect callback should be made")
+        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
 
-        delegate.taskWillPerformHTTPRedirection = { _, _, _, _ in
-            return nil
+        delegate.taskWillPerformHTTPRedirectionWithCompletion = {_, _, _, request, completion in
+            completion(request)
+            callbackExpectation.fulfill()
         }
 
         var request: NSURLRequest?
@@ -407,7 +414,49 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        manager.request(.GET, URLString)
+            .response { responseRequest, responseResponse, responseData, responseError in
+                request = responseRequest
+                response = responseResponse
+                data = responseData
+                error = responseError
+
+                expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
+        XCTAssertNil(error, "error should be nil")
+
+        XCTAssertEqual(response?.URL?.URLString ?? "", redirectURLString, "response URL should match the redirect URL")
+        XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
+    }
+
+    func testThatTaskOverrideClosureCanCancelHTTPRedirection() {
+        // Given
+        let redirectURLString = "https://www.apple.com"
+        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
+
+        let expectation = expectationWithDescription("Request should not redirect to \(redirectURLString)")
+        let callbackExpectation = expectationWithDescription("Redirect callback should be made")
+        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
+
+        delegate.taskWillPerformHTTPRedirectionWithCompletion = {_, _, _, _, completion in
+            callbackExpectation.fulfill()
+            completion(nil)
+        }
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var data: NSData?
+        var error: NSError?
+
+        // When
+        manager.request(.GET, URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -429,17 +478,68 @@ class RedirectResponseTestCase: BaseTestCase {
         XCTAssertEqual(response?.statusCode ?? -1, 302, "response should have a 302 status code")
     }
 
+    func testThatTaskOverrideClosureWithCompletionCanCancelHTTPRedirection() {
+        // Given
+        let redirectURLString = "https://www.apple.com"
+        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
+
+        let expectation = expectationWithDescription("Request should not redirect to \(redirectURLString)")
+        let callbackExpectation = expectationWithDescription("Redirect callback should be made")
+        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
+
+        delegate.taskWillPerformHTTPRedirection = { _, _, _, _ in
+            callbackExpectation.fulfill()
+            return nil
+        }
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var data: NSData?
+        var error: NSError?
+
+        // When
+        manager.request(.GET, URLString)
+            .response { responseRequest, responseResponse, responseData, responseError in
+                request = responseRequest
+                response = responseResponse
+                data = responseData
+                error = responseError
+
+                expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
+        XCTAssertNil(error, "error should be nil")
+
+        XCTAssertEqual(response?.URL?.URLString ?? "", URLString, "response URL should match the origin URL")
+        XCTAssertEqual(response?.statusCode ?? -1, 302, "response should have a 302 status code")
+    }
+
     func testThatTaskOverrideClosureIsCalledMultipleTimesForMultipleHTTPRedirects() {
         // Given
+        let redirectCount = 5
         let redirectURLString = "https://httpbin.org/get"
-        let URLString = "https://httpbin.org/redirect/5"
+        let URLString = "https://httpbin.org/redirect/\(redirectCount)"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
-        let delegate: Alamofire.Manager.SessionDelegate = Alamofire.Manager.sharedInstance.delegate
-        var totalRedirectCount = 0
+        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
+        var redirectExpectations = [XCTestExpectation]()
+        for index in 0..<redirectCount {
+            redirectExpectations.insert(expectationWithDescription("Redirect #\(index) callback was received"), atIndex: 0)
+        }
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, request in
-            totalRedirectCount += 1
+            if let redirectExpectation = redirectExpectations.popLast() {
+                redirectExpectation.fulfill()
+            } else {
+                XCTFail("Too many redirect callbacks were received")
+            }
+
             return request
         }
 
@@ -449,7 +549,7 @@ class RedirectResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        manager.request(.GET, URLString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -469,7 +569,58 @@ class RedirectResponseTestCase: BaseTestCase {
 
         XCTAssertEqual(response?.URL?.URLString ?? "", redirectURLString, "response URL should match the redirect URL")
         XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
-        XCTAssertEqual(totalRedirectCount, 5, "total redirect count should be 5")
+    }
+
+    func testThatTaskOverrideClosureWithCompletionIsCalledMultipleTimesForMultipleHTTPRedirects() {
+        // Given
+        let redirectCount = 5
+        let redirectURLString = "https://httpbin.org/get"
+        let URLString = "https://httpbin.org/redirect/\(redirectCount)"
+
+        let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
+        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
+
+        var redirectExpectations = [XCTestExpectation]()
+        for index in 0..<redirectCount {
+            redirectExpectations.insert(expectationWithDescription("Redirect #\(index) callback was received"), atIndex: 0)
+        }
+
+        delegate.taskWillPerformHTTPRedirectionWithCompletion = {_, _, _, request, completion in
+            if let redirectExpectation = redirectExpectations.popLast() {
+                redirectExpectation.fulfill()
+            } else {
+                XCTFail("Too many redirect callbacks were received")
+            }
+
+            completion(request)
+        }
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var data: NSData?
+        var error: NSError?
+
+        // When
+        manager.request(.GET, URLString)
+            .response { responseRequest, responseResponse, responseData, responseError in
+                request = responseRequest
+                response = responseResponse
+                data = responseData
+                error = responseError
+
+                expectation.fulfill()
+        }
+
+        waitForExpectationsWithTimeout(timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertNotNil(data, "data should not be nil")
+        XCTAssertNil(error, "error should be nil")
+
+        XCTAssertEqual(response?.URL?.URLString ?? "", redirectURLString, "response URL should match the redirect URL")
+        XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
     }
 
     func testThatRedirectedRequestContainsAllHeadersFromOriginalRequest() {
@@ -484,8 +635,6 @@ class RedirectResponseTestCase: BaseTestCase {
         // NOTE: It appears that most headers are maintained during a redirect with the exception of the `Authorization`
         // header. It appears that Apple's strips the `Authorization` header from the redirected URL request. If you
         // need to maintain the `Authorization` header, you need to manually append it to the redirected request.
-
-        let manager = Manager(configuration: NSURLSessionConfiguration.ephemeralSessionConfiguration())
 
         manager.delegate.taskWillPerformHTTPRedirection = { session, task, response, request in
             var redirectedRequest = request
