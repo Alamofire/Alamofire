@@ -740,11 +740,11 @@ public class Manager {
             case #selector(NSURLSessionDelegate.URLSession(_:didBecomeInvalidWithError:)):
                 return sessionDidBecomeInvalidWithError != nil
             case #selector(NSURLSessionDelegate.URLSession(_:didReceiveChallenge:completionHandler:)):
-                return sessionDidReceiveChallenge != nil
+                return (sessionDidReceiveChallenge != nil  || sessionDidReceiveChallengeWithCompletion != nil)
             case #selector(NSURLSessionTaskDelegate.URLSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)):
                 return (taskWillPerformHTTPRedirection != nil || taskWillPerformHTTPRedirectionWithCompletion != nil)
             case #selector(NSURLSessionDataDelegate.URLSession(_:dataTask:didReceiveResponse:completionHandler:)):
-                return dataTaskDidReceiveResponse != nil
+                return (dataTaskDidReceiveResponse != nil || dataTaskDidReceiveResponseWithCompletion != nil)
             default:
                 return self.dynamicType.instancesRespondToSelector(selector)
             }
