@@ -28,9 +28,12 @@ class AuthenticationTestCase: BaseTestCase {
     let user = "user"
     let password = "password"
     var URLString = ""
+    var manager: Manager!
 
     override func setUp() {
         super.setUp()
+
+        manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.ephemeralSessionConfiguration())
 
         let credentialStorage = NSURLCredentialStorage.sharedCredentialStorage()
 
@@ -60,7 +63,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        manager.request(.GET, URLString)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -94,7 +97,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        manager.request(.GET, URLString)
             .authenticate(user: user, password: password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -136,7 +139,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        manager.request(.GET, URLString)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -170,7 +173,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString)
+        manager.request(.GET, URLString)
             .authenticate(user: user, password: password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
