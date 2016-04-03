@@ -271,6 +271,8 @@ class ResponseJSONTestCase: BaseTestCase {
 class RedirectResponseTestCase: BaseTestCase {
     var manager: Alamofire.Manager!
 
+    // MARK: Setup and Teardown
+
     override func setUp() {
         super.setUp()
         manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.ephemeralSessionConfiguration())
@@ -403,7 +405,7 @@ class RedirectResponseTestCase: BaseTestCase {
         let callbackExpectation = expectationWithDescription("Redirect callback should be made")
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
 
-        delegate.taskWillPerformHTTPRedirectionWithCompletion = {_, _, _, request, completion in
+        delegate.taskWillPerformHTTPRedirectionWithCompletion = { _, _, _, request, completion in
             completion(request)
             callbackExpectation.fulfill()
         }
@@ -422,7 +424,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
@@ -445,7 +447,7 @@ class RedirectResponseTestCase: BaseTestCase {
         let callbackExpectation = expectationWithDescription("Redirect callback should be made")
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
 
-        delegate.taskWillPerformHTTPRedirectionWithCompletion = {_, _, _, _, completion in
+        delegate.taskWillPerformHTTPRedirectionWithCompletion = { _, _, _, _, completion in
             callbackExpectation.fulfill()
             completion(nil)
         }
@@ -506,7 +508,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
@@ -581,11 +583,12 @@ class RedirectResponseTestCase: BaseTestCase {
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
 
         var redirectExpectations = [XCTestExpectation]()
+
         for index in 0..<redirectCount {
             redirectExpectations.insert(expectationWithDescription("Redirect #\(index) callback was received"), atIndex: 0)
         }
 
-        delegate.taskWillPerformHTTPRedirectionWithCompletion = {_, _, _, request, completion in
+        delegate.taskWillPerformHTTPRedirectionWithCompletion = { _, _, _, request, completion in
             if let redirectExpectation = redirectExpectations.popLast() {
                 redirectExpectation.fulfill()
             } else {
@@ -609,7 +612,7 @@ class RedirectResponseTestCase: BaseTestCase {
                 error = responseError
 
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
