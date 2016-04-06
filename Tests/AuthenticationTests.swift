@@ -28,13 +28,15 @@ class AuthenticationTestCase: BaseTestCase {
     let user = "user"
     let password = "password"
     var URLString = ""
+
     var manager: Manager!
 
     override func setUp() {
         super.setUp()
 
-        manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.ephemeralSessionConfiguration())
+        manager = Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
 
+        // Clear out credentials
         let credentialStorage = NSURLCredentialStorage.sharedCredentialStorage()
 
         for (protectionSpace, credentials) in credentialStorage.allCredentials {
@@ -42,6 +44,10 @@ class AuthenticationTestCase: BaseTestCase {
                 credentialStorage.removeCredential(credential, forProtectionSpace: protectionSpace)
             }
         }
+
+        // Clear out cookies
+        let cookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+        cookieStorage.cookies?.forEach { cookieStorage.deleteCookie($0) }
     }
 }
 
