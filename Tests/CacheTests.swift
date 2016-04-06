@@ -147,7 +147,7 @@ class CacheTestCase: BaseTestCase {
         }
 
         // Wait for all requests to complete
-        dispatch_group_wait(dispatchGroup, dispatch_time(DISPATCH_TIME_NOW, Int64(10.0 * Float(NSEC_PER_SEC))))
+        dispatch_group_wait(dispatchGroup, dispatch_time(DISPATCH_TIME_NOW, Int64(30.0 * Float(NSEC_PER_SEC))))
 
         // Pause for 2 additional seconds to ensure all timestamps will be different
         dispatch_group_enter(dispatchGroup)
