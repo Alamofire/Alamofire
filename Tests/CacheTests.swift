@@ -26,13 +26,13 @@ import XCTest
 
 /**
     This test case tests all implemented cache policies against various `Cache-Control` header values. These tests
-    are meant to cover the main cases of `Cache-Control` header usage, but are no means exhaustive.
+    are meant to cover the main cases of `Cache-Control` header usage, but are by no means exhaustive.
 
     These tests work as follows:
 
     - Set up an `NSURLCache`
     - Set up an `Alamofire.Manager`
-    - Execute requests for all `Cache-Control` headers values to prime the `NSURLCache` with cached responses
+    - Execute requests for all `Cache-Control` header values to prime the `NSURLCache` with cached responses
     - Start up a new test
     - Execute another round of the same requests with a given `NSURLRequestCachePolicy`
     - Verify whether the response came from the cache or from the network
@@ -96,7 +96,7 @@ class CacheTestCase: BaseTestCase {
                 let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
                 configuration.HTTPAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
                 configuration.requestCachePolicy = .UseProtocolCachePolicy
-                configuration.URLCache = self.URLCache
+                configuration.URLCache = URLCache
 
                 return configuration
             }()
@@ -149,13 +149,13 @@ class CacheTestCase: BaseTestCase {
         // Wait for all requests to complete
         dispatch_group_wait(dispatchGroup, dispatch_time(DISPATCH_TIME_NOW, Int64(10.0 * Float(NSEC_PER_SEC))))
 
-        // Pause for 1 additional second to ensure all timestamps will be different
+        // Pause for 2 additional seconds to ensure all timestamps will be different
         dispatch_group_enter(dispatchGroup)
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1.0 * Float(NSEC_PER_SEC))), highPriorityDispatchQueue) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2.0 * Float(NSEC_PER_SEC))), highPriorityDispatchQueue) {
             dispatch_group_leave(dispatchGroup)
         }
 
-        // Wait for our 1 second pause to complete
+        // Wait for our 2 second pause to complete
         dispatch_group_wait(dispatchGroup, dispatch_time(DISPATCH_TIME_NOW, Int64(10.0 * Float(NSEC_PER_SEC))))
     }
 
