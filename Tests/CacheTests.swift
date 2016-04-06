@@ -112,6 +112,9 @@ class CacheTestCase: BaseTestCase {
     override func tearDown() {
         super.tearDown()
 
+        requests.removeAll()
+        timestamps.removeAll()
+
         URLCache.removeAllCachedResponses()
     }
 
