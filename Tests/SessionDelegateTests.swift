@@ -34,10 +34,6 @@ class SessionDelegateTestCase: BaseTestCase {
         manager = Alamofire.Manager(configuration: NSURLSessionConfiguration.ephemeralSessionConfiguration())
     }
 
-    override func tearDown() {
-        super.tearDown()
-    }
-
     // MARK: - Tests - Session Invalidation
 
     func testThatSessionDidBecomeInvalidWithErrorClosureIsCalledWhenSet() {
@@ -66,53 +62,67 @@ class SessionDelegateTestCase: BaseTestCase {
     // MARK: - Tests - Session Challenges
 
     func testThatSessionDidReceiveChallengeClosureIsCalledWhenSet() {
-        // Given
-        let expectation = expectationWithDescription("Override closure should be called")
+        if #available(iOS 9.0, *) {
+            // Given
+            let expectation = expectationWithDescription("Override closure should be called")
 
-        var overrideClosureCalled = false
-        var response: NSHTTPURLResponse?
+            var overrideClosureCalled = false
+            var response: NSHTTPURLResponse?
 
-        manager.delegate.sessionDidReceiveChallenge = { session, challenge in
-            overrideClosureCalled = true
-            return (.PerformDefaultHandling, nil)
+            manager.delegate.sessionDidReceiveChallenge = { session, challenge in
+                overrideClosureCalled = true
+                return (.PerformDefaultHandling, nil)
+            }
+
+            // When
+            manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
+                response = closureResponse.response
+                expectation.fulfill()
+            }
+
+            waitForExpectationsWithTimeout(timeout, handler: nil)
+
+            // Then
+            XCTAssertTrue(overrideClosureCalled)
+            XCTAssertEqual(response?.statusCode, 200)
+        } else {
+            // This test MUST be disabled on iOS 8.x because `respondsToSelector` is not being called for the
+            // `URLSession:didReceiveChallenge:completionHandler:` selector when more than one test here is run
+            // at a time. Whether we flush the URL session of wipe all the shared credentials, the behavior is
+            // still the same. Until we find a better solution, we'll need to disable this test on iOS 8.x.
         }
-
-        // When
-        manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
-            response = closureResponse.response
-            expectation.fulfill()
-        }
-
-        waitForExpectationsWithTimeout(timeout, handler: nil)
-
-        // Then
-        XCTAssertTrue(overrideClosureCalled)
-        XCTAssertEqual(response?.statusCode, 200)
     }
 
     func testThatSessionDidReceiveChallengeWithCompletionClosureIsCalledWhenSet() {
-        // Given
-        let expectation = expectationWithDescription("Override closure should be called")
+        if #available(iOS 9.0, *) {
+            // Given
+            let expectation = expectationWithDescription("Override closure should be called")
 
-        var overrideClosureCalled = false
-        var response: NSHTTPURLResponse?
+            var overrideClosureCalled = false
+            var response: NSHTTPURLResponse?
 
-        manager.delegate.sessionDidReceiveChallengeWithCompletion = { session, challenge, completion in
-            overrideClosureCalled = true
-            completion(.PerformDefaultHandling, nil)
+            manager.delegate.sessionDidReceiveChallengeWithCompletion = { session, challenge, completion in
+                overrideClosureCalled = true
+                completion(.PerformDefaultHandling, nil)
+            }
+
+            // When
+            manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
+                response = closureResponse.response
+                expectation.fulfill()
+            }
+
+            waitForExpectationsWithTimeout(timeout, handler: nil)
+
+            // Then
+            XCTAssertTrue(overrideClosureCalled)
+            XCTAssertEqual(response?.statusCode, 200)
+        } else {
+            // This test MUST be disabled on iOS 8.x because `respondsToSelector` is not being called for the
+            // `URLSession:didReceiveChallenge:completionHandler:` selector when more than one test here is run
+            // at a time. Whether we flush the URL session of wipe all the shared credentials, the behavior is
+            // still the same. Until we find a better solution, we'll need to disable this test on iOS 8.x.
         }
-
-        // When
-        manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
-            response = closureResponse.response
-            expectation.fulfill()
-        }
-
-        waitForExpectationsWithTimeout(timeout, handler: nil)
-
-        // Then
-        XCTAssertTrue(overrideClosureCalled)
-        XCTAssertEqual(response?.statusCode, 200)
     }
 
     // MARK: - Tests - Redirects
