@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.3.x` Releases - [3.3.0](#330)
+- `3.3.x` Releases - [3.3.0](#330) | [3.3.1](#331)
 - `3.2.x` Releases - [3.2.0](#320) | [3.2.1](#321)
 - `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313) | [3.1.4](#314) | [3.1.5](#315)
 - `3.0.x` Releases - [3.0.0](#300) | [3.0.1](#301)
@@ -20,6 +20,35 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [3.3.1](https://github.com/Alamofire/Alamofire/releases/tag/3.3.1)
+Released on 2016-04-06. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.3.1).
+
+#### Added
+- Tests for the `SessionDelegate` redirect with completion override closure.
+  - Added by [Kevin Harwood](https://github.com/kcharwood) in Pull Request
+  [#1141](https://github.com/Alamofire/Alamofire/issues/1141)
+- Tests for all the `SessionDelegate` override closures.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- The authentication test cases to clear out all cookies to help stabilize Travis-CI.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The cache test check for no store header to use availability checks.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- The `respondsToSelector` check for the new HTTP redirect closure with completion.
+  - Fixed by [Kevin Harwood](https://github.com/kcharwood) in Pull Request
+  [#1141](https://github.com/Alamofire/Alamofire/issues/1141) in Regards to Issue
+  [#1140](https://github.com/Alamofire/Alamofire/issues/1140).
+- Issue where the challenge and response `SessionDelegate` override closures were not called.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+- Typo in the Travis YAML file that was causing all tests to always fail on iOS 9.1.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+- Race condition in the cache tests that was causing random failures on Travis-CI.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
 
 ## [3.3.0](https://github.com/Alamofire/Alamofire/releases/tag/3.3.0)
 Released on 2016-03-23. All issues associated with this milestone can be found using this
