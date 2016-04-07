@@ -239,17 +239,15 @@ class CacheTestCase: BaseTestCase {
     // MARK: - Cache Helper Methods
 
     private func isCachedResponseForNoStoreHeaderExpected() -> Bool {
-        var storedInCache = false
-
         #if os(iOS)
-            let operatingSystemVersion = NSOperatingSystemVersion(majorVersion: 8, minorVersion: 3, patchVersion: 0)
-
-            if !NSProcessInfo().isOperatingSystemAtLeastVersion(operatingSystemVersion) {
-                storedInCache = true
+            if #available(iOS 8.3, *) {
+                return false
+            } else {
+                return true
             }
+        #else
+            return false
         #endif
-
-        return storedInCache
     }
 
     // MARK: - Tests
