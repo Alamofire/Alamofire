@@ -48,7 +48,8 @@ public struct Error {
         - returns: An `NSError` with the given error code and failure reason.
     */
     public static func errorWithCode(code: Code, failureReason: String) -> NSError {
-        return errorWithCode(code.rawValue, failureReason: failureReason)
+        let userInfo = [NSLocalizedFailureReasonErrorKey: failureReason]
+        return NSError(domain: Domain, code: code.rawValue, userInfo: userInfo)
     }
 
     /**
@@ -59,7 +60,7 @@ public struct Error {
 
         - returns: An `NSError` with the given error code and failure reason.
     */
-    public static func errorWithCode(code: Int, failureReason: String) -> NSError {
+    @available(*, deprecated) public static func errorWithCode(code: Int, failureReason: String) -> NSError {
         let userInfo = [NSLocalizedFailureReasonErrorKey: failureReason]
         return NSError(domain: Domain, code: code, userInfo: userInfo)
     }

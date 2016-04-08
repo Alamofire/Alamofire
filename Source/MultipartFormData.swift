@@ -216,8 +216,7 @@ public class MultipartFormData {
             let mimeType = mimeTypeForPathExtension(pathExtension)
             appendBodyPart(fileURL: fileURL, name: name, fileName: fileName, mimeType: mimeType)
         } else {
-            let failureReason = "Failed to extract the fileName of the provided URL: \(fileURL)"
-            setBodyPartError(Error.errorWithCode(NSURLErrorBadURL, failureReason: failureReason))
+            setBodyPartError(NSURLErrorBadURL, reason: "Failed to extract the fileName of the provided URL: \(fileURL)")
         }
     }
 
@@ -244,9 +243,7 @@ public class MultipartFormData {
         //============================================================
 
         guard fileURL.fileURL else {
-            let failureReason = "The file URL does not point to a file URL: \(fileURL)"
-            let error = Error.errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
-            setBodyPartError(error)
+            setBodyPartError(NSURLErrorBadURL, reason: "The file URL does not point to a file URL: \(fileURL)")
             return
         }
 
@@ -261,8 +258,7 @@ public class MultipartFormData {
         }
 
         guard isReachable else {
-            let error = Error.errorWithCode(NSURLErrorBadURL, failureReason: "The file URL is not reachable: \(fileURL)")
-            setBodyPartError(error)
+            setBodyPartError(NSURLErrorBadURL, reason: "The file URL is not reachable: \(fileURL)")
             return
         }
 
@@ -276,9 +272,7 @@ public class MultipartFormData {
             path = fileURL.path
             where NSFileManager.defaultManager().fileExistsAtPath(path, isDirectory: &isDirectory) && !isDirectory else
         {
-            let failureReason = "The file URL is a directory, not a file: \(fileURL)"
-            let error = Error.errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
-            setBodyPartError(error)
+            setBodyPartError(NSURLErrorBadURL, reason: "The file URL is a directory, not a file: \(fileURL)")
             return
         }
 
@@ -300,9 +294,7 @@ public class MultipartFormData {
         }
 
         guard let length = bodyContentLength else {
-            let failureReason = "Could not fetch attributes from the file URL: \(fileURL)"
-            let error = Error.errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
-            setBodyPartError(error)
+            setBodyPartError(NSURLErrorBadURL, reason: "Could not fetch attributes from the file URL: \(fileURL)")
             return
         }
 
@@ -311,9 +303,7 @@ public class MultipartFormData {
         //============================================================
 
         guard let stream = NSInputStream(URL: fileURL) else {
-            let failureReason = "Failed to create an input stream from the file URL: \(fileURL)"
-            let error = Error.errorWithCode(NSURLErrorCannotOpenFile, failureReason: failureReason)
-            setBodyPartError(error)
+            setBodyPartError(NSURLErrorCannotOpenFile, reason: "Failed to create an input stream from the file URL: \(fileURL)")
             return
         }
 
@@ -413,10 +403,12 @@ public class MultipartFormData {
 
         if let path = fileURL.path where NSFileManager.defaultManager().fileExistsAtPath(path) {
             let failureReason = "A file already exists at the given file URL: \(fileURL)"
-            throw Error.errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
+            let userInfo = [NSLocalizedFailureReasonErrorKey: failureReason]
+            throw NSError(domain: NSURLErrorDomain, code: NSURLErrorBadURL, userInfo: userInfo)
         } else if !fileURL.fileURL {
             let failureReason = "The URL does not point to a valid file: \(fileURL)"
-            throw Error.errorWithCode(NSURLErrorBadURL, failureReason: failureReason)
+            let userInfo = [NSLocalizedFailureReasonErrorKey: failureReason]
+            throw NSError(domain: NSURLErrorDomain, code: NSURLErrorBadURL, userInfo: userInfo)
         }
 
         let outputStream: NSOutputStream
@@ -425,7 +417,8 @@ public class MultipartFormData {
             outputStream = possibleOutputStream
         } else {
             let failureReason = "Failed to create an output stream with the given URL: \(fileURL)"
-            throw Error.errorWithCode(NSURLErrorCannotOpenFile, failureReason: failureReason)
+            let userInfo = [NSLocalizedFailureReasonErrorKey: failureReason]
+            throw NSError(domain: NSURLErrorDomain, code: NSURLErrorBadURL, userInfo: userInfo)
         }
 
         outputStream.open()
@@ -655,9 +648,10 @@ public class MultipartFormData {
 
     // MARK: - Private - Errors
 
-    private func setBodyPartError(error: NSError) {
+    private func setBodyPartError(code: Int, reason: String) {
         if bodyPartError == nil {
-            bodyPartError = error
+            let userInfo = [NSLocalizedFailureReasonErrorKey: reason]
+            bodyPartError = NSError(domain: NSURLErrorDomain, code: code, userInfo: userInfo)
         }
     }
 }
