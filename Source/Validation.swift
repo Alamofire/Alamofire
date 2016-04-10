@@ -80,7 +80,7 @@ extension Request {
                 return .Success
             } else {
                 let failureReason = "Response status code was unacceptable: \(response.statusCode)"
-                return .Failure(Error.errorWithCode(.StatusCodeValidationFailed, failureReason: failureReason))
+                return .Failure(Error.error(code: .StatusCodeValidationFailed, failureReason: failureReason))
             }
         }
     }
@@ -160,7 +160,7 @@ extension Request {
                 failureReason = "Response content type was missing and acceptable content type does not match \"*/*\""
             }
 
-            return .Failure(Error.errorWithCode(.ContentTypeValidationFailed, failureReason: failureReason))
+            return .Failure(Error.error(code: .ContentTypeValidationFailed, failureReason: failureReason))
         }
     }
 

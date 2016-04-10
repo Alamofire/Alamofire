@@ -25,7 +25,7 @@ import Foundation
 import XCTest
 
 class ResultTestCase: BaseTestCase {
-    let error = Error.errorWithCode(.StatusCodeValidationFailed, failureReason: "Status code validation failed")
+    let error = Error.error(code: .StatusCodeValidationFailed, failureReason: "Status code validation failed")
 
     // MARK: - Is Success Tests
 

@@ -161,7 +161,7 @@ extension Request {
 
             guard let validData = data else {
                 let failureReason = "Data could not be serialized. Input data was nil."
-                let error = Error.errorWithCode(.DataSerializationFailed, failureReason: failureReason)
+                let error = Error.error(code: .DataSerializationFailed, failureReason: failureReason)
                 return .Failure(error)
             }
 
@@ -209,7 +209,7 @@ extension Request {
 
             guard let validData = data else {
                 let failureReason = "String could not be serialized. Input data was nil."
-                let error = Error.errorWithCode(.StringSerializationFailed, failureReason: failureReason)
+                let error = Error.error(code: .StringSerializationFailed, failureReason: failureReason)
                 return .Failure(error)
             }
             
@@ -227,7 +227,7 @@ extension Request {
                 return .Success(string)
             } else {
                 let failureReason = "String could not be serialized with encoding: \(actualEncoding)"
-                let error = Error.errorWithCode(.StringSerializationFailed, failureReason: failureReason)
+                let error = Error.error(code: .StringSerializationFailed, failureReason: failureReason)
                 return .Failure(error)
             }
         }
@@ -280,7 +280,7 @@ extension Request {
 
             guard let validData = data where validData.length > 0 else {
                 let failureReason = "JSON could not be serialized. Input data was nil or zero length."
-                let error = Error.errorWithCode(.JSONSerializationFailed, failureReason: failureReason)
+                let error = Error.error(code: .JSONSerializationFailed, failureReason: failureReason)
                 return .Failure(error)
             }
 
@@ -338,7 +338,7 @@ extension Request {
 
             guard let validData = data where validData.length > 0 else {
                 let failureReason = "Property list could not be serialized. Input data was nil or zero length."
-                let error = Error.errorWithCode(.PropertyListSerializationFailed, failureReason: failureReason)
+                let error = Error.error(code: .PropertyListSerializationFailed, failureReason: failureReason)
                 return .Failure(error)
             }
 
