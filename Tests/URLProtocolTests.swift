@@ -58,6 +58,10 @@ class ProxyURLProtocol: NSURLProtocol {
     }
 
     override class func canonicalRequestForRequest(request: NSURLRequest) -> NSURLRequest {
+        if let headers = request.allHTTPHeaderFields {
+            return ParameterEncoding.URL.encode(request, parameters: headers).0
+        }
+
         return request
     }
 
@@ -102,36 +106,36 @@ extension ProxyURLProtocol: NSURLSessionDelegate {
 // MARK: -
 
 class URLProtocolTestCase: BaseTestCase {
+    var manager: Manager!
 
-    // MARK: Setup and Teardown Methods
+    // MARK: Setup and Teardown
 
     override func setUp() {
         super.setUp()
 
-        let configuration = Alamofire.Manager.sharedInstance.session.configuration
+        manager = {
+            let configuration: NSURLSessionConfiguration = {
+                let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+                configuration.protocolClasses = [ProxyURLProtocol.self]
+                configuration.HTTPAdditionalHeaders = ["session-configuration-header": "foo"]
 
-        configuration.protocolClasses = [ProxyURLProtocol.self]
-        configuration.HTTPAdditionalHeaders = ["Session-Configuration-Header": "foo"]
-    }
+                return configuration
+            }()
 
-    override func tearDown() {
-        super.tearDown()
-
-        Alamofire.Manager.sharedInstance.session.configuration.protocolClasses = []
+            return Manager(configuration: configuration)
+        }()
     }
 
     // MARK: Tests
 
-    func testThatURLProtocolReceivesRequestHeadersAndNotSessionConfigurationHeaders() {
+    func testThatURLProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() {
         // Given
         let URLString = "https://httpbin.org/response-headers"
         let URL = NSURL(string: URLString)!
-        let parameters = ["request-header": "foobar"]
 
-        let mutableURLRequest = NSMutableURLRequest(URL: URL)
-        mutableURLRequest.HTTPMethod = Method.GET.rawValue
-
-        let URLRequest = ParameterEncoding.URL.encode(mutableURLRequest, parameters: parameters).0
+        let URLRequest = NSMutableURLRequest(URL: URL)
+        URLRequest.HTTPMethod = Method.GET.rawValue
+        URLRequest.setValue("foobar", forHTTPHeaderField: "request-header")
 
         let expectation = expectationWithDescription("GET request should succeed")
 
@@ -141,7 +145,7 @@ class URLProtocolTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(URLRequest)
+        manager.request(URLRequest)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -160,8 +164,8 @@ class URLProtocolTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
 
         if let headers = response?.allHeaderFields as? [String: String] {
-            XCTAssertEqual(headers["request-header"] ?? "", "foobar", "urlrequest-header should be foobar")
-            XCTAssertNil(headers["Session-Configuration-Header"], "Session-Configuration-Header should be nil")
+            XCTAssertEqual(headers["request-header"], "foobar")
+            XCTAssertEqual(headers["session-configuration-header"], "foo")
         } else {
             XCTFail("headers should not be nil")
         }
