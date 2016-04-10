@@ -80,7 +80,8 @@ extension Request {
                 return .Success
             } else {
                 let failureReason = "Response status code was unacceptable: \(response.statusCode)"
-                return .Failure(Error.errorWithCode(.StatusCodeValidationFailed, failureReason: failureReason))
+                let userInfo: Dictionary<NSObject, AnyObject> = [NSLocalizedFailureReasonErrorKey: failureReason, Error.StatusCode: response.statusCode]
+                return .Failure(NSError(domain: Error.Domain, code: Error.Code.StatusCodeValidationFailed.rawValue, userInfo: userInfo))
             }
         }
     }

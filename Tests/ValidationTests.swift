@@ -69,6 +69,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         if let error = error {
             XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
             XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+            XCTAssertEqual((error.userInfo[Error.StatusCode] as! Int), 404, "status code should be 404")
         } else {
             XCTFail("error should be an NSError")
         }
@@ -97,6 +98,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         if let error = error {
             XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
             XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+            XCTAssertEqual((error.userInfo[Error.StatusCode] as! Int), 201, "status code should be 201")
         } else {
             XCTFail("error should be an NSError")
         }
@@ -357,6 +359,7 @@ class MultipleValidationTestCase: BaseTestCase {
         if let error = error {
             XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
             XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+            XCTAssertEqual((error.userInfo[Error.StatusCode] as! Int), 200, "status code should be 200")
         } else {
             XCTFail("error should be an NSError")
         }
@@ -442,6 +445,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         if let error = error {
             XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
             XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+            XCTAssertEqual((error.userInfo[Error.StatusCode] as! Int), 404, "status code should be 404")
         } else {
             XCTFail("error should be an NSError")
         }

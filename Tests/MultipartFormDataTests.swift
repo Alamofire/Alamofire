@@ -824,7 +824,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
         if let error = encodingError {
-            XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
+            XCTAssertEqual(error.domain, NSURLErrorDomain, "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
             if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
@@ -855,7 +855,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
         if let error = encodingError {
-            XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
+            XCTAssertEqual(error.domain, NSURLErrorDomain, "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
             if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
@@ -887,7 +887,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
         if let error = encodingError {
-            XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
+            XCTAssertEqual(error.domain, NSURLErrorDomain, "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
             if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
@@ -918,7 +918,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
         if let error = encodingError {
-            XCTAssertEqual(error.domain, "com.alamofire.error", "error domain does not match expected value")
+            XCTAssertEqual(error.domain, NSURLErrorDomain, "error domain does not match expected value")
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
             if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
@@ -960,7 +960,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
         if let encodingError = encodingError {
-            XCTAssertEqual(encodingError.domain, "com.alamofire.error", "encoding error domain does not match expected value")
+            XCTAssertEqual(encodingError.domain, NSURLErrorDomain, "encoding error domain does not match expected value")
             XCTAssertEqual(encodingError.code, NSURLErrorBadURL, "encoding error code does not match expected value")
         }
     }
@@ -986,7 +986,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
         if let encodingError = encodingError {
-            XCTAssertEqual(encodingError.domain, "com.alamofire.error", "encoding error domain does not match expected value")
+            XCTAssertEqual(encodingError.domain, NSURLErrorDomain, "encoding error domain does not match expected value")
             XCTAssertEqual(encodingError.code, NSURLErrorBadURL, "encoding error code does not match expected value")
         }
     }
