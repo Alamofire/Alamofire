@@ -1101,7 +1101,7 @@ The `.PerformDefaultEvaluation`, `.PinCertificates` and `.PinPublicKeys` server 
 
 #### Validating the Certificate Chain
 
-Pinning certificates and public keys both have the option of validating the certificate chain using the `validateCertificateChain` parameter. By setting this value to `true`, the full certificate chain will be evaluated in addition to performing a byte equality check against the pinned certficates or public keys. A value of `false` will skip the certificate chain validation, but will still perform the byte equality check.
+Pinning certificates and public keys both have the option of validating the certificate chain using the `validateCertificateChain` parameter. By setting this value to `true`, the full certificate chain will be evaluated in addition to performing a byte equality check against the pinned certificates or public keys. A value of `false` will skip the certificate chain validation, but will still perform the byte equality check.
 
 There are several cases where it may make sense to disable certificate chain validation. The most common use cases for disabling validation are self-signed and expired certificates. The evaluation would always fail in both of these cases, but the byte equality check will still ensure you are receiving the certificate you expect from the server.
 
@@ -1163,7 +1163,7 @@ There are some important things to remember when using network reachability to d
 * When Reachability is restored, use the event to retry failed network requests.
   * Even though the network requests may still fail, this is a good moment to retry them.
 * The network reachability status can be useful for determining why a network request may have failed.
-  * If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical errror, such as "request timed out."
+  * If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
 
 > It is recommended to check out [WWDC 2012 Session 706, "Networking Best Practices"](https://developer.apple.com/videos/play/wwdc2012-706/) for more info.
 
