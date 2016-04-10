@@ -43,7 +43,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNil(error)
     }
 
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
@@ -64,13 +64,14 @@ class StatusCodeValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
-            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+            XCTAssertEqual(error.domain, Error.Domain)
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[Error.UserInfoKeys.StatusCode] as? Int, 404)
         } else {
-            XCTFail("error should be an NSError")
+            XCTFail("error should not be nil")
         }
     }
 
@@ -92,13 +93,14 @@ class StatusCodeValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
-            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+            XCTAssertEqual(error.domain, Error.Domain)
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[Error.UserInfoKeys.StatusCode] as? Int, 201)
         } else {
-            XCTFail("error should be an NSError")
+            XCTFail("error should not be nil")
         }
     }
 }
@@ -126,7 +128,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNil(error)
     }
 
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
@@ -149,7 +151,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNil(error)
     }
 
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
@@ -170,13 +172,14 @@ class ContentTypeValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
-            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+            XCTAssertEqual(error.domain, Error.Domain)
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[Error.UserInfoKeys.ContentType] as? String, "application/xml")
         } else {
-            XCTFail("error should be an NSError")
+            XCTFail("error should not be nil")
         }
     }
 
@@ -201,10 +204,11 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(error, "error should not be nil")
 
         if let error = error {
-            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
-            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+            XCTAssertEqual(error.domain, Error.Domain)
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[Error.UserInfoKeys.ContentType] as? String, "application/xml")
         } else {
-            XCTFail("error should be an NSError")
+            XCTFail("error should not be nil")
         }
     }
 
@@ -226,7 +230,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNil(error)
     }
 
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
@@ -297,13 +301,13 @@ class ContentTypeValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response)
+        XCTAssertNotNil(data)
+        XCTAssertNil(error)
 
         if let response = response {
-            XCTAssertEqual(response.statusCode, 204, "response status code should be 204")
-            XCTAssertNil(response.MIMEType, "response mime type should be nil")
+            XCTAssertEqual(response.statusCode, 204)
+            XCTAssertNil(response.MIMEType)
         }
     }
 }
@@ -330,7 +334,7 @@ class MultipleValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNil(error)
     }
 
     func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithStatusCodeError() {
@@ -352,13 +356,14 @@ class MultipleValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
-            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+            XCTAssertEqual(error.domain, Error.Domain)
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[Error.UserInfoKeys.StatusCode] as? Int, 200)
         } else {
-            XCTFail("error should be an NSError")
+            XCTFail("error should not be nil")
         }
     }
 
@@ -381,13 +386,14 @@ class MultipleValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
-            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+            XCTAssertEqual(error.domain, Error.Domain)
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[Error.UserInfoKeys.ContentType] as? String, "application/xml")
         } else {
-            XCTFail("error should be an NSError")
+            XCTFail("error should not be nil")
         }
     }
 }
@@ -416,7 +422,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNil(error)
     }
 
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
@@ -437,13 +443,14 @@ class AutomaticValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
-            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue, "code should be status code validation failure")
+            XCTAssertEqual(error.domain, Error.Domain)
+            XCTAssertEqual(error.code, Error.Code.StatusCodeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[Error.UserInfoKeys.StatusCode] as? Int, 404)
         } else {
-            XCTFail("error should be an NSError")
+            XCTFail("error should not be nil")
         }
     }
 
@@ -468,7 +475,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNil(error)
     }
 
     func testThatValidationForRequestWithAcceptableComplexContentTypeResponseSucceeds() {
@@ -494,7 +501,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNil(error)
     }
 
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
@@ -518,13 +525,14 @@ class AutomaticValidationTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Error.Domain, "domain should be Alamofire error domain")
-            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue, "code should be content type validation failure")
+            XCTAssertEqual(error.domain, Error.Domain)
+            XCTAssertEqual(error.code, Error.Code.ContentTypeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[Error.UserInfoKeys.ContentType] as? String, "application/xml")
         } else {
-            XCTFail("error should be an NSError")
+            XCTFail("error should not be nil")
         }
     }
 }

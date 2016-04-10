@@ -80,7 +80,17 @@ extension Request {
                 return .Success
             } else {
                 let failureReason = "Response status code was unacceptable: \(response.statusCode)"
-                return .Failure(Error.error(code: .StatusCodeValidationFailed, failureReason: failureReason))
+
+                let error = NSError(
+                    domain: Error.Domain,
+                    code: Error.Code.StatusCodeValidationFailed.rawValue,
+                    userInfo: [
+                        NSLocalizedFailureReasonErrorKey: failureReason,
+                        Error.UserInfoKeys.StatusCode: response.statusCode
+                    ]
+                )
+
+                return .Failure(error)
             }
         }
     }
@@ -149,18 +159,31 @@ extension Request {
                 }
             }
 
+            let contentType: String
             let failureReason: String
 
             if let responseContentType = response.MIMEType {
+                contentType = responseContentType
+
                 failureReason = (
                     "Response content type \"\(responseContentType)\" does not match any acceptable " +
                     "content types: \(acceptableContentTypes)"
                 )
             } else {
+                contentType = ""
                 failureReason = "Response content type was missing and acceptable content type does not match \"*/*\""
             }
 
-            return .Failure(Error.error(code: .ContentTypeValidationFailed, failureReason: failureReason))
+            let error = NSError(
+                domain: Error.Domain,
+                code: Error.Code.ContentTypeValidationFailed.rawValue,
+                userInfo: [
+                    NSLocalizedFailureReasonErrorKey: failureReason,
+                    Error.UserInfoKeys.ContentType: contentType
+                ]
+            )
+
+            return .Failure(error)
         }
     }
 
