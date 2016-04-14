@@ -485,6 +485,18 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         return manager
     }()
 
+    let managerWithAcceptLanguageHeader: Manager = {
+        var headers = Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders ?? [:]
+        headers["Accept-Language"] = "en-US"
+        
+        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        configuration.HTTPAdditionalHeaders = headers
+        
+        let manager = Manager(configuration: configuration)
+        manager.startRequestsImmediately = false
+        return manager
+    }()
+    
     let managerDisallowingCookies: Manager = {
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.HTTPShouldSetCookies = false
@@ -511,6 +523,30 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
 
+    func testGETRequestWithDuplicateHeadersDebugDescription() {
+        // Given
+        let URLString = "https://httpbin.org/get"
+        
+        // When
+        let headers = [ "Accept-Language": "en-GB" ]
+        let request = managerWithAcceptLanguageHeader.request(.GET, URLString, headers: headers)
+        let components = cURLCommandComponents(request)
+        
+        // Then
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
+        XCTAssertFalse(components.contains("-X"), "command should not contain explicit -X flag")
+        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
+        
+        let tokens = request.debugDescription.componentsSeparatedByString("Accept-Language:")
+        XCTAssertTrue(tokens.count == 2,
+            "command should contain a single Accept-Language header"
+        )
+        XCTAssertTrue(
+            request.debugDescription.rangeOfString("-H \"Accept-Language: en-GB\"") != nil,
+            "command should Accept-Language set to 'en-GB'"
+        )
+    }
+    
     func testPOSTRequestDebugDescription() {
         // Given
         let URLString = "https://httpbin.org/post"
