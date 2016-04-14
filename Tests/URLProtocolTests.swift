@@ -136,7 +136,8 @@ class URLProtocolTestCase: BaseTestCase {
         let URLRequest = NSMutableURLRequest(URL: URL)
         URLRequest.HTTPMethod = Method.GET.rawValue
         URLRequest.setValue("foobar", forHTTPHeaderField: "request-header")
-
+        URLRequest.setValue("foo", forHTTPHeaderField: "session-configuration-header")
+        
         let expectation = expectationWithDescription("GET request should succeed")
 
         var request: NSURLRequest?
