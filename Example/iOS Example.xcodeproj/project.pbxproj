@@ -142,7 +142,10 @@
 				F8111E0619A951050040E7D1 /* Products */,
 				31E4765F1C55DD5900968569 /* Alamofire.xcodeproj */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
 		};
 		F8111E0619A951050040E7D1 /* Products */ = {
 			isa = PBXGroup;

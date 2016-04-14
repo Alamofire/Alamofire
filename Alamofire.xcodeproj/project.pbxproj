@@ -562,7 +562,10 @@
 				F8111E3F19A95C8B0040E7D1 /* Tests */,
 				F8111E3419A95C8B0040E7D1 /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
 		};
 		F8111E3419A95C8B0040E7D1 /* Products */ = {
 			isa = PBXGroup;
