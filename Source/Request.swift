@@ -72,6 +72,16 @@ public class Request {
 
     // MARK: - Authentication
 
+    public static func basicAuthenticationHeader(
+        user user: String,
+        password: String)
+        -> Dictionary<String, String>
+    {
+        let basicAuthCredentials = "\(user):\(password)".dataUsingEncoding(NSUTF8StringEncoding) ?? NSData()
+        let base64AuthCredentials = basicAuthCredentials.base64EncodedStringWithOptions([])
+        return ["Authorization": "Basic \(base64AuthCredentials)"]
+    }
+
     /**
         Associates an HTTP Basic credential with the request.
 
