@@ -459,6 +459,7 @@ Alamofire.download(.GET, "https://httpbin.org/stream/100", destination: destinat
 
 #### Accessing Resume Data for Failed Downloads
 
+
 ```swift
 Alamofire.download(.GET, "https://httpbin.org/stream/100", destination: destination)
          .response { _, _, data, _ in

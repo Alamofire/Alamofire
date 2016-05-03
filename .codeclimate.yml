@@ -1,0 +1,7 @@
+engines:
+  tailor:
+    enabled: true
+
+ratings:
+  paths:
+  - "**.swift"
