@@ -43,13 +43,13 @@ public protocol URLStringConvertible {
 
 extension String: URLStringConvertible {
     public var URLString: String {
-        return self
+        return self.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet()) ?? ""
     }
 }
 
 extension NSURL: URLStringConvertible {
     public var URLString: String {
-        return absoluteString
+        return absoluteString.stringByAddingPercentEncodingWithAllowedCharacters(.URLQueryAllowedCharacterSet()) ?? ""
     }
 }
 
