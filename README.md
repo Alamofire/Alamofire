@@ -376,7 +376,7 @@ Adding a custom HTTP header to a `Request` is supported directly in the global `
 ```swift
 let headers = [
     "Authorization": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
-    "Content-Type": "application/x-www-form-urlencoded"
+    "Accept": "application/json"
 ]
 
 Alamofire.request(.GET, "https://httpbin.org/get", headers: headers)
