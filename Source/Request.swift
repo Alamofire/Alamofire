@@ -550,7 +550,9 @@ extension Request: CustomDebugStringConvertible {
             HTTPBodyData = request.HTTPBody,
             HTTPBody = String(data: HTTPBodyData, encoding: NSUTF8StringEncoding)
         {
-            let escapedBody = HTTPBody.stringByReplacingOccurrencesOfString("\"", withString: "\\\"")
+            var escapedBody = HTTPBody.stringByReplacingOccurrencesOfString("\\\"", withString: "\\\\\"")
+            escapedBody = escapedBody.stringByReplacingOccurrencesOfString("\"", withString: "\\\"")
+
             components.append("-d \"\(escapedBody)\"")
         }
 

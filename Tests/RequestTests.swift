@@ -566,21 +566,32 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         // Given
         let URLString = "https://httpbin.org/post"
 
+        let parameters = [
+            "foo": "bar",
+            "fo\"o": "b\"ar",
+            "f'oo": "ba'r"
+        ]
+
         // When
-        let request = manager.request(.POST, URLString, parameters: ["foo": "bar"], encoding: .JSON)
+        let request = manager.request(.POST, URLString, parameters: parameters, encoding: .JSON)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
+
         XCTAssertTrue(
             request.debugDescription.rangeOfString("-H \"Content-Type: application/json\"") != nil,
             "command should contain 'application/json' Content-Type"
         )
+
+        let expectedBody = "-d \"{\\\"f'oo\\\":\\\"ba'r\\\",\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\",\\\"foo\\\":\\\"bar\\\"}\""
+
         XCTAssertTrue(
-            request.debugDescription.rangeOfString("-d \"{\\\"foo\\\":\\\"bar\\\"}\"") != nil,
+            request.debugDescription.rangeOfString(expectedBody) != nil,
             "command data should contain JSON encoded parameters"
         )
+
         XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
 
