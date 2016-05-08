@@ -70,7 +70,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '9.0'
 use_frameworks!
 
-pod 'Alamofire', '~> 3.3'
+pod 'Alamofire', '~> 3.4'
 ```
 
 Then, run the following command:
@@ -93,7 +93,7 @@ $ brew install carthage
 To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" ~> 3.3
+github "Alamofire/Alamofire" ~> 3.4
 ```
 
 Run `carthage update` to build the framework and drag the built `Alamofire.framework` into your Xcode project.

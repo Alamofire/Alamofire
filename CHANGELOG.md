@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
+- `3.4.x` Releases - [3.4.0](#340)
 - `3.3.x` Releases - [3.3.0](#330) | [3.3.1](#331)
 - `3.2.x` Releases - [3.2.0](#320) | [3.2.1](#321)
 - `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313) | [3.1.4](#314) | [3.1.5](#315)
@@ -21,6 +22,63 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.4.0](https://github.com/Alamofire/Alamofire/releases/tag/3.4.0)
+Released on 2016-05-08. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.4.0).
+
+#### Added
+- Status code and content type values into validation `NSError` userInfo dictionaries.
+  - Added by [Cédric Luthi](https://github.com/0xced) in Pull Request
+  [#1166](https://github.com/Alamofire/Alamofire/pull/1166).
+- New `authorizationHeader` API to generate base64 encoded authorization header.
+  - Added by [Cédric Luthi](https://github.com/0xced) in Pull Request
+  [#1187](https://github.com/Alamofire/Alamofire/pull/1187).
+
+#### Updated
+- URLProtocol tests to demonstrate using `NSURLProtocol` with `NSURLSession`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Regards to Issue
+  [#1160](https://github.com/Alamofire/Alamofire/issues/1160).
+- The `SesionDelegate` to no longer be `final` to allow subclassing.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1172](https://github.com/Alamofire/Alamofire/issues/1172) in Regards to Issue
+  [#1145](https://github.com/Alamofire/Alamofire/issues/1145).  
+- The `SessionDelegate` subscript public to allow full control when subclassing.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1172](https://github.com/Alamofire/Alamofire/issues/1172).
+- The `Response Serialization` section of the README to include validation examples.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Regards to Issue
+  [#1213](https://github.com/Alamofire/Alamofire/issues/1213).
+- The delegate guard in the `Manager` initializer in front of property assignment.
+  - Updated by [Broccoliii](https://github.com/broccolii) in Pull Request
+  [#1226](https://github.com/Alamofire/Alamofire/issues/1226).
+- Header example in the README to use `Accept` header instead of `Content-Type`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Regards to Pull Request
+  [#1229](https://github.com/Alamofire/Alamofire/issues/1229).
+
+#### Deprecated
+- The `errorWithCode` APIs and updated NSURLError* domains to `NSURLErrorDomain`.
+  - Deprecated by [Cédric Luthi](https://github.com/0xced) in Pull Request
+  [#1166](https://github.com/Alamofire/Alamofire/pull/1166).
+
+#### Fixed
+- Issue where Requests with invalid credentials were not terminating with 401 status code.
+  - Fixed by [Cédric Luthi](https://github.com/0xced) in Pull Request
+  [#1164](https://github.com/Alamofire/Alamofire/pull/1164) in Regards to Issue
+  [#1159](https://github.com/Alamofire/Alamofire/issues/1159).
+- Issue in URLProtocol test where config headers are not passed prior to iOS 9.0.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+- Issue where Request `cURLRepresentation` method was not coalescing duplicate headers.
+  - Fixed by [Chris Richards](https://github.com/chrisrichards) in Pull Request
+  [#1186](https://github.com/Alamofire/Alamofire/pull/1186) in Regards to Issue
+  [#1184](https://github.com/Alamofire/Alamofire/issues/1184).
+- Issue where incorrect dash in License file was breaking markdown parsing.
+  - Fixed by [Gemma Barlow](https://github.com/gemmakbarlow) in Pull Request
+  [#1218](https://github.com/Alamofire/Alamofire/issues/1218).
+- Issue where internal quotes were not escaped correctly in cURL output.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+
+---
+
 ## [3.3.1](https://github.com/Alamofire/Alamofire/releases/tag/3.3.1)
 Released on 2016-04-06. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.3.1).
@@ -28,7 +86,7 @@ Released on 2016-04-06. All issues associated with this milestone can be found u
 #### Added
 - Tests for the `SessionDelegate` redirect with completion override closure.
   - Added by [Kevin Harwood](https://github.com/kcharwood) in Pull Request
-  [#1141](https://github.com/Alamofire/Alamofire/issues/1141)
+  [#1141](https://github.com/Alamofire/Alamofire/issues/1141).
 - Tests for all the `SessionDelegate` override closures.
   - Added by [Christian Noon](https://github.com/cnoon).
 
