@@ -168,6 +168,38 @@ Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
 
 > Rather than blocking execution to wait for a response from the server, a [callback](http://en.wikipedia.org/wiki/Callback_%28computer_programming%29) is specified to handle the response once it's received. The result of a request is only available inside the scope of a response handler. Any execution contingent on the response or data received from the server must be done within a handler.
 
+### Validation
+
+By default, Alamofire treats any completed request to be successful, regardless of the content of the response. Calling `validate` before a response handler causes an error to be generated if the response had an unacceptable status code or MIME type.
+
+#### Manual Validation
+
+```swift
+Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
+         .validate(statusCode: 200..<300)
+         .validate(contentType: ["application/json"])
+         .response { response in
+             print(response)
+         }
+```
+
+#### Automatic Validation
+
+Automatically validates status code within `200...299` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
+
+```swift
+Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
+         .validate()
+         .responseJSON { response in
+             switch response.result {
+             case .Success:
+                 print("Validation Successful")
+             case .Failure(let error):
+                 print(error)
+             }
+         }
+```
+
 ### Response Serialization
 
 **Built-in Response Methods**
@@ -182,6 +214,7 @@ Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
 
 ```swift
 Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
+         .validate()
          .response { request, response, data, error in
              print(request)
              print(response)
@@ -196,6 +229,7 @@ Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
 
 ```swift
 Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
+         .validate()
          .responseData { response in
              print(response.request)
              print(response.response)
@@ -207,6 +241,7 @@ Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
 
 ```swift
 Alamofire.request(.GET, "https://httpbin.org/get")
+         .validate()
          .responseString { response in
              print("Success: \(response.result.isSuccess)")
              print("Response String: \(response.result.value)")
@@ -217,6 +252,7 @@ Alamofire.request(.GET, "https://httpbin.org/get")
 
 ```swift
 Alamofire.request(.GET, "https://httpbin.org/get")
+         .validate()
          .responseJSON { response in
              debugPrint(response)
          }
@@ -228,6 +264,7 @@ Response handlers can even be chained:
 
 ```swift
 Alamofire.request(.GET, "https://httpbin.org/get")
+         .validate()
          .responseString { response in
              print("Response String: \(response.result.value)")
          }
@@ -381,6 +418,7 @@ Alamofire.upload(.POST, "https://httpbin.org/post", file: fileURL)
                  print("Total bytes written on main queue: \(totalBytesWritten)")
              }
          }
+         .validate()
          .responseJSON { response in
              debugPrint(response)
          }
@@ -544,38 +582,6 @@ Alamofire.request(.GET, "https://httpbin.org/basic-auth/\(user)/\(password)")
          .authenticate(usingCredential: credential)
          .responseJSON { response in
              debugPrint(response)
-         }
-```
-
-### Validation
-
-By default, Alamofire treats any completed request to be successful, regardless of the content of the response. Calling `validate` before a response handler causes an error to be generated if the response had an unacceptable status code or MIME type.
-
-#### Manual Validation
-
-```swift
-Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
-         .validate(statusCode: 200..<300)
-         .validate(contentType: ["application/json"])
-         .response { response in
-             print(response)
-         }
-```
-
-#### Automatic Validation
-
-Automatically validates status code within `200...299` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
-
-```swift
-Alamofire.request(.GET, "https://httpbin.org/get", parameters: ["foo": "bar"])
-         .validate()
-         .responseJSON { response in
-             switch response.result {
-             case .Success:
-                 print("Validation Successful")
-             case .Failure(let error):
-                 print(error)
-             }
          }
 ```
 
