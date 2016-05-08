@@ -145,10 +145,10 @@ public class Manager {
         delegate: SessionDelegate,
         serverTrustPolicyManager: ServerTrustPolicyManager? = nil)
     {
+        guard delegate === session.delegate else { return nil }
+        
         self.delegate = delegate
         self.session = session
-
-        guard delegate === session.delegate else { return nil }
 
         commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
     }
