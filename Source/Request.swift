@@ -510,26 +510,22 @@ extension Request: CustomDebugStringConvertible {
             }
         }
 
-        if let headerFields = request.allHTTPHeaderFields {
-            for (field, value) in headerFields {
-                switch field {
-                case "Cookie":
-                    continue
-                default:
-                    components.append("-H \"\(field): \(value)\"")
-                }
+        var headers: [NSObject: AnyObject] = [:]
+
+        if let additionalHeaders = session.configuration.HTTPAdditionalHeaders {
+            for (field, value) in additionalHeaders where field != "Cookie" {
+                headers[field] = value
             }
         }
 
-        if let additionalHeaders = session.configuration.HTTPAdditionalHeaders {
-            for (field, value) in additionalHeaders {
-                switch field {
-                case "Cookie":
-                    continue
-                default:
-                    components.append("-H \"\(field): \(value)\"")
-                }
+        if let headerFields = request.allHTTPHeaderFields {
+            for (field, value) in headerFields where field != "Cookie" {
+                headers[field] = value
             }
+        }
+
+        for (field, value) in headers {
+            components.append("-H \"\(field): \(value)\"")
         }
 
         if let
