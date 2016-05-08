@@ -178,7 +178,7 @@ public class Request {
         if startTime == nil { startTime = CFAbsoluteTimeGetCurrent() }
 
         task.resume()
-        NSNotificationCenter.defaultCenter().postNotificationName(Notifications.Task.DidResume, object: task)
+        NSNotificationCenter.defaultCenter().postNotificationName(Notifications.Task.DidResume.rawValue, object: task)
     }
 
     /**
@@ -186,7 +186,7 @@ public class Request {
     */
     public func suspend() {
         task.suspend()
-        NSNotificationCenter.defaultCenter().postNotificationName(Notifications.Task.DidSuspend, object: task)
+        NSNotificationCenter.defaultCenter().postNotificationName(Notifications.Task.DidSuspend.rawValue, object: task)
     }
 
     /**
@@ -204,7 +204,7 @@ public class Request {
             task.cancel()
         }
 
-        NSNotificationCenter.defaultCenter().postNotificationName(Notifications.Task.DidCancel, object: task)
+        NSNotificationCenter.defaultCenter().postNotificationName(Notifications.Task.DidCancel.rawValue, object: task)
     }
 
     // MARK: - TaskDelegate

@@ -26,22 +26,24 @@ import Foundation
 
 /// Contains all the `NSNotification` names posted by Alamofire with descriptions of each notification's payload.
 public struct Notifications {
+
     /// Used as a namespace for all `NSURLSessionTask` related notifications.
-    public struct Task {
+    public enum Task: String {
         /// Notification posted when an `NSURLSessionTask` is resumed. The notification `object` contains the resumed
         /// `NSURLSessionTask`.
-        public static let DidResume = "com.alamofire.notifications.task.didResume"
+        case DidResume = "com.alamofire.notifications.task.didResume"
 
-        /// Notification posted when an `NSURLSessionTask` is suspended. The notification `object` contains the 
+        /// Notification posted when an `NSURLSessionTask` is suspended. The notification `object` contains the
         /// suspended `NSURLSessionTask`.
-        public static let DidSuspend = "com.alamofire.notifications.task.didSuspend"
+        case DidSuspend = "com.alamofire.notifications.task.didSuspend"
 
         /// Notification posted when an `NSURLSessionTask` is cancelled. The notification `object` contains the
         /// cancelled `NSURLSessionTask`.
-        public static let DidCancel = "com.alamofire.notifications.task.didCancel"
+        case DidCancel = "com.alamofire.notifications.task.didCancel"
 
         /// Notification posted when an `NSURLSessionTask` is completed. The notification `object` contains the
         /// completed `NSURLSessionTask`.
-        public static let DidComplete = "com.alamofire.notifications.task.didComplete"
+        case DidComplete = "com.alamofire.notifications.task.didComplete"
     }
+
 }
