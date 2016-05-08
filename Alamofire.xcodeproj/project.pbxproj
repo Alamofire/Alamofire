@@ -415,9 +415,9 @@
 		4C33A1171B5207DB00873DFF /* Certificates */ = {
 			isa = PBXGroup;
 			children = (
-				B39E2F821C1A72E5002DA1A9 /* Varying Encoding Types and Extensions */,
 				4C812C391B535F060017E0BF /* alamofire.org */,
 				4C812C381B535F000017E0BF /* disig.sk */,
+				B39E2F821C1A72E5002DA1A9 /* Varying Encoding Types and Extensions */,
 			);
 			name = Certificates;
 			path = Resources/Certificates;
