@@ -120,6 +120,37 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNil(error, "error should be nil")
     }
+
+    func testHiddenHTTPBasicAuthentication() {
+        // Given
+        let authorizationHeader = Request.authorizationHeader(user: user, password: password)
+        let expectation = expectationWithDescription("\(URLString) 200")
+
+        var request: NSURLRequest?
+        var response: NSHTTPURLResponse?
+        var data: NSData?
+        var error: NSError?
+
+        // When
+        manager.request(.GET, "http://httpbin.org/hidden-basic-auth/\(user)/\(password)", headers: authorizationHeader)
+            .response { responseRequest, responseResponse, responseData, responseError in
+                request = responseRequest
+                response = responseResponse
+                data = responseData
+                error = responseError
+
+                expectation.fulfill()
+            }
+
+        waitForExpectationsWithTimeout(timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertNotNil(response, "response should not be nil")
+        XCTAssertEqual(response?.statusCode ?? 0, 200, "response status code should be 200")
+        XCTAssertNotNil(data, "data should not be nil")
+        XCTAssertNil(error, "error should be nil")
+    }
 }
 
 // MARK: -
