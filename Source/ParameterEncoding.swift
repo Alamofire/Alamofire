@@ -229,7 +229,7 @@ public enum ParameterEncoding {
         //==========================================================================================================
         //
         //  Batching is required for escaping due to an internal bug in iOS 8.1 and 8.2. Encoding more than a few
-        //  hundred Chinense characters causes various malloc error crashes. To avoid this issue until iOS 8 is no
+        //  hundred Chinese characters causes various malloc error crashes. To avoid this issue until iOS 8 is no
         //  longer supported, batching MUST be used for encoding. This introduces roughly a 20% overhead. For more
         //  info, please refer to:
         //
