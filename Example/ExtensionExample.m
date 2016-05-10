@@ -32,6 +32,13 @@
     }];
     
 
+    [AlamofireWrapper downloadFileWithProgress:@"http://myaddress.com" progressBlock:^(float progress) {
+        NSLog(@"Progress %f", progress);
+    } destination:@"outputfile.something" success:^(NSURLRequest * _Nullable request, NSHTTPURLResponse * _Nullable response, NSDictionary * _Nullable json) {
+        NSLog(@"Success");
+    } failure:^(NSURLRequest * _Nullable request, NSHTTPURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSLog(@"Failure");
+    }];
 }
 
 

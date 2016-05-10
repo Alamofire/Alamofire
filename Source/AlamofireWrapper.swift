@@ -110,6 +110,27 @@ public class AlamofireWrapper: NSObject {
             }
     }
     
+    public class func downloadFileWithProgress(
+        address: String,
+        progressBlock: ((progress: Float) -> ()),
+        destination: String,
+        success: ((request: NSURLRequest?, response: NSHTTPURLResponse?, json: [NSObject: AnyObject]?) -> ()),
+        failure: ((request: NSURLRequest?, response: NSHTTPURLResponse?, error: NSError?) -> ())) {
+    
+        
+        let request = Manager.sharedInstance.download(.GET, address) { (_, _) -> NSURL in
+            return NSURL.fileURLWithPath(destination, isDirectory: true)
+            }.progress { (bytesRead, totalBytesRead, totalBytesExpectedToRead) -> Void in
+                let progress = Float(totalBytesRead) / Float(totalBytesExpectedToRead)
+                progressBlock(progress: progress)
+        }
+        
+        request.responseData { (response) -> Void in
+            parseResponse(response, success: success, failure: failure)
+        }
+    }
+
+    
     private class func translateMethod(method: RequestMethod) -> Alamofire.Method {
         switch(method) {
         case .GET:
