@@ -192,7 +192,7 @@ public enum ParameterEncoding {
             }
         } else if let array = value as? [AnyObject] {
             for value in array {
-                components += queryComponents("\(key)[]", value)
+                components += queryComponents("\(key)", value)
             }
         } else {
             if value is NSDate {
