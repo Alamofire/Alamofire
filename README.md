@@ -821,6 +821,22 @@ public protocol ResponseCollectionSerializable {
     static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Self]
 }
 
+extension ResponseCollectionSerializable where Self: ResponseObjectSerializable {
+    static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [Self] {
+        var collection = [Self]()
+        
+        if let representation = representation as? [[String: AnyObject]] {
+            for itemRepresentation in representation {
+                if let item = Self(response: response, representation: itemRepresentation) {
+                    collection.append(item)
+                }
+            }
+        }
+        
+        return collection
+    }
+}
+
 extension Alamofire.Request {
     public func responseCollection<T: ResponseCollectionSerializable>(completionHandler: Response<[T], BackendError> -> Void) -> Self {
         let responseSerializer = ResponseSerializer<[T], BackendError> { request, response, data, error in
@@ -854,20 +870,6 @@ final class User: ResponseObjectSerializable, ResponseCollectionSerializable {
     init?(response: NSHTTPURLResponse, representation: AnyObject) {
         self.username = response.URL!.lastPathComponent!
         self.name = representation.valueForKeyPath("name") as! String
-    }
-
-    static func collection(response response: NSHTTPURLResponse, representation: AnyObject) -> [User] {
-        var users: [User] = []
-
-        if let representation = representation as? [[String: AnyObject]] {
-            for userRepresentation in representation {
-                if let user = User(response: response, representation: userRepresentation) {
-                    users.append(user)
-                }
-            }
-        }
-
-        return users
     }
 }
 ```
