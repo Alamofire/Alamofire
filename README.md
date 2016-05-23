@@ -944,7 +944,7 @@ enum Router: URLRequestConvertible {
     var URLRequest: NSMutableURLRequest {
         let result: (path: String, parameters: [String: AnyObject]) = {
             switch self {
-            case .Search(let query, let page) where page > 1:
+            case .Search(let query, let page) where page > 0:
                 return ("/search", ["q": query, "offset": Router.perPage * page])
             case .Search(let query, _):
                 return ("/search", ["q": query])
