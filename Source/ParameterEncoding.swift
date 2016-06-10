@@ -191,8 +191,8 @@ public enum ParameterEncoding {
                 components += queryComponents("\(key)[\(nestedKey)]", value)
             }
         } else if let array = value as? [AnyObject] {
-            for value in array {
-                components += queryComponents("\(key)[]", value)
+            for (index, value) in array.enumerate() {
+                components += queryComponents("\(key)[\(index)]", value)
             }
         } else {
             components.append((escape(key), escape("\(value)")))
