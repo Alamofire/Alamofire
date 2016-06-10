@@ -136,7 +136,8 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
-        XCTAssertEqual(URLRequest.URL?.query ?? "", "foo%5B%5D=a&foo%5B%5D=1&foo%5B%5D=1", "query is incorrect")
+        let expectedQuery = "foo%5B0%5D=a&foo%5B1%5D=1&foo%5B2%5D=1"
+        XCTAssertEqual(URLRequest.URL?.query ?? "", expectedQuery, "query is incorrect")
     }
 
     func testURLParameterEncodeStringKeyDictionaryValueParameter() {
@@ -169,7 +170,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
 
         // Then
-        let expectedQuery = "foo%5Bbar%5D%5Bbaz%5D%5B%5D=a&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1"
+        let expectedQuery = "foo%5Bbar%5D%5Bbaz%5D%5B0%5D=a&foo%5Bbar%5D%5Bbaz%5D%5B1%5D=1&foo%5Bbar%5D%5Bbaz%5D%5B2%5D=1"
         XCTAssertEqual(URLRequest.URL?.query ?? "", expectedQuery, "query is incorrect")
     }
 
