@@ -1250,6 +1250,7 @@ There are some important things to remember when using network reachability to d
 The following rdars have some affect on the current implementation of Alamofire.
 
 * [rdar://21349340](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
+* [rdar://26761490](http://www.openradar.me/radar?id=5010235949318144) - Swift string interpolation causing memory leak with common usage
 
 ## FAQ
 
