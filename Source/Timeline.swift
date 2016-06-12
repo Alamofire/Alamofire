@@ -91,14 +91,16 @@ extension Timeline: CustomStringConvertible {
         let serializationDuration = String(format: "%.3f", self.serializationDuration)
         let totalDuration = String(format: "%.3f", self.totalDuration)
 
+        // NOTE: Had to move to string concatenation due to memory leak filed as rdar://26761490. Once memory leak is
+        // fixed, we should move back to string interpolation by reverting commit 7d4a43b1.
         let timings = [
-            "\"Latency\": \(latency) secs",
-            "\"Request Duration\": \(requestDuration) secs",
-            "\"Serialization Duration\": \(serializationDuration) secs",
-            "\"Total Duration\": \(totalDuration) secs"
+            "\"Latency\": " + latency + " secs",
+            "\"Request Duration\": " + requestDuration + " secs",
+            "\"Serialization Duration\": " + serializationDuration + " secs",
+            "\"Total Duration\": " + totalDuration + " secs"
         ]
 
-        return "Timeline: { \(timings.joinWithSeparator(", ")) }"
+        return "Timeline: { " + timings.joinWithSeparator(", ") + " }"
     }
 }
 
@@ -109,17 +111,28 @@ extension Timeline: CustomDebugStringConvertible {
     /// initial response time, the request completed time, the serialization completed time, the latency, the request
     /// duration and the total duration.
     public var debugDescription: String {
+        let requestStartTime = String(format: "%.3f", self.requestStartTime)
+        let initialResponseTime = String(format: "%.3f", self.initialResponseTime)
+        let requestCompletedTime = String(format: "%.3f", self.requestCompletedTime)
+        let serializationCompletedTime = String(format: "%.3f", self.serializationCompletedTime)
+        let latency = String(format: "%.3f", self.latency)
+        let requestDuration = String(format: "%.3f", self.requestDuration)
+        let serializationDuration = String(format: "%.3f", self.serializationDuration)
+        let totalDuration = String(format: "%.3f", self.totalDuration)
+
+        // NOTE: Had to move to string concatenation due to memory leak filed as rdar://26761490. Once memory leak is
+        // fixed, we should move back to string interpolation by reverting commit 7d4a43b1.
         let timings = [
-            "\"Request Start Time\": \(requestStartTime)",
-            "\"Initial Response Time\": \(initialResponseTime)",
-            "\"Request Completed Time\": \(requestCompletedTime)",
-            "\"Serialization Completed Time\": \(serializationCompletedTime)",
-            "\"Latency\": \(latency) secs",
-            "\"Request Duration\": \(requestDuration) secs",
-            "\"Serialization Duration\": \(serializationDuration) secs",
-            "\"Total Duration\": \(totalDuration) secs"
+            "\"Request Start Time\": " + requestStartTime,
+            "\"Initial Response Time\": " + initialResponseTime,
+            "\"Request Completed Time\": " + requestCompletedTime,
+            "\"Serialization Completed Time\": " + serializationCompletedTime,
+            "\"Latency\": " + latency + " secs",
+            "\"Request Duration\": " + requestDuration + " secs",
+            "\"Serialization Duration\": " + serializationDuration + " secs",
+            "\"Total Duration\": " + totalDuration + " secs"
         ]
 
-        return "Timeline: { \(timings.joinWithSeparator(", ")) }"
+        return "Timeline: { " + timings.joinWithSeparator(", ") + " }"
     }
 }
