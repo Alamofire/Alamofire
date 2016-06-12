@@ -192,10 +192,21 @@ public enum ParameterEncoding {
             }
         } else if let array = value as? [AnyObject] {
             for value in array {
-                components += queryComponents("\(key)[]", value)
+                components += queryComponents("\(key)", value)
             }
         } else {
-            components.append((escape(key), escape("\(value)")))
+            if value is NSDate {
+                let dateFormatter = NSDateFormatter()
+                dateFormatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+                dateFormatter.timeZone = NSTimeZone(abbreviation: "GMT")
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+                
+                let dateString = dateFormatter.stringFromDate(value as! NSDate).stringByAppendingString("Z")
+                components.append((escape(key), escape(dateString)))
+                
+            } else {
+                components.append((escape(key), escape("\(value)")))
+            }
         }
 
         return components
