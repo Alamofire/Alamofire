@@ -106,18 +106,22 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
 
     func testThatHostManagerIsNotifiedWhenStartListeningIsCalled() {
         // Given
-        let manager = NetworkReachabilityManager(host: "localhost")
-        let expectation = expectationWithDescription("listener closure should be executed")
+        guard let manager = NetworkReachabilityManager(host: "store.apple.com") else {
+            XCTFail("manager should NOT be nil")
+            return
+        }
 
+        let expectation = expectationWithDescription("listener closure should be executed")
         var networkReachabilityStatus: NetworkReachabilityManager.NetworkReachabilityStatus?
 
-        manager?.listener = { status in
+        manager.listener = { status in
+            guard networkReachabilityStatus == nil else { return }
             networkReachabilityStatus = status
             expectation.fulfill()
         }
 
         // When
-        manager?.startListening()
+        manager.startListening()
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
