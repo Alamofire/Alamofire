@@ -61,9 +61,11 @@ public class Manager {
                 let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
                 let bundle = info[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
                 let version = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
+
                 let osNameVersion: String = {
                     let version = NSProcessInfo.processInfo().operatingSystemVersion
                     let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+
                     let osName: String = {
                         #if os(iOS)
                             return "iOS"
@@ -79,16 +81,11 @@ public class Manager {
                             return "Unknown"
                         #endif
                     }()
-                    
+
                     return "\(osName) \(versionString)"
                 }()
 
-                var mutableUserAgent = NSMutableString(string: "\(executable)/\(bundle) (\(version); \(osNameVersion))") as CFMutableString
-                let transform = NSString(string: "Any-Latin; Latin-ASCII; [:^ASCII:] Remove") as CFString
-
-                if CFStringTransform(mutableUserAgent, UnsafeMutablePointer<CFRange>(nil), transform, false) {
-                    return mutableUserAgent as String
-                }
+                return "\(executable)/\(bundle) (\(version); \(osNameVersion))"
             }
 
             return "Alamofire"
