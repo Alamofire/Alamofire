@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.4.x` Releases - [3.4.0](#340)
+- `3.4.x` Releases - [3.4.0](#340) | [3.4.1](#341)
 - `3.3.x` Releases - [3.3.0](#330) | [3.3.1](#331)
 - `3.2.x` Releases - [3.2.0](#320) | [3.2.1](#321)
 - `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313) | [3.1.4](#314) | [3.1.5](#315)
@@ -21,6 +21,50 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [3.4.1](https://github.com/Alamofire/Alamofire/releases/tag/3.4.1)
+Released on 2016-06-12. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.4.1).
+
+#### Added
+- Rdar `26761490` to the list of rdars affecting Alamofire.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1262](https://github.com/Alamofire/Alamofire/pull/1262).
+- A new `debugDescription` test for a MultipartFormData Request with duplicate headers.
+  - Added by [Christian Noon](https://github.com/cnoon) in Regards to Issue
+  [#1303](https://github.com/Alamofire/Alamofire/issues/1303).
+
+#### Updated
+- CocoaPod installation instructions in README to be compatible with 1.x.
+  - Updated by [Luis Ferro](https://github.com/lferro9000) in Pull Request
+  [#1288](https://github.com/Alamofire/Alamofire/pull/1288).
+- The README to reflect the best error practices in response serializers.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#1273](https://github.com/Alamofire/Alamofire/pull/1273).
+- The generation of the `User-Agent` header to use non-localized sources.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#1292](https://github.com/Alamofire/Alamofire/pull/1292) in Regards to Issue
+  [#1269](https://github.com/Alamofire/Alamofire/pull/1269).
+- The `Generic Response Object Serialization` section of the README to use protocol extension.
+  - Updated by [Raphael Oliveira](https://github.com/raphaeloliveira) in Pull Request
+  [#1257](https://github.com/Alamofire/Alamofire/pull/1257).
+- Reachability by removing explicit IPv6 logic since OS handles this automatically.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1308](https://github.com/Alamofire/Alamofire/pull/1308) in Regards to Issue
+  [#1228](https://github.com/Alamofire/Alamofire/pull/1228).
+- Host manager reachability test to use different hostname to improve test reliability.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1308](https://github.com/Alamofire/Alamofire/pull/1308).
+
+#### Removed
+- `ReleaseTest` configuration and updated Travis-CI yaml file to enable testability directly.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- Memory leak in `Timeline` description and debugDescription due to string interpolation.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1262](https://github.com/Alamofire/Alamofire/issues/1262) in Regards to Issue
+  [#1232](https://github.com/Alamofire/Alamofire/issues/1232).
 
 ## [3.4.0](https://github.com/Alamofire/Alamofire/releases/tag/3.4.0)
 Released on 2016-05-08. All issues associated with this milestone can be found using this
