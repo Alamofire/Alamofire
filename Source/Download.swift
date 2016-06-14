@@ -154,7 +154,7 @@ extension Request {
             let directoryURLs = NSFileManager.defaultManager().URLsForDirectory(directory, inDomains: domain)
 
             if !directoryURLs.isEmpty {
-                return directoryURLs[0].URLByAppendingPathComponent(response.suggestedFilename!)
+                return directoryURLs[0].URLByAppendingPathComponent(response.suggestedFilename!)!
             }
 
             return temporaryURL

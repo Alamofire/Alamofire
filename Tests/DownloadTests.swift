@@ -79,7 +79,7 @@ class DownloadResponseTestCase: BaseTestCase {
     }()
 
     var randomCachesFileURL: NSURL {
-        return cachesURL.URLByAppendingPathComponent("\(NSUUID().UUIDString).json")
+        return cachesURL.URLByAppendingPathComponent("\(NSUUID().UUIDString).json")!
     }
 
     func testDownloadRequest() {
@@ -169,7 +169,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let fileManager = NSFileManager.defaultManager()
         let directory = fileManager.URLsForDirectory(searchPathDirectory, inDomains: self.searchPathDomain)[0]
         let filename = "test_download_data"
-        let fileURL = directory.URLByAppendingPathComponent(filename)
+        let fileURL = directory.URLByAppendingPathComponent(filename)!
 
         let expectation = expectationWithDescription("Bytes download progress should be reported: \(URLString)")
 
