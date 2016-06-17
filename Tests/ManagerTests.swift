@@ -42,7 +42,7 @@ class ManagerTestCase: BaseTestCase {
 
     func testInitializerWithSpecifiedArguments() {
         // Given
-        let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let configuration = URLSessionConfiguration.default()
         let delegate = Manager.SessionDelegate()
         let serverTrustPolicyManager = ServerTrustPolicyManager(policies: [:])
 
@@ -62,9 +62,9 @@ class ManagerTestCase: BaseTestCase {
     func testThatFailableInitializerSucceedsWithDefaultArguments() {
         // Given
         let delegate = Manager.SessionDelegate()
-        let session: NSURLSession = {
-            let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-            return NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        let session: URLSession = {
+            let configuration = URLSessionConfiguration.default()
+            return URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
         }()
 
         // When
@@ -82,9 +82,9 @@ class ManagerTestCase: BaseTestCase {
     func testThatFailableInitializerSucceedsWithSpecifiedArguments() {
         // Given
         let delegate = Manager.SessionDelegate()
-        let session: NSURLSession = {
-            let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-            return NSURLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        let session: URLSession = {
+            let configuration = URLSessionConfiguration.default()
+            return URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
         }()
 
         let serverTrustPolicyManager = ServerTrustPolicyManager(policies: [:])
@@ -104,9 +104,9 @@ class ManagerTestCase: BaseTestCase {
     func testThatFailableInitializerFailsWithWhenDelegateDoesNotEqualSessionDelegate() {
         // Given
         let delegate = Manager.SessionDelegate()
-        let session: NSURLSession = {
-            let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-            return NSURLSession(configuration: configuration, delegate: Manager.SessionDelegate(), delegateQueue: nil)
+        let session: URLSession = {
+            let configuration = URLSessionConfiguration.default()
+            return URLSession(configuration: configuration, delegate: Manager.SessionDelegate(), delegateQueue: nil)
         }()
 
         // When
@@ -119,9 +119,9 @@ class ManagerTestCase: BaseTestCase {
     func testThatFailableInitializerFailsWhenSessionDelegateIsNil() {
         // Given
         let delegate = Manager.SessionDelegate()
-        let session: NSURLSession = {
-            let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-            return NSURLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
+        let session: URLSession = {
+            let configuration = URLSessionConfiguration.default()
+            return URLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
         }()
 
         // When
@@ -138,12 +138,12 @@ class ManagerTestCase: BaseTestCase {
         let manager = Alamofire.Manager()
         manager.startRequestsImmediately = false
 
-        let URL = NSURL(string: "https://httpbin.org/get")!
-        let URLRequest = NSURLRequest(URL: URL)
+        let URL = Foundation.URL(string: "https://httpbin.org/get")!
+        let URLRequest = Foundation.URLRequest(url: URL)
 
-        let expectation = expectationWithDescription("\(URL)")
+        let expectation = self.expectation(withDescription: "\(URL)")
 
-        var response: NSHTTPURLResponse?
+        var response: HTTPURLResponse?
 
         // When
         manager.request(URLRequest)
@@ -153,7 +153,7 @@ class ManagerTestCase: BaseTestCase {
             }
             .resume()
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response, "response should not be nil")
@@ -167,15 +167,15 @@ class ManagerTestCase: BaseTestCase {
         var manager: Manager? = Alamofire.Manager()
         manager?.startRequestsImmediately = false
 
-        let URL = NSURL(string: "https://httpbin.org/get")!
-        let URLRequest = NSURLRequest(URL: URL)
+        let URL = Foundation.URL(string: "https://httpbin.org/get")!
+        let URLRequest = Foundation.URLRequest(url: URL)
 
         // When
         let request = manager?.request(URLRequest)
         manager = nil
 
         // Then
-        XCTAssertTrue(request?.task.state == .Suspended, "request task state should be '.Suspended'")
+        XCTAssertTrue(request?.task.state == .suspended, "request task state should be '.Suspended'")
         XCTAssertNil(manager, "manager should be nil")
     }
 
@@ -184,8 +184,8 @@ class ManagerTestCase: BaseTestCase {
         var manager: Manager? = Alamofire.Manager()
         manager!.startRequestsImmediately = false
 
-        let URL = NSURL(string: "https://httpbin.org/get")!
-        let URLRequest = NSURLRequest(URL: URL)
+        let URL = Foundation.URL(string: "https://httpbin.org/get")!
+        let URLRequest = Foundation.URLRequest(url: URL)
 
         // When
         let request = manager!.request(URLRequest)
@@ -194,7 +194,7 @@ class ManagerTestCase: BaseTestCase {
 
         // Then
         let state = request.task.state
-        XCTAssertTrue(state == .Canceling || state == .Completed, "state should be .Canceling or .Completed")
+        XCTAssertTrue(state == .canceling || state == .completed, "state should be .Canceling or .Completed")
         XCTAssertNil(manager, "manager should be nil")
     }
 }
@@ -203,43 +203,43 @@ class ManagerTestCase: BaseTestCase {
 
 class ManagerConfigurationHeadersTestCase: BaseTestCase {
     enum ConfigurationType {
-        case Default, Ephemeral, Background
+        case `default`, ephemeral, background
     }
 
     func testThatDefaultConfigurationHeadersAreSentWithRequest() {
         // Given, When, Then
-        executeAuthorizationHeaderTestForConfigurationType(.Default)
+        executeAuthorizationHeaderTestForConfigurationType(.default)
     }
 
     func testThatEphemeralConfigurationHeadersAreSentWithRequest() {
         // Given, When, Then
-        executeAuthorizationHeaderTestForConfigurationType(.Ephemeral)
+        executeAuthorizationHeaderTestForConfigurationType(.ephemeral)
     }
 
     func testThatBackgroundConfigurationHeadersAreSentWithRequest() {
         // Given, When, Then
-        executeAuthorizationHeaderTestForConfigurationType(.Background)
+        executeAuthorizationHeaderTestForConfigurationType(.background)
     }
 
-    private func executeAuthorizationHeaderTestForConfigurationType(type: ConfigurationType) {
+    private func executeAuthorizationHeaderTestForConfigurationType(_ type: ConfigurationType) {
         // Given
         let manager: Manager = {
-            let configuration: NSURLSessionConfiguration = {
-                let configuration: NSURLSessionConfiguration
+            let configuration: URLSessionConfiguration = {
+                let configuration: URLSessionConfiguration
 
                 switch type {
-                case .Default:
-                    configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
-                case .Ephemeral:
-                    configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
-                case .Background:
+                case .default:
+                    configuration = URLSessionConfiguration.default()
+                case .ephemeral:
+                    configuration = URLSessionConfiguration.ephemeral()
+                case .background:
                     let identifier = "com.alamofire.test.manager-configuration-tests"
-                    configuration = NSURLSessionConfiguration.backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier)
+                    configuration = URLSessionConfiguration.backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier)
                 }
 
                 var headers = Alamofire.Manager.defaultHTTPHeaders
                 headers["Authorization"] = "Bearer 123456"
-                configuration.HTTPAdditionalHeaders = headers
+                configuration.httpAdditionalHeaders = headers
 
                 return configuration
             }()
@@ -247,7 +247,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
             return Manager(configuration: configuration)
         }()
 
-        let expectation = expectationWithDescription("request should complete successfully")
+        let expectation = self.expectation(withDescription: "request should complete successfully")
 
         var response: Response<AnyObject, NSError>?
 
@@ -258,7 +258,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         if let response = response {

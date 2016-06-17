@@ -27,10 +27,10 @@ import Foundation
 import XCTest
 
 class BaseTestCase: XCTestCase {
-    let timeout: NSTimeInterval = 30.0
+    let timeout: TimeInterval = 30.0
 
-    func URLForResource(fileName: String, withExtension: String) -> NSURL {
-        let bundle = NSBundle(forClass: BaseTestCase.self)
-        return bundle.URLForResource(fileName, withExtension: withExtension)!
+    func URLForResource(_ fileName: String, withExtension: String) -> URL {
+        let bundle = Bundle(for: BaseTestCase.self)
+        return bundle.urlForResource(fileName, withExtension: withExtension)!
     }
 }
