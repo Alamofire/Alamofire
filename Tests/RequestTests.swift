@@ -597,8 +597,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
             "command should contain 'application/json' Content-Type"
         )
 
-        let expectedBody = "-d \"{\\\"f'oo\\\":\\\"ba'r\\\",\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\",\\\"foo\\\":\\\"bar\\\"}\""
-        let range = request.debugDescription.range(of: expectedBody)
+        let expectedBody = "-d \"{\\\"f'oo\\\":\\\"ba'r\\\",\\\"foo\\\":\\\"bar\\\",\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\"}\""        
         XCTAssertTrue(
             request.debugDescription.range(of: expectedBody) != nil,
             "command data should contain JSON encoded parameters"
