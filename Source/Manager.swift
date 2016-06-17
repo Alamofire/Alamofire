@@ -344,9 +344,11 @@ public class Manager {
 
             - parameter session: The session that no longer has any outstanding requests.
         */
+#if !os(OSX)
         public func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
             sessionDidFinishEventsForBackgroundURLSession?(session)
         }
+#endif
 
         // MARK: - NSURLSessionTaskDelegate
 
