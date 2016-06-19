@@ -194,17 +194,10 @@ public enum ServerTrustPolicy {
 
                 serverTrustIsValid = trustIsValid(serverTrust)
             } else {
-                let serverCertificatesDataArray = certificateDataForTrust(serverTrust)
+                let serverCertificatesDataSet = Set<NSData>(certificateDataForTrust(serverTrust))
                 let pinnedCertificatesDataArray = certificateDataForCertificates(pinnedCertificates)
 
-                outerLoop: for serverCertificateData in serverCertificatesDataArray {
-                    for pinnedCertificateData in pinnedCertificatesDataArray {
-                        if serverCertificateData.isEqualToData(pinnedCertificateData) {
-                            serverTrustIsValid = true
-                            break outerLoop
-                        }
-                    }
-                }
+                serverTrustIsValid = !serverCertificatesDataSet.isDisjointWith(pinnedCertificatesDataArray)
             }
         case let .PinPublicKeys(pinnedPublicKeys, validateCertificateChain, validateHost):
             var certificateChainEvaluationPassed = true
@@ -217,14 +210,10 @@ public enum ServerTrustPolicy {
             }
 
             if certificateChainEvaluationPassed {
-                outerLoop: for serverPublicKey in ServerTrustPolicy.publicKeysForTrust(serverTrust) as [AnyObject] {
-                    for pinnedPublicKey in pinnedPublicKeys as [AnyObject] {
-                        if serverPublicKey.isEqual(pinnedPublicKey) {
-                            serverTrustIsValid = true
-                            break outerLoop
-                        }
-                    }
-                }
+                let serverPublicKeysSet = NSSet(array: ServerTrustPolicy.publicKeysForTrust(serverTrust)) as Set<NSObject>
+                let pinnedPublicKeysSet = NSSet(array: pinnedPublicKeys) as Set<NSObject>
+
+                serverTrustIsValid = !serverPublicKeysSet.isDisjointWith(pinnedPublicKeysSet)
             }
         case .DisableEvaluation:
             serverTrustIsValid = true
