@@ -586,6 +586,11 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     }
 
     func testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
+    #if swift(>=2.3)
+        // ⚠️⚠️ rdar://26870455
+        // Will be enabled once rdar is resolved
+        print("⚠️⚠️ Skipping \(#function) due to rdar://26870455 ⚠️⚠️")
+    #else
         // Given
         let manager: Manager = {
             let identifier = "com.alamofire.uploadtests.\(NSUUID().UUIDString)"
@@ -646,6 +651,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         } else {
             XCTFail("streaming from disk should not be nil")
         }
+    #endif
     }
 
     // MARK: Combined Test Execution

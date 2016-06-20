@@ -60,7 +60,11 @@ struct BoundaryGenerator {
 
 private func temporaryFileURL() -> NSURL {
     let tempDirectoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
+#if swift(>=2.3)
+    let directoryURL = tempDirectoryURL.URLByAppendingPathComponent("com.alamofire.test/multipart.form.data")!
+#else
     let directoryURL = tempDirectoryURL.URLByAppendingPathComponent("com.alamofire.test/multipart.form.data")
+#endif
 
     let fileManager = NSFileManager.defaultManager()
     do {
@@ -70,7 +74,11 @@ private func temporaryFileURL() -> NSURL {
     }
 
     let fileName = NSUUID().UUIDString
+#if swift(>=2.3)
+    let fileURL = directoryURL.URLByAppendingPathComponent(fileName)!
+#else
     let fileURL = directoryURL.URLByAppendingPathComponent(fileName)
+#endif
 
     return fileURL
 }

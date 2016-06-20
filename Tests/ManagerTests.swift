@@ -262,10 +262,15 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
         // Given, When, Then
         executeAuthorizationHeaderTestForConfigurationType(.Ephemeral)
     }
-
     func testThatBackgroundConfigurationHeadersAreSentWithRequest() {
         // Given, When, Then
+    #if swift(>=2.3)
+        // ⚠️⚠️ rdar://26870455
+        // Will be enabled once rdar is resolved
+        print("⚠️⚠️ Skipping \(#function) due to rdar://26870455 ⚠️⚠️")
+    #else
         executeAuthorizationHeaderTestForConfigurationType(.Background)
+    #endif
     }
 
     private func executeAuthorizationHeaderTestForConfigurationType(type: ConfigurationType) {
