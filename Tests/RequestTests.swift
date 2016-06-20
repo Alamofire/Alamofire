@@ -597,12 +597,10 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
             "command should contain 'application/json' Content-Type"
         )
 
-        let expectedBody = "-d \"{\\\"f'oo\\\":\\\"ba'r\\\",\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\",\\\"foo\\\":\\\"bar\\\"}\""
-
-        XCTAssertTrue(
-            request.debugDescription.rangeOfString(expectedBody) != nil,
-            "command data should contain JSON encoded parameters"
-        )
+        XCTAssertTrue(request.debugDescription.rangeOfString("-d \"{") != nil, "command should contain the body parameter")
+        XCTAssertTrue(request.debugDescription.rangeOfString("\\\"f'oo\\\":\\\"ba'r\\\"") != nil, "command data should contain JSON encoded parameters")
+        XCTAssertTrue(request.debugDescription.rangeOfString("\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\"") != nil, "command data should contain JSON encoded parameters")
+        XCTAssertTrue(request.debugDescription.rangeOfString("\\\"foo\\\":\\\"bar\\") != nil, "command data should contain JSON encoded parameters")
 
         XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
     }
