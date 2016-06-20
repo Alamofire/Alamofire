@@ -310,13 +310,19 @@ extension Manager {
             } else {
                 let fileManager = NSFileManager.defaultManager()
                 let tempDirectoryURL = NSURL(fileURLWithPath: NSTemporaryDirectory())
-                let directoryURL = tempDirectoryURL.URLByAppendingPathComponent("com.alamofire.manager/multipart.form.data")
                 let fileName = NSUUID().UUIDString
+            #if swift(>=2.3)
+                let directoryURL = tempDirectoryURL.URLByAppendingPathComponent("com.alamofire.manager/multipart.form.data")!
+                let fileURL = directoryURL.URLByAppendingPathComponent(fileName)!
+            #else
+                let directoryURL = tempDirectoryURL.URLByAppendingPathComponent("com.alamofire.manager/multipart.form.data")
                 let fileURL = directoryURL.URLByAppendingPathComponent(fileName)
+            #endif
 
                 do {
                     try fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
                     try formData.writeEncodedDataToDisk(fileURL)
+
 
                     dispatch_async(dispatch_get_main_queue()) {
                         let encodingResult = MultipartFormDataEncodingResult.Success(

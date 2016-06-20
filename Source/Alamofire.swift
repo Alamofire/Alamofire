@@ -51,7 +51,11 @@ extension String: URLStringConvertible {
 
 extension NSURL: URLStringConvertible {
     public var URLString: String {
+        #if swift(>=2.3)
+        return absoluteString!
+        #else
         return absoluteString
+        #endif
     }
 }
 

@@ -131,7 +131,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
     func testThatRequestWillPerformHTTPRedirectionByDefault() {
         // Given
-        let redirectURLString = "https://www.apple.com"
+        let redirectURLString = "https://www.apple.com/"
         let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
@@ -201,7 +201,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
     func testThatTaskOverrideClosureCanPerformHTTPRedirection() {
         // Given
-        let redirectURLString = "https://www.apple.com"
+        let redirectURLString = "https://www.apple.com/"
         let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
@@ -243,7 +243,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
     func testThatTaskOverrideClosureWithCompletionCanPerformHTTPRedirection() {
         // Given
-        let redirectURLString = "https://www.apple.com"
+        let redirectURLString = "https://www.apple.com/"
         let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = expectationWithDescription("Request should redirect to \(redirectURLString)")
