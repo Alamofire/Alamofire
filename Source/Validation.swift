@@ -38,7 +38,7 @@ extension Request {
     }
 
     /**
-        A closure used to validate a request that takes a URL request and URL response, and returns whether the 
+        A closure used to validate a request that takes a URL request and URL response, and returns whether the
         request was valid.
     */
     public typealias Validation = (NSURLRequest?, NSHTTPURLResponse) -> ValidationResult
@@ -56,8 +56,7 @@ extension Request {
         delegate.queue.addOperationWithBlock {
             if let
                 response = self.response where self.delegate.error == nil,
-                case let .Failure(error) = validation(self.request, response)
-            {
+                case let .Failure(error) = validation(self.request, response) {
                 self.delegate.error = error
             }
         }
@@ -112,8 +111,7 @@ extension Request {
 
             if let
                 type = components.first,
-                subtype = components.last
-            {
+                subtype = components.last {
                 self.type = type
                 self.subtype = subtype
             } else {
@@ -140,14 +138,13 @@ extension Request {
 
         - returns: The request.
     */
-    public func validate<S : SequenceType where S.Generator.Element == String>(contentType acceptableContentTypes: S) -> Self {
+    public func validate<S: SequenceType where S.Generator.Element == String>(contentType acceptableContentTypes: S) -> Self {
         return validate { _, response in
             guard let validData = self.delegate.data where validData.length > 0 else { return .Success }
 
             if let
                 responseContentType = response.MIMEType,
-                responseMIMEType = MIMEType(responseContentType)
-            {
+                responseMIMEType = MIMEType(responseContentType) {
                 for contentType in acceptableContentTypes {
                     if let acceptableMIMEType = MIMEType(contentType) where acceptableMIMEType.matches(responseMIMEType) {
                         return .Success
@@ -192,7 +189,7 @@ extension Request {
     // MARK: - Automatic
 
     /**
-        Validates that the response has a status code in the default acceptable range of 200...299, and that the content 
+        Validates that the response has a status code in the default acceptable range of 200...299, and that the content
         type matches any specified in the Accept HTTP header field.
 
         If validation fails, subsequent calls to response handlers will have an associated error.

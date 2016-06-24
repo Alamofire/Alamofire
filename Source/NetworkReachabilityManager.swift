@@ -61,7 +61,7 @@ public class NetworkReachabilityManager {
         case WWAN
     }
 
-    /// A closure executed when the network reachability status changes. The closure takes a single argument: the 
+    /// A closure executed when the network reachability status changes. The closure takes a single argument: the
     /// network reachability status.
     public typealias Listener = NetworkReachabilityStatus -> Void
 
@@ -156,8 +156,7 @@ public class NetworkReachabilityManager {
         context.info = UnsafeMutablePointer(Unmanaged.passUnretained(self).toOpaque())
 
         let callbackEnabled = SCNetworkReachabilitySetCallback(
-            reachability,
-            { (_, flags, info) in
+            reachability, { (_, flags, info) in
                 let reachability = Unmanaged<NetworkReachabilityManager>.fromOpaque(COpaquePointer(info)).takeUnretainedValue()
                 reachability.notifyListener(flags)
             },
@@ -227,8 +226,7 @@ extension NetworkReachabilityManager.NetworkReachabilityStatus: Equatable {}
 public func ==(
     lhs: NetworkReachabilityManager.NetworkReachabilityStatus,
     rhs: NetworkReachabilityManager.NetworkReachabilityStatus)
-    -> Bool
-{
+    -> Bool {
     switch (lhs, rhs) {
     case (.Unknown, .Unknown):
         return true

@@ -31,10 +31,10 @@ import CoreServices
 #endif
 
 /**
-    Constructs `multipart/form-data` for uploads within an HTTP or HTTPS body. There are currently two ways to encode 
-    multipart form data. The first way is to encode the data directly in memory. This is very efficient, but can lead 
-    to memory issues if the dataset is too large. The second way is designed for larger datasets and will write all the 
-    data to a single file on disk with all the proper boundary segmentation. The second approach MUST be used for 
+    Constructs `multipart/form-data` for uploads within an HTTP or HTTPS body. There are currently two ways to encode
+    multipart form data. The first way is to encode the data directly in memory. This is very efficient, but can lead
+    to memory issues if the dataset is too large. The second way is designed for larger datasets and will write all the
+    data to a single file on disk with all the proper boundary segmentation. The second approach MUST be used for
     larger datasets such as video content, otherwise your app may run out of memory when trying to encode the dataset.
 
     For more information on `multipart/form-data` in general, please refer to the RFC-2388 and RFC-2045 specs as well
@@ -118,7 +118,7 @@ public class MultipartFormData {
         self.bodyParts = []
 
         /**
-         *  The optimal read/write buffer size in bytes for input and output streams is 1024 (1KB). For more 
+         *  The optimal read/write buffer size in bytes for input and output streams is 1024 (1KB). For more
          *  information, please refer to the following article:
          *    - https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Streams/Articles/ReadingInputStreams.html
          */
@@ -213,8 +213,7 @@ public class MultipartFormData {
     public func appendBodyPart(fileURL fileURL: NSURL, name: String) {
         if let
             fileName = fileURL.lastPathComponent,
-            pathExtension = fileURL.pathExtension
-        {
+            pathExtension = fileURL.pathExtension {
             let mimeType = mimeTypeForPathExtension(pathExtension)
             appendBodyPart(fileURL: fileURL, name: name, fileName: fileName, mimeType: mimeType)
         } else {
@@ -274,8 +273,7 @@ public class MultipartFormData {
 
         guard let
             path = fileURL.path
-            where NSFileManager.defaultManager().fileExistsAtPath(path, isDirectory: &isDirectory) && !isDirectory else
-        {
+            where NSFileManager.defaultManager().fileExistsAtPath(path, isDirectory: &isDirectory) && !isDirectory else {
             let failureReason = "The file URL is a directory, not a file: \(fileURL)"
             setBodyPartError(code: NSURLErrorBadURL, failureReason: failureReason)
             return
@@ -290,8 +288,7 @@ public class MultipartFormData {
         do {
             if let
                 path = fileURL.path,
-                fileSize = try NSFileManager.defaultManager().attributesOfItemAtPath(path)[NSFileSize] as? NSNumber
-            {
+                fileSize = try NSFileManager.defaultManager().attributesOfItemAtPath(path)[NSFileSize] as? NSNumber {
                 bodyContentLength = fileSize.unsignedLongLongValue
             }
         } catch {
@@ -338,8 +335,7 @@ public class MultipartFormData {
         length: UInt64,
         name: String,
         fileName: String,
-        mimeType: String)
-    {
+        mimeType: String) {
         let headers = contentHeaders(name: name, fileName: fileName, mimeType: mimeType)
         appendBodyPart(stream: stream, length: length, headers: headers)
     }
@@ -367,8 +363,8 @@ public class MultipartFormData {
     /**
         Encodes all the appended body parts into a single `NSData` object.
 
-        It is important to note that this method will load all the appended body parts into memory all at the same 
-        time. This method should only be used when the encoded data will have a small memory footprint. For large data 
+        It is important to note that this method will load all the appended body parts into memory all at the same
+        time. This method should only be used when the encoded data will have a small memory footprint. For large data
         cases, please use the `writeEncodedDataToDisk(fileURL:completionHandler:)` method.
 
         - throws: An `NSError` if encoding encounters an error.
@@ -517,8 +513,7 @@ public class MultipartFormData {
     private func writeInitialBoundaryDataForBodyPart(
         bodyPart: BodyPart,
         toOutputStream outputStream: NSOutputStream)
-        throws
-    {
+        throws {
         let initialData = bodyPart.hasInitialBoundary ? initialBoundaryData() : encapsulatedBoundaryData()
         return try writeData(initialData, toOutputStream: outputStream)
     }
@@ -560,8 +555,7 @@ public class MultipartFormData {
     private func writeFinalBoundaryDataForBodyPart(
         bodyPart: BodyPart,
         toOutputStream outputStream: NSOutputStream)
-        throws
-    {
+        throws {
         if bodyPart.hasFinalBoundary {
             return try writeData(finalBoundaryData(), toOutputStream: outputStream)
         }
@@ -608,8 +602,7 @@ public class MultipartFormData {
     private func mimeTypeForPathExtension(pathExtension: String) -> String {
         if let
             id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension, nil)?.takeRetainedValue(),
-            contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue()
-        {
+            contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue() {
             return contentType as String
         }
 
