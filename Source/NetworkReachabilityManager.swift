@@ -94,7 +94,6 @@ public class NetworkReachabilityManager {
         if SCNetworkReachabilityGetFlags(reachability, &flags) {
             return flags
         }
-
         return nil
     }
 
