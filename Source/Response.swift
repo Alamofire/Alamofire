@@ -25,15 +25,15 @@
 import Foundation
 
 /// Used to store all response data returned from a completed `Request`.
-public struct Response<Value, Error: ErrorType> {
+public struct Response<Value, Error: ErrorProtocol> {
     /// The URL request sent to the server.
-    public let request: NSURLRequest?
+    public let request: Foundation.URLRequest?
 
     /// The server's response to the URL request.
-    public let response: NSHTTPURLResponse?
+    public let response: HTTPURLResponse?
 
     /// The data returned by the server.
-    public let data: NSData?
+    public let data: Data?
 
     /// The result of response serialization.
     public let result: Result<Value, Error>
@@ -54,9 +54,9 @@ public struct Response<Value, Error: ErrorType> {
         - returns: the new `Response` instance.
     */
     public init(
-        request: NSURLRequest?,
-        response: NSHTTPURLResponse?,
-        data: NSData?,
+        request: Foundation.URLRequest?,
+        response: HTTPURLResponse?,
+        data: Data?,
         result: Result<Value, Error>,
         timeline: Timeline = Timeline())
     {
@@ -88,10 +88,10 @@ extension Response: CustomDebugStringConvertible {
 
         output.append(request != nil ? "[Request]: \(request!)" : "[Request]: nil")
         output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
-        output.append("[Data]: \(data?.length ?? 0) bytes")
+        output.append("[Data]: \(data?.count ?? 0) bytes")
         output.append("[Result]: \(result.debugDescription)")
         output.append("[Timeline]: \(timeline.debugDescription)")
 
-        return output.joinWithSeparator("\n")
+        return output.joined(separator: "\n")
     }
 }

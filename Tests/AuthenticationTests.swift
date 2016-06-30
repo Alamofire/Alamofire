@@ -36,19 +36,19 @@ class AuthenticationTestCase: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        manager = Manager(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+        manager = Manager(configuration: URLSessionConfiguration.default())
 
         // Clear out credentials
-        let credentialStorage = NSURLCredentialStorage.sharedCredentialStorage()
+        let credentialStorage = URLCredentialStorage.shared()
 
         for (protectionSpace, credentials) in credentialStorage.allCredentials {
             for (_, credential) in credentials {
-                credentialStorage.removeCredential(credential, forProtectionSpace: protectionSpace)
+                credentialStorage.remove(credential, for: protectionSpace)
             }
         }
 
         // Clear out cookies
-        let cookieStorage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+        let cookieStorage = HTTPCookieStorage.shared()
         cookieStorage.cookies?.forEach { cookieStorage.deleteCookie($0) }
     }
 }
@@ -63,11 +63,11 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
     func testHTTPBasicAuthenticationWithInvalidCredentials() {
         // Given
-        let expectation = expectationWithDescription("\(URLString) 401")
+        let expectation = self.expectation(withDescription: "\(URLString) 401")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
+        var request: URLRequest?
+        var response: HTTPURLResponse?
+        var data: Data?
         var error: NSError?
 
         // When
@@ -82,7 +82,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -94,11 +94,11 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
     func testHTTPBasicAuthenticationWithValidCredentials() {
         // Given
-        let expectation = expectationWithDescription("\(URLString) 200")
+        let expectation = self.expectation(withDescription: "\(URLString) 200")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
+        var request: URLRequest?
+        var response: HTTPURLResponse?
+        var data: Data?
         var error: NSError?
 
         // When
@@ -113,7 +113,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -126,11 +126,11 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
     func testHiddenHTTPBasicAuthentication() {
         // Given
         let authorizationHeader = Request.authorizationHeader(user: user, password: password)
-        let expectation = expectationWithDescription("\(URLString) 200")
+        let expectation = self.expectation(withDescription: "\(URLString) 200")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
+        var request: URLRequest?
+        var response: HTTPURLResponse?
+        var data: Data?
         var error: NSError?
 
         // When
@@ -144,7 +144,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -167,11 +167,11 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
     func testHTTPDigestAuthenticationWithInvalidCredentials() {
         // Given
-        let expectation = expectationWithDescription("\(URLString) 401")
+        let expectation = self.expectation(withDescription: "\(URLString) 401")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
+        var request: URLRequest?
+        var response: HTTPURLResponse?
+        var data: Data?
         var error: NSError?
 
         // When
@@ -186,7 +186,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -198,11 +198,11 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
     func testHTTPDigestAuthenticationWithValidCredentials() {
         // Given
-        let expectation = expectationWithDescription("\(URLString) 200")
+        let expectation = self.expectation(withDescription: "\(URLString) 200")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
+        var request: URLRequest?
+        var response: HTTPURLResponse?
+        var data: Data?
         var error: NSError?
 
         // When
@@ -217,7 +217,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")

@@ -26,7 +26,7 @@ import Alamofire
 import Foundation
 import XCTest
 
-class ProxyURLProtocol: NSURLProtocol {
+class ProxyURLProtocol: URLProtocol {
 
     // MARK: Properties
 
@@ -34,50 +34,52 @@ class ProxyURLProtocol: NSURLProtocol {
         static let HandledByForwarderURLProtocol = "HandledByProxyURLProtocol"
     }
 
-    lazy var session: NSURLSession = {
-        let configuration: NSURLSessionConfiguration = {
-            let configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
-            configuration.HTTPAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
+    lazy var session: Foundation.URLSession = {
+        let configuration: URLSessionConfiguration = {
+            let configuration = URLSessionConfiguration.ephemeral()
+            configuration.httpAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
 
             return configuration
         }()
 
-        let session = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        let session = Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
 
         return session
     }()
 
-    var activeTask: NSURLSessionTask?
+    var activeTask: URLSessionTask?
 
     // MARK: Class Request Methods
 
-    override class func canInitWithRequest(request: NSURLRequest) -> Bool {
-        if NSURLProtocol.propertyForKey(PropertyKeys.HandledByForwarderURLProtocol, inRequest: request) != nil {
+    override class func canInit(with request: URLRequest) -> Bool {
+        if URLProtocol.property(forKey: PropertyKeys.HandledByForwarderURLProtocol, in: request) != nil {
             return false
         }
 
         return true
     }
 
-    override class func canonicalRequestForRequest(request: NSURLRequest) -> NSURLRequest {
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
         if let headers = request.allHTTPHeaderFields {
-            return ParameterEncoding.URL.encode(request, parameters: headers).0
+            return ParameterEncoding.url.encode(request, parameters: headers).0
         }
 
         return request
     }
 
-    override class func requestIsCacheEquivalent(a: NSURLRequest, toRequest b: NSURLRequest) -> Bool {
+    override class func requestIsCacheEquivalent(_ a: URLRequest, to b: URLRequest) -> Bool {
         return false
     }
 
     // MARK: Loading Methods
 
     override func startLoading() {
-        let mutableRequest = request.URLRequest
-        NSURLProtocol.setProperty(true, forKey: PropertyKeys.HandledByForwarderURLProtocol, inRequest: mutableRequest)
-
-        activeTask = session.dataTaskWithRequest(mutableRequest)
+        // rdar://26849668
+        // Hopefully will be fixed in a future seed
+        // URLProtocol had some API's that didnt make the value type conversion
+        let mutableRequest = (request.urlRequest as NSURLRequest).mutableCopy() as! NSMutableURLRequest
+        URLProtocol.setProperty(true, forKey: PropertyKeys.HandledByForwarderURLProtocol, in: mutableRequest)
+        activeTask = session.dataTask(with: mutableRequest as URLRequest)
         activeTask?.resume()
     }
 
@@ -88,20 +90,20 @@ class ProxyURLProtocol: NSURLProtocol {
 
 // MARK: -
 
-extension ProxyURLProtocol: NSURLSessionDelegate {
+extension ProxyURLProtocol: URLSessionDelegate {
 
     // MARK: NSURLSessionDelegate
 
-    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        client?.URLProtocol(self, didLoadData: data)
+    func URLSession(_ session: Foundation.URLSession, dataTask: URLSessionDataTask, didReceiveData data: Data) {
+        client?.urlProtocol(self, didLoad: data)
     }
 
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+    func URLSession(_ session: Foundation.URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
         if let response = task.response {
-            client?.URLProtocol(self, didReceiveResponse: response, cacheStoragePolicy: .NotAllowed)
+            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         }
 
-        client?.URLProtocolDidFinishLoading(self)
+        client?.urlProtocolDidFinishLoading(self)
     }
 }
 
@@ -116,10 +118,10 @@ class URLProtocolTestCase: BaseTestCase {
         super.setUp()
 
         manager = {
-            let configuration: NSURLSessionConfiguration = {
-                let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+            let configuration: URLSessionConfiguration = {
+                let configuration = URLSessionConfiguration.default()
                 configuration.protocolClasses = [ProxyURLProtocol.self]
-                configuration.HTTPAdditionalHeaders = ["session-configuration-header": "foo"]
+                configuration.httpAdditionalHeaders = ["session-configuration-header": "foo"]
 
                 return configuration
             }()
@@ -133,21 +135,21 @@ class URLProtocolTestCase: BaseTestCase {
     func testThatURLProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() {
         // Given
         let URLString = "https://httpbin.org/response-headers"
-        let URL = NSURL(string: URLString)!
+        let URL = Foundation.URL(string: URLString)!
 
-        let URLRequest = NSMutableURLRequest(URL: URL)
-        URLRequest.HTTPMethod = Method.GET.rawValue
-        URLRequest.setValue("foobar", forHTTPHeaderField: "request-header")
+        var mutableURLRequest = URLRequest(url: URL)
+        mutableURLRequest.httpMethod = Method.GET.rawValue
+        mutableURLRequest.setValue("foobar", forHTTPHeaderField: "request-header")
 
-        let expectation = expectationWithDescription("GET request should succeed")
+        let expectation = self.expectation(withDescription: "GET request should succeed")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
+        var request: Foundation.URLRequest?
+        var response: HTTPURLResponse?
+        var data: Data?
         var error: NSError?
 
         // When
-        manager.request(URLRequest)
+        manager.request(mutableURLRequest)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -157,7 +159,7 @@ class URLProtocolTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
