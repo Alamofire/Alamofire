@@ -62,7 +62,7 @@ private func temporaryFileURL() -> URL {
     let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
     let directoryURL = try! tempDirectoryURL.appendingPathComponent("com.alamofire.test/multipart.form.data")
 
-    let fileManager = FileManager.default()
+    let fileManager = FileManager.default
     do {
         try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
     } catch {

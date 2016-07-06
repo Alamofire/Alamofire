@@ -151,7 +151,7 @@ extension Request {
         -> DownloadFileDestination
     {
         return { temporaryURL, response -> URL in
-            let directoryURLs = FileManager.default().urlsForDirectory(directory, inDomains: domain)
+            let directoryURLs = FileManager.default.urlsForDirectory(directory, inDomains: domain)
 
             if !directoryURLs.isEmpty {
                 return try! directoryURLs[0].appendingPathComponent(response.suggestedFilename!)
@@ -199,7 +199,7 @@ extension Request {
             if let downloadTaskDidFinishDownloadingToURL = downloadTaskDidFinishDownloadingToURL {
                 do {
                     let destination = downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
-                    try FileManager.default().moveItem(at: location, to: destination)
+                    try FileManager.default.moveItem(at: location, to: destination)
                 } catch {
                     self.error = error as NSError
                 }

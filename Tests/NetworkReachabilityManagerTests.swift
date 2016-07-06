@@ -214,7 +214,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
     func testThatManagerReturnsReachableOnWWANStatusWhenIsWWAN() {
         // Given
         let manager = NetworkReachabilityManager()
-        let flags: SCNetworkReachabilityFlags = [.reachable, .iswwan]
+        let flags: SCNetworkReachabilityFlags = [.reachable, .isWWAN]
 
         // When
         let networkReachabilityStatus = manager?.networkReachabilityStatusForFlags(flags)

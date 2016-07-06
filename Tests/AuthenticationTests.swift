@@ -36,10 +36,10 @@ class AuthenticationTestCase: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        manager = Manager(configuration: URLSessionConfiguration.default())
+        manager = Manager(configuration: .default)
 
         // Clear out credentials
-        let credentialStorage = URLCredentialStorage.shared()
+        let credentialStorage = URLCredentialStorage.shared
 
         for (protectionSpace, credentials) in credentialStorage.allCredentials {
             for (_, credential) in credentials {
@@ -48,7 +48,7 @@ class AuthenticationTestCase: BaseTestCase {
         }
 
         // Clear out cookies
-        let cookieStorage = HTTPCookieStorage.shared()
+        let cookieStorage = HTTPCookieStorage.shared
         cookieStorage.cookies?.forEach { cookieStorage.deleteCookie($0) }
     }
 }

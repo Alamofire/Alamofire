@@ -42,7 +42,7 @@ class ManagerTestCase: BaseTestCase {
 
     func testInitializerWithSpecifiedArguments() {
         // Given
-        let configuration = URLSessionConfiguration.default()
+        let configuration = URLSessionConfiguration.default
         let delegate = Manager.SessionDelegate()
         let serverTrustPolicyManager = ServerTrustPolicyManager(policies: [:])
 
@@ -63,7 +63,7 @@ class ManagerTestCase: BaseTestCase {
         // Given
         let delegate = Manager.SessionDelegate()
         let session: URLSession = {
-            let configuration = URLSessionConfiguration.default()
+            let configuration = URLSessionConfiguration.default
             return URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
         }()
 
@@ -83,7 +83,7 @@ class ManagerTestCase: BaseTestCase {
         // Given
         let delegate = Manager.SessionDelegate()
         let session: URLSession = {
-            let configuration = URLSessionConfiguration.default()
+            let configuration = URLSessionConfiguration.default
             return URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
         }()
 
@@ -105,7 +105,7 @@ class ManagerTestCase: BaseTestCase {
         // Given
         let delegate = Manager.SessionDelegate()
         let session: URLSession = {
-            let configuration = URLSessionConfiguration.default()
+            let configuration = URLSessionConfiguration.default
             return URLSession(configuration: configuration, delegate: Manager.SessionDelegate(), delegateQueue: nil)
         }()
 
@@ -120,7 +120,7 @@ class ManagerTestCase: BaseTestCase {
         // Given
         let delegate = Manager.SessionDelegate()
         let session: URLSession = {
-            let configuration = URLSessionConfiguration.default()
+            let configuration = URLSessionConfiguration.default
             return URLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
         }()
 
@@ -231,12 +231,12 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
 
                 switch type {
                 case .default:
-                    configuration = URLSessionConfiguration.default()
+                    configuration = .default
                 case .ephemeral:
-                    configuration = URLSessionConfiguration.ephemeral()
+                    configuration = .ephemeral
                 case .background:
                     let identifier = "com.alamofire.test.manager-configuration-tests"
-                    configuration = URLSessionConfiguration.backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier)
+                    configuration = .backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier)
                 }
 
                 var headers = Alamofire.Manager.defaultHTTPHeaders

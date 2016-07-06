@@ -95,7 +95,7 @@ class CacheTestCase: BaseTestCase {
 
         manager = {
             let configuration: URLSessionConfiguration = {
-                let configuration = URLSessionConfiguration.default()
+                let configuration = URLSessionConfiguration.default
                 configuration.httpAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
                 configuration.requestCachePolicy = .useProtocolCachePolicy
                 configuration.urlCache = URLCache

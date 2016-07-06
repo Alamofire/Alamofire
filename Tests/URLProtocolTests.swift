@@ -36,7 +36,7 @@ class ProxyURLProtocol: URLProtocol {
 
     lazy var session: Foundation.URLSession = {
         let configuration: URLSessionConfiguration = {
-            let configuration = URLSessionConfiguration.ephemeral()
+            let configuration = URLSessionConfiguration.ephemeral
             configuration.httpAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
 
             return configuration
@@ -119,7 +119,7 @@ class URLProtocolTestCase: BaseTestCase {
 
         manager = {
             let configuration: URLSessionConfiguration = {
-                let configuration = URLSessionConfiguration.default()
+                let configuration = URLSessionConfiguration.default
                 configuration.protocolClasses = [ProxyURLProtocol.self]
                 configuration.httpAdditionalHeaders = ["session-configuration-header": "foo"]
 

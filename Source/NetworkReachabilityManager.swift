@@ -154,12 +154,12 @@ public class NetworkReachabilityManager {
     @discardableResult
     public func startListening() -> Bool {
         var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
-        context.info = UnsafeMutablePointer(OpaquePointer(bitPattern: Unmanaged.passUnretained(self)))
+        context.info = UnsafeMutablePointer(Unmanaged.passUnretained(self).toOpaque())
 
         let callbackEnabled = SCNetworkReachabilitySetCallback(
             reachability,
             { (_, flags, info) in
-                let reachability = Unmanaged<NetworkReachabilityManager>.fromOpaque(OpaquePointer(info!)).takeUnretainedValue()
+                let reachability = Unmanaged<NetworkReachabilityManager>.fromOpaque(info!).takeUnretainedValue()
                 reachability.notifyListener(flags)
             },
             &context
@@ -206,7 +206,7 @@ public class NetworkReachabilityManager {
         }
 
         #if os(iOS)
-            if flags.contains(.iswwan) { networkStatus = .reachable(.wwan) }
+            if flags.contains(.isWWAN) { networkStatus = .reachable(.wwan) }
         #endif
 
         return networkStatus

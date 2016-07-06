@@ -115,7 +115,7 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        let fileManager = FileManager.default()
+        let fileManager = FileManager.default
         let directory = fileManager.urlsForDirectory(searchPathDirectory, inDomains: self.searchPathDomain)[0]
 
         do {
@@ -166,7 +166,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let randomBytes = 4 * 1024 * 1024
         let urlString = "https://httpbin.org/bytes/\(randomBytes)"
 
-        let fileManager = FileManager.default()
+        let fileManager = FileManager.default
         let directory = fileManager.urlsForDirectory(searchPathDirectory, inDomains: self.searchPathDomain)[0]
         let filename = "test_download_data"
         let fileURL = try! directory.appendingPathComponent(filename)

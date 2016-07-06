@@ -333,14 +333,14 @@ class RequestResponseTestCase: BaseTestCase {
             let URL = URLForResource("unicorn", withExtension: "png")
             let data = try! Data(contentsOf: URL)
 
-            return data.base64EncodedString(.encoding64CharacterLineLength)
+            return data.base64EncodedString(options: .lineLength64Characters)
         }()
 
         let jpegBase64EncodedString: String = {
             let URL = URLForResource("rainbow", withExtension: "jpg")
             let data = try! Data(contentsOf: URL)
 
-            return data.base64EncodedString(.encoding64CharacterLineLength)
+            return data.base64EncodedString(options: .lineLength64Characters)
         }()
 
         let parameters = [
@@ -482,7 +482,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     // MARK: Properties
 
     let manager: Manager = {
-        let manager = Manager(configuration: URLSessionConfiguration.default())
+        let manager = Manager(configuration: .default)
         manager.startRequestsImmediately = false
         return manager
     }()
@@ -491,7 +491,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         var headers = Alamofire.Manager.sharedInstance.session.configuration.httpAdditionalHeaders ?? [:]
         headers["Accept-Language"] = "en-US"
         
-        let configuration = URLSessionConfiguration.default()
+        let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = headers
         
         let manager = Manager(configuration: configuration)
@@ -503,7 +503,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         var headers = Alamofire.Manager.sharedInstance.session.configuration.httpAdditionalHeaders ?? [:]
         headers["Content-Type"] = "application/json"
 
-        let configuration = URLSessionConfiguration.default()
+        let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = headers
 
         let manager = Manager(configuration: configuration)
@@ -512,7 +512,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     }()
 
     let managerDisallowingCookies: Manager = {
-        let configuration = URLSessionConfiguration.default()
+        let configuration = URLSessionConfiguration.default
         configuration.httpShouldSetCookies = false
 
         let manager = Manager(configuration: configuration)

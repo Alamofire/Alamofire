@@ -33,7 +33,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
     override func setUp() {
         super.setUp()
-        manager = Alamofire.Manager(configuration: URLSessionConfiguration.ephemeral())
+        manager = Alamofire.Manager(configuration: .ephemeral)
     }
 
     // MARK: - Tests - Session Invalidation

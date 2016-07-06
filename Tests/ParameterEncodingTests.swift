@@ -524,7 +524,7 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
 class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
     // MARK: Properties
 
-    let encoding: ParameterEncoding = .propertyList(.xmlFormat_v1_0, 0)
+    let encoding: ParameterEncoding = .propertyList(.xml, 0)
 
     // MARK: Tests
 

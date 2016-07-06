@@ -223,7 +223,7 @@ public enum ParameterEncoding {
 
         // rdar://26850776
         // Crash in Xcode 8 Seed 1 when trying to mutate a CharacterSet with remove
-        var allowedCharacterSet = NSMutableCharacterSet.urlQueryAllowed()
+        var allowedCharacterSet = NSMutableCharacterSet.urlQueryAllowed
         allowedCharacterSet.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
 
         var escaped = ""

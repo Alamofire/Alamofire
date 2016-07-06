@@ -273,7 +273,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
         let manager: Manager = {
             let configuration: URLSessionConfiguration = {
-                let configuration = URLSessionConfiguration.ephemeral()
+                let configuration = URLSessionConfiguration.ephemeral
                 configuration.httpAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
 
                 return configuration

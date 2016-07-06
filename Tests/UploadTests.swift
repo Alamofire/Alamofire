@@ -524,7 +524,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         {
             XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
             XCTAssertTrue(
-                FileManager.default().fileExists(atPath: streamFilePath),
+                FileManager.default.fileExists(atPath: streamFilePath),
                 "stream file path should exist"
             )
         }

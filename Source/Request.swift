@@ -118,7 +118,7 @@ public class Request {
     public static func authorizationHeader(user: String, password: String) -> [String: String] {
         guard let data = "\(user):\(password)".data(using: String.Encoding.utf8) else { return [:] }
 
-        let credential = data.base64EncodedString([])
+        let credential = data.base64EncodedString(options: [])
 
         return ["Authorization": "Basic \(credential)"]
     }
@@ -180,7 +180,7 @@ public class Request {
         if startTime == nil { startTime = CFAbsoluteTimeGetCurrent() }
 
         task.resume()
-        NotificationCenter.default().post(name: Notification.Name(rawValue: Notifications.Task.DidResume), object: task)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: Notifications.Task.DidResume), object: task)
     }
 
     /**
@@ -188,7 +188,7 @@ public class Request {
     */
     public func suspend() {
         task.suspend()
-        NotificationCenter.default().post(name: Notification.Name(rawValue: Notifications.Task.DidSuspend), object: task)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: Notifications.Task.DidSuspend), object: task)
     }
 
     /**
@@ -206,7 +206,7 @@ public class Request {
             task.cancel()
         }
 
-        NotificationCenter.default().post(name: Notification.Name(rawValue: Notifications.Task.DidCancel), object: task)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: Notifications.Task.DidCancel), object: task)
     }
 
     // MARK: - TaskDelegate
