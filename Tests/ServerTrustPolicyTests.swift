@@ -242,11 +242,7 @@ class ServerTrustPolicyExplorationBasicX509PolicyValidationTestCase: ServerTrust
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift (>=2.3)
-        let policies = [SecPolicyCreateBasicX509()!]
-    #else
         let policies = [SecPolicyCreateBasicX509()]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -259,11 +255,7 @@ class ServerTrustPolicyExplorationBasicX509PolicyValidationTestCase: ServerTrust
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift (>=2.3)
-        let policies = [SecPolicyCreateBasicX509()!]
-    #else
         let policies = [SecPolicyCreateBasicX509()]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -276,11 +268,7 @@ class ServerTrustPolicyExplorationBasicX509PolicyValidationTestCase: ServerTrust
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift (>=2.3)
-        let policies = [SecPolicyCreateBasicX509()!]
-    #else
         let policies = [SecPolicyCreateBasicX509()]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -293,11 +281,7 @@ class ServerTrustPolicyExplorationBasicX509PolicyValidationTestCase: ServerTrust
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift (>=2.3)
-        let policies = [SecPolicyCreateBasicX509()!]
-    #else
         let policies = [SecPolicyCreateBasicX509()]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -319,11 +303,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift(>=2.3)
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")!]
-    #else
         let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -336,11 +316,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift(>=2.3)
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")!]
-    #else
         let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -353,11 +329,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift(>=2.3)
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")!]
-    #else
         let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -370,11 +342,8 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift(>=2.3)
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")!]
-    #else
+
         let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -387,11 +356,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift(>=2.3)
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")!]
-    #else
         let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -404,11 +369,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift(>=2.3)
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")!]
-    #else
         let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -421,19 +382,11 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift(>=2.3)
-        let policies = [
-            SecPolicyCreateSSL(true, "test.alamofire.org")!,
-            SecPolicyCreateSSL(true, "blog.alamofire.org")!,
-            SecPolicyCreateSSL(true, "www.alamofire.org")!
-        ]
-    #else
         let policies = [
             SecPolicyCreateSSL(true, "test.alamofire.org"),
             SecPolicyCreateSSL(true, "blog.alamofire.org"),
             SecPolicyCreateSSL(true, "www.alamofire.org")
         ]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -446,11 +399,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift(>=2.3)
-        let policies = [SecPolicyCreateSSL(true, nil)!]
-    #else
         let policies = [SecPolicyCreateSSL(true, nil)]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
@@ -463,11 +412,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-    #if swift(>=2.3)
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")!]
-    #else
         let policies = [SecPolicyCreateSSL(true, "test.alamofire.org")]
-    #endif
         SecTrustSetPolicies(trust, policies)
 
         // Then
