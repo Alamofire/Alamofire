@@ -315,14 +315,14 @@ extension Manager {
                     }
                 }
             } else {
-                let fileManager = FileManager.default
+                let fileManager = FileManager.default()
                 let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
                 let directoryURL = try! tempDirectoryURL.appendingPathComponent("com.alamofire.manager/multipart.form.data")
                 let fileName = UUID().uuidString
                 let fileURL = try! directoryURL.appendingPathComponent(fileName)
 
                 do {
-                    try fileManager().createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                    try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
                     try formData.writeEncodedDataToDisk(fileURL)
 
                     DispatchQueue.main.async {
