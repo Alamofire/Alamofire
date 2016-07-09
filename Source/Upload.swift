@@ -322,7 +322,7 @@ extension Manager {
                 let fileURL = try! directoryURL.appendingPathComponent(fileName)
 
                 do {
-                    try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                    try fileManager().createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
                     try formData.writeEncodedDataToDisk(fileURL)
 
                     DispatchQueue.main.async {
