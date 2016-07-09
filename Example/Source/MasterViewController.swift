@@ -57,7 +57,7 @@ class MasterViewController: UITableViewController {
 
     // MARK: - UIStoryboardSegue
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: AnyObject?) {
         if let
             navigationController = segue.destinationViewController as? UINavigationController,
             detailViewController = navigationController.topViewController as? DetailViewController
@@ -79,8 +79,8 @@ class MasterViewController: UITableViewController {
                 case "DOWNLOAD":
                     detailViewController.segueIdentifier = "DOWNLOAD"
                     let destination = Alamofire.Request.suggestedDownloadDestination(
-                        directory: .CachesDirectory,
-                        domain: .UserDomainMask
+                        directory: .cachesDirectory,
+                        domain: .userDomainMask
                     )
                     return Alamofire.download(.GET, "https://httpbin.org/stream/1", destination: destination)
                 default:
@@ -88,7 +88,7 @@ class MasterViewController: UITableViewController {
                 }
             }
 
-            if let request = requestForSegue(segue) {
+            if let request = requestForSegue(segue: segue) {
                 detailViewController.request = request
             }
         }

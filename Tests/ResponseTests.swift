@@ -30,9 +30,9 @@ class ResponseDataTestCase: BaseTestCase {
     func testThatResponseDataReturnsSuccessResultWithValidData() {
         // Given
         let URLString = "https://httpbin.org/get"
-        let expectation = expectationWithDescription("request should succeed")
+        let expectation = self.expectation(withDescription: "request should succeed")
 
-        var response: Response<NSData, NSError>?
+        var response: Response<Data, NSError>?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -41,7 +41,7 @@ class ResponseDataTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         if let response = response {
@@ -57,9 +57,9 @@ class ResponseDataTestCase: BaseTestCase {
     func testThatResponseDataReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let URLString = "https://invalid-url-here.org/this/does/not/exist"
-        let expectation = expectationWithDescription("request should fail with 404")
+        let expectation = self.expectation(withDescription: "request should fail with 404")
 
-        var response: Response<NSData, NSError>?
+        var response: Response<Data, NSError>?
 
         // When
         Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
@@ -68,7 +68,7 @@ class ResponseDataTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         if let response = response {
@@ -88,7 +88,7 @@ class ResponseStringTestCase: BaseTestCase {
     func testThatResponseStringReturnsSuccessResultWithValidString() {
         // Given
         let URLString = "https://httpbin.org/get"
-        let expectation = expectationWithDescription("request should succeed")
+        let expectation = self.expectation(withDescription: "request should succeed")
 
         var response: Response<String, NSError>?
 
@@ -99,7 +99,7 @@ class ResponseStringTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         if let response = response {
@@ -115,7 +115,7 @@ class ResponseStringTestCase: BaseTestCase {
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let URLString = "https://invalid-url-here.org/this/does/not/exist"
-        let expectation = expectationWithDescription("request should fail with 404")
+        let expectation = self.expectation(withDescription: "request should fail with 404")
 
         var response: Response<String, NSError>?
 
@@ -126,7 +126,7 @@ class ResponseStringTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         if let response = response {
@@ -146,7 +146,7 @@ class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
         // Given
         let URLString = "https://httpbin.org/get"
-        let expectation = expectationWithDescription("request should succeed")
+        let expectation = self.expectation(withDescription: "request should succeed")
 
         var response: Response<AnyObject, NSError>?
 
@@ -157,7 +157,7 @@ class ResponseJSONTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         if let response = response {
@@ -173,7 +173,7 @@ class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let URLString = "https://invalid-url-here.org/this/does/not/exist"
-        let expectation = expectationWithDescription("request should fail with 404")
+        let expectation = self.expectation(withDescription: "request should fail with 404")
 
         var response: Response<AnyObject, NSError>?
 
@@ -184,7 +184,7 @@ class ResponseJSONTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         if let response = response {
@@ -200,7 +200,7 @@ class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseJSONReturnsSuccessResultForGETRequest() {
         // Given
         let URLString = "https://httpbin.org/get"
-        let expectation = expectationWithDescription("request should succeed")
+        let expectation = self.expectation(withDescription: "request should succeed")
 
         var response: Response<AnyObject, NSError>?
 
@@ -211,7 +211,7 @@ class ResponseJSONTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         if let response = response {
@@ -235,7 +235,7 @@ class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseJSONReturnsSuccessResultForPOSTRequest() {
         // Given
         let URLString = "https://httpbin.org/post"
-        let expectation = expectationWithDescription("request should succeed")
+        let expectation = self.expectation(withDescription: "request should succeed")
 
         var response: Response<AnyObject, NSError>?
 
@@ -246,7 +246,7 @@ class ResponseJSONTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(withTimeout: timeout, handler: nil)
 
         // Then
         if let response = response {

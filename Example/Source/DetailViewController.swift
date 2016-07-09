@@ -44,12 +44,12 @@ class DetailViewController: UITableViewController {
 
     var headers: [String: String] = [:]
     var body: String?
-    var elapsedTime: NSTimeInterval?
+    var elapsedTime: TimeInterval?
     var segueIdentifier: String?
 
-    static let numberFormatter: NSNumberFormatter = {
-        let formatter = NSNumberFormatter()
-        formatter.numberStyle = .DecimalStyle
+    static let numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
         return formatter
     }()
 
@@ -57,10 +57,10 @@ class DetailViewController: UITableViewController {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        refreshControl?.addTarget(self, action: #selector(DetailViewController.refresh), forControlEvents: .ValueChanged)
+        refreshControl?.addTarget(self, action: #selector(DetailViewController.refresh), for: .valueChanged)
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         refresh()
     }
@@ -102,25 +102,26 @@ class DetailViewController: UITableViewController {
     }
 
     private func downloadedBodyString() -> String {
-        let fileManager = NSFileManager.defaultManager()
-        let cachesDirectory = fileManager.URLsForDirectory(.CachesDirectory, inDomains: .UserDomainMask)[0]
+        let fileManager = FileManager.default()
+        let cachesDirectory = fileManager.urlsForDirectory(.cachesDirectory, inDomains: .userDomainMask)[0]
 
         do {
-            let contents = try fileManager.contentsOfDirectoryAtURL(
-                cachesDirectory,
+            let contents = try fileManager.contentsOfDirectory(
+                at: cachesDirectory,
                 includingPropertiesForKeys: nil,
-                options: .SkipsHiddenFiles
+                options: .skipsHiddenFiles
             )
 
             if let
                 fileURL = contents.first,
-                data = NSData(contentsOfURL: fileURL)
+                data = try? Data(contentsOf: fileURL)
             {
-                let json = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions())
-                let prettyData = try NSJSONSerialization.dataWithJSONObject(json, options: .PrettyPrinted)
+                //let json = try JSONSerialization.jsonObject(data, options: JSONSerialization.ReadingOptions())
+                let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
+                let prettyData = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
 
-                if let prettyString = NSString(data: prettyData, encoding: NSUTF8StringEncoding) as? String {
-                    try fileManager.removeItemAtURL(fileURL)
+                if let prettyString = NSString(data: prettyData, encoding: String.Encoding.utf8.rawValue) as? String {
+                    try fileManager.removeItem(at: fileURL)
                     return prettyString
                 }
             }
@@ -135,7 +136,7 @@ class DetailViewController: UITableViewController {
 // MARK: - UITableViewDataSource
 
 extension DetailViewController {
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Sections(rawValue: section)! {
         case .Headers:
             return headers.count
@@ -144,11 +145,11 @@ extension DetailViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch Sections(rawValue: indexPath.section)! {
         case .Headers:
-            let cell = tableView.dequeueReusableCellWithIdentifier("Header")!
-            let field = headers.keys.sort(<)[indexPath.row]
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Header")!
+            let field = headers.keys.sorted(isOrderedBefore: <)[indexPath.row]
             let value = headers[field]
 
             cell.textLabel?.text = field
@@ -156,7 +157,7 @@ extension DetailViewController {
 
             return cell
         case .Body:
-            let cell = tableView.dequeueReusableCellWithIdentifier("Body")!
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Body")!
             cell.textLabel?.text = body
 
             return cell
@@ -167,11 +168,11 @@ extension DetailViewController {
 // MARK: - UITableViewDelegate
 
 extension DetailViewController {
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
 
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ : UITableView, titleForHeaderInSection section: Int) -> String? {
         if self.tableView(tableView, numberOfRowsInSection: section) == 0 {
             return ""
         }
@@ -183,8 +184,8 @@ extension DetailViewController {
             return "Body"
         }
     }
-
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch Sections(rawValue: indexPath.section)! {
         case .Body:
             return 300
@@ -193,9 +194,9 @@ extension DetailViewController {
         }
     }
 
-    override func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+    override func tableView(_ : UITableView, titleForFooterInSection section: Int) -> String? {
         if Sections(rawValue: section) == .Body, let elapsedTime = elapsedTime {
-            let elapsedTimeText = DetailViewController.numberFormatter.stringFromNumber(elapsedTime) ?? "???"
+            let elapsedTimeText = DetailViewController.numberFormatter.string(from: elapsedTime) ?? "???"
             return "Elapsed Time: \(elapsedTimeText) sec"
         }
 
