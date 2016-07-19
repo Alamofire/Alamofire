@@ -111,7 +111,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
             return
         }
 
-        let expectation = self.expectation(withDescription: "listener closure should be executed")
+        let expectation = self.expectation(description: "listener closure should be executed")
         var networkReachabilityStatus: NetworkReachabilityManager.NetworkReachabilityStatus?
 
         manager.listener = { status in
@@ -122,7 +122,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
 
         // When
         manager.startListening()
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertEqual(networkReachabilityStatus, .reachable(.ethernetOrWiFi))
@@ -131,7 +131,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
     func testThatAddressManagerIsNotifiedWhenStartListeningIsCalled() {
         // Given
         let manager = NetworkReachabilityManager()
-        let expectation = self.expectation(withDescription: "listener closure should be executed")
+        let expectation = self.expectation(description: "listener closure should be executed")
 
         var networkReachabilityStatus: NetworkReachabilityManager.NetworkReachabilityStatus?
 
@@ -142,7 +142,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
 
         // When
         manager?.startListening()
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertEqual(networkReachabilityStatus, .reachable(.ethernetOrWiFi))

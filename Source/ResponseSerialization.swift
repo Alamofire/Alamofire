@@ -160,7 +160,7 @@ extension Request {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .failure(error!) }
 
-            if let response = response where response.statusCode == 204 { return .success(Data()) }
+            if let response = response, response.statusCode == 204 { return .success(Data()) }
 
             guard let validData = data else {
                 let failureReason = "Data could not be serialized. Input data was nil."
@@ -209,7 +209,7 @@ extension Request {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .failure(error!) }
 
-            if let response = response where response.statusCode == 204 { return .success("") }
+            if let response = response, response.statusCode == 204 { return .success("") }
 
             guard let validData = data else {
                 let failureReason = "String could not be serialized. Input data was nil."
@@ -219,7 +219,7 @@ extension Request {
             
             var convertedEncoding = encoding
             
-            if let encodingName = response?.textEncodingName where convertedEncoding == nil {
+            if let encodingName = response?.textEncodingName, convertedEncoding == nil {
                 convertedEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(
                     CFStringConvertIANACharSetNameToEncoding(encodingName))
                 )
@@ -281,9 +281,9 @@ extension Request {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .failure(error!) }
 
-            if let response = response where response.statusCode == 204 { return .success(NSNull()) }
+            if let response = response, response.statusCode == 204 { return .success(NSNull()) }
 
-            guard let validData = data where validData.count > 0 else {
+            guard let validData = data, validData.count > 0 else {
                 let failureReason = "JSON could not be serialized. Input data was nil or zero length."
                 let error = Error.error(code: .jsonSerializationFailed, failureReason: failureReason)
                 return .failure(error)
@@ -340,9 +340,9 @@ extension Request {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .failure(error!) }
 
-            if let response = response where response.statusCode == 204 { return .success(NSNull()) }
+            if let response = response, response.statusCode == 204 { return .success(NSNull()) }
 
-            guard let validData = data where validData.count > 0 else {
+            guard let validData = data, validData.count > 0 else {
                 let failureReason = "Property list could not be serialized. Input data was nil or zero length."
                 let error = Error.error(code: .propertyListSerializationFailed, failureReason: failureReason)
                 return .failure(error)

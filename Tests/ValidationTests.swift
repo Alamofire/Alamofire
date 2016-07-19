@@ -30,7 +30,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeResponseSucceeds() {
         // Given
         let URLString = "https://httpbin.org/status/200"
-        let expectation = self.expectation(withDescription: "request should return 200 status code")
+        let expectation = self.expectation(description: "request should return 200 status code")
 
         var error: NSError?
 
@@ -42,7 +42,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(error)
@@ -51,7 +51,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
         let URLString = "https://httpbin.org/status/404"
-        let expectation = self.expectation(withDescription: "request should return 404 status code")
+        let expectation = self.expectation(description: "request should return 404 status code")
 
         var error: NSError?
 
@@ -63,7 +63,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error)
@@ -80,7 +80,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithNoAcceptableStatusCodesFails() {
         // Given
         let URLString = "https://httpbin.org/status/201"
-        let expectation = self.expectation(withDescription: "request should return 201 status code")
+        let expectation = self.expectation(description: "request should return 201 status code")
 
         var error: NSError?
 
@@ -92,7 +92,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error)
@@ -113,7 +113,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableContentTypeResponseSucceeds() {
         // Given
         let URLString = "https://httpbin.org/ip"
-        let expectation = self.expectation(withDescription: "request should succeed and return ip")
+        let expectation = self.expectation(description: "request should succeed and return ip")
 
         var error: NSError?
 
@@ -127,7 +127,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(error)
@@ -136,7 +136,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceeds() {
         // Given
         let URLString = "https://httpbin.org/ip"
-        let expectation = self.expectation(withDescription: "request should succeed and return ip")
+        let expectation = self.expectation(description: "request should succeed and return ip")
 
         var error: NSError?
 
@@ -150,7 +150,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(error)
@@ -159,7 +159,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithUnacceptableContentTypeResponseFails() {
         // Given
         let URLString = "https://httpbin.org/xml"
-        let expectation = self.expectation(withDescription: "request should succeed and return xml")
+        let expectation = self.expectation(description: "request should succeed and return xml")
 
         var error: NSError?
 
@@ -171,7 +171,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error)
@@ -188,7 +188,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseFails() {
         // Given
         let URLString = "https://httpbin.org/xml"
-        let expectation = self.expectation(withDescription: "request should succeed and return xml")
+        let expectation = self.expectation(description: "request should succeed and return xml")
 
         var error: NSError?
 
@@ -200,7 +200,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
@@ -217,7 +217,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithNoAcceptableContentTypeResponseSucceedsWhenNoDataIsReturned() {
         // Given
         let URLString = "https://httpbin.org/status/204"
-        let expectation = self.expectation(withDescription: "request should succeed and return no data")
+        let expectation = self.expectation(description: "request should succeed and return no data")
 
         var error: NSError?
 
@@ -229,7 +229,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(error)
@@ -283,7 +283,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         }()
 
         let URLString = "https://httpbin.org/delete"
-        let expectation = self.expectation(withDescription: "request should be stubbed and return 204 status code")
+        let expectation = self.expectation(description: "request should be stubbed and return 204 status code")
 
         var response: HTTPURLResponse?
         var data: Data?
@@ -300,7 +300,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response)
@@ -320,7 +320,7 @@ class MultipleValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
         let URLString = "https://httpbin.org/ip"
-        let expectation = self.expectation(withDescription: "request should succeed and return ip")
+        let expectation = self.expectation(description: "request should succeed and return ip")
 
         var error: NSError?
 
@@ -333,7 +333,7 @@ class MultipleValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(error)
@@ -342,7 +342,7 @@ class MultipleValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithStatusCodeError() {
         // Given
         let URLString = "https://httpbin.org/xml"
-        let expectation = self.expectation(withDescription: "request should succeed and return xml")
+        let expectation = self.expectation(description: "request should succeed and return xml")
 
         var error: NSError?
 
@@ -355,7 +355,7 @@ class MultipleValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error)
@@ -372,7 +372,7 @@ class MultipleValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithUnacceptableStatusCodeAndContentTypeResponseFailsWithContentTypeError() {
         // Given
         let URLString = "https://httpbin.org/xml"
-        let expectation = self.expectation(withDescription: "request should succeed and return xml")
+        let expectation = self.expectation(description: "request should succeed and return xml")
 
         var error: NSError?
 
@@ -385,7 +385,7 @@ class MultipleValidationTestCase: BaseTestCase {
                 expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error)
@@ -409,7 +409,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var mutableURLRequest = URLRequest(url: url)
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let expectation = self.expectation(withDescription: "request should succeed and return ip")
+        let expectation = self.expectation(description: "request should succeed and return ip")
 
         var error: NSError?
 
@@ -421,7 +421,7 @@ class AutomaticValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(error)
@@ -430,7 +430,7 @@ class AutomaticValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithUnacceptableStatusCodeResponseFails() {
         // Given
         let URLString = "https://httpbin.org/status/404"
-        let expectation = self.expectation(withDescription: "request should return 404 status code")
+        let expectation = self.expectation(description: "request should return 404 status code")
 
         var error: NSError?
 
@@ -442,7 +442,7 @@ class AutomaticValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error)
@@ -462,7 +462,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var mutableURLRequest = URLRequest(url: url)
         mutableURLRequest.setValue("application/*", forHTTPHeaderField: "Accept")
 
-        let expectation = self.expectation(withDescription: "request should succeed and return ip")
+        let expectation = self.expectation(description: "request should succeed and return ip")
 
         var error: NSError?
 
@@ -474,7 +474,7 @@ class AutomaticValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(error)
@@ -488,7 +488,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         let headerValue = "text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5"
         mutableURLRequest.setValue(headerValue, forHTTPHeaderField: "Accept")
 
-        let expectation = self.expectation(withDescription: "request should succeed and return xml")
+        let expectation = self.expectation(description: "request should succeed and return xml")
 
         var error: NSError?
 
@@ -500,7 +500,7 @@ class AutomaticValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(error)
@@ -512,7 +512,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var mutableURLRequest = URLRequest(url: URL)
         mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let expectation = self.expectation(withDescription: "request should succeed and return xml")
+        let expectation = self.expectation(description: "request should succeed and return xml")
 
         var error: NSError?
 
@@ -524,7 +524,7 @@ class AutomaticValidationTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(error)

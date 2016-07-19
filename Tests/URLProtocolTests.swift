@@ -141,7 +141,7 @@ class URLProtocolTestCase: BaseTestCase {
         mutableURLRequest.httpMethod = Method.GET.rawValue
         mutableURLRequest.setValue("foobar", forHTTPHeaderField: "request-header")
 
-        let expectation = self.expectation(withDescription: "GET request should succeed")
+        let expectation = self.expectation(description: "GET request should succeed")
 
         var request: Foundation.URLRequest?
         var response: HTTPURLResponse?
@@ -159,7 +159,7 @@ class URLProtocolTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
