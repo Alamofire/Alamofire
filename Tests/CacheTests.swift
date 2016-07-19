@@ -204,7 +204,7 @@ class CacheTestCase: BaseTestCase {
         shouldReturnCachedResponse: Bool)
     {
         // Given
-        let expectation = self.expectation(withDescription: "GET request to httpbin")
+        let expectation = self.expectation(description: "GET request to httpbin")
         var response: HTTPURLResponse?
 
         // When
@@ -213,7 +213,7 @@ class CacheTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         verifyResponse(response, forCacheControl: cacheControl, isCachedResponse: shouldReturnCachedResponse)
@@ -225,9 +225,8 @@ class CacheTestCase: BaseTestCase {
             return
         }
 
-        if let
-            response = response,
-            timestamp = response.allHeaderFields["Date"] as? String
+        if let response = response,
+           let timestamp = response.allHeaderFields["Date"] as? String
         {
             if isCachedResponse {
                 XCTAssertEqual(timestamp, cachedResponseTimestamp, "timestamps should be equal")
@@ -337,7 +336,7 @@ class CacheTestCase: BaseTestCase {
             executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.NoStore, shouldReturnCachedResponse: true)
         } else {
             // Given
-            let expectation = self.expectation(withDescription: "GET request to httpbin")
+            let expectation = self.expectation(description: "GET request to httpbin")
             var response: HTTPURLResponse?
 
             // When
@@ -346,7 +345,7 @@ class CacheTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(withTimeout: timeout, handler: nil)
+            waitForExpectations(timeout: timeout, handler: nil)
 
             // Then
             XCTAssertNil(response, "response should be nil")

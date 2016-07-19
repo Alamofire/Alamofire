@@ -141,7 +141,7 @@ class ManagerTestCase: BaseTestCase {
         let URL = Foundation.URL(string: "https://httpbin.org/get")!
         let URLRequest = Foundation.URLRequest(url: URL)
 
-        let expectation = self.expectation(withDescription: "\(URL)")
+        let expectation = self.expectation(description: "\(URL)")
 
         var response: HTTPURLResponse?
 
@@ -153,7 +153,7 @@ class ManagerTestCase: BaseTestCase {
             }
             .resume()
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response, "response should not be nil")
@@ -249,7 +249,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
             return Manager(configuration: configuration)
         }()
 
-        let expectation = self.expectation(withDescription: "request should complete successfully")
+        let expectation = self.expectation(description: "request should complete successfully")
 
         var response: Response<AnyObject, NSError>?
 
@@ -260,7 +260,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         if let response = response {
@@ -269,9 +269,8 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
             XCTAssertNotNil(response.data, "data should not be nil")
             XCTAssertTrue(response.result.isSuccess, "result should be a success")
 
-            if let
-                headers = response.result.value?["headers" as NSString] as? [String: String],
-                authorization = headers["Authorization"]
+            if let headers = response.result.value?["headers" as NSString] as? [String: String],
+               let authorization = headers["Authorization"]
             {
                 XCTAssertEqual(authorization, "Bearer 123456", "authorization header value does not match")
             } else {

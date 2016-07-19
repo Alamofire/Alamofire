@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     // MARK: - UIApplicationDelegate
 
     func application(
-        application: UIApplication,
+        _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [NSObject : AnyObject]?)
         -> Bool
     {
@@ -47,9 +47,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     // MARK: - UISplitViewControllerDelegate
 
     func splitViewController(
-        splitViewController: UISplitViewController,
-        collapseSecondaryViewController secondaryViewController: UIViewController,
-        ontoPrimaryViewController primaryViewController: UIViewController)
+        _ splitViewController: UISplitViewController,
+        collapseSecondary secondaryViewController: UIViewController,
+        onto primaryViewController: UIViewController)
         -> Bool
     {
         if let secondaryAsNavController = secondaryViewController as? UINavigationController {

@@ -195,9 +195,8 @@ public class Request {
         Cancels the request.
     */
     public func cancel() {
-        if let
-            downloadDelegate = delegate as? DownloadTaskDelegate,
-            downloadTask = downloadDelegate.downloadTask
+        if let downloadDelegate = delegate as? DownloadTaskDelegate,
+           let downloadTask = downloadDelegate.downloadTask
         {
             downloadTask.cancel { data in
                 downloadDelegate.resumeData = data
@@ -294,9 +293,8 @@ public class Request {
             } else if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
                 let host = challenge.protectionSpace.host
 
-                if let
-                    serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicyForHost(host),
-                    serverTrust = challenge.protectionSpace.serverTrust
+                if let serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicyForHost(host),
+                   let serverTrust = challenge.protectionSpace.serverTrust
                 {
                     if serverTrustPolicy.evaluateServerTrust(serverTrust, isValidForHost: host) {
                         disposition = .useCredential
@@ -343,10 +341,9 @@ public class Request {
                 if let error = error {
                     self.error = error
 
-                    if let
-                        downloadDelegate = self as? DownloadTaskDelegate,
-                        userInfo = error.userInfo as? [String: AnyObject],
-                        resumeData = userInfo[NSURLSessionDownloadTaskResumeData] as? Data
+                    if let downloadDelegate = self as? DownloadTaskDelegate,
+                       let userInfo = error.userInfo as? [String: AnyObject],
+                       let resumeData = userInfo[NSURLSessionDownloadTaskResumeData] as? Data
                     {
                         downloadDelegate.resumeData = resumeData
                     }
@@ -493,16 +490,15 @@ extension Request: CustomDebugStringConvertible {
     func cURLRepresentation() -> String {
         var components = ["$ curl -i"]
 
-        guard let
-            request = self.request,
-            URL = request.url,
-            host = URL.host
+        guard let request = self.request,
+              let URL = request.url,
+              let host = URL.host
         else {
             return "$ curl command could not be created"
         }
 
-        if let HTTPMethod = request.httpMethod where HTTPMethod != "GET" {
-            components.append("-X \(HTTPMethod)")
+        if let httpMethod = request.httpMethod, httpMethod != "GET" {
+            components.append("-X \(httpMethod)")
         }
 
         if let credentialStorage = self.session.configuration.urlCredentialStorage {
@@ -526,9 +522,8 @@ extension Request: CustomDebugStringConvertible {
         }
 
         if session.configuration.httpShouldSetCookies {
-            if let
-                cookieStorage = session.configuration.httpCookieStorage,
-                cookies = cookieStorage.cookies(for: URL) where !cookies.isEmpty
+            if let cookieStorage = session.configuration.httpCookieStorage,
+               let cookies = cookieStorage.cookies(for: URL), !cookies.isEmpty
             {
                 let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value ?? String());" }
                 components.append("-b \"\(string.substring(to: string.characters.index(before: string.endIndex)))\"")
@@ -553,11 +548,10 @@ extension Request: CustomDebugStringConvertible {
             components.append("-H \"\(field): \(value)\"")
         }
 
-        if let
-            HTTPBodyData = request.httpBody,
-            HTTPBody = String(data: HTTPBodyData, encoding: String.Encoding.utf8)
+        if let httpBodyData = request.httpBody,
+           let httpBody = String(data: httpBodyData, encoding: String.Encoding.utf8)
         {
-            var escapedBody = HTTPBody.replacingOccurrences(of: "\\\"", with: "\\\\\"")
+            var escapedBody = httpBody.replacingOccurrences(of: "\\\"", with: "\\\\\"")
             escapedBody = escapedBody.replacingOccurrences(of: "\"", with: "\\\"")
 
             components.append("-d \"\(escapedBody)\"")

@@ -323,9 +323,8 @@ public class Manager {
             } else if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
                 let host = challenge.protectionSpace.host
 
-                if let
-                    serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicyForHost(host),
-                    serverTrust = challenge.protectionSpace.serverTrust
+                if let serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicyForHost(host),
+                   let serverTrust = challenge.protectionSpace.serverTrust
                 {
                     if serverTrustPolicy.evaluateServerTrust(serverTrust, isValidForHost: host) {
                         disposition = .useCredential

@@ -84,7 +84,7 @@ class RequestResponseTestCase: BaseTestCase {
         // Given
         let URLString = "https://httpbin.org/get"
 
-        let expectation = self.expectation(withDescription: "GET request should succeed: \(URLString)")
+        let expectation = self.expectation(description: "GET request should succeed: \(URLString)")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -102,7 +102,7 @@ class RequestResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -116,7 +116,7 @@ class RequestResponseTestCase: BaseTestCase {
         let randomBytes = 4 * 1024 * 1024
         let URLString = "https://httpbin.org/bytes/\(randomBytes)"
 
-        let expectation = self.expectation(withDescription: "Bytes download progress should be reported: \(URLString)")
+        let expectation = self.expectation(description: "Bytes download progress should be reported: \(URLString)")
 
         var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
@@ -146,7 +146,7 @@ class RequestResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(responseRequest, "response request should not be nil")
@@ -175,9 +175,8 @@ class RequestResponseTestCase: BaseTestCase {
             }
         }
 
-        if let
-            lastByteValue = byteValues.last,
-            lastProgressValue = progressValues.last
+        if let lastByteValue = byteValues.last,
+           let lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
@@ -194,7 +193,7 @@ class RequestResponseTestCase: BaseTestCase {
         let randomBytes = 4 * 1024 * 1024
         let URLString = "https://httpbin.org/bytes/\(randomBytes)"
 
-        let expectation = self.expectation(withDescription: "Bytes download progress should be reported: \(URLString)")
+        let expectation = self.expectation(description: "Bytes download progress should be reported: \(URLString)")
 
         var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
@@ -227,7 +226,7 @@ class RequestResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(responseRequest, "response request should not be nil")
@@ -257,9 +256,8 @@ class RequestResponseTestCase: BaseTestCase {
             }
         }
 
-        if let
-            lastByteValue = byteValues.last,
-            lastProgressValue = progressValues.last
+        if let lastByteValue = byteValues.last,
+           let lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
@@ -290,7 +288,7 @@ class RequestResponseTestCase: BaseTestCase {
             "emoji": "😃"
         ]
 
-        let expectation = self.expectation(withDescription: "request should succeed")
+        let expectation = self.expectation(description: "request should succeed")
 
         var response: Response<AnyObject, NSError>?
 
@@ -301,7 +299,7 @@ class RequestResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         if let response = response {
@@ -309,9 +307,8 @@ class RequestResponseTestCase: BaseTestCase {
             XCTAssertNotNil(response.response, "response should not be nil")
             XCTAssertNotNil(response.data, "data should not be nil")
 
-            if let
-                JSON = response.result.value as? [String: AnyObject],
-                form = JSON["form"] as? [String: String]
+            if let json = response.result.value as? [String: AnyObject],
+               let form = json["form"] as? [String: String]
             {
                 XCTAssertEqual(form["french"], parameters["french"], "french parameter value should match form value")
                 XCTAssertEqual(form["japanese"], parameters["japanese"], "japanese parameter value should match form value")
@@ -349,7 +346,7 @@ class RequestResponseTestCase: BaseTestCase {
             "jpeg_image": jpegBase64EncodedString
         ]
 
-        let expectation = self.expectation(withDescription: "request should succeed")
+        let expectation = self.expectation(description: "request should succeed")
 
         var response: Response<AnyObject, NSError>?
 
@@ -360,7 +357,7 @@ class RequestResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         if let response = response {
@@ -369,9 +366,8 @@ class RequestResponseTestCase: BaseTestCase {
             XCTAssertNotNil(response.data, "data should not be nil")
             XCTAssertTrue(response.result.isSuccess, "result should be success")
 
-            if let
-                JSON = response.result.value as? [String: AnyObject],
-                form = JSON["form"] as? [String: String]
+            if let json = response.result.value as? [String: AnyObject],
+               let form = json["form"] as? [String: String]
             {
                 XCTAssertEqual(form["email"], parameters["email"], "email parameter value should match form value")
                 XCTAssertEqual(form["png_image"], parameters["png_image"], "png_image parameter value should match form value")
@@ -411,7 +407,7 @@ class RequestExtensionTestCase: BaseTestCase {
     func testThatRequestExtensionHasAccessToTaskDelegateQueue() {
         // Given
         let URLString = "https://httpbin.org/get"
-        let expectation = self.expectation(withDescription: "GET request should succeed: \(URLString)")
+        let expectation = self.expectation(description: "GET request should succeed: \(URLString)")
 
         var responses: [String] = []
 
@@ -429,7 +425,7 @@ class RequestExtensionTestCase: BaseTestCase {
                 expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         if responses.count == 3 {
@@ -451,7 +447,7 @@ class RequestDescriptionTestCase: BaseTestCase {
         let request = Alamofire.request(.GET, URLString)
         let initialRequestDescription = request.description
 
-        let expectation = self.expectation(withDescription: "Request description should update: \(URLString)")
+        let expectation = self.expectation(description: "Request description should update: \(URLString)")
 
         var finalRequestDescription: String?
         var response: HTTPURLResponse?
@@ -464,7 +460,7 @@ class RequestDescriptionTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertEqual(initialRequestDescription, "GET https://httpbin.org/get", "incorrect request description")
@@ -658,7 +654,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         // Given
         let URLString = "https://httpbin.org/post"
         let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
-        let expectation = self.expectation(withDescription: "multipart form data encoding should succeed")
+        let expectation = self.expectation(description: "multipart form data encoding should succeed")
 
         var request: Request?
         var components: [String] = []
@@ -683,7 +679,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         debugPrint(request!)
 

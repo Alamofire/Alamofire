@@ -40,7 +40,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
     func testThatSessionDidBecomeInvalidWithErrorClosureIsCalledWhenSet() {
         // Given
-        let expectation = self.expectation(withDescription: "Override closure should be called")
+        let expectation = self.expectation(description: "Override closure should be called")
 
         var overrideClosureCalled = false
         var invalidationError: NSError?
@@ -54,7 +54,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
         // When
         manager.session.invalidateAndCancel()
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertTrue(overrideClosureCalled)
@@ -66,7 +66,7 @@ class SessionDelegateTestCase: BaseTestCase {
     func testThatSessionDidReceiveChallengeClosureIsCalledWhenSet() {
         if #available(iOS 9.0, *) {
             // Given
-            let expectation = self.expectation(withDescription: "Override closure should be called")
+            let expectation = self.expectation(description: "Override closure should be called")
 
             var overrideClosureCalled = false
             var response: HTTPURLResponse?
@@ -82,7 +82,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(withTimeout: timeout, handler: nil)
+            waitForExpectations(timeout: timeout, handler: nil)
 
             // Then
             XCTAssertTrue(overrideClosureCalled)
@@ -98,7 +98,7 @@ class SessionDelegateTestCase: BaseTestCase {
     func testThatSessionDidReceiveChallengeWithCompletionClosureIsCalledWhenSet() {
         if #available(iOS 9.0, *) {
             // Given
-            let expectation = self.expectation(withDescription: "Override closure should be called")
+            let expectation = self.expectation(description: "Override closure should be called")
 
             var overrideClosureCalled = false
             var response: HTTPURLResponse?
@@ -114,7 +114,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(withTimeout: timeout, handler: nil)
+            waitForExpectations(timeout: timeout, handler: nil)
 
             // Then
             XCTAssertTrue(overrideClosureCalled)
@@ -134,7 +134,7 @@ class SessionDelegateTestCase: BaseTestCase {
         let redirectURLString = "https://www.apple.com/"
         let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
-        let expectation = self.expectation(withDescription: "Request should redirect to \(redirectURLString)")
+        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
         var request: Foundation.URLRequest?
         var response: HTTPURLResponse?
@@ -152,7 +152,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -168,7 +168,7 @@ class SessionDelegateTestCase: BaseTestCase {
         let redirectURLString = "https://httpbin.org/get"
         let URLString = "https://httpbin.org/redirect/5"
 
-        let expectation = self.expectation(withDescription: "Request should redirect to \(redirectURLString)")
+        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
         var request: Foundation.URLRequest?
         var response: HTTPURLResponse?
@@ -186,7 +186,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -203,8 +203,8 @@ class SessionDelegateTestCase: BaseTestCase {
         let redirectURLString = "https://www.apple.com/"
         let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
-        let expectation = self.expectation(withDescription: "Request should redirect to \(redirectURLString)")
-        let callbackExpectation = self.expectation(withDescription: "Redirect callback should be made")
+        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
+        let callbackExpectation = self.expectation(description: "Redirect callback should be made")
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, request in
@@ -228,7 +228,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -244,8 +244,8 @@ class SessionDelegateTestCase: BaseTestCase {
         let redirectURLString = "https://www.apple.com/"
         let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
-        let expectation = self.expectation(withDescription: "Request should redirect to \(redirectURLString)")
-        let callbackExpectation = self.expectation(withDescription: "Redirect callback should be made")
+        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
+        let callbackExpectation = self.expectation(description: "Redirect callback should be made")
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirectionWithCompletion = { _, _, _, request, completion in
@@ -269,7 +269,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -286,8 +286,8 @@ class SessionDelegateTestCase: BaseTestCase {
         let redirectURLString = "https://www.apple.com"
         let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
-        let expectation = self.expectation(withDescription: "Request should not redirect to \(redirectURLString)")
-        let callbackExpectation = self.expectation(withDescription: "Redirect callback should be made")
+        let expectation = self.expectation(description: "Request should not redirect to \(redirectURLString)")
+        let callbackExpectation = self.expectation(description: "Redirect callback should be made")
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirectionWithCompletion = { _, _, _, _, completion in
@@ -311,7 +311,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -328,8 +328,8 @@ class SessionDelegateTestCase: BaseTestCase {
         let redirectURLString = "https://www.apple.com"
         let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
-        let expectation = self.expectation(withDescription: "Request should not redirect to \(redirectURLString)")
-        let callbackExpectation = self.expectation(withDescription: "Redirect callback should be made")
+        let expectation = self.expectation(description: "Request should not redirect to \(redirectURLString)")
+        let callbackExpectation = self.expectation(description: "Redirect callback should be made")
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, _ in
@@ -353,7 +353,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -371,11 +371,11 @@ class SessionDelegateTestCase: BaseTestCase {
         let redirectURLString = "https://httpbin.org/get"
         let URLString = "https://httpbin.org/redirect/\(redirectCount)"
 
-        let expectation = self.expectation(withDescription: "Request should redirect to \(redirectURLString)")
+        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
         var redirectExpectations = [XCTestExpectation]()
         for index in 0..<redirectCount {
-            redirectExpectations.insert(self.expectation(withDescription: "Redirect #\(index) callback was received"), at: 0)
+            redirectExpectations.insert(self.expectation(description: "Redirect #\(index) callback was received"), at: 0)
         }
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, request in
@@ -404,7 +404,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -422,13 +422,13 @@ class SessionDelegateTestCase: BaseTestCase {
         let redirectURLString = "https://httpbin.org/get"
         let URLString = "https://httpbin.org/redirect/\(redirectCount)"
 
-        let expectation = self.expectation(withDescription: "Request should redirect to \(redirectURLString)")
+        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
         let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
 
         var redirectExpectations = [XCTestExpectation]()
 
         for index in 0..<redirectCount {
-            redirectExpectations.insert(self.expectation(withDescription: "Redirect #\(index) callback was received"), at: 0)
+            redirectExpectations.insert(self.expectation(description: "Redirect #\(index) callback was received"), at: 0)
         }
 
         delegate.taskWillPerformHTTPRedirectionWithCompletion = { _, _, _, request, completion in
@@ -457,7 +457,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -485,10 +485,9 @@ class SessionDelegateTestCase: BaseTestCase {
         manager.delegate.taskWillPerformHTTPRedirection = { session, task, response, request in
             var redirectedRequest = request
 
-            if let
-                originalRequest = task.originalRequest,
-                headers = originalRequest.allHTTPHeaderFields,
-                authorizationHeaderValue = headers["Authorization"]
+            if let originalRequest = task.originalRequest,
+               let headers = originalRequest.allHTTPHeaderFields,
+               let authorizationHeaderValue = headers["Authorization"]
             {
                 var mutableRequest = request
                 mutableRequest.setValue(authorizationHeaderValue, forHTTPHeaderField: "Authorization")
@@ -498,7 +497,7 @@ class SessionDelegateTestCase: BaseTestCase {
             return redirectedRequest
         }
 
-        let expectation = self.expectation(withDescription: "Request should redirect to \(redirectURLString)")
+        let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
         var response: Response<AnyObject, NSError>?
 
@@ -509,7 +508,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request, "request should not be nil")
@@ -517,9 +516,8 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data, "data should not be nil")
         XCTAssertTrue(response?.result.isSuccess ?? false, "response result should be a success")
         
-        if let
-            JSON = response?.result.value as? [String: AnyObject],
-            headers = JSON["headers"] as? [String: String]
+        if let json = response?.result.value as? [String: AnyObject],
+           let headers = json["headers"] as? [String: String]
         {
             XCTAssertEqual(headers["Custom-Header"], "foobar", "Custom-Header should be equal to foobar")
             XCTAssertEqual(headers["Authorization"], "1234", "Authorization header should be equal to 1234")
@@ -530,7 +528,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
     func testThatDataTaskDidReceiveResponseClosureIsCalledWhenSet() {
         // Given
-        let expectation = self.expectation(withDescription: "Override closure should be called")
+        let expectation = self.expectation(description: "Override closure should be called")
 
         var overrideClosureCalled = false
         var response: HTTPURLResponse?
@@ -546,7 +544,7 @@ class SessionDelegateTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertTrue(overrideClosureCalled)
@@ -555,7 +553,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
     func testThatDataTaskDidReceiveResponseWithCompletionClosureIsCalledWhenSet() {
         // Given
-        let expectation = self.expectation(withDescription: "Override closure should be called")
+        let expectation = self.expectation(description: "Override closure should be called")
 
         var overrideClosureCalled = false
         var response: HTTPURLResponse?
@@ -571,7 +569,7 @@ class SessionDelegateTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertTrue(overrideClosureCalled)

@@ -135,9 +135,8 @@ public enum ServerTrustPolicy {
         }.flatten())
 
         for path in paths {
-            if let
-                certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)),
-                certificate = SecCertificateCreateWithData(nil, certificateData)
+            if let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)),
+               let certificate = SecCertificateCreateWithData(nil, certificateData)
             {
                 certificates.append(certificate)
             }
@@ -277,9 +276,8 @@ public enum ServerTrustPolicy {
         var publicKeys: [SecKey] = []
 
         for index in 0..<SecTrustGetCertificateCount(trust) {
-            if let
-                certificate = SecTrustGetCertificateAtIndex(trust, index),
-                publicKey = publicKeyForCertificate(certificate)
+            if let certificate = SecTrustGetCertificateAtIndex(trust, index),
+               let publicKey = publicKeyForCertificate(certificate)
             {
                 publicKeys.append(publicKey)
             }
@@ -295,7 +293,7 @@ public enum ServerTrustPolicy {
         var trust: SecTrust?
         let trustCreationStatus = SecTrustCreateWithCertificates(certificate, policy, &trust)
 
-        if let trust = trust where trustCreationStatus == errSecSuccess {
+        if let trust = trust, trustCreationStatus == errSecSuccess {
             publicKey = SecTrustCopyPublicKey(trust)
         }
 

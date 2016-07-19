@@ -412,9 +412,8 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         )
         XCTAssertNotNil(URLRequest.httpBody, "HTTPBody should not be nil")
 
-        if let
-            HTTPBody = URLRequest.httpBody,
-            decodedHTTPBody = String(data: HTTPBody, encoding: String.Encoding.utf8)
+        if let httpBody = URLRequest.httpBody,
+           let decodedHTTPBody = String(data: httpBody, encoding: String.Encoding.utf8)
         {
             XCTAssertEqual(decodedHTTPBody, "bar=2&foo=1", "HTTPBody is incorrect")
         } else {

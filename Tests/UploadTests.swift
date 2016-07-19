@@ -146,7 +146,7 @@ class UploadDataTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
         let data = "Lorem ipsum dolor sit amet".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
-        let expectation = self.expectation(withDescription: "Upload request should succeed: \(urlString)")
+        let expectation = self.expectation(description: "Upload request should succeed: \(urlString)")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -162,7 +162,7 @@ class UploadDataTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -182,7 +182,7 @@ class UploadDataTestCase: BaseTestCase {
             return text.data(using: String.Encoding.utf8, allowLossyConversion: false)!
         }()
 
-        let expectation = self.expectation(withDescription: "Bytes upload progress should be reported: \(urlString)")
+        let expectation = self.expectation(description: "Bytes upload progress should be reported: \(urlString)")
 
         var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
@@ -212,7 +212,7 @@ class UploadDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(responseRequest, "response request should not be nil")
@@ -241,9 +241,8 @@ class UploadDataTestCase: BaseTestCase {
             }
         }
 
-        if let
-            lastByteValue = byteValues.last,
-            lastProgressValue = progressValues.last
+        if let lastByteValue = byteValues.last,
+           let lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
@@ -271,7 +270,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
         let uploadData = "upload_data".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
-        let expectation = self.expectation(withDescription: "multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
         var request: URLRequest?
@@ -304,7 +303,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -312,10 +311,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let
-            request = request,
-            multipartFormData = formData,
-            contentType = request.value(forHTTPHeaderField: "Content-Type")
+        if let request = request,
+           let multipartFormData = formData,
+           let contentType = request.value(forHTTPHeaderField: "Content-Type")
         {
             XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
         } else {
@@ -329,7 +327,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let french = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
         let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
-        let expectation = self.expectation(withDescription: "multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -361,7 +359,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -384,7 +382,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let french = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
         let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
-        let expectation = self.expectation(withDescription: "multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var streamingFromDisk: Bool?
         var streamFileURL: URL?
@@ -412,7 +410,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -428,7 +426,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
         let uploadData = "upload data".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
-        let expectation = self.expectation(withDescription: "multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
         var request: URLRequest?
@@ -457,7 +455,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -466,10 +464,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTAssertFalse(streamingFromDisk, "streaming from disk should be false")
         }
 
-        if let
-            request = request,
-            multipartFormData = formData,
-            contentType = request.value(forHTTPHeaderField: "Content-Type")
+        if let request = request,
+           let multipartFormData = formData,
+           let contentType = request.value(forHTTPHeaderField: "Content-Type")
         {
             XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
         } else {
@@ -483,7 +480,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let french = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
         let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
-        let expectation = self.expectation(withDescription: "multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var streamingFromDisk: Bool?
         var streamFileURL: URL?
@@ -512,15 +509,14 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
         XCTAssertNotNil(streamFileURL, "stream file URL should not be nil")
 
-        if let
-            streamingFromDisk = streamingFromDisk,
-            streamFilePath = streamFileURL?.path
+        if let streamingFromDisk = streamingFromDisk,
+           let streamFilePath = streamFileURL?.path
         {
             XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
             XCTAssertTrue(
@@ -535,7 +531,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
         let uploadData = "upload data".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
-        let expectation = self.expectation(withDescription: "multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
         var request: URLRequest?
@@ -565,7 +561,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -574,10 +570,9 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
         }
 
-        if let
-            request = request,
-            multipartFormData = formData,
-            contentType = request.value(forHTTPHeaderField: "Content-Type")
+        if let request = request,
+           let multipartFormData = formData,
+           let contentType = request.value(forHTTPHeaderField: "Content-Type")
         {
             XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
         } else {
@@ -671,7 +666,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return loremValues.joined(separator: " ").data(using: String.Encoding.utf8, allowLossyConversion: false)!
         }()
 
-        let expectation = self.expectation(withDescription: "multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
@@ -720,7 +715,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -749,9 +744,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         }
 
-        if let
-            lastByteValue = byteValues.last,
-            lastProgressValue = progressValues.last
+        if let lastByteValue = byteValues.last,
+           let lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)

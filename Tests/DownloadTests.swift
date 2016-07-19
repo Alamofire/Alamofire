@@ -92,7 +92,7 @@ class DownloadResponseTestCase: BaseTestCase {
             domain: searchPathDomain
         )
 
-        let expectation = self.expectation(withDescription: "Download request should download data to file: \(urlString)")
+        let expectation = self.expectation(description: "Download request should download data to file: \(urlString)")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -108,7 +108,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -171,7 +171,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let filename = "test_download_data"
         let fileURL = try! directory.appendingPathComponent(filename)
 
-        let expectation = self.expectation(withDescription: "Bytes download progress should be reported: \(urlString)")
+        let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
 
         var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
@@ -203,7 +203,7 @@ class DownloadResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(responseRequest, "response request should not be nil")
@@ -232,9 +232,8 @@ class DownloadResponseTestCase: BaseTestCase {
             }
         }
 
-        if let
-            lastByteValue = byteValues.last,
-            lastProgressValue = progressValues.last
+        if let lastByteValue = byteValues.last,
+           let lastProgressValue = progressValues.last
         {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
@@ -263,7 +262,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let parameters = ["foo": "bar"]
         let destination: Request.DownloadFileDestination = { _, _ in fileURL }
 
-        let expectation = self.expectation(withDescription: "Download request should download data to file: \(fileURL)")
+        let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -279,18 +278,17 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let
-            data = try? Data(contentsOf: fileURL),
-            JSONObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
-            JSON = JSONObject as? [String: AnyObject],
-            args = JSON["args"] as? [String: String]
+        if let data = try? Data(contentsOf: fileURL),
+           let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
+           let json = jsonObject as? [String: AnyObject],
+           let args = json["args"] as? [String: String]
         {
             XCTAssertEqual(args["foo"], "bar", "foo parameter should equal bar")
         } else {
@@ -305,7 +303,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let headers = ["Authorization": "123456"]
         let destination: Request.DownloadFileDestination = { _, _ in fileURL }
 
-        let expectation = self.expectation(withDescription: "Download request should download data to file: \(fileURL)")
+        let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -321,18 +319,17 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let
-            data = try? Data(contentsOf: fileURL),
-            JSONObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
-            JSON = JSONObject as? [String: AnyObject],
-            headers = JSON["headers"] as? [String: String]
+        if let data = try? Data(contentsOf: fileURL),
+           let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
+           let json = jsonObject as? [String: AnyObject],
+           let headers = json["headers"] as? [String: String]
         {
             XCTAssertEqual(headers["Authorization"], "123456", "Authorization parameter should equal 123456")
         } else {
@@ -354,7 +351,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
     func testThatImmediatelyCancelledDownloadDoesNotHaveResumeDataAvailable() {
         // Given
-        let expectation = self.expectation(withDescription: "Download should be cancelled")
+        let expectation = self.expectation(description: "Download should be cancelled")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -374,7 +371,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         download.cancel()
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -387,7 +384,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
     func testThatCancelledDownloadResponseDataMatchesResumeData() {
         // Given
-        let expectation = self.expectation(withDescription: "Download should be cancelled")
+        let expectation = self.expectation(description: "Download should be cancelled")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -408,7 +405,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -418,9 +415,8 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         XCTAssertNotNil(download.resumeData, "resume data should not be nil")
 
-        if let
-            responseData = data as? Data,
-            resumeData = download.resumeData
+        if let responseData = data as? Data,
+           let resumeData = download.resumeData
         {
             XCTAssertEqual(responseData, resumeData, "response data should equal resume data")
         } else {
@@ -430,7 +426,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
     func testThatCancelledDownloadResumeDataIsAvailableWithJSONResponseSerializer() {
         // Given
-        let expectation = self.expectation(withDescription: "Download should be cancelled")
+        let expectation = self.expectation(description: "Download should be cancelled")
         var response: Response<AnyObject, NSError>?
 
         // When
@@ -443,7 +439,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(withTimeout: timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         if let response = response {
