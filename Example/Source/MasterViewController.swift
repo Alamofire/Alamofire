@@ -46,9 +46,8 @@ class MasterViewController: UITableViewController {
         if let split = splitViewController {
             let controllers = split.viewControllers
 
-            if let
-                navigationController = controllers.last as? UINavigationController,
-                topViewController = navigationController.topViewController as? DetailViewController
+            if let navigationController = controllers.last as? UINavigationController,
+               let topViewController = navigationController.topViewController as? DetailViewController
             {
                 detailViewController = topViewController
             }
@@ -57,12 +56,11 @@ class MasterViewController: UITableViewController {
 
     // MARK: - UIStoryboardSegue
 
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let
-            navigationController = segue.destinationViewController as? UINavigationController,
-            detailViewController = navigationController.topViewController as? DetailViewController
+    override func prepare(for segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let navigationController = segue.destinationViewController as? UINavigationController,
+           let detailViewController = navigationController.topViewController as? DetailViewController
         {
-            func requestForSegue(segue: UIStoryboardSegue) -> Request? {
+            func requestForSegue(_ segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier! {
                 case "GET":
                     detailViewController.segueIdentifier = "GET"
@@ -79,8 +77,8 @@ class MasterViewController: UITableViewController {
                 case "DOWNLOAD":
                     detailViewController.segueIdentifier = "DOWNLOAD"
                     let destination = Alamofire.Request.suggestedDownloadDestination(
-                        directory: .CachesDirectory,
-                        domain: .UserDomainMask
+                        directory: .cachesDirectory,
+                        domain: .userDomainMask
                     )
                     return Alamofire.download(.GET, "https://httpbin.org/stream/1", destination: destination)
                 default:

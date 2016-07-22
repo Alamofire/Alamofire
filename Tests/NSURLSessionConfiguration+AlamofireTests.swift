@@ -24,14 +24,14 @@
 
 import Foundation
 
-extension NSURLSessionConfiguration {
-    static func backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier: String) -> NSURLSessionConfiguration {
-        let configuration: NSURLSessionConfiguration
+extension URLSessionConfiguration {
+    static func backgroundSessionConfigurationForAllPlatformsWithIdentifier(_ identifier: String) -> URLSessionConfiguration {
+        let configuration: URLSessionConfiguration
 
         if #available(OSX 10.10, *) {
-            configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(identifier)
+            configuration = URLSessionConfiguration.background(withIdentifier: identifier)
         } else {
-            configuration = NSURLSessionConfiguration.backgroundSessionConfiguration(identifier)
+            configuration = URLSessionConfiguration.backgroundSessionConfiguration(identifier)
         }
 
         return configuration
