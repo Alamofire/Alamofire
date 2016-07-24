@@ -27,9 +27,10 @@ import Foundation
 import XCTest
 
 private struct TestCertificates {
-    static let RootCA = TestCertificates.certificateWithFileName("root-ca-disig")
-    static let IntermediateCA = TestCertificates.certificateWithFileName("intermediate-ca-disig")
-    static let Leaf = TestCertificates.certificateWithFileName("testssl-expire.disig.sk")
+    static let RootCA = TestCertificates.certificateWithFileName("expired.badssl.com-root-ca")
+    static let IntermediateCA1 = TestCertificates.certificateWithFileName("expired.badssl.com-intermediate-ca-1")
+    static let IntermediateCA2 = TestCertificates.certificateWithFileName("expired.badssl.com-intermediate-ca-2")
+    static let Leaf = TestCertificates.certificateWithFileName("expired.badssl.com-leaf")
 
     static func certificateWithFileName(_ fileName: String) -> SecCertificate {
         class Bundle {}
@@ -45,7 +46,8 @@ private struct TestCertificates {
 
 private struct TestPublicKeys {
     static let RootCA = TestPublicKeys.publicKeyForCertificate(TestCertificates.RootCA)
-    static let IntermediateCA = TestPublicKeys.publicKeyForCertificate(TestCertificates.IntermediateCA)
+    static let IntermediateCA1 = TestPublicKeys.publicKeyForCertificate(TestCertificates.IntermediateCA1)
+    static let IntermediateCA2 = TestPublicKeys.publicKeyForCertificate(TestCertificates.IntermediateCA2)
     static let Leaf = TestPublicKeys.publicKeyForCertificate(TestCertificates.Leaf)
 
     static func publicKeyForCertificate(_ certificate: SecCertificate) -> SecKey {
@@ -62,8 +64,8 @@ private struct TestPublicKeys {
 // MARK: -
 
 class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
-    let URL = "https://testssl-expire.disig.sk/"
-    let host = "testssl-expire.disig.sk"
+    let URL = "https://expired.badssl.com/"
+    let host = "expired.badssl.com"
     var configuration: URLSessionConfiguration!
 
     // MARK: Setup and Teardown
@@ -170,7 +172,13 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWhenPinningAllCertificatesWithCertificateChainValidation() {
         // Given
-        let certificates = [TestCertificates.Leaf, TestCertificates.IntermediateCA, TestCertificates.RootCA]
+        let certificates = [
+            TestCertificates.Leaf,
+            TestCertificates.IntermediateCA1,
+            TestCertificates.IntermediateCA2,
+            TestCertificates.RootCA
+        ]
+
         let policies: [String: ServerTrustPolicy] = [
             host: .pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
         ]
@@ -232,7 +240,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCACertificateWithoutCertificateChainValidation() {
         // Given
-        let certificates = [TestCertificates.IntermediateCA]
+        let certificates = [TestCertificates.IntermediateCA2]
         let policies: [String: ServerTrustPolicy] = [
             host: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
@@ -352,7 +360,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyWithoutCertificateChainValidation() {
         // Given
-        let publicKeys = [TestPublicKeys.IntermediateCA]
+        let publicKeys = [TestPublicKeys.IntermediateCA2]
         let policies: [String: ServerTrustPolicy] = [
             host: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
