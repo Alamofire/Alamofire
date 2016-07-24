@@ -1,31 +1,66 @@
 language: objective-c
-osx_image: xcode7.3
 env:
   global:
   - LC_CTYPE=en_US.UTF-8
   - LANG=en_US.UTF-8
   - WORKSPACE=Alamofire.xcworkspace
-  - IOS_FRAMEWORK_SCHEME="Alamofire iOS"
-  - OSX_FRAMEWORK_SCHEME="Alamofire OSX"
-  - TVOS_FRAMEWORK_SCHEME="Alamofire tvOS"
-  - WATCHOS_FRAMEWORK_SCHEME="Alamofire watchOS"
-  - IOS_SDK=iphonesimulator9.3
-  - OSX_SDK=macosx10.11
-  - TVOS_SDK=appletvsimulator9.2
-  - WATCHOS_SDK=watchsimulator2.2
+  - IOS_SCHEME="Alamofire iOS"
+  - OSX_SCHEME="Alamofire OSX"
+  - TVOS_SCHEME="Alamofire tvOS"
+  - WATCHOS_SCHEME="Alamofire watchOS"
+  - IOS_SIM="iphonesimulator"
+  - OSX_SIM="macosx"
+  - TVOS_SIM="appletvsimulator"
+  - WATCHOS_SIM="watchsimulator"
   - EXAMPLE_SCHEME="iOS Example"
-  matrix:
-    - DESTINATION="OS=8.1,name=iPhone 4S"          SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="YES"
-    - DESTINATION="OS=8.2,name=iPhone 5"           SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="OS=8.3,name=iPhone 5S"          SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="OS=8.4,name=iPhone 6"           SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="OS=9.0,name=iPhone 6"           SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="OS=9.1,name=iPhone 6 Plus"      SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="OS=9.2,name=iPhone 6S"          SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="OS=9.3,name=iPhone 6S Plus"     SCHEME="$IOS_FRAMEWORK_SCHEME"     SDK="$IOS_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
-    - DESTINATION="arch=x86_64"                    SCHEME="$OSX_FRAMEWORK_SCHEME"     SDK="$OSX_SDK"     RUN_TESTS="YES" BUILD_EXAMPLE="NO"  POD_LINT="NO"
-    - DESTINATION="OS=9.2,name=Apple TV 1080p"     SCHEME="$TVOS_FRAMEWORK_SCHEME"    SDK="$TVOS_SDK"    RUN_TESTS="YES" BUILD_EXAMPLE="NO"  POD_LINT="NO"
-    - DESTINATION="OS=2.2,name=Apple Watch - 42mm" SCHEME="$WATCHOS_FRAMEWORK_SCHEME" SDK="$WATCHOS_SDK" RUN_TESTS="NO"  BUILD_EXAMPLE="NO"  POD_LINT="NO"
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="OS=8.1,name=iPhone 4S" SCHEME="$IOS_SCHEME" SDK="${IOS_SIM}9.3" RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="YES"
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="OS=8.2,name=iPhone 5" SCHEME="$IOS_SCHEME" SDK="${IOS_SIM}9.3" RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="OS=8.3,name=iPhone 5S" SCHEME="$IOS_SCHEME" SDK="${IOS_SIM}9.3" RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="OS=8.4,name=iPhone 6" SCHEME="$IOS_SCHEME" SDK="${IOS_SIM}9.3" RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="OS=9.0,name=iPhone 6" SCHEME="$IOS_SCHEME" SDK="${IOS_SIM}9.3" RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="OS=9.1,name=iPhone 6 Plus" SCHEME="$IOS_SCHEME" SDK="${IOS_SIM}9.3" RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="OS=9.2,name=iPhone 6S" SCHEME="$IOS_SCHEME" SDK="${IOS_SIM}9.3" RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="OS=9.3,name=iPhone 6S Plus" SCHEME="$IOS_SCHEME" SDK="${IOS_SIM}9.3" RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="arch=x86_64" SCHEME="$OSX_SCHEME" SDK="${OSX_SIM}10.11" RUN_TESTS="YES" BUILD_EXAMPLE="NO" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="OS=9.2,name=Apple TV 1080p" SCHEME="$TVOS_SCHEME" SDK="${TVOS_SIM}9.2" RUN_TESTS="YES" BUILD_EXAMPLE="NO" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode7.3
+      env: DESTINATION="OS=2.2,name=Apple Watch - 42mm" SCHEME="$WATCHOS_SCHEME" SDK="${WATCHOS_SIM}2.2" RUN_TESTS="NO" BUILD_EXAMPLE="NO" POD_LINT="NO"
+
+    - os: osx
+      env: DESTINATION="OS=10.0,name=iPhone 6S" SCHEME="$IOS_SCHEME" SDK="${IOS_SIM}10.0" RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+      osx_image: xcode8
+    - os: osx
+      osx_image: xcode8
+      env: DESTINATION="arch=x86_64" SCHEME="$OSX_SCHEME" SDK="${OSX_SIM}10.12" RUN_TESTS="YES" BUILD_EXAMPLE="NO" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode8
+      env: DESTINATION="OS=10.0,name=Apple TV 1080p" SCHEME="$TVOS_SCHEME" SDK="${TVOS_SIM}10.0" RUN_TESTS="YES" BUILD_EXAMPLE="NO" POD_LINT="NO"
+    - os: osx
+      osx_image: xcode8
+      env: DESTINATION="OS=3.0,name=Apple Watch - 42mm" SCHEME="$WATCHOS_SCHEME" SDK="${WATCHOS_SIM}3.0" RUN_TESTS="NO" BUILD_EXAMPLE="NO" POD_LINT="NO"
 script:
   - set -o pipefail
   - xcodebuild -version
