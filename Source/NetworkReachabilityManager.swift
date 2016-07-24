@@ -61,7 +61,7 @@ public class NetworkReachabilityManager {
         case WWAN
     }
 
-    /// A closure executed when the network reachability status changes. The closure takes a single argument: the 
+    /// A closure executed when the network reachability status changes. The closure takes a single argument: the
     /// network reachability status.
     public typealias Listener = NetworkReachabilityStatus -> Void
 

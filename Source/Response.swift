@@ -44,7 +44,7 @@ public struct Response<Value, Error: ErrorType> {
     /**
         Initializes the `Response` instance with the specified URL request, URL response, server data and response
         serialization result.
-    
+
         - parameter request:  The URL request sent to the server.
         - parameter response: The server's response to the URL request.
         - parameter data:     The data returned by the server.

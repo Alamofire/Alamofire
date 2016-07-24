@@ -32,7 +32,7 @@ public struct Notifications {
         /// `NSURLSessionTask`.
         public static let DidResume = "com.alamofire.notifications.task.didResume"
 
-        /// Notification posted when an `NSURLSessionTask` is suspended. The notification `object` contains the 
+        /// Notification posted when an `NSURLSessionTask` is suspended. The notification `object` contains the
         /// suspended `NSURLSessionTask`.
         public static let DidSuspend = "com.alamofire.notifications.task.didSuspend"
 

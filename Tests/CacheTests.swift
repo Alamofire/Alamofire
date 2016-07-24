@@ -124,7 +124,7 @@ class CacheTestCase: BaseTestCase {
 
     /**
         Executes a request for all `Cache-Control` header values to load the response into the `URLCache`.
-    
+
         This implementation leverages dispatch groups to execute all the requests as well as wait an additional
         second before returning. This ensures the cache contains responses for all requests that are at least
         one second old. This allows the tests to distinguish whether the subsequent responses come from the cache
