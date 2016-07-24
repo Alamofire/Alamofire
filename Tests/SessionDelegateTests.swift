@@ -515,10 +515,8 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response, "response should not be nil")
         XCTAssertNotNil(response?.data, "data should not be nil")
         XCTAssertTrue(response?.result.isSuccess ?? false, "response result should be a success")
-        
-        if let json = response?.result.value as? [String: AnyObject],
-           let headers = json["headers"] as? [String: String]
-        {
+
+        if let json = response?.result.value as? [String: AnyObject], let headers = json["headers"] as? [String: String] {
             XCTAssertEqual(headers["Custom-Header"], "foobar", "Custom-Header should be equal to foobar")
             XCTAssertEqual(headers["Authorization"], "1234", "Authorization header should be equal to 1234")
         }

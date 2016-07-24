@@ -960,7 +960,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluateServerTrust(serverTrust, isValidForHost: host)
-        
+
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }

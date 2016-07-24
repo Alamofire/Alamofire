@@ -38,7 +38,7 @@ extension Request {
     }
 
     /**
-        A closure used to validate a request that takes a URL request and URL response, and returns whether the 
+        A closure used to validate a request that takes a URL request and URL response, and returns whether the
         request was valid.
     */
     public typealias Validation = (Foundation.URLRequest?, HTTPURLResponse) -> ValidationResult
@@ -189,7 +189,7 @@ extension Request {
     // MARK: - Automatic
 
     /**
-        Validates that the response has a status code in the default acceptable range of 200...299, and that the content 
+        Validates that the response has a status code in the default acceptable range of 200...299, and that the content
         type matches any specified in the Accept HTTP header field.
 
         If validation fails, subsequent calls to response handlers will have an associated error.
