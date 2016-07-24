@@ -140,7 +140,7 @@ extension Request {
 
         - returns: The request.
     */
-    public func validate<S : SequenceType where S.Generator.Element == String>(contentType acceptableContentTypes: S) -> Self {
+    public func validate<S: SequenceType where S.Generator.Element == String>(contentType acceptableContentTypes: S) -> Self {
         return validate { _, response in
             guard let validData = self.delegate.data where validData.length > 0 else { return .Success }
 

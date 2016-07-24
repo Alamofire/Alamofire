@@ -64,7 +64,7 @@ extension Manager {
         - parameter hostName: The hostname of the server to connect to.
         - parameter port:     The port of the server to connect to.
 
-        :returns: The created stream request.
+        - returns: The created stream request.
     */
     public func stream(hostName hostName: String, port: Int) -> Request {
         return stream(.Stream(hostName, port))
