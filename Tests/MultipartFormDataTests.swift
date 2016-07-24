@@ -64,13 +64,13 @@ private func temporaryFileURL() -> NSURL {
 
     let fileManager = NSFileManager.defaultManager()
     do {
-        try fileManager.createDirectoryAtURL(directoryURL, withIntermediateDirectories: true, attributes: nil)
+        try fileManager.createDirectoryAtURL(directoryURL!, withIntermediateDirectories: true, attributes: nil)
     } catch {
         // No-op - will cause tests to fail, not crash
     }
 
     let fileName = NSUUID().UUIDString
-    let fileURL = directoryURL.URLByAppendingPathComponent(fileName)
+    let fileURL = directoryURL!.URLByAppendingPathComponent(fileName)!
 
     return fileURL
 }

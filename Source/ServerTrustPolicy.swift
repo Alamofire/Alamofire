@@ -180,13 +180,13 @@ public enum ServerTrustPolicy {
 
         switch self {
         case let .PerformDefaultEvaluation(validateHost):
-            let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
+            let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)!
             SecTrustSetPolicies(serverTrust, [policy])
 
             serverTrustIsValid = trustIsValid(serverTrust)
         case let .PinCertificates(pinnedCertificates, validateCertificateChain, validateHost):
             if validateCertificateChain {
-                let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
+                let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)!
                 SecTrustSetPolicies(serverTrust, [policy])
 
                 SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates)
@@ -210,7 +210,7 @@ public enum ServerTrustPolicy {
             var certificateChainEvaluationPassed = true
 
             if validateCertificateChain {
-                let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
+                let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)!
                 SecTrustSetPolicies(serverTrust, [policy])
 
                 certificateChainEvaluationPassed = trustIsValid(serverTrust)
@@ -240,12 +240,12 @@ public enum ServerTrustPolicy {
     private func trustIsValid(trust: SecTrust) -> Bool {
         var isValid = false
 
-        var result = SecTrustResultType(kSecTrustResultInvalid)
+        var result = SecTrustResultType.Invalid
         let status = SecTrustEvaluate(trust, &result)
 
         if status == errSecSuccess {
-            let unspecified = SecTrustResultType(kSecTrustResultUnspecified)
-            let proceed = SecTrustResultType(kSecTrustResultProceed)
+            let unspecified = SecTrustResultType.Unspecified
+            let proceed = SecTrustResultType.Proceed
 
             isValid = result == unspecified || result == proceed
         }
