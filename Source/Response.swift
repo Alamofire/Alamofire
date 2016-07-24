@@ -58,8 +58,7 @@ public struct Response<Value, Error: ErrorType> {
         response: NSHTTPURLResponse?,
         data: NSData?,
         result: Result<Value, Error>,
-        timeline: Timeline = Timeline())
-    {
+        timeline: Timeline = Timeline()) {
         self.request = request
         self.response = response
         self.data = data

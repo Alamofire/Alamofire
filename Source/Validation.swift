@@ -56,8 +56,7 @@ extension Request {
         delegate.queue.addOperationWithBlock {
             if let
                 response = self.response where self.delegate.error == nil,
-                case let .Failure(error) = validation(self.request, response)
-            {
+                case let .Failure(error) = validation(self.request, response) {
                 self.delegate.error = error
             }
         }
@@ -112,8 +111,7 @@ extension Request {
 
             if let
                 type = components.first,
-                subtype = components.last
-            {
+                subtype = components.last {
                 self.type = type
                 self.subtype = subtype
             } else {
@@ -146,8 +144,7 @@ extension Request {
 
             if let
                 responseContentType = response.MIMEType,
-                responseMIMEType = MIMEType(responseContentType)
-            {
+                responseMIMEType = MIMEType(responseContentType) {
                 for contentType in acceptableContentTypes {
                     if let acceptableMIMEType = MIMEType(contentType) where acceptableMIMEType.matches(responseMIMEType) {
                         return .Success

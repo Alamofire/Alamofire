@@ -89,8 +89,7 @@ func URLRequest(
     method: Method,
     _ URLString: URLStringConvertible,
     headers: [String: String]? = nil)
-    -> NSMutableURLRequest
-{
+    -> NSMutableURLRequest {
     let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString)!)
     mutableURLRequest.HTTPMethod = method.rawValue
 
@@ -123,8 +122,7 @@ public func request(
     parameters: [String: AnyObject]? = nil,
     encoding: ParameterEncoding = .URL,
     headers: [String: String]? = nil)
-    -> Request
-{
+    -> Request {
     return Manager.sharedInstance.request(
         method,
         URLString,
@@ -166,8 +164,7 @@ public func upload(
     _ URLString: URLStringConvertible,
     headers: [String: String]? = nil,
     file: NSURL)
-    -> Request
-{
+    -> Request {
     return Manager.sharedInstance.upload(method, URLString, headers: headers, file: file)
 }
 
@@ -200,8 +197,7 @@ public func upload(
     _ URLString: URLStringConvertible,
     headers: [String: String]? = nil,
     data: NSData)
-    -> Request
-{
+    -> Request {
     return Manager.sharedInstance.upload(method, URLString, headers: headers, data: data)
 }
 
@@ -234,8 +230,7 @@ public func upload(
     _ URLString: URLStringConvertible,
     headers: [String: String]? = nil,
     stream: NSInputStream)
-    -> Request
-{
+    -> Request {
     return Manager.sharedInstance.upload(method, URLString, headers: headers, stream: stream)
 }
 
@@ -270,8 +265,7 @@ public func upload(
     headers: [String: String]? = nil,
     multipartFormData: MultipartFormData -> Void,
     encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
-    encodingCompletion: (Manager.MultipartFormDataEncodingResult -> Void)?)
-{
+    encodingCompletion: (Manager.MultipartFormDataEncodingResult -> Void)?) {
     return Manager.sharedInstance.upload(
         method,
         URLString,
@@ -295,8 +289,7 @@ public func upload(
     URLRequest: URLRequestConvertible,
     multipartFormData: MultipartFormData -> Void,
     encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
-    encodingCompletion: (Manager.MultipartFormDataEncodingResult -> Void)?)
-{
+    encodingCompletion: (Manager.MultipartFormDataEncodingResult -> Void)?) {
     return Manager.sharedInstance.upload(
         URLRequest,
         multipartFormData: multipartFormData,
@@ -328,8 +321,7 @@ public func download(
     encoding: ParameterEncoding = .URL,
     headers: [String: String]? = nil,
     destination: Request.DownloadFileDestination)
-    -> Request
-{
+    -> Request {
     return Manager.sharedInstance.download(
         method,
         URLString,

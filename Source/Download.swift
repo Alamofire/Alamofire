@@ -85,8 +85,7 @@ extension Manager {
         encoding: ParameterEncoding = .URL,
         headers: [String: String]? = nil,
         destination: Request.DownloadFileDestination)
-        -> Request
-    {
+        -> Request {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
         let encodedURLRequest = encoding.encode(mutableURLRequest, parameters: parameters).0
 
@@ -148,8 +147,7 @@ extension Request {
     public class func suggestedDownloadDestination(
         directory directory: NSSearchPathDirectory = .DocumentDirectory,
         domain: NSSearchPathDomainMask = .UserDomainMask)
-        -> DownloadFileDestination
-    {
+        -> DownloadFileDestination {
         return { temporaryURL, response -> NSURL in
             let directoryURLs = NSFileManager.defaultManager().URLsForDirectory(directory, inDomains: domain)
 
@@ -194,8 +192,7 @@ extension Request {
         func URLSession(
             session: NSURLSession,
             downloadTask: NSURLSessionDownloadTask,
-            didFinishDownloadingToURL location: NSURL)
-        {
+            didFinishDownloadingToURL location: NSURL) {
             if let downloadTaskDidFinishDownloadingToURL = downloadTaskDidFinishDownloadingToURL {
                 do {
                     let destination = downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
@@ -211,8 +208,7 @@ extension Request {
             downloadTask: NSURLSessionDownloadTask,
             didWriteData bytesWritten: Int64,
             totalBytesWritten: Int64,
-            totalBytesExpectedToWrite: Int64)
-        {
+            totalBytesExpectedToWrite: Int64) {
             if initialResponseTime == nil { initialResponseTime = CFAbsoluteTimeGetCurrent() }
 
             if let downloadTaskDidWriteData = downloadTaskDidWriteData {
@@ -235,8 +231,7 @@ extension Request {
             session: NSURLSession,
             downloadTask: NSURLSessionDownloadTask,
             didResumeAtOffset fileOffset: Int64,
-            expectedTotalBytes: Int64)
-        {
+            expectedTotalBytes: Int64) {
             if let downloadTaskDidResumeAtOffset = downloadTaskDidResumeAtOffset {
                 downloadTaskDidResumeAtOffset(session, downloadTask, fileOffset, expectedTotalBytes)
             } else {

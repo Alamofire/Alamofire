@@ -102,8 +102,7 @@ extension Manager {
         _ URLString: URLStringConvertible,
         headers: [String: String]? = nil,
         file: NSURL)
-        -> Request
-    {
+        -> Request {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
         return upload(mutableURLRequest, file: file)
     }
@@ -141,8 +140,7 @@ extension Manager {
         _ URLString: URLStringConvertible,
         headers: [String: String]? = nil,
         data: NSData)
-        -> Request
-    {
+        -> Request {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
 
         return upload(mutableURLRequest, data: data)
@@ -181,8 +179,7 @@ extension Manager {
         _ URLString: URLStringConvertible,
         headers: [String: String]? = nil,
         stream: NSInputStream)
-        -> Request
-    {
+        -> Request {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
 
         return upload(mutableURLRequest, stream: stream)
@@ -239,8 +236,7 @@ extension Manager {
         headers: [String: String]? = nil,
         multipartFormData: MultipartFormData -> Void,
         encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
-        encodingCompletion: (MultipartFormDataEncodingResult -> Void)?)
-    {
+        encodingCompletion: (MultipartFormDataEncodingResult -> Void)?) {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
 
         return upload(
@@ -279,8 +275,7 @@ extension Manager {
         URLRequest: URLRequestConvertible,
         multipartFormData: MultipartFormData -> Void,
         encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
-        encodingCompletion: (MultipartFormDataEncodingResult -> Void)?)
-    {
+        encodingCompletion: (MultipartFormDataEncodingResult -> Void)?) {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             let formData = MultipartFormData()
             multipartFormData(formData)
@@ -359,8 +354,7 @@ extension Request {
             task: NSURLSessionTask,
             didSendBodyData bytesSent: Int64,
             totalBytesSent: Int64,
-            totalBytesExpectedToSend: Int64)
-        {
+            totalBytesExpectedToSend: Int64) {
             if initialResponseTime == nil { initialResponseTime = CFAbsoluteTimeGetCurrent() }
 
             if let taskDidSendBodyData = taskDidSendBodyData {

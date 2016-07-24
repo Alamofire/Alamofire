@@ -173,8 +173,7 @@ extension Manager.SessionDelegate: NSURLSessionStreamDelegate {
         session: NSURLSession,
         streamTask: NSURLSessionStreamTask,
         didBecomeInputStream inputStream: NSInputStream,
-        outputStream: NSOutputStream)
-    {
+        outputStream: NSOutputStream) {
         streamTaskDidBecomeInputStream?(session, streamTask, inputStream, outputStream)
     }
 }
