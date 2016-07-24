@@ -27,7 +27,7 @@ import Foundation
 // MARK: - URLStringConvertible
 
 /**
-    Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to 
+    Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to
     construct URL requests.
 */
 public protocol URLStringConvertible {
@@ -355,11 +355,11 @@ public func download(URLRequest: URLRequestConvertible, destination: Request.Dow
 // MARK: Resume Data
 
 /**
-    Creates a request using the shared manager instance for downloading from the resume data produced from a 
+    Creates a request using the shared manager instance for downloading from the resume data produced from a
     previous request cancellation.
 
     - parameter resumeData:  The resume data. This is an opaque data blob produced by `NSURLSessionDownloadTask`
-                             when a task is cancelled. See `NSURLSession -downloadTaskWithResumeData:` for additional 
+                             when a task is cancelled. See `NSURLSession -downloadTaskWithResumeData:` for additional
                              information.
     - parameter destination: The closure used to determine the destination of the downloaded file.
 

@@ -490,10 +490,10 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     let managerWithAcceptLanguageHeader: Manager = {
         var headers = Alamofire.Manager.sharedInstance.session.configuration.HTTPAdditionalHeaders ?? [:]
         headers["Accept-Language"] = "en-US"
-        
+
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.HTTPAdditionalHeaders = headers
-        
+
         let manager = Manager(configuration: configuration)
         manager.startRequestsImmediately = false
         return manager

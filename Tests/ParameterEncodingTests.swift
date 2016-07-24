@@ -45,14 +45,14 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         // Then
         XCTAssertNil(URLRequest.URL?.query, "query should be nil")
     }
-    
+
     func testURLParameterEncodeEmptyDictionaryParameter() {
         // Given
         let parameters: [String: AnyObject] = [:]
-        
+
         // When
         let (URLRequest, _) = encoding.encode(self.URLRequest, parameters: parameters)
-        
+
         // Then
         XCTAssertNil(URLRequest.URL?.query, "query should be nil")
     }

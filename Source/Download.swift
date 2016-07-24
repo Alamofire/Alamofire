@@ -114,8 +114,8 @@ extension Manager {
 
         If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
 
-        - parameter resumeData:  The resume data. This is an opaque data blob produced by `NSURLSessionDownloadTask` 
-                                 when a task is cancelled. See `NSURLSession -downloadTaskWithResumeData:` for 
+        - parameter resumeData:  The resume data. This is an opaque data blob produced by `NSURLSessionDownloadTask`
+                                 when a task is cancelled. See `NSURLSession -downloadTaskWithResumeData:` for
                                  additional information.
         - parameter destination: The closure used to determine the destination of the downloaded file.
 
@@ -130,14 +130,14 @@ extension Manager {
 
 extension Request {
     /**
-        A closure executed once a request has successfully completed in order to determine where to move the temporary 
-        file written to during the download process. The closure takes two arguments: the temporary file URL and the URL 
+        A closure executed once a request has successfully completed in order to determine where to move the temporary
+        file written to during the download process. The closure takes two arguments: the temporary file URL and the URL
         response, and returns a single argument: the file URL where the temporary file should be moved.
     */
     public typealias DownloadFileDestination = (NSURL, NSHTTPURLResponse) -> NSURL
 
     /**
-        Creates a download file destination closure which uses the default file manager to move the temporary file to a 
+        Creates a download file destination closure which uses the default file manager to move the temporary file to a
         file URL in the first available directory with the specified search path directory and search path domain mask.
 
         - parameter directory: The search path directory. `.DocumentDirectory` by default.
@@ -220,7 +220,7 @@ extension Request {
                     session,
                     downloadTask,
                     bytesWritten,
-                    totalBytesWritten, 
+                    totalBytesWritten,
                     totalBytesExpectedToWrite
                 )
             } else {

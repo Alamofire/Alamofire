@@ -31,10 +31,10 @@ import CoreServices
 #endif
 
 /**
-    Constructs `multipart/form-data` for uploads within an HTTP or HTTPS body. There are currently two ways to encode 
-    multipart form data. The first way is to encode the data directly in memory. This is very efficient, but can lead 
-    to memory issues if the dataset is too large. The second way is designed for larger datasets and will write all the 
-    data to a single file on disk with all the proper boundary segmentation. The second approach MUST be used for 
+    Constructs `multipart/form-data` for uploads within an HTTP or HTTPS body. There are currently two ways to encode
+    multipart form data. The first way is to encode the data directly in memory. This is very efficient, but can lead
+    to memory issues if the dataset is too large. The second way is designed for larger datasets and will write all the
+    data to a single file on disk with all the proper boundary segmentation. The second approach MUST be used for
     larger datasets such as video content, otherwise your app may run out of memory when trying to encode the dataset.
 
     For more information on `multipart/form-data` in general, please refer to the RFC-2388 and RFC-2045 specs as well
@@ -118,7 +118,7 @@ public class MultipartFormData {
         self.bodyParts = []
 
         /**
-         *  The optimal read/write buffer size in bytes for input and output streams is 1024 (1KB). For more 
+         *  The optimal read/write buffer size in bytes for input and output streams is 1024 (1KB). For more
          *  information, please refer to the following article:
          *    - https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Streams/Articles/ReadingInputStreams.html
          */
@@ -367,8 +367,8 @@ public class MultipartFormData {
     /**
         Encodes all the appended body parts into a single `NSData` object.
 
-        It is important to note that this method will load all the appended body parts into memory all at the same 
-        time. This method should only be used when the encoded data will have a small memory footprint. For large data 
+        It is important to note that this method will load all the appended body parts into memory all at the same
+        time. This method should only be used when the encoded data will have a small memory footprint. For large data
         cases, please use the `writeEncodedDataToDisk(fileURL:completionHandler:)` method.
 
         - throws: An `NSError` if encoding encounters an error.

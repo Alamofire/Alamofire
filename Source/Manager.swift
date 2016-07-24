@@ -32,7 +32,7 @@ public class Manager {
     // MARK: - Properties
 
     /**
-        A shared instance of `Manager`, used by top-level Alamofire request methods, and suitable for use directly 
+        A shared instance of `Manager`, used by top-level Alamofire request methods, and suitable for use directly
         for any ad hoc requests.
     */
     public static let sharedInstance: Manager = {
@@ -116,14 +116,14 @@ public class Manager {
     public var startRequestsImmediately: Bool = true
 
     /**
-        The background completion handler closure provided by the UIApplicationDelegate 
-        `application:handleEventsForBackgroundURLSession:completionHandler:` method. By setting the background 
-        completion handler, the SessionDelegate `sessionDidFinishEventsForBackgroundURLSession` closure implementation 
+        The background completion handler closure provided by the UIApplicationDelegate
+        `application:handleEventsForBackgroundURLSession:completionHandler:` method. By setting the background
+        completion handler, the SessionDelegate `sessionDidFinishEventsForBackgroundURLSession` closure implementation
         will automatically call the handler.
-    
-        If you need to handle your own events before the handler is called, then you need to override the 
+
+        If you need to handle your own events before the handler is called, then you need to override the
         SessionDelegate `sessionDidFinishEventsForBackgroundURLSession` and manually call the handler when finished.
-    
+
         `nil` by default.
     */
     public var backgroundCompletionHandler: (() -> Void)?
@@ -133,11 +133,11 @@ public class Manager {
     /**
         Initializes the `Manager` instance with the specified configuration, delegate and server trust policy.
 
-        - parameter configuration:            The configuration used to construct the managed session. 
+        - parameter configuration:            The configuration used to construct the managed session.
                                               `NSURLSessionConfiguration.defaultSessionConfiguration()` by default.
         - parameter delegate:                 The delegate used when initializing the session. `SessionDelegate()` by
                                               default.
-        - parameter serverTrustPolicyManager: The server trust policy manager to use for evaluating all server trust 
+        - parameter serverTrustPolicyManager: The server trust policy manager to use for evaluating all server trust
                                               challenges. `nil` by default.
 
         - returns: The new `Manager` instance.
@@ -361,14 +361,14 @@ public class Manager {
         /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:task:didReceiveChallenge:completionHandler:`.
         public var taskDidReceiveChallenge: ((NSURLSession, NSURLSessionTask, NSURLAuthenticationChallenge) -> (NSURLSessionAuthChallengeDisposition, NSURLCredential?))?
 
-        /// Overrides all behavior for NSURLSessionTaskDelegate method `URLSession:task:didReceiveChallenge:completionHandler:` and 
+        /// Overrides all behavior for NSURLSessionTaskDelegate method `URLSession:task:didReceiveChallenge:completionHandler:` and
         /// requires the caller to call the `completionHandler`.
         public var taskDidReceiveChallengeWithCompletion: ((NSURLSession, NSURLSessionTask, NSURLAuthenticationChallenge, (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) -> Void)?
 
         /// Overrides default behavior for NSURLSessionTaskDelegate method `URLSession:session:task:needNewBodyStream:`.
         public var taskNeedNewBodyStream: ((NSURLSession, NSURLSessionTask) -> NSInputStream?)?
 
-        /// Overrides all behavior for NSURLSessionTaskDelegate method `URLSession:session:task:needNewBodyStream:` and 
+        /// Overrides all behavior for NSURLSessionTaskDelegate method `URLSession:session:task:needNewBodyStream:` and
         /// requires the caller to call the `completionHandler`.
         public var taskNeedNewBodyStreamWithCompletion: ((NSURLSession, NSURLSessionTask, NSInputStream? -> Void) -> Void)?
 
@@ -387,8 +387,8 @@ public class Manager {
             - parameter task:              The task whose request resulted in a redirect.
             - parameter response:          An object containing the server’s response to the original request.
             - parameter request:           A URL request object filled out with the new location.
-            - parameter completionHandler: A closure that your handler should call with either the value of the request 
-                                           parameter, a modified URL request object, or NULL to refuse the redirect and 
+            - parameter completionHandler: A closure that your handler should call with either the value of the request
+                                           parameter, a modified URL request object, or NULL to refuse the redirect and
                                            return the body of the redirect response.
         */
         public func URLSession(
@@ -525,7 +525,7 @@ public class Manager {
         /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didReceiveResponse:completionHandler:`.
         public var dataTaskDidReceiveResponse: ((NSURLSession, NSURLSessionDataTask, NSURLResponse) -> NSURLSessionResponseDisposition)?
 
-        /// Overrides all behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didReceiveResponse:completionHandler:` and 
+        /// Overrides all behavior for NSURLSessionDataDelegate method `URLSession:dataTask:didReceiveResponse:completionHandler:` and
         /// requires caller to call the `completionHandler`.
         public var dataTaskDidReceiveResponseWithCompletion: ((NSURLSession, NSURLSessionDataTask, NSURLResponse, NSURLSessionResponseDisposition -> Void) -> Void)?
 
@@ -538,7 +538,7 @@ public class Manager {
         /// Overrides default behavior for NSURLSessionDataDelegate method `URLSession:dataTask:willCacheResponse:completionHandler:`.
         public var dataTaskWillCacheResponse: ((NSURLSession, NSURLSessionDataTask, NSCachedURLResponse) -> NSCachedURLResponse?)?
 
-        /// Overrides all behavior for NSURLSessionDataDelegate method `URLSession:dataTask:willCacheResponse:completionHandler:` and 
+        /// Overrides all behavior for NSURLSessionDataDelegate method `URLSession:dataTask:willCacheResponse:completionHandler:` and
         /// requires caller to call the `completionHandler`.
         public var dataTaskWillCacheResponseWithCompletion: ((NSURLSession, NSURLSessionDataTask, NSCachedURLResponse, NSCachedURLResponse? -> Void) -> Void)?
 
@@ -550,8 +550,8 @@ public class Manager {
             - parameter session:           The session containing the data task that received an initial reply.
             - parameter dataTask:          The data task that received an initial reply.
             - parameter response:          A URL response object populated with headers.
-            - parameter completionHandler: A completion handler that your code calls to continue the transfer, passing a 
-                                           constant to indicate whether the transfer should continue as a data task or 
+            - parameter completionHandler: A completion handler that your code calls to continue the transfer, passing a
+                                           constant to indicate whether the transfer should continue as a data task or
                                            should become a download task.
         */
         public func URLSession(
@@ -614,12 +614,12 @@ public class Manager {
 
             - parameter session:           The session containing the data (or upload) task.
             - parameter dataTask:          The data (or upload) task.
-            - parameter proposedResponse:  The default caching behavior. This behavior is determined based on the current 
-                                           caching policy and the values of certain received headers, such as the Pragma 
+            - parameter proposedResponse:  The default caching behavior. This behavior is determined based on the current
+                                           caching policy and the values of certain received headers, such as the Pragma
                                            and Cache-Control headers.
-            - parameter completionHandler: A block that your handler must call, providing either the original proposed 
-                                           response, a modified version of that response, or NULL to prevent caching the 
-                                           response. If your delegate implements this method, it must call this completion 
+            - parameter completionHandler: A block that your handler must call, providing either the original proposed
+                                           response, a modified version of that response, or NULL to prevent caching the
+                                           response. If your delegate implements this method, it must call this completion
                                            handler; otherwise, your app leaks memory.
         */
         public func URLSession(
@@ -667,8 +667,8 @@ public class Manager {
 
             - parameter session:      The session containing the download task that finished.
             - parameter downloadTask: The download task that finished.
-            - parameter location:     A file URL for the temporary file. Because the file is temporary, you must either 
-                                      open the file for reading or move it to a permanent location in your app’s sandbox 
+            - parameter location:     A file URL for the temporary file. Because the file is temporary, you must either
+                                      open the file for reading or move it to a permanent location in your app’s sandbox
                                       container directory before returning from this delegate method.
         */
         public func URLSession(
@@ -688,11 +688,11 @@ public class Manager {
 
             - parameter session:                   The session containing the download task.
             - parameter downloadTask:              The download task.
-            - parameter bytesWritten:              The number of bytes transferred since the last time this delegate 
+            - parameter bytesWritten:              The number of bytes transferred since the last time this delegate
                                                    method was called.
             - parameter totalBytesWritten:         The total number of bytes transferred so far.
-            - parameter totalBytesExpectedToWrite: The expected length of the file, as provided by the Content-Length 
-                                                   header. If this header was not provided, the value is 
+            - parameter totalBytesExpectedToWrite: The expected length of the file, as provided by the Content-Length
+                                                   header. If this header was not provided, the value is
                                                    `NSURLSessionTransferSizeUnknown`.
         */
         public func URLSession(
@@ -720,11 +720,11 @@ public class Manager {
 
             - parameter session:            The session containing the download task that finished.
             - parameter downloadTask:       The download task that resumed. See explanation in the discussion.
-            - parameter fileOffset:         If the file's cache policy or last modified date prevents reuse of the 
-                                            existing content, then this value is zero. Otherwise, this value is an 
-                                            integer representing the number of bytes on disk that do not need to be 
+            - parameter fileOffset:         If the file's cache policy or last modified date prevents reuse of the
+                                            existing content, then this value is zero. Otherwise, this value is an
+                                            integer representing the number of bytes on disk that do not need to be
                                             retrieved again.
-            - parameter expectedTotalBytes: The expected length of the file, as provided by the Content-Length header. 
+            - parameter expectedTotalBytes: The expected length of the file, as provided by the Content-Length header.
                                             If this header was not provided, the value is NSURLSessionTransferSizeUnknown.
         */
         public func URLSession(

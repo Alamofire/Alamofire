@@ -54,10 +54,10 @@ public struct Timeline {
         Creates a new `Timeline` instance with the specified request times.
 
         - parameter requestStartTime:           The time the request was initialized. Defaults to `0.0`.
-        - parameter initialResponseTime:        The time the first bytes were received from or sent to the server. 
+        - parameter initialResponseTime:        The time the first bytes were received from or sent to the server.
                                                 Defaults to `0.0`.
         - parameter requestCompletedTime:       The time when the request was completed. Defaults to `0.0`.
-        - parameter serializationCompletedTime: The time when the response serialization was completed. Defaults 
+        - parameter serializationCompletedTime: The time when the response serialization was completed. Defaults
                                                 to `0.0`.
 
         - returns: The new `Timeline` instance.
@@ -83,7 +83,7 @@ public struct Timeline {
 // MARK: - CustomStringConvertible
 
 extension Timeline: CustomStringConvertible {
-    /// The textual representation used when written to an output stream, which includes the latency, the request 
+    /// The textual representation used when written to an output stream, which includes the latency, the request
     /// duration and the total duration.
     public var description: String {
         let latency = String(format: "%.3f", self.latency)
@@ -107,7 +107,7 @@ extension Timeline: CustomStringConvertible {
 // MARK: - CustomDebugStringConvertible
 
 extension Timeline: CustomDebugStringConvertible {
-    /// The textual representation used when written to an output stream, which includes the request start time, the 
+    /// The textual representation used when written to an output stream, which includes the request start time, the
     /// initial response time, the request completed time, the serialization completed time, the latency, the request
     /// duration and the total duration.
     public var debugDescription: String {

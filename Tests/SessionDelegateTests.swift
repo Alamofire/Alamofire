@@ -518,7 +518,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response, "response should not be nil")
         XCTAssertNotNil(response?.data, "data should not be nil")
         XCTAssertTrue(response?.result.isSuccess ?? false, "response result should be a success")
-        
+
         if let
             JSON = response?.result.value as? [String: AnyObject],
             headers = JSON["headers"] as? [String: String]
