@@ -180,7 +180,12 @@ public class Request {
         if startTime == nil { startTime = CFAbsoluteTimeGetCurrent() }
 
         task.resume()
-        NotificationCenter.default.post(name: Notification.Name(rawValue: Notifications.Task.DidResume), object: task)
+
+        NotificationCenter.default.post(
+            name: Notification.Name.Task.DidResume,
+            object: self,
+            userInfo: [Notification.Key.Task: task]
+        )
     }
 
     /**
@@ -188,7 +193,12 @@ public class Request {
     */
     public func suspend() {
         task.suspend()
-        NotificationCenter.default.post(name: Notification.Name(rawValue: Notifications.Task.DidSuspend), object: task)
+
+        NotificationCenter.default.post(
+            name: Notification.Name.Task.DidSuspend,
+            object: self,
+            userInfo: [Notification.Key.Task: task]
+        )
     }
 
     /**
@@ -205,7 +215,11 @@ public class Request {
             task.cancel()
         }
 
-        NotificationCenter.default.post(name: Notification.Name(rawValue: Notifications.Task.DidCancel), object: task)
+        NotificationCenter.default.post(
+            name: Notification.Name.Task.DidCancel,
+            object: self,
+            userInfo: [Notification.Key.Task: task]
+        )
     }
 
     // MARK: - TaskDelegate
@@ -215,7 +229,6 @@ public class Request {
         executing all operations attached to the serial operation queue upon task completion.
     */
     public class TaskDelegate: NSObject {
-
         /// The serial operation queue used to execute all operations after the task completes.
         public let queue: OperationQueue
 

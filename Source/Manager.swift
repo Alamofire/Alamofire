@@ -509,7 +509,11 @@ public class Manager {
                 delegate.urlSession(session, task: task, didCompleteWithError: error)
             }
 
-            NotificationCenter.default.post(name: Notification.Name(rawValue: Notifications.Task.DidComplete), object: task)
+            NotificationCenter.default.post(
+                name: Notification.Name.Task.DidComplete,
+                object: self,
+                userInfo: [Notification.Key.Task: task]
+            )
 
             self[task] = nil
         }
