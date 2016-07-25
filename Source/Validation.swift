@@ -52,6 +52,7 @@ extension Request {
 
         - returns: The request.
     */
+    @discardableResult
     public func validate(_ validation: Validation) -> Self {
         delegate.queue.addOperation {
             if let response = self.response, self.delegate.error == nil,
@@ -75,6 +76,7 @@ extension Request {
 
         - returns: The request.
     */
+    @discardableResult
     public func validate<S: Sequence where S.Iterator.Element == Int>(statusCode acceptableStatusCode: S) -> Self {
         return validate { _, response in
             if acceptableStatusCode.contains(response.statusCode) {
@@ -138,6 +140,7 @@ extension Request {
 
         - returns: The request.
     */
+    @discardableResult
     public func validate<S: Sequence where S.Iterator.Element == String>(contentType acceptableContentTypes: S) -> Self {
         return validate { _, response in
             guard let validData = self.delegate.data, validData.count > 0 else { return .success }
@@ -196,6 +199,7 @@ extension Request {
 
         - returns: The request.
     */
+    @discardableResult
     public func validate() -> Self {
         let acceptableStatusCodes: CountableRange<Int> = 200..<300
         let acceptableContentTypes: [String] = {

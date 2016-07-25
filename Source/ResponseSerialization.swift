@@ -108,6 +108,7 @@ extension Request {
 
         - returns: The request.
     */
+    @discardableResult
     public func response<T: ResponseSerializerType>(
         queue: DispatchQueue? = nil,
         responseSerializer: T,
@@ -367,6 +368,7 @@ extension Request {
 
         - returns: The request.
     */
+    @discardableResult
     public func responsePropertyList(
         queue: DispatchQueue? = nil,
         options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions(),

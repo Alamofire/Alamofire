@@ -83,6 +83,7 @@ public class Request {
 
         - returns: The request.
     */
+    @discardableResult
     public func authenticate(
         user: String,
         password: String,
@@ -101,6 +102,7 @@ public class Request {
 
         - returns: The request.
     */
+    @discardableResult
     public func authenticate(usingCredential credential: URLCredential) -> Self {
         delegate.credential = credential
 
