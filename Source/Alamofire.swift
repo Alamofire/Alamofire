@@ -44,27 +44,19 @@ public protocol URLStringConvertible {
 }
 
 extension String: URLStringConvertible {
-    public var URLString: String {
-        return self
-    }
+    public var URLString: String { return self }
 }
 
 extension NSURL: URLStringConvertible {
-    public var URLString: String {
-        return absoluteString
-    }
+    public var URLString: String { return absoluteString }
 }
 
 extension NSURLComponents: URLStringConvertible {
-    public var URLString: String {
-        return URL!.URLString
-    }
+    public var URLString: String { return URL!.URLString }
 }
 
 extension NSURLRequest: URLStringConvertible {
-    public var URLString: String {
-        return URL!.URLString
-    }
+    public var URLString: String { return URL!.URLString }
 }
 
 // MARK: - URLRequestConvertible
@@ -78,9 +70,7 @@ public protocol URLRequestConvertible {
 }
 
 extension NSURLRequest: URLRequestConvertible {
-    public var URLRequest: NSMutableURLRequest {
-        return self.mutableCopy() as! NSMutableURLRequest
-    }
+    public var URLRequest: NSMutableURLRequest { return self.mutableCopy() as! NSMutableURLRequest }
 }
 
 // MARK: - Convenience
