@@ -233,12 +233,10 @@ public class Request {
             self.progress = Progress(totalUnitCount: 0)
             self.queue = {
                 let operationQueue = OperationQueue()
+
                 operationQueue.maxConcurrentOperationCount = 1
                 operationQueue.isSuspended = true
-
-                if #available(OSX 10.10, *) {
-                    operationQueue.qualityOfService = QualityOfService.utility
-                }
+                operationQueue.qualityOfService = .utility
 
                 return operationQueue
             }()

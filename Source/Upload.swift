@@ -281,14 +281,7 @@ extension Manager {
         encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
-
-        let attributes: DispatchQueue.GlobalAttributes
-        if #available(OSXApplicationExtension 10.10, *) {
-            attributes = DispatchQueue.GlobalAttributes.qosDefault
-        } else {
-            attributes = []
-        }
-        DispatchQueue.global(attributes: attributes).async {
+        DispatchQueue.global(attributes: .qosUtility).async {
             let formData = MultipartFormData()
             multipartFormData(formData)
 

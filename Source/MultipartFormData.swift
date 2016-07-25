@@ -254,11 +254,7 @@ public class MultipartFormData {
         //              Check 2 - is file URL reachable?
         //============================================================
 
-        var isReachable = true
-
-        if #available(OSX 10.10, *) {
-            isReachable = (fileURL as NSURL).checkPromisedItemIsReachableAndReturnError(nil)
-        }
+        let isReachable = (fileURL as NSURL).checkPromisedItemIsReachableAndReturnError(nil)
 
         guard isReachable else {
             setBodyPartError(code: NSURLErrorBadURL, failureReason: "The file URL is not reachable: \(fileURL)")
@@ -271,8 +267,9 @@ public class MultipartFormData {
 
         var isDirectory: ObjCBool = false
 
-        guard let path = fileURL.path,
-              FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory else
+        guard
+            let path = fileURL.path,
+            FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory else
         {
             let failureReason = "The file URL is a directory, not a file: \(fileURL)"
             setBodyPartError(code: NSURLErrorBadURL, failureReason: failureReason)
@@ -286,8 +283,9 @@ public class MultipartFormData {
         var bodyContentLength: UInt64?
 
         do {
-            if let path = fileURL.path,
-               let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber
+            if
+                let path = fileURL.path,
+                let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber
             {
                 bodyContentLength = fileSize.uint64Value
             }

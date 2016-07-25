@@ -63,14 +63,8 @@ public class Manager {
                 let version = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
 
                 let osNameVersion: String = {
-                    let versionString: String
-
-                    if #available(OSX 10.10, *) {
-                        let version = ProcessInfo.processInfo.operatingSystemVersion
-                        versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-                    } else {
-                        versionString = "10.9"
-                    }
+                    let version = ProcessInfo.processInfo.operatingSystemVersion
+                    let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
 
                     let osName: String = {
                         #if os(iOS)
