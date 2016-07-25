@@ -55,7 +55,7 @@ extension Request {
     @discardableResult
     public func validate(_ validation: Validation) -> Self {
         delegate.queue.addOperation {
-            if let response = self.response, self.delegate.error == nil,
+            if let response = self.response where self.delegate.error == nil,
                case let .failure(error) = validation(self.request, response)
             {
                 self.delegate.error = error
@@ -143,19 +143,19 @@ extension Request {
     @discardableResult
     public func validate<S: Sequence where S.Iterator.Element == String>(contentType acceptableContentTypes: S) -> Self {
         return validate { _, response in
-            guard let validData = self.delegate.data, validData.count > 0 else { return .success }
+            guard let validData = self.delegate.data where validData.count > 0 else { return .success }
 
             if let responseContentType = response.mimeType,
                let responseMIMEType = MIMEType(responseContentType)
             {
                 for contentType in acceptableContentTypes {
-                    if let acceptableMIMEType = MIMEType(contentType), acceptableMIMEType.matches(responseMIMEType) {
+                    if let acceptableMIMEType = MIMEType(contentType) where acceptableMIMEType.matches(responseMIMEType) {
                         return .success
                     }
                 }
             } else {
                 for contentType in acceptableContentTypes {
-                    if let mimeType = MIMEType(contentType), mimeType.type == "*" && mimeType.subtype == "*" {
+                    if let mimeType = MIMEType(contentType) where mimeType.type == "*" && mimeType.subtype == "*" {
                         return .success
                     }
                 }
