@@ -293,7 +293,7 @@ public enum ServerTrustPolicy {
         var trust: SecTrust?
         let trustCreationStatus = SecTrustCreateWithCertificates(certificate, policy, &trust)
 
-        if let trust = trust, trustCreationStatus == errSecSuccess {
+        if let trust = trust where trustCreationStatus == errSecSuccess {
             publicKey = SecTrustCopyPublicKey(trust)
         }
 
