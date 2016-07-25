@@ -234,7 +234,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
                 case .ephemeral:
                     configuration = .ephemeral
                 case .background:
-                    let identifier = "com.alamofire.test.manager-configuration-tests"
+                    let identifier = "org.alamofire.test.manager-configuration-tests"
                     configuration = .background(withIdentifier: identifier)
                 }
 

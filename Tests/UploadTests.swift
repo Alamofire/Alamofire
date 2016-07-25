@@ -584,7 +584,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 //    func testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
 //        // Given
 //        let manager: Manager = {
-//            let identifier = "com.alamofire.uploadtests.\(UUID().uuidString)"
+//            let identifier = "org.alamofire.uploadtests.\(UUID().uuidString)"
 //            let configuration = URLSessionConfiguration.backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier)
 //
 //            return Manager(configuration: configuration, serverTrustPolicyManager: nil)

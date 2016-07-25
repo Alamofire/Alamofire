@@ -132,7 +132,7 @@ class CacheTestCase: BaseTestCase {
     */
     func primeCachedResponses() {
         let dispatchGroup = DispatchGroup()
-        let serialQueue = DispatchQueue(label: "com.alamofire.cache-tests", attributes: DispatchQueueAttributes.serial)
+        let serialQueue = DispatchQueue(label: "org.alamofire.cache-tests", attributes: DispatchQueueAttributes.serial)
 
         for cacheControl in CacheControl.allValues {
             dispatchGroup.enter()

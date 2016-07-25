@@ -310,7 +310,7 @@ extension Manager {
             } else {
                 let fileManager = FileManager.default
                 let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-                let directoryURL = try! tempDirectoryURL.appendingPathComponent("com.alamofire.manager/multipart.form.data")
+                let directoryURL = try! tempDirectoryURL.appendingPathComponent("org.alamofire.manager/multipart.form.data")
                 let fileName = UUID().uuidString
                 let fileURL = try! directoryURL.appendingPathComponent(fileName)
 
