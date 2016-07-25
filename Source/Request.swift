@@ -510,7 +510,7 @@ extension Request: CustomDebugStringConvertible {
             return "$ curl command could not be created"
         }
 
-        if let httpMethod = request.httpMethod, httpMethod != "GET" {
+        if let httpMethod = request.httpMethod where httpMethod != "GET" {
             components.append("-X \(httpMethod)")
         }
 
@@ -536,7 +536,7 @@ extension Request: CustomDebugStringConvertible {
 
         if session.configuration.httpShouldSetCookies {
             if let cookieStorage = session.configuration.httpCookieStorage,
-               let cookies = cookieStorage.cookies(for: URL), !cookies.isEmpty
+               let cookies = cookieStorage.cookies(for: URL) where !cookies.isEmpty
             {
                 let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value ?? String());" }
                 components.append("-b \"\(string.substring(to: string.characters.index(before: string.endIndex)))\"")
