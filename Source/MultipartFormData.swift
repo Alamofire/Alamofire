@@ -268,7 +268,7 @@ public class MultipartFormData {
         var isDirectory: ObjCBool = false
 
         guard
-            let path = fileURL.path,
+            let path = fileURL.path where
             FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory else
         {
             let failureReason = "The file URL is a directory, not a file: \(fileURL)"
@@ -404,7 +404,7 @@ public class MultipartFormData {
             throw bodyPartError
         }
 
-        if let path = fileURL.path, FileManager.default.fileExists(atPath: path) {
+        if let path = fileURL.path where FileManager.default.fileExists(atPath: path) {
             let failureReason = "A file already exists at the given file URL: \(fileURL)"
             throw Error.error(domain: NSURLErrorDomain, code: NSURLErrorBadURL, failureReason: failureReason)
         } else if !fileURL.isFileURL {
