@@ -117,9 +117,9 @@ public enum ParameterEncoding {
                 }
             }
 
-            if let method = Method(rawValue: urlRequest.httpMethod!), encodesParametersInURL(method) {
+            if let method = Method(rawValue: urlRequest.httpMethod!) where encodesParametersInURL(method) {
                 if var
-                    URLComponents = URLComponents(url: urlRequest.url!, resolvingAgainstBaseURL: false),
+                    URLComponents = URLComponents(url: urlRequest.url!, resolvingAgainstBaseURL: false) where
                     !parameters.isEmpty {
                     let percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)
                     URLComponents.percentEncodedQuery = percentEncodedQuery
