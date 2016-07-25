@@ -95,7 +95,16 @@ func URLRequest(
     headers: [String: String]? = nil)
     -> NSMutableURLRequest
 {
-    let mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString)!)
+    let mutableURLRequest: NSMutableURLRequest
+
+    if let request = URLString as? NSMutableURLRequest {
+        mutableURLRequest = request
+    } else if let request = URLString as? NSURLRequest {
+        mutableURLRequest = request.URLRequest
+    } else {
+        mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString)!)
+    }
+
     mutableURLRequest.HTTPMethod = method.rawValue
 
     if let headers = headers {
