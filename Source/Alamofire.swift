@@ -88,11 +88,14 @@ extension Foundation.URLRequest: URLRequestConvertible {
 extension URLRequest {
     init(_ method: Method, _ urlString: URLStringConvertible, headers: [String:String]? = nil) {
         self.init(url: URL(string: urlString.urlString)!)
+
+        if let request = urlString as? URLRequest { self = request }
+
         self.httpMethod = method.rawValue
 
         if let headers = headers {
             for (headerField, headerValue) in headers {
-                self.setValue(headerValue, forHTTPHeaderField: headerField)
+                setValue(headerValue, forHTTPHeaderField: headerField)
             }
         }
     }
