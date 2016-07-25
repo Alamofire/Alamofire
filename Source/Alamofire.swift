@@ -44,27 +44,19 @@ public protocol URLStringConvertible {
 }
 
 extension String: URLStringConvertible {
-    public var urlString: String {
-        return self
-    }
+    public var urlString: String { return self }
 }
 
 extension URL: URLStringConvertible {
-    public var urlString: String {
-        return absoluteString!
-    }
+    public var urlString: String { return absoluteString! }
 }
 
 extension URLComponents: URLStringConvertible {
-    public var urlString: String {
-        return url!.urlString
-    }
+    public var urlString: String { return url!.urlString }
 }
 
 extension Foundation.URLRequest: URLStringConvertible {
-    public var urlString: String {
-        return url!.urlString
-    }
+    public var urlString: String { return url!.urlString }
 }
 
 // MARK: - URLRequestConvertible
@@ -77,10 +69,8 @@ public protocol URLRequestConvertible {
     var urlRequest: URLRequest { get }
 }
 
-extension Foundation.URLRequest: URLRequestConvertible {
-    public var urlRequest: URLRequest {
-        return self
-    }
+extension URLRequest: URLRequestConvertible {
+    public var urlRequest: URLRequest { return self }
 }
 
 // MARK: - Convenience
