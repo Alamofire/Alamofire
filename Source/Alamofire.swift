@@ -59,6 +59,15 @@ extension NSURLRequest: URLStringConvertible {
     public var URLString: String { return URL!.URLString }
 }
 
+extension String {
+    func urlEncode() -> String? {
+        let unreserved = "!=:-._~/?"
+        let allowed = NSMutableCharacterSet.alphanumericCharacterSet()
+        allowed.addCharactersInString(unreserved)
+        return stringByAddingPercentEncodingWithAllowedCharacters(allowed)
+    }
+}
+
 // MARK: - URLRequestConvertible
 
 /**
@@ -88,7 +97,7 @@ func URLRequest(
     } else if let request = URLString as? NSURLRequest {
         mutableURLRequest = request.URLRequest
     } else {
-        mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString)!)
+        mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString.urlEncode()!)!)
     }
 
     mutableURLRequest.HTTPMethod = method.rawValue
