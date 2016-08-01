@@ -43,7 +43,7 @@ class SessionDelegateTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Override closure should be called")
 
         var overrideClosureCalled = false
-        var invalidationError: NSError?
+        var invalidationError: Swift.Error?
 
         manager.delegate.sessionDidBecomeInvalidWithError = { _, error in
             overrideClosureCalled = true

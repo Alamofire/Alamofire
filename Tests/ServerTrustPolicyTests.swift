@@ -49,7 +49,7 @@ private struct TestCertificates {
 
     static func certificateWithFileName(_ fileName: String) -> SecCertificate {
         class Bundle {}
-        let filePath = Foundation.Bundle(for: Bundle.self).pathForResource(fileName, ofType: "cer")!
+        let filePath = Foundation.Bundle(for: Bundle.self).path(forResource: fileName, ofType: "cer")!
         let data = try! Data(contentsOf: URL(fileURLWithPath: filePath))
         let certificate = SecCertificateCreateWithData(nil, data)!
 
@@ -169,12 +169,12 @@ private enum TestTrusts {
                 TestCertificates.IntermediateCA2,
                 TestCertificates.RootCA
             ])
-        case leafValidDNSNameMissingIntermediate:
+        case .leafValidDNSNameMissingIntermediate:
             trust = TestTrusts.trustWithCertificates([
                 TestCertificates.LeafValidDNSName,
                 TestCertificates.RootCA
             ])
-        case leafValidDNSNameWithIncorrectIntermediate:
+        case .leafValidDNSNameWithIncorrectIntermediate:
             trust = TestTrusts.trustWithCertificates([
                 TestCertificates.LeafValidDNSName,
                 TestCertificates.IntermediateCA1,

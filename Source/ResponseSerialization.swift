@@ -34,7 +34,7 @@ public protocol ResponseSerializerType {
     associatedtype SerializedObject
 
     /// The type of error to be created by this `ResponseSerializer` if serialization fails.
-    associatedtype ErrorObject: ErrorProtocol
+    associatedtype ErrorObject: Swift.Error
 
     /**
         A closure used by response handlers that takes a request, response, data and error and returns a result.
@@ -47,7 +47,7 @@ public protocol ResponseSerializerType {
 /**
     A generic `ResponseSerializerType` used to serialize a request, response, and data into a serialized object.
 */
-public struct ResponseSerializer<Value, Error: ErrorProtocol>: ResponseSerializerType {
+public struct ResponseSerializer<Value, Error: Swift.Error>: ResponseSerializerType {
     /// The type of serialized object to be created by this `ResponseSerializer`.
     public typealias SerializedObject = Value
 

@@ -32,7 +32,7 @@ import Foundation
     - Failure: The request encountered an error resulting in a failure. The associated values are the original data
                provided by the server as well as the error that caused the failure.
 */
-public enum Result<Value, Error: ErrorProtocol> {
+public enum Result<Value, Error: Swift.Error> {
     case success(Value)
     case failure(Error)
 

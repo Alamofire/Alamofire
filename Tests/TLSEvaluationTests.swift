@@ -34,7 +34,7 @@ private struct TestCertificates {
 
     static func certificateWithFileName(_ fileName: String) -> SecCertificate {
         class Bundle {}
-        let filePath = Foundation.Bundle(for: Bundle.self).pathForResource(fileName, ofType: "cer")!
+        let filePath = Foundation.Bundle(for: Bundle.self).path(forResource: fileName, ofType: "cer")!
         let data = try! Data(contentsOf: URL(fileURLWithPath: filePath))
         let certificate = SecCertificateCreateWithData(nil, data)!
 

@@ -48,7 +48,7 @@ extension String: URLStringConvertible {
 }
 
 extension URL: URLStringConvertible {
-    public var urlString: String { return absoluteString! }
+    public var urlString: String { return absoluteString }
 }
 
 extension URLComponents: URLStringConvertible {

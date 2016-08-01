@@ -211,9 +211,9 @@ public class MultipartFormData {
         - parameter name:    The name to associate with the file content in the `Content-Disposition` HTTP header.
     */
     public func appendBodyPart(fileURL: URL, name: String) {
-        if let fileName = fileURL.lastPathComponent,
-           let pathExtension = fileURL.pathExtension
-        {
+        let fileName = fileURL.lastPathComponent
+        let pathExtension = fileURL.pathExtension
+        if !fileName.isEmpty && !pathExtension.isEmpty {
             let mimeType = mimeTypeForPathExtension(pathExtension)
             appendBodyPart(fileURL: fileURL, name: name, fileName: fileName, mimeType: mimeType)
         } else {
@@ -266,10 +266,9 @@ public class MultipartFormData {
         //============================================================
 
         var isDirectory: ObjCBool = false
-
-        guard
-            let path = fileURL.path,
-            FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory else
+        let path = fileURL.path
+        
+        guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory.boolValue else
         {
             let failureReason = "The file URL is a directory, not a file: \(fileURL)"
             setBodyPartError(code: NSURLErrorBadURL, failureReason: failureReason)
@@ -281,11 +280,9 @@ public class MultipartFormData {
         //============================================================
 
         var bodyContentLength: UInt64?
-
+        
         do {
-            if
-                let path = fileURL.path,
-                let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber
+            if let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber
             {
                 bodyContentLength = fileSize.uint64Value
             }
@@ -404,7 +401,8 @@ public class MultipartFormData {
             throw bodyPartError
         }
 
-        if let path = fileURL.path, FileManager.default.fileExists(atPath: path) {
+        let path = fileURL.path
+        if FileManager.default.fileExists(atPath: path) {
             let failureReason = "A file already exists at the given file URL: \(fileURL)"
             throw Error.error(domain: NSURLErrorDomain, code: NSURLErrorBadURL, failureReason: failureReason)
         } else if !fileURL.isFileURL {
@@ -469,7 +467,7 @@ public class MultipartFormData {
         let inputStream = bodyPart.bodyStream
         inputStream.open()
 
-        var error: NSError?
+        var error: Swift.Error?
         let encoded = NSMutableData()
 
         while inputStream.hasBytesAvailable {

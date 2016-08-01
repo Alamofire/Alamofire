@@ -93,7 +93,7 @@ public enum ParameterEncoding {
             func query(_ parameters: [String: AnyObject]) -> String {
                 var components: [(String, String)] = []
 
-                for key in parameters.keys.sorted(isOrderedBefore: <) {
+                for key in parameters.keys.sorted(by: <) {
                     let value = parameters[key]!
                     components += queryComponents(key, value)
                 }
