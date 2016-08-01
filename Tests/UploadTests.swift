@@ -189,7 +189,7 @@ class UploadDataTestCase: BaseTestCase {
         var responseRequest: URLRequest?
         var responseResponse: HTTPURLResponse?
         var responseData: Data?
-        var responseError: ErrorProtocol?
+        var responseError: Swift.Error?
 
         // When
         let upload = Alamofire.upload(.POST, urlString, data: data)

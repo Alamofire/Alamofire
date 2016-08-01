@@ -60,7 +60,7 @@ struct BoundaryGenerator {
 
 private func temporaryFileURL() -> URL {
     let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-    let directoryURL = try! tempDirectoryURL.appendingPathComponent("org.alamofire.test/multipart.form.data")
+    let directoryURL = tempDirectoryURL.appendingPathComponent("org.alamofire.test/multipart.form.data")
 
     let fileManager = FileManager.default
     do {
@@ -70,7 +70,7 @@ private func temporaryFileURL() -> URL {
     }
 
     let fileName = UUID().uuidString
-    let fileURL = try! directoryURL.appendingPathComponent(fileName)
+    let fileURL = directoryURL.appendingPathComponent(fileName)
 
     return fileURL
 }
@@ -807,6 +807,9 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 // MARK: -
 
 class MultipartFormDataFailureTestCase: BaseTestCase {
+    
+    //    ⚠️ This test has been removed as a result of URL(string: "") returning nil in Xcode 8 Seed 4
+    /*
     func testThatAppendingFileBodyPartWithInvalidLastPathComponentReturnsError() {
         // Given
         let fileURL = URL(string: "")!
@@ -837,6 +840,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
             }
         }
     }
+     */
 
     func testThatAppendingFileBodyPartThatIsNotFileURLReturnsError() {
         // Given
@@ -924,7 +928,11 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
             XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
 
             if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
-                let expectedFailureReason = "The file URL is a directory, not a file: \(directoryURL)"
+                #if swift(>=3.0)
+                    let expectedFailureReason = "Failed to extract the fileName of the provided URL: \(directoryURL)"
+                #else
+                    let expectedFailureReason = "The file URL is a directory, not a file: \(directoryURL)"
+                #endif
                 XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
             } else {
                 XCTFail("failure reason should not be nil")

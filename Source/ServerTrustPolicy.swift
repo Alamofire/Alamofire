@@ -131,7 +131,7 @@ public enum ServerTrustPolicy {
         var certificates: [SecCertificate] = []
 
         let paths = Set([".cer", ".CER", ".crt", ".CRT", ".der", ".DER"].map { fileExtension in
-            bundle.pathsForResources(ofType: fileExtension, inDirectory: nil)
+            bundle.paths(forResourcesOfType: fileExtension, inDirectory: nil)
         }.flatten())
 
         for path in paths {
