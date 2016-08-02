@@ -69,9 +69,9 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain)
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.statusCodeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[Alamofire.Errors.UserInfoKeys.StatusCode] as? Int, 404)
+            XCTAssertEqual(error.domain, ErrorDomain)
+            XCTAssertEqual(error.code, ErrorCode.statusCodeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.StatusCode] as? Int, 404)
         } else {
             XCTFail("error should not be nil")
         }
@@ -98,9 +98,9 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain)
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.statusCodeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[Alamofire.Errors.UserInfoKeys.StatusCode] as? Int, 201)
+            XCTAssertEqual(error.domain, ErrorDomain)
+            XCTAssertEqual(error.code, ErrorCode.statusCodeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.StatusCode] as? Int, 201)
         } else {
             XCTFail("error should not be nil")
         }
@@ -177,9 +177,9 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain)
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.contentTypeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[Alamofire.Errors.UserInfoKeys.ContentType] as? String, "application/xml")
+            XCTAssertEqual(error.domain, ErrorDomain)
+            XCTAssertEqual(error.code, ErrorCode.contentTypeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.ContentType] as? String, "application/xml")
         } else {
             XCTFail("error should not be nil")
         }
@@ -206,9 +206,9 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(error, "error should not be nil")
 
         if let error = error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain)
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.contentTypeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[Alamofire.Errors.UserInfoKeys.ContentType] as? String, "application/xml")
+            XCTAssertEqual(error.domain, ErrorDomain)
+            XCTAssertEqual(error.code, ErrorCode.contentTypeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.ContentType] as? String, "application/xml")
         } else {
             XCTFail("error should not be nil")
         }
@@ -361,9 +361,9 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain)
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.statusCodeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[Alamofire.Errors.UserInfoKeys.StatusCode] as? Int, 200)
+            XCTAssertEqual(error.domain, ErrorDomain)
+            XCTAssertEqual(error.code, ErrorCode.statusCodeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.StatusCode] as? Int, 200)
         } else {
             XCTFail("error should not be nil")
         }
@@ -391,9 +391,9 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain)
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.contentTypeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[Alamofire.Errors.UserInfoKeys.ContentType] as? String, "application/xml")
+            XCTAssertEqual(error.domain, ErrorDomain)
+            XCTAssertEqual(error.code, ErrorCode.contentTypeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.ContentType] as? String, "application/xml")
         } else {
             XCTFail("error should not be nil")
         }
@@ -448,9 +448,9 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain)
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.statusCodeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[Alamofire.Errors.UserInfoKeys.StatusCode] as? Int, 404)
+            XCTAssertEqual(error.domain, ErrorDomain)
+            XCTAssertEqual(error.code, ErrorCode.statusCodeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.StatusCode] as? Int, 404)
         } else {
             XCTFail("error should not be nil")
         }
@@ -530,9 +530,9 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNotNil(error)
 
         if let error = error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain)
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.contentTypeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[Alamofire.Errors.UserInfoKeys.ContentType] as? String, "application/xml")
+            XCTAssertEqual(error.domain, ErrorDomain)
+            XCTAssertEqual(error.code, ErrorCode.contentTypeValidationFailed.rawValue)
+            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.ContentType] as? String, "application/xml")
         } else {
             XCTFail("error should not be nil")
         }

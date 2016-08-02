@@ -165,7 +165,7 @@ extension Request {
 
             guard let validData = data else {
                 let failureReason = "Data could not be serialized. Input data was nil."
-                let error = Errors.error(code: .dataSerializationFailed, failureReason: failureReason)
+                let error = NSError(code: .dataSerializationFailed, failureReason: failureReason)
                 return .failure(error)
             }
 
@@ -214,7 +214,7 @@ extension Request {
 
             guard let validData = data else {
                 let failureReason = "String could not be serialized. Input data was nil."
-                let error = Errors.error(code: .stringSerializationFailed, failureReason: failureReason)
+                let error = NSError(code: .stringSerializationFailed, failureReason: failureReason)
                 return .failure(error)
             }
 
@@ -232,7 +232,7 @@ extension Request {
                 return .success(string)
             } else {
                 let failureReason = "String could not be serialized with encoding: \(actualEncoding)"
-                let error = Errors.error(code: .stringSerializationFailed, failureReason: failureReason)
+                let error = NSError(code: .stringSerializationFailed, failureReason: failureReason)
                 return .failure(error)
             }
         }
@@ -286,7 +286,7 @@ extension Request {
 
             guard let validData = data, validData.count > 0 else {
                 let failureReason = "JSON could not be serialized. Input data was nil or zero length."
-                let error = Errors.error(code: .jsonSerializationFailed, failureReason: failureReason)
+                let error = NSError(code: .jsonSerializationFailed, failureReason: failureReason)
                 return .failure(error)
             }
 
@@ -345,7 +345,7 @@ extension Request {
 
             guard let validData = data, validData.count > 0 else {
                 let failureReason = "Property list could not be serialized. Input data was nil or zero length."
-                let error = Errors.error(code: .propertyListSerializationFailed, failureReason: failureReason)
+                let error = NSError(code: .propertyListSerializationFailed, failureReason: failureReason)
                 return .failure(error)
             }
 

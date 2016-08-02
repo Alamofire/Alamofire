@@ -27,7 +27,7 @@ import Foundation
 import XCTest
 
 class ResponseSerializationTestCase: BaseTestCase {
-    let error = NSError(domain: Alamofire.Errors.Domain, code: -10000, userInfo: nil)
+    let error = NSError(domain: ErrorDomain, code: -10000, userInfo: nil)
 
     // MARK: - Data Response Serializer Tests
 
@@ -58,8 +58,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.dataSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.dataSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -78,7 +78,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
             XCTAssertEqual(error.code, self.error.code, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
@@ -100,8 +100,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.dataSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.dataSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -141,8 +141,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.stringSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.stringSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -220,8 +220,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.stringSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.stringSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -247,8 +247,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.stringSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.stringSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -267,7 +267,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
             XCTAssertEqual(error.code, self.error.code, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
@@ -289,8 +289,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.stringSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.stringSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -330,8 +330,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.jsonSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.jsonSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -350,8 +350,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.jsonSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.jsonSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -405,7 +405,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
             XCTAssertEqual(error.code, self.error.code, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
@@ -427,8 +427,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.jsonSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.jsonSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -468,8 +468,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.propertyListSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.propertyListSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -488,8 +488,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.propertyListSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.propertyListSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }
@@ -543,7 +543,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
             XCTAssertEqual(error.code, self.error.code, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
@@ -565,8 +565,8 @@ class ResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error, "result error should not be nil")
 
         if let error = result.error {
-            XCTAssertEqual(error.domain, Alamofire.Errors.Domain, "error domain should match expected value")
-            XCTAssertEqual(error.code, Alamofire.Errors.Code.propertyListSerializationFailed.rawValue, "error code should match expected value")
+            XCTAssertEqual(error.domain, ErrorDomain, "error domain should match expected value")
+            XCTAssertEqual(error.code, ErrorCode.propertyListSerializationFailed.rawValue, "error code should match expected value")
         } else {
             XCTFail("error should not be nil")
         }

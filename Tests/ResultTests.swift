@@ -27,7 +27,7 @@ import Foundation
 import XCTest
 
 class ResultTestCase: BaseTestCase {
-    let error = Alamofire.Errors.error(code: .statusCodeValidationFailed, failureReason: "Status code validation failed")
+    let error = NSError(code: .statusCodeValidationFailed, failureReason: "Status code validation failed")
 
     // MARK: - Is Success Tests
 
