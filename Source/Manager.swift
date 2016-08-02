@@ -98,7 +98,7 @@ public class Manager {
         ]
     }()
 
-    let queue = DispatchQueue(label: "Alamofire Manager Queue", attributes: DispatchQueueAttributes.serial)
+    let queue = DispatchQueue(label: "Alamofire Manager Queue")
 
     /// The underlying session.
     public let session: URLSession
@@ -240,7 +240,7 @@ public class Manager {
     */
     public class SessionDelegate: NSObject, URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate, URLSessionDownloadDelegate {
         private var subdelegates: [Int: Request.TaskDelegate] = [:]
-        private let subdelegateQueue = DispatchQueue(label: "Alamofire Sub Delegate Queue", attributes: DispatchQueueAttributes.concurrent)
+        private let subdelegateQueue = DispatchQueue(label: "Alamofire Sub Delegate Queue", attributes: .concurrent)
 
         /// Access the task delegate for the specified task in a thread-safe manner.
         public subscript(task: URLSessionTask) -> Request.TaskDelegate? {
@@ -288,7 +288,7 @@ public class Manager {
             - parameter session: The session object that was invalidated.
             - parameter error:   The error that caused invalidation, or nil if the invalidation was explicit.
         */
-        public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: NSError?) {
+        public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
             sessionDidBecomeInvalidWithError?(session, error)
         }
 
@@ -502,7 +502,7 @@ public class Manager {
             - parameter task:    The task whose request finished transferring data.
             - parameter error:   If an error occurred, an error object indicating how the transfer failed, otherwise nil.
         */
-        public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
+        public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
             if let taskDidComplete = taskDidComplete {
                 taskDidComplete(session, task, error)
             } else if let delegate = self[task] {

@@ -103,7 +103,7 @@ class DetailViewController: UITableViewController {
 
     private func downloadedBodyString() -> String {
         let fileManager = FileManager.default
-        let cachesDirectory = fileManager.urlsForDirectory(.cachesDirectory, inDomains: .userDomainMask)[0]
+        let cachesDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
 
         do {
             let contents = try fileManager.contentsOfDirectory(
@@ -147,7 +147,7 @@ extension DetailViewController {
         switch Sections(rawValue: (indexPath as NSIndexPath).section)! {
         case .headers:
             let cell = tableView.dequeueReusableCell(withIdentifier: "Header")!
-            let field = headers.keys.sorted(isOrderedBefore: <)[(indexPath as NSIndexPath).row]
+            let field = headers.keys.sorted(by: <)[indexPath.row]
             let value = headers[field]
 
             cell.textLabel?.text = field

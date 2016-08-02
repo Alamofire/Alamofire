@@ -79,7 +79,7 @@ class DownloadResponseTestCase: BaseTestCase {
     }()
 
     var randomCachesFileURL: URL {
-        return try! cachesURL.appendingPathComponent("\(UUID().uuidString).json")
+        return cachesURL.appendingPathComponent("\(UUID().uuidString).json")
     }
 
     func testDownloadRequest() {
@@ -116,7 +116,7 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
 
         let fileManager = FileManager.default
-        let directory = fileManager.urlsForDirectory(searchPathDirectory, inDomains: self.searchPathDomain)[0]
+        let directory = fileManager.urls(for: searchPathDirectory, in: self.searchPathDomain)[0]
 
         do {
             let contents = try fileManager.contentsOfDirectory(
@@ -131,7 +131,7 @@ class DownloadResponseTestCase: BaseTestCase {
             let suggestedFilename = "\(numberOfLines).json"
             #endif
 
-            let predicate = Predicate(format: "lastPathComponent = '\(suggestedFilename)'")
+            let predicate = NSPredicate(format: "lastPathComponent = '\(suggestedFilename)'")
             let filteredContents = (contents as NSArray).filtered(using: predicate)
             XCTAssertEqual(filteredContents.count, 1, "should have one file in Documents")
 
@@ -167,9 +167,9 @@ class DownloadResponseTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/bytes/\(randomBytes)"
 
         let fileManager = FileManager.default
-        let directory = fileManager.urlsForDirectory(searchPathDirectory, inDomains: self.searchPathDomain)[0]
+        let directory = fileManager.urls(for: searchPathDirectory, in: self.searchPathDomain)[0]
         let filename = "test_download_data"
-        let fileURL = try! directory.appendingPathComponent(filename)
+        let fileURL = directory.appendingPathComponent(filename)
 
         let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
 
@@ -178,7 +178,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var responseRequest: URLRequest?
         var responseResponse: HTTPURLResponse?
         var responseData: Data?
-        var responseError: ErrorProtocol?
+        var responseError: Error?
 
         // When
         let download = Alamofire.download(.GET, urlString) { _, _ in

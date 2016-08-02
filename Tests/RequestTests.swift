@@ -123,7 +123,7 @@ class RequestResponseTestCase: BaseTestCase {
         var responseRequest: URLRequest?
         var responseResponse: HTTPURLResponse?
         var responseData: Data?
-        var responseError: ErrorProtocol?
+        var responseError: Error?
 
         // When
         let request = Alamofire.request(.GET, URLString)
@@ -202,7 +202,7 @@ class RequestResponseTestCase: BaseTestCase {
         var responseRequest: URLRequest?
         var responseResponse: HTTPURLResponse?
         var responseData: Data?
-        var responseError: ErrorProtocol?
+        var responseError: Error?
 
         // When
         let request = Alamofire.request(.GET, URLString)

@@ -34,7 +34,7 @@ public protocol ResponseSerializerType {
     associatedtype SerializedObject
 
     /// The type of error to be created by this `ResponseSerializer` if serialization fails.
-    associatedtype ErrorObject: ErrorProtocol
+    associatedtype ErrorObject: Error
 
     /**
         A closure used by response handlers that takes a request, response, data and error and returns a result.
@@ -47,7 +47,7 @@ public protocol ResponseSerializerType {
 /**
     A generic `ResponseSerializerType` used to serialize a request, response, and data into a serialized object.
 */
-public struct ResponseSerializer<Value, Error: ErrorProtocol>: ResponseSerializerType {
+public struct ResponseSerializer<Value, Error: Swift.Error>: ResponseSerializerType {
     /// The type of serialized object to be created by this `ResponseSerializer`.
     public typealias SerializedObject = Value
 
@@ -165,7 +165,7 @@ extension Request {
 
             guard let validData = data else {
                 let failureReason = "Data could not be serialized. Input data was nil."
-                let error = Error.error(code: .dataSerializationFailed, failureReason: failureReason)
+                let error = Errors.error(code: .dataSerializationFailed, failureReason: failureReason)
                 return .failure(error)
             }
 
@@ -214,7 +214,7 @@ extension Request {
 
             guard let validData = data else {
                 let failureReason = "String could not be serialized. Input data was nil."
-                let error = Error.error(code: .stringSerializationFailed, failureReason: failureReason)
+                let error = Errors.error(code: .stringSerializationFailed, failureReason: failureReason)
                 return .failure(error)
             }
 
@@ -232,7 +232,7 @@ extension Request {
                 return .success(string)
             } else {
                 let failureReason = "String could not be serialized with encoding: \(actualEncoding)"
-                let error = Error.error(code: .stringSerializationFailed, failureReason: failureReason)
+                let error = Errors.error(code: .stringSerializationFailed, failureReason: failureReason)
                 return .failure(error)
             }
         }
@@ -286,7 +286,7 @@ extension Request {
 
             guard let validData = data, validData.count > 0 else {
                 let failureReason = "JSON could not be serialized. Input data was nil or zero length."
-                let error = Error.error(code: .jsonSerializationFailed, failureReason: failureReason)
+                let error = Errors.error(code: .jsonSerializationFailed, failureReason: failureReason)
                 return .failure(error)
             }
 
@@ -345,7 +345,7 @@ extension Request {
 
             guard let validData = data, validData.count > 0 else {
                 let failureReason = "Property list could not be serialized. Input data was nil or zero length."
-                let error = Error.error(code: .propertyListSerializationFailed, failureReason: failureReason)
+                let error = Errors.error(code: .propertyListSerializationFailed, failureReason: failureReason)
                 return .failure(error)
             }
 

@@ -24,8 +24,8 @@
 
 import Foundation
 
-/// The `Error` struct provides a convenience for creating custom Alamofire NSErrors.
-public struct Error {
+/// The `Errors` struct provides a convenience for creating custom Alamofire NSErrors.
+public struct Errors {
     /// The domain used for creating all Alamofire errors.
     public static let Domain = "org.alamofire.error"
 
@@ -77,11 +77,11 @@ public struct Error {
         return NSError(domain: Domain, code: code, userInfo: userInfo)
     }
 
-    static func error(domain: String = Error.Domain, code: Code, failureReason: String) -> NSError {
+    static func error(domain: String = Errors.Domain, code: Code, failureReason: String) -> NSError {
         return error(domain: domain, code: code.rawValue, failureReason: failureReason)
     }
 
-    static func error(domain: String = Error.Domain, code: Int, failureReason: String) -> NSError {
+    static func error(domain: String = Errors.Domain, code: Int, failureReason: String) -> NSError {
         let userInfo = [NSLocalizedFailureReasonErrorKey: failureReason]
         return NSError(domain: domain, code: code, userInfo: userInfo)
     }

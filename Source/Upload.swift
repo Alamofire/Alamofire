@@ -204,7 +204,7 @@ extension Manager {
     */
     public enum MultipartFormDataEncodingResult {
         case success(request: Request, streamingFromDisk: Bool, streamFileURL: URL?)
-        case failure(ErrorProtocol)
+        case failure(Error)
     }
 
     /**
@@ -281,7 +281,7 @@ extension Manager {
         encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
-        DispatchQueue.global(attributes: .qosUtility).async {
+        DispatchQueue.global(qos: .utility).async {
             let formData = MultipartFormData()
             multipartFormData(formData)
 
@@ -310,9 +310,9 @@ extension Manager {
             } else {
                 let fileManager = FileManager.default
                 let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-                let directoryURL = try! tempDirectoryURL.appendingPathComponent("org.alamofire.manager/multipart.form.data")
+                let directoryURL = tempDirectoryURL.appendingPathComponent("org.alamofire.manager/multipart.form.data")
                 let fileName = UUID().uuidString
-                let fileURL = try! directoryURL.appendingPathComponent(fileName)
+                let fileURL = directoryURL.appendingPathComponent(fileName)
 
                 do {
                     try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)

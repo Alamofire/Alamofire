@@ -85,11 +85,11 @@ extension Request {
                 let failureReason = "Response status code was unacceptable: \(response.statusCode)"
 
                 let error = NSError(
-                    domain: Error.Domain,
-                    code: Error.Code.statusCodeValidationFailed.rawValue,
+                    domain: Errors.Domain,
+                    code: Errors.Code.statusCodeValidationFailed.rawValue,
                     userInfo: [
                         NSLocalizedFailureReasonErrorKey: failureReason,
-                        Error.UserInfoKeys.StatusCode: response.statusCode
+                        Errors.UserInfoKeys.StatusCode: response.statusCode
                     ]
                 )
 
@@ -177,11 +177,11 @@ extension Request {
             }
 
             let error = NSError(
-                domain: Error.Domain,
-                code: Error.Code.contentTypeValidationFailed.rawValue,
+                domain: Errors.Domain,
+                code: Errors.Code.contentTypeValidationFailed.rawValue,
                 userInfo: [
                     NSLocalizedFailureReasonErrorKey: failureReason,
-                    Error.UserInfoKeys.ContentType: contentType
+                    Errors.UserInfoKeys.ContentType: contentType
                 ]
             )
 

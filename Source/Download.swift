@@ -151,10 +151,10 @@ extension Request {
         -> DownloadFileDestination
     {
         return { temporaryURL, response -> URL in
-            let directoryURLs = FileManager.default.urlsForDirectory(directory, inDomains: domain)
+            let directoryURLs = FileManager.default.urls(for: directory, in: domain)
 
             if !directoryURLs.isEmpty {
-                return try! directoryURLs[0].appendingPathComponent(response.suggestedFilename!)
+                return directoryURLs[0].appendingPathComponent(response.suggestedFilename!)
             }
 
             return temporaryURL

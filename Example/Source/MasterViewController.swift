@@ -57,7 +57,7 @@ class MasterViewController: UITableViewController {
     // MARK: - UIStoryboardSegue
 
     override func prepare(for segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let navigationController = segue.destinationViewController as? UINavigationController,
+        if let navigationController = segue.destination as? UINavigationController,
            let detailViewController = navigationController.topViewController as? DetailViewController
         {
             func requestForSegue(_ segue: UIStoryboardSegue) -> Request? {
