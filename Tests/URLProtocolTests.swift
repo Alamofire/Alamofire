@@ -31,7 +31,7 @@ class ProxyURLProtocol: URLProtocol {
     // MARK: Properties
 
     struct PropertyKeys {
-        static let HandledByForwarderURLProtocol = "HandledByProxyURLProtocol"
+        static let handledByForwarderURLProtocol = "HandledByProxyURLProtocol"
     }
 
     lazy var session: URLSession = {
@@ -52,7 +52,7 @@ class ProxyURLProtocol: URLProtocol {
     // MARK: Class Request Methods
 
     override class func canInit(with request: URLRequest) -> Bool {
-        if URLProtocol.property(forKey: PropertyKeys.HandledByForwarderURLProtocol, in: request) != nil {
+        if URLProtocol.property(forKey: PropertyKeys.handledByForwarderURLProtocol, in: request) != nil {
             return false
         }
 
@@ -78,7 +78,7 @@ class ProxyURLProtocol: URLProtocol {
         // Hopefully will be fixed in a future seed
         // URLProtocol had some API's that didnt make the value type conversion
         let mutableRequest = (request.urlRequest as NSURLRequest).mutableCopy() as! NSMutableURLRequest
-        URLProtocol.setProperty(true, forKey: PropertyKeys.HandledByForwarderURLProtocol, in: mutableRequest)
+        URLProtocol.setProperty(true, forKey: PropertyKeys.handledByForwarderURLProtocol, in: mutableRequest)
         activeTask = session.dataTask(with: mutableRequest as URLRequest)
         activeTask?.resume()
     }
@@ -138,7 +138,7 @@ class URLProtocolTestCase: BaseTestCase {
         let url = URL(string: urlString)!
 
         var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = Method.GET.rawValue
+        urlRequest.httpMethod = HTTPMethod.get.rawValue
         urlRequest.setValue("foobar", forHTTPHeaderField: "request-header")
 
         let expectation = self.expectation(description: "GET request should succeed")
@@ -149,7 +149,7 @@ class URLProtocolTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(urlRequest: urlRequest)
+        manager.request(urlRequest)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse

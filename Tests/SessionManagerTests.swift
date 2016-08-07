@@ -146,7 +146,7 @@ class SessionManagerTestCase: BaseTestCase {
         var response: HTTPURLResponse?
 
         // When
-        manager.dataRequest(urlRequest: urlRequest)
+        manager.request(urlRequest)
             .response { _, responseResponse, _, _ in
                 response = responseResponse
                 expectation.fulfill()
@@ -171,7 +171,7 @@ class SessionManagerTestCase: BaseTestCase {
         let urlRequest = URLRequest(url: url)
 
         // When
-        let request = manager?.dataRequest(urlRequest: urlRequest)
+        let request = manager?.request(urlRequest)
         manager = nil
 
         // Then
@@ -188,7 +188,7 @@ class SessionManagerTestCase: BaseTestCase {
         let urlRequest = URLRequest(url: url)
 
         // When
-        let request = manager!.dataRequest(urlRequest: urlRequest)
+        let request = manager!.request(urlRequest)
         request.cancel()
         manager = nil
 
@@ -208,12 +208,12 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
 
     func testThatDefaultConfigurationHeadersAreSentWithRequest() {
         // Given, When, Then
-        executeAuthorizationHeaderTestForConfigurationType(.default)
+        executeAuthorizationHeaderTest(for: .default)
     }
 
     func testThatEphemeralConfigurationHeadersAreSentWithRequest() {
         // Given, When, Then
-        executeAuthorizationHeaderTestForConfigurationType(.ephemeral)
+        executeAuthorizationHeaderTest(for: .ephemeral)
     }
 
 //    ⚠️ This test has been removed as a result of rdar://26870455 in Xcode 8 Seed 1
@@ -222,7 +222,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
 //        executeAuthorizationHeaderTestForConfigurationType(.background)
 //    }
 
-    private func executeAuthorizationHeaderTestForConfigurationType(_ type: ConfigurationType) {
+    private func executeAuthorizationHeaderTest(for type: ConfigurationType) {
         // Given
         let manager: SessionManager = {
             let configuration: URLSessionConfiguration = {
@@ -253,7 +253,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        manager.dataRequest(method: .GET, urlString: "https://httpbin.org/headers")
+        manager.request("https://httpbin.org/headers", withMethod: .get)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -268,8 +268,9 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
             XCTAssertNotNil(response.data, "data should not be nil")
             XCTAssertTrue(response.result.isSuccess, "result should be a success")
 
-            if let headers = response.result.value?["headers" as NSString] as? [String: String],
-               let authorization = headers["Authorization"]
+            if
+                let headers = response.result.value?["headers" as NSString] as? [String: String],
+                let authorization = headers["Authorization"]
             {
                 XCTAssertEqual(authorization, "Bearer 123456", "authorization header value does not match")
             } else {

@@ -103,10 +103,10 @@ public class TaskDelegate: NSObject {
         } else if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
             let host = challenge.protectionSpace.host
 
-            if let serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicyForHost(host),
+            if let serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicy(forHost: host),
                 let serverTrust = challenge.protectionSpace.serverTrust
             {
-                if serverTrustPolicy.evaluateServerTrust(serverTrust, isValidForHost: host) {
+                if serverTrustPolicy.evaluate(serverTrust, forHost: host) {
                     disposition = .useCredential
                     credential = URLCredential(trust: serverTrust)
                 } else {
@@ -151,14 +151,15 @@ public class TaskDelegate: NSObject {
             if let error = error {
                 self.error = error
 
-                if let downloadDelegate = self as? DownloadTaskDelegate,
+                if
+                    let downloadDelegate = self as? DownloadTaskDelegate,
                     let userInfo = error.userInfo as? [String: AnyObject],
                     let resumeData = userInfo[NSURLSessionDownloadTaskResumeData] as? Data
                 {
                     downloadDelegate.resumeData = resumeData
                 }
             }
-            
+
             queue.isSuspended = false
         }
     }

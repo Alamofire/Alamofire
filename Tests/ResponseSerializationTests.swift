@@ -27,9 +27,12 @@ import Foundation
 import XCTest
 
 class ResponseSerializationTestCase: BaseTestCase {
+
+    // MARK: - Properties
+
     let error = NSError(domain: ErrorDomain, code: -10000, userInfo: nil)
 
-    // MARK: - Data Response Serializer Tests
+    // MARK: - Tests - Data Response Serializer
 
     func testThatDataResponseSerializerSucceedsWhenDataIsNotNil() {
         // Given
@@ -126,7 +129,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    // MARK: - String Response Serializer Tests
+    // MARK: - Tests - String Response Serializer
 
     func testThatStringResponseSerializerFailsWhenDataIsNil() {
         // Given
@@ -315,7 +318,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    // MARK: - JSON Response Serializer Tests
+    // MARK: - Tests - JSON Response Serializer
 
     func testThatJSONResponseSerializerFailsWhenDataIsNil() {
         // Given
@@ -453,7 +456,7 @@ class ResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    // MARK: - Property List Response Serializer Tests
+    // MARK: - Tests - Property List Response Serializer
 
     func testThatPropertyListResponseSerializerFailsWhenDataIsNil() {
         // Given

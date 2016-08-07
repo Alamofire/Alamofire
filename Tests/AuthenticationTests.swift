@@ -71,7 +71,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -102,7 +102,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .authenticate(user: user, password: password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -125,7 +125,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
     func testHiddenHTTPBasicAuthentication() {
         // Given
-        let authorizationHeader = Request.authorizationHeader(user: user, password: password)
+        let authorizationHeader = Request.authorizationHeaderFrom(user: user, password: password)
         let urlString = "http://httpbin.org/hidden-basic-auth/\(user)/\(password)"
         let expectation = self.expectation(description: "\(urlString) 200")
 
@@ -135,7 +135,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString, headers: authorizationHeader)
+        manager.request(urlString, withMethod: .get, headers: authorizationHeader)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -176,7 +176,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -207,7 +207,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .authenticate(user: user, password: password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest

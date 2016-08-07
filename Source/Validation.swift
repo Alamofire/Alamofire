@@ -25,38 +25,33 @@
 import Foundation
 
 extension Request {
-
-    /**
-        Used to represent whether validation was successful or encountered an error resulting in a failure.
-
-        - Success: The validation was successful.
-        - Failure: The validation failed encountering the provided error.
-    */
+    /// Used to represent whether validation was successful or encountered an error resulting in a failure.
+    ///
+    /// - success: The validation was successful.
+    /// - failure: The validation failed encountering the provided error.
     public enum ValidationResult {
         case success
         case failure(NSError)
     }
 
-    /**
-        A closure used to validate a request that takes a URL request and URL response, and returns whether the
-        request was valid.
-    */
+    /// A closure used to validate a request that takes a URL request and URL response, and returns whether the
+    /// request was valid.
     public typealias Validation = (URLRequest?, HTTPURLResponse) -> ValidationResult
 
-    /**
-        Validates the request, using the specified closure.
-
-        If validation fails, subsequent calls to response handlers will have an associated error.
-
-        - parameter validation: A closure to validate the request.
-
-        - returns: The request.
-    */
+    /// Validates the request, using the specified closure.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - parameter validation: A closure to validate the request.
+    ///
+    /// - returns: The request.
     @discardableResult
-    public func validate(_ validation: Validation) -> Self {
+    public func validate(validation: Validation) -> Self {
         delegate.queue.addOperation {
-            if let response = self.response, self.delegate.error == nil,
-               case let .failure(error) = validation(self.request, response)
+            if
+                let response = self.response,
+                self.delegate.error == nil,
+                case let .failure(error) = validation(self.request, response)
             {
                 self.delegate.error = error
             }
@@ -67,15 +62,13 @@ extension Request {
 
     // MARK: - Status Code
 
-    /**
-        Validates that the response has a status code in the specified range.
-
-        If validation fails, subsequent calls to response handlers will have an associated error.
-
-        - parameter range: The range of acceptable status codes.
-
-        - returns: The request.
-    */
+    /// Validates that the response has a status code in the specified range.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - parameter range: The range of acceptable status codes.
+    ///
+    /// - returns: The request.
     @discardableResult
     public func validate<S: Sequence where S.Iterator.Element == Int>(statusCode acceptableStatusCode: S) -> Self {
         return validate { _, response in
@@ -111,9 +104,7 @@ extension Request {
                 return split.components(separatedBy: "/")
             }()
 
-            if let type = components.first,
-               let subtype = components.last
-            {
+            if let type = components.first, let subtype = components.last {
                 self.type = type
                 self.subtype = subtype
             } else {
@@ -131,23 +122,19 @@ extension Request {
         }
     }
 
-    /**
-        Validates that the response has a content type in the specified array.
-
-        If validation fails, subsequent calls to response handlers will have an associated error.
-
-        - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
-
-        - returns: The request.
-    */
+    /// Validates that the response has a content type in the specified array.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
+    ///
+    /// - returns: The request.
     @discardableResult
     public func validate<S: Sequence where S.Iterator.Element == String>(contentType acceptableContentTypes: S) -> Self {
         return validate { _, response in
             guard let validData = self.delegate.data, validData.count > 0 else { return .success }
 
-            if let responseContentType = response.mimeType,
-               let responseMIMEType = MIMEType(responseContentType)
-            {
+            if let responseContentType = response.mimeType, let responseMIMEType = MIMEType(responseContentType) {
                 for contentType in acceptableContentTypes {
                     if let acceptableMIMEType = MIMEType(contentType), acceptableMIMEType.matches(responseMIMEType) {
                         return .success
@@ -191,14 +178,12 @@ extension Request {
 
     // MARK: - Automatic
 
-    /**
-        Validates that the response has a status code in the default acceptable range of 200...299, and that the content
-        type matches any specified in the Accept HTTP header field.
-
-        If validation fails, subsequent calls to response handlers will have an associated error.
-
-        - returns: The request.
-    */
+    /// Validates that the response has a status code in the default acceptable range of 200...299, and that the content
+    /// type matches any specified in the Accept HTTP header field.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - returns: The request.
     @discardableResult
     public func validate() -> Self {
         let acceptableStatusCodes: CountableRange<Int> = 200..<300

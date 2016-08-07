@@ -32,7 +32,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/"
 
         // When
-        let request = Alamofire.dataRequest(method: .GET, urlString: urlString)
+        let request = Alamofire.request(urlString, withMethod: .get)
 
         // Then
         XCTAssertNotNil(request.request, "request URL request should not be nil")
@@ -46,7 +46,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
 
         // When
-        let request = Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
+        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
 
         // Then
         XCTAssertNotNil(request.request, "request URL request should not be nil")
@@ -62,7 +62,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let headers = ["Authorization": "123456"]
 
         // When
-        let request = Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"], headers: headers)
+        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"], headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -92,7 +92,7 @@ class RequestResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -126,7 +126,7 @@ class RequestResponseTestCase: BaseTestCase {
         var responseError: Error?
 
         // When
-        let request = Alamofire.dataRequest(method: .GET, urlString: urlString)
+        let request = Alamofire.request(urlString, withMethod: .get)
         request.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
@@ -175,9 +175,7 @@ class RequestResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
-           let lastProgressValue = progressValues.last
-        {
+        if let lastByteValue = byteValues.last, let lastProgressValue = progressValues.last {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
 
@@ -205,7 +203,7 @@ class RequestResponseTestCase: BaseTestCase {
         var responseError: Error?
 
         // When
-        let request = Alamofire.dataRequest(method: .GET, urlString: urlString)
+        let request = Alamofire.request(urlString, withMethod: .get)
         request.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
@@ -256,9 +254,7 @@ class RequestResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
-           let lastProgressValue = progressValues.last
-        {
+        if let lastByteValue = byteValues.last, let lastProgressValue = progressValues.last {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
 
@@ -293,7 +289,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.dataRequest(method: .POST, urlString: urlString, parameters: parameters)
+        Alamofire.request(urlString, withMethod: .post, parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -307,9 +303,7 @@ class RequestResponseTestCase: BaseTestCase {
             XCTAssertNotNil(response.response, "response should not be nil")
             XCTAssertNotNil(response.data, "data should not be nil")
 
-            if let json = response.result.value as? [String: AnyObject],
-               let form = json["form"] as? [String: String]
-            {
+            if let json = response.result.value as? [String: AnyObject], let form = json["form"] as? [String: String] {
                 XCTAssertEqual(form["french"], parameters["french"], "french parameter value should match form value")
                 XCTAssertEqual(form["japanese"], parameters["japanese"], "japanese parameter value should match form value")
                 XCTAssertEqual(form["arabic"], parameters["arabic"], "arabic parameter value should match form value")
@@ -327,14 +321,14 @@ class RequestResponseTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
 
         let pngBase64EncodedString: String = {
-            let URL = URLForResource("unicorn", withExtension: "png")
+            let URL = url(forResource: "unicorn", withExtension: "png")
             let data = try! Data(contentsOf: URL)
 
             return data.base64EncodedString(options: .lineLength64Characters)
         }()
 
         let jpegBase64EncodedString: String = {
-            let URL = URLForResource("rainbow", withExtension: "jpg")
+            let URL = url(forResource: "rainbow", withExtension: "jpg")
             let data = try! Data(contentsOf: URL)
 
             return data.base64EncodedString(options: .lineLength64Characters)
@@ -351,7 +345,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.dataRequest(method: .POST, urlString: urlString, parameters: parameters)
+        Alamofire.request(urlString, withMethod: .post, parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -366,9 +360,7 @@ class RequestResponseTestCase: BaseTestCase {
             XCTAssertNotNil(response.data, "data should not be nil")
             XCTAssertTrue(response.result.isSuccess, "result should be success")
 
-            if let json = response.result.value as? [String: AnyObject],
-               let form = json["form"] as? [String: String]
-            {
+            if let json = response.result.value as? [String: AnyObject], let form = json["form"] as? [String: String] {
                 XCTAssertEqual(form["email"], parameters["email"], "email parameter value should match form value")
                 XCTAssertEqual(form["png_image"], parameters["png_image"], "png_image parameter value should match form value")
                 XCTAssertEqual(form["jpeg_image"], parameters["jpeg_image"], "jpeg_image parameter value should match form value")
@@ -384,7 +376,7 @@ class RequestResponseTestCase: BaseTestCase {
 // MARK: -
 
 extension Request {
-    private func preValidate(_ operation: (Void) -> Void) -> Self {
+    private func preValidate(operation: (Void) -> Void) -> Self {
         delegate.queue.addOperation {
             operation()
         }
@@ -392,7 +384,7 @@ extension Request {
         return self
     }
 
-    private func postValidate(_ operation: (Void) -> Void) -> Self {
+    private func postValidate(operation: (Void) -> Void) -> Self {
         delegate.queue.addOperation {
             operation()
         }
@@ -412,7 +404,7 @@ class RequestExtensionTestCase: BaseTestCase {
         var responses: [String] = []
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .preValidate {
                 responses.append("preValidate")
             }
@@ -444,7 +436,7 @@ class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
         let urlString = "https://httpbin.org/get"
-        let request = Alamofire.dataRequest(method: .GET, urlString: urlString)
+        let request = Alamofire.request(urlString, withMethod: .get)
         let initialRequestDescription = request.description
 
         let expectation = self.expectation(description: "Request description should update: \(urlString)")
@@ -524,8 +516,8 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
 
         // When
-        let request = manager.dataRequest(method: .GET, urlString: urlString)
-        let components = cURLCommandComponents(request)
+        let request = manager.request(urlString, withMethod: .get)
+        let components = cURLCommandComponents(for: request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
@@ -539,8 +531,8 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
         // When
         let headers = [ "Accept-Language": "en-GB" ]
-        let request = managerWithAcceptLanguageHeader.dataRequest(method: .GET, urlString: urlString, headers: headers)
-        let components = cURLCommandComponents(request)
+        let request = managerWithAcceptLanguageHeader.request(urlString, withMethod: .get, headers: headers)
+        let components = cURLCommandComponents(for: request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
@@ -561,8 +553,8 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
 
         // When
-        let request = manager.dataRequest(method: .POST, urlString: urlString)
-        let components = cURLCommandComponents(request)
+        let request = manager.request(urlString, withMethod: .post)
+        let components = cURLCommandComponents(for: request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
@@ -581,8 +573,8 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         ]
 
         // When
-        let request = manager.dataRequest(method: .POST, urlString: urlString, parameters: parameters, encoding: .json)
-        let components = cURLCommandComponents(request)
+        let request = manager.request(urlString, withMethod: .post, parameters: parameters, encoding: .json)
+        let components = cURLCommandComponents(for: request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
@@ -612,8 +604,8 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         manager.session.configuration.httpCookieStorage?.setCookie(cookie)
 
         // When
-        let request = manager.dataRequest(method: .POST, urlString: urlString)
-        let components = cURLCommandComponents(request)
+        let request = manager.request(urlString, withMethod: .post)
+        let components = cURLCommandComponents(for: request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
@@ -637,8 +629,8 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         managerDisallowingCookies.session.configuration.httpCookieStorage?.setCookie(cookie)
 
         // When
-        let request = managerDisallowingCookies.dataRequest(method: .POST, urlString: urlString)
-        let components = cURLCommandComponents(request)
+        let request = managerDisallowingCookies.request(urlString, withMethod: .post)
+        let components = cURLCommandComponents(for: request)
 
         // Then
         let cookieComponents = components.filter { $0 == "-b" }
@@ -648,24 +640,24 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     func testMultipartFormDataRequestWithDuplicateHeadersDebugDescription() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
         let expectation = self.expectation(description: "multipart form data encoding should succeed")
 
         var request: Request?
         var components: [String] = []
 
         // When
-        managerWithContentTypeHeader.uploadRequest(
-            method: .POST,
-            urlString: urlString,
+        managerWithContentTypeHeader.upload(
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: japanese, name: "japanese")
+                multipartFormData.append(japaneseData, withName: "japanese")
             },
+            to: urlString,
+            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case .success(let upload, _, _):
                     request = upload
-                    components = self.cURLCommandComponents(upload)
+                    components = self.cURLCommandComponents(for: upload)
 
                     expectation.fulfill()
                 case .failure:
@@ -697,7 +689,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let urlString = "invalid_url"
 
         // When
-        let request = manager.dataRequest(method: .GET, urlString: urlString)
+        let request = manager.request(urlString, withMethod: .get)
         let debugDescription = request.debugDescription
 
         // Then
@@ -706,7 +698,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     // MARK: Test Helper Methods
 
-    private func cURLCommandComponents(_ request: Request) -> [String] {
+    private func cURLCommandComponents(for request: Request) -> [String] {
         let whitespaceCharacterSet = CharacterSet.whitespacesAndNewlines
         return request.debugDescription.components(separatedBy: whitespaceCharacterSet)
                                        .filter { $0 != "" && $0 != "\\" }

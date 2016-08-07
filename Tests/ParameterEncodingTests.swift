@@ -33,13 +33,15 @@ class ParameterEncodingTestCase: BaseTestCase {
 // MARK: -
 
 class URLParameterEncodingTestCase: ParameterEncodingTestCase {
+
+    // MARK: Properties
+
     let encoding: ParameterEncoding = .url
 
     // MARK: Tests - Parameter Types
 
     func testURLParameterEncodeNilParameters() {
-        // Given
-        // When
+        // Given, When
         let (urlRequest, _) = encoding.encode(self.urlRequest, parameters: nil)
 
         // Then
@@ -383,7 +385,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testThatURLParameterEncodingEncodesGETParametersInURL() {
         // Given
         var mutableURLRequest = self.urlRequest.urlRequest
-        mutableURLRequest.httpMethod = Method.GET.rawValue
+        mutableURLRequest.httpMethod = HTTPMethod.get.rawValue
         let parameters = ["foo": 1, "bar": 2]
 
         // When
@@ -398,7 +400,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testThatURLParameterEncodingEncodesPOSTParametersInHTTPBody() {
         // Given
         var mutableURLRequest = self.urlRequest.urlRequest
-        mutableURLRequest.httpMethod = Method.POST.rawValue
+        mutableURLRequest.httpMethod = HTTPMethod.post.rawValue
         let parameters = ["foo": 1, "bar": 2]
 
         // When
@@ -425,7 +427,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testThatURLEncodedInURLParameterEncodingEncodesPOSTParametersInURL() {
         // Given
         var mutableURLRequest = self.urlRequest.urlRequest
-        mutableURLRequest.httpMethod = Method.POST.rawValue
+        mutableURLRequest.httpMethod = HTTPMethod.post.rawValue
         let parameters = ["foo": 1, "bar": 2]
 
         // When
@@ -448,8 +450,7 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
     // MARK: Tests
 
     func testJSONParameterEncodeNilParameters() {
-        // Given
-        // When
+        // Given, When
         let (URLRequest, error) = encoding.encode(self.urlRequest, parameters: nil)
 
         // Then
@@ -529,8 +530,7 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
     // MARK: Tests
 
     func testPropertyListParameterEncodeNilParameters() {
-        // Given
-        // When
+        // Given, When
         let (URLRequest, error) = encoding.encode(self.urlRequest, parameters: nil)
 
         // Then
@@ -573,6 +573,7 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
                     options: PropertyListSerialization.MutabilityOptions(),
                     format: nil
                 )
+
                 if let plist = plist as? NSObject {
                     XCTAssertEqual(plist, parameters as NSObject, "HTTPBody plist does not equal parameters")
                 } else {
@@ -615,6 +616,7 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
                     options: PropertyListSerialization.MutabilityOptions(),
                     format: nil
                 )
+                
                 XCTAssertTrue(plist.value(forKey: "date") is NSDate, "date is not NSDate")
                 XCTAssertTrue(plist.value(forKey: "data") is NSData, "data is not NSData")
             } catch {
@@ -645,6 +647,7 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
 // MARK: -
 
 class CustomParameterEncodingTestCase: ParameterEncodingTestCase {
+
     // MARK: Tests
 
     func testCustomParameterEncode() {

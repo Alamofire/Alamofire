@@ -30,26 +30,24 @@ import MobileCoreServices
 import CoreServices
 #endif
 
-/**
-    Constructs `multipart/form-data` for uploads within an HTTP or HTTPS body. There are currently two ways to encode
-    multipart form data. The first way is to encode the data directly in memory. This is very efficient, but can lead
-    to memory issues if the dataset is too large. The second way is designed for larger datasets and will write all the
-    data to a single file on disk with all the proper boundary segmentation. The second approach MUST be used for
-    larger datasets such as video content, otherwise your app may run out of memory when trying to encode the dataset.
-
-    For more information on `multipart/form-data` in general, please refer to the RFC-2388 and RFC-2045 specs as well
-    and the w3 form documentation.
-
-    - https://www.ietf.org/rfc/rfc2388.txt
-    - https://www.ietf.org/rfc/rfc2045.txt
-    - https://www.w3.org/TR/html401/interact/forms.html#h-17.13
-*/
+/// Constructs `multipart/form-data` for uploads within an HTTP or HTTPS body. There are currently two ways to encode
+/// multipart form data. The first way is to encode the data directly in memory. This is very efficient, but can lead
+/// to memory issues if the dataset is too large. The second way is designed for larger datasets and will write all the
+/// data to a single file on disk with all the proper boundary segmentation. The second approach MUST be used for
+/// larger datasets such as video content, otherwise your app may run out of memory when trying to encode the dataset.
+///
+/// For more information on `multipart/form-data` in general, please refer to the RFC-2388 and RFC-2045 specs as well
+/// and the w3 form documentation.
+///
+/// - https://www.ietf.org/rfc/rfc2388.txt
+/// - https://www.ietf.org/rfc/rfc2045.txt
+/// - https://www.w3.org/TR/html401/interact/forms.html#h-17.13
 public class MultipartFormData {
 
     // MARK: - Helper Types
 
     struct EncodingCharacters {
-        static let CRLF = "\r\n"
+        static let crlf = "\r\n"
     }
 
     struct BoundaryGenerator {
@@ -61,16 +59,16 @@ public class MultipartFormData {
             return String(format: "alamofire.boundary.%08x%08x", arc4random(), arc4random())
         }
 
-        static func boundaryData(boundaryType: BoundaryType, boundary: String) -> Data {
+        static func boundaryData(forBoundaryType boundaryType: BoundaryType, boundary: String) -> Data {
             let boundaryText: String
 
             switch boundaryType {
             case .initial:
-                boundaryText = "--\(boundary)\(EncodingCharacters.CRLF)"
+                boundaryText = "--\(boundary)\(EncodingCharacters.crlf)"
             case .encapsulated:
-                boundaryText = "\(EncodingCharacters.CRLF)--\(boundary)\(EncodingCharacters.CRLF)"
+                boundaryText = "\(EncodingCharacters.crlf)--\(boundary)\(EncodingCharacters.crlf)"
             case .final:
-                boundaryText = "\(EncodingCharacters.CRLF)--\(boundary)--\(EncodingCharacters.CRLF)"
+                boundaryText = "\(EncodingCharacters.crlf)--\(boundary)--\(EncodingCharacters.crlf)"
             }
 
             return boundaryText.data(using: String.Encoding.utf8, allowLossyConversion: false)!
@@ -108,138 +106,126 @@ public class MultipartFormData {
 
     // MARK: - Lifecycle
 
-    /**
-        Creates a multipart form data object.
-
-        - returns: The multipart form data object.
-    */
+    /// Creates a multipart form data object.
+    ///
+    /// - returns: The multipart form data object.
     public init() {
         self.boundary = BoundaryGenerator.randomBoundary()
         self.bodyParts = []
 
-        /**
-         *  The optimal read/write buffer size in bytes for input and output streams is 1024 (1KB). For more
-         *  information, please refer to the following article:
-         *    - https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Streams/Articles/ReadingInputStreams.html
-         */
+        ///
+        /// The optimal read/write buffer size in bytes for input and output streams is 1024 (1KB). For more
+        /// information, please refer to the following article:
+        ///   - https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Streams/Articles/ReadingInputStreams.html
+        ///
 
         self.streamBufferSize = 1024
     }
 
     // MARK: - Body Parts
 
-    /**
-        Creates a body part from the data and appends it to the multipart form data object.
-
-        The body part data will be encoded using the following format:
-
-        - `Content-Disposition: form-data; name=#{name}` (HTTP Header)
-        - Encoded data
-        - Multipart form boundary
-
-        - parameter data: The data to encode into the multipart form data.
-        - parameter name: The name to associate with the data in the `Content-Disposition` HTTP header.
-    */
-    public func appendBodyPart(data: Data, name: String) {
-        let headers = contentHeaders(name: name)
+    /// Creates a body part from the data and appends it to the multipart form data object.
+    ///
+    /// The body part data will be encoded using the following format:
+    ///
+    /// - `Content-Disposition: form-data; name=#{name}` (HTTP Header)
+    /// - Encoded data
+    /// - Multipart form boundary
+    ///
+    /// - parameter data: The data to encode into the multipart form data.
+    /// - parameter name: The name to associate with the data in the `Content-Disposition` HTTP header.
+    public func append(_ data: Data, withName name: String) {
+        let headers = contentHeaders(withName: name)
         let stream = InputStream(data: data)
         let length = UInt64(data.count)
 
-        appendBodyPart(stream: stream, length: length, headers: headers)
+        append(stream, withLength: length, headers: headers)
     }
 
-    /**
-        Creates a body part from the data and appends it to the multipart form data object.
-
-        The body part data will be encoded using the following format:
-
-        - `Content-Disposition: form-data; name=#{name}` (HTTP Header)
-        - `Content-Type: #{generated mimeType}` (HTTP Header)
-        - Encoded data
-        - Multipart form boundary
-
-        - parameter data:     The data to encode into the multipart form data.
-        - parameter name:     The name to associate with the data in the `Content-Disposition` HTTP header.
-        - parameter mimeType: The MIME type to associate with the data content type in the `Content-Type` HTTP header.
-    */
-    public func appendBodyPart(data: Data, name: String, mimeType: String) {
-        let headers = contentHeaders(name: name, mimeType: mimeType)
+    /// Creates a body part from the data and appends it to the multipart form data object.
+    ///
+    /// The body part data will be encoded using the following format:
+    ///
+    /// - `Content-Disposition: form-data; name=#{name}` (HTTP Header)
+    /// - `Content-Type: #{generated mimeType}` (HTTP Header)
+    /// - Encoded data
+    /// - Multipart form boundary
+    ///
+    /// - parameter data:     The data to encode into the multipart form data.
+    /// - parameter name:     The name to associate with the data in the `Content-Disposition` HTTP header.
+    /// - parameter mimeType: The MIME type to associate with the data content type in the `Content-Type` HTTP header.
+    public func append(_ data: Data, withName name: String, mimeType: String) {
+        let headers = contentHeaders(withName: name, mimeType: mimeType)
         let stream = InputStream(data: data)
         let length = UInt64(data.count)
 
-        appendBodyPart(stream: stream, length: length, headers: headers)
+        append(stream, withLength: length, headers: headers)
     }
 
-    /**
-        Creates a body part from the data and appends it to the multipart form data object.
-
-        The body part data will be encoded using the following format:
-
-        - `Content-Disposition: form-data; name=#{name}; filename=#{filename}` (HTTP Header)
-        - `Content-Type: #{mimeType}` (HTTP Header)
-        - Encoded file data
-        - Multipart form boundary
-
-        - parameter data:     The data to encode into the multipart form data.
-        - parameter name:     The name to associate with the data in the `Content-Disposition` HTTP header.
-        - parameter fileName: The filename to associate with the data in the `Content-Disposition` HTTP header.
-        - parameter mimeType: The MIME type to associate with the data in the `Content-Type` HTTP header.
-    */
-    public func appendBodyPart(data: Data, name: String, fileName: String, mimeType: String) {
-        let headers = contentHeaders(name: name, fileName: fileName, mimeType: mimeType)
+    /// Creates a body part from the data and appends it to the multipart form data object.
+    ///
+    /// The body part data will be encoded using the following format:
+    ///
+    /// - `Content-Disposition: form-data; name=#{name}; filename=#{filename}` (HTTP Header)
+    /// - `Content-Type: #{mimeType}` (HTTP Header)
+    /// - Encoded file data
+    /// - Multipart form boundary
+    ///
+    /// - parameter data:     The data to encode into the multipart form data.
+    /// - parameter name:     The name to associate with the data in the `Content-Disposition` HTTP header.
+    /// - parameter fileName: The filename to associate with the data in the `Content-Disposition` HTTP header.
+    /// - parameter mimeType: The MIME type to associate with the data in the `Content-Type` HTTP header.
+    public func append(_ data: Data, withN name: String, fileName: String, mimeType: String) {
+        let headers = contentHeaders(withName: name, fileName: fileName, mimeType: mimeType)
         let stream = InputStream(data: data)
         let length = UInt64(data.count)
 
-        appendBodyPart(stream: stream, length: length, headers: headers)
+        append(stream, withLength: length, headers: headers)
     }
 
-    /**
-        Creates a body part from the file and appends it to the multipart form data object.
-
-        The body part data will be encoded using the following format:
-
-        - `Content-Disposition: form-data; name=#{name}; filename=#{generated filename}` (HTTP Header)
-        - `Content-Type: #{generated mimeType}` (HTTP Header)
-        - Encoded file data
-        - Multipart form boundary
-
-        The filename in the `Content-Disposition` HTTP header is generated from the last path component of the
-        `fileURL`. The `Content-Type` HTTP header MIME type is generated by mapping the `fileURL` extension to the
-        system associated MIME type.
-
-        - parameter fileURL: The URL of the file whose content will be encoded into the multipart form data.
-        - parameter name:    The name to associate with the file content in the `Content-Disposition` HTTP header.
-    */
-    public func appendBodyPart(fileURL: URL, name: String) {
+    /// Creates a body part from the file and appends it to the multipart form data object.
+    ///
+    /// The body part data will be encoded using the following format:
+    ///
+    /// - `Content-Disposition: form-data; name=#{name}; filename=#{generated filename}` (HTTP Header)
+    /// - `Content-Type: #{generated mimeType}` (HTTP Header)
+    /// - Encoded file data
+    /// - Multipart form boundary
+    ///
+    /// The filename in the `Content-Disposition` HTTP header is generated from the last path component of the
+    /// `fileURL`. The `Content-Type` HTTP header MIME type is generated by mapping the `fileURL` extension to the
+    /// system associated MIME type.
+    ///
+    /// - parameter fileURL: The URL of the file whose content will be encoded into the multipart form data.
+    /// - parameter name:    The name to associate with the file content in the `Content-Disposition` HTTP header.
+    public func append(_ fileURL: URL, withName name: String) {
         let fileName = fileURL.lastPathComponent
         let pathExtension = fileURL.pathExtension
 
         if !fileName.isEmpty && !pathExtension.isEmpty {
-            let mimeType = mimeTypeForPathExtension(pathExtension)
-            appendBodyPart(fileURL: fileURL, name: name, fileName: fileName, mimeType: mimeType)
+            let mime = mimeType(forPathExtension: pathExtension)
+            append(fileURL, withName: name, fileName: fileName, mimeType: mime)
         } else {
             let failureReason = "Failed to extract the fileName of the provided URL: \(fileURL)"
-            setBodyPartError(code: NSURLErrorBadURL, failureReason: failureReason)
+            setBodyPartError(withCode: NSURLErrorBadURL, failureReason: failureReason)
         }
     }
 
-    /**
-        Creates a body part from the file and appends it to the multipart form data object.
-
-        The body part data will be encoded using the following format:
-
-        - Content-Disposition: form-data; name=#{name}; filename=#{filename} (HTTP Header)
-        - Content-Type: #{mimeType} (HTTP Header)
-        - Encoded file data
-        - Multipart form boundary
-
-        - parameter fileURL:  The URL of the file whose content will be encoded into the multipart form data.
-        - parameter name:     The name to associate with the file content in the `Content-Disposition` HTTP header.
-        - parameter fileName: The filename to associate with the file content in the `Content-Disposition` HTTP header.
-        - parameter mimeType: The MIME type to associate with the file content in the `Content-Type` HTTP header.
-    */
-    public func appendBodyPart(fileURL: URL, name: String, fileName: String, mimeType: String) {
-        let headers = contentHeaders(name: name, fileName: fileName, mimeType: mimeType)
+    /// Creates a body part from the file and appends it to the multipart form data object.
+    ///
+    /// The body part data will be encoded using the following format:
+    ///
+    /// - Content-Disposition: form-data; name=#{name}; filename=#{filename} (HTTP Header)
+    /// - Content-Type: #{mimeType} (HTTP Header)
+    /// - Encoded file data
+    /// - Multipart form boundary
+    ///
+    /// - parameter fileURL:  The URL of the file whose content will be encoded into the multipart form data.
+    /// - parameter name:     The name to associate with the file content in the `Content-Disposition` HTTP header.
+    /// - parameter fileName: The filename to associate with the file content in the `Content-Disposition` HTTP header.
+    /// - parameter mimeType: The MIME type to associate with the file content in the `Content-Type` HTTP header.
+    public func append(_ fileURL: URL, withName name: String, fileName: String, mimeType: String) {
+        let headers = contentHeaders(withName: name, fileName: fileName, mimeType: mimeType)
 
         //============================================================
         //                 Check 1 - is file URL?
@@ -247,7 +233,7 @@ public class MultipartFormData {
 
         guard fileURL.isFileURL else {
             let failureReason = "The file URL does not point to a file URL: \(fileURL)"
-            setBodyPartError(code: NSURLErrorBadURL, failureReason: failureReason)
+            setBodyPartError(withCode: NSURLErrorBadURL, failureReason: failureReason)
             return
         }
 
@@ -258,7 +244,7 @@ public class MultipartFormData {
         let isReachable = (fileURL as NSURL).checkPromisedItemIsReachableAndReturnError(nil)
 
         guard isReachable else {
-            setBodyPartError(code: NSURLErrorBadURL, failureReason: "The file URL is not reachable: \(fileURL)")
+            setBodyPartError(withCode: NSURLErrorBadURL, failureReason: "The file URL is not reachable: \(fileURL)")
             return
         }
 
@@ -272,7 +258,7 @@ public class MultipartFormData {
         guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory.boolValue else
         {
             let failureReason = "The file URL is a directory, not a file: \(fileURL)"
-            setBodyPartError(code: NSURLErrorBadURL, failureReason: failureReason)
+            setBodyPartError(withCode: NSURLErrorBadURL, failureReason: failureReason)
             return
         }
 
@@ -283,8 +269,7 @@ public class MultipartFormData {
         var bodyContentLength: UInt64?
 
         do {
-            if let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber
-            {
+            if let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber {
                 bodyContentLength = fileSize.uint64Value
             }
         }
@@ -294,7 +279,7 @@ public class MultipartFormData {
 
         guard let length = bodyContentLength else {
             let failureReason = "Could not fetch attributes from the file URL: \(fileURL)"
-            setBodyPartError(code: NSURLErrorBadURL, failureReason: failureReason)
+            setBodyPartError(withCode: NSURLErrorBadURL, failureReason: failureReason)
             return
         }
 
@@ -304,71 +289,65 @@ public class MultipartFormData {
 
         guard let stream = InputStream(url: fileURL) else {
             let failureReason = "Failed to create an input stream from the file URL: \(fileURL)"
-            setBodyPartError(code: NSURLErrorCannotOpenFile, failureReason: failureReason)
+            setBodyPartError(withCode: NSURLErrorCannotOpenFile, failureReason: failureReason)
             return
         }
 
-        appendBodyPart(stream: stream, length: length, headers: headers)
+        append(stream, withLength: length, headers: headers)
     }
 
-    /**
-        Creates a body part from the stream and appends it to the multipart form data object.
-
-        The body part data will be encoded using the following format:
-
-        - `Content-Disposition: form-data; name=#{name}; filename=#{filename}` (HTTP Header)
-        - `Content-Type: #{mimeType}` (HTTP Header)
-        - Encoded stream data
-        - Multipart form boundary
-
-        - parameter stream:   The input stream to encode in the multipart form data.
-        - parameter length:   The content length of the stream.
-        - parameter name:     The name to associate with the stream content in the `Content-Disposition` HTTP header.
-        - parameter fileName: The filename to associate with the stream content in the `Content-Disposition` HTTP header.
-        - parameter mimeType: The MIME type to associate with the stream content in the `Content-Type` HTTP header.
-    */
-    public func appendBodyPart(
-        stream: InputStream,
-        length: UInt64,
+    /// Creates a body part from the stream and appends it to the multipart form data object.
+    ///
+    /// The body part data will be encoded using the following format:
+    ///
+    /// - `Content-Disposition: form-data; name=#{name}; filename=#{filename}` (HTTP Header)
+    /// - `Content-Type: #{mimeType}` (HTTP Header)
+    /// - Encoded stream data
+    /// - Multipart form boundary
+    ///
+    /// - parameter stream:   The input stream to encode in the multipart form data.
+    /// - parameter length:   The content length of the stream.
+    /// - parameter name:     The name to associate with the stream content in the `Content-Disposition` HTTP header.
+    /// - parameter fileName: The filename to associate with the stream content in the `Content-Disposition` HTTP header.
+    /// - parameter mimeType: The MIME type to associate with the stream content in the `Content-Type` HTTP header.
+    public func append(
+        _ stream: InputStream,
+        withLength length: UInt64,
         name: String,
         fileName: String,
         mimeType: String)
     {
-        let headers = contentHeaders(name: name, fileName: fileName, mimeType: mimeType)
-        appendBodyPart(stream: stream, length: length, headers: headers)
+        let headers = contentHeaders(withName: name, fileName: fileName, mimeType: mimeType)
+        append(stream, withLength: length, headers: headers)
     }
 
-    /**
-        Creates a body part with the headers, stream and length and appends it to the multipart form data object.
-
-        The body part data will be encoded using the following format:
-
-        - HTTP headers
-        - Encoded stream data
-        - Multipart form boundary
-
-        - parameter stream:  The input stream to encode in the multipart form data.
-        - parameter length:  The content length of the stream.
-        - parameter headers: The HTTP headers for the body part.
-    */
-    public func appendBodyPart(stream: InputStream, length: UInt64, headers: [String: String]) {
+    /// Creates a body part with the headers, stream and length and appends it to the multipart form data object.
+    ///
+    /// The body part data will be encoded using the following format:
+    ///
+    /// - HTTP headers
+    /// - Encoded stream data
+    /// - Multipart form boundary
+    ///
+    /// - parameter stream:  The input stream to encode in the multipart form data.
+    /// - parameter length:  The content length of the stream.
+    /// - parameter headers: The HTTP headers for the body part.
+    public func append(_ stream: InputStream, withLength length: UInt64, headers: [String: String]) {
         let bodyPart = BodyPart(headers: headers, bodyStream: stream, bodyContentLength: length)
         bodyParts.append(bodyPart)
     }
 
     // MARK: - Data Encoding
 
-    /**
-        Encodes all the appended body parts into a single `NSData` object.
-
-        It is important to note that this method will load all the appended body parts into memory all at the same
-        time. This method should only be used when the encoded data will have a small memory footprint. For large data
-        cases, please use the `writeEncodedDataToDisk(fileURL:completionHandler:)` method.
-
-        - throws: An `NSError` if encoding encounters an error.
-
-        - returns: The encoded `Data` if encoding is successful.
-    */
+    /// Encodes all the appended body parts into a single `NSData` object.
+    ///
+    /// It is important to note that this method will load all the appended body parts into memory all at the same
+    /// time. This method should only be used when the encoded data will have a small memory footprint. For large data
+    /// cases, please use the `writeEncodedDataToDisk(fileURL:completionHandler:)` method.
+    ///
+    /// - throws: An `NSError` if encoding encounters an error.
+    ///
+    /// - returns: The encoded `Data` if encoding is successful.
     public func encode() throws -> Data {
         if let bodyPartError = bodyPartError {
             throw bodyPartError
@@ -387,16 +366,14 @@ public class MultipartFormData {
         return encoded
     }
 
-    /**
-        Writes the appended body parts into the given file URL.
-
-        This process is facilitated by reading and writing with input and output streams, respectively. Thus,
-        this approach is very memory efficient and should be used for large body part data.
-
-        - parameter fileURL: The file URL to write the multipart form data into.
-
-        - throws: An `NSError` if encoding encounters an error.
-    */
+    /// Writes the appended body parts into the given file URL.
+    ///
+    /// This process is facilitated by reading and writing with input and output streams, respectively. Thus,
+    /// this approach is very memory efficient and should be used for large body part data.
+    ///
+    /// - parameter fileURL: The file URL to write the multipart form data into.
+    ///
+    /// - throws: An `NSError` if encoding encounters an error.
     public func writeEncodedDataToDisk(_ fileURL: URL) throws {
         if let bodyPartError = bodyPartError {
             throw bodyPartError
@@ -426,7 +403,7 @@ public class MultipartFormData {
         self.bodyParts.last?.hasFinalBoundary = true
 
         for bodyPart in self.bodyParts {
-            try writeBodyPart(bodyPart, toOutputStream: outputStream)
+            try write(bodyPart, to: outputStream)
         }
 
         outputStream.close()
@@ -440,10 +417,10 @@ public class MultipartFormData {
         let initialData = bodyPart.hasInitialBoundary ? initialBoundaryData() : encapsulatedBoundaryData()
         encoded.append(initialData)
 
-        let headerData = encodeHeaderDataForBodyPart(bodyPart)
+        let headerData = encodeHeaderData(for: bodyPart)
         encoded.append(headerData)
 
-        let bodyStreamData = try encodeBodyStreamDataForBodyPart(bodyPart)
+        let bodyStreamData = try encodeBodyStreamData(for: bodyPart)
         encoded.append(bodyStreamData)
 
         if bodyPart.hasFinalBoundary {
@@ -453,18 +430,18 @@ public class MultipartFormData {
         return encoded as Data
     }
 
-    private func encodeHeaderDataForBodyPart(_ bodyPart: BodyPart) -> Data {
+    private func encodeHeaderData(for bodyPart: BodyPart) -> Data {
         var headerText = ""
 
         for (key, value) in bodyPart.headers {
-            headerText += "\(key): \(value)\(EncodingCharacters.CRLF)"
+            headerText += "\(key): \(value)\(EncodingCharacters.crlf)"
         }
-        headerText += EncodingCharacters.CRLF
+        headerText += EncodingCharacters.crlf
 
         return headerText.data(using: String.Encoding.utf8, allowLossyConversion: false)!
     }
 
-    private func encodeBodyStreamDataForBodyPart(_ bodyPart: BodyPart) throws -> Data {
+    private func encodeBodyStreamData(for bodyPart: BodyPart) throws -> Data {
         let inputStream = bodyPart.bodyStream
         inputStream.open()
 
@@ -502,28 +479,24 @@ public class MultipartFormData {
 
     // MARK: - Private - Writing Body Part to Output Stream
 
-    private func writeBodyPart(_ bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) throws {
-        try writeInitialBoundaryDataForBodyPart(bodyPart, toOutputStream: outputStream)
-        try writeHeaderDataForBodyPart(bodyPart, toOutputStream: outputStream)
-        try writeBodyStreamForBodyPart(bodyPart, toOutputStream: outputStream)
-        try writeFinalBoundaryDataForBodyPart(bodyPart, toOutputStream: outputStream)
+    private func write(_ bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
+        try writeInitialBoundaryData(for: bodyPart, to: outputStream)
+        try writeHeaderData(for: bodyPart, to: outputStream)
+        try writeBodyStream(for: bodyPart, to: outputStream)
+        try writeFinalBoundaryData(for: bodyPart, to: outputStream)
     }
 
-    private func writeInitialBoundaryDataForBodyPart(
-        _ bodyPart: BodyPart,
-        toOutputStream outputStream: NSOutputStream)
-        throws
-    {
+    private func writeInitialBoundaryData(for bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
         let initialData = bodyPart.hasInitialBoundary ? initialBoundaryData() : encapsulatedBoundaryData()
-        return try writeData(initialData, toOutputStream: outputStream)
+        return try write(initialData, to: outputStream)
     }
 
-    private func writeHeaderDataForBodyPart(_ bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) throws {
-        let headerData = encodeHeaderDataForBodyPart(bodyPart)
-        return try writeData(headerData, toOutputStream: outputStream)
+    private func writeHeaderData(for bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
+        let headerData = encodeHeaderData(for: bodyPart)
+        return try write(headerData, to: outputStream)
     }
 
-    private func writeBodyStreamForBodyPart(_ bodyPart: BodyPart, toOutputStream outputStream: NSOutputStream) throws {
+    private func writeBodyStream(for bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
         let inputStream = bodyPart.bodyStream
         inputStream.open()
 
@@ -540,7 +513,7 @@ public class MultipartFormData {
                     buffer = Array(buffer[0..<bytesRead])
                 }
 
-                try writeBuffer(&buffer, toOutputStream: outputStream)
+                try write(&buffer, to: outputStream)
             } else if bytesRead < 0 {
                 let failureReason = "Failed to read from input stream: \(inputStream)"
                 throw NSError(domain: NSURLErrorDomain, code: .inputStreamReadFailed, failureReason: failureReason)
@@ -552,26 +525,22 @@ public class MultipartFormData {
         inputStream.close()
     }
 
-    private func writeFinalBoundaryDataForBodyPart(
-        _ bodyPart: BodyPart,
-        toOutputStream outputStream: NSOutputStream)
-        throws
-    {
+    private func writeFinalBoundaryData(for bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
         if bodyPart.hasFinalBoundary {
-            return try writeData(finalBoundaryData(), toOutputStream: outputStream)
+            return try write(finalBoundaryData(), to: outputStream)
         }
     }
 
     // MARK: - Private - Writing Buffered Data to Output Stream
 
-    private func writeData(_ data: Data, toOutputStream outputStream: NSOutputStream) throws {
+    private func write(_ data: Data, to outputStream: NSOutputStream) throws {
         var buffer = [UInt8](repeating: 0, count: data.count)
         (data as NSData).getBytes(&buffer, length: data.count)
 
-        return try writeBuffer(&buffer, toOutputStream: outputStream)
+        return try write(&buffer, to: outputStream)
     }
 
-    private func writeBuffer(_ buffer: inout [UInt8], toOutputStream outputStream: NSOutputStream) throws {
+    private func write(_ buffer: inout [UInt8], to outputStream: NSOutputStream) throws {
         var bytesToWrite = buffer.count
 
         while bytesToWrite > 0 {
@@ -600,9 +569,10 @@ public class MultipartFormData {
 
     // MARK: - Private - Mime Type
 
-    private func mimeTypeForPathExtension(_ pathExtension: String) -> String {
-        if let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension, nil)?.takeRetainedValue(),
-           let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue()
+    private func mimeType(forPathExtension pathExtension: String) -> String {
+        if
+            let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension, nil)?.takeRetainedValue(),
+            let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue()
         {
             return contentType as String
         }
@@ -612,18 +582,18 @@ public class MultipartFormData {
 
     // MARK: - Private - Content Headers
 
-    private func contentHeaders(name: String) -> [String: String] {
+    private func contentHeaders(withName name: String) -> [String: String] {
         return ["Content-Disposition": "form-data; name=\"\(name)\""]
     }
 
-    private func contentHeaders(name: String, mimeType: String) -> [String: String] {
+    private func contentHeaders(withName name: String, mimeType: String) -> [String: String] {
         return [
             "Content-Disposition": "form-data; name=\"\(name)\"",
             "Content-Type": "\(mimeType)"
         ]
     }
 
-    private func contentHeaders(name: String, fileName: String, mimeType: String) -> [String: String] {
+    private func contentHeaders(withName name: String, fileName: String, mimeType: String) -> [String: String] {
         return [
             "Content-Disposition": "form-data; name=\"\(name)\"; filename=\"\(fileName)\"",
             "Content-Type": "\(mimeType)"
@@ -633,20 +603,20 @@ public class MultipartFormData {
     // MARK: - Private - Boundary Encoding
 
     private func initialBoundaryData() -> Data {
-        return BoundaryGenerator.boundaryData(boundaryType: .initial, boundary: boundary)
+        return BoundaryGenerator.boundaryData(forBoundaryType: .initial, boundary: boundary)
     }
 
     private func encapsulatedBoundaryData() -> Data {
-        return BoundaryGenerator.boundaryData(boundaryType: .encapsulated, boundary: boundary)
+        return BoundaryGenerator.boundaryData(forBoundaryType: .encapsulated, boundary: boundary)
     }
 
     private func finalBoundaryData() -> Data {
-        return BoundaryGenerator.boundaryData(boundaryType: .final, boundary: boundary)
+        return BoundaryGenerator.boundaryData(forBoundaryType: .final, boundary: boundary)
     }
 
     // MARK: - Private - Errors
 
-    private func setBodyPartError(code: Int, failureReason: String) {
+    private func setBodyPartError(withCode code: Int, failureReason: String) {
         guard bodyPartError == nil else { return }
         bodyPartError = NSError(domain: NSURLErrorDomain, code: code, failureReason: failureReason)
     }

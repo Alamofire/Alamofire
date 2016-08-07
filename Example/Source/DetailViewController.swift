@@ -112,13 +112,11 @@ class DetailViewController: UITableViewController {
                 options: .skipsHiddenFiles
             )
 
-            if let fileURL = contents.first,
-               let data = try? Data(contentsOf: fileURL)
-            {
+            if let fileURL = contents.first, let data = try? Data(contentsOf: fileURL) {
                 let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
                 let prettyData = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
 
-                if let prettyString = NSString(data: prettyData, encoding: String.Encoding.utf8.rawValue) as? String {
+                if let prettyString = String(data: prettyData, encoding: String.Encoding.utf8) {
                     try fileManager.removeItem(at: fileURL)
                     return prettyString
                 }

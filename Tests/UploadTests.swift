@@ -30,10 +30,10 @@ class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndFile() {
         // Given
         let urlString = "https://httpbin.org/"
-        let imageURL = URLForResource("rainbow", withExtension: "jpg")
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
 
         // When
-        let request = Alamofire.upload(method: .POST, urlString: urlString, file: imageURL)
+        let request = Alamofire.upload(imageURL, to: urlString, withMethod: .post)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -45,10 +45,11 @@ class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLHeadersAndFile() {
         // Given
         let urlString = "https://httpbin.org/"
-        let imageURL = URLForResource("rainbow", withExtension: "jpg")
+        let headers = ["Authorization": "123456"]
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
 
         // When
-        let request = Alamofire.upload(method: .POST, urlString: urlString, headers: ["Authorization": "123456"], file: imageURL)
+        let request = Alamofire.upload(imageURL, to: urlString, withMethod: .post, headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -70,7 +71,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/"
 
         // When
-        let request = Alamofire.uploadRequest(method: .POST, urlString: urlString, data: Data())
+        let request = Alamofire.upload(Data(), to: urlString, withMethod: .post)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -82,9 +83,10 @@ class UploadDataInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLHeadersAndData() {
         // Given
         let urlString = "https://httpbin.org/"
+        let headers = ["Authorization": "123456"]
 
         // When
-        let request = Alamofire.uploadRequest(method: .POST, urlString: urlString, headers: ["Authorization": "123456"], data: Data())
+        let request = Alamofire.upload(Data(), to: urlString, withMethod: .post, headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -104,11 +106,11 @@ class UploadStreamInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndStream() {
         // Given
         let urlString = "https://httpbin.org/"
-        let imageURL = URLForResource("rainbow", withExtension: "jpg")
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
         let imageStream = InputStream(url: imageURL)!
 
         // When
-        let request = Alamofire.uploadRequest(method: .POST, urlString: urlString, stream: imageStream)
+        let request = Alamofire.upload(imageStream, to: urlString, withMethod: .post)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -120,12 +122,12 @@ class UploadStreamInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLHeadersAndStream() {
         // Given
         let urlString = "https://httpbin.org/"
-        let imageURL = URLForResource("rainbow", withExtension: "jpg")
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
         let headers = ["Authorization": "123456"]
         let imageStream = InputStream(url: imageURL)!
 
         // When
-        let request = Alamofire.uploadRequest(method: .POST, urlString: urlString, headers: headers, stream: imageStream)
+        let request = Alamofire.upload(imageStream, to: urlString, withMethod: .post, headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -154,7 +156,7 @@ class UploadDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.uploadRequest(method: .POST, urlString: urlString, data: data)
+        Alamofire.upload(data, to: urlString, withMethod: .post)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -193,7 +195,7 @@ class UploadDataTestCase: BaseTestCase {
         var responseError: Error?
 
         // When
-        let upload = Alamofire.uploadRequest(method: .POST, urlString: urlString, data: data)
+        let upload = Alamofire.upload(data, to: urlString, withMethod: .post)
         upload.progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
             let bytes = (bytes: bytesWritten, totalBytes: totalBytesWritten, totalBytesExpected: totalBytesExpectedToWrite)
             byteValues.append(bytes)
@@ -242,9 +244,7 @@ class UploadDataTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
-           let lastProgressValue = progressValues.last
-        {
+        if let lastByteValue = byteValues.last, let lastProgressValue = progressValues.last {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
 
@@ -280,13 +280,13 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.uploadRequest(
-            method: .POST,
-            urlString: urlString,
+        Alamofire.upload(
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: uploadData, name: "upload_data")
+                multipartFormData.append(uploadData, withName: "upload_data")
                 formData = multipartFormData
             },
+            to: urlString,
+            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case .success(let upload, _, _):
@@ -312,9 +312,10 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let request = request,
-           let multipartFormData = formData,
-           let contentType = request.value(forHTTPHeaderField: "Content-Type")
+        if
+            let request = request,
+            let multipartFormData = formData,
+            let contentType = request.value(forHTTPHeaderField: "Content-Type")
         {
             XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
         } else {
@@ -325,8 +326,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     func testThatUploadingMultipartFormDataSucceedsWithDefaultParameters() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let french = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
-        let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let frenchData = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
@@ -336,13 +337,13 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.uploadRequest(
-            method: .POST,
-            urlString: urlString,
+        Alamofire.upload(
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: french, name: "french")
-                multipartFormData.appendBodyPart(data: japanese, name: "japanese")
+                multipartFormData.append(frenchData, withName: "french")
+                multipartFormData.append(japaneseData, withName: "japanese")
             },
+            to: urlString,
+            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case .success(let upload, _, _):
@@ -380,8 +381,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     func testThatUploadingMultipartFormDataBelowMemoryThresholdStreamsFromMemory() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let french = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
-        let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let frenchData = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
@@ -389,13 +390,13 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var streamFileURL: URL?
 
         // When
-        Alamofire.uploadRequest(
-            method: .POST,
-            urlString: urlString,
+        Alamofire.upload(
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: french, name: "french")
-                multipartFormData.appendBodyPart(data: japanese, name: "japanese")
+                multipartFormData.append(frenchData, withName: "french")
+                multipartFormData.append(japaneseData, withName: "japanese")
             },
+            to: urlString,
+            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case let .success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
@@ -434,13 +435,13 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var streamingFromDisk: Bool?
 
         // When
-        Alamofire.uploadRequest(
-            method: .POST,
-            urlString: urlString,
+        Alamofire.upload(
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: uploadData, name: "upload_data")
+                multipartFormData.append(uploadData, withName: "upload_data")
                 formData = multipartFormData
             },
+            to: urlString,
+            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case let .success(upload, uploadStreamingFromDisk, _):
@@ -465,9 +466,10 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTAssertFalse(streamingFromDisk, "streaming from disk should be false")
         }
 
-        if let request = request,
-           let multipartFormData = formData,
-           let contentType = request.value(forHTTPHeaderField: "Content-Type")
+        if
+            let request = request,
+            let multipartFormData = formData,
+            let contentType = request.value(forHTTPHeaderField: "Content-Type")
         {
             XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
         } else {
@@ -478,8 +480,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     func testThatUploadingMultipartFormDataAboveMemoryThresholdStreamsFromDisk() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let french = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
-        let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let frenchData = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
@@ -487,14 +489,14 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var streamFileURL: URL?
 
         // When
-        Alamofire.uploadRequest(
-            method: .POST,
-            urlString: urlString,
+        Alamofire.upload(
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: french, name: "french")
-                multipartFormData.appendBodyPart(data: japanese, name: "japanese")
+                multipartFormData.append(frenchData, withName: "french")
+                multipartFormData.append(japaneseData, withName: "japanese")
             },
-            encodingMemoryThreshold: 0,
+            usingThreshold: 0,
+            to: urlString,
+            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case let .success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
@@ -516,9 +518,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
         XCTAssertNotNil(streamFileURL, "stream file URL should not be nil")
 
-        if let streamingFromDisk = streamingFromDisk,
-           let streamFilePath = streamFileURL?.path
-        {
+        if let streamingFromDisk = streamingFromDisk, let streamFilePath = streamFileURL?.path {
             XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
             XCTAssertTrue(
                 FileManager.default.fileExists(atPath: streamFilePath),
@@ -539,14 +539,14 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var streamingFromDisk: Bool?
 
         // When
-        Alamofire.uploadRequest(
-            method: .POST,
-            urlString: urlString,
+        Alamofire.upload(
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: uploadData, name: "upload_data")
+                multipartFormData.append(uploadData, withName: "upload_data")
                 formData = multipartFormData
             },
-            encodingMemoryThreshold: 0,
+            usingThreshold: 0,
+            to: urlString,
+            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case let .success(upload, uploadStreamingFromDisk, _):
@@ -571,9 +571,10 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
         }
 
-        if let request = request,
-           let multipartFormData = formData,
-           let contentType = request.value(forHTTPHeaderField: "Content-Type")
+        if
+            let request = request,
+            let multipartFormData = formData,
+            let contentType = request.value(forHTTPHeaderField: "Content-Type")
         {
             XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
         } else {
@@ -605,7 +606,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 //
 //        // When
 //        manager.upload(
-//            .POST,
+//            .post,
 //            urlString,
 //            multipartFormData: { multipartFormData in
 //                multipartFormData.appendBodyPart(data: french, name: "french")
@@ -677,14 +678,14 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.uploadRequest(
-            method: .POST,
-            urlString: urlString,
+        Alamofire.upload(
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: loremData1, name: "lorem1")
-                multipartFormData.appendBodyPart(data: loremData2, name: "lorem2")
+                multipartFormData.append(loremData1, withName: "lorem1")
+                multipartFormData.append(loremData2, withName: "lorem2")
             },
-            encodingMemoryThreshold: streamFromDisk ? 0 : 100_000_000,
+            usingThreshold: streamFromDisk ? 0 : 100_000_000,
+            to: urlString,
+            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case .success(let upload, _, _):

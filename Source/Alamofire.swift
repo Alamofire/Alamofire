@@ -73,14 +73,14 @@ extension URLRequest: URLRequestConvertible {
 // MARK: -
 
 extension URLRequest {
-    /// Initializes a `URLRequest` instance with the specified method, URL string and headers dictionary.
+    /// Creates an instance with the specified `method`, `urlString` and `headers`.
     ///
     /// - parameter method:    The HTTP method.
     /// - parameter urlString: The URL string.
     /// - parameter headers:   The HTTP headers. `nil` by default.
     ///
     /// - returns: The new `URLRequest` instance.
-    public init(method: Method, urlString: URLStringConvertible, headers: [String: String]? = nil) {
+    public init(method: HTTPMethod, urlString: URLStringConvertible, headers: [String: String]? = nil) {
         self.init(url: URL(string: urlString.urlString)!)
 
         if let request = urlString as? URLRequest { self = request }
@@ -97,257 +97,290 @@ extension URLRequest {
 
 // MARK: - Data Request
 
-/// Creates a data request using the default session manager instance for the specified method, URL string,
-/// parameters, parameter encoding and headers.
+/// Creates a data `Request` using the default session manager instance to retrieve the contents of the specified
+/// `method`, `urlString`, `parameters`, `encoding` and `headers`.
 ///
-/// - parameter method:     The HTTP method.
 /// - parameter urlString:  The URL string.
+/// - parameter method:     The HTTP method.
 /// - parameter parameters: The parameters. `nil` by default.
 /// - parameter encoding:   The parameter encoding. `.URL` by default.
 /// - parameter headers:    The HTTP headers. `nil` by default.
 ///
-/// - returns: The created data request.
+/// - returns: The created data `Request`.
 @discardableResult
-public func dataRequest(
-    method: Method,
-    urlString: URLStringConvertible,
+public func request(
+    _ urlString: URLStringConvertible,
+    withMethod method: HTTPMethod,
     parameters: [String: AnyObject]? = nil,
     encoding: ParameterEncoding = .url,
     headers: [String: String]? = nil)
     -> Request
 {
-    return SessionManager.default.dataRequest(
-        method: method,
-        urlString: urlString,
+    return SessionManager.default.request(
+        urlString,
+        withMethod: method,
         parameters: parameters,
         encoding: encoding,
         headers: headers
     )
 }
 
-/// Creates a data request using the default session manager instance for the specified URL request.
-///
-/// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+/// Creates a data `Request` using the default session manager instance to retrieve the contents of the
+/// specified `urlRequest`.
 ///
 /// - parameter urlRequest: The URL request
 ///
-/// - returns: The created request.
+/// - returns: The created data `Request`.
 @discardableResult
-public func dataRequest(urlRequest: URLRequestConvertible) -> Request {
-    return SessionManager.default.dataRequest(urlRequest: urlRequest.urlRequest)
+public func request(_ urlRequest: URLRequestConvertible) -> Request {
+    return SessionManager.default.request(urlRequest.urlRequest)
 }
 
 // MARK: - Download Request
 
 // MARK: URL Request
 
-/// Creates a download request using the default session manager instance for the specified method, URL string, 
-/// parameters, parameter encoding, headers dictionary and destination closure.
+/// Creates a download `Request` using the default session manager instance to retrieve the contents of the specified
+/// `method`, `urlString`, `parameters`, `encoding`, `headers` and save them to the `destination`.
 ///
+/// - parameter urlString:   The URL string.
+/// - parameter destination: The closure used to determine the destination of the downloaded file.
 /// - parameter method:      The HTTP method.
-/// - parameter URLString:   The URL string.
 /// - parameter parameters:  The parameters. `nil` by default.
 /// - parameter encoding:    The parameter encoding. `.URL` by default.
 /// - parameter headers:     The HTTP headers. `nil` by default.
-/// - parameter destination: The closure used to determine the destination of the downloaded file.
 ///
-/// - returns: The created download request.
+/// - returns: The created download `Request`.
 @discardableResult
-public func downloadRequest(
-    method: Method,
-    urlString: URLStringConvertible,
+public func download(
+    _ urlString: URLStringConvertible,
+    to destination: Request.DownloadFileDestination,
+    withMethod method: HTTPMethod,
     parameters: [String: AnyObject]? = nil,
     encoding: ParameterEncoding = .url,
-    headers: [String: String]? = nil,
-    destination: Request.DownloadFileDestination)
+    headers: [String: String]? = nil)
     -> Request
 {
-    return SessionManager.default.downloadRequest(
-        method: method,
-        urlString: urlString,
+    return SessionManager.default.download(
+        urlString,
+        to: destination,
+        withMethod: method,
         parameters: parameters,
         encoding: encoding,
-        headers: headers,
-        destination: destination
+        headers: headers
     )
 }
 
-/// Creates a download request using the default session manager instance for the specified URL request.
+/// Creates a download `Request` using the default session manager instance to retrieve the contents of the specified
+/// `urlRequest` and save them to the `destination`.
 ///
-/// - parameter URLRequest:  The URL request.
+/// - parameter urlRequest:  The URL request.
 /// - parameter destination: The closure used to determine the destination of the downloaded file.
 ///
-/// - returns: The created download request.
+/// - returns: The created download `Request`.
 @discardableResult
-public func downloadRequest(urlRequest: URLRequestConvertible, destination: Request.DownloadFileDestination) -> Request {
-    return SessionManager.default.downloadRequest(urlRequest: urlRequest, destination: destination)
+public func download(
+    _ urlRequest: URLRequestConvertible,
+    to destination: Request.DownloadFileDestination)
+    -> Request
+{
+    return SessionManager.default.download(urlRequest, to: destination)
 }
 
 // MARK: Resume Data
 
-/// Creates a request using the default session manager instance for downloading from the resume data produced from a
-/// previous request cancellation.
+/// Creates a download `Request` using the default session manager instance from the `resumeData` produced from a
+/// previous request cancellation to retrieve the contents of the original request and save them to the `destination`.
 ///
-/// - parameter resumeData:  The resume data. This is an opaque data blob produced by `NSURLSessionDownloadTask`
-///                          when a task is cancelled. See `NSURLSession -downloadTaskWithResumeData:` for additional
+/// - parameter resumeData:  The resume data. This is an opaque data blob produced by `URLSessionDownloadTask`
+///                          when a task is cancelled. See `URLSession -downloadTask(withResumeData:)` for additional
 ///                          information.
 /// - parameter destination: The closure used to determine the destination of the downloaded file.
 ///
-/// - returns: The created download request.
+/// - returns: The created download `Request`.
 @discardableResult
-public func downloadRequest(resumeData data: Data, destination: Request.DownloadFileDestination) -> Request {
-    return SessionManager.default.downloadRequest(resumeData: data, destination: destination)
+public func download(resourceWithin resumeData: Data, to destination: Request.DownloadFileDestination) -> Request {
+    return SessionManager.default.download(resourceWithin: resumeData, to: destination)
 }
 
 // MARK: - Upload Request
 
 // MARK: File
 
-/// Creates an upload request using the default session manager instance for the specified method, URL string,
-/// headers and file.
+/// Creates an upload `Request` using the default session manager instance from the specified `method`, `urlString`
+/// and `headers` for uploading the `file`.
 ///
-/// - parameter method:    The HTTP method.
-/// - parameter URLString: The URL string.
-/// - parameter headers:   The HTTP headers. `nil` by default.
 /// - parameter file:      The file to upload.
+/// - parameter method:    The HTTP method.
+/// - parameter urlString: The URL string.
+/// - parameter headers:   The HTTP headers. `nil` by default.
 ///
-/// - returns: The created upload request.
+/// - returns: The created upload `Request`.
 @discardableResult
 public func upload(
-    method: Method,
-    urlString: URLStringConvertible,
-    headers: [String: String]? = nil,
-    file: URL)
+    _ fileURL: URL,
+    to urlString: URLStringConvertible,
+    withMethod method: HTTPMethod,
+    headers: [String: String]? = nil)
     -> Request
 {
-    return SessionManager.default.uploadRequest(method: method, urlString: urlString, headers: headers, file: file)
+    return SessionManager.default.upload(fileURL, to: urlString, withMethod: method, headers: headers)
 }
 
-/// Creates an upload request using the default session manager instance for the specified URL request and file.
+/// Creates a upload `Request` using the default session manager instance from the specified `urlRequest` for
+/// uploading the `file`.
 ///
-/// - parameter urlRequest: The URL request.
 /// - parameter file:       The file to upload.
+/// - parameter urlRequest: The URL request.
 ///
-/// - returns: The created upload request.
+/// - returns: The created upload `Request`.
 @discardableResult
-public func uploadRequest(urlRequest: URLRequestConvertible, file: URL) -> Request {
-    return SessionManager.default.uploadRequest(urlRequest: urlRequest, file: file)
+public func upload(_ fileURL: URL, with urlRequest: URLRequestConvertible) -> Request {
+    return SessionManager.default.upload(fileURL, with: urlRequest)
 }
 
 // MARK: Data
 
-/// Creates an upload request using the default session manager instance for the specified method, URL string, 
-/// headers dictionary and data.
+/// Creates an upload `Request` using the default session manager instance from the specified `method`, `urlString`
+/// and `headers` for uploading the `data`.
 ///
-/// - parameter method:    The HTTP method.
-/// - parameter urlString: The URL string.
-/// - parameter headers:   The HTTP headers. `nil` by default.
 /// - parameter data:      The data to upload.
+/// - parameter urlString: The URL string.
+/// - parameter method:    The HTTP method.
+/// - parameter headers:   The HTTP headers. `nil` by default.
 ///
-/// - returns: The created upload request.
+/// - returns: The created upload `Request`.
 @discardableResult
-public func uploadRequest(
-    method: Method,
-    urlString: URLStringConvertible,
-    headers: [String: String]? = nil,
-    data: Data)
+public func upload(
+    _ data: Data,
+    to urlString: URLStringConvertible,
+    withMethod method: HTTPMethod,
+    headers: [String: String]? = nil)
     -> Request
 {
-    return SessionManager.default.uploadRequest(method: method, urlString: urlString, headers: headers, data: data)
+    return SessionManager.default.upload(data, to: urlString, withMethod: method, headers: headers)
 }
 
-/// Creates an upload request using the default session manager instance for the specified URL request and data.
+/// Creates an upload `Request` using the default session manager instance from the specified `urlRequest` for
+/// uploading the `data`.
 ///
-/// - parameter urlRequest: The URL request.
 /// - parameter data:       The data to upload.
+/// - parameter urlRequest: The URL request.
 ///
-/// - returns: The created upload request.
+/// - returns: The created upload `Request`.
 @discardableResult
-public func uploadRequest(urlRequest: URLRequestConvertible, data: Data) -> Request {
-    return SessionManager.default.uploadRequest(urlRequest: urlRequest, data: data)
+public func upload(_ data: Data, with urlRequest: URLRequestConvertible) -> Request {
+    return SessionManager.default.upload(data, with: urlRequest)
 }
 
 // MARK: InputStream
 
-/// Creates an upload request using the default session manager instance for the specified method, URL string,
-/// headers dictionary and stream.
+/// Creates an upload `Request` using the default session manager instance from the specified `method`, `urlString`
+/// and `headers` for uploading the `stream`.
 ///
-/// - parameter method:    The HTTP method.
-/// - parameter urlString: The URL string.
-/// - parameter headers:   The HTTP headers. `nil` by default.
 /// - parameter stream:    The stream to upload.
+/// - parameter urlString: The URL string.
+/// - parameter method:    The HTTP method.
+/// - parameter headers:   The HTTP headers. `nil` by default.
 ///
-/// - returns: The created upload request.
+/// - returns: The created upload `Request`.
 @discardableResult
-public func uploadRequest(
-    method: Method,
-    urlString: URLStringConvertible,
-    headers: [String: String]? = nil,
-    stream: InputStream)
+public func upload(
+    _ stream: InputStream,
+    to urlString: URLStringConvertible,
+    withMethod method: HTTPMethod,
+    headers: [String: String]? = nil)
     -> Request
 {
-    return SessionManager.default.uploadRequest(method: method, urlString: urlString, headers: headers, stream: stream)
+    return SessionManager.default.upload(stream, to: urlString, withMethod: method, headers: headers)
 }
 
-/// Creates an upload request using the default session manager instance for the specified URL request and stream.
+/// Creates an upload `Request` using the default session manager instance from the specified `urlRequest` for
+/// uploading the `stream`.
 ///
 /// - parameter urlRequest: The URL request.
 /// - parameter stream:     The stream to upload.
 ///
-/// - returns: The created upload request.
+/// - returns: The created upload `Request`.
 @discardableResult
-public func uploadRequest(urlRequest: URLRequestConvertible, stream: InputStream) -> Request {
-    return SessionManager.default.uploadRequest(urlRequest: urlRequest, stream: stream)
+public func upload(_ stream: InputStream, with urlRequest: URLRequestConvertible) -> Request {
+    return SessionManager.default.upload(stream, with: urlRequest)
 }
 
 // MARK: MultipartFormData
 
-/// Creates an upload request using the default session manager instance for the specified method, URL string,
-/// headers dictionary, multipart form data instance, memory threshold and completion closure.
+/// Encodes `multipartFormData` using `encodingMemoryThreshold` with the default session manager instance and calls
+/// `encodingCompletion` with new upload `Request` using the `method`, `urlString` and `headers`.
 ///
-/// - parameter method:                  The HTTP method.
-/// - parameter urlString:               The URL string.
-/// - parameter headers:                 The HTTP headers. `nil` by default.
+/// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+/// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+/// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+/// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+/// footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+/// used for larger payloads such as video content.
+///
+/// The `encodingMemoryThreshold` parameter allows Alamofire to automatically determine whether to encode in-memory
+/// or stream from disk. If the content length of the `MultipartFormData` is below the `encodingMemoryThreshold`,
+/// encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+/// during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+/// technique was used.
+///
 /// - parameter multipartFormData:       The closure used to append body parts to the `MultipartFormData`.
 /// - parameter encodingMemoryThreshold: The encoding memory threshold in bytes.
 ///                                      `multipartFormDataEncodingMemoryThreshold` by default.
+/// - parameter urlString:               The URL string.
+/// - parameter method:                  The HTTP method.
+/// - parameter headers:                 The HTTP headers. `nil` by default.
 /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
-public func uploadRequest(
-    method: Method,
-    urlString: URLStringConvertible,
-    headers: [String: String]? = nil,
+public func upload(
     multipartFormData: (MultipartFormData) -> Void,
-    encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
+    usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
+    to urlString: URLStringConvertible,
+    withMethod method: HTTPMethod,
+    headers: [String: String]? = nil,
     encodingCompletion: ((SessionManager.MultipartFormDataEncodingResult) -> Void)?)
 {
-    return SessionManager.default.uploadRequest(
-        method: method,
-        urlString: urlString,
-        headers: headers,
+    return SessionManager.default.upload(
         multipartFormData: multipartFormData,
-        encodingMemoryThreshold: encodingMemoryThreshold,
+        usingThreshold: encodingMemoryThreshold,
+        to: urlString,
+        withMethod: method,
+        headers: headers,
         encodingCompletion: encodingCompletion
     )
 }
 
-/// Creates an upload request using the default session manager instance for the specified URL request, multipart 
-/// form data instance, memory threshold and completion closure.
+/// Encodes `multipartFormData` using `encodingMemoryThreshold` and the default session manager instance and
+/// calls `encodingCompletion` with new upload `Request` using the `urlRequest`.
 ///
-/// - parameter urlRequest:              The URL request.
+/// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+/// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+/// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+/// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+/// footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+/// used for larger payloads such as video content.
+///
+/// The `encodingMemoryThreshold` parameter allows Alamofire to automatically determine whether to encode in-memory
+/// or stream from disk. If the content length of the `MultipartFormData` is below the `encodingMemoryThreshold`,
+/// encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+/// during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+/// technique was used.
+///
 /// - parameter multipartFormData:       The closure used to append body parts to the `MultipartFormData`.
 /// - parameter encodingMemoryThreshold: The encoding memory threshold in bytes.
 ///                                      `multipartFormDataEncodingMemoryThreshold` by default.
+/// - parameter urlRequest:              The URL request.
 /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
-public func uploadRequest(
-    urlRequest: URLRequestConvertible,
+public func upload(
     multipartFormData: (MultipartFormData) -> Void,
-    encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
+    usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
+    with urlRequest: URLRequestConvertible,
     encodingCompletion: ((SessionManager.MultipartFormDataEncodingResult) -> Void)?)
 {
-    return SessionManager.default.uploadRequest(
-        urlRequest: urlRequest,
+    return SessionManager.default.upload(
         multipartFormData: multipartFormData,
-        encodingMemoryThreshold: encodingMemoryThreshold,
+        usingThreshold: encodingMemoryThreshold,
+        with: urlRequest,
         encodingCompletion: encodingCompletion
     )
 }

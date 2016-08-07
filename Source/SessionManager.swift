@@ -47,15 +47,19 @@ public class SessionManager {
     }
 
     private enum Uploadable {
-        case data(URLRequest, Data)
-        case file(URLRequest, URL)
-        case stream(URLRequest, InputStream)
+        case data(Data, URLRequest)
+        case file(URL, URLRequest)
+        case stream(InputStream, URLRequest)
     }
+
+#if !os(watchOS)
 
     private enum Streamable {
         case stream(String, Int)
         case netService(NetService)
     }
+
+#endif
 
     // MARK: - Properties
 
@@ -149,7 +153,7 @@ public class SessionManager {
 
     // MARK: - Lifecycle
 
-    /// Initializes the `SessionManager` instance with the specified configuration, delegate and server trust policy.
+    /// Creates an instance with the specified `configuration`, `delegate` and `serverTrustPolicyManager`.
     ///
     /// - parameter configuration:            The configuration used to construct the managed session.
     ///                                       `NSURLSessionConfiguration.defaultSessionConfiguration()` by default.
@@ -170,14 +174,14 @@ public class SessionManager {
         commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
     }
 
-    /// Initializes the `SessionManager` instance with the specified session, delegate and server trust policy.
+    /// Creates an instance with the specified `session`, `delegate` and `serverTrustPolicyManager`.
     ///
     /// - parameter session:                  The URL session.
     /// - parameter delegate:                 The delegate of the URL session. Must equal the URL session's delegate.
     /// - parameter serverTrustPolicyManager: The server trust policy manager to use for evaluating all server trust
     ///                                       challenges. `nil` by default.
     ///
-    /// - returns: The new `SessionManager` instance if the URL session's delegate matches the delegate parameter.
+    /// - returns: The new `SessionManager` instance if the URL session's delegate matches; `nil` otherwise.
     public init?(
         session: URLSession,
         delegate: SessionDelegate,
@@ -206,19 +210,20 @@ public class SessionManager {
 
     // MARK: - Data Request
 
-    /// Creates a data request for the specified method, URL string, parameters, parameter encoding and headers.
+    /// Creates a data `Request` to retrieve the contents of the specified `method`, `urlString`, `parameters`,
+    /// `encoding` and `headers`.
     ///
-    /// - parameter method:     The HTTP method.
     /// - parameter urlString:  The URL string.
+    /// - parameter method:     The HTTP method.
     /// - parameter parameters: The parameters. `nil` by default.
     /// - parameter encoding:   The parameter encoding. `.URL` by default.
     /// - parameter headers:    The HTTP headers. `nil` by default.
     ///
-    /// - returns: The created data request.
+    /// - returns: The created data `Request`.
     @discardableResult
-    public func dataRequest(
-        method: Method,
-        urlString: URLStringConvertible,
+    public func request(
+        _ urlString: URLStringConvertible,
+        withMethod method: HTTPMethod,
         parameters: [String: AnyObject]? = nil,
         encoding: ParameterEncoding = .url,
         headers: [String: String]? = nil)
@@ -227,17 +232,17 @@ public class SessionManager {
         let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
         let encodedURLRequest = encoding.encode(urlRequest, parameters: parameters).0
 
-        return dataRequest(urlRequest: encodedURLRequest)
+        return request(encodedURLRequest)
     }
 
-    /// Creates a data request for the specified URL request.
+    /// Creates a data `Request` to retrieve the contents of the specified `urlRequest`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
     /// - parameter urlRequest: The URL request
     ///
-    /// - returns: The created data request.
-    public func dataRequest(urlRequest: URLRequestConvertible) -> Request {
+    /// - returns: The created data `Request`.
+    public func request(_ urlRequest: URLRequestConvertible) -> Request {
         var dataTask: URLSessionDataTask!
         queue.sync { dataTask = self.session.dataTask(with: urlRequest.urlRequest) }
 
@@ -255,72 +260,78 @@ public class SessionManager {
 
     // MARK: URL Request
 
-    /// Creates a download request for the specified method, URL string, parameters, parameter encoding, headers
-    /// and destination.
+    /// Creates a download `Request` to retrieve the contents of the specified `method`, `urlString`, `parameters`,
+    /// `encoding`, `headers` and save them to the `destination`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter method:      The HTTP method.
     /// - parameter urlString:   The URL string.
+    /// - parameter destination: The closure used to determine the destination of the downloaded file.
+    /// - parameter method:      The HTTP method.
     /// - parameter parameters:  The parameters. `nil` by default.
     /// - parameter encoding:    The parameter encoding. `.URL` by default.
     /// - parameter headers:     The HTTP headers. `nil` by default.
-    /// - parameter destination: The closure used to determine the destination of the downloaded file.
     ///
-    /// - returns: The created download request.
+    /// - returns: The created download `Request`.
     @discardableResult
-    public func downloadRequest(
-        method: Method,
-        urlString: URLStringConvertible,
+    public func download(
+        _ urlString: URLStringConvertible,
+        to destination: Request.DownloadFileDestination,
+        withMethod method: HTTPMethod,
         parameters: [String: AnyObject]? = nil,
         encoding: ParameterEncoding = .url,
-        headers: [String: String]? = nil,
-        destination: Request.DownloadFileDestination)
+        headers: [String: String]? = nil)
         -> Request
     {
         let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
         let encodedURLRequest = encoding.encode(urlRequest, parameters: parameters).0
 
-        return downloadRequest(urlRequest: encodedURLRequest, destination: destination)
+        return download(encodedURLRequest, to: destination)
     }
 
-    /// Creates a request for downloading from the specified URL request.
+    /// Creates a download `Request` to retrieve the contents of the specified `urlRequest` and save them to
+    /// the `destination`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
     /// - parameter urlRequest:  The URL request
     /// - parameter destination: The closure used to determine the destination of the downloaded file.
     ///
-    /// - returns: The created download request.
+    /// - returns: The created download `Request`.
     @discardableResult
-    public func downloadRequest(
-        urlRequest: URLRequestConvertible,
-        destination: Request.DownloadFileDestination)
+    public func download(
+        _ urlRequest: URLRequestConvertible,
+        to destination: Request.DownloadFileDestination)
         -> Request
     {
-        return downloadRequest(downloadable: .request(urlRequest.urlRequest), destination: destination)
+        return download(.request(urlRequest.urlRequest), to: destination)
     }
 
     // MARK: Resume Data
 
-    /// Creates a request for downloading from the resume data produced from a previous request cancellation.
+    /// Creates a download `Request` from the `resumeData` produced from a previous request cancellation to retrieve
+    /// the contents of the original request and save them to the `destination`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter resumeData:  The resume data. This is an opaque data blob produced by `NSURLSessionDownloadTask`
-    ///                          when a task is cancelled. See `NSURLSession -downloadTaskWithResumeData:` for
+    /// - parameter resumeData:  The resume data. This is an opaque data blob produced by `URLSessionDownloadTask`
+    ///                          when a task is cancelled. See `URLSession -downloadTask(withResumeData:)` for
     ///                          additional information.
     /// - parameter destination: The closure used to determine the destination of the downloaded file.
     ///
-    /// - returns: The created download request.
+    /// - returns: The created download `Request`.
     @discardableResult
-    public func downloadRequest(resumeData data: Data, destination: Request.DownloadFileDestination) -> Request {
-        return downloadRequest(downloadable: .resumeData(data), destination: destination)
+    public func download(resourceWithin resumeData: Data, to destination: Request.DownloadFileDestination) -> Request {
+        return download(.resumeData(resumeData), to: destination)
     }
 
     // MARK: Private - Download Implementation
 
-    private func downloadRequest(downloadable: Downloadable, destination: Request.DownloadFileDestination) -> Request {
+    private func download(
+        _ downloadable: Downloadable,
+        to destination: Request.DownloadFileDestination)
+        -> Request
+    {
         var downloadTask: URLSessionDownloadTask!
 
         switch downloadable {
@@ -355,118 +366,119 @@ public class SessionManager {
 
     // MARK: File
 
-    /// Creates a request for uploading a file to the specified URL request.
+    /// Creates an upload `Request` from the specified `method`, `urlString` and `headers` for uploading the `file`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
+    /// - parameter file:      The file to upload.
     /// - parameter method:    The HTTP method.
     /// - parameter urlString: The URL string.
     /// - parameter headers:   The HTTP headers. `nil` by default.
-    /// - parameter file:      The file to upload
     ///
-    /// - returns: The created upload request.
+    /// - returns: The created upload `Request`.
     @discardableResult
-    public func uploadRequest(
-        method: Method,
-        urlString: URLStringConvertible,
-        headers: [String: String]? = nil,
-        file: URL)
+    public func upload(
+        _ fileURL: URL,
+        to urlString: URLStringConvertible,
+        withMethod method: HTTPMethod,
+        headers: [String: String]? = nil)
         -> Request
     {
         let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
-        return uploadRequest(urlRequest: urlRequest, file: file)
+        return upload(fileURL, with: urlRequest)
     }
 
-    /// Creates a request for uploading a file to the specified URL request.
+    /// Creates a upload `Request` from the specified `urlRequest` for uploading the `file`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter urlRequest: The URL request
-    /// - parameter file:       The file to upload
+    /// - parameter file:       The file to upload.
+    /// - parameter urlRequest: The URL request.
     ///
-    /// - returns: The created upload request.
+    /// - returns: The created upload `Request`.
     @discardableResult
-    public func uploadRequest(urlRequest: URLRequestConvertible, file: URL) -> Request {
-        return uploadRequest(uploadable: .file(urlRequest.urlRequest as URLRequest, file))
+    public func upload(_ fileURL: URL, with urlRequest: URLRequestConvertible) -> Request {
+        return upload(.file(fileURL, urlRequest.urlRequest))
     }
 
     // MARK: Data
 
-    /// Creates a request for uploading data to the specified URL request.
+    /// Creates an upload `Request` from the specified `method`, `urlString` and `headers` for uploading the `data`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
+    /// - parameter data:      The data to upload.
+    /// - parameter urlString: The URL string.
     /// - parameter method:    The HTTP method.
-    /// - parameter URLString: The URL string.
     /// - parameter headers:   The HTTP headers. `nil` by default.
-    /// - parameter data:      The data to upload
     ///
-    /// - returns: The created upload request.
+    /// - returns: The created upload `Request`.
     @discardableResult
-    public func uploadRequest(
-        method: Method,
-        urlString: URLStringConvertible,
-        headers: [String: String]? = nil,
-        data: Data)
+    public func upload(
+        _ data: Data,
+        to urlString: URLStringConvertible,
+        withMethod method: HTTPMethod,
+        headers: [String: String]? = nil)
         -> Request
     {
         let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
-        return uploadRequest(urlRequest: urlRequest, data: data)
+        return upload(data, with: urlRequest)
     }
 
-    /// Creates a request for uploading data to the specified URL request.
+    /// Creates an upload `Request` from the specified `urlRequest` for uploading the `data`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter urlRequest: The URL request.
     /// - parameter data:       The data to upload.
+    /// - parameter urlRequest: The URL request.
     ///
-    /// - returns: The created upload request.
+    /// - returns: The created upload `Request`.
     @discardableResult
-    public func uploadRequest(urlRequest: URLRequestConvertible, data: Data) -> Request {
-        return uploadRequest(uploadable: .data(urlRequest.urlRequest as URLRequest, data))
+    public func upload(_ data: Data, with urlRequest: URLRequestConvertible) -> Request {
+        return upload(.data(data, urlRequest.urlRequest))
     }
 
     // MARK: InputStream
 
-    /// Creates a request for uploading a stream to the specified URL request.
+    /// Creates an upload `Request` from the specified `method`, `urlString` and `headers` for uploading the `stream`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter method:    The HTTP method.
-    /// - parameter urlString: The URL string.
-    /// - parameter headers:   The HTTP headers. `nil` by default.
     /// - parameter stream:    The stream to upload.
+    /// - parameter urlString: The URL string.
+    /// - parameter method:    The HTTP method.
+    /// - parameter headers:   The HTTP headers. `nil` by default.
     ///
-    /// - returns: The created upload request.
+    /// - returns: The created upload `Request`.
     @discardableResult
-    public func uploadRequest(
-        method: Method,
-        urlString: URLStringConvertible,
-        headers: [String: String]? = nil,
-        stream: InputStream)
+    public func upload(
+        _ stream: InputStream,
+        to urlString: URLStringConvertible,
+        withMethod method: HTTPMethod,
+        headers: [String: String]? = nil)
         -> Request
     {
         let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
-        return uploadRequest(urlRequest: urlRequest, stream: stream)
+        return upload(stream, with: urlRequest)
     }
 
-    /// Creates a request for uploading a stream to the specified URL request.
+    /// Creates an upload `Request` from the specified `urlRequest` for uploading the `stream`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter URLRequest: The URL request.
     /// - parameter stream:     The stream to upload.
+    /// - parameter urlRequest: The URL request.
     ///
-    /// - returns: The created upload request.
+    /// - returns: The created upload `Request`.
     @discardableResult
-    public func uploadRequest(urlRequest: URLRequestConvertible, stream: InputStream) -> Request {
-        return uploadRequest(uploadable: .stream(urlRequest.urlRequest as URLRequest, stream))
+    public func upload(_ stream: InputStream, with urlRequest: URLRequestConvertible) -> Request {
+        return upload(.stream(stream, urlRequest.urlRequest))
     }
 
     // MARK: MultipartFormData
 
-    /// Encodes the `MultipartFormData` and creates a request to upload the result to the specified URL request.
+    /// Encodes `multipartFormData` using `encodingMemoryThreshold` and calls `encodingCompletion` with new
+    /// upload `Request` using the `method`, `urlString` and `headers`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
@@ -483,32 +495,33 @@ public class SessionManager {
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter method:                  The HTTP method.
-    /// - parameter urlString:               The URL string.
-    /// - parameter headers:                 The HTTP headers. `nil` by default.
     /// - parameter multipartFormData:       The closure used to append body parts to the `MultipartFormData`.
     /// - parameter encodingMemoryThreshold: The encoding memory threshold in bytes.
     ///                                      `multipartFormDataEncodingMemoryThreshold` by default.
+    /// - parameter urlString:               The URL string.
+    /// - parameter method:                  The HTTP method.
+    /// - parameter headers:                 The HTTP headers. `nil` by default.
     /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
-    public func uploadRequest(
-        method: Method,
-        urlString: URLStringConvertible,
-        headers: [String: String]? = nil,
+    public func upload(
         multipartFormData: (MultipartFormData) -> Void,
-        encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
+        usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
+        to urlString: URLStringConvertible,
+        withMethod method: HTTPMethod,
+        headers: [String: String]? = nil,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
         let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
 
-        return uploadRequest(
-            urlRequest: urlRequest,
+        return upload(
             multipartFormData: multipartFormData,
-            encodingMemoryThreshold: encodingMemoryThreshold,
+            usingThreshold: encodingMemoryThreshold,
+            with: urlRequest,
             encodingCompletion: encodingCompletion
         )
     }
 
-    /// Encodes the `MultipartFormData` and creates a request to upload the result to the specified URL request.
+    /// Encodes `multipartFormData` using `encodingMemoryThreshold` and calls `encodingCompletion` with new
+    /// upload `Request` using the `urlRequest`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
@@ -525,15 +538,15 @@ public class SessionManager {
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter urlRequest:              The URL request.
     /// - parameter multipartFormData:       The closure used to append body parts to the `MultipartFormData`.
     /// - parameter encodingMemoryThreshold: The encoding memory threshold in bytes.
     ///                                      `multipartFormDataEncodingMemoryThreshold` by default.
+    /// - parameter urlRequest:              The URL request.
     /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
-    public func uploadRequest(
-        urlRequest: URLRequestConvertible,
+    public func upload(
         multipartFormData: (MultipartFormData) -> Void,
-        encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
+        usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
+        with urlRequest: URLRequestConvertible,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
         DispatchQueue.global(qos: .utility).async {
@@ -550,7 +563,7 @@ public class SessionManager {
                     let data = try formData.encode()
 
                     let encodingResult = MultipartFormDataEncodingResult.success(
-                        request: self.uploadRequest(urlRequest: urlRequestWithContentType, data: data),
+                        request: self.upload(data, with: urlRequestWithContentType),
                         streamingFromDisk: false,
                         streamFileURL: nil
                     )
@@ -572,7 +585,7 @@ public class SessionManager {
 
                     DispatchQueue.main.async {
                         let encodingResult = MultipartFormDataEncodingResult.success(
-                            request: self.uploadRequest(urlRequest: urlRequestWithContentType, file: fileURL),
+                            request: self.upload(fileURL, with: urlRequestWithContentType),
                             streamingFromDisk: true,
                             streamFileURL: fileURL
                         )
@@ -587,20 +600,20 @@ public class SessionManager {
 
     // MARK: Private - Upload Implementation
 
-    private func uploadRequest(uploadable: Uploadable) -> Request {
+    private func upload(_ uploadable: Uploadable) -> Request {
         var uploadTask: URLSessionUploadTask!
         var HTTPBodyStream: InputStream?
 
         switch uploadable {
-        case .data(let request, let data):
+        case .data(let data, let request):
             queue.sync {
                 uploadTask = self.session.uploadTask(with: request, from: data)
             }
-        case .file(let request, let fileURL):
+        case .file(let fileURL, let request):
             queue.sync {
                 uploadTask = self.session.uploadTask(with: request, fromFile: fileURL)
             }
-        case .stream(let request, let stream):
+        case .stream(let stream, let request):
             queue.sync {
                 uploadTask = self.session.uploadTask(withStreamedRequest: request)
             }
@@ -631,32 +644,36 @@ public class SessionManager {
 
     // MARK: Hostname and Port
 
-    /// Creates a stream request for bidirectional streaming with the given hostname and port.
+    /// Creates a stream `Request` for bidirectional streaming using the `hostname` and `port`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
     /// - parameter hostName: The hostname of the server to connect to.
     /// - parameter port:     The port of the server to connect to.
     ///
-    /// - returns: The created stream request.
+    /// - returns: The created stream `Request`.
     @discardableResult
-    public func streamRequest(hostName: String, port: Int) -> Request {
-        return streamRequest(streamable: .stream(hostName, port))
+    public func stream(withHostName hostName: String, port: Int) -> Request {
+        return stream(.stream(hostName, port))
     }
 
     // MARK: NetService
 
-    /// Creates a request for bidirectional streaming with the given `NSNetService`.
+    /// Creates a stream `Request` for bidirectional streaming using the `netService`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
     /// - parameter netService: The net service used to identify the endpoint.
     ///
-    /// - returns: The created stream request.
+    /// - returns: The created stream `Request`.
     @discardableResult
-    public func streamRequest(netService: NetService) -> Request {
-        return streamRequest(streamable: .netService(netService))
+    public func stream(with netService: NetService) -> Request {
+        return stream(.netService(netService))
     }
 
     // MARK: Private - Stream Implementation
 
-    private func streamRequest(streamable: Streamable) -> Request {
+    private func stream(_ streamable: Streamable) -> Request {
         var streamTask: URLSessionStreamTask!
 
         switch streamable {

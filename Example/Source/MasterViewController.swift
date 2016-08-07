@@ -46,8 +46,9 @@ class MasterViewController: UITableViewController {
         if let split = splitViewController {
             let controllers = split.viewControllers
 
-            if let navigationController = controllers.last as? UINavigationController,
-               let topViewController = navigationController.topViewController as? DetailViewController
+            if
+                let navigationController = controllers.last as? UINavigationController,
+                let topViewController = navigationController.topViewController as? DetailViewController
             {
                 detailViewController = topViewController
             }
@@ -57,30 +58,31 @@ class MasterViewController: UITableViewController {
     // MARK: - UIStoryboardSegue
 
     override func prepare(for segue: UIStoryboardSegue, sender: AnyObject?) {
-        if let navigationController = segue.destination as? UINavigationController,
-           let detailViewController = navigationController.topViewController as? DetailViewController
+        if
+            let navigationController = segue.destination as? UINavigationController,
+            let detailViewController = navigationController.topViewController as? DetailViewController
         {
             func requestForSegue(_ segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier! {
                 case "GET":
                     detailViewController.segueIdentifier = "GET"
-                    return Alamofire.dataRequest(.GET, "https://httpbin.org/get")
+                    return Alamofire.request("https://httpbin.org/get", withMethod: .get)
                 case "POST":
                     detailViewController.segueIdentifier = "POST"
-                    return Alamofire.dataRequest(.POST, "https://httpbin.org/post")
+                    return Alamofire.request("https://httpbin.org/post", withMethod: .post)
                 case "PUT":
                     detailViewController.segueIdentifier = "PUT"
-                    return Alamofire.dataRequest(.PUT, "https://httpbin.org/put")
+                    return Alamofire.request("https://httpbin.org/put", withMethod: .put)
                 case "DELETE":
                     detailViewController.segueIdentifier = "DELETE"
-                    return Alamofire.dataRequest(.DELETE, "https://httpbin.org/delete")
+                    return Alamofire.request("https://httpbin.org/delete", withMethod: .delete)
                 case "DOWNLOAD":
                     detailViewController.segueIdentifier = "DOWNLOAD"
                     let destination = Alamofire.Request.suggestedDownloadDestination(
                         directory: .cachesDirectory,
                         domain: .userDomainMask
                     )
-                    return Alamofire.download(.GET, "https://httpbin.org/stream/1", destination: destination)
+                    return Alamofire.download("https://httpbin.org/stream/1", to: destination, withMethod: .get)
                 default:
                     return nil
                 }

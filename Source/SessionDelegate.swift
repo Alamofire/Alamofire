@@ -150,16 +150,20 @@ public class SessionDelegate: NSObject {
 
     // MARK: NSObject Overrides
 
-    /// Returns a `Bool` indicating whether the `SessionDelegate` implements or inherits a method that can respond 
+    /// Returns a `Bool` indicating whether the `SessionDelegate` implements or inherits a method that can respond
     /// to a specified message.
     ///
     /// - parameter selector: A selector that identifies a message.
     ///
     /// - returns: `true` if the receiver implements or inherits a method that can respond to selector, otherwise `false`.
     public override func responds(to selector: Selector) -> Bool {
+        #if !os(OSX)
+            if selector == #selector(URLSessionDelegate.urlSessionDidFinishEvents(forBackgroundURLSession:)) {
+                return sessionDidFinishEventsForBackgroundURLSession != nil
+            }
+        #endif
+
         switch selector {
-        case #selector(URLSessionDelegate.urlSessionDidFinishEvents(forBackgroundURLSession:)):
-            return sessionDidFinishEventsForBackgroundURLSession != nil
         case #selector(URLSessionDelegate.urlSession(_:didBecomeInvalidWithError:)):
             return sessionDidBecomeInvalidWithError != nil
         case #selector(URLSessionDelegate.urlSession(_:didReceive:completionHandler:)):
@@ -185,12 +189,12 @@ extension SessionDelegate: URLSessionDelegate {
         sessionDidBecomeInvalidWithError?(session, error)
     }
 
-    /// Requests credentials from the delegate in response to a session-level authentication request from the 
+    /// Requests credentials from the delegate in response to a session-level authentication request from the
     /// remote server.
     ///
     /// - parameter session:           The session containing the task that requested authentication.
     /// - parameter challenge:         An object that contains the request for authentication.
-    /// - parameter completionHandler: A handler that your delegate method must call providing the disposition 
+    /// - parameter completionHandler: A handler that your delegate method must call providing the disposition
     ///                                and credential.
     public func urlSession(
         _ session: URLSession,
@@ -210,10 +214,11 @@ extension SessionDelegate: URLSessionDelegate {
         } else if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
             let host = challenge.protectionSpace.host
 
-            if let serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicyForHost(host),
+            if
+                let serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicy(forHost: host),
                 let serverTrust = challenge.protectionSpace.serverTrust
             {
-                if serverTrustPolicy.evaluateServerTrust(serverTrust, isValidForHost: host) {
+                if serverTrustPolicy.evaluate(serverTrust, forHost: host) {
                     disposition = .useCredential
                     credential = URLCredential(trust: serverTrust)
                 } else {
@@ -275,7 +280,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     /// - parameter session:           The session containing the task whose request requires authentication.
     /// - parameter task:              The task whose request requires authentication.
     /// - parameter challenge:         An object that contains the request for authentication.
-    /// - parameter completionHandler: A handler that your delegate method must call providing the disposition 
+    /// - parameter completionHandler: A handler that your delegate method must call providing the disposition
     ///                                and credential.
     public func urlSession(
         _ session: URLSession,
@@ -598,5 +603,5 @@ extension SessionDelegate: URLSessionStreamDelegate {
         streamTaskDidBecomeInputStream?(session, streamTask, inputStream, outputStream)
     }
 }
-    
+
 #endif

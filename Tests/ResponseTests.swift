@@ -35,7 +35,7 @@ class ResponseDataTestCase: BaseTestCase {
         var response: Response<Data, NSError>?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
             .responseData { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -62,7 +62,7 @@ class ResponseDataTestCase: BaseTestCase {
         var response: Response<Data, NSError>?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
             .responseData { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -93,7 +93,7 @@ class ResponseStringTestCase: BaseTestCase {
         var response: Response<String, NSError>?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
             .responseString { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -120,7 +120,7 @@ class ResponseStringTestCase: BaseTestCase {
         var response: Response<String, NSError>?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
             .responseString { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -151,7 +151,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -178,7 +178,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -205,7 +205,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -240,7 +240,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.dataRequest(method: .POST, urlString: urlString, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .post, parameters: ["foo": "bar"])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()

@@ -76,7 +76,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.dataRequest(method: .GET, urlString: "https://httpbin.org/get").responseJSON { closureResponse in
+        manager.request("https://httpbin.org/get", withMethod: .get).responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
@@ -101,7 +101,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.dataRequest(method: .GET, urlString: "https://httpbin.org/get").responseJSON { closureResponse in
+        manager.request("https://httpbin.org/get", withMethod: .get).responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
@@ -128,7 +128,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -162,7 +162,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -204,7 +204,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -245,7 +245,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -287,7 +287,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -329,7 +329,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -380,7 +380,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -433,7 +433,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString)
+        manager.request(urlString, withMethod: .get)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -471,9 +471,10 @@ class SessionDelegateTestCase: BaseTestCase {
         manager.delegate.taskWillPerformHTTPRedirection = { session, task, response, request in
             var redirectedRequest = request
 
-            if let originalRequest = task.originalRequest,
-               let headers = originalRequest.allHTTPHeaderFields,
-               let authorizationHeaderValue = headers["Authorization"]
+            if
+                let originalRequest = task.originalRequest,
+                let headers = originalRequest.allHTTPHeaderFields,
+                let authorizationHeaderValue = headers["Authorization"]
             {
                 var mutableRequest = request
                 mutableRequest.setValue(authorizationHeaderValue, forHTTPHeaderField: "Authorization")
@@ -488,7 +489,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        manager.dataRequest(method: .GET, urlString: urlString, headers: headers)
+        manager.request(urlString, withMethod: .get, headers: headers)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -523,7 +524,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.dataRequest(method: .GET, urlString: "https://httpbin.org/get").responseJSON { closureResponse in
+        manager.request("https://httpbin.org/get", withMethod: .get).responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
@@ -548,7 +549,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.dataRequest(method: .GET, urlString: "https://httpbin.org/get").responseJSON { closureResponse in
+        manager.request("https://httpbin.org/get", withMethod: .get).responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }

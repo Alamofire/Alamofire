@@ -102,7 +102,6 @@ public class Request {
         -> Self
     {
         let credential = URLCredential(user: user, password: password, persistence: persistence)
-
         return authenticate(usingCredential: credential)
     }
 
@@ -123,7 +122,7 @@ public class Request {
     /// - parameter password: The password.
     ///
     /// - returns: A dictionary with Authorization key and credential value or empty dictionary if encoding fails.
-    public static func authorizationHeader(user: String, password: String) -> [String: String] {
+    public static func authorizationHeaderFrom(user: String, password: String) -> [String: String] {
         guard let data = "\(user):\(password)".data(using: String.Encoding.utf8) else { return [:] }
 
         let credential = data.base64EncodedString(options: [])
@@ -145,7 +144,7 @@ public class Request {
     ///
     /// - returns: The request.
     @discardableResult
-    public func progress(_ closure: ((Int64, Int64, Int64) -> Void)? = nil) -> Self {
+    public func progress(closure: ((Int64, Int64, Int64) -> Void)? = nil) -> Self {
         if let uploadDelegate = delegate as? UploadTaskDelegate {
             uploadDelegate.uploadProgress = closure
         } else if let dataDelegate = delegate as? DataTaskDelegate {
@@ -167,7 +166,7 @@ public class Request {
     ///
     /// - returns: The request.
     @discardableResult
-    public func stream(_ closure: ((Data) -> Void)? = nil) -> Self {
+    public func stream(closure: ((Data) -> Void)? = nil) -> Self {
         if let dataDelegate = delegate as? DataTaskDelegate {
             dataDelegate.dataStream = closure
         }
@@ -203,9 +202,7 @@ public class Request {
 
     /// Cancels the request.
     public func cancel() {
-        if let downloadDelegate = delegate as? DownloadTaskDelegate,
-           let downloadTask = downloadDelegate.downloadTask
-        {
+        if let downloadDelegate = delegate as? DownloadTaskDelegate, let downloadTask = downloadDelegate.downloadTask {
             downloadTask.cancel { data in
                 downloadDelegate.resumeData = data
             }
@@ -313,8 +310,9 @@ extension Request: CustomDebugStringConvertible {
         }
 
         if session.configuration.httpShouldSetCookies {
-            if let cookieStorage = session.configuration.httpCookieStorage,
-               let cookies = cookieStorage.cookies(for: URL), !cookies.isEmpty
+            if
+                let cookieStorage = session.configuration.httpCookieStorage,
+                let cookies = cookieStorage.cookies(for: URL), !cookies.isEmpty
             {
                 let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value ?? String());" }
                 components.append("-b \"\(string.substring(to: string.characters.index(before: string.endIndex)))\"")
@@ -339,8 +337,9 @@ extension Request: CustomDebugStringConvertible {
             components.append("-H \"\(field): \(value)\"")
         }
 
-        if let httpBodyData = request.httpBody,
-           let httpBody = String(data: httpBodyData, encoding: String.Encoding.utf8)
+        if
+            let httpBodyData = request.httpBody,
+            let httpBody = String(data: httpBodyData, encoding: String.Encoding.utf8)
         {
             var escapedBody = httpBody.replacingOccurrences(of: "\\\"", with: "\\\\\"")
             escapedBody = escapedBody.replacingOccurrences(of: "\"", with: "\\\"")

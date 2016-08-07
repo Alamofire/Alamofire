@@ -35,7 +35,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(statusCode: 200..<300)
             .response { _, _, _, responseError in
                 error = responseError
@@ -56,7 +56,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(statusCode: [200])
             .response { _, _, _, responseError in
                 error = responseError
@@ -85,7 +85,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(statusCode: [])
             .response { _, _, _, responseError in
                 error = responseError
@@ -118,7 +118,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(contentType: ["application/json"])
             .validate(contentType: ["application/json;charset=utf8"])
             .validate(contentType: ["application/json;q=0.8;charset=utf8"])
@@ -141,7 +141,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(contentType: ["*/*"])
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
@@ -164,7 +164,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(contentType: ["application/octet-stream"])
             .response { _, _, _, responseError in
                 error = responseError
@@ -193,7 +193,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(contentType: [])
             .response { _, _, _, responseError in
                 error = responseError
@@ -222,7 +222,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(contentType: [])
             .response { _, response, data, responseError in
                 error = responseError
@@ -238,7 +238,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
         class MockManager: SessionManager {
-            override func dataRequest(urlRequest: URLRequestConvertible) -> Request {
+            override func request(_ urlRequest: URLRequestConvertible) -> Request {
                 var dataTask: URLSessionDataTask!
 
                 queue.sync {
@@ -290,7 +290,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        manager.dataRequest(method: .DELETE, urlString: urlString)
+        manager.request(urlString, withMethod: .delete)
             .validate(contentType: ["*/*"])
             .response { _, responseResponse, responseData, responseError in
                 response = responseResponse
@@ -325,7 +325,7 @@ class MultipleValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .response { _, _, _, responseError in
@@ -347,7 +347,7 @@ class MultipleValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
             .response { _, _, _, responseError in
@@ -377,7 +377,7 @@ class MultipleValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate(contentType: ["application/octet-stream"])
             .validate(statusCode: 400..<600)
             .response { _, _, _, responseError in
@@ -406,15 +406,15 @@ class AutomaticValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
         let url = URL(string: "https://httpbin.org/ip")!
-        var mutableURLRequest = URLRequest(url: url)
-        mutableURLRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+        var urlRequest = URLRequest(url: url)
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
         let expectation = self.expectation(description: "request should succeed and return ip")
 
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(urlRequest: mutableURLRequest)
+        Alamofire.request(urlRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -435,7 +435,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(method: .GET, urlString: urlString)
+        Alamofire.request(urlString, withMethod: .get)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -467,7 +467,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(urlRequest: urlRequest)
+        Alamofire.request(urlRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -493,7 +493,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(urlRequest: urlRequest)
+        Alamofire.request(urlRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError
@@ -517,7 +517,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.dataRequest(urlRequest: urlRequest)
+        Alamofire.request(urlRequest)
             .validate()
             .response { _, _, _, responseError in
                 error = responseError

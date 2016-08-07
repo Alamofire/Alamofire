@@ -50,18 +50,16 @@ public struct Timeline {
     /// The time interval in seconds from the time the request started to the time response serialization completed.
     public let totalDuration: TimeInterval
 
-    /**
-        Creates a new `Timeline` instance with the specified request times.
-
-        - parameter requestStartTime:           The time the request was initialized. Defaults to `0.0`.
-        - parameter initialResponseTime:        The time the first bytes were received from or sent to the server.
-                                                Defaults to `0.0`.
-        - parameter requestCompletedTime:       The time when the request was completed. Defaults to `0.0`.
-        - parameter serializationCompletedTime: The time when the response serialization was completed. Defaults
-                                                to `0.0`.
-
-        - returns: The new `Timeline` instance.
-    */
+    /// Creates a new `Timeline` instance with the specified request times.
+    ///
+    /// - parameter requestStartTime:           The time the request was initialized. Defaults to `0.0`.
+    /// - parameter initialResponseTime:        The time the first bytes were received from or sent to the server.
+    ///                                         Defaults to `0.0`.
+    /// - parameter requestCompletedTime:       The time when the request was completed. Defaults to `0.0`.
+    /// - parameter serializationCompletedTime: The time when the response serialization was completed. Defaults
+    ///                                         to `0.0`.
+    ///
+    /// - returns: The new `Timeline` instance.
     public init(
         requestStartTime: CFAbsoluteTime = 0.0,
         initialResponseTime: CFAbsoluteTime = 0.0,
