@@ -80,7 +80,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWithNoServerTrustPolicy() {
         // Given
         weak var expectation = self.expectation(description: "\(URL)")
-        let manager = Manager(configuration: configuration)
+        let manager = SessionManager(configuration: configuration)
         var error: NSError?
 
         // When
@@ -107,7 +107,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWithDefaultServerTrustPolicy() {
         // Given
         let policies = [host: ServerTrustPolicy.performDefaultEvaluation(validateHost: true)]
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -143,7 +143,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             host: .pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -183,7 +183,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             host: .pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -217,7 +217,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             host: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -245,7 +245,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             host: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -273,7 +273,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             host: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -303,7 +303,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             host: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: true, validateHost: true)
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -337,7 +337,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             host: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -365,7 +365,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             host: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -393,7 +393,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             host: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -419,7 +419,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenDisablingEvaluation() {
         // Given
         let policies = [host: ServerTrustPolicy.disableEvaluation]
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -451,7 +451,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             }
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
@@ -481,7 +481,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             }
         ]
 
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )

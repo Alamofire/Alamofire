@@ -27,7 +27,7 @@ import Foundation
 #if !os(watchOS)
 
 @available(iOS 9.0, OSX 10.11, tvOS 9.0, *)
-extension Manager {
+extension SessionManager {
     private enum Streamable {
         case stream(String, Int)
         case netService(Foundation.NetService)
@@ -85,7 +85,7 @@ extension Manager {
 // MARK: -
 
 @available(iOS 9.0, OSX 10.11, tvOS 9.0, *)
-extension Manager.SessionDelegate: URLSessionStreamDelegate {
+extension SessionManager.SessionDelegate: URLSessionStreamDelegate {
 
     // MARK: Override Closures
 

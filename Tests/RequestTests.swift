@@ -477,41 +477,41 @@ class RequestDescriptionTestCase: BaseTestCase {
 class RequestDebugDescriptionTestCase: BaseTestCase {
     // MARK: Properties
 
-    let manager: Manager = {
-        let manager = Manager(configuration: .default)
+    let manager: SessionManager = {
+        let manager = SessionManager(configuration: .default)
         manager.startRequestsImmediately = false
         return manager
     }()
 
-    let managerWithAcceptLanguageHeader: Manager = {
-        var headers = Alamofire.Manager.sharedInstance.session.configuration.httpAdditionalHeaders ?? [:]
+    let managerWithAcceptLanguageHeader: SessionManager = {
+        var headers = SessionManager.sharedInstance.session.configuration.httpAdditionalHeaders ?? [:]
         headers["Accept-Language"] = "en-US"
 
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = headers
 
-        let manager = Manager(configuration: configuration)
+        let manager = SessionManager(configuration: configuration)
         manager.startRequestsImmediately = false
         return manager
     }()
 
-    let managerWithContentTypeHeader: Manager = {
-        var headers = Alamofire.Manager.sharedInstance.session.configuration.httpAdditionalHeaders ?? [:]
+    let managerWithContentTypeHeader: SessionManager = {
+        var headers = SessionManager.sharedInstance.session.configuration.httpAdditionalHeaders ?? [:]
         headers["Content-Type"] = "application/json"
 
         let configuration = URLSessionConfiguration.default
         configuration.httpAdditionalHeaders = headers
 
-        let manager = Manager(configuration: configuration)
+        let manager = SessionManager(configuration: configuration)
         manager.startRequestsImmediately = false
         return manager
     }()
 
-    let managerDisallowingCookies: Manager = {
+    let managerDisallowingCookies: SessionManager = {
         let configuration = URLSessionConfiguration.default
         configuration.httpShouldSetCookies = false
 
-        let manager = Manager(configuration: configuration)
+        let manager = SessionManager(configuration: configuration)
         manager.startRequestsImmediately = false
 
         return manager

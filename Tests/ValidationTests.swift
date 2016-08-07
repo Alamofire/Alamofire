@@ -237,7 +237,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
-        class MockManager: Manager {
+        class MockManager: SessionManager {
             override func request(_ urlRequest: URLRequestConvertible) -> Request {
                 var dataTask: URLSessionDataTask!
 
@@ -271,10 +271,10 @@ class ContentTypeValidationTestCase: BaseTestCase {
             override var mimeType: String? { return nil }
         }
 
-        let manager: Manager = {
+        let manager: SessionManager = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.ephemeral
-                configuration.httpAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
+                configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
 
                 return configuration
             }()

@@ -24,7 +24,7 @@
 
 import Foundation
 
-extension Manager {
+extension SessionManager {
     private enum Downloadable {
         case request(Foundation.URLRequest)
         case resumeData(Data)

@@ -27,13 +27,13 @@ import Foundation
 import XCTest
 
 class SessionDelegateTestCase: BaseTestCase {
-    var manager: Alamofire.Manager!
+    var manager: SessionManager!
 
     // MARK: - Setup and Teardown
 
     override func setUp() {
         super.setUp()
-        manager = Alamofire.Manager(configuration: .ephemeral)
+        manager = SessionManager(configuration: .ephemeral)
     }
 
     // MARK: - Tests - Session Invalidation
@@ -191,7 +191,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
         let callbackExpectation = self.expectation(description: "Redirect callback should be made")
-        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
+        let delegate: SessionManager.SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, request in
             callbackExpectation.fulfill()
@@ -232,7 +232,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
         let callbackExpectation = self.expectation(description: "Redirect callback should be made")
-        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
+        let delegate: SessionManager.SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirectionWithCompletion = { _, _, _, request, completion in
             completion(request)
@@ -274,7 +274,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should not redirect to \(redirectURLString)")
         let callbackExpectation = self.expectation(description: "Redirect callback should be made")
-        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
+        let delegate: SessionManager.SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirectionWithCompletion = { _, _, _, _, completion in
             callbackExpectation.fulfill()
@@ -316,7 +316,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should not redirect to \(redirectURLString)")
         let callbackExpectation = self.expectation(description: "Redirect callback should be made")
-        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
+        let delegate: SessionManager.SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, _ in
             callbackExpectation.fulfill()
@@ -358,7 +358,7 @@ class SessionDelegateTestCase: BaseTestCase {
         let URLString = "https://httpbin.org/redirect/\(redirectCount)"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
-        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
+        let delegate: SessionManager.SessionDelegate = manager.delegate
         var redirectExpectations = [XCTestExpectation]()
         for index in 0..<redirectCount {
             redirectExpectations.insert(self.expectation(description: "Redirect #\(index) callback was received"), at: 0)
@@ -409,7 +409,7 @@ class SessionDelegateTestCase: BaseTestCase {
         let URLString = "https://httpbin.org/redirect/\(redirectCount)"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
-        let delegate: Alamofire.Manager.SessionDelegate = manager.delegate
+        let delegate: SessionManager.SessionDelegate = manager.delegate
 
         var redirectExpectations = [XCTestExpectation]()
 

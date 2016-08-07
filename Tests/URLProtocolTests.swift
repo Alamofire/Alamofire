@@ -34,10 +34,10 @@ class ProxyURLProtocol: URLProtocol {
         static let HandledByForwarderURLProtocol = "HandledByProxyURLProtocol"
     }
 
-    lazy var session: Foundation.URLSession = {
+    lazy var session: URLSession = {
         let configuration: URLSessionConfiguration = {
             let configuration = URLSessionConfiguration.ephemeral
-            configuration.httpAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
+            configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
 
             return configuration
         }()
@@ -110,7 +110,7 @@ extension ProxyURLProtocol: URLSessionDelegate {
 // MARK: -
 
 class URLProtocolTestCase: BaseTestCase {
-    var manager: Manager!
+    var manager: SessionManager!
 
     // MARK: Setup and Teardown
 
@@ -126,7 +126,7 @@ class URLProtocolTestCase: BaseTestCase {
                 return configuration
             }()
 
-            return Manager(configuration: configuration)
+            return SessionManager(configuration: configuration)
         }()
     }
 

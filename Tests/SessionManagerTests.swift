@@ -1,5 +1,5 @@
 //
-//  ManagerTests.swift
+//  SessionManagerTests.swift
 //
 //  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -26,13 +26,13 @@
 import Foundation
 import XCTest
 
-class ManagerTestCase: BaseTestCase {
+class SessionManagerTestCase: BaseTestCase {
 
     // MARK: Initialization Tests
 
     func testInitializerWithDefaultArguments() {
         // Given, When
-        let manager = Manager()
+        let manager = SessionManager()
 
         // Then
         XCTAssertNotNil(manager.session.delegate, "session delegate should not be nil")
@@ -43,11 +43,11 @@ class ManagerTestCase: BaseTestCase {
     func testInitializerWithSpecifiedArguments() {
         // Given
         let configuration = URLSessionConfiguration.default
-        let delegate = Manager.SessionDelegate()
+        let delegate = SessionManager.SessionDelegate()
         let serverTrustPolicyManager = ServerTrustPolicyManager(policies: [:])
 
         // When
-        let manager = Manager(
+        let manager = SessionManager(
             configuration: configuration,
             delegate: delegate,
             serverTrustPolicyManager: serverTrustPolicyManager
@@ -61,14 +61,14 @@ class ManagerTestCase: BaseTestCase {
 
     func testThatFailableInitializerSucceedsWithDefaultArguments() {
         // Given
-        let delegate = Manager.SessionDelegate()
+        let delegate = SessionManager.SessionDelegate()
         let session: URLSession = {
             let configuration = URLSessionConfiguration.default
             return URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
         }()
 
         // When
-        let manager = Manager(session: session, delegate: delegate)
+        let manager = SessionManager(session: session, delegate: delegate)
 
         // Then
         if let manager = manager {
@@ -81,7 +81,7 @@ class ManagerTestCase: BaseTestCase {
 
     func testThatFailableInitializerSucceedsWithSpecifiedArguments() {
         // Given
-        let delegate = Manager.SessionDelegate()
+        let delegate = SessionManager.SessionDelegate()
         let session: URLSession = {
             let configuration = URLSessionConfiguration.default
             return URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
@@ -90,7 +90,7 @@ class ManagerTestCase: BaseTestCase {
         let serverTrustPolicyManager = ServerTrustPolicyManager(policies: [:])
 
         // When
-        let manager = Manager(session: session, delegate: delegate, serverTrustPolicyManager: serverTrustPolicyManager)
+        let manager = SessionManager(session: session, delegate: delegate, serverTrustPolicyManager: serverTrustPolicyManager)
 
         // Then
         if let manager = manager {
@@ -103,14 +103,14 @@ class ManagerTestCase: BaseTestCase {
 
     func testThatFailableInitializerFailsWithWhenDelegateDoesNotEqualSessionDelegate() {
         // Given
-        let delegate = Manager.SessionDelegate()
+        let delegate = SessionManager.SessionDelegate()
         let session: URLSession = {
             let configuration = URLSessionConfiguration.default
-            return URLSession(configuration: configuration, delegate: Manager.SessionDelegate(), delegateQueue: nil)
+            return URLSession(configuration: configuration, delegate: SessionManager.SessionDelegate(), delegateQueue: nil)
         }()
 
         // When
-        let manager = Manager(session: session, delegate: delegate)
+        let manager = SessionManager(session: session, delegate: delegate)
 
         // Then
         XCTAssertNil(manager, "manager should be nil")
@@ -118,14 +118,14 @@ class ManagerTestCase: BaseTestCase {
 
     func testThatFailableInitializerFailsWhenSessionDelegateIsNil() {
         // Given
-        let delegate = Manager.SessionDelegate()
+        let delegate = SessionManager.SessionDelegate()
         let session: URLSession = {
             let configuration = URLSessionConfiguration.default
             return URLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
         }()
 
         // When
-        let manager = Manager(session: session, delegate: delegate)
+        let manager = SessionManager(session: session, delegate: delegate)
 
         // Then
         XCTAssertNil(manager, "manager should be nil")
@@ -135,7 +135,7 @@ class ManagerTestCase: BaseTestCase {
 
     func testSetStartRequestsImmediatelyToFalseAndResumeRequest() {
         // Given
-        let manager = Alamofire.Manager()
+        let manager = SessionManager()
         manager.startRequestsImmediately = false
 
         let URL = Foundation.URL(string: "https://httpbin.org/get")!
@@ -164,7 +164,7 @@ class ManagerTestCase: BaseTestCase {
 
     func testReleasingManagerWithPendingRequestDeinitializesSuccessfully() {
         // Given
-        var manager: Manager? = Alamofire.Manager()
+        var manager: SessionManager? = SessionManager()
         manager?.startRequestsImmediately = false
 
         let URL = Foundation.URL(string: "https://httpbin.org/get")!
@@ -181,7 +181,7 @@ class ManagerTestCase: BaseTestCase {
 
     func testReleasingManagerWithPendingCanceledRequestDeinitializesSuccessfully() {
         // Given
-        var manager: Manager? = Alamofire.Manager()
+        var manager: SessionManager? = SessionManager()
         manager!.startRequestsImmediately = false
 
         let URL = Foundation.URL(string: "https://httpbin.org/get")!
@@ -224,7 +224,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
 
     private func executeAuthorizationHeaderTestForConfigurationType(_ type: ConfigurationType) {
         // Given
-        let manager: Manager = {
+        let manager: SessionManager = {
             let configuration: URLSessionConfiguration = {
                 let configuration: URLSessionConfiguration
 
@@ -238,14 +238,14 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
                     configuration = .background(withIdentifier: identifier)
                 }
 
-                var headers = Alamofire.Manager.defaultHTTPHeaders
+                var headers = SessionManager.defaultHTTPHeaders
                 headers["Authorization"] = "Bearer 123456"
                 configuration.httpAdditionalHeaders = headers
 
                 return configuration
             }()
 
-            return Manager(configuration: configuration)
+            return SessionManager(configuration: configuration)
         }()
 
         let expectation = self.expectation(description: "request should complete successfully")

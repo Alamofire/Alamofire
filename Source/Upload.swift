@@ -24,7 +24,7 @@
 
 import Foundation
 
-extension Manager {
+extension SessionManager {
     private enum Uploadable {
         case data(Foundation.URLRequest, Foundation.Data)
         case file(Foundation.URLRequest, URL)
@@ -238,7 +238,7 @@ extension Manager {
         _ URLString: URLStringConvertible,
         headers: [String: String]? = nil,
         multipartFormData: (MultipartFormData) -> Void,
-        encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
+        encodingMemoryThreshold: UInt64 = SessionManager.MultipartFormDataEncodingMemoryThreshold,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
         let mutableURLRequest = URLRequest(method, URLString, headers: headers)
@@ -278,7 +278,7 @@ extension Manager {
     public func upload(
         _ urlRequest: URLRequestConvertible,
         multipartFormData: (MultipartFormData) -> Void,
-        encodingMemoryThreshold: UInt64 = Manager.MultipartFormDataEncodingMemoryThreshold,
+        encodingMemoryThreshold: UInt64 = SessionManager.MultipartFormDataEncodingMemoryThreshold,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
         DispatchQueue.global(qos: .utility).async {

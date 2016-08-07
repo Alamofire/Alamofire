@@ -1,5 +1,5 @@
 //
-//  Manager.swift
+//  SessionManager.swift
 //
 //  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -27,19 +27,19 @@ import Foundation
 /**
     Responsible for creating and managing `Request` objects, as well as their underlying `NSURLSession`.
 */
-public class Manager {
+public class SessionManager {
 
     // MARK: - Properties
 
     /**
-        A shared instance of `Manager`, used by top-level Alamofire request methods, and suitable for use directly
-        for any ad hoc requests.
+        A shared instance of `SessionManager`, used by top-level Alamofire request methods, and suitable for use 
+        directly for any ad hoc requests.
     */
-    public static let sharedInstance: Manager = {
+    public static let sharedInstance: SessionManager = {
         let configuration = URLSessionConfiguration.default
-        configuration.httpAdditionalHeaders = Manager.defaultHTTPHeaders
+        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
 
-        return Manager(configuration: configuration)
+        return SessionManager(configuration: configuration)
     }()
 
     /**
@@ -98,7 +98,7 @@ public class Manager {
         ]
     }()
 
-    let queue = DispatchQueue(label: "Alamofire Manager Queue")
+    let queue = DispatchQueue(label: "Alamofire Session Manager Queue")
 
     /// The underlying session.
     public let session: URLSession

@@ -72,8 +72,8 @@ class CacheTestCase: BaseTestCase {
 
     // MARK: - Properties
 
-    var URLCache: Foundation.URLCache!
-    var manager: Manager!
+    var urlCache: URLCache!
+    var manager: SessionManager!
 
     let URLString = "https://httpbin.org/response-headers"
     let requestTimeout: TimeInterval = 30
@@ -86,24 +86,24 @@ class CacheTestCase: BaseTestCase {
     override func setUp() {
         super.setUp()
 
-        URLCache = {
+        urlCache = {
             let capacity = 50 * 1024 * 1024 // MBs
-            let URLCache = Foundation.URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
+            let urlCache = Foundation.URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
 
-            return URLCache
+            return urlCache
         }()
 
         manager = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.default
-                configuration.httpAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
+                configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
                 configuration.requestCachePolicy = .useProtocolCachePolicy
-                configuration.urlCache = URLCache
+                configuration.urlCache = urlCache
 
                 return configuration
             }()
 
-            let manager = Manager(configuration: configuration)
+            let manager = SessionManager(configuration: configuration)
 
             return manager
         }()
@@ -117,7 +117,7 @@ class CacheTestCase: BaseTestCase {
         requests.removeAll()
         timestamps.removeAll()
 
-        URLCache.removeAllCachedResponses()
+        urlCache.removeAllCachedResponses()
     }
 
     // MARK: - Cache Priming Methods
@@ -250,12 +250,12 @@ class CacheTestCase: BaseTestCase {
         let noStoreRequest = requests[CacheControl.NoStore]!
 
         // When
-        let publicResponse = URLCache.cachedResponse(for: publicRequest)
-        let privateResponse = URLCache.cachedResponse(for: privateRequest)
-        let maxAgeNonExpiredResponse = URLCache.cachedResponse(for: maxAgeNonExpiredRequest)
-        let maxAgeExpiredResponse = URLCache.cachedResponse(for: maxAgeExpiredRequest)
-        let noCacheResponse = URLCache.cachedResponse(for: noCacheRequest)
-        let noStoreResponse = URLCache.cachedResponse(for: noStoreRequest)
+        let publicResponse = urlCache.cachedResponse(for: publicRequest)
+        let privateResponse = urlCache.cachedResponse(for: privateRequest)
+        let maxAgeNonExpiredResponse = urlCache.cachedResponse(for: maxAgeNonExpiredRequest)
+        let maxAgeExpiredResponse = urlCache.cachedResponse(for: maxAgeExpiredRequest)
+        let noCacheResponse = urlCache.cachedResponse(for: noCacheRequest)
+        let noStoreResponse = urlCache.cachedResponse(for: noStoreRequest)
 
         // Then
         XCTAssertNotNil(publicResponse, "\(CacheControl.Public) response should not be nil")
