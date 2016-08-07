@@ -36,7 +36,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         let destination = Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
 
         // When
-        let request = Alamofire.download(.GET, urlString, destination: destination)
+        let request = Alamofire.downloadRequest(method: .GET, urlString: urlString, destination: destination)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -48,10 +48,11 @@ class DownloadInitializationTestCase: BaseTestCase {
     func testDownloadClassMethodWithMethodURLHeadersAndDestination() {
         // Given
         let urlString = "https://httpbin.org/"
+        let headers = ["Authorization": "123456"]
         let destination = Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
 
         // When
-        let request = Alamofire.download(.GET, urlString, headers: ["Authorization": "123456"], destination: destination)
+        let request = Alamofire.downloadRequest(method: .GET, urlString: urlString, headers: headers, destination: destination)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -99,7 +100,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.download(.GET, urlString, destination: destination)
+        Alamofire.downloadRequest(method: .GET, urlString: urlString, destination: destination)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -181,7 +182,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var responseError: Error?
 
         // When
-        let download = Alamofire.download(.GET, urlString) { _, _ in
+        let download = Alamofire.downloadRequest(method: .GET, urlString: urlString) { _, _ in
             return fileURL
         }
         download.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
@@ -269,7 +270,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.download(.GET, urlString, parameters: parameters, destination: destination)
+        Alamofire.downloadRequest(method: .GET, urlString: urlString, parameters: parameters, destination: destination)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -310,7 +311,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.download(.GET, urlString, headers: headers, destination: destination)
+        Alamofire.downloadRequest(method: .GET, urlString: urlString, headers: headers, destination: destination)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -359,7 +360,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        let download = Alamofire.download(.GET, urlString, destination: destination)
+        let download = Alamofire.downloadRequest(method: .GET, urlString: urlString, destination: destination)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -392,7 +393,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        let download = Alamofire.download(.GET, urlString, destination: destination)
+        let download = Alamofire.downloadRequest(method: .GET, urlString: urlString, destination: destination)
         download.progress { _, _, _ in
             download.cancel()
         }
@@ -430,7 +431,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        let download = Alamofire.download(.GET, urlString, destination: destination)
+        let download = Alamofire.downloadRequest(method: .GET, urlString: urlString, destination: destination)
         download.progress { _, _, _ in
             download.cancel()
         }

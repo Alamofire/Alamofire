@@ -29,7 +29,7 @@ import XCTest
 class AuthenticationTestCase: BaseTestCase {
     let user = "user"
     let password = "password"
-    var URLString = ""
+    var urlString = ""
 
     var manager: SessionManager!
 
@@ -58,12 +58,12 @@ class AuthenticationTestCase: BaseTestCase {
 class BasicAuthenticationTestCase: AuthenticationTestCase {
     override func setUp() {
         super.setUp()
-        URLString = "https://httpbin.org/basic-auth/\(user)/\(password)"
+        urlString = "https://httpbin.org/basic-auth/\(user)/\(password)"
     }
 
     func testHTTPBasicAuthenticationWithInvalidCredentials() {
         // Given
-        let expectation = self.expectation(description: "\(URLString) 401")
+        let expectation = self.expectation(description: "\(urlString) 401")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -71,7 +71,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -94,7 +94,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
     func testHTTPBasicAuthenticationWithValidCredentials() {
         // Given
-        let expectation = self.expectation(description: "\(URLString) 200")
+        let expectation = self.expectation(description: "\(urlString) 200")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -102,7 +102,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .authenticate(user: user, password: password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -126,7 +126,8 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
     func testHiddenHTTPBasicAuthentication() {
         // Given
         let authorizationHeader = Request.authorizationHeader(user: user, password: password)
-        let expectation = self.expectation(description: "\(URLString) 200")
+        let urlString = "http://httpbin.org/hidden-basic-auth/\(user)/\(password)"
+        let expectation = self.expectation(description: "\(urlString) 200")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -134,7 +135,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        manager.request(.GET, "http://httpbin.org/hidden-basic-auth/\(user)/\(password)", headers: authorizationHeader)
+        manager.dataRequest(method: .GET, urlString: urlString, headers: authorizationHeader)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -162,12 +163,12 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
     override func setUp() {
         super.setUp()
-        URLString = "https://httpbin.org/digest-auth/\(qop)/\(user)/\(password)"
+        urlString = "https://httpbin.org/digest-auth/\(qop)/\(user)/\(password)"
     }
 
     func testHTTPDigestAuthenticationWithInvalidCredentials() {
         // Given
-        let expectation = self.expectation(description: "\(URLString) 401")
+        let expectation = self.expectation(description: "\(urlString) 401")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -175,7 +176,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .authenticate(user: "invalid", password: "credentials")
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
@@ -198,7 +199,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
     func testHTTPDigestAuthenticationWithValidCredentials() {
         // Given
-        let expectation = self.expectation(description: "\(URLString) 200")
+        let expectation = self.expectation(description: "\(urlString) 200")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -206,7 +207,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .authenticate(user: user, password: password)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest

@@ -75,10 +75,10 @@ class CacheTestCase: BaseTestCase {
     var urlCache: URLCache!
     var manager: SessionManager!
 
-    let URLString = "https://httpbin.org/response-headers"
+    let urlString = "https://httpbin.org/response-headers"
     let requestTimeout: TimeInterval = 30
 
-    var requests: [String: Foundation.URLRequest] = [:]
+    var requests: [String: URLRequest] = [:]
     var timestamps: [String: String] = [:]
 
     // MARK: - Setup and Teardown
@@ -88,7 +88,7 @@ class CacheTestCase: BaseTestCase {
 
         urlCache = {
             let capacity = 50 * 1024 * 1024 // MBs
-            let urlCache = Foundation.URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
+            let urlCache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
 
             return urlCache
         }()
@@ -166,10 +166,11 @@ class CacheTestCase: BaseTestCase {
 
     // MARK: - Request Helper Methods
 
-    func URLRequest(cacheControl: String, cachePolicy: NSURLRequest.CachePolicy) -> Foundation.URLRequest {
+    func urlRequest(cacheControl: String, cachePolicy: NSURLRequest.CachePolicy) -> URLRequest {
         let parameters = ["Cache-Control": cacheControl]
-        let URL = Foundation.URL(string: URLString)!
-        var urlRequest = Foundation.URLRequest(url: URL, cachePolicy: cachePolicy, timeoutInterval: requestTimeout)
+        let url = URL(string: urlString)!
+
+        var urlRequest = URLRequest(url: url, cachePolicy: cachePolicy, timeoutInterval: requestTimeout)
         urlRequest.httpMethod = Method.GET.rawValue
 
         return ParameterEncoding.url.encode(urlRequest, parameters: parameters).0
@@ -180,11 +181,11 @@ class CacheTestCase: BaseTestCase {
         cacheControl: String,
         cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy,
         queue: DispatchQueue = DispatchQueue.main,
-        completion: (Foundation.URLRequest?, HTTPURLResponse?) -> Void)
-        -> Foundation.URLRequest
+        completion: (URLRequest?, HTTPURLResponse?) -> Void)
+        -> URLRequest
     {
-        let urlRequest = URLRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)
-        let request = manager.request(urlRequest)
+        let urlRequest = self.urlRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)
+        let request = manager.dataRequest(urlRequest: urlRequest)
 
         request.response(
             queue: queue,

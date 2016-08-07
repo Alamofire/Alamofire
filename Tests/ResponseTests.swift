@@ -29,13 +29,13 @@ import XCTest
 class ResponseDataTestCase: BaseTestCase {
     func testThatResponseDataReturnsSuccessResultWithValidData() {
         // Given
-        let URLString = "https://httpbin.org/get"
+        let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: Response<Data, NSError>?
 
         // When
-        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
             .responseData { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -56,13 +56,13 @@ class ResponseDataTestCase: BaseTestCase {
 
     func testThatResponseDataReturnsFailureResultWithOptionalDataAndError() {
         // Given
-        let URLString = "https://invalid-url-here.org/this/does/not/exist"
+        let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
         var response: Response<Data, NSError>?
 
         // When
-        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
             .responseData { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -87,13 +87,13 @@ class ResponseDataTestCase: BaseTestCase {
 class ResponseStringTestCase: BaseTestCase {
     func testThatResponseStringReturnsSuccessResultWithValidString() {
         // Given
-        let URLString = "https://httpbin.org/get"
+        let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: Response<String, NSError>?
 
         // When
-        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
             .responseString { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -114,13 +114,13 @@ class ResponseStringTestCase: BaseTestCase {
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
-        let URLString = "https://invalid-url-here.org/this/does/not/exist"
+        let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
         var response: Response<String, NSError>?
 
         // When
-        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
             .responseString { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -145,13 +145,13 @@ class ResponseStringTestCase: BaseTestCase {
 class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
         // Given
-        let URLString = "https://httpbin.org/get"
+        let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -172,13 +172,13 @@ class ResponseJSONTestCase: BaseTestCase {
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
-        let URLString = "https://invalid-url-here.org/this/does/not/exist"
+        let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -199,13 +199,13 @@ class ResponseJSONTestCase: BaseTestCase {
 
     func testThatResponseJSONReturnsSuccessResultForGETRequest() {
         // Given
-        let URLString = "https://httpbin.org/get"
+        let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -234,13 +234,13 @@ class ResponseJSONTestCase: BaseTestCase {
 
     func testThatResponseJSONReturnsSuccessResultForPOSTRequest() {
         // Given
-        let URLString = "https://httpbin.org/post"
+        let urlString = "https://httpbin.org/post"
         let expectation = self.expectation(description: "request should succeed")
 
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.request(.POST, URLString, parameters: ["foo": "bar"])
+        Alamofire.dataRequest(method: .POST, urlString: urlString, parameters: ["foo": "bar"])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()

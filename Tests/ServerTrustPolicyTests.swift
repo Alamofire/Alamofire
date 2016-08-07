@@ -48,8 +48,8 @@ private struct TestCertificates {
     static let LeafValidURI = TestCertificates.certificateWithFileName("valid-uri")
 
     static func certificateWithFileName(_ fileName: String) -> SecCertificate {
-        class Bundle {}
-        let filePath = Foundation.Bundle(for: Bundle.self).path(forResource: fileName, ofType: "cer")!
+        class Locater {}
+        let filePath = Bundle(for: Locater.self).path(forResource: fileName, ofType: "cer")!
         let data = try! Data(contentsOf: URL(fileURLWithPath: filePath))
         let certificate = SecCertificateCreateWithData(nil, data)!
 

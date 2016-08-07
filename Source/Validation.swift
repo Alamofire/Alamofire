@@ -41,7 +41,7 @@ extension Request {
         A closure used to validate a request that takes a URL request and URL response, and returns whether the
         request was valid.
     */
-    public typealias Validation = (Foundation.URLRequest?, HTTPURLResponse) -> ValidationResult
+    public typealias Validation = (URLRequest?, HTTPURLResponse) -> ValidationResult
 
     /**
         Validates the request, using the specified closure.

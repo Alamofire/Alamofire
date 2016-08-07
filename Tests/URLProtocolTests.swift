@@ -94,11 +94,11 @@ extension ProxyURLProtocol: URLSessionDelegate {
 
     // MARK: NSURLSessionDelegate
 
-    func URLSession(_ session: Foundation.URLSession, dataTask: URLSessionDataTask, didReceiveData data: Data) {
+    func URLSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceiveData data: Data) {
         client?.urlProtocol(self, didLoad: data)
     }
 
-    func URLSession(_ session: Foundation.URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
+    func URLSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
         if let response = task.response {
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         }
@@ -134,22 +134,22 @@ class URLProtocolTestCase: BaseTestCase {
 
     func testThatURLProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() {
         // Given
-        let URLString = "https://httpbin.org/response-headers"
-        let URL = Foundation.URL(string: URLString)!
+        let urlString = "https://httpbin.org/response-headers"
+        let url = URL(string: urlString)!
 
-        var mutableURLRequest = URLRequest(url: URL)
-        mutableURLRequest.httpMethod = Method.GET.rawValue
-        mutableURLRequest.setValue("foobar", forHTTPHeaderField: "request-header")
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = Method.GET.rawValue
+        urlRequest.setValue("foobar", forHTTPHeaderField: "request-header")
 
         let expectation = self.expectation(description: "GET request should succeed")
 
-        var request: Foundation.URLRequest?
+        var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
         var error: NSError?
 
         // When
-        manager.request(mutableURLRequest)
+        manager.dataRequest(urlRequest: urlRequest)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse

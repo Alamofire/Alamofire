@@ -29,45 +29,45 @@ import XCTest
 class RequestInitializationTestCase: BaseTestCase {
     func testRequestClassMethodWithMethodAndURL() {
         // Given
-        let URLString = "https://httpbin.org/"
+        let urlString = "https://httpbin.org/"
 
         // When
-        let request = Alamofire.request(.GET, URLString)
+        let request = Alamofire.dataRequest(method: .GET, urlString: urlString)
 
         // Then
         XCTAssertNotNil(request.request, "request URL request should not be nil")
         XCTAssertEqual(request.request?.httpMethod ?? "", "GET", "request HTTP method should match expected value")
-        XCTAssertEqual(request.request?.urlString ?? "", URLString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.urlString ?? "", urlString, "request URL string should be equal")
         XCTAssertNil(request.response, "request response should be nil")
     }
 
     func testRequestClassMethodWithMethodAndURLAndParameters() {
         // Given
-        let URLString = "https://httpbin.org/get"
+        let urlString = "https://httpbin.org/get"
 
         // When
-        let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        let request = Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
 
         // Then
         XCTAssertNotNil(request.request, "request URL request should not be nil")
         XCTAssertEqual(request.request?.httpMethod ?? "", "GET", "request HTTP method should match expected value")
-        XCTAssertNotEqual(request.request?.urlString ?? "", URLString, "request URL string should be equal")
+        XCTAssertNotEqual(request.request?.urlString ?? "", urlString, "request URL string should be equal")
         XCTAssertEqual(request.request?.url?.query ?? "", "foo=bar", "query is incorrect")
         XCTAssertNil(request.response, "request response should be nil")
     }
 
     func testRequestClassMethodWithMethodURLParametersAndHeaders() {
         // Given
-        let URLString = "https://httpbin.org/get"
+        let urlString = "https://httpbin.org/get"
         let headers = ["Authorization": "123456"]
 
         // When
-        let request = Alamofire.request(.GET, URLString, parameters: ["foo": "bar"], headers: headers)
+        let request = Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"], headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod ?? "", "GET", "request HTTP method should match expected value")
-        XCTAssertNotEqual(request.request?.urlString ?? "", URLString, "request URL string should be equal")
+        XCTAssertNotEqual(request.request?.urlString ?? "", urlString, "request URL string should be equal")
         XCTAssertEqual(request.request?.url?.query ?? "", "foo=bar", "query is incorrect")
 
         let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
@@ -82,9 +82,9 @@ class RequestInitializationTestCase: BaseTestCase {
 class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
-        let URLString = "https://httpbin.org/get"
+        let urlString = "https://httpbin.org/get"
 
-        let expectation = self.expectation(description: "GET request should succeed: \(URLString)")
+        let expectation = self.expectation(description: "GET request should succeed: \(urlString)")
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -92,7 +92,7 @@ class RequestResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(.GET, URLString, parameters: ["foo": "bar"])
+        Alamofire.dataRequest(method: .GET, urlString: urlString, parameters: ["foo": "bar"])
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -114,9 +114,9 @@ class RequestResponseTestCase: BaseTestCase {
     func testRequestResponseWithProgress() {
         // Given
         let randomBytes = 4 * 1024 * 1024
-        let URLString = "https://httpbin.org/bytes/\(randomBytes)"
+        let urlString = "https://httpbin.org/bytes/\(randomBytes)"
 
-        let expectation = self.expectation(description: "Bytes download progress should be reported: \(URLString)")
+        let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
 
         var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
@@ -126,7 +126,7 @@ class RequestResponseTestCase: BaseTestCase {
         var responseError: Error?
 
         // When
-        let request = Alamofire.request(.GET, URLString)
+        let request = Alamofire.dataRequest(method: .GET, urlString: urlString)
         request.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
@@ -191,9 +191,9 @@ class RequestResponseTestCase: BaseTestCase {
     func testRequestResponseWithStream() {
         // Given
         let randomBytes = 4 * 1024 * 1024
-        let URLString = "https://httpbin.org/bytes/\(randomBytes)"
+        let urlString = "https://httpbin.org/bytes/\(randomBytes)"
 
-        let expectation = self.expectation(description: "Bytes download progress should be reported: \(URLString)")
+        let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
 
         var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
         var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
@@ -205,7 +205,7 @@ class RequestResponseTestCase: BaseTestCase {
         var responseError: Error?
 
         // When
-        let request = Alamofire.request(.GET, URLString)
+        let request = Alamofire.dataRequest(method: .GET, urlString: urlString)
         request.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
@@ -280,7 +280,7 @@ class RequestResponseTestCase: BaseTestCase {
 
     func testPOSTRequestWithUnicodeParameters() {
         // Given
-        let URLString = "https://httpbin.org/post"
+        let urlString = "https://httpbin.org/post"
         let parameters = [
             "french": "français",
             "japanese": "日本語",
@@ -293,7 +293,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.request(.POST, URLString, parameters: parameters)
+        Alamofire.dataRequest(method: .POST, urlString: urlString, parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -324,7 +324,7 @@ class RequestResponseTestCase: BaseTestCase {
 
     func testPOSTRequestWithBase64EncodedImages() {
         // Given
-        let URLString = "https://httpbin.org/post"
+        let urlString = "https://httpbin.org/post"
 
         let pngBase64EncodedString: String = {
             let URL = URLForResource("unicorn", withExtension: "png")
@@ -351,7 +351,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        Alamofire.request(.POST, URLString, parameters: parameters)
+        Alamofire.dataRequest(method: .POST, urlString: urlString, parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -406,13 +406,13 @@ extension Request {
 class RequestExtensionTestCase: BaseTestCase {
     func testThatRequestExtensionHasAccessToTaskDelegateQueue() {
         // Given
-        let URLString = "https://httpbin.org/get"
-        let expectation = self.expectation(description: "GET request should succeed: \(URLString)")
+        let urlString = "https://httpbin.org/get"
+        let expectation = self.expectation(description: "GET request should succeed: \(urlString)")
 
         var responses: [String] = []
 
         // When
-        Alamofire.request(.GET, URLString)
+        Alamofire.dataRequest(method: .GET, urlString: urlString)
             .preValidate {
                 responses.append("preValidate")
             }
@@ -443,11 +443,11 @@ class RequestExtensionTestCase: BaseTestCase {
 class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
-        let URLString = "https://httpbin.org/get"
-        let request = Alamofire.request(.GET, URLString)
+        let urlString = "https://httpbin.org/get"
+        let request = Alamofire.dataRequest(method: .GET, urlString: urlString)
         let initialRequestDescription = request.description
 
-        let expectation = self.expectation(description: "Request description should update: \(URLString)")
+        let expectation = self.expectation(description: "Request description should update: \(urlString)")
 
         var finalRequestDescription: String?
         var response: HTTPURLResponse?
@@ -484,7 +484,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     }()
 
     let managerWithAcceptLanguageHeader: SessionManager = {
-        var headers = SessionManager.sharedInstance.session.configuration.httpAdditionalHeaders ?? [:]
+        var headers = SessionManager.default.session.configuration.httpAdditionalHeaders ?? [:]
         headers["Accept-Language"] = "en-US"
 
         let configuration = URLSessionConfiguration.default
@@ -496,7 +496,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     }()
 
     let managerWithContentTypeHeader: SessionManager = {
-        var headers = SessionManager.sharedInstance.session.configuration.httpAdditionalHeaders ?? [:]
+        var headers = SessionManager.default.session.configuration.httpAdditionalHeaders ?? [:]
         headers["Content-Type"] = "application/json"
 
         let configuration = URLSessionConfiguration.default
@@ -521,31 +521,31 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testGETRequestDebugDescription() {
         // Given
-        let URLString = "https://httpbin.org/get"
+        let urlString = "https://httpbin.org/get"
 
         // When
-        let request = manager.request(.GET, URLString)
+        let request = manager.dataRequest(method: .GET, urlString: urlString)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertFalse(components.contains("-X"), "command should not contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(urlString)\"", "URL component should be equal")
     }
 
     func testGETRequestWithDuplicateHeadersDebugDescription() {
         // Given
-        let URLString = "https://httpbin.org/get"
+        let urlString = "https://httpbin.org/get"
 
         // When
         let headers = [ "Accept-Language": "en-GB" ]
-        let request = managerWithAcceptLanguageHeader.request(.GET, URLString, headers: headers)
+        let request = managerWithAcceptLanguageHeader.dataRequest(method: .GET, urlString: urlString, headers: headers)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertFalse(components.contains("-X"), "command should not contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(urlString)\"", "URL component should be equal")
 
         let tokens = request.debugDescription.components(separatedBy: "Accept-Language:")
         XCTAssertTrue(tokens.count == 2, "command should contain a single Accept-Language header")
@@ -558,21 +558,21 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testPOSTRequestDebugDescription() {
         // Given
-        let URLString = "https://httpbin.org/post"
+        let urlString = "https://httpbin.org/post"
 
         // When
-        let request = manager.request(.POST, URLString)
+        let request = manager.dataRequest(method: .POST, urlString: urlString)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(urlString)\"", "URL component should be equal")
     }
 
     func testPOSTRequestWithJSONParametersDebugDescription() {
         // Given
-        let URLString = "https://httpbin.org/post"
+        let urlString = "https://httpbin.org/post"
 
         let parameters = [
             "foo": "bar",
@@ -581,7 +581,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         ]
 
         // When
-        let request = manager.request(.POST, URLString, parameters: parameters, encoding: .json)
+        let request = manager.dataRequest(method: .POST, urlString: urlString, parameters: parameters, encoding: .json)
         let components = cURLCommandComponents(request)
 
         // Then
@@ -594,12 +594,12 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         XCTAssertNotNil(request.debugDescription.range(of: "\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\""), "command should contain JSON parameters")
         XCTAssertNotNil(request.debugDescription.range(of: "\\\"foo\\\":\\\"bar\\"), "command should contain JSON parameters")
 
-        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(urlString)\"", "URL component should be equal")
     }
 
     func testPOSTRequestWithCookieDebugDescription() {
         // Given
-        let URLString = "https://httpbin.org/post"
+        let urlString = "https://httpbin.org/post"
 
         let properties = [
             HTTPCookiePropertyKey.domain: "httpbin.org",
@@ -612,19 +612,19 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         manager.session.configuration.httpCookieStorage?.setCookie(cookie)
 
         // When
-        let request = manager.request(.POST, URLString)
+        let request = manager.dataRequest(method: .POST, urlString: urlString)
         let components = cURLCommandComponents(request)
 
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertEqual(components[3..<5], ["-X", "POST"], "command should contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(urlString)\"", "URL component should be equal")
         XCTAssertEqual(components[5..<6], ["-b"], "command should contain -b flag")
     }
 
     func testPOSTRequestWithCookiesDisabledDebugDescription() {
         // Given
-        let URLString = "https://httpbin.org/post"
+        let urlString = "https://httpbin.org/post"
 
         let properties = [
             HTTPCookiePropertyKey.domain: "httpbin.org",
@@ -637,7 +637,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         managerDisallowingCookies.session.configuration.httpCookieStorage?.setCookie(cookie)
 
         // When
-        let request = managerDisallowingCookies.request(.POST, URLString)
+        let request = managerDisallowingCookies.dataRequest(method: .POST, urlString: urlString)
         let components = cURLCommandComponents(request)
 
         // Then
@@ -647,7 +647,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testMultipartFormDataRequestWithDuplicateHeadersDebugDescription() {
         // Given
-        let URLString = "https://httpbin.org/post"
+        let urlString = "https://httpbin.org/post"
         let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
         let expectation = self.expectation(description: "multipart form data encoding should succeed")
 
@@ -655,9 +655,9 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         var components: [String] = []
 
         // When
-        managerWithContentTypeHeader.upload(
-            .POST,
-            URLString,
+        managerWithContentTypeHeader.uploadRequest(
+            method: .POST,
+            urlString: urlString,
             multipartFormData: { multipartFormData in
                 multipartFormData.appendBodyPart(data: japanese, name: "japanese")
             },
@@ -681,7 +681,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"], "components should be equal")
         XCTAssertTrue(components.contains("-X"), "command should contain explicit -X flag")
-        XCTAssertEqual(components.last ?? "", "\"\(URLString)\"", "URL component should be equal")
+        XCTAssertEqual(components.last ?? "", "\"\(urlString)\"", "URL component should be equal")
 
         let tokens = request.debugDescription.components(separatedBy: "Content-Type:")
         XCTAssertTrue(tokens.count == 2, "command should contain a single Content-Type header")
@@ -694,10 +694,10 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     func testThatRequestWithInvalidURLDebugDescription() {
         // Given
-        let URLString = "invalid_url"
+        let urlString = "invalid_url"
 
         // When
-        let request = manager.request(.GET, URLString)
+        let request = manager.dataRequest(method: .GET, urlString: urlString)
         let debugDescription = request.debugDescription
 
         // Then

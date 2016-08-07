@@ -27,7 +27,7 @@ import Foundation
 /// Used to store all response data returned from a completed `Request`.
 public struct Response<ValueType, ErrorType: Error> {
     /// The URL request sent to the server.
-    public let request: Foundation.URLRequest?
+    public let request: URLRequest?
 
     /// The server's response to the URL request.
     public let response: HTTPURLResponse?
@@ -54,7 +54,7 @@ public struct Response<ValueType, ErrorType: Error> {
         - returns: the new `Response` instance.
     */
     public init(
-        request: Foundation.URLRequest?,
+        request: URLRequest?,
         response: HTTPURLResponse?,
         data: Data?,
         result: Result<ValueType, ErrorType>,

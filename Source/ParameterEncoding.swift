@@ -80,7 +80,7 @@ public enum ParameterEncoding {
     public func encode(
         _ URLRequest: URLRequestConvertible,
         parameters: [String: AnyObject]?)
-        -> (Foundation.URLRequest, NSError?)
+        -> (URLRequest, NSError?)
     {
         var urlRequest = URLRequest.urlRequest
 

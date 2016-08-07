@@ -64,16 +64,16 @@ class MasterViewController: UITableViewController {
                 switch segue.identifier! {
                 case "GET":
                     detailViewController.segueIdentifier = "GET"
-                    return Alamofire.request(.GET, "https://httpbin.org/get")
+                    return Alamofire.dataRequest(.GET, "https://httpbin.org/get")
                 case "POST":
                     detailViewController.segueIdentifier = "POST"
-                    return Alamofire.request(.POST, "https://httpbin.org/post")
+                    return Alamofire.dataRequest(.POST, "https://httpbin.org/post")
                 case "PUT":
                     detailViewController.segueIdentifier = "PUT"
-                    return Alamofire.request(.PUT, "https://httpbin.org/put")
+                    return Alamofire.dataRequest(.PUT, "https://httpbin.org/put")
                 case "DELETE":
                     detailViewController.segueIdentifier = "DELETE"
-                    return Alamofire.request(.DELETE, "https://httpbin.org/delete")
+                    return Alamofire.dataRequest(.DELETE, "https://httpbin.org/delete")
                 case "DOWNLOAD":
                     detailViewController.segueIdentifier = "DOWNLOAD"
                     let destination = Alamofire.Request.suggestedDownloadDestination(

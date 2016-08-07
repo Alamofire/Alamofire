@@ -88,8 +88,8 @@ class ResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
         // Given
         let serializer = Request.dataResponseSerializer()
-        let URL = Foundation.URL(string: "https://httpbin.org/get")!
-        let response = HTTPURLResponse(url: URL, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
+        let url = URL(string: "https://httpbin.org/get")!
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
 
         // When
         let result = serializer.serializeResponse(nil, response, nil, nil)
@@ -110,8 +110,8 @@ class ResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
         // Given
         let serializer = Request.dataResponseSerializer()
-        let URL = Foundation.URL(string: "https://httpbin.org/get")!
-        let response = HTTPURLResponse(url: URL, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
+        let url = URL(string: "https://httpbin.org/get")!
+        let response = HTTPURLResponse(url: url, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
 
         // When
         let result = serializer.serializeResponse(nil, response, nil, nil)
@@ -277,8 +277,8 @@ class ResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
         // Given
         let serializer = Request.stringResponseSerializer()
-        let URL = Foundation.URL(string: "https://httpbin.org/get")!
-        let response = HTTPURLResponse(url: URL, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
+        let url = URL(string: "https://httpbin.org/get")!
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
 
         // When
         let result = serializer.serializeResponse(nil, response, nil, nil)
@@ -299,8 +299,8 @@ class ResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
         // Given
         let serializer = Request.stringResponseSerializer()
-        let URL = Foundation.URL(string: "https://httpbin.org/get")!
-        let response = HTTPURLResponse(url: URL, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
+        let url = URL(string: "https://httpbin.org/get")!
+        let response = HTTPURLResponse(url: url, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
 
         // When
         let result = serializer.serializeResponse(nil, response, nil, nil)
@@ -415,8 +415,8 @@ class ResponseSerializationTestCase: BaseTestCase {
     func testThatJSONResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
         // Given
         let serializer = Request.JSONResponseSerializer()
-        let URL = Foundation.URL(string: "https://httpbin.org/get")!
-        let response = HTTPURLResponse(url: URL, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
+        let url = URL(string: "https://httpbin.org/get")!
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
 
         // When
         let result = serializer.serializeResponse(nil, response, nil, nil)
@@ -437,8 +437,8 @@ class ResponseSerializationTestCase: BaseTestCase {
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
         // Given
         let serializer = Request.JSONResponseSerializer()
-        let URL = Foundation.URL(string: "https://httpbin.org/get")!
-        let response = HTTPURLResponse(url: URL, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
+        let url = URL(string: "https://httpbin.org/get")!
+        let response = HTTPURLResponse(url: url, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
 
         // When
         let result = serializer.serializeResponse(nil, response, nil, nil)
@@ -553,8 +553,8 @@ class ResponseSerializationTestCase: BaseTestCase {
     func testThatPropertyListResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
         // Given
         let serializer = Request.propertyListResponseSerializer()
-        let URL = Foundation.URL(string: "https://httpbin.org/get")!
-        let response = HTTPURLResponse(url: URL, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
+        let url = URL(string: "https://httpbin.org/get")!
+        let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
 
         // When
         let result = serializer.serializeResponse(nil, response, nil, nil)
@@ -575,8 +575,8 @@ class ResponseSerializationTestCase: BaseTestCase {
     func testThatPropertyListResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
         // Given
         let serializer = Request.propertyListResponseSerializer()
-        let URL = Foundation.URL(string: "https://httpbin.org/get")!
-        let response = HTTPURLResponse(url: URL, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
+        let url = URL(string: "https://httpbin.org/get")!
+        let response = HTTPURLResponse(url: url, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
 
         // When
         let result = serializer.serializeResponse(nil, response, nil, nil)

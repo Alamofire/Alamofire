@@ -39,7 +39,7 @@ public protocol ResponseSerializerType {
     /**
         A closure used by response handlers that takes a request, response, data and error and returns a result.
     */
-    var serializeResponse: (Foundation.URLRequest?, HTTPURLResponse?, Data?, NSError?) -> Result<SerializedObject, ErrorObject> { get }
+    var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, NSError?) -> Result<SerializedObject, ErrorObject> { get }
 }
 
 // MARK: -
@@ -57,7 +57,7 @@ public struct ResponseSerializer<Value, Error: Swift.Error>: ResponseSerializerT
     /**
         A closure used by response handlers that takes a request, response, data and error and returns a result.
     */
-    public var serializeResponse: (Foundation.URLRequest?, HTTPURLResponse?, Data?, NSError?) -> Result<Value, Error>
+    public var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, NSError?) -> Result<Value, Error>
 
     /**
         Initializes the `ResponseSerializer` instance with the given serialize response closure.
@@ -66,7 +66,7 @@ public struct ResponseSerializer<Value, Error: Swift.Error>: ResponseSerializerT
 
         - returns: The new generic response serializer instance.
     */
-    public init(serializeResponse: (Foundation.URLRequest?, HTTPURLResponse?, Data?, NSError?) -> Result<Value, Error>) {
+    public init(serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, NSError?) -> Result<Value, Error>) {
         self.serializeResponse = serializeResponse
     }
 }
@@ -86,7 +86,7 @@ extension Request {
     @discardableResult
     public func response(
         queue: DispatchQueue? = nil,
-        completionHandler: (Foundation.URLRequest?, HTTPURLResponse?, Data?, NSError?) -> Void)
+        completionHandler: (URLRequest?, HTTPURLResponse?, Data?, NSError?) -> Void)
         -> Self
     {
         delegate.queue.addOperation {

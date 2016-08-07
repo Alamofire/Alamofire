@@ -76,7 +76,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
+        manager.dataRequest(method: .GET, urlString: "https://httpbin.org/get").responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
@@ -101,7 +101,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
+        manager.dataRequest(method: .GET, urlString: "https://httpbin.org/get").responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
@@ -118,17 +118,17 @@ class SessionDelegateTestCase: BaseTestCase {
     func testThatRequestWillPerformHTTPRedirectionByDefault() {
         // Given
         let redirectURLString = "https://www.apple.com/"
-        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
+        let urlString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
-        var request: Foundation.URLRequest?
+        var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -152,17 +152,17 @@ class SessionDelegateTestCase: BaseTestCase {
     func testThatRequestWillPerformRedirectionMultipleTimesByDefault() {
         // Given
         let redirectURLString = "https://httpbin.org/get"
-        let URLString = "https://httpbin.org/redirect/5"
+        let urlString = "https://httpbin.org/redirect/5"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
-        var request: Foundation.URLRequest?
+        var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -187,24 +187,24 @@ class SessionDelegateTestCase: BaseTestCase {
     func testThatTaskOverrideClosureCanPerformHTTPRedirection() {
         // Given
         let redirectURLString = "https://www.apple.com/"
-        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
+        let urlString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
         let callbackExpectation = self.expectation(description: "Redirect callback should be made")
-        let delegate: SessionManager.SessionDelegate = manager.delegate
+        let delegate: SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, request in
             callbackExpectation.fulfill()
             return request
         }
 
-        var request: Foundation.URLRequest?
+        var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -228,24 +228,24 @@ class SessionDelegateTestCase: BaseTestCase {
     func testThatTaskOverrideClosureWithCompletionCanPerformHTTPRedirection() {
         // Given
         let redirectURLString = "https://www.apple.com/"
-        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
+        let urlString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
         let callbackExpectation = self.expectation(description: "Redirect callback should be made")
-        let delegate: SessionManager.SessionDelegate = manager.delegate
+        let delegate: SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirectionWithCompletion = { _, _, _, request, completion in
             completion(request)
             callbackExpectation.fulfill()
         }
 
-        var request: Foundation.URLRequest?
+        var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -270,24 +270,24 @@ class SessionDelegateTestCase: BaseTestCase {
     func testThatTaskOverrideClosureCanCancelHTTPRedirection() {
         // Given
         let redirectURLString = "https://www.apple.com"
-        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
+        let urlString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = self.expectation(description: "Request should not redirect to \(redirectURLString)")
         let callbackExpectation = self.expectation(description: "Redirect callback should be made")
-        let delegate: SessionManager.SessionDelegate = manager.delegate
+        let delegate: SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirectionWithCompletion = { _, _, _, _, completion in
             callbackExpectation.fulfill()
             completion(nil)
         }
 
-        var request: Foundation.URLRequest?
+        var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -305,31 +305,31 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        XCTAssertEqual(response?.url?.urlString ?? "", URLString, "response URL should match the origin URL")
+        XCTAssertEqual(response?.url?.urlString ?? "", urlString, "response URL should match the origin URL")
         XCTAssertEqual(response?.statusCode ?? -1, 302, "response should have a 302 status code")
     }
 
     func testThatTaskOverrideClosureWithCompletionCanCancelHTTPRedirection() {
         // Given
         let redirectURLString = "https://www.apple.com"
-        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
+        let urlString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
 
         let expectation = self.expectation(description: "Request should not redirect to \(redirectURLString)")
         let callbackExpectation = self.expectation(description: "Redirect callback should be made")
-        let delegate: SessionManager.SessionDelegate = manager.delegate
+        let delegate: SessionDelegate = manager.delegate
 
         delegate.taskWillPerformHTTPRedirection = { _, _, _, _ in
             callbackExpectation.fulfill()
             return nil
         }
 
-        var request: Foundation.URLRequest?
+        var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -347,7 +347,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        XCTAssertEqual(response?.url?.urlString ?? "", URLString, "response URL should match the origin URL")
+        XCTAssertEqual(response?.url?.urlString ?? "", urlString, "response URL should match the origin URL")
         XCTAssertEqual(response?.statusCode ?? -1, 302, "response should have a 302 status code")
     }
 
@@ -355,10 +355,10 @@ class SessionDelegateTestCase: BaseTestCase {
         // Given
         let redirectCount = 5
         let redirectURLString = "https://httpbin.org/get"
-        let URLString = "https://httpbin.org/redirect/\(redirectCount)"
+        let urlString = "https://httpbin.org/redirect/\(redirectCount)"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
-        let delegate: SessionManager.SessionDelegate = manager.delegate
+        let delegate: SessionDelegate = manager.delegate
         var redirectExpectations = [XCTestExpectation]()
         for index in 0..<redirectCount {
             redirectExpectations.insert(self.expectation(description: "Redirect #\(index) callback was received"), at: 0)
@@ -374,13 +374,13 @@ class SessionDelegateTestCase: BaseTestCase {
             return request
         }
 
-        var request: Foundation.URLRequest?
+        var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -406,10 +406,10 @@ class SessionDelegateTestCase: BaseTestCase {
         // Given
         let redirectCount = 5
         let redirectURLString = "https://httpbin.org/get"
-        let URLString = "https://httpbin.org/redirect/\(redirectCount)"
+        let urlString = "https://httpbin.org/redirect/\(redirectCount)"
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
-        let delegate: SessionManager.SessionDelegate = manager.delegate
+        let delegate: SessionDelegate = manager.delegate
 
         var redirectExpectations = [XCTestExpectation]()
 
@@ -427,13 +427,13 @@ class SessionDelegateTestCase: BaseTestCase {
             completion(request)
         }
 
-        var request: Foundation.URLRequest?
+        var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
         var error: NSError?
 
         // When
-        manager.request(.GET, URLString)
+        manager.dataRequest(method: .GET, urlString: urlString)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -458,7 +458,7 @@ class SessionDelegateTestCase: BaseTestCase {
     func testThatRedirectedRequestContainsAllHeadersFromOriginalRequest() {
         // Given
         let redirectURLString = "https://httpbin.org/get"
-        let URLString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
+        let urlString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
         let headers = [
             "Authorization": "1234",
             "Custom-Header": "foobar",
@@ -488,7 +488,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        manager.request(.GET, URLString, headers: headers)
+        manager.dataRequest(method: .GET, urlString: urlString, headers: headers)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -523,7 +523,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
+        manager.dataRequest(method: .GET, urlString: "https://httpbin.org/get").responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
@@ -548,7 +548,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.request(.GET, "https://httpbin.org/get").responseJSON { closureResponse in
+        manager.dataRequest(method: .GET, urlString: "https://httpbin.org/get").responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
