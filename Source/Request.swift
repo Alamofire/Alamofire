@@ -35,7 +35,16 @@ public class Request {
     // MARK: Properties
 
     /// The delegate for the underlying task.
-    public let delegate: TaskDelegate
+    public internal(set) var delegate: TaskDelegate {
+        get {
+            taskDelegateLock.lock() ; defer { taskDelegateLock.unlock() }
+            return taskDelegate
+        }
+        set {
+            taskDelegateLock.lock() ; defer { taskDelegateLock.unlock() }
+            taskDelegate = newValue
+        }
+    }
 
     /// The underlying task.
     public var task: URLSessionTask { return delegate.task }
@@ -66,6 +75,9 @@ public class Request {
     var startTime: CFAbsoluteTime?
     var endTime: CFAbsoluteTime?
 
+    private var taskDelegate: TaskDelegate
+    private var taskDelegateLock = NSLock()
+
     // MARK: Lifecycle
 
     init(session: URLSession, task: URLSessionTask) {
@@ -73,13 +85,13 @@ public class Request {
 
         switch task {
         case is URLSessionUploadTask:
-            delegate = UploadTaskDelegate(task: task)
+            taskDelegate = UploadTaskDelegate(task: task)
         case is URLSessionDataTask:
-            delegate = DataTaskDelegate(task: task)
+            taskDelegate = DataTaskDelegate(task: task)
         case is URLSessionDownloadTask:
-            delegate = DownloadTaskDelegate(task: task)
+            taskDelegate = DownloadTaskDelegate(task: task)
         default:
-            delegate = TaskDelegate(task: task)
+            taskDelegate = TaskDelegate(task: task)
         }
 
         delegate.queue.addOperation { self.endTime = CFAbsoluteTimeGetCurrent() }

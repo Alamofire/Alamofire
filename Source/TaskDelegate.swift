@@ -33,7 +33,7 @@ public class TaskDelegate: NSObject {
     /// The serial operation queue used to execute all operations after the task completes.
     public let queue: OperationQueue
 
-    let task: URLSessionTask
+    var task: URLSessionTask
     let progress: Progress
 
     var data: Data? { return nil }
@@ -56,11 +56,6 @@ public class TaskDelegate: NSObject {
 
             return operationQueue
         }()
-    }
-
-    deinit {
-        queue.cancelAllOperations()
-        queue.isSuspended = false
     }
 
     // MARK: NSURLSessionTaskDelegate
