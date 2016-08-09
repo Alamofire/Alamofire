@@ -235,7 +235,7 @@ extension Request {
 
 extension Request {
     /// Creates a response serializer that returns a JSON object constructed from the response data using
-    /// `NSJSONSerialization` with the specified reading options.
+    /// `JSONSerialization` with the specified reading options.
     ///
     /// - parameter options: The JSON serialization reading options. `.AllowFragments` by default.
     ///
@@ -289,7 +289,7 @@ extension Request {
 
 extension Request {
     /// Creates a response serializer that returns an object constructed from the response data using
-    /// `NSPropertyListSerialization` with the specified reading options.
+    /// `PropertyListSerialization` with the specified reading options.
     ///
     /// - parameter options: The property list reading options. `NSPropertyListReadOptions()` by default.
     ///

@@ -97,13 +97,13 @@ extension URLRequest {
 
 // MARK: - Data Request
 
-/// Creates a data `Request` using the default session manager instance to retrieve the contents of the specified
-/// `method`, `urlString`, `parameters`, `encoding` and `headers`.
+/// Creates a data `Request` using the default `SessionManager` to retrieve the contents of a URL based on the
+/// specified `urlString`, `method`, `parameters`, `encoding` and `headers`.
 ///
 /// - parameter urlString:  The URL string.
 /// - parameter method:     The HTTP method.
 /// - parameter parameters: The parameters. `nil` by default.
-/// - parameter encoding:   The parameter encoding. `.URL` by default.
+/// - parameter encoding:   The parameter encoding. `.url` by default.
 /// - parameter headers:    The HTTP headers. `nil` by default.
 ///
 /// - returns: The created data `Request`.
@@ -125,7 +125,7 @@ public func request(
     )
 }
 
-/// Creates a data `Request` using the default session manager instance to retrieve the contents of the
+/// Creates a data `Request` using the default `SessionManager` to retrieve the contents of a URL based on the
 /// specified `urlRequest`.
 ///
 /// - parameter urlRequest: The URL request
@@ -140,14 +140,14 @@ public func request(_ urlRequest: URLRequestConvertible) -> Request {
 
 // MARK: URL Request
 
-/// Creates a download `Request` using the default session manager instance to retrieve the contents of the specified
-/// `method`, `urlString`, `parameters`, `encoding`, `headers` and save them to the `destination`.
+/// Creates a download `Request` using the default `SessionManager` to retrieve the contents of a URL based on the
+/// specified `urlString`, `method`, `parameters`, `encoding`, `headers` and save them to the `destination`.
 ///
 /// - parameter urlString:   The URL string.
 /// - parameter destination: The closure used to determine the destination of the downloaded file.
 /// - parameter method:      The HTTP method.
 /// - parameter parameters:  The parameters. `nil` by default.
-/// - parameter encoding:    The parameter encoding. `.URL` by default.
+/// - parameter encoding:    The parameter encoding. `.url` by default.
 /// - parameter headers:     The HTTP headers. `nil` by default.
 ///
 /// - returns: The created download `Request`.
@@ -171,8 +171,8 @@ public func download(
     )
 }
 
-/// Creates a download `Request` using the default session manager instance to retrieve the contents of the specified
-/// `urlRequest` and save them to the `destination`.
+/// Creates a download `Request` using the default `SessionManager` to retrieve the contents of a URL based on the
+/// specified `urlRequest` and save them to the `destination`.
 ///
 /// - parameter urlRequest:  The URL request.
 /// - parameter destination: The closure used to determine the destination of the downloaded file.
@@ -189,7 +189,7 @@ public func download(
 
 // MARK: Resume Data
 
-/// Creates a download `Request` using the default session manager instance from the `resumeData` produced from a
+/// Creates a download `Request` using the default `SessionManager` from the `resumeData` produced from a
 /// previous request cancellation to retrieve the contents of the original request and save them to the `destination`.
 ///
 /// - parameter resumeData:  The resume data. This is an opaque data blob produced by `URLSessionDownloadTask`
@@ -207,7 +207,7 @@ public func download(resourceWithin resumeData: Data, to destination: Request.Do
 
 // MARK: File
 
-/// Creates an upload `Request` using the default session manager instance from the specified `method`, `urlString`
+/// Creates an upload `Request` using the default `SessionManager` from the specified `method`, `urlString`
 /// and `headers` for uploading the `file`.
 ///
 /// - parameter file:      The file to upload.
@@ -227,7 +227,7 @@ public func upload(
     return SessionManager.default.upload(fileURL, to: urlString, withMethod: method, headers: headers)
 }
 
-/// Creates a upload `Request` using the default session manager instance from the specified `urlRequest` for
+/// Creates a upload `Request` using the default `SessionManager` from the specified `urlRequest` for
 /// uploading the `file`.
 ///
 /// - parameter file:       The file to upload.
@@ -241,7 +241,7 @@ public func upload(_ fileURL: URL, with urlRequest: URLRequestConvertible) -> Re
 
 // MARK: Data
 
-/// Creates an upload `Request` using the default session manager instance from the specified `method`, `urlString`
+/// Creates an upload `Request` using the default `SessionManager` from the specified `method`, `urlString`
 /// and `headers` for uploading the `data`.
 ///
 /// - parameter data:      The data to upload.
@@ -261,7 +261,7 @@ public func upload(
     return SessionManager.default.upload(data, to: urlString, withMethod: method, headers: headers)
 }
 
-/// Creates an upload `Request` using the default session manager instance from the specified `urlRequest` for
+/// Creates an upload `Request` using the default `SessionManager` from the specified `urlRequest` for
 /// uploading the `data`.
 ///
 /// - parameter data:       The data to upload.
@@ -275,7 +275,7 @@ public func upload(_ data: Data, with urlRequest: URLRequestConvertible) -> Requ
 
 // MARK: InputStream
 
-/// Creates an upload `Request` using the default session manager instance from the specified `method`, `urlString`
+/// Creates an upload `Request` using the default `SessionManager` from the specified `method`, `urlString`
 /// and `headers` for uploading the `stream`.
 ///
 /// - parameter stream:    The stream to upload.
@@ -295,7 +295,7 @@ public func upload(
     return SessionManager.default.upload(stream, to: urlString, withMethod: method, headers: headers)
 }
 
-/// Creates an upload `Request` using the default session manager instance from the specified `urlRequest` for
+/// Creates an upload `Request` using the default `SessionManager` from the specified `urlRequest` for
 /// uploading the `stream`.
 ///
 /// - parameter urlRequest: The URL request.
@@ -309,7 +309,7 @@ public func upload(_ stream: InputStream, with urlRequest: URLRequestConvertible
 
 // MARK: MultipartFormData
 
-/// Encodes `multipartFormData` using `encodingMemoryThreshold` with the default session manager instance and calls
+/// Encodes `multipartFormData` using `encodingMemoryThreshold` with the default `SessionManager` and calls
 /// `encodingCompletion` with new upload `Request` using the `method`, `urlString` and `headers`.
 ///
 /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
@@ -350,7 +350,7 @@ public func upload(
     )
 }
 
-/// Encodes `multipartFormData` using `encodingMemoryThreshold` and the default session manager instance and
+/// Encodes `multipartFormData` using `encodingMemoryThreshold` and the default `SessionManager` and
 /// calls `encodingCompletion` with new upload `Request` using the `urlRequest`.
 ///
 /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative

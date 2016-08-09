@@ -52,13 +52,13 @@ public enum HTTPMethod: String {
 ///                    dictionary values (`foo[bar]=baz`).
 ///
 /// - urlEncodedInURL: Creates query string to be set as or appended to any existing URL query. Uses the same
-///                    implementation as the `.URL` case, but always applies the encoded result to the URL.
+///                    implementation as the `.url` case, but always applies the encoded result to the URL.
 ///
-/// - json:            Uses `NSJSONSerialization` to create a JSON representation of the parameters object, which is
+/// - json:            Uses `JSONSerialization` to create a JSON representation of the parameters object, which is
 ///                    set as the body of the request. The `Content-Type` HTTP header field of an encoded request is
 ///                    set to `application/json`.
 ///
-/// - propertyList:    Uses `NSPropertyListSerialization` to create a plist representation of the parameters object,
+/// - propertyList:    Uses `PropertyListSerialization` to create a plist representation of the parameters object,
 ///                    according to the associated format and write options values, which is set as the body of the
 ///                    request. The `Content-Type` HTTP header field of an encoded request is set to
 ///                    `application/x-plist`.
