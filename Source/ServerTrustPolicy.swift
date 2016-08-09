@@ -182,7 +182,9 @@ public enum ServerTrustPolicy {
         case let .PerformDefaultEvaluation(validateHost):
             let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
             #if swift(>=2.3)
-                SecTrustSetPolicies(serverTrust, policy)
+                if let policy = policy {
+                    SecTrustSetPolicies(serverTrust, policy)
+                }
             #else
                 SecTrustSetPolicies(serverTrust, [policy])
             #endif
@@ -192,7 +194,9 @@ public enum ServerTrustPolicy {
             if validateCertificateChain {
                 let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
             #if swift(>=2.3)
-                SecTrustSetPolicies(serverTrust, policy)
+                if let policy = policy {
+                    SecTrustSetPolicies(serverTrust, policy)
+                }
             #else
                 SecTrustSetPolicies(serverTrust, [policy])
             #endif
@@ -220,7 +224,9 @@ public enum ServerTrustPolicy {
             if validateCertificateChain {
                 let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
             #if swift(>=2.3)
-                SecTrustSetPolicies(serverTrust, policy)
+                if let policy = policy {
+                    SecTrustSetPolicies(serverTrust, policy)
+                }
             #else
                 SecTrustSetPolicies(serverTrust, [policy])
             #endif
