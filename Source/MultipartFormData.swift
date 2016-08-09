@@ -359,7 +359,7 @@ public class MultipartFormData {
         bodyParts.last?.hasFinalBoundary = true
 
         for bodyPart in bodyParts {
-            let encodedData = try encodeBodyPart(bodyPart)
+            let encodedData = try encode(bodyPart)
             encoded.append(encodedData)
         }
 
@@ -378,7 +378,6 @@ public class MultipartFormData {
         if let bodyPartError = bodyPartError {
             throw bodyPartError
         }
-
 
         if FileManager.default.fileExists(atPath: fileURL.path) {
             let failureReason = "A file already exists at the given file URL: \(fileURL)"
@@ -411,16 +410,16 @@ public class MultipartFormData {
 
     // MARK: - Private - Body Part Encoding
 
-    private func encodeBodyPart(_ bodyPart: BodyPart) throws -> Data {
+    private func encode(_ bodyPart: BodyPart) throws -> Data {
         var encoded = Data()
 
         let initialData = bodyPart.hasInitialBoundary ? initialBoundaryData() : encapsulatedBoundaryData()
         encoded.append(initialData)
 
-        let headerData = encodeHeaderData(for: bodyPart)
+        let headerData = encodeHeaders(for: bodyPart)
         encoded.append(headerData)
 
-        let bodyStreamData = try encodeBodyStreamData(for: bodyPart)
+        let bodyStreamData = try encodeBodyStream(for: bodyPart)
         encoded.append(bodyStreamData)
 
         if bodyPart.hasFinalBoundary {
@@ -430,7 +429,7 @@ public class MultipartFormData {
         return encoded as Data
     }
 
-    private func encodeHeaderData(for bodyPart: BodyPart) -> Data {
+    private func encodeHeaders(for bodyPart: BodyPart) -> Data {
         var headerText = ""
 
         for (key, value) in bodyPart.headers {
@@ -441,7 +440,7 @@ public class MultipartFormData {
         return headerText.data(using: String.Encoding.utf8, allowLossyConversion: false)!
     }
 
-    private func encodeBodyStreamData(for bodyPart: BodyPart) throws -> Data {
+    private func encodeBodyStream(for bodyPart: BodyPart) throws -> Data {
         let inputStream = bodyPart.bodyStream
         inputStream.open()
 
@@ -492,7 +491,7 @@ public class MultipartFormData {
     }
 
     private func writeHeaderData(for bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
-        let headerData = encodeHeaderData(for: bodyPart)
+        let headerData = encodeHeaders(for: bodyPart)
         return try write(headerData, to: outputStream)
     }
 
@@ -582,22 +581,14 @@ public class MultipartFormData {
 
     // MARK: - Private - Content Headers
 
-    private func contentHeaders(withName name: String) -> [String: String] {
-        return ["Content-Disposition": "form-data; name=\"\(name)\""]
-    }
+    private func contentHeaders(withName name: String, fileName: String? = nil, mimeType: String? = nil) -> [String: String] {
+        var disposition = "form-data; name=\"\(name)\""
+        if let fileName = fileName { disposition += "; filename=\"\(fileName)\"" }
 
-    private func contentHeaders(withName name: String, mimeType: String) -> [String: String] {
-        return [
-            "Content-Disposition": "form-data; name=\"\(name)\"",
-            "Content-Type": "\(mimeType)"
-        ]
-    }
+        var headers = ["Content-Disposition": disposition]
+        if let mimeType = mimeType { headers["Content-Type"] = mimeType }
 
-    private func contentHeaders(withName name: String, fileName: String, mimeType: String) -> [String: String] {
-        return [
-            "Content-Disposition": "form-data; name=\"\(name)\"; filename=\"\(fileName)\"",
-            "Content-Type": "\(mimeType)"
-        ]
+        return headers
     }
 
     // MARK: - Private - Boundary Encoding
