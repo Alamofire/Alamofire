@@ -1404,7 +1404,7 @@ class ServerTrustPolicyCertificatesInBundleTestCase: ServerTrustPolicyTestCase {
 
         // When
         let certificates = ServerTrustPolicy.certificates(
-            within: Bundle(for: ServerTrustPolicyCertificatesInBundleTestCase.self)
+            in: Bundle(for: ServerTrustPolicyCertificatesInBundleTestCase.self)
         )
 
         // Then

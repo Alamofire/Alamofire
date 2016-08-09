@@ -227,8 +227,8 @@ public class Request {
     ///
     /// - returns: A download file destination closure.
     public class func suggestedDownloadDestination(
-        directory: FileManager.SearchPathDirectory = .documentDirectory,
-        domain: FileManager.SearchPathDomainMask = .userDomainMask)
+        for directory: FileManager.SearchPathDirectory = .documentDirectory,
+        in domain: FileManager.SearchPathDomainMask = .userDomainMask)
         -> DownloadFileDestination
     {
         return { temporaryURL, response -> URL in

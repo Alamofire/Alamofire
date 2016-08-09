@@ -33,7 +33,7 @@ class DownloadInitializationTestCase: BaseTestCase {
     func testDownloadClassMethodWithMethodURLAndDestination() {
         // Given
         let urlString = "https://httpbin.org/"
-        let destination = Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+        let destination = Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
 
         // When
         let request = Alamofire.download(urlString, to: destination, withMethod: .get)
@@ -49,7 +49,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/"
         let headers = ["Authorization": "123456"]
-        let destination = Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+        let destination = Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
 
         // When
         let request = Alamofire.download(urlString, to: destination, withMethod: .get, headers: headers)
@@ -87,11 +87,7 @@ class DownloadResponseTestCase: BaseTestCase {
         // Given
         let numberOfLines = 100
         let urlString = "https://httpbin.org/stream/\(numberOfLines)"
-
-        let destination = Alamofire.Request.suggestedDownloadDestination(
-            directory: searchPathDirectory,
-            domain: searchPathDomain
-        )
+        let destination = Alamofire.Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
 
         let expectation = self.expectation(description: "Download request should download data to file: \(urlString)")
 
@@ -345,7 +341,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         let searchPathDirectory: FileManager.SearchPathDirectory = .cachesDirectory
         let searchPathDomain: FileManager.SearchPathDomainMask = .userDomainMask
 
-        return Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+        return Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
     }()
 
     func testThatImmediatelyCancelledDownloadDoesNotHaveResumeDataAvailable() {
