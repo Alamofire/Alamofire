@@ -46,7 +46,7 @@ extension Request {
     ///
     /// - returns: The request.
     @discardableResult
-    public func validate(validation: Validation) -> Self {
+    public func validate(_ validation: Validation) -> Self {
         delegate.queue.addOperation {
             if
                 let response = self.response,
