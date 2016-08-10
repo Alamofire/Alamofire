@@ -246,7 +246,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 }
 
                 let request = MockRequest(session: session, task: dataTask)
-                delegate[request.delegate.task] = request.delegate
+                delegate[request.delegate.task] = request
 
                 if startRequestsImmediately {
                     request.resume()
