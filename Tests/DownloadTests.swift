@@ -33,10 +33,10 @@ class DownloadInitializationTestCase: BaseTestCase {
     func testDownloadClassMethodWithMethodURLAndDestination() {
         // Given
         let urlString = "https://httpbin.org/"
-        let destination = Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+        let destination = Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
 
         // When
-        let request = Alamofire.download(.GET, urlString, destination: destination)
+        let request = Alamofire.download(urlString, to: destination, withMethod: .get)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -48,10 +48,11 @@ class DownloadInitializationTestCase: BaseTestCase {
     func testDownloadClassMethodWithMethodURLHeadersAndDestination() {
         // Given
         let urlString = "https://httpbin.org/"
-        let destination = Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+        let headers = ["Authorization": "123456"]
+        let destination = Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
 
         // When
-        let request = Alamofire.download(.GET, urlString, headers: ["Authorization": "123456"], destination: destination)
+        let request = Alamofire.download(urlString, to: destination, withMethod: .get, headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -86,11 +87,7 @@ class DownloadResponseTestCase: BaseTestCase {
         // Given
         let numberOfLines = 100
         let urlString = "https://httpbin.org/stream/\(numberOfLines)"
-
-        let destination = Alamofire.Request.suggestedDownloadDestination(
-            directory: searchPathDirectory,
-            domain: searchPathDomain
-        )
+        let destination = Alamofire.Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
 
         let expectation = self.expectation(description: "Download request should download data to file: \(urlString)")
 
@@ -99,7 +96,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.download(.GET, urlString, destination: destination)
+        Alamofire.download(urlString, to: destination, withMethod: .get)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -181,9 +178,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var responseError: Error?
 
         // When
-        let download = Alamofire.download(.GET, urlString) { _, _ in
-            return fileURL
-        }
+        let download = Alamofire.download(urlString, to: { _, _ in fileURL }, withMethod: .get)
         download.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
             let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
             byteValues.append(bytes)
@@ -232,9 +227,7 @@ class DownloadResponseTestCase: BaseTestCase {
             }
         }
 
-        if let lastByteValue = byteValues.last,
-           let lastProgressValue = progressValues.last
-        {
+        if let lastByteValue = byteValues.last, let lastProgressValue = progressValues.last {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
 
@@ -269,7 +262,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.download(.GET, urlString, parameters: parameters, destination: destination)
+        Alamofire.download(urlString, to: destination, withMethod: .get, parameters: parameters)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -285,10 +278,11 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let data = try? Data(contentsOf: fileURL),
-           let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
-           let json = jsonObject as? [String: AnyObject],
-           let args = json["args"] as? [String: String]
+        if
+            let data = try? Data(contentsOf: fileURL),
+            let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
+            let json = jsonObject as? [String: AnyObject],
+            let args = json["args"] as? [String: String]
         {
             XCTAssertEqual(args["foo"], "bar", "foo parameter should equal bar")
         } else {
@@ -310,7 +304,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.download(.GET, urlString, headers: headers, destination: destination)
+        Alamofire.download(urlString, to: destination, withMethod: .get, headers: headers)
             .response { responseRequest, responseResponse, _, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -326,10 +320,11 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let data = try? Data(contentsOf: fileURL),
-           let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
-           let json = jsonObject as? [String: AnyObject],
-           let headers = json["headers"] as? [String: String]
+        if
+            let data = try? Data(contentsOf: fileURL),
+            let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
+            let json = jsonObject as? [String: AnyObject],
+            let headers = json["headers"] as? [String: String]
         {
             XCTAssertEqual(headers["Authorization"], "123456", "Authorization parameter should equal 123456")
         } else {
@@ -346,7 +341,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         let searchPathDirectory: FileManager.SearchPathDirectory = .cachesDirectory
         let searchPathDomain: FileManager.SearchPathDomainMask = .userDomainMask
 
-        return Request.suggestedDownloadDestination(directory: searchPathDirectory, domain: searchPathDomain)
+        return Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
     }()
 
     func testThatImmediatelyCancelledDownloadDoesNotHaveResumeDataAvailable() {
@@ -359,7 +354,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        let download = Alamofire.download(.GET, urlString, destination: destination)
+        let download = Alamofire.download(urlString, to: destination, withMethod: .get)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -392,7 +387,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        let download = Alamofire.download(.GET, urlString, destination: destination)
+        let download = Alamofire.download(urlString, to: destination, withMethod: .get)
         download.progress { _, _, _ in
             download.cancel()
         }
@@ -415,9 +410,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         XCTAssertNotNil(download.resumeData, "resume data should not be nil")
 
-        if let responseData = data as? Data,
-           let resumeData = download.resumeData
-        {
+        if let responseData = data as? Data, let resumeData = download.resumeData {
             XCTAssertEqual(responseData, resumeData, "response data should equal resume data")
         } else {
             XCTFail("response data or resume data was unexpectedly nil")
@@ -430,7 +423,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var response: Response<AnyObject, NSError>?
 
         // When
-        let download = Alamofire.download(.GET, urlString, destination: destination)
+        let download = Alamofire.download(urlString, to: destination, withMethod: .get)
         download.progress { _, _, _ in
             download.cancel()
         }

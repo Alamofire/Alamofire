@@ -52,10 +52,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         onto primaryViewController: UIViewController)
         -> Bool
     {
-        if let secondaryAsNavController = secondaryViewController as? UINavigationController {
-            if let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController {
-                return topAsDetailController.request == nil
-            }
+        if
+            let secondaryAsNavController = secondaryViewController as? UINavigationController,
+            let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController
+        {
+            return topAsDetailController.request == nil
         }
 
         return false

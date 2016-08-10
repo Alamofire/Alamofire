@@ -31,13 +31,13 @@ class ProxyURLProtocol: URLProtocol {
     // MARK: Properties
 
     struct PropertyKeys {
-        static let HandledByForwarderURLProtocol = "HandledByProxyURLProtocol"
+        static let handledByForwarderURLProtocol = "HandledByProxyURLProtocol"
     }
 
-    lazy var session: Foundation.URLSession = {
+    lazy var session: URLSession = {
         let configuration: URLSessionConfiguration = {
             let configuration = URLSessionConfiguration.ephemeral
-            configuration.httpAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
+            configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
 
             return configuration
         }()
@@ -52,7 +52,7 @@ class ProxyURLProtocol: URLProtocol {
     // MARK: Class Request Methods
 
     override class func canInit(with request: URLRequest) -> Bool {
-        if URLProtocol.property(forKey: PropertyKeys.HandledByForwarderURLProtocol, in: request) != nil {
+        if URLProtocol.property(forKey: PropertyKeys.handledByForwarderURLProtocol, in: request) != nil {
             return false
         }
 
@@ -78,7 +78,7 @@ class ProxyURLProtocol: URLProtocol {
         // Hopefully will be fixed in a future seed
         // URLProtocol had some API's that didnt make the value type conversion
         let mutableRequest = (request.urlRequest as NSURLRequest).mutableCopy() as! NSMutableURLRequest
-        URLProtocol.setProperty(true, forKey: PropertyKeys.HandledByForwarderURLProtocol, in: mutableRequest)
+        URLProtocol.setProperty(true, forKey: PropertyKeys.handledByForwarderURLProtocol, in: mutableRequest)
         activeTask = session.dataTask(with: mutableRequest as URLRequest)
         activeTask?.resume()
     }
@@ -94,11 +94,11 @@ extension ProxyURLProtocol: URLSessionDelegate {
 
     // MARK: NSURLSessionDelegate
 
-    func URLSession(_ session: Foundation.URLSession, dataTask: URLSessionDataTask, didReceiveData data: Data) {
+    func URLSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceiveData data: Data) {
         client?.urlProtocol(self, didLoad: data)
     }
 
-    func URLSession(_ session: Foundation.URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
+    func URLSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
         if let response = task.response {
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         }
@@ -110,7 +110,7 @@ extension ProxyURLProtocol: URLSessionDelegate {
 // MARK: -
 
 class URLProtocolTestCase: BaseTestCase {
-    var manager: Manager!
+    var manager: SessionManager!
 
     // MARK: Setup and Teardown
 
@@ -126,7 +126,7 @@ class URLProtocolTestCase: BaseTestCase {
                 return configuration
             }()
 
-            return Manager(configuration: configuration)
+            return SessionManager(configuration: configuration)
         }()
     }
 
@@ -134,22 +134,22 @@ class URLProtocolTestCase: BaseTestCase {
 
     func testThatURLProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() {
         // Given
-        let URLString = "https://httpbin.org/response-headers"
-        let URL = Foundation.URL(string: URLString)!
+        let urlString = "https://httpbin.org/response-headers"
+        let url = URL(string: urlString)!
 
-        var mutableURLRequest = URLRequest(url: URL)
-        mutableURLRequest.httpMethod = Method.GET.rawValue
-        mutableURLRequest.setValue("foobar", forHTTPHeaderField: "request-header")
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = HTTPMethod.get.rawValue
+        urlRequest.setValue("foobar", forHTTPHeaderField: "request-header")
 
         let expectation = self.expectation(description: "GET request should succeed")
 
-        var request: Foundation.URLRequest?
+        var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
         var error: NSError?
 
         // When
-        manager.request(mutableURLRequest)
+        manager.request(urlRequest)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
