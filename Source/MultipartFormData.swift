@@ -175,7 +175,7 @@ public class MultipartFormData {
     /// - parameter name:     The name to associate with the data in the `Content-Disposition` HTTP header.
     /// - parameter fileName: The filename to associate with the data in the `Content-Disposition` HTTP header.
     /// - parameter mimeType: The MIME type to associate with the data in the `Content-Type` HTTP header.
-    public func append(_ data: Data, withN name: String, fileName: String, mimeType: String) {
+    public func append(_ data: Data, withName name: String, fileName: String, mimeType: String) {
         let headers = contentHeaders(withName: name, fileName: fileName, mimeType: mimeType)
         let stream = InputStream(data: data)
         let length = UInt64(data.count)
