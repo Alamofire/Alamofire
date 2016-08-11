@@ -123,19 +123,18 @@ public class SessionDelegate: NSObject {
 
     // MARK: Properties
 
-    private var subdelegates: [Int: TaskDelegate] = [:]
-    private let subdelegateQueue = DispatchQueue(label: "Alamofire Sub Delegate Queue", attributes: .concurrent)
+    private var requests: [Int: Request] = [:]
+    private let lock = NSLock()
 
     /// Access the task delegate for the specified task in a thread-safe manner.
-    public subscript(task: URLSessionTask) -> TaskDelegate? {
+    public subscript(task: URLSessionTask) -> Request? {
         get {
-            var subdelegate: TaskDelegate?
-            subdelegateQueue.sync { subdelegate = self.subdelegates[task.taskIdentifier] }
-
-            return subdelegate
+            lock.lock() ; defer { lock.unlock() }
+            return requests[task.taskIdentifier]
         }
         set {
-            subdelegateQueue.async { self.subdelegates[task.taskIdentifier] = newValue }
+            lock.lock() ; defer { lock.unlock() }
+            requests[task.taskIdentifier] = newValue
         }
     }
 
@@ -296,7 +295,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         if let taskDidReceiveChallenge = taskDidReceiveChallenge {
             let result = taskDidReceiveChallenge(session, task, challenge)
             completionHandler(result.0, result.1)
-        } else if let delegate = self[task] {
+        } else if let delegate = self[task]?.delegate {
             delegate.urlSession(
                 session,
                 task: task,
@@ -325,7 +324,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         if let taskNeedNewBodyStream = taskNeedNewBodyStream {
             completionHandler(taskNeedNewBodyStream(session, task))
-        } else if let delegate = self[task] {
+        } else if let delegate = self[task]?.delegate {
             delegate.urlSession(session, task: task, needNewBodyStream: completionHandler)
         }
     }
@@ -346,7 +345,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     {
         if let taskDidSendBodyData = taskDidSendBodyData {
             taskDidSendBodyData(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
-        } else if let delegate = self[task] as? UploadTaskDelegate {
+        } else if let delegate = self[task]?.delegate as? UploadTaskDelegate {
             delegate.URLSession(
                 session,
                 task: task,
@@ -365,7 +364,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let taskDidComplete = taskDidComplete {
             taskDidComplete(session, task, error)
-        } else if let delegate = self[task] {
+        } else if let delegate = self[task]?.delegate {
             delegate.urlSession(session, task: task, didCompleteWithError: error)
         }
 
@@ -423,8 +422,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         if let dataTaskDidBecomeDownloadTask = dataTaskDidBecomeDownloadTask {
             dataTaskDidBecomeDownloadTask(session, dataTask, downloadTask)
         } else {
-            let downloadDelegate = DownloadTaskDelegate(task: downloadTask)
-            self[downloadTask] = downloadDelegate
+            self[downloadTask]?.delegate = DownloadTaskDelegate(task: downloadTask)
         }
     }
 
@@ -436,7 +434,7 @@ extension SessionDelegate: URLSessionDataDelegate {
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         if let dataTaskDidReceiveData = dataTaskDidReceiveData {
             dataTaskDidReceiveData(session, dataTask, data)
-        } else if let delegate = self[dataTask] as? DataTaskDelegate {
+        } else if let delegate = self[dataTask]?.delegate as? DataTaskDelegate {
             delegate.urlSession(session, dataTask: dataTask, didReceive: data)
         }
     }
@@ -465,7 +463,7 @@ extension SessionDelegate: URLSessionDataDelegate {
 
         if let dataTaskWillCacheResponse = dataTaskWillCacheResponse {
             completionHandler(dataTaskWillCacheResponse(session, dataTask, proposedResponse))
-        } else if let delegate = self[dataTask] as? DataTaskDelegate {
+        } else if let delegate = self[dataTask]?.delegate as? DataTaskDelegate {
             delegate.urlSession(
                 session,
                 dataTask: dataTask,
@@ -495,7 +493,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
     {
         if let downloadTaskDidFinishDownloadingToURL = downloadTaskDidFinishDownloadingToURL {
             downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
-        } else if let delegate = self[downloadTask] as? DownloadTaskDelegate {
+        } else if let delegate = self[downloadTask]?.delegate as? DownloadTaskDelegate {
             delegate.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location)
         }
     }
@@ -519,7 +517,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
     {
         if let downloadTaskDidWriteData = downloadTaskDidWriteData {
             downloadTaskDidWriteData(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
-        } else if let delegate = self[downloadTask] as? DownloadTaskDelegate {
+        } else if let delegate = self[downloadTask]?.delegate as? DownloadTaskDelegate {
             delegate.urlSession(
                 session,
                 downloadTask: downloadTask,
@@ -548,7 +546,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
     {
         if let downloadTaskDidResumeAtOffset = downloadTaskDidResumeAtOffset {
             downloadTaskDidResumeAtOffset(session, downloadTask, fileOffset, expectedTotalBytes)
-        } else if let delegate = self[downloadTask] as? DownloadTaskDelegate {
+        } else if let delegate = self[downloadTask]?.delegate as? DownloadTaskDelegate {
             delegate.urlSession(
                 session,
                 downloadTask: downloadTask,
