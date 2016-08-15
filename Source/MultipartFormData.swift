@@ -397,6 +397,7 @@ public class MultipartFormData {
         }
 
         outputStream.open()
+        defer { outputStream.close() }
 
         self.bodyParts.first?.hasInitialBoundary = true
         self.bodyParts.last?.hasFinalBoundary = true
@@ -404,8 +405,6 @@ public class MultipartFormData {
         for bodyPart in self.bodyParts {
             try write(bodyPart, to: outputStream)
         }
-
-        outputStream.close()
     }
 
     // MARK: - Private - Body Part Encoding

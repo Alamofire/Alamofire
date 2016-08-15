@@ -23,6 +23,47 @@
 //
 
 import Foundation
+//
+//public struct AFError: Error {
+//
+//    public enum Code: Int {
+//        case inputStreamReadFailed
+//        case outputStreamWriteFailed
+//        case contentTypeValidationFailed
+//        case statusCodeValidationFailed
+//        case dataSerializationFailed
+//        case stringSerializationFailed
+//        case jsonSerializationFailed
+//        case propertyListSerializationFailed
+//    }
+//    
+//    public static let inputStreamReadFailed: Code = .inputStreamReadFailed
+//    public static let outputStreamWriteFailed: Code = .outputStreamWriteFailed
+//    public static let contentTypeValidationFailed: Code = .contentTypeValidationFailed
+//    public static let statusCodeValidationFailed: Code = .statusCodeValidationFailed
+//    public static let dataSerializationFailed: Code = .dataSerializationFailed
+//    public static let stringSerializationFailed: Code = .stringSerializationFailed
+//    public static let jsonSerializationFailed: Code = .jsonSerializationFailed
+//    public static let propertyListSerializationFailed: Code = .propertyListSerializationFailed
+//    
+//}
+
+public enum AFError: Error {
+    public enum OutputStreamError: Error {
+        case failedToCreateStream
+        case fileAlreadyExists(atURL: URL)
+        case invalidFile(atURL: URL)
+    }
+    
+    case inputStreamReadFailed
+    case outputStreamWriteFailed(error: OutputStreamError)
+    case contentTypeValidationFailed(expected: String, actual: String)
+    case statusCodeValidationFailed(code: Int)
+    case dataSerializationFailed
+    case stringSerializationFailed
+    case jsonSerializationFailed
+    case propertyListSerializationFailed
+}
 
 /// The domain used for creating all Alamofire errors.
 public let ErrorDomain = "org.alamofire.error"

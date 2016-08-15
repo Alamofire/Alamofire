@@ -136,7 +136,7 @@ public class SessionManager {
     public let delegate: SessionDelegate
 
     /// Whether to start requests immediately after being constructed. `true` by default.
-    public var startRequestsImmediately: Bool = true
+    public var startRequestsImmediately = true
 
     /// The background completion handler closure provided by the UIApplicationDelegate
     /// `application:handleEventsForBackgroundURLSession:completionHandler:` method. By setting the background
