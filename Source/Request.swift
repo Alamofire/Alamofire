@@ -326,7 +326,7 @@ extension Request: CustomDebugStringConvertible {
                 let cookieStorage = session.configuration.httpCookieStorage,
                 let cookies = cookieStorage.cookies(for: URL), !cookies.isEmpty
             {
-                let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value ?? String());" }
+                let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value );" }
                 components.append("-b \"\(string.substring(to: string.characters.index(before: string.endIndex)))\"")
             }
         }
@@ -334,14 +334,14 @@ extension Request: CustomDebugStringConvertible {
         var headers: [NSObject: AnyObject] = [:]
 
         if let additionalHeaders = session.configuration.httpAdditionalHeaders {
-            for (field, value) in additionalHeaders where field != "Cookie" {
-                headers[field] = value
+            for (field, value) in additionalHeaders where field as? String != "Cookie" {
+                headers[field as NSObject] = value as AnyObject
             }
         }
 
         if let headerFields = request.allHTTPHeaderFields {
             for (field, value) in headerFields where field != "Cookie" {
-                headers[field] = value
+                headers[field as NSObject] = value as AnyObject
             }
         }
 

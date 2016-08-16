@@ -171,7 +171,7 @@ class CacheTestCase: BaseTestCase {
         var urlRequest = URLRequest(url: url, cachePolicy: cachePolicy, timeoutInterval: requestTimeout)
         urlRequest.httpMethod = HTTPMethod.get.rawValue
 
-        return ParameterEncoding.url.encode(urlRequest, parameters: parameters).0
+        return ParameterEncoding.url.encode(urlRequest, parameters: parameters as [String : AnyObject]?).0
     }
 
     @discardableResult
@@ -179,7 +179,7 @@ class CacheTestCase: BaseTestCase {
         cacheControl: String,
         cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy,
         queue: DispatchQueue = DispatchQueue.main,
-        completion: (URLRequest?, HTTPURLResponse?) -> Void)
+        completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
         -> URLRequest
     {
         let urlRequest = self.urlRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)

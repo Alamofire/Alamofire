@@ -387,9 +387,9 @@ public class MultipartFormData {
             throw NSError(domain: NSURLErrorDomain, code: NSURLErrorBadURL, failureReason: failureReason)
         }
 
-        let outputStream: NSOutputStream
+        let outputStream: OutputStream
 
-        if let possibleOutputStream = NSOutputStream(url: fileURL, append: false) {
+        if let possibleOutputStream = OutputStream(url: fileURL, append: false) {
             outputStream = possibleOutputStream
         } else {
             let failureReason = "Failed to create an output stream with the given URL: \(fileURL)"
@@ -478,24 +478,24 @@ public class MultipartFormData {
 
     // MARK: - Private - Writing Body Part to Output Stream
 
-    private func write(_ bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
+    private func write(_ bodyPart: BodyPart, to outputStream: OutputStream) throws {
         try writeInitialBoundaryData(for: bodyPart, to: outputStream)
         try writeHeaderData(for: bodyPart, to: outputStream)
         try writeBodyStream(for: bodyPart, to: outputStream)
         try writeFinalBoundaryData(for: bodyPart, to: outputStream)
     }
 
-    private func writeInitialBoundaryData(for bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
+    private func writeInitialBoundaryData(for bodyPart: BodyPart, to outputStream: OutputStream) throws {
         let initialData = bodyPart.hasInitialBoundary ? initialBoundaryData() : encapsulatedBoundaryData()
         return try write(initialData, to: outputStream)
     }
 
-    private func writeHeaderData(for bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
+    private func writeHeaderData(for bodyPart: BodyPart, to outputStream: OutputStream) throws {
         let headerData = encodeHeaders(for: bodyPart)
         return try write(headerData, to: outputStream)
     }
 
-    private func writeBodyStream(for bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
+    private func writeBodyStream(for bodyPart: BodyPart, to outputStream: OutputStream) throws {
         let inputStream = bodyPart.bodyStream
         inputStream.open()
 
@@ -524,7 +524,7 @@ public class MultipartFormData {
         inputStream.close()
     }
 
-    private func writeFinalBoundaryData(for bodyPart: BodyPart, to outputStream: NSOutputStream) throws {
+    private func writeFinalBoundaryData(for bodyPart: BodyPart, to outputStream: OutputStream) throws {
         if bodyPart.hasFinalBoundary {
             return try write(finalBoundaryData(), to: outputStream)
         }
@@ -532,14 +532,14 @@ public class MultipartFormData {
 
     // MARK: - Private - Writing Buffered Data to Output Stream
 
-    private func write(_ data: Data, to outputStream: NSOutputStream) throws {
+    private func write(_ data: Data, to outputStream: OutputStream) throws {
         var buffer = [UInt8](repeating: 0, count: data.count)
         (data as NSData).getBytes(&buffer, length: data.count)
 
         return try write(&buffer, to: outputStream)
     }
 
-    private func write(_ buffer: inout [UInt8], to outputStream: NSOutputStream) throws {
+    private func write(_ buffer: inout [UInt8], to outputStream: OutputStream) throws {
         var bytesToWrite = buffer.count
 
         while bytesToWrite > 0 {
@@ -570,7 +570,7 @@ public class MultipartFormData {
 
     private func mimeType(forPathExtension pathExtension: String) -> String {
         if
-            let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension, nil)?.takeRetainedValue(),
+            let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as CFString, nil)?.takeRetainedValue(),
             let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue()
         {
             return contentType as String
