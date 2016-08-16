@@ -31,7 +31,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 
 ## Requirements
 
-- iOS 9.0+ / Mac OS X 10.11+ / tvOS 9.0+ / watchOS 2.0+
+- iOS 8.0+ / Mac OS X 10.11+ / tvOS 9.0+ / watchOS 2.0+
 - Xcode 8.0 beta 3+
 
 ## Migration Guides

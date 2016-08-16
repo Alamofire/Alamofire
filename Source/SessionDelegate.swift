@@ -106,18 +106,61 @@ public class SessionDelegate: NSObject {
     // MARK: URLSessionStreamDelegate Overrides
 
 #if !os(watchOS)
-
+    /// Private storage for streamTaskReadClosed since stored properties are not allowed to be marked @available
+    private var _streamTaskReadClosed: Any?
+    
     /// Overrides default behavior for NSURLSessionStreamDelegate method `URLSession:readClosedForStreamTask:`.
-    public var streamTaskReadClosed: ((URLSession, URLSessionStreamTask) -> Void)?
-
+    @available(iOSApplicationExtension 9.0, *)
+    public var streamTaskReadClosed: ((URLSession, URLSessionStreamTask) -> Void)? {
+        get {
+            return _streamTaskReadClosed as? ((URLSession, URLSessionStreamTask) -> Void)
+        }
+        set {
+            _streamTaskReadClosed = newValue
+        }
+    }
+    
+    /// Private storage for streamTaskWriteClosed since stored properties are not allowed to be marked @available
+    private var _streamTaskWriteClosed: Any?
+    
     /// Overrides default behavior for NSURLSessionStreamDelegate method `URLSession:writeClosedForStreamTask:`.
-    public var streamTaskWriteClosed: ((URLSession, URLSessionStreamTask) -> Void)?
-
+    @available(iOSApplicationExtension 9.0, *)
+    public var streamTaskWriteClosed: ((URLSession, URLSessionStreamTask) -> Void)? {
+        get {
+            return _streamTaskWriteClosed as? ((URLSession, URLSessionStreamTask) -> Void)
+        }
+        set {
+            _streamTaskWriteClosed = newValue
+        }
+    }
+    
+    /// Private storage for streamTaskBetterRouteDiscovered since stored properties are not allowed to be marked @available
+    private var _streamTaskBetterRouteDiscovered: Any?
+    
     /// Overrides default behavior for NSURLSessionStreamDelegate method `URLSession:betterRouteDiscoveredForStreamTask:`.
-    public var streamTaskBetterRouteDiscovered: ((URLSession, URLSessionStreamTask) -> Void)?
+    @available(iOSApplicationExtension 9.0, *)
+    public var streamTaskBetterRouteDiscovered: ((URLSession, URLSessionStreamTask) -> Void)? {
+        get {
+            return _streamTaskBetterRouteDiscovered as? ((URLSession, URLSessionStreamTask) -> Void)
+        }
+        set {
+            _streamTaskBetterRouteDiscovered = newValue
+        }
+    }
 
+    /// Private storage for streamTaskDidBecomeInputStream since stored properties are not allowed to be marked @available
+    public var _streamTaskDidBecomeInputStream: Any?
+    
     /// Overrides default behavior for NSURLSessionStreamDelegate method `URLSession:streamTask:didBecomeInputStream:outputStream:`.
-    public var streamTaskDidBecomeInputStream: ((URLSession, URLSessionStreamTask, InputStream, OutputStream) -> Void)?
+    @available(iOSApplicationExtension 9.0, *)
+    public var streamTaskDidBecomeInputStream: ((URLSession, URLSessionStreamTask, InputStream, OutputStream) -> Void)? {
+        get {
+            return _streamTaskDidBecomeInputStream as? ((URLSession, URLSessionStreamTask, InputStream, OutputStream) -> Void)
+        }
+        set {
+            _streamTaskDidBecomeInputStream = newValue
+        }
+    }
 
 #endif
 
@@ -561,6 +604,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
 
 #if !os(watchOS)
 
+@available(iOSApplicationExtension 9.0, *)
 extension SessionDelegate: URLSessionStreamDelegate {
     /// Tells the delegate that the read side of the connection has been closed.
     ///
