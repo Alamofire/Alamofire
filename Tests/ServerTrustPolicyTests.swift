@@ -294,7 +294,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString?)]
+        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString)]
         SecTrustSetPolicies(trust, policies as CFTypeRef)
 
         // Then
@@ -307,7 +307,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString?)]
+        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString)]
         SecTrustSetPolicies(trust, policies as CFTypeRef)
 
         // Then
@@ -320,7 +320,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString?)]
+        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString)]
         SecTrustSetPolicies(trust, policies as CFTypeRef)
 
         // Then
@@ -333,7 +333,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString?)]
+        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString)]
         SecTrustSetPolicies(trust, policies as CFTypeRef)
 
         // Then
@@ -346,7 +346,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString?)]
+        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString)]
         SecTrustSetPolicies(trust, policies as CFTypeRef)
 
         // Then
@@ -359,7 +359,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString?)]
+        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString)]
         SecTrustSetPolicies(trust, policies as CFTypeRef)
 
         // Then
@@ -373,9 +373,9 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
 
         // When
         let policies = [
-            SecPolicyCreateSSL(true, "test.alamofire.org" as CFString?),
-            SecPolicyCreateSSL(true, "blog.alamofire.org" as CFString?),
-            SecPolicyCreateSSL(true, "www.alamofire.org" as CFString?)
+            SecPolicyCreateSSL(true, "test.alamofire.org" as CFString),
+            SecPolicyCreateSSL(true, "blog.alamofire.org" as CFString),
+            SecPolicyCreateSSL(true, "www.alamofire.org" as CFString)
         ]
         SecTrustSetPolicies(trust, policies as CFTypeRef)
 
@@ -402,7 +402,7 @@ class ServerTrustPolicyExplorationSSLPolicyValidationTestCase: ServerTrustPolicy
         setRootCertificateAsLoneAnchorCertificateForTrust(trust)
 
         // When
-        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString?)]
+        let policies = [SecPolicyCreateSSL(true, "test.alamofire.org" as CFString)]
         SecTrustSetPolicies(trust, policies as CFTypeRef)
 
         // Then
