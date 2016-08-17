@@ -503,7 +503,7 @@ public class SessionManager {
     /// - parameter headers:                 The HTTP headers. `nil` by default.
     /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
     public func upload(
-        multipartFormData: (MultipartFormData) -> Void,
+        multipartFormData: @escaping (MultipartFormData) -> Void,
         usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
         to urlString: URLStringConvertible,
         withMethod method: HTTPMethod,
@@ -544,7 +544,7 @@ public class SessionManager {
     /// - parameter urlRequest:              The URL request.
     /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
     public func upload(
-        multipartFormData: (MultipartFormData) -> Void,
+        multipartFormData: @escaping (MultipartFormData) -> Void,
         usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
         with urlRequest: URLRequestConvertible,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
