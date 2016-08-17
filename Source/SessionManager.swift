@@ -224,7 +224,7 @@ open class SessionManager {
     open func request(
         _ urlString: URLStringConvertible,
         withMethod method: HTTPMethod,
-        parameters: [String: AnyObject]? = nil,
+        parameters: [String: Any]? = nil,
         encoding: ParameterEncoding = .url,
         headers: [String: String]? = nil)
         -> Request
@@ -278,7 +278,7 @@ open class SessionManager {
         _ urlString: URLStringConvertible,
         to destination: Request.DownloadFileDestination,
         withMethod method: HTTPMethod,
-        parameters: [String: AnyObject]? = nil,
+        parameters: [String: Any]? = nil,
         encoding: ParameterEncoding = .url,
         headers: [String: String]? = nil)
         -> Request

@@ -61,7 +61,7 @@ class ProxyURLProtocol: URLProtocol {
 
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
         if let headers = request.allHTTPHeaderFields {
-            return ParameterEncoding.url.encode(request, parameters: headers as [String : AnyObject]?).0
+            return ParameterEncoding.url.encode(request, parameters: headers).0
         }
 
         return request

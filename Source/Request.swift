@@ -331,12 +331,10 @@ extension Request: CustomDebugStringConvertible {
             }
         }
 
-        var headers: [String: String] = [:]
+        var headers: [AnyHashable: Any] = [:]
 
         if let additionalHeaders = session.configuration.httpAdditionalHeaders {
-            for (field, value) in additionalHeaders {
-                guard let field = field as? String, let value = value as? String, field != "Cookie" else { continue }
-
+            for (field, value) in additionalHeaders where field != AnyHashable("Cookie") {
                 headers[field] = value
             }
         }

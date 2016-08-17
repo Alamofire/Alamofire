@@ -252,7 +252,7 @@ class DownloadResponseTestCase: BaseTestCase {
         // Given
         let fileURL = randomCachesFileURL
         let urlString = "https://httpbin.org/get"
-        let parameters = ["foo": "bar" as AnyObject]
+        let parameters = ["foo": "bar"]
         let destination: Request.DownloadFileDestination = { _, _ in fileURL }
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
@@ -281,7 +281,7 @@ class DownloadResponseTestCase: BaseTestCase {
         if
             let data = try? Data(contentsOf: fileURL),
             let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
-            let json = jsonObject as? [String: AnyObject],
+            let json = jsonObject as? [String: Any],
             let args = json["args"] as? [String: String]
         {
             XCTAssertEqual(args["foo"], "bar", "foo parameter should equal bar")
@@ -323,7 +323,7 @@ class DownloadResponseTestCase: BaseTestCase {
         if
             let data = try? Data(contentsOf: fileURL),
             let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
-            let json = jsonObject as? [String: AnyObject],
+            let json = jsonObject as? [String: Any],
             let headers = json["headers"] as? [String: String]
         {
             XCTAssertEqual(headers["Authorization"], "123456", "Authorization parameter should equal 123456")

@@ -111,7 +111,7 @@ extension URLRequest {
 public func request(
     _ urlString: URLStringConvertible,
     withMethod method: HTTPMethod,
-    parameters: [String: AnyObject]? = nil,
+    parameters: [String: Any]? = nil,
     encoding: ParameterEncoding = .url,
     headers: [String: String]? = nil)
     -> Request
@@ -156,7 +156,7 @@ public func download(
     _ urlString: URLStringConvertible,
     to destination: Request.DownloadFileDestination,
     withMethod method: HTTPMethod,
-    parameters: [String: AnyObject]? = nil,
+    parameters: [String: Any]? = nil,
     encoding: ParameterEncoding = .url,
     headers: [String: String]? = nil)
     -> Request

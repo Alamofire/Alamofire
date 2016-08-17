@@ -185,7 +185,7 @@ extension SessionDelegate: URLSessionDelegate {
     /// - parameter session: The session object that was invalidated.
     /// - parameter error:   The error that caused invalidation, or nil if the invalidation was explicit.
     open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        sessionDidBecomeInvalidWithError?(session, error as NSError?)
+        sessionDidBecomeInvalidWithError?(session, error as? NSError)
     }
 
     /// Requests credentials from the delegate in response to a session-level authentication request from the
@@ -363,9 +363,9 @@ extension SessionDelegate: URLSessionTaskDelegate {
     /// - parameter error:   If an error occurred, an error object indicating how the transfer failed, otherwise nil.
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let taskDidComplete = taskDidComplete {
-            taskDidComplete(session, task, error as NSError?)
+            taskDidComplete(session, task, error as? NSError)
         } else if let delegate = self[task]?.delegate {
-            delegate.urlSession(session, task: task, didCompleteWithError: error as NSError?)
+            delegate.urlSession(session, task: task, didCompleteWithError: error as? NSError)
         }
 
         NotificationCenter.default.post(

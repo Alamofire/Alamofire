@@ -128,8 +128,8 @@ public enum ServerTrustPolicy {
 
         for path in paths {
             if
-                let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)),
-                let certificate = SecCertificateCreateWithData(nil, certificateData as CFData)
+                let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)) as CFData,
+                let certificate = SecCertificateCreateWithData(nil, certificateData)
             {
                 certificates.append(certificate)
             }

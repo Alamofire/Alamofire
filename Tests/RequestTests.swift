@@ -46,7 +46,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
 
         // When
-        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
+        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
 
         // Then
         XCTAssertNotNil(request.request, "request URL request should not be nil")
@@ -62,7 +62,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let headers = ["Authorization": "123456"]
 
         // When
-        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject], headers: headers)
+        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"], headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -92,7 +92,7 @@ class RequestResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -289,7 +289,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: Response<Any, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .post, parameters: parameters as [String: AnyObject])
+        Alamofire.request(urlString, withMethod: .post, parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -345,7 +345,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: Response<Any, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .post, parameters: parameters as [String: AnyObject])
+        Alamofire.request(urlString, withMethod: .post, parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -573,7 +573,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         ]
 
         // When
-        let request = manager.request(urlString, withMethod: .post, parameters: parameters as [String : AnyObject]?, encoding: .json)
+        let request = manager.request(urlString, withMethod: .post, parameters: parameters, encoding: .json)
         let components = cURLCommandComponents(for: request)
 
         // Then
