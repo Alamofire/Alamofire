@@ -210,7 +210,7 @@ public class SessionManager {
 
     // MARK: - Data Request
 
-    /// Creates a data `Request` to retrieve the contents of a URL based on the specified `urlString`, `method`, 
+    /// Creates a data `Request` to retrieve the contents of a URL based on the specified `urlString`, `method`,
     /// `parameters`, `encoding` and `headers`.
     ///
     /// - parameter urlString:  The URL string.
@@ -260,7 +260,7 @@ public class SessionManager {
 
     // MARK: URL Request
 
-    /// Creates a download `Request` to retrieve the contents of a URL based on the specified `urlString`, `method`, 
+    /// Creates a download `Request` to retrieve the contents of a URL based on the specified `urlString`, `method`,
     /// `parameters`, `encoding`, `headers` and save them to the `destination`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.

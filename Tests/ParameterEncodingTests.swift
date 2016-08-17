@@ -616,7 +616,7 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
                     options: PropertyListSerialization.MutabilityOptions(),
                     format: nil
                 ) as AnyObject
-                
+
                 XCTAssertTrue(plist.value(forKey: "date") is NSDate, "date is not NSDate")
                 XCTAssertTrue(plist.value(forKey: "data") is NSData, "data is not NSData")
             } catch {

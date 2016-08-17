@@ -336,7 +336,7 @@ extension Request: CustomDebugStringConvertible {
         if let additionalHeaders = session.configuration.httpAdditionalHeaders {
             for (field, value) in additionalHeaders {
                 guard let field = field as? String, let value = value as? String, field != "Cookie" else { continue }
-                
+
                 headers[field] = value
             }
         }
