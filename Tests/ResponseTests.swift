@@ -240,7 +240,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var response: Response<Any, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .post, parameters: ["foo": "bar" as AnyObject])
+        Alamofire.request(urlString, withMethod: .post, parameters: ["foo": "bar"])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
