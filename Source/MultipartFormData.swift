@@ -42,7 +42,7 @@ import CoreServices
 /// - https://www.ietf.org/rfc/rfc2388.txt
 /// - https://www.ietf.org/rfc/rfc2045.txt
 /// - https://www.w3.org/TR/html401/interact/forms.html#h-17.13
-public class MultipartFormData {
+open class MultipartFormData {
 
     // MARK: - Helper Types
 
@@ -92,7 +92,7 @@ public class MultipartFormData {
     // MARK: - Properties
 
     /// The `Content-Type` header value containing the boundary used to generate the `multipart/form-data`.
-    public var contentType: String { return "multipart/form-data; boundary=\(boundary)" }
+    open var contentType: String { return "multipart/form-data; boundary=\(boundary)" }
 
     /// The content length of all body parts used to generate the `multipart/form-data` not including the boundaries.
     public var contentLength: UInt64 { return bodyParts.reduce(0) { $0 + $1.bodyContentLength } }

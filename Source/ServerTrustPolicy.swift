@@ -25,9 +25,9 @@
 import Foundation
 
 /// Responsible for managing the mapping of `ServerTrustPolicy` objects to a given host.
-public class ServerTrustPolicyManager {
+open class ServerTrustPolicyManager {
     /// The dictionary of policies mapped to a particular host.
-    public let policies: [String: ServerTrustPolicy]
+    open let policies: [String: ServerTrustPolicy]
 
     /// Initializes the `ServerTrustPolicyManager` instance with the given policies.
     ///
@@ -51,7 +51,7 @@ public class ServerTrustPolicyManager {
     /// - parameter host: The host to use when searching for a matching policy.
     ///
     /// - returns: The server trust policy for the given host if found.
-    public func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
+    open func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
         return policies[host]
     }
 }
