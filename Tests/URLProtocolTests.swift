@@ -168,8 +168,8 @@ class URLProtocolTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
 
         if let headers = response?.allHeaderFields {
-            XCTAssertEqual(headers["request-header"] as! String, "foobar")
-            XCTAssertEqual(headers["session-configuration-header"] as! String, "foo")
+            XCTAssertEqual(headers["request-header"] as? String, "foobar")
+            XCTAssertEqual(headers["session-configuration-header"] as? String, "foo")
         } else {
             XCTFail("headers should not be nil")
         }
