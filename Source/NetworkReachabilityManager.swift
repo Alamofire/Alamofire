@@ -127,13 +127,11 @@ public class NetworkReachabilityManager {
         address.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
         address.sin_family = sa_family_t(AF_INET)
 
-        let possibleReachability = withUnsafePointer(to: &address) { pointer in
+        guard let reachability = withUnsafePointer(to: &address, ({ pointer in
             return pointer.withMemoryRebound(to: sockaddr.self, capacity: MemoryLayout<sockaddr>.size) {
                 return SCNetworkReachabilityCreateWithAddress(nil, $0)
             }
-        }
-
-        guard let reachability = possibleReachability else { return nil }
+        })) else { return nil }
 
         self.init(reachability: reachability)
     }
