@@ -231,7 +231,7 @@ class DataTaskDelegate: TaskDelegate, URLSessionDataDelegate {
             } else {
                 mutableData.append(data)
             }
-            
+
             let bytesReceived = Int64(data.count)
             totalBytesReceived += bytesReceived
             let totalBytesExpected = dataTask.response?.expectedContentLength ?? NSURLSessionTransferSizeUnknown
