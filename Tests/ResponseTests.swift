@@ -35,7 +35,7 @@ class ResponseDataTestCase: BaseTestCase {
         var response: Response<Data, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
             .responseData { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -62,7 +62,7 @@ class ResponseDataTestCase: BaseTestCase {
         var response: Response<Data, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
             .responseData { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -93,7 +93,7 @@ class ResponseStringTestCase: BaseTestCase {
         var response: Response<String, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
             .responseString { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -120,7 +120,7 @@ class ResponseStringTestCase: BaseTestCase {
         var response: Response<String, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
             .responseString { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -148,10 +148,10 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<AnyObject, NSError>?
+        var response: Response<Any, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -175,10 +175,10 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: Response<AnyObject, NSError>?
+        var response: Response<Any, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -202,10 +202,10 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<AnyObject, NSError>?
+        var response: Response<Any, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -222,7 +222,7 @@ class ResponseJSONTestCase: BaseTestCase {
 
             // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
             // - https://openradar.appspot.com/radar?id=5517037090635776
-            if let args = response.result.value?["args" as NSString] as? [String: String] {
+            if let args = (response.result.value as AnyObject?)?["args" as NSString] as? [String: String] {
                 XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
             } else {
                 XCTFail("args should not be nil")
@@ -237,10 +237,10 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<AnyObject, NSError>?
+        var response: Response<Any, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .post, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .post, parameters: ["foo": "bar" as AnyObject])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -257,7 +257,7 @@ class ResponseJSONTestCase: BaseTestCase {
 
             // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
             // - https://openradar.appspot.com/radar?id=5517037090635776
-            if let form = response.result.value?["form" as NSString] as? [String: String] {
+            if let form = (response.result.value as AnyObject?)?["form" as NSString] as? [String: String] {
                 XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
             } else {
                 XCTFail("form should not be nil")

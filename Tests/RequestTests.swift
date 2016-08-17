@@ -46,7 +46,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
 
         // When
-        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
 
         // Then
         XCTAssertNotNil(request.request, "request URL request should not be nil")
@@ -62,7 +62,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let headers = ["Authorization": "123456"]
 
         // When
-        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"], headers: headers)
+        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject], headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -92,7 +92,7 @@ class RequestResponseTestCase: BaseTestCase {
         var error: NSError?
 
         // When
-        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar" as AnyObject])
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
@@ -286,10 +286,10 @@ class RequestResponseTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<AnyObject, NSError>?
+        var response: Response<Any, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .post, parameters: parameters)
+        Alamofire.request(urlString, withMethod: .post, parameters: parameters as [String: AnyObject])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -303,7 +303,7 @@ class RequestResponseTestCase: BaseTestCase {
             XCTAssertNotNil(response.response, "response should not be nil")
             XCTAssertNotNil(response.data, "data should not be nil")
 
-            if let json = response.result.value as? [String: AnyObject], let form = json["form"] as? [String: String] {
+            if let json = response.result.value as? [String: Any], let form = json["form"] as? [String: String] {
                 XCTAssertEqual(form["french"], parameters["french"], "french parameter value should match form value")
                 XCTAssertEqual(form["japanese"], parameters["japanese"], "japanese parameter value should match form value")
                 XCTAssertEqual(form["arabic"], parameters["arabic"], "arabic parameter value should match form value")
@@ -342,10 +342,10 @@ class RequestResponseTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<AnyObject, NSError>?
+        var response: Response<Any, NSError>?
 
         // When
-        Alamofire.request(urlString, withMethod: .post, parameters: parameters)
+        Alamofire.request(urlString, withMethod: .post, parameters: parameters as [String: AnyObject])
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -360,7 +360,7 @@ class RequestResponseTestCase: BaseTestCase {
             XCTAssertNotNil(response.data, "data should not be nil")
             XCTAssertTrue(response.result.isSuccess, "result should be success")
 
-            if let json = response.result.value as? [String: AnyObject], let form = json["form"] as? [String: String] {
+            if let json = response.result.value as? [String: Any], let form = json["form"] as? [String: String] {
                 XCTAssertEqual(form["email"], parameters["email"], "email parameter value should match form value")
                 XCTAssertEqual(form["png_image"], parameters["png_image"], "png_image parameter value should match form value")
                 XCTAssertEqual(form["jpeg_image"], parameters["jpeg_image"], "jpeg_image parameter value should match form value")
@@ -376,7 +376,7 @@ class RequestResponseTestCase: BaseTestCase {
 // MARK: -
 
 extension Request {
-    private func preValidate(operation: (Void) -> Void) -> Self {
+    fileprivate func preValidate(operation: @escaping (Void) -> Void) -> Self {
         delegate.queue.addOperation {
             operation()
         }
@@ -384,7 +384,7 @@ extension Request {
         return self
     }
 
-    private func postValidate(operation: (Void) -> Void) -> Self {
+    fileprivate func postValidate(operation: @escaping (Void) -> Void) -> Self {
         delegate.queue.addOperation {
             operation()
         }
@@ -573,7 +573,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         ]
 
         // When
-        let request = manager.request(urlString, withMethod: .post, parameters: parameters, encoding: .json)
+        let request = manager.request(urlString, withMethod: .post, parameters: parameters as [String : AnyObject]?, encoding: .json)
         let components = cURLCommandComponents(for: request)
 
         // Then
