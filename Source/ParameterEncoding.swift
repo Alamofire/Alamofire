@@ -70,7 +70,7 @@ public enum ParameterEncoding {
     case urlEncodedInURL
     case json
     case propertyList(PropertyListSerialization.PropertyListFormat, PropertyListSerialization.WriteOptions)
-    case custom((URLRequestConvertible, [String: AnyObject]?) -> (URLRequest, NSError?))
+    case custom((URLRequestConvertible, [String: Any]?) -> (URLRequest, NSError?))
 
     /// Creates a URL request by encoding parameters and applying them onto an existing request.
     ///
@@ -81,7 +81,7 @@ public enum ParameterEncoding {
     ///            if any.
     public func encode(
         _ urlRequest: URLRequestConvertible,
-        parameters: [String: AnyObject]?)
+        parameters: [String: Any]?)
         -> (URLRequest, NSError?)
     {
         var urlRequest = urlRequest.urlRequest
@@ -92,7 +92,7 @@ public enum ParameterEncoding {
 
         switch self {
         case .url, .urlEncodedInURL:
-            func query(_ parameters: [String: AnyObject]) -> String {
+            func query(_ parameters: [String: Any]) -> String {
                 var components: [(String, String)] = []
 
                 for key in parameters.keys.sorted(by: <) {
@@ -100,7 +100,7 @@ public enum ParameterEncoding {
                     components += queryComponents(fromKey: key, value: value)
                 }
 
-                return (components.map { "\($0)=\($1)" } as [String]).joined(separator: "&")
+                return components.map { "\($0)=\($1)" }.joined(separator: "&")
             }
 
             func encodesParametersInURL(with method: HTTPMethod) -> Bool {
@@ -183,17 +183,19 @@ public enum ParameterEncoding {
     /// - parameter value: The value of the query component.
     ///
     /// - returns: The percent-escaped, URL encoded query string components.
-    public func queryComponents(fromKey key: String, value: AnyObject) -> [(String, String)] {
+    public func queryComponents(fromKey key: String, value: Any) -> [(String, String)] {
         var components: [(String, String)] = []
 
-        if let dictionary = value as? [String: AnyObject] {
+        if let dictionary = value as? [String: Any] {
             for (nestedKey, value) in dictionary {
                 components += queryComponents(fromKey: "\(key)[\(nestedKey)]", value: value)
             }
-        } else if let array = value as? [AnyObject] {
+        } else if let array = value as? [Any] {
             for value in array {
                 components += queryComponents(fromKey: "\(key)[]", value: value)
             }
+        } else if let bool = value as? Bool {
+            components.append((escape(key), escape((bool ? "1" : "0"))))
         } else {
             components.append((escape(key), escape("\(value)")))
         }

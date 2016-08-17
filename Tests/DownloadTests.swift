@@ -134,7 +134,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
             if let file = filteredContents.first as? URL {
                 XCTAssertEqual(
-                    file.lastPathComponent ?? "",
+                    file.lastPathComponent,
                     "\(suggestedFilename)",
                     "filename should be \(suggestedFilename)"
                 )
@@ -281,7 +281,7 @@ class DownloadResponseTestCase: BaseTestCase {
         if
             let data = try? Data(contentsOf: fileURL),
             let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
-            let json = jsonObject as? [String: AnyObject],
+            let json = jsonObject as? [String: Any],
             let args = json["args"] as? [String: String]
         {
             XCTAssertEqual(args["foo"], "bar", "foo parameter should equal bar")
@@ -323,7 +323,7 @@ class DownloadResponseTestCase: BaseTestCase {
         if
             let data = try? Data(contentsOf: fileURL),
             let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
-            let json = jsonObject as? [String: AnyObject],
+            let json = jsonObject as? [String: Any],
             let headers = json["headers"] as? [String: String]
         {
             XCTAssertEqual(headers["Authorization"], "123456", "Authorization parameter should equal 123456")
@@ -350,7 +350,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         var request: URLRequest?
         var response: HTTPURLResponse?
-        var data: AnyObject?
+        var data: Data?
         var error: NSError?
 
         // When
@@ -383,7 +383,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         var request: URLRequest?
         var response: HTTPURLResponse?
-        var data: AnyObject?
+        var data: Data?
         var error: NSError?
 
         // When
@@ -410,7 +410,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         XCTAssertNotNil(download.resumeData, "resume data should not be nil")
 
-        if let responseData = data as? Data, let resumeData = download.resumeData {
+        if let responseData = data, let resumeData = download.resumeData {
             XCTAssertEqual(responseData, resumeData, "response data should equal resume data")
         } else {
             XCTFail("response data or resume data was unexpectedly nil")
@@ -420,7 +420,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
     func testThatCancelledDownloadResumeDataIsAvailableWithJSONResponseSerializer() {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")
-        var response: Response<AnyObject, NSError>?
+        var response: Response<Any, NSError>?
 
         // When
         let download = Alamofire.download(urlString, to: destination, withMethod: .get)

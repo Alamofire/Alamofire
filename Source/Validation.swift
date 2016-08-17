@@ -70,7 +70,7 @@ extension Request {
     ///
     /// - returns: The request.
     @discardableResult
-    public func validate<S: Sequence where S.Iterator.Element == Int>(statusCode acceptableStatusCode: S) -> Self {
+    public func validate<S: Sequence>(statusCode acceptableStatusCode: S) -> Self where S.Iterator.Element == Int {
         return validate { _, response in
             if acceptableStatusCode.contains(response.statusCode) {
                 return .success
@@ -130,7 +130,7 @@ extension Request {
     ///
     /// - returns: The request.
     @discardableResult
-    public func validate<S: Sequence where S.Iterator.Element == String>(contentType acceptableContentTypes: S) -> Self {
+    public func validate<S: Sequence>(contentType acceptableContentTypes: S) -> Self where S.Iterator.Element == String {
         return validate { _, response in
             guard let validData = self.delegate.data, validData.count > 0 else { return .success }
 

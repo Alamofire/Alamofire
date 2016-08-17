@@ -36,7 +36,7 @@ private struct TestCertificates {
         class Locater {}
         let filePath = Bundle(for: Locater.self).path(forResource: fileName, ofType: "cer")!
         let data = try! Data(contentsOf: URL(fileURLWithPath: filePath))
-        let certificate = SecCertificateCreateWithData(nil, data)!
+        let certificate = SecCertificateCreateWithData(nil, data as CFData)!
 
         return certificate
     }
