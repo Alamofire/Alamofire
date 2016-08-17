@@ -101,7 +101,7 @@ class DetailViewController: UITableViewController {
         }
     }
 
-    fileprivate func downloadedBodyString() -> String {
+    private func downloadedBodyString() -> String {
         let fileManager = FileManager.default
         let cachesDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
 
