@@ -134,7 +134,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
             if let file = filteredContents.first as? URL {
                 XCTAssertEqual(
-                    file.lastPathComponent ?? "",
+                    file.lastPathComponent ,
                     "\(suggestedFilename)",
                     "filename should be \(suggestedFilename)"
                 )
@@ -252,7 +252,7 @@ class DownloadResponseTestCase: BaseTestCase {
         // Given
         let fileURL = randomCachesFileURL
         let urlString = "https://httpbin.org/get"
-        let parameters = ["foo": "bar"]
+        let parameters = ["foo": "bar" as AnyObject]
         let destination: Request.DownloadFileDestination = { _, _ in fileURL }
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
@@ -358,7 +358,11 @@ class DownloadResumeDataTestCase: BaseTestCase {
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse
-                data = responseData
+                if let responseData = responseData {
+                    data = responseData as AnyObject
+                } else {
+                    data = nil
+                }
                 error = responseError
 
                 expectation.fulfill()
@@ -368,6 +372,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         waitForExpectations(timeout: timeout, handler: nil)
 
+        print("data: \(data)")
         // Then
         XCTAssertNotNil(request, "request should not be nil")
         XCTAssertNil(response, "response should be nil")
@@ -394,7 +399,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         download.response { responseRequest, responseResponse, responseData, responseError in
             request = responseRequest
             response = responseResponse
-            data = responseData
+            data = responseData as AnyObject
             error = responseError
 
             expectation.fulfill()

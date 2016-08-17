@@ -503,7 +503,7 @@ public class SessionManager {
     /// - parameter headers:                 The HTTP headers. `nil` by default.
     /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
     public func upload(
-        multipartFormData: (MultipartFormData) -> Void,
+        multipartFormData: @escaping (MultipartFormData) -> Void,
         usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
         to urlString: URLStringConvertible,
         withMethod method: HTTPMethod,
@@ -544,7 +544,7 @@ public class SessionManager {
     /// - parameter urlRequest:              The URL request.
     /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
     public func upload(
-        multipartFormData: (MultipartFormData) -> Void,
+        multipartFormData: @escaping (MultipartFormData) -> Void,
         usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
         with urlRequest: URLRequestConvertible,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
@@ -653,6 +653,7 @@ public class SessionManager {
     ///
     /// - returns: The created stream `Request`.
     @discardableResult
+    @available(iOS 9.0, *)
     public func stream(withHostName hostName: String, port: Int) -> Request {
         return stream(.stream(hostName, port))
     }
@@ -667,12 +668,13 @@ public class SessionManager {
     ///
     /// - returns: The created stream `Request`.
     @discardableResult
+    @available(iOS 9.0, *)
     public func stream(with netService: NetService) -> Request {
         return stream(.netService(netService))
     }
 
     // MARK: Private - Stream Implementation
-
+    @available(iOS 9.0, *)
     private func stream(_ streamable: Streamable) -> Request {
         var streamTask: URLSessionStreamTask!
 

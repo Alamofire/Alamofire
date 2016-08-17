@@ -61,7 +61,7 @@ class ProxyURLProtocol: URLProtocol {
 
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
         if let headers = request.allHTTPHeaderFields {
-            return ParameterEncoding.url.encode(request, parameters: headers).0
+            return ParameterEncoding.url.encode(request, parameters: headers as [String : AnyObject]?).0
         }
 
         return request
@@ -167,9 +167,12 @@ class URLProtocolTestCase: BaseTestCase {
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        if let headers = response?.allHeaderFields as? [String: String] {
-            XCTAssertEqual(headers["request-header"], "foobar")
-            XCTAssertEqual(headers["session-configuration-header"], "foo")
+        if let headers = response?.allHeaderFields,// as? [String: String] {
+            let requestHeader = headers["request-header"] as? String,
+            let sessionConfigurationHeader = headers["session-configuration-header"] as? String {
+            
+            XCTAssertEqual(requestHeader, "foobar")
+            XCTAssertEqual(sessionConfigurationHeader, "foo")
         } else {
             XCTFail("headers should not be nil")
         }
