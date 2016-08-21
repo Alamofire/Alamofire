@@ -179,7 +179,7 @@ class CacheTestCase: BaseTestCase {
         cacheControl: String,
         cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy,
         queue: DispatchQueue = DispatchQueue.main,
-        completion: (URLRequest?, HTTPURLResponse?) -> Void)
+        completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
         -> URLRequest
     {
         let urlRequest = self.urlRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)

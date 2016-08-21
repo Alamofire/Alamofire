@@ -25,9 +25,9 @@
 import Foundation
 
 /// Responsible for managing the mapping of `ServerTrustPolicy` objects to a given host.
-public class ServerTrustPolicyManager {
+open class ServerTrustPolicyManager {
     /// The dictionary of policies mapped to a particular host.
-    public let policies: [String: ServerTrustPolicy]
+    open let policies: [String: ServerTrustPolicy]
 
     /// Initializes the `ServerTrustPolicyManager` instance with the given policies.
     ///
@@ -51,7 +51,7 @@ public class ServerTrustPolicyManager {
     /// - parameter host: The host to use when searching for a matching policy.
     ///
     /// - returns: The server trust policy for the given host if found.
-    public func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
+    open func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
         return policies[host]
     }
 }
@@ -110,7 +110,7 @@ public enum ServerTrustPolicy {
     case pinCertificates(certificates: [SecCertificate], validateCertificateChain: Bool, validateHost: Bool)
     case pinPublicKeys(publicKeys: [SecKey], validateCertificateChain: Bool, validateHost: Bool)
     case disableEvaluation
-    case customEvaluation((serverTrust: SecTrust, host: String) -> Bool)
+    case customEvaluation((_ serverTrust: SecTrust, _ host: String) -> Bool)
 
     // MARK: - Bundle Location
 
@@ -124,11 +124,11 @@ public enum ServerTrustPolicy {
 
         let paths = Set([".cer", ".CER", ".crt", ".CRT", ".der", ".DER"].map { fileExtension in
             bundle.paths(forResourcesOfType: fileExtension, inDirectory: nil)
-        }.flatten())
+        }.joined())
 
         for path in paths {
             if
-                let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)),
+                let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)) as CFData,
                 let certificate = SecCertificateCreateWithData(nil, certificateData)
             {
                 certificates.append(certificate)
@@ -169,15 +169,15 @@ public enum ServerTrustPolicy {
         switch self {
         case let .performDefaultEvaluation(validateHost):
             let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
-            SecTrustSetPolicies(serverTrust, [policy])
+            SecTrustSetPolicies(serverTrust, policy)
 
             serverTrustIsValid = trustIsValid(serverTrust)
         case let .pinCertificates(pinnedCertificates, validateCertificateChain, validateHost):
             if validateCertificateChain {
                 let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
-                SecTrustSetPolicies(serverTrust, [policy])
+                SecTrustSetPolicies(serverTrust, policy)
 
-                SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates)
+                SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates as CFArray)
                 SecTrustSetAnchorCertificatesOnly(serverTrust, true)
 
                 serverTrustIsValid = trustIsValid(serverTrust)
@@ -199,7 +199,7 @@ public enum ServerTrustPolicy {
 
             if validateCertificateChain {
                 let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
-                SecTrustSetPolicies(serverTrust, [policy])
+                SecTrustSetPolicies(serverTrust, policy)
 
                 certificateChainEvaluationPassed = trustIsValid(serverTrust)
             }
@@ -217,7 +217,7 @@ public enum ServerTrustPolicy {
         case .disableEvaluation:
             serverTrustIsValid = true
         case let .customEvaluation(closure):
-            serverTrustIsValid = closure(serverTrust: serverTrust, host: host)
+            serverTrustIsValid = closure(serverTrust, host)
         }
 
         return serverTrustIsValid

@@ -192,7 +192,7 @@ extension DetailViewController {
 
     override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         if Sections(rawValue: section) == .body, let elapsedTime = elapsedTime {
-            let elapsedTimeText = DetailViewController.numberFormatter.string(from: elapsedTime) ?? "???"
+            let elapsedTimeText = DetailViewController.numberFormatter.string(from: elapsedTime as NSNumber) ?? "???"
             return "Elapsed Time: \(elapsedTimeText) sec"
         }
 

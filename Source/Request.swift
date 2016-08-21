@@ -26,7 +26,7 @@ import Foundation
 
 /// Responsible for sending a request and receiving the response and associated data from the server, as well as
 /// managing its underlying `URLSessionTask`.
-public class Request {
+open class Request {
     /// A closure executed once a request has successfully completed in order to determine where to move the temporary
     /// file written to during the download process. The closure takes two arguments: the temporary file URL and the URL
     /// response, and returns a single argument: the file URL where the temporary file should be moved.
@@ -35,7 +35,7 @@ public class Request {
     // MARK: Properties
 
     /// The delegate for the underlying task.
-    public internal(set) var delegate: TaskDelegate {
+    open internal(set) var delegate: TaskDelegate {
         get {
             taskDelegateLock.lock() ; defer { taskDelegateLock.unlock() }
             return taskDelegate
@@ -47,22 +47,22 @@ public class Request {
     }
 
     /// The underlying task.
-    public var task: URLSessionTask { return delegate.task }
+    open var task: URLSessionTask { return delegate.task }
 
     /// The session belonging to the underlying task.
-    public let session: URLSession
+    open let session: URLSession
 
     /// The request sent or to be sent to the server.
-    public var request: URLRequest? { return task.originalRequest }
+    open var request: URLRequest? { return task.originalRequest }
 
     /// The response received from the server, if any.
-    public var response: HTTPURLResponse? { return task.response as? HTTPURLResponse }
+    open var response: HTTPURLResponse? { return task.response as? HTTPURLResponse }
 
     /// The progress of the request lifecycle.
-    public var progress: Progress { return delegate.progress }
+    open var progress: Progress { return delegate.progress }
 
     /// The resume data of the underlying download task if available after a failure.
-    public var resumeData: Data? {
+    open var resumeData: Data? {
         var data: Data?
 
         if let delegate = delegate as? DownloadTaskDelegate {
@@ -107,7 +107,7 @@ public class Request {
     ///
     /// - returns: The request.
     @discardableResult
-    public func authenticate(
+    open func authenticate(
         user: String,
         password: String,
         persistence: URLCredential.Persistence = .forSession)
@@ -123,7 +123,7 @@ public class Request {
     ///
     /// - returns: The request.
     @discardableResult
-    public func authenticate(usingCredential credential: URLCredential) -> Self {
+    open func authenticate(usingCredential credential: URLCredential) -> Self {
         delegate.credential = credential
         return self
     }
@@ -134,7 +134,7 @@ public class Request {
     /// - parameter password: The password.
     ///
     /// - returns: A dictionary with Authorization key and credential value or empty dictionary if encoding fails.
-    public static func authorizationHeaderFrom(user: String, password: String) -> [String: String] {
+    open static func authorizationHeaderFrom(user: String, password: String) -> [String: String] {
         guard let data = "\(user):\(password)".data(using: String.Encoding.utf8) else { return [:] }
 
         let credential = data.base64EncodedString(options: [])
@@ -156,7 +156,7 @@ public class Request {
     ///
     /// - returns: The request.
     @discardableResult
-    public func progress(closure: ((Int64, Int64, Int64) -> Void)? = nil) -> Self {
+    open func progress(closure: ((Int64, Int64, Int64) -> Void)? = nil) -> Self {
         if let uploadDelegate = delegate as? UploadTaskDelegate {
             uploadDelegate.uploadProgress = closure
         } else if let dataDelegate = delegate as? DataTaskDelegate {
@@ -178,7 +178,7 @@ public class Request {
     ///
     /// - returns: The request.
     @discardableResult
-    public func stream(closure: ((Data) -> Void)? = nil) -> Self {
+    open func stream(closure: ((Data) -> Void)? = nil) -> Self {
         if let dataDelegate = delegate as? DataTaskDelegate {
             dataDelegate.dataStream = closure
         }
@@ -189,7 +189,7 @@ public class Request {
     // MARK: State
 
     /// Resumes the request.
-    public func resume() {
+    open func resume() {
         if startTime == nil { startTime = CFAbsoluteTimeGetCurrent() }
 
         task.resume()
@@ -202,7 +202,7 @@ public class Request {
     }
 
     /// Suspends the request.
-    public func suspend() {
+    open func suspend() {
         task.suspend()
 
         NotificationCenter.default.post(
@@ -213,7 +213,7 @@ public class Request {
     }
 
     /// Cancels the request.
-    public func cancel() {
+    open func cancel() {
         if let downloadDelegate = delegate as? DownloadTaskDelegate, let downloadTask = downloadDelegate.downloadTask {
             downloadTask.cancel { data in
                 downloadDelegate.resumeData = data
@@ -238,7 +238,7 @@ public class Request {
     /// - parameter domain:    The search path domain mask. `.UserDomainMask` by default.
     ///
     /// - returns: A download file destination closure.
-    public class func suggestedDownloadDestination(
+    open class func suggestedDownloadDestination(
         for directory: FileManager.SearchPathDirectory = .documentDirectory,
         in domain: FileManager.SearchPathDomainMask = .userDomainMask)
         -> DownloadFileDestination
@@ -260,7 +260,7 @@ public class Request {
 extension Request: CustomStringConvertible {
     /// The textual representation used when written to an output stream, which includes the HTTP method and URL, as
     /// well as the response status code if a response has been received.
-    public var description: String {
+    open var description: String {
         var components: [String] = []
 
         if let HTTPMethod = request?.httpMethod {
@@ -283,7 +283,7 @@ extension Request: CustomStringConvertible {
 
 extension Request: CustomDebugStringConvertible {
     /// The textual representation used when written to an output stream, in the form of a cURL command.
-    public var debugDescription: String {
+    open var debugDescription: String {
         return cURLRepresentation()
     }
 
@@ -326,15 +326,15 @@ extension Request: CustomDebugStringConvertible {
                 let cookieStorage = session.configuration.httpCookieStorage,
                 let cookies = cookieStorage.cookies(for: URL), !cookies.isEmpty
             {
-                let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value ?? String());" }
+                let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value);" }
                 components.append("-b \"\(string.substring(to: string.characters.index(before: string.endIndex)))\"")
             }
         }
 
-        var headers: [NSObject: AnyObject] = [:]
+        var headers: [AnyHashable: Any] = [:]
 
         if let additionalHeaders = session.configuration.httpAdditionalHeaders {
-            for (field, value) in additionalHeaders where field != "Cookie" {
+            for (field, value) in additionalHeaders where field != AnyHashable("Cookie") {
                 headers[field] = value
             }
         }

@@ -486,7 +486,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
-        var response: Response<AnyObject, NSError>?
+        var response: Response<Any, NSError>?
 
         // When
         manager.request(urlString, withMethod: .get, headers: headers)
@@ -503,7 +503,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data, "data should not be nil")
         XCTAssertTrue(response?.result.isSuccess ?? false, "response result should be a success")
 
-        if let json = response?.result.value as? [String: AnyObject], let headers = json["headers"] as? [String: String] {
+        if let json = response?.result.value as? [String: Any], let headers = json["headers"] as? [String: String] {
             XCTAssertEqual(headers["Custom-Header"], "foobar", "Custom-Header should be equal to foobar")
             XCTAssertEqual(headers["Authorization"], "1234", "Authorization header should be equal to 1234")
         }

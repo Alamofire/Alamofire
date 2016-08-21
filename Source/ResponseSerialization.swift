@@ -56,7 +56,7 @@ public struct ResponseSerializer<Value>: ResponseSerializerType {
     /// - parameter serializeResponse: The closure used to serialize the response.
     ///
     /// - returns: The new generic response serializer instance.
-    public init(serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<Value>) {
+    public init(serializeResponse: @escaping (URLRequest?, HTTPURLResponse?, Data?, NSError?) -> Result<Value, Error>) {
         self.serializeResponse = serializeResponse
     }
 }
@@ -73,7 +73,7 @@ extension Request {
     @discardableResult
     public func response(
         queue: DispatchQueue? = nil,
-        completionHandler: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Void)
+        completionHandler: @escaping (URLRequest?, HTTPURLResponse?, Data?, NSError?) -> Void)
         -> Self
     {
         delegate.queue.addOperation {
@@ -97,7 +97,7 @@ extension Request {
     public func response<T: ResponseSerializerType>(
         queue: DispatchQueue? = nil,
         responseSerializer: T,
-        completionHandler: (Response<T.SerializedObject>) -> Void)
+        completionHandler: @escaping (Response<T.SerializedObject, T.ErrorObject>) -> Void)
         -> Self
     {
         delegate.queue.addOperation {
@@ -161,7 +161,7 @@ extension Request {
     ///
     /// - returns: The request.
     @discardableResult
-    public func responseData(queue: DispatchQueue? = nil, completionHandler: (Response<Data>) -> Void) -> Self {
+    public func responseData(queue: DispatchQueue? = nil, completionHandler: @escaping (Response<Data, NSError>) -> Void) -> Self {
         return response(queue: queue, responseSerializer: Request.dataResponseSerializer(), completionHandler: completionHandler)
     }
 }
@@ -190,7 +190,7 @@ extension Request {
 
             var convertedEncoding = encoding
 
-            if let encodingName = response?.textEncodingName, convertedEncoding == nil {
+            if let encodingName = response?.textEncodingName as CFString!, convertedEncoding == nil {
                 convertedEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(
                     CFStringConvertIANACharSetNameToEncoding(encodingName))
                 )
@@ -220,7 +220,7 @@ extension Request {
     public func responseString(
         queue: DispatchQueue? = nil,
         encoding: String.Encoding? = nil,
-        completionHandler: (Response<String>) -> Void)
+        completionHandler: @escaping (Response<String, NSError>) -> Void)
         -> Self
     {
         return response(
@@ -243,6 +243,7 @@ extension Request {
     public static func JSONResponseSerializer(
         options: JSONSerialization.ReadingOptions = .allowFragments)
         -> ResponseSerializer<AnyObject>
+        -> ResponseSerializer<Any, NSError>
     {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .failure(error!) }
@@ -274,7 +275,7 @@ extension Request {
     public func responseJSON(
         queue: DispatchQueue? = nil,
         options: JSONSerialization.ReadingOptions = .allowFragments,
-        completionHandler: (Response<AnyObject>) -> Void)
+        completionHandler: @escaping (Response<Any, NSError>) -> Void)
         -> Self
     {
         return response(
@@ -296,7 +297,7 @@ extension Request {
     /// - returns: A property list object response serializer.
     public static func propertyListResponseSerializer(
         options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions())
-        -> ResponseSerializer<AnyObject>
+        -> ResponseSerializer<Any, NSError>
     {
         return ResponseSerializer { _, response, data, error in
             guard error == nil else { return .failure(error!) }
@@ -330,7 +331,7 @@ extension Request {
     public func responsePropertyList(
         queue: DispatchQueue? = nil,
         options: PropertyListSerialization.ReadOptions = PropertyListSerialization.ReadOptions(),
-        completionHandler: (Response<AnyObject>) -> Void)
+        completionHandler: @escaping (Response<Any, NSError>) -> Void)
         -> Self
     {
         return response(

@@ -33,7 +33,7 @@ import SystemConfiguration
 /// Reachability can be used to determine background information about why a network operation failed, or to retry
 /// network requests when a connection is established. It should not be used to prevent a user from initiating a network
 /// request, as it's possible that an initial request may be required to establish reachability.
-public class NetworkReachabilityManager {
+open class NetworkReachabilityManager {
     /**
         Defines the various states of network reachability.
 
@@ -71,25 +71,25 @@ public class NetworkReachabilityManager {
     // MARK: - Properties
 
     /// Whether the network is currently reachable.
-    public var isReachable: Bool { return isReachableOnWWAN || isReachableOnEthernetOrWiFi }
+    open var isReachable: Bool { return isReachableOnWWAN || isReachableOnEthernetOrWiFi }
 
     /// Whether the network is currently reachable over the WWAN interface.
-    public var isReachableOnWWAN: Bool { return networkReachabilityStatus == .reachable(.wwan) }
+    open var isReachableOnWWAN: Bool { return networkReachabilityStatus == .reachable(.wwan) }
 
     /// Whether the network is currently reachable over Ethernet or WiFi interface.
-    public var isReachableOnEthernetOrWiFi: Bool { return networkReachabilityStatus == .reachable(.ethernetOrWiFi) }
+    open var isReachableOnEthernetOrWiFi: Bool { return networkReachabilityStatus == .reachable(.ethernetOrWiFi) }
 
     /// The current network reachability status.
-    public var networkReachabilityStatus: NetworkReachabilityStatus {
+    open var networkReachabilityStatus: NetworkReachabilityStatus {
         guard let flags = self.flags else { return .unknown }
         return networkReachabilityStatusForFlags(flags)
     }
 
     /// The dispatch queue to execute the `listener` closure on.
-    public var listenerQueue: DispatchQueue = DispatchQueue.main
+    open var listenerQueue: DispatchQueue = DispatchQueue.main
 
     /// A closure executed when the network reachability status changes.
-    public var listener: Listener?
+    open var listener: Listener?
 
     private var flags: SCNetworkReachabilityFlags? {
         var flags = SCNetworkReachabilityFlags()
@@ -124,11 +124,13 @@ public class NetworkReachabilityManager {
     /// - returns: The new `NetworkReachabilityManager` instance.
     public convenience init?() {
         var address = sockaddr_in()
-        address.sin_len = UInt8(sizeofValue(address))
+        address.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
         address.sin_family = sa_family_t(AF_INET)
 
-        guard let reachability = withUnsafePointer(&address, {
-            SCNetworkReachabilityCreateWithAddress(nil, UnsafePointer($0))
+        guard let reachability = withUnsafePointer(to: &address, { pointer in
+            return pointer.withMemoryRebound(to: sockaddr.self, capacity: MemoryLayout<sockaddr>.size) {
+                return SCNetworkReachabilityCreateWithAddress(nil, $0)
+            }
         }) else { return nil }
 
         self.init(reachability: reachability)
@@ -149,9 +151,9 @@ public class NetworkReachabilityManager {
     ///
     /// - returns: `true` if listening was started successfully, `false` otherwise.
     @discardableResult
-    public func startListening() -> Bool {
+    open func startListening() -> Bool {
         var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
-        context.info = UnsafeMutablePointer(Unmanaged.passUnretained(self).toOpaque())
+        context.info = Unmanaged.passUnretained(self).toOpaque()
 
         let callbackEnabled = SCNetworkReachabilitySetCallback(
             reachability,
@@ -173,7 +175,7 @@ public class NetworkReachabilityManager {
     }
 
     /// Stops listening for changes in network reachability status.
-    public func stopListening() {
+    open func stopListening() {
         SCNetworkReachabilitySetCallback(reachability, nil, nil)
         SCNetworkReachabilitySetDispatchQueue(reachability, nil)
     }
