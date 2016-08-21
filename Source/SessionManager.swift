@@ -229,7 +229,7 @@ open class SessionManager {
         headers: [String: String]? = nil)
         -> Request
     {
-        let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
+        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
         let encodedURLRequest = encoding.encode(urlRequest, parameters: parameters).0
 
         return request(encodedURLRequest)
@@ -283,7 +283,7 @@ open class SessionManager {
         headers: [String: String]? = nil)
         -> Request
     {
-        let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
+        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
         let encodedURLRequest = encoding.encode(urlRequest, parameters: parameters).0
 
         return download(encodedURLRequest, to: destination)
@@ -384,7 +384,7 @@ open class SessionManager {
         headers: [String: String]? = nil)
         -> Request
     {
-        let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
+        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
         return upload(fileURL, with: urlRequest)
     }
 
@@ -421,7 +421,7 @@ open class SessionManager {
         headers: [String: String]? = nil)
         -> Request
     {
-        let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
+        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
         return upload(data, with: urlRequest)
     }
 
@@ -458,7 +458,7 @@ open class SessionManager {
         headers: [String: String]? = nil)
         -> Request
     {
-        let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
+        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
         return upload(stream, with: urlRequest)
     }
 
@@ -510,7 +510,7 @@ open class SessionManager {
         headers: [String: String]? = nil,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
-        let urlRequest = URLRequest(method: method, urlString: urlString, headers: headers)
+        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
 
         return upload(
             multipartFormData: multipartFormData,
