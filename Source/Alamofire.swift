@@ -75,12 +75,12 @@ extension URLRequest: URLRequestConvertible {
 extension URLRequest {
     /// Creates an instance with the specified `method`, `urlString` and `headers`.
     ///
-    /// - parameter method:    The HTTP method.
     /// - parameter urlString: The URL string.
+    /// - parameter method:    The HTTP method.
     /// - parameter headers:   The HTTP headers. `nil` by default.
     ///
     /// - returns: The new `URLRequest` instance.
-    public init(method: HTTPMethod, urlString: URLStringConvertible, headers: [String: String]? = nil) {
+    public init(urlString: URLStringConvertible, method: HTTPMethod, headers: [String: String]? = nil) {
         self.init(url: URL(string: urlString.urlString)!)
 
         if let request = urlString as? URLRequest { self = request }
