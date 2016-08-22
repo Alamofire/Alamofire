@@ -570,7 +570,7 @@ open class SessionManager {
 
                     DispatchQueue.main.async { encodingCompletion?(encodingResult) }
                 } catch {
-                    DispatchQueue.main.async { encodingCompletion?(.failure(error as NSError)) }
+                    DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
                 }
             } else {
                 let fileManager = FileManager.default
@@ -592,7 +592,7 @@ open class SessionManager {
                         encodingCompletion?(encodingResult)
                     }
                 } catch {
-                    DispatchQueue.main.async { encodingCompletion?(.failure(error as NSError)) }
+                    DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
                 }
             }
         }

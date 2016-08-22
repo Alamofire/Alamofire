@@ -70,7 +70,7 @@ public enum ParameterEncoding {
     case urlEncodedInURL
     case json
     case propertyList(PropertyListSerialization.PropertyListFormat, PropertyListSerialization.WriteOptions)
-    case custom((URLRequestConvertible, [String: Any]?) -> (URLRequest, NSError?))
+    case custom((URLRequestConvertible, [String: Any]?) -> (URLRequest, Error?))
 
     /// Creates a URL request by encoding parameters and applying them onto an existing request.
     ///
@@ -82,7 +82,7 @@ public enum ParameterEncoding {
     public func encode(
         _ urlRequest: URLRequestConvertible,
         parameters: [String: Any]?)
-        -> (URLRequest, NSError?)
+        -> (URLRequest, Error?)
     {
         var urlRequest = urlRequest.urlRequest
 
