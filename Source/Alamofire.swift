@@ -48,7 +48,16 @@ extension String: URLStringConvertible {
 }
 
 extension NSURL: URLStringConvertible {
-    public var URLString: String { return absoluteString }
+    public var URLString: String {
+        #if !swift(>=2.3)
+            return absoluteString
+        #else
+            guard let absolute = absoluteString else {
+                fatalError("Could not find the absolute string for url \(self)")
+            }
+            return absolute
+        #endif
+    }
 }
 
 extension NSURLComponents: URLStringConvertible {

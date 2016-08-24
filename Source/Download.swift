@@ -152,9 +152,17 @@ extension Request {
     {
         return { temporaryURL, response -> NSURL in
             let directoryURLs = NSFileManager.defaultManager().URLsForDirectory(directory, inDomains: domain)
-
+            
             if !directoryURLs.isEmpty {
-                return directoryURLs[0].URLByAppendingPathComponent(response.suggestedFilename!)
+                #if !swift(>=2.3)
+                    return directoryURLs[0].URLByAppendingPathComponent(response.suggestedFilename!)
+                #else
+                    guard let destination = directoryURLs[0].URLByAppendingPathComponent(response.suggestedFilename!) else {
+                        fatalError("Could not create a URL appending the suggested filename")
+                    }
+                    
+                    return destination
+                #endif
             }
 
             return temporaryURL
