@@ -240,15 +240,25 @@ public enum ServerTrustPolicy {
     private func trustIsValid(trust: SecTrust) -> Bool {
         var isValid = false
 
-        var result = SecTrustResultType(kSecTrustResultInvalid)
-        let status = SecTrustEvaluate(trust, &result)
-
-        if status == errSecSuccess {
+        #if !swift(>=2.3)
+            var result = SecTrustResultType(kSecTrustResultInvalid)
+            let status = SecTrustEvaluate(trust, &result)
+            
+            if status == errSecSuccess {
             let unspecified = SecTrustResultType(kSecTrustResultUnspecified)
             let proceed = SecTrustResultType(kSecTrustResultProceed)
-
+            
             isValid = result == unspecified || result == proceed
-        }
+            }
+        #else
+            var result = SecTrustResultType.Invalid
+            let status = SecTrustEvaluate(trust, &result)
+            
+            if status == errSecSuccess {
+                isValid = result == SecTrustResultType.Unspecified
+                    || result == SecTrustResultType.Proceed
+            }
+        #endif
 
         return isValid
     }
