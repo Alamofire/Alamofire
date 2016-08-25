@@ -156,7 +156,7 @@ open class SessionManager {
     /// Creates an instance with the specified `configuration`, `delegate` and `serverTrustPolicyManager`.
     ///
     /// - parameter configuration:            The configuration used to construct the managed session.
-    ///                                       `NSURLSessionConfiguration.defaultSessionConfiguration()` by default.
+    ///                                       `URLSessionConfiguration.default` by default.
     /// - parameter delegate:                 The delegate used when initializing the session. `SessionDelegate()` by
     ///                                       default.
     /// - parameter serverTrustPolicyManager: The server trust policy manager to use for evaluating all server trust
@@ -581,7 +581,7 @@ open class SessionManager {
 
                 do {
                     try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
-                    try formData.writeEncodedDataToDisk(fileURL)
+                    try formData.writeEncodedData(to: fileURL)
 
                     DispatchQueue.main.async {
                         let encodingResult = MultipartFormDataEncodingResult.success(

@@ -197,7 +197,7 @@ extension Request {
             if let string = String(data: validData, encoding: actualEncoding) {
                 return .success(string)
             } else {
-                return .failure(AFError.responseSerializationFailed(reason: .invalidStringEncoding(actualEncoding)))
+                return .failure(AFError.responseSerializationFailed(reason: .stringSerializationFailed(encoding: actualEncoding)))
             }
         }
     }
@@ -251,7 +251,7 @@ extension Request {
                 let json = try JSONSerialization.jsonObject(with: validData, options: options)
                 return .success(json)
             } catch {
-                return .failure(error)
+                return .failure(AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: error)))
             }
         }
     }
@@ -283,7 +283,7 @@ extension Request {
     /// Creates a response serializer that returns an object constructed from the response data using
     /// `PropertyListSerialization` with the specified reading options.
     ///
-    /// - parameter options: The property list reading options. `NSPropertyListReadOptions()` by default.
+    /// - parameter options: The property list reading options. `PropertyListReadOptions()` by default.
     ///
     /// - returns: A property list object response serializer.
     public static func propertyListResponseSerializer(
@@ -303,7 +303,7 @@ extension Request {
                 let plist = try PropertyListSerialization.propertyList(from: validData, options: options, format: nil)
                 return .success(plist)
             } catch {
-                return .failure(error)
+                return .failure(AFError.responseSerializationFailed(reason: .propertyListSerializationFailed(error: error)))
             }
         }
     }

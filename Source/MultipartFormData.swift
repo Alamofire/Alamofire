@@ -101,7 +101,7 @@ open class MultipartFormData {
     public let boundary: String
 
     private var bodyParts: [BodyPart]
-    private var bodyPartError: Error?
+    private var bodyPartError: AFError?
     private let streamBufferSize: Int
 
     // MARK: - Lifecycle
@@ -206,7 +206,7 @@ open class MultipartFormData {
             let mime = mimeType(forPathExtension: pathExtension)
             append(fileURL, withName: name, fileName: fileName, mimeType: mime)
         } else {
-            setBodyPartError(withReason: .failedToExtractFilename(for: fileURL))
+            setBodyPartError(withReason: .bodyPartFilenameInvalid(in: fileURL))
         }
     }
 
@@ -231,22 +231,22 @@ open class MultipartFormData {
         //============================================================
 
         guard fileURL.isFileURL else {
-            setBodyPartError(withReason: .notAFile(at: fileURL))
+            setBodyPartError(withReason: .bodyPartURLInvalid(at: fileURL))
             return
         }
 
         //============================================================
         //              Check 2 - is file URL reachable?
         //============================================================
-        
+
         do {
             let isReachable = try fileURL.checkPromisedItemIsReachable()
             guard isReachable else {
-                setBodyPartError(withReason: .fileNotReachable(at: fileURL))
+                setBodyPartError(withReason: .bodyPartFileNotReachable(at: fileURL))
                 return
             }
         } catch {
-            bodyPartError = error
+            setBodyPartError(withReason: .bodyPartFileNotReachableWithError(url: fileURL, error: error))
             return
         }
 
@@ -259,7 +259,7 @@ open class MultipartFormData {
 
         guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory.boolValue else
         {
-            setBodyPartError(withReason: .isDirectory(at: fileURL))
+            setBodyPartError(withReason: .bodyPartFileIsDirectory(at: fileURL))
             return
         }
 
@@ -267,19 +267,18 @@ open class MultipartFormData {
         //          Check 4 - can the file size be extracted?
         //============================================================
 
-        var bodyContentLength: UInt64?
+        let bodyContentLength: UInt64
 
         do {
-            if let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber {
-                bodyContentLength = fileSize.uint64Value
+            guard let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? UInt64 else {
+                setBodyPartError(withReason: .bodyPartFileSizeNotAvailable(at: fileURL))
+                return
             }
+
+            bodyContentLength = fileSize
         }
         catch {
-            // No Op
-        }
-
-        guard let length = bodyContentLength else {
-            setBodyPartError(withReason: .failedToFetchAttributes(from: fileURL))
+            setBodyPartError(withReason: .bodyPartFileSizeQueryFailedWithError(url: fileURL, error: error))
             return
         }
 
@@ -288,11 +287,11 @@ open class MultipartFormData {
         //============================================================
 
         guard let stream = InputStream(url: fileURL) else {
-            setBodyPartError(withReason: .failedToCreateInputStream(from: fileURL))
+            setBodyPartError(withReason: .bodyPartInputStreamCreationFailed(for: fileURL))
             return
         }
 
-        append(stream, withLength: length, headers: headers)
+        append(stream, withLength: bodyContentLength, headers: headers)
     }
 
     /// Creates a body part from the stream and appends it to the multipart form data object.
@@ -373,26 +372,19 @@ open class MultipartFormData {
     /// - parameter fileURL: The file URL to write the multipart form data into.
     ///
     /// - throws: An `AFError` if encoding encounters an error.
-    public func writeEncodedDataToDisk(_ fileURL: URL) throws {
+    public func writeEncodedData(to fileURL: URL) throws {
         if let bodyPartError = bodyPartError {
             throw bodyPartError
         }
 
         if FileManager.default.fileExists(atPath: fileURL.path) {
-            let failureReason = "A file already exists at the given file URL: \(fileURL)"
-            throw AFError.outputStreamWriteFailed(reason: .fileAlreadyExists(at: fileURL))
+            throw AFError.multipartEncodingFailed(reason: .outputStreamFileAlreadyExists(at: fileURL))
         } else if !fileURL.isFileURL {
-            let failureReason = "The URL does not point to a valid file: \(fileURL)"
-            throw AFError.outputStreamWriteFailed(reason: .invalidFile(at: fileURL))
+            throw AFError.multipartEncodingFailed(reason: .outputStreamURLInvalid(url: fileURL))
         }
 
-        let outputStream: OutputStream
-
-        if let possibleOutputStream = OutputStream(url: fileURL, append: false) {
-            outputStream = possibleOutputStream
-        } else {
-            let failureReason = "Failed to create an output stream with the given URL: \(fileURL)"
-            throw AFError.outputStreamWriteFailed(reason: .failedToCreateStream(at: fileURL))
+        guard let outputStream = OutputStream(url: fileURL, append: false) else {
+            throw AFError.multipartEncodingFailed(reason: .outputStreamCreationFailed(for: fileURL))
         }
 
         outputStream.open()
@@ -424,7 +416,7 @@ open class MultipartFormData {
             encoded.append(finalBoundaryData())
         }
 
-        return encoded as Data
+        return encoded
     }
 
     private func encodeHeaders(for bodyPart: BodyPart) -> Data {
@@ -441,36 +433,26 @@ open class MultipartFormData {
     private func encodeBodyStream(for bodyPart: BodyPart) throws -> Data {
         let inputStream = bodyPart.bodyStream
         inputStream.open()
+        defer { inputStream.close() }
 
-        var error: Error?
         var encoded = Data()
 
         while inputStream.hasBytesAvailable {
             var buffer = [UInt8](repeating: 0, count: streamBufferSize)
             let bytesRead = inputStream.read(&buffer, maxLength: streamBufferSize)
 
-            if inputStream.streamError != nil {
-                error = inputStream.streamError
-                break
+            guard inputStream.streamError == nil else {
+                throw AFError.multipartEncodingFailed(reason: .inputStreamReadFailed(error: inputStream.streamError!))
             }
 
             if bytesRead > 0 {
                 encoded.append(buffer, count: bytesRead)
-            } else if bytesRead < 0 {
-                error = AFError.inputStreamReadFailed(inputStream: inputStream)
-                break
             } else {
                 break
             }
         }
 
-        inputStream.close()
-
-        if let error = error {
-            throw error
-        }
-
-        return encoded as Data
+        return encoded
     }
 
     // MARK: - Private - Writing Body Part to Output Stream
@@ -494,14 +476,16 @@ open class MultipartFormData {
 
     private func writeBodyStream(for bodyPart: BodyPart, to outputStream: OutputStream) throws {
         let inputStream = bodyPart.bodyStream
+
         inputStream.open()
+        defer { inputStream.close() }
 
         while inputStream.hasBytesAvailable {
             var buffer = [UInt8](repeating: 0, count: streamBufferSize)
             let bytesRead = inputStream.read(&buffer, maxLength: streamBufferSize)
 
             if let streamError = inputStream.streamError {
-                throw streamError
+                throw AFError.multipartEncodingFailed(reason: .inputStreamReadFailed(error: streamError))
             }
 
             if bytesRead > 0 {
@@ -510,14 +494,10 @@ open class MultipartFormData {
                 }
 
                 try write(&buffer, to: outputStream)
-            } else if bytesRead < 0 {
-                throw AFError.inputStreamReadFailed(inputStream: inputStream)
             } else {
                 break
             }
         }
-
-        inputStream.close()
     }
 
     private func writeFinalBoundaryData(for bodyPart: BodyPart, to outputStream: OutputStream) throws {
@@ -530,7 +510,7 @@ open class MultipartFormData {
 
     private func write(_ data: Data, to outputStream: OutputStream) throws {
         var buffer = [UInt8](repeating: 0, count: data.count)
-        (data as NSData).getBytes(&buffer, length: data.count)
+        data.copyBytes(to: &buffer, count: data.count)
 
         return try write(&buffer, to: outputStream)
     }
@@ -542,12 +522,8 @@ open class MultipartFormData {
             if outputStream.hasSpaceAvailable {
                 let bytesWritten = outputStream.write(buffer, maxLength: bytesToWrite)
 
-                if let streamError = outputStream.streamError {
-                    throw streamError
-                }
-
-                if bytesWritten < 0 {
-                    throw AFError.outputStreamWriteFailed(reason: .writeFailed(to: outputStream))
+                guard outputStream.streamError == nil else {
+                    throw AFError.multipartEncodingFailed(reason: .outputStreamWriteFailed(error: outputStream.streamError!))
                 }
 
                 bytesToWrite -= bytesWritten
@@ -556,7 +532,7 @@ open class MultipartFormData {
                     buffer = Array(buffer[bytesWritten..<buffer.count])
                 }
             } else if let streamError = outputStream.streamError {
-                throw streamError
+                throw AFError.multipartEncodingFailed(reason: .outputStreamWriteFailed(error: streamError))
             }
         }
     }

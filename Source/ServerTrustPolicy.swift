@@ -60,7 +60,7 @@ open class ServerTrustPolicyManager {
 
 extension URLSession {
     private struct AssociatedKeys {
-        static var ManagerKey = "NSURLSession.ServerTrustPolicyManager"
+        static var ManagerKey = "URLSession.ServerTrustPolicyManager"
     }
 
     var serverTrustPolicyManager: ServerTrustPolicyManager? {

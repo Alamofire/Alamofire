@@ -220,9 +220,7 @@ public enum ParameterEncoding {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="
 
-        // rdar://26850776
-        // Crash in Xcode 8 Seed 1 when trying to mutate a CharacterSet with remove
-        var allowedCharacterSet = NSMutableCharacterSet.urlQueryAllowed
+        var allowedCharacterSet = CharacterSet.urlQueryAllowed
         allowedCharacterSet.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
 
         return string.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? string

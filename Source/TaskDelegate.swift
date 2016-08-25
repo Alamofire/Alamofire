@@ -58,7 +58,7 @@ open class TaskDelegate: NSObject {
         }()
     }
 
-    // MARK: NSURLSessionTaskDelegate
+    // MARK: URLSessionTaskDelegate
 
     var taskWillPerformHTTPRedirection: ((URLSession, URLSessionTask, HTTPURLResponse, URLRequest) -> URLRequest?)?
     var taskDidReceiveChallenge: ((URLSession, URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))?
@@ -170,7 +170,7 @@ class DataTaskDelegate: TaskDelegate, URLSessionDataDelegate {
         if dataStream != nil {
             return nil
         } else {
-            return mutableData as Data
+            return mutableData
         }
     }
 
@@ -189,7 +189,7 @@ class DataTaskDelegate: TaskDelegate, URLSessionDataDelegate {
         super.init(task: task)
     }
 
-    // MARK: NSURLSessionDataDelegate
+    // MARK: URLSessionDataDelegate
 
     var dataTaskDidReceiveResponse: ((URLSession, URLSessionDataTask, URLResponse) -> URLSession.ResponseDisposition)?
     var dataTaskDidBecomeDownloadTask: ((URLSession, URLSessionDataTask, URLSessionDownloadTask) -> Void)?
@@ -276,7 +276,7 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
     var resumeData: Data?
     override var data: Data? { return resumeData }
 
-    // MARK: NSURLSessionDownloadDelegate
+    // MARK: URLSessionDownloadDelegate
 
     var downloadTaskDidFinishDownloadingToURL: ((URLSession, URLSessionDownloadTask, URL) -> URL)?
     var downloadTaskDidWriteData: ((URLSession, URLSessionDownloadTask, Int64, Int64, Int64) -> Void)?
@@ -346,7 +346,7 @@ class UploadTaskDelegate: DataTaskDelegate {
     var uploadTask: URLSessionUploadTask? { return task as? URLSessionUploadTask }
     var uploadProgress: ((Int64, Int64, Int64) -> Void)!
 
-    // MARK: NSURLSessionTaskDelegate
+    // MARK: URLSessionTaskDelegate
 
     var taskDidSendBodyData: ((URLSession, URLSessionTask, Int64, Int64, Int64) -> Void)?
 

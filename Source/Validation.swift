@@ -72,8 +72,11 @@ extension Request {
     @discardableResult
     public func validate<S: Sequence>(statusCode acceptableStatusCode: S) -> Self where S.Iterator.Element == Int {
         return validate { _, response in
-            return acceptableStatusCode.contains(response.statusCode) ?
-                .success : .failure(AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: response.statusCode)))
+            if acceptableStatusCode.contains(response.statusCode) {
+                return .success
+            } else {
+                return .failure(AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: response.statusCode)))
+            }
         }
     }
 
@@ -119,7 +122,7 @@ extension Request {
     public func validate<S: Sequence>(contentType acceptableContentTypes: S) -> Self where S.Iterator.Element == String {
         return validate { _, response in
             guard let validData = self.delegate.data, validData.count > 0 else { return .success }
-            
+
             guard
                 let responseContentType = response.mimeType,
                 let responseMIMEType = MIMEType(responseContentType) else {
@@ -128,8 +131,8 @@ extension Request {
                         return .success
                     }
                 }
-                    
-                return .failure(AFError.responseValidationFailed(reason: .contentTypeMissingAndNotWildcard))
+
+                return .failure(AFError.responseValidationFailed(reason: .missingContentType(acceptable: Array(acceptableContentTypes))))
             }
 
             for contentType in acceptableContentTypes {
@@ -137,9 +140,9 @@ extension Request {
                     return .success
                 }
             }
-            
-            let error = AFError.responseValidationFailed(reason: .contentTypeMismatch(acceptable: acceptableContentTypes as! [String], actual: responseContentType))
-            
+
+            let error = AFError.responseValidationFailed(reason: .unacceptableContentType(acceptable: Array(acceptableContentTypes), response: responseContentType))
+
             return .failure(error)
         }
     }
