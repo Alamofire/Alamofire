@@ -153,7 +153,7 @@ class UploadDataTestCase: BaseTestCase {
 
         var request: URLRequest?
         var response: HTTPURLResponse?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.upload(data, to: urlString, withMethod: .post)
@@ -277,7 +277,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.upload(
@@ -334,7 +334,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.upload(
@@ -601,7 +601,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 //        var request: URLRequest?
 //        var response: HTTPURLResponse?
 //        var data: Data?
-//        var error: NSError?
+//        var error: Error?
 //        var streamingFromDisk: Bool?
 //
 //        // When
@@ -675,7 +675,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.upload(

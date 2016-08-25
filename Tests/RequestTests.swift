@@ -89,7 +89,7 @@ class RequestResponseTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
@@ -286,7 +286,7 @@ class RequestResponseTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<Any, NSError>?
+        var response: Response<Any>?
 
         // When
         Alamofire.request(urlString, withMethod: .post, parameters: parameters)
@@ -342,7 +342,7 @@ class RequestResponseTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<Any, NSError>?
+        var response: Response<Any>?
 
         // When
         Alamofire.request(urlString, withMethod: .post, parameters: parameters)

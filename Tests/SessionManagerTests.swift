@@ -250,7 +250,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should complete successfully")
 
-        var response: Response<Any, NSError>?
+        var response: Response<Any>?
 
         // When
         manager.request("https://httpbin.org/headers", withMethod: .get)

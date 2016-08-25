@@ -93,7 +93,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         var request: URLRequest?
         var response: HTTPURLResponse?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.download(urlString, to: destination, withMethod: .get)
@@ -259,7 +259,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         var request: URLRequest?
         var response: HTTPURLResponse?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.download(urlString, to: destination, withMethod: .get, parameters: parameters)
@@ -301,7 +301,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
         var request: URLRequest?
         var response: HTTPURLResponse?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.download(urlString, to: destination, withMethod: .get, headers: headers)
@@ -351,7 +351,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         let download = Alamofire.download(urlString, to: destination, withMethod: .get)
@@ -384,7 +384,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         let download = Alamofire.download(urlString, to: destination, withMethod: .get)
@@ -420,7 +420,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
     func testThatCancelledDownloadResumeDataIsAvailableWithJSONResponseSerializer() {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")
-        var response: Response<Any, NSError>?
+        var response: Response<Any>?
 
         // When
         let download = Alamofire.download(urlString, to: destination, withMethod: .get)

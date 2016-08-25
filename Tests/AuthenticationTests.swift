@@ -68,7 +68,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -99,7 +99,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -132,7 +132,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get, headers: authorizationHeader)
@@ -173,7 +173,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -204,7 +204,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)

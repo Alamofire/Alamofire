@@ -98,7 +98,7 @@ extension ProxyURLProtocol: URLSessionDelegate {
         client?.urlProtocol(self, didLoad: data)
     }
 
-    func URLSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
+    func URLSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let response = task.response {
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         }
@@ -146,7 +146,7 @@ class URLProtocolTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlRequest)

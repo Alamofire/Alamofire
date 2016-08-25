@@ -32,7 +32,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/status/200"
         let expectation = self.expectation(description: "request should return 200 status code")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -53,7 +53,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/status/404"
         let expectation = self.expectation(description: "request should return 404 status code")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -82,7 +82,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/status/201"
         let expectation = self.expectation(description: "request should return 201 status code")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -115,7 +115,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/ip"
         let expectation = self.expectation(description: "request should succeed and return ip")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -138,7 +138,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/ip"
         let expectation = self.expectation(description: "request should succeed and return ip")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -161,7 +161,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/xml"
         let expectation = self.expectation(description: "request should succeed and return xml")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -190,7 +190,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/xml"
         let expectation = self.expectation(description: "request should succeed and return xml")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -219,7 +219,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/status/204"
         let expectation = self.expectation(description: "request should succeed and return no data")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -287,7 +287,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .delete)
@@ -322,7 +322,7 @@ class MultipleValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/ip"
         let expectation = self.expectation(description: "request should succeed and return ip")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -344,7 +344,7 @@ class MultipleValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/xml"
         let expectation = self.expectation(description: "request should succeed and return xml")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -374,7 +374,7 @@ class MultipleValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/xml"
         let expectation = self.expectation(description: "request should succeed and return xml")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -411,7 +411,7 @@ class AutomaticValidationTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should succeed and return ip")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlRequest)
@@ -432,7 +432,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/status/404"
         let expectation = self.expectation(description: "request should return 404 status code")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlString, withMethod: .get)
@@ -464,7 +464,7 @@ class AutomaticValidationTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should succeed and return ip")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlRequest)
@@ -490,7 +490,7 @@ class AutomaticValidationTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should succeed and return xml")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlRequest)
@@ -514,7 +514,7 @@ class AutomaticValidationTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should succeed and return xml")
 
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.request(urlRequest)
