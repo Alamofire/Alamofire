@@ -68,10 +68,9 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if let error = error {
-            XCTAssertEqual(error.domain, ErrorDomain)
-            XCTAssertEqual(error.code, ErrorCode.statusCodeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.StatusCode] as? Int, 404)
+        if let error = error as? AFError, let statusCode = error.responseCode {
+            XCTAssertTrue(error.isUnacceptableStatusCode)
+            XCTAssertEqual(statusCode, 404)
         } else {
             XCTFail("error should not be nil")
         }
@@ -97,10 +96,9 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if let error = error {
-            XCTAssertEqual(error.domain, ErrorDomain)
-            XCTAssertEqual(error.code, ErrorCode.statusCodeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.StatusCode] as? Int, 201)
+        if let error = error as? AFError, let statusCode = error.responseCode {
+            XCTAssertTrue(error.isUnacceptableStatusCode)
+            XCTAssertEqual(statusCode, 201)
         } else {
             XCTFail("error should not be nil")
         }
@@ -176,10 +174,10 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if let error = error {
-            XCTAssertEqual(error.domain, ErrorDomain)
-            XCTAssertEqual(error.code, ErrorCode.contentTypeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.ContentType] as? String, "application/xml")
+        if let error = error as? AFError, let contentType = error.responseContentType, let acceptableTypes = error.acceptableContentTypes {
+            XCTAssertTrue(error.isUnacceptableContentType)
+            XCTAssertEqual(contentType, "application/xml")
+            XCTAssertEqual(acceptableTypes[0], "application/octet-stream")
         } else {
             XCTFail("error should not be nil")
         }
@@ -205,10 +203,10 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error {
-            XCTAssertEqual(error.domain, ErrorDomain)
-            XCTAssertEqual(error.code, ErrorCode.contentTypeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.ContentType] as? String, "application/xml")
+        if let error = error as? AFError, let contentType = error.responseContentType, let acceptableTypes = error.acceptableContentTypes {
+            XCTAssertTrue(error.isUnacceptableContentType)
+            XCTAssertEqual(contentType, "application/xml")
+            XCTAssertTrue(acceptableTypes.isEmpty)
         } else {
             XCTFail("error should not be nil")
         }
@@ -360,10 +358,9 @@ class MultipleValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if let error = error {
-            XCTAssertEqual(error.domain, ErrorDomain)
-            XCTAssertEqual(error.code, ErrorCode.statusCodeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.StatusCode] as? Int, 200)
+        if let error = error as? AFError, let statusCode = error.responseCode {
+            XCTAssertTrue(error.isUnacceptableStatusCode)
+            XCTAssertEqual(statusCode, 200)
         } else {
             XCTFail("error should not be nil")
         }
@@ -390,10 +387,10 @@ class MultipleValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if let error = error {
-            XCTAssertEqual(error.domain, ErrorDomain)
-            XCTAssertEqual(error.code, ErrorCode.contentTypeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.ContentType] as? String, "application/xml")
+        if let error = error as? AFError, let contentType = error.responseContentType, let acceptableTypes = error.acceptableContentTypes {
+            XCTAssertTrue(error.isUnacceptableContentType)
+            XCTAssertEqual(contentType, "application/xml")
+            XCTAssertEqual(acceptableTypes[0], "application/octet-stream")
         } else {
             XCTFail("error should not be nil")
         }
@@ -447,10 +444,9 @@ class AutomaticValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if let error = error {
-            XCTAssertEqual(error.domain, ErrorDomain)
-            XCTAssertEqual(error.code, ErrorCode.statusCodeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.StatusCode] as? Int, 404)
+        if let error = error as? AFError, let statusCode = error.responseCode {
+            XCTAssertTrue(error.isUnacceptableStatusCode)
+            XCTAssertEqual(statusCode, 404)
         } else {
             XCTFail("error should not be nil")
         }
@@ -529,10 +525,10 @@ class AutomaticValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if let error = error {
-            XCTAssertEqual(error.domain, ErrorDomain)
-            XCTAssertEqual(error.code, ErrorCode.contentTypeValidationFailed.rawValue)
-            XCTAssertEqual(error.userInfo[ErrorUserInfoKeys.ContentType] as? String, "application/xml")
+        if let error = error as? AFError, let contentType = error.responseContentType, let acceptableTypes = error.acceptableContentTypes {
+            XCTAssertTrue(error.isUnacceptableContentType)
+            XCTAssertEqual(contentType, "application/xml")
+            XCTAssertEqual(acceptableTypes[0], "application/json")
         } else {
             XCTFail("error should not be nil")
         }

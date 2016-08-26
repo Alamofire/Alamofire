@@ -270,12 +270,12 @@ open class MultipartFormData {
         let bodyContentLength: UInt64
 
         do {
-            guard let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? UInt64 else {
+            guard let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber else {
                 setBodyPartError(withReason: .bodyPartFileSizeNotAvailable(at: fileURL))
                 return
             }
 
-            bodyContentLength = fileSize
+            bodyContentLength = fileSize.uint64Value
         }
         catch {
             setBodyPartError(withReason: .bodyPartFileSizeQueryFailedWithError(url: fileURL, error: error))
@@ -441,8 +441,8 @@ open class MultipartFormData {
             var buffer = [UInt8](repeating: 0, count: streamBufferSize)
             let bytesRead = inputStream.read(&buffer, maxLength: streamBufferSize)
 
-            guard inputStream.streamError == nil else {
-                throw AFError.multipartEncodingFailed(reason: .inputStreamReadFailed(error: inputStream.streamError!))
+            if let error = inputStream.streamError {
+                throw AFError.multipartEncodingFailed(reason: .inputStreamReadFailed(error: error))
             }
 
             if bytesRead > 0 {
@@ -522,8 +522,8 @@ open class MultipartFormData {
             if outputStream.hasSpaceAvailable {
                 let bytesWritten = outputStream.write(buffer, maxLength: bytesToWrite)
 
-                guard outputStream.streamError == nil else {
-                    throw AFError.multipartEncodingFailed(reason: .outputStreamWriteFailed(error: outputStream.streamError!))
+                if let error = outputStream.streamError {
+                    throw AFError.multipartEncodingFailed(reason: .outputStreamWriteFailed(error: error))
                 }
 
                 bytesToWrite -= bytesWritten

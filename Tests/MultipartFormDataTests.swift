@@ -22,6 +22,7 @@
 //  THE SOFTWARE.
 //
 
+@testable
 import Alamofire
 import Foundation
 import XCTest
@@ -826,15 +827,10 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
         if let error = encodingError as? AFError {
-            XCTAssertEqual(error.domain, NSURLErrorDomain, "error domain does not match expected value")
-            XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
+            XCTAssertTrue(error.isBodyPartFilenameInvalid)
 
-            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
-                let expectedFailureReason = "Failed to extract the fileName of the provided URL: \(fileURL)"
-                XCTAssertEqual(failureReason, expectedFailureReason, "failure reason does not match expected value")
-            } else {
-                XCTFail("failure reason should not be nil")
-            }
+            let expectedFailureReason = "The URL provided does not have a valid filename: \(fileURL)"
+            XCTAssertEqual(error.localizedDescription, expectedFailureReason, "failure reason does not match expected value")
         } else {
             XCTFail("Error should be AFError.")
         }
@@ -858,16 +854,13 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = encodingError {
-            XCTAssertEqual(error.domain, NSURLErrorDomain, "error domain does not match expected value")
-            XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
+        if let error = encodingError as? AFError {
+            XCTAssertTrue(error.isBodyPartURLInvalid)
 
-            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
-                let expectedFailureReason = "The file URL does not point to a file URL: \(fileURL)"
-                XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
-            } else {
-                XCTFail("failure reason should not be nil")
-            }
+            let expectedFailureReason = "The URL provided is not a file URL: \(fileURL)"
+            XCTAssertEqual(error.localizedDescription, expectedFailureReason, "error failure reason does not match expected value")
+        } else {
+            XCTFail("Error should be AFError.")
         }
     }
 
@@ -890,16 +883,10 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = encodingError {
-            XCTAssertEqual(error.domain, NSURLErrorDomain, "error domain does not match expected value")
-            XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
-
-            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
-                let expectedFailureReason = "The file URL is not reachable: \(fileURL)"
-                XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
-            } else {
-                XCTFail("failure reason should not be nil")
-            }
+        if let error = encodingError as? AFError {
+            XCTAssertTrue(error.isBodyPartFileNotReachableWithError)
+        } else {
+            XCTFail("Error should be AFError.")
         }
     }
 
@@ -921,16 +908,13 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = encodingError {
-            XCTAssertEqual(error.domain, NSURLErrorDomain, "error domain does not match expected value")
-            XCTAssertEqual(error.code, NSURLErrorBadURL, "error code does not match expected value")
+        if let error = encodingError as? AFError {
+            XCTAssertTrue(error.isBodyPartFileIsDirectory)
 
-            if let failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
-                let expectedFailureReason = "The file URL is a directory, not a file: \(directoryURL)"
-                XCTAssertEqual(failureReason, expectedFailureReason, "error failure reason does not match expected value")
-            } else {
-                XCTFail("failure reason should not be nil")
-            }
+            let expectedFailureReason = "The URL provided is a directory: \(directoryURL)"
+            XCTAssertEqual(error.localizedDescription, expectedFailureReason, "error failure reason does not match expected value")
+        } else {
+            XCTFail("Error should be AFError.")
         }
     }
 
@@ -963,9 +947,8 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         XCTAssertNil(writerError, "writer error should be nil")
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let encodingError = encodingError {
-            XCTAssertEqual(encodingError.domain, NSURLErrorDomain, "encoding error domain does not match expected value")
-            XCTAssertEqual(encodingError.code, NSURLErrorBadURL, "encoding error code does not match expected value")
+        if let encodingError = encodingError as? AFError {
+            XCTAssertTrue(encodingError.isOutputStreamFileAlreadyExists)
         }
     }
 
@@ -989,9 +972,8 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let encodingError = encodingError {
-            XCTAssertEqual(encodingError.domain, NSURLErrorDomain, "encoding error domain does not match expected value")
-            XCTAssertEqual(encodingError.code, NSURLErrorBadURL, "encoding error code does not match expected value")
+        if let encodingError = encodingError as? AFError {
+            XCTAssertTrue(encodingError.isOutputStreamURLInvalid)
         }
     }
 }

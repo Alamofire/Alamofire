@@ -219,7 +219,7 @@ class ManagerConfigurationHeadersTestCase: BaseTestCase {
 //    ⚠️ This test has been removed as a result of rdar://26870455 in Xcode 8 Seed 1
 //    func testThatBackgroundConfigurationHeadersAreSentWithRequest() {
 //        // Given, When, Then
-//        executeAuthorizationHeaderTestForConfigurationType(.background)
+//        executeAuthorizationHeaderTest(for: .background)
 //    }
 
     private func executeAuthorizationHeaderTest(for type: ConfigurationType) {
