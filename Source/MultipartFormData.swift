@@ -231,7 +231,7 @@ open class MultipartFormData {
         //============================================================
 
         guard fileURL.isFileURL else {
-            setBodyPartError(withReason: .bodyPartURLInvalid(at: fileURL))
+            setBodyPartError(withReason: .bodyPartURLInvalid(url: fileURL))
             return
         }
 
@@ -246,7 +246,7 @@ open class MultipartFormData {
                 return
             }
         } catch {
-            setBodyPartError(withReason: .bodyPartFileNotReachableWithError(url: fileURL, error: error))
+            setBodyPartError(withReason: .bodyPartFileNotReachableWithError(atURL: fileURL, error: error))
             return
         }
 
@@ -278,7 +278,7 @@ open class MultipartFormData {
             bodyContentLength = fileSize.uint64Value
         }
         catch {
-            setBodyPartError(withReason: .bodyPartFileSizeQueryFailedWithError(url: fileURL, error: error))
+            setBodyPartError(withReason: .bodyPartFileSizeQueryFailedWithError(forURL: fileURL, error: error))
             return
         }
 
@@ -518,21 +518,17 @@ open class MultipartFormData {
     private func write(_ buffer: inout [UInt8], to outputStream: OutputStream) throws {
         var bytesToWrite = buffer.count
 
-        while bytesToWrite > 0 {
-            if outputStream.hasSpaceAvailable {
-                let bytesWritten = outputStream.write(buffer, maxLength: bytesToWrite)
-
-                if let error = outputStream.streamError {
-                    throw AFError.multipartEncodingFailed(reason: .outputStreamWriteFailed(error: error))
-                }
-
-                bytesToWrite -= bytesWritten
-
-                if bytesToWrite > 0 {
-                    buffer = Array(buffer[bytesWritten..<buffer.count])
-                }
-            } else if let streamError = outputStream.streamError {
-                throw AFError.multipartEncodingFailed(reason: .outputStreamWriteFailed(error: streamError))
+        while bytesToWrite > 0, outputStream.hasSpaceAvailable {
+            let bytesWritten = outputStream.write(buffer, maxLength: bytesToWrite)
+            
+            if let error = outputStream.streamError {
+                throw AFError.multipartEncodingFailed(reason: .outputStreamWriteFailed(error: error))
+            }
+            
+            bytesToWrite -= bytesWritten
+            
+            if bytesToWrite > 0 {
+                buffer = Array(buffer[bytesWritten..<buffer.count])
             }
         }
     }

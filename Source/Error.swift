@@ -27,21 +27,46 @@ import Foundation
 /// `AFError` is the error type returned by the Alamofire framework. It encompasses a few
 /// different types of errors, each with their own associated reasons.
 ///
-/// `.multipartEncodingFailed` errors are returned when some step in the multipart encoding process fails.
+/// - `.multipartEncodingFailed` errors are returned when some step in the multipart encoding process fails.
 ///
-/// `.responseValidationFailed` errors are returned when a `validate()` call fails.
+/// - `.responseValidationFailed` errors are returned when a `validate()` call fails.
 ///
-/// `.responseSerializationFailed` errors are returned when a response serializer encounters an error in the serialization process.
+/// - `.responseSerializationFailed` errors are returned when a response serializer encounters an error in the 
+///     serialization process.
 public enum AFError: Error {
-
+    /// The reason underlying the `AFError.multipartEncodingFailed` state.
+    ///
+    /// - `.bodyPartURLInvalid`:                    The `fileURL` provided for reading an encodable body part isn't a
+    ///                                             file URL.
+    /// - `.bodyPartFilenameInvalid`:               The filename of the `fileURL` provided has either an empty
+    ///                                             `lastPathComponent` or `pathExtension.
+    /// - `.bodyPartFileNotReachable`:              The file at the `fileURL` provided was not reachable.
+    /// - `.bodyPartFileNotReachableWithError`:     Attempting to check the reachability of the `fileURL` provided threw
+    ///                                             an error.
+    /// - `.bodyPartFileIsDirectory`:               The file at the `fileURL` provided is actually a directory.
+    /// - `.bodyPartFileSizeNotAvailable`:          The size of the file at the `fileURL` provided was not returned by
+    ///                                             the system.
+    /// - `.bodyPartFileSizeQueryFailedWithError`:  The attempt to find the size of the file at the `fileURL` provided
+    ///                                             threw an error.
+    /// - `.bodyPartInputStreamCreationFailed`:     An `InputStream` could not be created for the provided `fileURL`.
+    /// - `.outputStreamCreationFailed`:            An `OutputStream` could not be created when attempting to write the
+    ///                                             encoded data to disk.
+    /// - `.outputStreamFileAlreadyExists`:         The encoded body data could not be writtent disk because a file already
+    ///                                             exists at the provided `fileURL`.
+    /// - `.outputStreamURLInvalid`:                The `fileURL` provided for writing the encoded body data to disk is
+    ///                                             not a file URL.
+    /// - `.outputStreamWriteFailed`:               The attempt to write the encoded body data to disk failed with an
+    ///                                             underlying error.
+    /// - `.inputStreamReadFailed`:                 The attempt to read an encoded body part `InputStream` failed with
+    ///                                             underlying system error.
     public enum MultipartEncodingFailureReason {
-        case bodyPartURLInvalid(at: URL)
+        case bodyPartURLInvalid(url: URL)
         case bodyPartFilenameInvalid(in: URL)
         case bodyPartFileNotReachable(at: URL)
-        case bodyPartFileNotReachableWithError(url: URL, error: Error)
+        case bodyPartFileNotReachableWithError(atURL: URL, error: Error)
         case bodyPartFileIsDirectory(at: URL)
         case bodyPartFileSizeNotAvailable(at: URL)
-        case bodyPartFileSizeQueryFailedWithError(url: URL, error: Error)
+        case bodyPartFileSizeQueryFailedWithError(forURL: URL, error: Error)
         case bodyPartInputStreamCreationFailed(for: URL)
 
         case outputStreamCreationFailed(for: URL)
@@ -52,12 +77,26 @@ public enum AFError: Error {
         case inputStreamReadFailed(error: Error)
     }
 
+    /// The reason underlying the `AFError.responseValidationFailed` state.
+    ///
+    /// - `.missingContentType`:        The response did not contain a `Content-Type` and the `acceptableContentTypes`
+    ///                                 provided did not contain wildcard type.
+    /// - `unacceptableContentType`:    The response `Content-Type` did not match any type in the provided
+    ///    .                            `acceptableContentTypes`.
+    /// - `.unacceptableStatusCode`:    The response status code was not acceptable.
     public enum ValidationFailureReason {
-        case missingContentType(acceptable: [String])
-        case unacceptableContentType(acceptable: [String], response: String)
+        case missingContentType(acceptableContentTypes: [String])
+        case unacceptableContentType(acceptableContentTypes: [String], responseContentType: String)
         case unacceptableStatusCode(code: Int)
     }
 
+    /// The reason underlying the `AFError.responseSerializationFailed` state.
+    ///
+    /// - `.inputDataNil`:                      The response contained no data.
+    /// - `.inputDataNilOrZeroLength`:          The response contained no data or the data was zero length.
+    /// - `.stringSerializationFailed`:         String serialization failed using the provided `String.Encoding`.
+    /// - `.jsonSerializationFailed`:           JSON serialization failed with an underlying system error.
+    /// - `.propertyListSerializationFailed`:   Proptery list serialization failed with an underlying system error.
     public enum SerializationFailureReason {
         case inputDataNil
         case inputDataNilOrZeroLength
@@ -69,270 +108,36 @@ public enum AFError: Error {
     case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
     case responseValidationFailed(reason: ValidationFailureReason)
     case responseSerializationFailed(reason: SerializationFailureReason)
-
 }
 
-// MARK: Error Booleans
+// MARK: - Error Booleans
 
 public extension AFError {
-
-    /// Returns whether the AFError is a multipart encoding error.
-    /// When true, the `url` and `underlyingError` properties will contain the associated values.
+    /// Returns whether the AFError is a multipart encoding error. When true, the `url` and `underlyingError` properties 
+    /// will contain the associated values.
     public var isMultipartEncodingError: Bool {
         if case .multipartEncodingFailed = self { return true }
         return false
     }
 
-    /// Returns whether the `AFError` is a response validation error.
-    /// When true, the `acceptableContentTypes`, `responseContentType`, and `responseCode` properties will contain the associated values.
+    /// Returns whether the `AFError` is a response validation error. When true, the `acceptableContentTypes`, 
+    /// `responseContentType`, and `responseCode` properties will contain the associated values.
     public var isResponseValidationError: Bool {
         if case .responseValidationFailed = self { return true }
         return false
     }
 
-    /// Returns whether the `AFError` is a response serialization error.
-    /// When true, the `failedStringEncoding` and `underlyingError` properties will contain the associated values.
+    /// Returns whether the `AFError` is a response serialization error. When true, the `failedStringEncoding` and 
+    /// `underlyingError` properties will contain the associated values.
     public var isResponseSerializationError: Bool {
         if case .responseSerializationFailed = self { return true }
         return false
     }
-
 }
 
-extension AFError {
-
-    var isBodyPartURLInvalid: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isBodyPartURLInvalid { return true }
-        return false
-    }
-
-    var isBodyPartFilenameInvalid: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isBodyPartFilenameInvalid { return true }
-        return false
-    }
-
-    var isBodyPartFileNotReachable: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isBodyPartFileNotReachable { return true }
-        return false
-    }
-
-    var isBodyPartFileNotReachableWithError: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isBodyPartFileNotReachableWithError { return true }
-        return false
-    }
-
-    var isBodyPartFileIsDirectory: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isBodyPartFileIsDirectory { return true }
-        return false
-    }
-
-    var isBodyPartFileSizeNotAvailable: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isBodyPartFileSizeNotAvailable { return true }
-        return false
-    }
-
-    var isBodyPartFileSizeQueryFailedWithError: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isBodyPartFileSizeQueryFailedWithError { return true }
-        return false
-    }
-
-    var isBodyPartInputStreamCreationFailed: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isBodyPartInputStreamCreationFailed { return true }
-        return false
-    }
-
-    var isOutputStreamCreationFailed: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isOutputStreamCreationFailed { return true }
-        return false
-    }
-
-    var isOutputStreamFileAlreadyExists: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isOutputStreamFileAlreadyExists { return true }
-        return false
-    }
-
-    var isOutputStreamURLInvalid: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isOutputStreamURLInvalid { return true }
-        return false
-    }
-
-    var isOutputStreamWriteFailed: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isOutputStreamWriteFailed { return true }
-        return false
-    }
-
-    var isInputStreamReadFailed: Bool {
-        if case let .multipartEncodingFailed(reason) = self, reason.isInputStreamReadFailed { return true }
-        return false
-    }
-
-    // SerializationFailureReason
-
-    var isInputDataNil: Bool {
-        if case let .responseSerializationFailed(reason) = self, reason.isInputDataNil { return true }
-        return false
-    }
-
-    var isInputDataNilOrZeroLength: Bool {
-        if case let .responseSerializationFailed(reason) = self, reason.isInputDataNilOrZeroLength { return true }
-        return false
-    }
-
-    var isStringSerializationFailed: Bool {
-        if case let .responseSerializationFailed(reason) = self, reason.isStringSerializationFailed { return true }
-        return false
-    }
-
-    var isJSONSerializationFailed: Bool {
-        if case let .responseSerializationFailed(reason) = self, reason.isJSONSerializationFailed { return true }
-        return false
-    }
-
-    var isPropertyListSerializationFailed: Bool {
-        if case let .responseSerializationFailed(reason) = self, reason.isPropertyListSerializationFailed { return true }
-        return false
-    }
-
-    // ValidationFailureReason
-
-    var isMissingContentType: Bool {
-        if case let .responseValidationFailed(reason) = self, reason.isMissingContentType { return true }
-        return false
-    }
-
-    var isUnacceptableContentType: Bool {
-        if case let .responseValidationFailed(reason) = self, reason.isUnacceptableContentType { return true }
-        return false
-    }
-
-    var isUnacceptableStatusCode: Bool {
-        if case let .responseValidationFailed(reason) = self, reason.isUnacceptableStatusCode { return true }
-        return false
-    }
-
-}
-
-extension AFError.MultipartEncodingFailureReason {
-
-    var isBodyPartURLInvalid: Bool {
-        if case .bodyPartURLInvalid = self { return true }
-        return false
-    }
-
-    var isBodyPartFilenameInvalid: Bool {
-        if case .bodyPartFilenameInvalid = self { return true }
-        return false
-    }
-
-    var isBodyPartFileNotReachable: Bool {
-        if case .bodyPartFileNotReachable = self { return true }
-        return false
-    }
-
-    var isBodyPartFileNotReachableWithError: Bool {
-        if case .bodyPartFileNotReachableWithError = self { return true }
-        return false
-    }
-
-    var isBodyPartFileIsDirectory: Bool {
-        if case .bodyPartFileIsDirectory = self { return true }
-        return false
-    }
-
-    var isBodyPartFileSizeNotAvailable: Bool {
-        if case .bodyPartFileSizeNotAvailable = self { return true }
-        return false
-    }
-
-    var isBodyPartFileSizeQueryFailedWithError: Bool {
-        if case .bodyPartFileSizeQueryFailedWithError = self { return true }
-        return false
-    }
-
-    var isBodyPartInputStreamCreationFailed: Bool {
-        if case .bodyPartInputStreamCreationFailed = self { return true }
-        return false
-    }
-
-    var isOutputStreamCreationFailed: Bool {
-        if case .outputStreamCreationFailed = self { return true }
-        return false
-    }
-
-    var isOutputStreamFileAlreadyExists: Bool {
-        if case .outputStreamFileAlreadyExists = self { return true }
-        return false
-    }
-
-    var isOutputStreamURLInvalid: Bool {
-        if case .outputStreamURLInvalid = self { return true }
-        return false
-    }
-
-    var isOutputStreamWriteFailed: Bool {
-        if case .outputStreamWriteFailed = self { return true }
-        return false
-    }
-
-    var isInputStreamReadFailed: Bool {
-        if case .inputStreamReadFailed = self { return true }
-        return false
-    }
-
-}
-
-extension AFError.SerializationFailureReason {
-
-    var isInputDataNil: Bool {
-        if case .inputDataNil = self { return true }
-        return false
-    }
-
-    var isInputDataNilOrZeroLength: Bool {
-        if case .inputDataNilOrZeroLength = self { return true }
-        return false
-    }
-
-    var isStringSerializationFailed: Bool {
-        if case .stringSerializationFailed = self { return true }
-        return false
-    }
-
-    var isJSONSerializationFailed: Bool {
-        if case .jsonSerializationFailed = self { return true }
-        return false
-    }
-
-    var isPropertyListSerializationFailed: Bool {
-        if case .propertyListSerializationFailed = self { return true }
-        return false
-    }
-
-}
-
-extension AFError.ValidationFailureReason {
-
-    var isMissingContentType: Bool {
-        if case .missingContentType = self { return true }
-        return false
-    }
-
-    var isUnacceptableContentType: Bool {
-        if case .unacceptableContentType = self { return true }
-        return false
-    }
-
-    var isUnacceptableStatusCode: Bool {
-        if case .unacceptableStatusCode = self { return true }
-        return false
-    }
-
-}
-
-// MARK: Convenience Properties
+// MARK: - Convenience Properties
 
 public extension AFError {
-
     /// The `URL` associated with the error.
     public var url: URL? {
         switch self {
@@ -343,7 +148,8 @@ public extension AFError {
         }
     }
 
-    /// The `Error` returned by a system framework associated with a `.multipartEncodingFailed` or `.responseSerializationFailed` error.
+    /// The `Error` returned by a system framework associated with a `.multipartEncodingFailed` or 
+    /// `.responseSerializationFailed` error.
     public var underlyingError: Error? {
         switch self {
         case .multipartEncodingFailed(let reason):
@@ -394,11 +200,9 @@ public extension AFError {
             return nil
         }
     }
-
 }
 
 extension AFError.MultipartEncodingFailureReason {
-
     var url: URL? {
         switch self {
         case .bodyPartURLInvalid(let url), .bodyPartFilenameInvalid(let url), .bodyPartFileNotReachable(let url),
@@ -412,7 +216,7 @@ extension AFError.MultipartEncodingFailureReason {
     }
 
     var underlyingError: Error? {
-        switch self{
+        switch self {
         case .bodyPartFileNotReachableWithError(_, let error), .bodyPartFileSizeQueryFailedWithError(_, let error),
              .outputStreamWriteFailed(let error), .inputStreamReadFailed(let error):
             return error
@@ -420,11 +224,9 @@ extension AFError.MultipartEncodingFailureReason {
             return nil
         }
     }
-
 }
 
 extension AFError.ValidationFailureReason {
-
     var acceptableContentTypes: [String]? {
         switch self {
         case .missingContentType(let types), .unacceptableContentType(let types, _):
@@ -451,11 +253,9 @@ extension AFError.ValidationFailureReason {
             return nil
         }
     }
-
 }
 
 extension AFError.SerializationFailureReason {
-
     var failedStringEncoding: String.Encoding? {
         switch self {
         case .stringSerializationFailed(let encoding):
@@ -473,13 +273,11 @@ extension AFError.SerializationFailureReason {
             return nil
         }
     }
-
 }
 
-// MARK: Error Descriptions
+// MARK: - Error Descriptions
 
 extension AFError: LocalizedError {
-
     public var errorDescription: String? {
         switch self {
         case .multipartEncodingFailed(let reason):
@@ -490,11 +288,9 @@ extension AFError: LocalizedError {
             return reason.localizedDescription
         }
     }
-
 }
 
 extension AFError.SerializationFailureReason {
-
     var localizedDescription: String {
         switch self {
         case .inputDataNil:
@@ -509,11 +305,9 @@ extension AFError.SerializationFailureReason {
             return "PropertyList could not be serialized because of error:\n\(error.localizedDescription)"
         }
     }
-
 }
 
 extension AFError.ValidationFailureReason {
-
     var localizedDescription: String {
         switch self {
         case .missingContentType(let types):
@@ -524,11 +318,9 @@ extension AFError.ValidationFailureReason {
             return "Response status code was unacceptable: \(code)."
         }
     }
-
 }
 
 extension AFError.MultipartEncodingFailureReason {
-
     var localizedDescription: String {
         switch self {
         case .bodyPartURLInvalid(let url):
@@ -559,5 +351,4 @@ extension AFError.MultipartEncodingFailureReason {
             return "InputStream read failed with error: \(error)"
         }
     }
-
 }

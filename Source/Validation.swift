@@ -132,7 +132,7 @@ extension Request {
                     }
                 }
 
-                return .failure(AFError.responseValidationFailed(reason: .missingContentType(acceptable: Array(acceptableContentTypes))))
+                return .failure(AFError.responseValidationFailed(reason: .missingContentType(acceptableContentTypes: Array(acceptableContentTypes))))
             }
 
             for contentType in acceptableContentTypes {
@@ -141,7 +141,7 @@ extension Request {
                 }
             }
 
-            let error = AFError.responseValidationFailed(reason: .unacceptableContentType(acceptable: Array(acceptableContentTypes), response: responseContentType))
+            let error = AFError.responseValidationFailed(reason: .unacceptableContentType(acceptableContentTypes: Array(acceptableContentTypes), responseContentType: responseContentType))
 
             return .failure(error)
         }
