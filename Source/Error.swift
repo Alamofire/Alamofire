@@ -31,7 +31,7 @@ import Foundation
 ///
 /// - `.responseValidationFailed` errors are returned when a `validate()` call fails.
 ///
-/// - `.responseSerializationFailed` errors are returned when a response serializer encounters an error in the 
+/// - `.responseSerializationFailed` errors are returned when a response serializer encounters an error in the
 ///     serialization process.
 public enum AFError: Error {
     /// The reason underlying the `AFError.multipartEncodingFailed` state.
@@ -113,21 +113,21 @@ public enum AFError: Error {
 // MARK: - Error Booleans
 
 public extension AFError {
-    /// Returns whether the AFError is a multipart encoding error. When true, the `url` and `underlyingError` properties 
+    /// Returns whether the AFError is a multipart encoding error. When true, the `url` and `underlyingError` properties
     /// will contain the associated values.
     public var isMultipartEncodingError: Bool {
         if case .multipartEncodingFailed = self { return true }
         return false
     }
 
-    /// Returns whether the `AFError` is a response validation error. When true, the `acceptableContentTypes`, 
+    /// Returns whether the `AFError` is a response validation error. When true, the `acceptableContentTypes`,
     /// `responseContentType`, and `responseCode` properties will contain the associated values.
     public var isResponseValidationError: Bool {
         if case .responseValidationFailed = self { return true }
         return false
     }
 
-    /// Returns whether the `AFError` is a response serialization error. When true, the `failedStringEncoding` and 
+    /// Returns whether the `AFError` is a response serialization error. When true, the `failedStringEncoding` and
     /// `underlyingError` properties will contain the associated values.
     public var isResponseSerializationError: Bool {
         if case .responseSerializationFailed = self { return true }
@@ -148,7 +148,7 @@ public extension AFError {
         }
     }
 
-    /// The `Error` returned by a system framework associated with a `.multipartEncodingFailed` or 
+    /// The `Error` returned by a system framework associated with a `.multipartEncodingFailed` or
     /// `.responseSerializationFailed` error.
     public var underlyingError: Error? {
         switch self {
