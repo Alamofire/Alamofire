@@ -22,7 +22,6 @@
 //  THE SOFTWARE.
 //
 
-@testable
 import Alamofire
 import Foundation
 import XCTest
