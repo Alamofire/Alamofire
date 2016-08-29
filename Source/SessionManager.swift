@@ -88,7 +88,8 @@ open class SessionManager {
             if let info = Bundle.main.infoDictionary {
                 let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
                 let bundle = info[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
-                let version = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
+                let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
+                let appBuild = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
 
                 let osNameVersion: String = {
                     let version = ProcessInfo.processInfo.operatingSystemVersion
@@ -113,7 +114,7 @@ open class SessionManager {
                     return "\(osName) \(versionString)"
                 }()
 
-                return "\(executable)/\(bundle) (\(version); \(osNameVersion))"
+                return "\(executable)/\(bundle) (\(appVersion)/\(appBuild)); \(osNameVersion))"
             }
 
             return "Alamofire"
