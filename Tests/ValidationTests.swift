@@ -174,16 +174,12 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if
-            let error = error as? AFError,
-            let contentType = error.responseContentType,
-            let acceptableTypes = error.acceptableContentTypes,
-            let firstAcceptableType = acceptableTypes.first {
+        if let error = error as? AFError {
             XCTAssertTrue(error.isUnacceptableContentType)
-            XCTAssertEqual(contentType, "application/xml")
-            XCTAssertEqual(firstAcceptableType, "application/octet-stream")
+            XCTAssertEqual(error.responseContentType, "application/xml")
+            XCTAssertEqual(error.acceptableContentTypes?.first, "application/octet-stream")
         } else {
-            XCTFail("Error should not be nil, should be an AFError, should have associated responseContentType and acceptableContentTypes values, and should have an acceptable type of application/octet-stream.")
+            XCTFail("error should not be nil")
         }
     }
 
@@ -207,12 +203,12 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError, let contentType = error.responseContentType, let acceptableTypes = error.acceptableContentTypes {
+        if let error = error as? AFError {
             XCTAssertTrue(error.isUnacceptableContentType)
-            XCTAssertEqual(contentType, "application/xml")
-            XCTAssertTrue(acceptableTypes.isEmpty)
+            XCTAssertEqual(error.responseContentType, "application/xml")
+            XCTAssertTrue(error.acceptableContentTypes?.isEmpty ?? false)
         } else {
-            XCTFail("Error should not be nil, should be an AFError, should have associated responseContentType and acceptableContentType values, and should have an empty acceptableContentTypes array.")
+            XCTFail("error should not be nil")
         }
     }
 
@@ -362,11 +358,11 @@ class MultipleValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if let error = error as? AFError, let statusCode = error.responseCode {
+        if let error = error as? AFError {
             XCTAssertTrue(error.isUnacceptableStatusCode)
-            XCTAssertEqual(statusCode, 200)
+            XCTAssertEqual(error.responseCode, 200)
         } else {
-            XCTFail("Error should not be nil, should be an AFError, and should have an associated statusCode.")
+            XCTFail("error should not be nil")
         }
     }
 
@@ -391,16 +387,12 @@ class MultipleValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if
-            let error = error as? AFError,
-            let contentType = error.responseContentType,
-            let acceptableTypes = error.acceptableContentTypes,
-            let firstAcceptableType = acceptableTypes.first {
+        if let error = error as? AFError {
             XCTAssertTrue(error.isUnacceptableContentType)
-            XCTAssertEqual(contentType, "application/xml")
-            XCTAssertEqual(firstAcceptableType, "application/octet-stream")
+            XCTAssertEqual(error.responseContentType, "application/xml")
+            XCTAssertEqual(error.acceptableContentTypes?.first, "application/octet-stream")
         } else {
-            XCTFail("Error should not be nil, should be an AFError, should have associated responseContentType and acceptableContentTypes values, should have a response type of application/xml, and should have an acceptable type of application/octet-stream.")
+            XCTFail("error should not be nil")
         }
     }
 }
@@ -533,16 +525,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if
-            let error = error as? AFError,
-            let contentType = error.responseContentType,
-            let acceptableTypes = error.acceptableContentTypes,
-            let firstAcceptableType = acceptableTypes.first {
+        if let error = error as? AFError {
             XCTAssertTrue(error.isUnacceptableContentType)
-            XCTAssertEqual(contentType, "application/xml")
-            XCTAssertEqual(firstAcceptableType, "application/json")
+            XCTAssertEqual(error.responseContentType, "application/xml")
+            XCTAssertEqual(error.acceptableContentTypes?.first, "application/json")
         } else {
-            XCTFail("Error should not be nil, should be an AFError, should have associated responseContentType and acceptableContentTypes values, should have a response type of application/xml, and should have an acceptable type of application/json.")
+            XCTFail("error should not be nil")
         }
     }
 }
