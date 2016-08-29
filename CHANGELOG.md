@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 4.x Releases
-- `4.0.0` Betas - [4.0.0-beta.1](#400-beta1)
+- `4.0.0` Betas - [4.0.0-beta.1](#400-beta1) | [4.0.0-beta.2](#400-beta2)
 
 #### 3.x Releases
 - `3.4.x` Releases - [3.4.0](#340) | [3.4.1](#341) | [3.4.2](#342)
@@ -24,6 +24,15 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [4.0.0-beta.2](https://github.com/Alamofire/Alamofire/releases/tag/4.0.0-beta.2)
+Released on 2016-08-29. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.0.0-beta.2).
+
+#### Fixed
+- Build issue with `Manager` class due to cherry picked change that merged incorrectly.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Regards to Issue
+  [#1438](https://github.com/Alamofire/Alamofire/pull/1438).
 
 ## [4.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/4.0.0-beta.1)
 Released on 2016-08-28. All issues associated with this milestone can be found using this
