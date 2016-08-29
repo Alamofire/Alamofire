@@ -291,8 +291,8 @@ extension Request: CustomDebugStringConvertible {
         var components = ["$ curl -i"]
 
         guard let request = self.request,
-              let URL = request.url,
-              let host = URL.host
+              let url = request.url,
+              let host = url.host
         else {
             return "$ curl command could not be created"
         }
@@ -304,8 +304,8 @@ extension Request: CustomDebugStringConvertible {
         if let credentialStorage = self.session.configuration.urlCredentialStorage {
             let protectionSpace = URLProtectionSpace(
                 host: host,
-                port: (URL as NSURL).port?.intValue ?? 0,
-                protocol: URL.scheme,
+                port: url.port ?? 0,
+                protocol: url.scheme,
                 realm: host,
                 authenticationMethod: NSURLAuthenticationMethodHTTPBasic
             )
@@ -324,7 +324,7 @@ extension Request: CustomDebugStringConvertible {
         if session.configuration.httpShouldSetCookies {
             if
                 let cookieStorage = session.configuration.httpCookieStorage,
-                let cookies = cookieStorage.cookies(for: URL), !cookies.isEmpty
+                let cookies = cookieStorage.cookies(for: url), !cookies.isEmpty
             {
                 let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value);" }
                 components.append("-b \"\(string.substring(to: string.characters.index(before: string.endIndex)))\"")
@@ -359,7 +359,7 @@ extension Request: CustomDebugStringConvertible {
             components.append("-d \"\(escapedBody)\"")
         }
 
-        components.append("\"\(URL.absoluteString)\"")
+        components.append("\"\(url.absoluteString)\"")
 
         return components.joined(separator: " \\\n\t")
     }

@@ -652,7 +652,7 @@ class CustomParameterEncodingTestCase: ParameterEncodingTestCase {
 
     func testCustomParameterEncode() {
         // Given
-        let encodingClosure: (URLRequestConvertible, [String: Any]?) -> (URLRequest, NSError?) = { urlRequest, parameters in
+        let encodingClosure: (URLRequestConvertible, [String: Any]?) -> (URLRequest, Error?) = { urlRequest, parameters in
             guard let parameters = parameters else { return (urlRequest.urlRequest, nil) }
 
             var urlString = urlRequest.urlRequest.urlString + "?"

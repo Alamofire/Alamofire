@@ -25,7 +25,7 @@
 import Foundation
 
 /// Used to store all response data returned from a completed `Request`.
-public struct Response<ValueType, ErrorType: Error> {
+public struct Response<Value> {
     /// The URL request sent to the server.
     public let request: URLRequest?
 
@@ -36,7 +36,7 @@ public struct Response<ValueType, ErrorType: Error> {
     public let data: Data?
 
     /// The result of response serialization.
-    public let result: Result<ValueType, ErrorType>
+    public let result: Result<Value>
 
     /// The timeline of the complete lifecycle of the `Request`.
     public let timeline: Timeline
@@ -55,7 +55,7 @@ public struct Response<ValueType, ErrorType: Error> {
         request: URLRequest?,
         response: HTTPURLResponse?,
         data: Data?,
-        result: Result<ValueType, ErrorType>,
+        result: Result<Value>,
         timeline: Timeline = Timeline())
     {
         self.request = request

@@ -43,7 +43,7 @@ class SessionDelegateTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Override closure should be called")
 
         var overrideClosureCalled = false
-        var invalidationError: NSError?
+        var invalidationError: Error?
 
         manager.delegate.sessionDidBecomeInvalidWithError = { _, error in
             overrideClosureCalled = true
@@ -125,7 +125,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -159,7 +159,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -201,7 +201,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -242,7 +242,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -284,7 +284,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -326,7 +326,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -377,7 +377,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -430,7 +430,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         manager.request(urlString, withMethod: .get)
@@ -486,7 +486,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
-        var response: Response<Any, NSError>?
+        var response: Response<Any>?
 
         // When
         manager.request(urlString, withMethod: .get, headers: headers)

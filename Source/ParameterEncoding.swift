@@ -70,7 +70,7 @@ public enum ParameterEncoding {
     case urlEncodedInURL
     case json
     case propertyList(PropertyListSerialization.PropertyListFormat, PropertyListSerialization.WriteOptions)
-    case custom((URLRequestConvertible, [String: Any]?) -> (URLRequest, NSError?))
+    case custom((URLRequestConvertible, [String: Any]?) -> (URLRequest, Error?))
 
     /// Creates a URL request by encoding parameters and applying them onto an existing request.
     ///
@@ -82,13 +82,13 @@ public enum ParameterEncoding {
     public func encode(
         _ urlRequest: URLRequestConvertible,
         parameters: [String: Any]?)
-        -> (URLRequest, NSError?)
+        -> (URLRequest, Error?)
     {
         var urlRequest = urlRequest.urlRequest
 
         guard let parameters = parameters else { return (urlRequest, nil) }
 
-        var encodingError: NSError? = nil
+        var encodingError: Error? = nil
 
         switch self {
         case .url, .urlEncodedInURL:
@@ -143,8 +143,7 @@ public enum ParameterEncoding {
             }
         case .json:
             do {
-                let options = JSONSerialization.WritingOptions()
-                let data = try JSONSerialization.data(withJSONObject: parameters, options: options)
+                let data = try JSONSerialization.data(withJSONObject: parameters, options: [])
 
                 if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
                     urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -152,7 +151,7 @@ public enum ParameterEncoding {
 
                 urlRequest.httpBody = data
             } catch {
-                encodingError = error as NSError
+                encodingError = error
             }
         case .propertyList(let format, let options):
             do {
@@ -168,7 +167,7 @@ public enum ParameterEncoding {
 
                 urlRequest.httpBody = data
             } catch {
-                encodingError = error as NSError
+                encodingError = error
             }
         case .custom(let closure):
             (urlRequest, encodingError) = closure(urlRequest, parameters)
@@ -221,9 +220,7 @@ public enum ParameterEncoding {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="
 
-        // rdar://26850776
-        // Crash in Xcode 8 Seed 1 when trying to mutate a CharacterSet with remove
-        var allowedCharacterSet = NSMutableCharacterSet.urlQueryAllowed
+        var allowedCharacterSet = CharacterSet.urlQueryAllowed
         allowedCharacterSet.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
 
         return string.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? string

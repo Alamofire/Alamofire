@@ -37,7 +37,7 @@ open class TaskDelegate: NSObject {
     let progress: Progress
 
     var data: Data? { return nil }
-    var error: NSError?
+    var error: Error?
 
     var initialResponseTime: CFAbsoluteTime?
     var credential: URLCredential?
@@ -58,12 +58,12 @@ open class TaskDelegate: NSObject {
         }()
     }
 
-    // MARK: NSURLSessionTaskDelegate
+    // MARK: URLSessionTaskDelegate
 
     var taskWillPerformHTTPRedirection: ((URLSession, URLSessionTask, HTTPURLResponse, URLRequest) -> URLRequest?)?
     var taskDidReceiveChallenge: ((URLSession, URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))?
     var taskNeedNewBodyStream: ((URLSession, URLSessionTask) -> InputStream?)?
-    var taskDidCompleteWithError: ((URLSession, URLSessionTask, NSError?) -> Void)?
+    var taskDidCompleteWithError: ((URLSession, URLSessionTask, Error?) -> Void)?
 
     @objc(URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:)
     func urlSession(
@@ -137,7 +137,8 @@ open class TaskDelegate: NSObject {
         completionHandler(bodyStream)
     }
 
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: NSError?) {
+    @objc(URLSession:task:didCompleteWithError:)
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let taskDidCompleteWithError = taskDidCompleteWithError {
             taskDidCompleteWithError(session, task, error)
         } else {
@@ -146,7 +147,7 @@ open class TaskDelegate: NSObject {
 
                 if
                     let downloadDelegate = self as? DownloadTaskDelegate,
-                    let resumeData = error.userInfo[NSURLSessionDownloadTaskResumeData] as? Data
+                    let resumeData = (error as NSError).userInfo[NSURLSessionDownloadTaskResumeData] as? Data
                 {
                     downloadDelegate.resumeData = resumeData
                 }
@@ -169,7 +170,7 @@ class DataTaskDelegate: TaskDelegate, URLSessionDataDelegate {
         if dataStream != nil {
             return nil
         } else {
-            return mutableData as Data
+            return mutableData
         }
     }
 
@@ -188,7 +189,7 @@ class DataTaskDelegate: TaskDelegate, URLSessionDataDelegate {
         super.init(task: task)
     }
 
-    // MARK: NSURLSessionDataDelegate
+    // MARK: URLSessionDataDelegate
 
     var dataTaskDidReceiveResponse: ((URLSession, URLSessionDataTask, URLResponse) -> URLSession.ResponseDisposition)?
     var dataTaskDidBecomeDownloadTask: ((URLSession, URLSessionDataTask, URLSessionDownloadTask) -> Void)?
@@ -275,7 +276,7 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
     var resumeData: Data?
     override var data: Data? { return resumeData }
 
-    // MARK: NSURLSessionDownloadDelegate
+    // MARK: URLSessionDownloadDelegate
 
     var downloadTaskDidFinishDownloadingToURL: ((URLSession, URLSessionDownloadTask, URL) -> URL)?
     var downloadTaskDidWriteData: ((URLSession, URLSessionDownloadTask, Int64, Int64, Int64) -> Void)?
@@ -291,7 +292,7 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
                 let destination = downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
                 try FileManager.default.moveItem(at: location, to: destination)
             } catch {
-                self.error = error as NSError
+                self.error = error
             }
         }
     }
@@ -345,7 +346,7 @@ class UploadTaskDelegate: DataTaskDelegate {
     var uploadTask: URLSessionUploadTask? { return task as? URLSessionUploadTask }
     var uploadProgress: ((Int64, Int64, Int64) -> Void)!
 
-    // MARK: NSURLSessionTaskDelegate
+    // MARK: URLSessionTaskDelegate
 
     var taskDidSendBodyData: ((URLSession, URLSessionTask, Int64, Int64, Int64) -> Void)?
 

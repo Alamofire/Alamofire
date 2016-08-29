@@ -153,7 +153,7 @@ class UploadDataTestCase: BaseTestCase {
 
         var request: URLRequest?
         var response: HTTPURLResponse?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.upload(data, to: urlString, withMethod: .post)
@@ -277,7 +277,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.upload(
@@ -334,7 +334,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.upload(
@@ -585,33 +585,33 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 //    ⚠️ This test has been removed as a result of rdar://26870455 in Xcode 8 Seed 1
 //    func testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
 //        // Given
-//        let manager: Manager = {
+//        let manager: SessionManager = {
 //            let identifier = "org.alamofire.uploadtests.\(UUID().uuidString)"
-//            let configuration = URLSessionConfiguration.backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier)
+//            let configuration = URLSessionConfiguration.background(withIdentifier: identifier)
 //
-//            return Manager(configuration: configuration, serverTrustPolicyManager: nil)
+//            return SessionManager(configuration: configuration, serverTrustPolicyManager: nil)
 //        }()
 //
 //        let urlString = "https://httpbin.org/post"
 //        let french = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 //        let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
 //
-//        let expectation = self.expectation(withDescription: "multipart form data upload should succeed")
+//        let expectation = self.expectation(description: "multipart form data upload should succeed")
 //
 //        var request: URLRequest?
 //        var response: HTTPURLResponse?
 //        var data: Data?
-//        var error: NSError?
+//        var error: Error?
 //        var streamingFromDisk: Bool?
 //
 //        // When
 //        manager.upload(
-//            .post,
-//            urlString,
 //            multipartFormData: { multipartFormData in
-//                multipartFormData.appendBodyPart(data: french, name: "french")
-//                multipartFormData.appendBodyPart(data: japanese, name: "japanese")
+//                multipartFormData.append(french, withName: "french")
+//                multipartFormData.append(japanese, withName: "japanese")
 //            },
+//            to: urlString,
+//            withMethod: .post,
 //            encodingCompletion: { result in
 //                switch result {
 //                case let .success(upload, uploadStreamingFromDisk, _):
@@ -631,7 +631,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 //            }
 //        )
 //
-//        waitForExpectations(withTimeout: timeout, handler: nil)
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertNotNil(request, "request should not be nil")
@@ -675,7 +675,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: NSError?
+        var error: Error?
 
         // When
         Alamofire.upload(
