@@ -60,7 +60,8 @@ public class Manager {
             if let info = NSBundle.mainBundle().infoDictionary {
                 let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
                 let bundle = info[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
-                let version = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
+                let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
+                let appBuild = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
 
                 let osNameVersion: String = {
                     let versionString: String
@@ -91,7 +92,7 @@ public class Manager {
                     return "\(osName) \(versionString)"
                 }()
 
-                return "\(executable)/\(bundle) (\(version); \(osNameVersion))"
+                return "\(executable)/\(bundle) (\(appVersion)/\(appBuild)); \(osNameVersion))"
             }
 
             return "Alamofire"
