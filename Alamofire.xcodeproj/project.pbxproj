@@ -31,8 +31,8 @@
 		4C0B62531BB1001C009302D3 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0B62501BB1001C009302D3 /* Response.swift */; };
 		4C0E5BF81B673D3400816CCC /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E5BF71B673D3400816CCC /* Result.swift */; };
 		4C0E5BF91B673D3400816CCC /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E5BF71B673D3400816CCC /* Result.swift */; };
-		4C1DC8541B68908E00476DE3 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* Error.swift */; };
-		4C1DC8551B68908E00476DE3 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* Error.swift */; };
+		4C1DC8541B68908E00476DE3 /* AFError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* AFError.swift */; };
+		4C1DC8551B68908E00476DE3 /* AFError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* AFError.swift */; };
 		4C23EB431B327C5B0090E0BC /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */; };
 		4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */; };
 		4C256A531B096C770065714F /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
@@ -153,14 +153,14 @@
 		4CDE2C471AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */; };
 		4CE2724F1AF88FB500F1D59A /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
 		4CE272501AF88FB500F1D59A /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
-		4CEC605A1B745C9100E684F4 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* Error.swift */; };
+		4CEC605A1B745C9100E684F4 /* AFError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* AFError.swift */; };
 		4CEC605B1B745C9100E684F4 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0E5BF71B673D3400816CCC /* Result.swift */; };
 		4CEC605C1B745C9B00E684F4 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4CEE82AD1C6813CF00E9C9F0 /* NetworkReachabilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */; };
 		4CF626F91BA7CB3E0011A099 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CF626EF1BA7CB3E0011A099 /* Alamofire.framework */; };
 		4CF627061BA7CBE30011A099 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4CF627071BA7CBF60011A099 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
-		4CF627081BA7CBF60011A099 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* Error.swift */; };
+		4CF627081BA7CBF60011A099 /* AFError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* AFError.swift */; };
 		4CF627091BA7CBF60011A099 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C361AF8932A00BABAE5 /* SessionManager.swift */; };
 		4CF6270A1BA7CBF60011A099 /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */; };
 		4CF6270B1BA7CBF60011A099 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE2C391AF899EC00BABAE5 /* Request.swift */; };
@@ -259,7 +259,7 @@
 		4C0B62501BB1001C009302D3 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
 		4C0E02681BF99A18004E7F18 /* Info-tvOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-tvOS.plist"; path = "Source/Info-tvOS.plist"; sourceTree = SOURCE_ROOT; };
 		4C0E5BF71B673D3400816CCC /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
-		4C1DC8531B68908E00476DE3 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		4C1DC8531B68908E00476DE3 /* AFError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AFError.swift; sourceTree = "<group>"; };
 		4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormData.swift; sourceTree = "<group>"; };
 		4C256A501B096C2C0065714F /* BaseTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormDataTests.swift; sourceTree = "<group>"; };
@@ -528,7 +528,7 @@
 		4CDE2C481AF8A14A00BABAE5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				4C1DC8531B68908E00476DE3 /* Error.swift */,
+				4C1DC8531B68908E00476DE3 /* AFError.swift */,
 				4CB928281C66BFBC00CE5F08 /* Notifications.swift */,
 				4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */,
 				4CDE2C391AF899EC00BABAE5 /* Request.swift */,
@@ -1012,7 +1012,7 @@
 				4C574E6C1C67D207000B3128 /* Timeline.swift in Sources */,
 				4CFCFE301D56D31700A76388 /* SessionDelegate.swift in Sources */,
 				4CF6270C1BA7CBF60011A099 /* Result.swift in Sources */,
-				4CF627081BA7CBF60011A099 /* Error.swift in Sources */,
+				4CF627081BA7CBF60011A099 /* AFError.swift in Sources */,
 				4CF627131BA7CBF60011A099 /* Validation.swift in Sources */,
 				4CF6270E1BA7CBF60011A099 /* MultipartFormData.swift in Sources */,
 				4C80F9F81BB730EF001B46D2 /* Response.swift in Sources */,
@@ -1064,7 +1064,7 @@
 				4CE272501AF88FB500F1D59A /* ParameterEncoding.swift in Sources */,
 				4CDE2C3B1AF899EC00BABAE5 /* Request.swift in Sources */,
 				4CDE2C471AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
-				4C1DC8551B68908E00476DE3 /* Error.swift in Sources */,
+				4C1DC8551B68908E00476DE3 /* AFError.swift in Sources */,
 				4CDE2C381AF8932A00BABAE5 /* SessionManager.swift in Sources */,
 				4C0B62521BB1001C009302D3 /* Response.swift in Sources */,
 				4CB9282A1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
@@ -1087,7 +1087,7 @@
 				4CFCFE311D56D31700A76388 /* SessionDelegate.swift in Sources */,
 				E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */,
 				E4202FD11B667AA100C997FB /* Request.swift in Sources */,
-				4CEC605A1B745C9100E684F4 /* Error.swift in Sources */,
+				4CEC605A1B745C9100E684F4 /* AFError.swift in Sources */,
 				E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */,
 				E4202FD31B667AA100C997FB /* SessionManager.swift in Sources */,
 				4C0B62531BB1001C009302D3 /* Response.swift in Sources */,
@@ -1110,7 +1110,7 @@
 				4CE2724F1AF88FB500F1D59A /* ParameterEncoding.swift in Sources */,
 				4CDE2C3A1AF899EC00BABAE5 /* Request.swift in Sources */,
 				4CDE2C461AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
-				4C1DC8541B68908E00476DE3 /* Error.swift in Sources */,
+				4C1DC8541B68908E00476DE3 /* AFError.swift in Sources */,
 				4CDE2C371AF8932A00BABAE5 /* SessionManager.swift in Sources */,
 				4C0B62511BB1001C009302D3 /* Response.swift in Sources */,
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
