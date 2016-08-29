@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.4.x` Releases - [3.4.0](#340) | [3.4.1](#341)
+- `3.4.x` Releases - [3.4.0](#340) | [3.4.1](#341) | [3.4.2](#342)
 - `3.3.x` Releases - [3.3.0](#330) | [3.3.1](#331)
 - `3.2.x` Releases - [3.2.0](#320) | [3.2.1](#321)
 - `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313) | [3.1.4](#314) | [3.1.5](#315)
@@ -21,6 +21,37 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [3.4.2](https://github.com/Alamofire/Alamofire/releases/tag/3.4.2)
+Released on 2016-08-28. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.4.2).
+
+#### Added
+- Added Cleanup Whitespace target to remove excess whitespace from Swift files.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- All TLS evaluation tests from `disig.sk` to `badssl.com` to be more reliant and robust.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Internal `URLRequest` method to maintain mutable variant data on an `NSURLRequest` passed
+  into the top-level APIs.
+  - Updated by [Greedwolf DSS](https://github.com/passchaos) in Pull Request
+  [#1330](https://github.com/Alamofire/Alamofire/pull/1330).
+- The `User-Agent` header to include version and build numbers.
+  - Updated by [Sergey Demchenko](https://github.com/antrix1989) in Pull Request
+  [#1420](https://github.com/Alamofire/Alamofire/pull/1420).
+
+#### Removed
+- All excess whitespace from Swift files using the `Cleanup Whitespace` target.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- `Request` debug description tests to no longer require parameters in a specific order.
+  - Fixed by [Marius Serban](https://github.com/marius-serban) in Pull Request
+  [#1318](https://github.com/Alamofire/Alamofire/pull/1318).
+- Small ACL issue in code sample of the Handling Errors section of the README.
+  - Fixed by [Adrian Brink](https://github.com/adrianbrink) in Pull Request
+  [#1315](https://github.com/Alamofire/Alamofire/pull/1315).
 
 ## [3.4.1](https://github.com/Alamofire/Alamofire/releases/tag/3.4.1)
 Released on 2016-06-12. All issues associated with this milestone can be found using this
