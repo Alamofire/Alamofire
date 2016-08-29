@@ -2,8 +2,11 @@
 All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
+#### 4.x Releases
+- `4.0.0` Betas - [4.0.0-beta.1](#400-beta1)
+
 #### 3.x Releases
-- `3.4.x` Releases - [3.4.0](#340) | [3.4.1](#341)
+- `3.4.x` Releases - [3.4.0](#340) | [3.4.1](#341) | [3.4.2](#342)
 - `3.3.x` Releases - [3.3.0](#330) | [3.3.1](#331)
 - `3.2.x` Releases - [3.2.0](#320) | [3.2.1](#321)
 - `3.1.x` Releases - [3.1.0](#310) | [3.1.1](#311) | [3.1.2](#312) | [3.1.3](#313) | [3.1.4](#314) | [3.1.5](#315)
@@ -21,6 +24,92 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [4.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/4.0.0-beta.1)
+Released on 2016-08-28. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.0.0-beta.1).
+
+#### Added
+- `discardableResult` annotations to all top-level Request APIs.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- All source, test and example logic as well as project settings to compile against
+  the Xcode 8 beta releases.
+  - Updated by [Kevin Harwood](https://github.com/kcharwood), 
+    [Jon Shier](https://github.com/jshier) and 
+    [Christian Noon](https://github.com/cnoon).
+- Deployment targets to iOS 9.0, macOS 10.11, tvOS 9.0 and watchOS 2.0.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Notifications to use nested structs inside `Notification.Name` namespace.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The `Manager` class to `SessionManager` to be more descriptive.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1385](https://github.com/Alamofire/Alamofire/pull/1385).
+- The `SessionDelegate`, `TaskDelegate` and subclasses by pulling them into the global namespace.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1385](https://github.com/Alamofire/Alamofire/pull/1385).
+- All the Core APIs and documentation to match Swift 3 API design guidelines.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1385](https://github.com/Alamofire/Alamofire/pull/1385).
+- The `SessionDelegate` to store `Request` instances internally to prepare for retry logic.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1391](https://github.com/Alamofire/Alamofire/pull/1391).
+- The podspec to 4.0.0-beta.1 and bumped the deployment targets.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#1401](https://github.com/Alamofire/Alamofire/pull/1401).
+- The parameter order of custom `URLRequest` initializer to match other APIs.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The travis yaml file for Xcode 8.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- The `Error` enum to `AFError` which now conforms to the new `Error` protocol.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#1419](https://github.com/Alamofire/Alamofire/pull/1419).
+
+#### Fixed
+- Typo in a parameter name in the `MultipartFormData` Swift 3 API refactor.
+  - Fixed by [Joshua Hudson](https://github.com/jhudsonWA) in Pull Request
+  [#1395](https://github.com/Alamofire/Alamofire/pull/1395).
+
+#### Upgrade Notes
+This release requires Xcode 8.0 beta 6+ because it has been completely refactored to compile against Swift 3.0. Any older versions of Xcode will **NOT COMPILE**.
+
+This release is the start of the Alamofire 4.0.0 beta releases. We still have quite a few large changes we're trying to squeeze in before the Xcode 8 GM drops, so the APIs will continue to change over the next few weeks. Please keep in mind that each beta will likely bring new APIs and also refactor others. The betas **WILL NOT** follow semantic versioning. We'll most likely conform to semantic versioning once we start releasing the RCs unless we run into a major unforeseen issue.
+
+We'd really appreciate everyone trying out the betas and letting us know if you find issues. We want to address every possible issue prior to the official Alamofire 4.0.0 release.
+
+---
+
+## [3.4.2](https://github.com/Alamofire/Alamofire/releases/tag/3.4.2)
+Released on 2016-08-28. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.4.2).
+
+#### Added
+- Added Cleanup Whitespace target to remove excess whitespace from Swift files.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- All TLS evaluation tests from `disig.sk` to `badssl.com` to be more reliant and robust.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Internal `URLRequest` method to maintain mutable variant data on an `NSURLRequest` passed
+  into the top-level APIs.
+  - Updated by [Greedwolf DSS](https://github.com/passchaos) in Pull Request
+  [#1330](https://github.com/Alamofire/Alamofire/pull/1330).
+- The `User-Agent` header to include version and build numbers.
+  - Updated by [Sergey Demchenko](https://github.com/antrix1989) in Pull Request
+  [#1420](https://github.com/Alamofire/Alamofire/pull/1420).
+
+#### Removed
+- All excess whitespace from Swift files using the `Cleanup Whitespace` target.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- `Request` debug description tests to no longer require parameters in a specific order.
+  - Fixed by [Marius Serban](https://github.com/marius-serban) in Pull Request
+  [#1318](https://github.com/Alamofire/Alamofire/pull/1318).
+- Small ACL issue in code sample of the Handling Errors section of the README.
+  - Fixed by [Adrian Brink](https://github.com/adrianbrink) in Pull Request
+  [#1315](https://github.com/Alamofire/Alamofire/pull/1315).
 
 ## [3.4.1](https://github.com/Alamofire/Alamofire/releases/tag/3.4.1)
 Released on 2016-06-12. All issues associated with this milestone can be found using this
