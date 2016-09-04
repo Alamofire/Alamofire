@@ -24,9 +24,9 @@
 
 import Foundation
 
-/// A type that can adapt a `URLRequest` in some manner.
+/// A type that can inspect and optionally adapt a `URLRequest` in some manner if necessary.
 public protocol RequestAdapter {
-    /// Adapts the specified `URLRequest` in some manner and returns the result.
+    /// Inspects and adapts the specified `URLRequest` in some manner if necessary and returns the result.
     ///
     /// - parameter urlRequest: The URL request to adapt.
     ///

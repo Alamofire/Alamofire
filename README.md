@@ -1110,6 +1110,175 @@ Generally, either the default implementation or the override closures should pro
 
 > It is important to keep in mind that the `subdelegates` are initialized and destroyed in the default implementation. Be careful when subclassing to not introduce memory leaks.
 
+### Adapting and Retrying Requests
+
+Most web services these days are behind some sort of authentication system. One of the more common ones today is OAuth. This generally involves generating an access token authorizing your application or user to call the various supported web services. While creating these initial access tokens can be laborsome, it can be even more complicated when your access token expires and you need to fetch a new one. There are many thread-safety issues that need to be considered.
+
+The `RequestAdapter` and `RequestRetrier` protocols were created to make it much easier to create a thread-safe authentication system for a specific set of web services.
+
+#### RequestAdapter
+
+The `RequestAdapter` protocol allows each `Request` made on a `SessionManager` to be inspected and adapted before being created. One very specific way to use an adapter is to append an `Authorization` header to requests behind a certain type of authentication.
+
+```swift
+class AccessTokenAdapter: RequestAdapter {
+	private let accessToken: String
+	
+	init(accessToken: String) {
+		self.accessToken = accessToken
+	}
+
+	func adapt(_ urlRequest: URLRequest) -> URLRequest {
+	    var urlRequest = urlRequest
+
+	    if urlRequest.urlString.hasPrefix("https://httpbin.org") {
+		    urlRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
+	    }
+
+	    return urlRequest
+	}
+}
+
+let sessionManager = SessionManager()
+sessionManager.adapter = AccessTokenAdapter(accessToken: "1234")
+
+sessionManager.request("https://httpbin.org/get", withMethod: .get)
+```
+
+#### RequestRetrier
+
+The `RequestRetrier` protocol allows a `Request` that encountered an `Error` while being executed to be retried. When using both the `RequestAdapter` and `RequestRetrier` protocols together, you can create credential refresh systems for OAuth1, OAuth2, Basic Auth and even exponential backoff retry policies. The possibilities are endless. Here's a short example of how you could implement a refresh flow for OAuth2 access tokens.
+
+```swift
+class OAuth2Handler: RequestAdapter, RequestRetrier {
+    private typealias RefreshCompletion = (_ succeeded: Bool, _ accessToken: String?, _ refreshToken: String?) -> Void
+
+    private let sessionManager: SessionManager = {
+        let configuration = URLSessionConfiguration.default
+        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+
+        return SessionManager(configuration: configuration)
+    }()
+
+    private let lock = NSLock()
+
+    private var clientID: String
+    private var baseURLString: String
+    private var accessToken: String
+    private var refreshToken: String
+
+    private var isRefreshing = false
+    private var requestsToRetry: [RequestRetryCompletion] = []
+
+    // MARK: - Initialization
+
+    public init(clientID: String, baseURLString: String, accessToken: String, refreshToken: String) {
+        self.clientID = clientID
+        self.baseURLString = baseURLString
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
+    }
+
+    // MARK: - RequestAdapter
+
+    public func adapt(_ urlRequest: URLRequest) -> URLRequest {
+        if urlRequest.urlString.hasPrefix(baseURLString) {
+            var mutableURLRequest = urlRequest
+            mutableURLRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
+            return mutableURLRequest
+        }
+
+        return urlRequest
+    }
+
+    // MARK: - RequestRetrier
+
+    public func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: RequestRetryCompletion) {
+        lock.lock() ; defer { lock.unlock() }
+
+        if let response = request.task.response as? HTTPURLResponse, response.statusCode == 401 {
+            requestsToRetry.append(completion)
+
+            if !isRefreshing {
+                refreshTokens { [weak self] succeeded, accessToken, refreshToken in
+                    guard let strongSelf = self else { return }
+
+                    strongSelf.lock.lock() ; defer { strongSelf.lock.unlock() }
+
+                    if let accessToken = accessToken, let refreshToken = refreshToken {
+                        strongSelf.accessToken = accessToken
+                        strongSelf.refreshToken = refreshToken
+                    }
+
+                    strongSelf.requestsToRetry.forEach { $0(succeeded, 0.0) }
+                    strongSelf.requestsToRetry.removeAll()
+                }
+            }
+        } else {
+            completion(false, 0.0)
+        }
+    }
+
+    // MARK: - Private - Refresh Tokens
+
+    private func refreshTokens(completion: RefreshCompletion) {
+        guard !isRefreshing else { return }
+
+        isRefreshing = true
+
+        let urlString = "\(baseURLString)/oauth2/token"
+
+        let parameters: [String: Any] = [
+            "access_token": accessToken,
+            "refresh_token": refreshToken,
+            "client_id": clientID,
+            "grant_type": "refresh_token"
+        ]
+
+        sessionManager.request(urlString, withMethod: .post, parameters: parameters, encoding: .json).responseJSON { [weak self] response in
+            guard let strongSelf = self else { return }
+
+            if let json = response.result.value as? [String: String] {
+                completion(true, json["access_token"], json["refresh_token"])
+            } else {
+                completion(false, nil, nil)
+            }
+
+            strongSelf.isRefreshing = false
+        }
+    }
+}
+
+let baseURLString = "https://some.domain-behind-oauth2.com"
+
+let oauthHandler = OAuth2Handler(
+    clientID: "12345678",
+    baseURLString: baseURLString,
+    accessToken: "abcd1234",
+    refreshToken: "ef56789a"
+)
+
+let sessionManager = SessionManager()
+sessionManager.adapter = oauthHandler
+sessionManager.retrier = oauthHandler
+
+let urlString = "\(baseURLString)/some/endpoint"
+
+manager.request(urlString, withMethod: .get).validate().responseJSON { response in
+    debugPrint(response)
+}
+```
+
+Once the `OAuth2Handler` is applied as both the `adapter` and `retrier` for the `SessionManager`, it will handle an invalid access token error by automatically refreshing the access token and retrying all failed requests in the same order they failed. 
+
+> If you needed them to execute in the same order they were created, you could instead sort them by their task identifiers. 
+
+The example above only checks for a `401` response code which is not nearly robust enough, but does demonstrate how one could check for an invalid access token error. In a production application, one would want to check the `realm` and most likely the `www-authenticate` header response although it depends on the OAuth2 implementation.
+
+Another important note is that this authentication system could be shared between multiple session managers. For example, you may need to use both a `default` and `ephemeral` session configuration for the same set of web services. The example above allows the same `oauthHandler` instance to be shared across multiple session managers to manage the single refresh flow.
+
+> Please note that this is not a global OAuth2 solution. It is merely an example demonstrating how one could use the `RequestAdapter` in conjunction with the `RequestRetrier` to create a thread-safe refresh system.
+
 ### Security
 
 Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire will evaluate the certificate chain provided by the server using Apple's built in validation provided by the Security framework. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by the `ServerTrustPolicy`.
