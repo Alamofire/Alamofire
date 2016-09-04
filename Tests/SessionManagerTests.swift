@@ -44,6 +44,36 @@ class SessionManagerTestCase: BaseTestCase {
         }
     }
 
+    private class RequestHandler: RequestAdapter, RequestRetrier {
+        var adaptedCount = 0
+        var retryCount = 0
+        var shouldApplyAuthorizationHeader = false
+
+        func adapt(_ urlRequest: URLRequest) -> URLRequest {
+            var urlRequest = urlRequest
+
+            adaptedCount += 1
+
+            if shouldApplyAuthorizationHeader && adaptedCount > 1 {
+                Request.authorizationHeaderFrom(user: "user", password: "password").forEach { header, value in
+                    urlRequest.setValue(value, forHTTPHeaderField: header)
+                }
+            }
+
+            return urlRequest
+        }
+
+        func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: RequestRetryCompletion) {
+            retryCount += 1
+
+            if retryCount < 2 {
+                completion(true, 0.0)
+            } else {
+                completion(false, 0.0)
+            }
+        }
+    }
+
     // MARK: Tests - Initialization
 
     func testInitializerWithDefaultArguments() {
@@ -292,6 +322,63 @@ class SessionManagerTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(request.task.originalRequest?.httpMethod, adapter.method.rawValue)
+    }
+
+    // MARK: Tests - Request Retrier
+
+    func testThatSessionManagerCallsRequestRetrierWhenRequestEncountersError() {
+        // Given
+        let handler = RequestHandler()
+
+        let sessionManager = SessionManager()
+        sessionManager.adapter = handler
+        sessionManager.retrier = handler
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: Response<Any>?
+
+        // When
+        sessionManager.request("https://httpbin.org/basic-auth/user/password", withMethod: .get)
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(response?.result.isSuccess, false)
+    }
+
+    func testThatSessionManagerCallsAdapterWhenRequestIsRetried() {
+        // Given
+        let handler = RequestHandler()
+        handler.shouldApplyAuthorizationHeader = true
+
+        let sessionManager = SessionManager()
+        sessionManager.adapter = handler
+        sessionManager.retrier = handler
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: Response<Any>?
+
+        // When
+        sessionManager.request("https://httpbin.org/basic-auth/user/password", withMethod: .get)
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, true)
     }
 }
 
