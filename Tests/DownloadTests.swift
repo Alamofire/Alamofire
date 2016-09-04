@@ -33,7 +33,7 @@ class DownloadInitializationTestCase: BaseTestCase {
     func testDownloadClassMethodWithMethodURLAndDestination() {
         // Given
         let urlString = "https://httpbin.org/"
-        let destination = Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
+        let destination = DownloadRequest.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
 
         // When
         let request = Alamofire.download(urlString, to: destination, withMethod: .get)
@@ -49,7 +49,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/"
         let headers = ["Authorization": "123456"]
-        let destination = Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
+        let destination = DownloadRequest.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
 
         // When
         let request = Alamofire.download(urlString, to: destination, withMethod: .get, headers: headers)
@@ -87,7 +87,7 @@ class DownloadResponseTestCase: BaseTestCase {
         // Given
         let numberOfLines = 100
         let urlString = "https://httpbin.org/stream/\(numberOfLines)"
-        let destination = Alamofire.Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
+        let destination = DownloadRequest.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
 
         let expectation = self.expectation(description: "Download request should download data to file: \(urlString)")
 
@@ -253,7 +253,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let fileURL = randomCachesFileURL
         let urlString = "https://httpbin.org/get"
         let parameters = ["foo": "bar"]
-        let destination: Request.DownloadFileDestination = { _, _ in fileURL }
+        let destination: DownloadRequest.DownloadFileDestination = { _, _ in fileURL }
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
 
@@ -295,7 +295,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let fileURL = randomCachesFileURL
         let urlString = "https://httpbin.org/get"
         let headers = ["Authorization": "123456"]
-        let destination: Request.DownloadFileDestination = { _, _ in fileURL }
+        let destination: DownloadRequest.DownloadFileDestination = { _, _ in fileURL }
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
 
@@ -337,11 +337,11 @@ class DownloadResponseTestCase: BaseTestCase {
 
 class DownloadResumeDataTestCase: BaseTestCase {
     let urlString = "https://upload.wikimedia.org/wikipedia/commons/6/69/NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg"
-    let destination: Request.DownloadFileDestination = {
+    let destination: DownloadRequest.DownloadFileDestination = {
         let searchPathDirectory: FileManager.SearchPathDirectory = .cachesDirectory
         let searchPathDomain: FileManager.SearchPathDomainMask = .userDomainMask
 
-        return Request.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
+        return DownloadRequest.suggestedDownloadDestination(for: searchPathDirectory, in: searchPathDomain)
     }()
 
     func testThatImmediatelyCancelledDownloadDoesNotHaveResumeDataAvailable() {

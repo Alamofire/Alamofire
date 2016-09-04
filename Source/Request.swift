@@ -57,25 +57,15 @@ public protocol RequestRetrier {
 
 // MARK: -
 
+protocol TaskConvertible {
+    func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask
+}
+
+// MARK: -
+
 /// Responsible for sending a request and receiving the response and associated data from the server, as well as
 /// managing its underlying `URLSessionTask`.
 open class Request {
-
-    // MARK: Helper Types
-
-    enum TaskConvertible {
-        case data(URLRequest)
-        case download(URLRequest)
-        case downloadResumeData(Data)
-        case uploadData(Data, URLRequest)
-        case uploadFile(URL, URLRequest)
-        case uploadStream(InputStream, URLRequest)
-    }
-
-    /// A closure executed once a request has successfully completed in order to determine where to move the temporary
-    /// file written to during the download process. The closure takes two arguments: the temporary file URL and the URL
-    /// response, and returns a single argument: the file URL where the temporary file should be moved.
-    public typealias DownloadFileDestination = (URL, HTTPURLResponse) -> URL
 
     // MARK: Properties
 
@@ -105,17 +95,6 @@ open class Request {
 
     /// The progress of the request lifecycle.
     open var progress: Progress { return delegate.progress }
-
-    /// The resume data of the underlying download task if available after a failure.
-    open var resumeData: Data? {
-        var data: Data?
-
-        if let delegate = delegate as? DownloadTaskDelegate {
-            data = delegate.resumeData
-        }
-
-        return data
-    }
 
     let originalTask: TaskConvertible?
 
@@ -218,24 +197,6 @@ open class Request {
         return self
     }
 
-    /// Sets a closure to be called periodically during the lifecycle of the request as data is read from the server.
-    ///
-    /// This closure returns the bytes most recently received from the server, not including data from previous calls.
-    /// If this closure is set, data will only be available within this closure, and will not be saved elsewhere. It is
-    /// also important to note that the `response` closure will be called with nil `responseData`.
-    ///
-    /// - parameter closure: The code to be executed periodically during the lifecycle of the request.
-    ///
-    /// - returns: The request.
-    @discardableResult
-    open func stream(closure: ((Data) -> Void)? = nil) -> Self {
-        if let dataDelegate = delegate as? DataTaskDelegate {
-            dataDelegate.dataStream = closure
-        }
-
-        return self
-    }
-
     // MARK: State
 
     /// Resumes the request.
@@ -264,44 +225,13 @@ open class Request {
 
     /// Cancels the request.
     open func cancel() {
-        if let downloadDelegate = delegate as? DownloadTaskDelegate, let downloadTask = downloadDelegate.downloadTask {
-            downloadTask.cancel { data in
-                downloadDelegate.resumeData = data
-            }
-        } else {
-            task.cancel()
-        }
+        task.cancel()
 
         NotificationCenter.default.post(
             name: Notification.Name.Task.DidCancel,
             object: self,
             userInfo: [Notification.Key.Task: task]
         )
-    }
-
-    // MARK: Download Destination
-
-    /// Creates a download file destination closure which uses the default file manager to move the temporary file to a
-    /// file URL in the first available directory with the specified search path directory and search path domain mask.
-    ///
-    /// - parameter directory: The search path directory. `.DocumentDirectory` by default.
-    /// - parameter domain:    The search path domain mask. `.UserDomainMask` by default.
-    ///
-    /// - returns: A download file destination closure.
-    open class func suggestedDownloadDestination(
-        for directory: FileManager.SearchPathDirectory = .documentDirectory,
-        in domain: FileManager.SearchPathDomainMask = .userDomainMask)
-        -> DownloadFileDestination
-    {
-        return { temporaryURL, response -> URL in
-            let directoryURLs = FileManager.default.urls(for: directory, in: domain)
-
-            if !directoryURLs.isEmpty {
-                return directoryURLs[0].appendingPathComponent(response.suggestedFilename!)
-            }
-
-            return temporaryURL
-        }
     }
 }
 
@@ -414,3 +344,167 @@ extension Request: CustomDebugStringConvertible {
         return components.joined(separator: " \\\n\t")
     }
 }
+
+// MARK: -
+
+/// Specific type of `Request` that manages an underlying `URLSessionDataTask`.
+open class DataRequest: Request {
+    enum Requestable: TaskConvertible {
+        case request(URLRequest)
+
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
+            var task: URLSessionTask!
+
+            switch self {
+            case let .request(urlRequest):
+                let urlRequest = urlRequest.adapt(using: adapter)
+                queue.sync { task = session.dataTask(with: urlRequest) }
+            }
+
+            return task
+        }
+    }
+
+    var dataDelegate: DataTaskDelegate { return delegate as! DataTaskDelegate }
+
+    /// Sets a closure to be called periodically during the lifecycle of the request as data is read from the server.
+    ///
+    /// This closure returns the bytes most recently received from the server, not including data from previous calls.
+    /// If this closure is set, data will only be available within this closure, and will not be saved elsewhere. It is
+    /// also important to note that the server data in any `Response` object will be `nil`.
+    ///
+    /// - parameter closure: The code to be executed periodically during the lifecycle of the request.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    open func stream(closure: ((Data) -> Void)? = nil) -> Self {
+        dataDelegate.dataStream = closure
+        return self
+    }
+}
+
+// MARK: -
+
+/// Specific type of `Request` that manages an underlying `URLSessionDownloadTask`.
+open class DownloadRequest: Request {
+    /// A closure executed once a request has successfully completed in order to determine where to move the temporary
+    /// file written to during the download process. The closure takes two arguments: the temporary file URL and the URL
+    /// response, and returns a single argument: the file URL where the temporary file should be moved.
+    public typealias DownloadFileDestination = (URL, HTTPURLResponse) -> URL
+
+    enum Downloadable: TaskConvertible {
+        case request(URLRequest)
+        case resumeData(Data)
+
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
+            var task: URLSessionTask!
+
+            switch self {
+            case let .request(urlRequest):
+                let urlRequest = urlRequest.adapt(using: adapter)
+                queue.sync { task = session.downloadTask(with: urlRequest) }
+            case let .resumeData(resumeData):
+                queue.sync { task = session.downloadTask(withResumeData: resumeData) }
+            }
+
+            return task
+        }
+    }
+
+    /// The resume data of the underlying download task if available after a failure.
+    open var resumeData: Data? { return downloadDelegate.resumeData }
+
+    var downloadDelegate: DownloadTaskDelegate { return delegate as! DownloadTaskDelegate }
+
+    /// Cancels the request.
+    open override func cancel() {
+        downloadDelegate.downloadTask.cancel { self.downloadDelegate.resumeData = $0 }
+
+        NotificationCenter.default.post(
+            name: Notification.Name.Task.DidCancel,
+            object: self,
+            userInfo: [Notification.Key.Task: task]
+        )
+    }
+
+    /// Creates a download file destination closure which uses the default file manager to move the temporary file to a
+    /// file URL in the first available directory with the specified search path directory and search path domain mask.
+    ///
+    /// - parameter directory: The search path directory. `.DocumentDirectory` by default.
+    /// - parameter domain:    The search path domain mask. `.UserDomainMask` by default.
+    ///
+    /// - returns: A download file destination closure.
+    open class func suggestedDownloadDestination(
+        for directory: FileManager.SearchPathDirectory = .documentDirectory,
+        in domain: FileManager.SearchPathDomainMask = .userDomainMask)
+        -> DownloadFileDestination
+    {
+        return { temporaryURL, response -> URL in
+            let directoryURLs = FileManager.default.urls(for: directory, in: domain)
+
+            if !directoryURLs.isEmpty {
+                return directoryURLs[0].appendingPathComponent(response.suggestedFilename!)
+            }
+
+            return temporaryURL
+        }
+    }
+}
+
+// MARK: -
+
+/// Specific type of `Request` that manages an underlying `URLSessionUploadTask`.
+open class UploadRequest: DataRequest {
+    enum Uploadable: TaskConvertible {
+        case data(Data, URLRequest)
+        case file(URL, URLRequest)
+        case stream(InputStream, URLRequest)
+
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
+            var task: URLSessionTask!
+
+            switch self {
+            case let .data(data, urlRequest):
+                let urlRequest = urlRequest.adapt(using: adapter)
+                queue.sync { task = session.uploadTask(with: urlRequest, from: data) }
+            case let .file(url, urlRequest):
+                let urlRequest = urlRequest.adapt(using: adapter)
+                queue.sync { task = session.uploadTask(with: urlRequest, fromFile: url) }
+            case let .stream(_, urlRequest):
+                let urlRequest = urlRequest.adapt(using: adapter)
+                queue.sync { task = session.uploadTask(withStreamedRequest: urlRequest) }
+            }
+
+            return task
+        }
+    }
+
+    var uploadDelegate: UploadTaskDelegate { return delegate as! UploadTaskDelegate }
+}
+
+// MARK: -
+
+#if !os(watchOS)
+
+/// Specific type of `Request` that manages an underlying `URLSessionStreamTask`.
+open class StreamRequest: Request {
+    enum Streamable: TaskConvertible {
+        case stream(String, Int)
+        case netService(NetService)
+
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
+            var task: URLSessionTask!
+
+            switch self {
+            case let .stream(hostName, port):
+                queue.sync { task = session.streamTask(withHostName: hostName, port: port) }
+            case let .netService(netService):
+                queue.sync { task = session.streamTask(with: netService) }
+            }
+            
+            return task
+        }
+    }
+}
+    
+#endif

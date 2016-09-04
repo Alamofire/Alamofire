@@ -172,7 +172,7 @@ class DataTaskDelegate: TaskDelegate, URLSessionDataDelegate {
 
     // MARK: Properties
 
-    var dataTask: URLSessionDataTask? { return task as? URLSessionDataTask }
+    var dataTask: URLSessionDataTask { return task as! URLSessionDataTask }
 
     override var data: Data? {
         if dataStream != nil {
@@ -286,7 +286,7 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
 
     // MARK: Properties
 
-    var downloadTask: URLSessionDownloadTask? { return task as? URLSessionDownloadTask }
+    var downloadTask: URLSessionDownloadTask { return task as! URLSessionDownloadTask }
     var downloadProgress: ((Int64, Int64, Int64) -> Void)?
 
     var resumeData: Data?
@@ -367,7 +367,7 @@ class UploadTaskDelegate: DataTaskDelegate {
 
     // MARK: Properties
 
-    var uploadTask: URLSessionUploadTask? { return task as? URLSessionUploadTask }
+    var uploadTask: URLSessionUploadTask { return task as! URLSessionUploadTask }
     var uploadProgress: ((Int64, Int64, Int64) -> Void)!
 
     // MARK: URLSessionTaskDelegate

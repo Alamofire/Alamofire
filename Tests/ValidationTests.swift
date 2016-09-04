@@ -236,24 +236,25 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
         class MockManager: SessionManager {
-            override func request(_ urlRequest: URLRequestConvertible) -> Request {
-                let urlRequest = urlRequest.urlRequest
-                var dataTask: URLSessionDataTask!
+            override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+                let originalRequest = urlRequest.urlRequest
+                let adaptedRequest = originalRequest.adapt(using: adapter)
 
-                queue.sync { dataTask = self.session.dataTask(with: urlRequest) }
+                var task: URLSessionDataTask!
+                queue.sync { task = self.session.dataTask(with: adaptedRequest) }
 
-                let request = MockRequest(session: session, task: dataTask, originalTask: .data(urlRequest))
+                let originalTask = DataRequest.Requestable.request(originalRequest)
+                let request = MockRequest(session: session, task: task, originalTask: originalTask)
+
                 delegate[request.delegate.task] = request
 
-                if startRequestsImmediately {
-                    request.resume()
-                }
+                if startRequestsImmediately { request.resume() }
 
                 return request
             }
         }
 
-        class MockRequest: Request {
+        class MockRequest: DataRequest {
             override var response: HTTPURLResponse? {
                 return MockHTTPURLResponse(
                     url: URL(string: request!.urlString)!,

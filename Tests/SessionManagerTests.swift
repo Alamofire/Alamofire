@@ -270,7 +270,7 @@ class SessionManagerTestCase: BaseTestCase {
         sessionManager.startRequestsImmediately = false
 
         // When
-        let destination = Request.suggestedDownloadDestination()
+        let destination = DownloadRequest.suggestedDownloadDestination()
         let request = sessionManager.download("https://httpbin.org/get", to: destination, withMethod: .get)
 
         // Then
