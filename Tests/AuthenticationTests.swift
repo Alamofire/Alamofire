@@ -125,9 +125,14 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
     func testHiddenHTTPBasicAuthentication() {
         // Given
-        let authorizationHeader = Request.authorizationHeaderFrom(user: user, password: password)
         let urlString = "http://httpbin.org/hidden-basic-auth/\(user)/\(password)"
         let expectation = self.expectation(description: "\(urlString) 200")
+
+        var headers: [String: String]?
+
+        if let authorizationHeader = Request.authorizationHeaderFrom(user: user, password: password) {
+            headers = [authorizationHeader.key: authorizationHeader.value]
+        }
 
         var request: URLRequest?
         var response: HTTPURLResponse?
@@ -135,7 +140,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get, headers: authorizationHeader)
+        manager.request(urlString, withMethod: .get, headers: headers)
             .response { responseRequest, responseResponse, responseData, responseError in
                 request = responseRequest
                 response = responseResponse

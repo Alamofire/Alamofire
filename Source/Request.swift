@@ -178,18 +178,18 @@ open class Request {
         return self
     }
 
-    /// Returns a base64 encoded basic authentication credential as an authorization header dictionary.
+    /// Returns a base64 encoded basic authentication credential as an authorization header tuple.
     ///
     /// - parameter user:     The user.
     /// - parameter password: The password.
     ///
-    /// - returns: A dictionary with Authorization key and credential value or empty dictionary if encoding fails.
-    open static func authorizationHeaderFrom(user: String, password: String) -> [String: String] {
-        guard let data = "\(user):\(password)".data(using: String.Encoding.utf8) else { return [:] }
+    /// - returns: A tuple with Authorization header and credential value if encoding succeeds, `nil` otherwise.
+    open static func authorizationHeaderFrom(user: String, password: String) -> (key: String, value: String)? {
+        guard let data = "\(user):\(password)".data(using: .utf8) else { return nil }
 
         let credential = data.base64EncodedString(options: [])
 
-        return ["Authorization": "Basic \(credential)"]
+        return (key: "Authorization", value: "Basic \(credential)")
     }
 
     // MARK: Progress
