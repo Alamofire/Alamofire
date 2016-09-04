@@ -119,6 +119,8 @@ extension AFError {
     }
 }
 
+// MARK: -
+
 extension AFError.MultipartEncodingFailureReason {
     var isBodyPartURLInvalid: Bool {
         if case .bodyPartURLInvalid = self { return true }
@@ -186,6 +188,8 @@ extension AFError.MultipartEncodingFailureReason {
     }
 }
 
+// MARK: -
+
 extension AFError.SerializationFailureReason {
     var isInputDataNil: Bool {
         if case .inputDataNil = self { return true }
@@ -212,6 +216,8 @@ extension AFError.SerializationFailureReason {
         return false
     }
 }
+
+// MARK: -
 
 extension AFError.ValidationFailureReason {
     var isMissingContentType: Bool {
