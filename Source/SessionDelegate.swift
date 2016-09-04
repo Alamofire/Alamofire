@@ -123,6 +123,9 @@ open class SessionDelegate: NSObject {
 
     // MARK: Properties
 
+    var retrier: RequestRetrier?
+    weak var sessionManager: SessionManager?
+
     private var requests: [Int: Request] = [:]
     private let lock = NSLock()
 
@@ -362,19 +365,64 @@ extension SessionDelegate: URLSessionTaskDelegate {
     /// - parameter task:    The task whose request finished transferring data.
     /// - parameter error:   If an error occurred, an error object indicating how the transfer failed, otherwise nil.
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        if let taskDidComplete = taskDidComplete {
-            taskDidComplete(session, task, error)
-        } else if let delegate = self[task]?.delegate {
-            delegate.urlSession(session, task: task, didCompleteWithError: error)
+        /// Executed after it is determined that the request is not going to be retried
+        let completeTask: (URLSession, URLSessionTask, Error?) -> Void = { [weak self] session, task, error in
+            guard let strongSelf = self else { return }
+
+            if let taskDidComplete = strongSelf.taskDidComplete {
+                taskDidComplete(session, task, error)
+            } else if let delegate = strongSelf[task]?.delegate {
+                delegate.urlSession(session, task: task, didCompleteWithError: error)
+            }
+
+            NotificationCenter.default.post(
+                name: Notification.Name.Task.DidComplete,
+                object: strongSelf,
+                userInfo: [Notification.Key.Task: task]
+            )
+
+            strongSelf[task] = nil
         }
 
-        NotificationCenter.default.post(
-            name: Notification.Name.Task.DidComplete,
-            object: self,
-            userInfo: [Notification.Key.Task: task]
-        )
+        guard let request = self[task], let sessionManager = sessionManager else {
+            completeTask(session, task, error)
+            return
+        }
 
-        self[task] = nil
+        // Run all validations on the request before checking if an error occurred
+        request.validations.forEach { $0() }
+
+        // Determine whether an error has occurred
+        var error: Error? = error
+
+        if let taskDelegate = self[task]?.delegate, taskDelegate.error != nil {
+            error = taskDelegate.error
+        }
+
+        /// If an error occurred and the retrier is set, asynchronously ask the retrier if the request
+        /// should be retried. Otherwise, complete the task by notifying the task delegate.
+        if let retrier = retrier, let error = error {
+            retrier.should(sessionManager, retry: request, with: error) { [weak self] shouldRetry, delay in
+                if shouldRetry {
+                    DispatchQueue.utility.after(delay) { [weak self] in
+                        guard let strongSelf = self else { return }
+
+                        let retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false
+
+                        if retrySucceeded {
+                            strongSelf[request.task] = request
+                            return
+                        } else {
+                            completeTask(session, task, error)
+                        }
+                    }
+                } else {
+                    completeTask(session, task, error)
+                }
+            }
+        } else {
+            completeTask(session, task, error)
+        }
     }
 }
 

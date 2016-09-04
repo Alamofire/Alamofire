@@ -24,9 +24,54 @@
 
 import Foundation
 
+/// A type that can adapt a `URLRequest` in some manner.
+public protocol RequestAdapter {
+    /// Adapts the specified `URLRequest` in some manner and returns the result.
+    ///
+    /// - parameter urlRequest: The URL request to adapt.
+    ///
+    /// - returns: The adapted `URLRequest`.
+    func adapt(_ urlRequest: URLRequest) -> URLRequest
+}
+
+// MARK: -
+
+/// A closure executed when the `RequestRetrier` determines whether a `Request` should be retried or not.
+public typealias RequestRetryCompletion = (_ shouldRetry: Bool, _ timeDelay: TimeInterval) -> Void
+
+/// A type that determines whether a request should be retried after being executed by the specified session manager
+/// and encountering an error.
+public protocol RequestRetrier {
+    /// Determines whether the `Request` should be retried by calling the `completion` closure.
+    ///
+    /// This operation is fully asychronous. Any amount of time can be taken to determine whether the request needs
+    /// to be retried. The one requirement is that the completion closure is called to ensure the request is properly
+    /// cleaned up after.
+    ///
+    /// - parameter manager:    The session manager the request was executed on.
+    /// - parameter request:    The request that failed due to the encountered error.
+    /// - parameter error:      The error encountered when executing the request.
+    /// - parameter completion: The completion closure to be executed when retry decision has been determined.
+    func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: RequestRetryCompletion)
+}
+
+// MARK: -
+
 /// Responsible for sending a request and receiving the response and associated data from the server, as well as
 /// managing its underlying `URLSessionTask`.
 open class Request {
+
+    // MARK: Helper Types
+
+    enum TaskConvertible {
+        case data(URLRequest)
+        case download(URLRequest)
+        case downloadResumeData(Data)
+        case uploadData(Data, URLRequest)
+        case uploadFile(URL, URLRequest)
+        case uploadStream(InputStream, URLRequest)
+    }
+
     /// A closure executed once a request has successfully completed in order to determine where to move the temporary
     /// file written to during the download process. The closure takes two arguments: the temporary file URL and the URL
     /// response, and returns a single argument: the file URL where the temporary file should be moved.
@@ -72,16 +117,21 @@ open class Request {
         return data
     }
 
+    let originalTask: TaskConvertible?
+
     var startTime: CFAbsoluteTime?
     var endTime: CFAbsoluteTime?
+
+    var validations: [() -> Void] = []
 
     private var taskDelegate: TaskDelegate
     private var taskDelegateLock = NSLock()
 
     // MARK: Lifecycle
 
-    init(session: URLSession, task: URLSessionTask) {
+    init(session: URLSession, task: URLSessionTask, originalTask: TaskConvertible?) {
         self.session = session
+        self.originalTask = originalTask
 
         switch task {
         case is URLSessionUploadTask:
