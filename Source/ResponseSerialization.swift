@@ -31,9 +31,6 @@ public protocol ResponseSerializerType {
     /// The type of serialized object to be created by this `ResponseSerializerType`.
     associatedtype SerializedObject
 
-    /// The type of error to be created by this `ResponseSerializer` if serialization fails.
-//    associatedtype ErrorObject: Error
-
     /// A closure used by response handlers that takes a request, response, data and error and returns a result.
     var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<SerializedObject> { get }
 }
@@ -44,9 +41,6 @@ public protocol ResponseSerializerType {
 public struct ResponseSerializer<Value>: ResponseSerializerType {
     /// The type of serialized object to be created by this `ResponseSerializer`.
     public typealias SerializedObject = Value
-
-    /// The type of error to be created by this `ResponseSerializer` if serialization fails.
-    //public typealias ErrorObject = ErrorType
 
     /// A closure used by response handlers that takes a request, response, data and error and returns a result.
     public var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<Value>
