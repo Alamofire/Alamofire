@@ -53,6 +53,10 @@
 		4C3D00581C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */; };
 		4C3D00591C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */; };
 		4C3D005A1C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */; };
+		4C43669B1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C43669A1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift */; };
+		4C43669C1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C43669A1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift */; };
+		4C43669D1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C43669A1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift */; };
+		4C43669E1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C43669A1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift */; };
 		4C4CBE7B1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4CBE7A1BAF700C0024D659 /* String+AlamofireTests.swift */; };
 		4C4CBE7C1BAF700C0024D659 /* String+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4CBE7A1BAF700C0024D659 /* String+AlamofireTests.swift */; };
 		4C574E6A1C67D207000B3128 /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C574E691C67D207000B3128 /* Timeline.swift */; };
@@ -269,6 +273,7 @@
 		4C341BB91B1A865A00C1B34D /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkReachabilityManager.swift; sourceTree = "<group>"; };
 		4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkReachabilityManagerTests.swift; sourceTree = "<group>"; };
+		4C43669A1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Alamofire.swift"; sourceTree = "<group>"; };
 		4C4CBE7A1BAF700C0024D659 /* String+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+AlamofireTests.swift"; sourceTree = "<group>"; };
 		4C574E691C67D207000B3128 /* Timeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
 		4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustPolicy.swift; sourceTree = "<group>"; };
@@ -495,6 +500,14 @@
 			name = "Signed by CA2";
 			sourceTree = "<group>";
 		};
+		4C4366991D7BB92700C38AAD /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				4C43669A1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
 		4C7C8D201B9D0D7300948136 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -599,6 +612,7 @@
 			children = (
 				F897FF4019AA800700AB5182 /* Alamofire.swift */,
 				4CDE2C481AF8A14A00BABAE5 /* Core */,
+				4C4366991D7BB92700C38AAD /* Extensions */,
 				4CDE2C491AF8A14E00BABAE5 /* Features */,
 				F8111E3619A95C8B0040E7D1 /* Supporting Files */,
 			);
@@ -1027,6 +1041,7 @@
 				4CF627091BA7CBF60011A099 /* SessionManager.swift in Sources */,
 				4CF6270F1BA7CBF60011A099 /* ResponseSerialization.swift in Sources */,
 				4CF6270B1BA7CBF60011A099 /* Request.swift in Sources */,
+				4C43669D1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				4C3D00561C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
 				4CFCFE3B1D56E8D900A76388 /* TaskDelegate.swift in Sources */,
 				4CF6270A1BA7CBF60011A099 /* ParameterEncoding.swift in Sources */,
@@ -1077,6 +1092,7 @@
 				4CB9282A1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */,
 				4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
+				4C43669C1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				4C811F8E1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,
 				4CFCFE3A1D56E8D900A76388 /* TaskDelegate.swift in Sources */,
 				4C3D00551C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
@@ -1100,6 +1116,7 @@
 				4C0B62531BB1001C009302D3 /* Response.swift in Sources */,
 				4CB9282C1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				4CEC605B1B745C9100E684F4 /* Result.swift in Sources */,
+				4C43669E1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */,
 				4CFCFE3C1D56E8D900A76388 /* TaskDelegate.swift in Sources */,
 				E4202FD51B667AA100C997FB /* MultipartFormData.swift in Sources */,
@@ -1123,6 +1140,7 @@
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
 				4C23EB431B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
 				4C811F8D1B51856D00E0F59A /* ServerTrustPolicy.swift in Sources */,
+				4C43669B1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				4C3D00541C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
 				4CFCFE391D56E8D900A76388 /* TaskDelegate.swift in Sources */,
 				4CDE2C431AF89F0900BABAE5 /* Validation.swift in Sources */,
