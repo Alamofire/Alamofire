@@ -178,52 +178,39 @@ class DownloadResponseTestCase: BaseTestCase {
         var responseError: Error?
 
         // When
-        let download = Alamofire.download(urlString, to: { _, _ in fileURL }, withMethod: .get)
-        download.progress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-            let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
-            byteValues.append(bytes)
+        Alamofire.download(urlString, to: { _, _ in fileURL }, withMethod: .get)
+            .downloadProgress { progress in
+                progressValues.append((progress.completedUnitCount, progress.totalUnitCount))
+            }
+            .downloadProgress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
+                let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
+                byteValues.append(bytes)
+            }
+            .response { request, response, data, error in
+                responseRequest = request
+                responseResponse = response
+                responseData = data
+                responseError = error
 
-            let progress = (
-                completedUnitCount: download.progress.completedUnitCount,
-                totalUnitCount: download.progress.totalUnitCount
-            )
-            progressValues.append(progress)
-        }
-        download.response { request, response, data, error in
-            responseRequest = request
-            responseResponse = response
-            responseData = data
-            responseError = error
-
-            expectation.fulfill()
-        }
+                expectation.fulfill()
+            }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(responseRequest, "response request should not be nil")
-        XCTAssertNotNil(responseResponse, "response should not be nil")
-        XCTAssertNil(responseData, "response data should be nil")
-        XCTAssertNil(responseError, "response error should be nil")
+        XCTAssertNotNil(responseRequest)
+        XCTAssertNotNil(responseResponse)
+        XCTAssertNil(responseData)
+        XCTAssertNil(responseError)
 
-        XCTAssertEqual(byteValues.count, progressValues.count, "byteValues count should equal progressValues count")
+        XCTAssertEqual(byteValues.count, progressValues.count)
 
         if byteValues.count == progressValues.count {
-            for index in 0..<byteValues.count {
-                let byteValue = byteValues[index]
-                let progressValue = progressValues[index]
-
-                XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
-                XCTAssertEqual(
-                    byteValue.totalBytes,
-                    progressValue.completedUnitCount,
-                    "total bytes should be equal to completed unit count"
-                )
-                XCTAssertEqual(
-                    byteValue.totalBytesExpected,
-                    progressValue.totalUnitCount,
-                    "total bytes expected should be equal to total unit count"
-                )
+            for (byteValue, progressValue) in zip(byteValues, progressValues) {
+                XCTAssertGreaterThan(byteValue.bytes, 0)
+                print("\(byteValue.totalBytes) - \(progressValue.completedUnitCount)")
+                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount)
+                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount)
             }
         }
 
@@ -231,12 +218,8 @@ class DownloadResponseTestCase: BaseTestCase {
             let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
             let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
 
-            XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
-            XCTAssertEqual(
-                progressValueFractionalCompletion,
-                1.0,
-                "progress value fractional completion should equal 1.0"
-            )
+            XCTAssertEqual(byteValueFractionalCompletion, 1.0)
+            XCTAssertEqual(progressValueFractionalCompletion, 1.0)
         } else {
             XCTFail("last item in bytesValues and progressValues should not be nil")
         }
@@ -388,7 +371,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         // When
         let download = Alamofire.download(urlString, to: destination, withMethod: .get)
-        download.progress { _, _, _ in
+        download.downloadProgress { _, _, _ in
             download.cancel()
         }
         download.response { responseRequest, responseResponse, responseData, responseError in
@@ -424,7 +407,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         // When
         let download = Alamofire.download(urlString, to: destination, withMethod: .get)
-        download.progress { _, _, _ in
+        download.downloadProgress { _, _, _ in
             download.cancel()
         }
         download.responseJSON { closureResponse in

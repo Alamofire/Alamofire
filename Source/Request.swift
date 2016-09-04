@@ -66,6 +66,14 @@ protocol TaskConvertible {
 /// Responsible for sending a request and receiving the response and associated data from the server, as well as
 /// managing its underlying `URLSessionTask`.
 open class Request {
+    /// A closure executed when monitoring upload or download progress of a request.
+    public typealias ProgressHandler = (Progress) -> Void
+
+    /// A closure executed when monitoring the download progress of a request.
+    public typealias DownloadProgressHandler = (_ bytesReceived: Int64, _ totalBytesReceived: Int64, _ totalBytesExpectedToReceive: Int64) -> Void
+
+    /// A closure executed when monitoring the upload progress of a request.
+    public typealias UploadProgressHandler = (_ bytesSent: Int64, _ totalBytesSent: Int64, _ totalBytesExpectedToSend: Int64) -> Void
 
     // MARK: Properties
 
@@ -92,9 +100,6 @@ open class Request {
 
     /// The response received from the server, if any.
     open var response: HTTPURLResponse? { return task.response as? HTTPURLResponse }
-
-    /// The progress of the request lifecycle.
-    open var progress: Progress { return delegate.progress }
 
     let originalTask: TaskConvertible?
 
@@ -169,32 +174,6 @@ open class Request {
         let credential = data.base64EncodedString(options: [])
 
         return (key: "Authorization", value: "Basic \(credential)")
-    }
-
-    // MARK: Progress
-
-    /// Sets a closure to be called periodically during the lifecycle of the request as data is written to or read
-    /// from the server.
-    ///
-    /// - For uploads, the progress closure returns the bytes written, total bytes written, and total bytes expected
-    ///   to write.
-    /// - For downloads and data tasks, the progress closure returns the bytes read, total bytes read, and total bytes
-    ///   expected to read.
-    ///
-    /// - parameter closure: The code to be executed periodically during the lifecycle of the request.
-    ///
-    /// - returns: The request.
-    @discardableResult
-    open func progress(closure: ((Int64, Int64, Int64) -> Void)? = nil) -> Self {
-        if let uploadDelegate = delegate as? UploadTaskDelegate {
-            uploadDelegate.uploadProgress = closure
-        } else if let dataDelegate = delegate as? DataTaskDelegate {
-            dataDelegate.dataProgress = closure
-        } else if let downloadDelegate = delegate as? DownloadTaskDelegate {
-            downloadDelegate.downloadProgress = closure
-        }
-
-        return self
     }
 
     // MARK: State
@@ -349,6 +328,9 @@ extension Request: CustomDebugStringConvertible {
 
 /// Specific type of `Request` that manages an underlying `URLSessionDataTask`.
 open class DataRequest: Request {
+
+    // MARK: Helper Types
+
     enum Requestable: TaskConvertible {
         case request(URLRequest)
 
@@ -365,7 +347,14 @@ open class DataRequest: Request {
         }
     }
 
+    // MARK: Properties
+
+    /// The progress of fetching the response data from the server for the request.
+    open var progress: Progress { return dataDelegate.progress }
+
     var dataDelegate: DataTaskDelegate { return delegate as! DataTaskDelegate }
+
+    // MARK: Stream
 
     /// Sets a closure to be called periodically during the lifecycle of the request as data is read from the server.
     ///
@@ -381,12 +370,41 @@ open class DataRequest: Request {
         dataDelegate.dataStream = closure
         return self
     }
+
+    // MARK: Progress
+
+    /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
+    ///
+    /// - parameter queue:   The dispatch queue to execute the closure on.
+    /// - parameter closure: The code to be executed periodically as data is read from the server.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: ProgressHandler) -> Self {
+        dataDelegate.progressHandler = (closure, queue)
+        return self
+    }
+
+    /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
+    ///
+    /// - parameter queue:   The dispatch queue to execute the closure on.
+    /// - parameter closure: The code to be executed periodically as data is read from the server.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: DownloadProgressHandler) -> Self {
+        dataDelegate.progressDebugHandler = (closure, queue)
+        return self
+    }
 }
 
 // MARK: -
 
 /// Specific type of `Request` that manages an underlying `URLSessionDownloadTask`.
 open class DownloadRequest: Request {
+
+    // MARK: Helper Types
+
     /// A closure executed once a request has successfully completed in order to determine where to move the temporary
     /// file written to during the download process. The closure takes two arguments: the temporary file URL and the URL
     /// response, and returns a single argument: the file URL where the temporary file should be moved.
@@ -411,10 +429,17 @@ open class DownloadRequest: Request {
         }
     }
 
+    // MARK: Properties
+
     /// The resume data of the underlying download task if available after a failure.
     open var resumeData: Data? { return downloadDelegate.resumeData }
 
+    /// The progress of downloading the response data from the server for the request.
+    open var progress: Progress { return downloadDelegate.progress }
+
     var downloadDelegate: DownloadTaskDelegate { return delegate as! DownloadTaskDelegate }
+
+    // MARK: State
 
     /// Cancels the request.
     open override func cancel() {
@@ -426,6 +451,34 @@ open class DownloadRequest: Request {
             userInfo: [Notification.Key.Task: task]
         )
     }
+
+    // MARK: Progress
+
+    /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
+    ///
+    /// - parameter queue:   The dispatch queue to execute the closure on.
+    /// - parameter closure: The code to be executed periodically as data is read from the server.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: ProgressHandler) -> Self {
+        downloadDelegate.progressHandler = (closure, queue)
+        return self
+    }
+
+    /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
+    ///
+    /// - parameter queue:   The dispatch queue to execute the closure on.
+    /// - parameter closure: The code to be executed periodically as data is read from the server.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: DownloadProgressHandler) -> Self {
+        downloadDelegate.progressDebugHandler = (closure, queue)
+        return self
+    }
+
+    // MARK: Destination
 
     /// Creates a download file destination closure which uses the default file manager to move the temporary file to a
     /// file URL in the first available directory with the specified search path directory and search path domain mask.
@@ -455,6 +508,9 @@ open class DownloadRequest: Request {
 
 /// Specific type of `Request` that manages an underlying `URLSessionUploadTask`.
 open class UploadRequest: DataRequest {
+
+    // MARK: Helper Types
+
     enum Uploadable: TaskConvertible {
         case data(Data, URLRequest)
         case file(URL, URLRequest)
@@ -479,7 +535,46 @@ open class UploadRequest: DataRequest {
         }
     }
 
+    // MARK: Properties
+
+    /// The progress of uploading the payload to the server for the upload request.
+    open var uploadProgress: Progress { return uploadDelegate.uploadProgress }
+
     var uploadDelegate: UploadTaskDelegate { return delegate as! UploadTaskDelegate }
+
+    // MARK: Upload Progress
+
+    /// Sets a closure to be called periodically during the lifecycle of the `UploadRequest` as data is sent to 
+    /// the server.
+    ///
+    /// After the data is sent to the server, the `progress(queue:closure:)` APIs can be used to monitor the progress
+    /// of data being read from the server.
+    ///
+    /// - parameter queue:   The dispatch queue to execute the closure on.
+    /// - parameter closure: The code to be executed periodically as data is sent to the server.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    open func uploadProgress(queue: DispatchQueue = DispatchQueue.main, closure: ProgressHandler) -> Self {
+        uploadDelegate.uploadProgressHandler = (closure, queue)
+        return self
+    }
+
+    /// Sets a closure to be called periodically during the lifecycle of the `UploadRequest` as data is sent to
+    /// the server.
+    ///
+    /// After the data is sent to the server, the `progress(queue:closure:)` APIs can be used to monitor the progress
+    /// of data being read from the server.
+    ///
+    /// - parameter queue:   The dispatch queue to execute the closure on.
+    /// - parameter closure: The code to be executed periodically as data is sent to the server.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    open func uploadProgress(queue: DispatchQueue = DispatchQueue.main, closure: UploadProgressHandler) -> Self {
+        uploadDelegate.uploadProgressDebugHandler = (closure, queue)
+        return self
+    }
 }
 
 // MARK: -
