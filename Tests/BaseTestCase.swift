@@ -29,6 +29,14 @@ import XCTest
 class BaseTestCase: XCTestCase {
     let timeout: TimeInterval = 30.0
 
+    override func setUp() {
+        super.setUp()
+
+        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.applicationSupportDirectory)
+        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.cachesDirectory)
+        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.documentsDirectory)
+    }
+
     func url(forResource fileName: String, withExtension ext: String) -> URL {
         let bundle = Bundle(for: BaseTestCase.self)
         return bundle.url(forResource: fileName, withExtension: ext)!
