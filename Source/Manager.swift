@@ -56,6 +56,7 @@ public class Manager {
         }.joinWithSeparator(", ")
 
         // User-Agent Header; see https://tools.ietf.org/html/rfc7231#section-5.5.3
+        // Example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 9.3.0) Alamofire/3.4.2`
         let userAgent: String = {
             if let info = NSBundle.mainBundle().infoDictionary {
                 let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
@@ -92,7 +93,16 @@ public class Manager {
                     return "\(osName) \(versionString)"
                 }()
 
-                return "\(executable)/\(bundle) (\(appVersion)/\(appBuild)); \(osNameVersion))"
+                let alamofireVersion: String = {
+                    guard
+                        let afInfo = NSBundle(forClass: Manager.self).infoDictionary,
+                        build = afInfo["CFBundleShortVersionString"]
+                    else { return "Unknown" }
+
+                    return "Alamofire/\(build)"
+                }()
+
+                return "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
             }
 
             return "Alamofire"
