@@ -143,31 +143,24 @@ class URLProtocolTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "GET request should succeed")
 
-        var request: URLRequest?
-        var response: HTTPURLResponse?
-        var data: Data?
-        var error: Error?
+        var response: DefaultDataResponse?
 
         // When
         manager.request(urlRequest)
-            .response { responseRequest, responseResponse, responseData, responseError in
-                request = responseRequest
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        if let headers = response?.allHeaderFields {
+        if let headers = response?.response?.allHeaderFields {
             XCTAssertEqual(headers["request-header"] as? String, "foobar")
             XCTAssertEqual(headers["session-configuration-header"] as? String, "foo")
         } else {

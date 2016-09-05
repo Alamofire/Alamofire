@@ -37,8 +37,8 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlString, withMethod: .get)
             .validate(statusCode: 200..<300)
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -58,8 +58,8 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlString, withMethod: .get)
             .validate(statusCode: [200])
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -86,8 +86,8 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlString, withMethod: .get)
             .validate(statusCode: [])
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -120,8 +120,8 @@ class ContentTypeValidationTestCase: BaseTestCase {
             .validate(contentType: ["application/json"])
             .validate(contentType: ["application/json;charset=utf8"])
             .validate(contentType: ["application/json;q=0.8;charset=utf8"])
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -143,8 +143,8 @@ class ContentTypeValidationTestCase: BaseTestCase {
             .validate(contentType: ["*/*"])
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -164,8 +164,8 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlString, withMethod: .get)
             .validate(contentType: ["application/octet-stream"])
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -193,8 +193,8 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlString, withMethod: .get)
             .validate(contentType: [])
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -222,8 +222,8 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlString, withMethod: .get)
             .validate(contentType: [])
-            .response { _, response, data, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -282,32 +282,25 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/delete"
         let expectation = self.expectation(description: "request should be stubbed and return 204 status code")
 
-        var response: HTTPURLResponse?
-        var data: Data?
-        var error: Error?
+        var response: DefaultDataResponse?
 
         // When
         manager.request(urlString, withMethod: .delete)
             .validate(contentType: ["*/*"])
-            .response { _, responseResponse, responseData, responseError in
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(response)
-        XCTAssertNotNil(data)
-        XCTAssertNil(error)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        if let response = response {
-            XCTAssertEqual(response.statusCode, 204)
-            XCTAssertNil(response.mimeType)
-        }
+        XCTAssertEqual(response?.response?.statusCode, 204)
+        XCTAssertNil(response?.response?.mimeType)
     }
 }
 
@@ -325,8 +318,8 @@ class MultipleValidationTestCase: BaseTestCase {
         Alamofire.request(urlString, withMethod: .get)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -347,8 +340,8 @@ class MultipleValidationTestCase: BaseTestCase {
         Alamofire.request(urlString, withMethod: .get)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -376,8 +369,8 @@ class MultipleValidationTestCase: BaseTestCase {
         Alamofire.request(urlString, withMethod: .get)
             .validate(contentType: ["application/octet-stream"])
             .validate(statusCode: 400..<600)
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
         }
 
@@ -412,8 +405,8 @@ class AutomaticValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlRequest)
             .validate()
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -433,8 +426,8 @@ class AutomaticValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlString, withMethod: .get)
             .validate()
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -464,8 +457,8 @@ class AutomaticValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlRequest)
             .validate()
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -490,8 +483,8 @@ class AutomaticValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlRequest)
             .validate()
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 
@@ -514,8 +507,8 @@ class AutomaticValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlRequest)
             .validate()
-            .response { _, _, _, responseError in
-                error = responseError
+            .response { resp in
+                error = resp.error
                 expectation.fulfill()
             }
 

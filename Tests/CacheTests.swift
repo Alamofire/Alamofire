@@ -187,8 +187,8 @@ class CacheTestCase: BaseTestCase {
 
         request.response(
             queue: queue,
-            completionHandler: { _, response, data, _ in
-                completion(request.request, response)
+            completionHandler: { response in
+                completion(response.request, response.response)
             }
         )
 

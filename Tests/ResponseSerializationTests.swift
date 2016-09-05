@@ -35,7 +35,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatDataResponseSerializerSucceedsWhenDataIsNotNil() {
         // Given
-        let serializer = Request.dataResponseSerializer()
+        let serializer = DataRequest.dataResponseSerializer()
         let data = "data".data(using: String.Encoding.utf8)!
 
         // When
@@ -49,7 +49,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatDataResponseSerializerFailsWhenDataIsNil() {
         // Given
-        let serializer = Request.dataResponseSerializer()
+        let serializer = DataRequest.dataResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, nil, nil)
@@ -68,7 +68,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatDataResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
-        let serializer = Request.dataResponseSerializer()
+        let serializer = DataRequest.dataResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, nil, error)
@@ -87,7 +87,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatDataResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
         // Given
-        let serializer = Request.dataResponseSerializer()
+        let serializer = DataRequest.dataResponseSerializer()
         let url = URL(string: "https://httpbin.org/get")!
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
 
@@ -108,7 +108,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
         // Given
-        let serializer = Request.dataResponseSerializer()
+        let serializer = DataRequest.dataResponseSerializer()
         let url = URL(string: "https://httpbin.org/get")!
         let response = HTTPURLResponse(url: url, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
 
@@ -129,7 +129,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatStringResponseSerializerFailsWhenDataIsNil() {
         // Given
-        let serializer = Request.stringResponseSerializer()
+        let serializer = DataRequest.stringResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, nil, nil)
@@ -148,7 +148,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatStringResponseSerializerSucceedsWhenDataIsEmpty() {
         // Given
-        let serializer = Request.stringResponseSerializer()
+        let serializer = DataRequest.stringResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, Data(), nil)
@@ -160,7 +160,7 @@ class ResponseSerializationTestCase: BaseTestCase {
     }
 
     func testThatStringResponseSerializerSucceedsWithUTF8DataAndNoProvidedEncoding() {
-        let serializer = Request.stringResponseSerializer()
+        let serializer = DataRequest.stringResponseSerializer()
         let data = "data".data(using: String.Encoding.utf8)!
 
         // When
@@ -173,7 +173,7 @@ class ResponseSerializationTestCase: BaseTestCase {
     }
 
     func testThatStringResponseSerializerSucceedsWithUTF8DataAndUTF8ProvidedEncoding() {
-        let serializer = Request.stringResponseSerializer(encoding: String.Encoding.utf8)
+        let serializer = DataRequest.stringResponseSerializer(encoding: String.Encoding.utf8)
         let data = "data".data(using: String.Encoding.utf8)!
 
         // When
@@ -186,7 +186,7 @@ class ResponseSerializationTestCase: BaseTestCase {
     }
 
     func testThatStringResponseSerializerSucceedsWithUTF8DataUsingResponseTextEncodingName() {
-        let serializer = Request.stringResponseSerializer()
+        let serializer = DataRequest.stringResponseSerializer()
         let data = "data".data(using: String.Encoding.utf8)!
         let response = HTTPURLResponse(
             url: URL(string: "https://httpbin.org/get")!,
@@ -206,7 +206,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatStringResponseSerializerFailsWithUTF32DataAndUTF8ProvidedEncoding() {
         // Given
-        let serializer = Request.stringResponseSerializer(encoding: String.Encoding.utf8)
+        let serializer = DataRequest.stringResponseSerializer(encoding: String.Encoding.utf8)
         let data = "random data".data(using: String.Encoding.utf32)!
 
         // When
@@ -227,7 +227,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatStringResponseSerializerFailsWithUTF32DataAndUTF8ResponseEncoding() {
         // Given
-        let serializer = Request.stringResponseSerializer()
+        let serializer = DataRequest.stringResponseSerializer()
         let data = "random data".data(using: String.Encoding.utf32)!
         let response = HTTPURLResponse(
             url: URL(string: "https://httpbin.org/get")!,
@@ -254,7 +254,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatStringResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
-        let serializer = Request.stringResponseSerializer()
+        let serializer = DataRequest.stringResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, nil, error)
@@ -273,7 +273,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatStringResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
         // Given
-        let serializer = Request.stringResponseSerializer()
+        let serializer = DataRequest.stringResponseSerializer()
         let url = URL(string: "https://httpbin.org/get")!
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
 
@@ -294,7 +294,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
         // Given
-        let serializer = Request.stringResponseSerializer()
+        let serializer = DataRequest.stringResponseSerializer()
         let url = URL(string: "https://httpbin.org/get")!
         let response = HTTPURLResponse(url: url, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
 
@@ -315,7 +315,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONResponseSerializerFailsWhenDataIsNil() {
         // Given
-        let serializer = Request.JSONResponseSerializer()
+        let serializer = DataRequest.jsonResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, nil, nil)
@@ -334,7 +334,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONResponseSerializerFailsWhenDataIsEmpty() {
         // Given
-        let serializer = Request.JSONResponseSerializer()
+        let serializer = DataRequest.jsonResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, Data(), nil)
@@ -353,7 +353,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
-        let serializer = Request.JSONResponseSerializer()
+        let serializer = DataRequest.jsonResponseSerializer()
         let data = "{\"json\": true}".data(using: String.Encoding.utf8)!
 
         // When
@@ -367,7 +367,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONResponseSerializerFailsWhenDataIsInvalidJSON() {
         // Given
-        let serializer = Request.JSONResponseSerializer()
+        let serializer = DataRequest.jsonResponseSerializer()
         let data = "definitely not valid json".data(using: String.Encoding.utf8)!
 
         // When
@@ -388,7 +388,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
-        let serializer = Request.JSONResponseSerializer()
+        let serializer = DataRequest.jsonResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, nil, error)
@@ -407,7 +407,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
         // Given
-        let serializer = Request.JSONResponseSerializer()
+        let serializer = DataRequest.jsonResponseSerializer()
         let url = URL(string: "https://httpbin.org/get")!
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
 
@@ -428,7 +428,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
         // Given
-        let serializer = Request.JSONResponseSerializer()
+        let serializer = DataRequest.jsonResponseSerializer()
         let url = URL(string: "https://httpbin.org/get")!
         let response = HTTPURLResponse(url: url, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
 
@@ -449,7 +449,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatPropertyListResponseSerializerFailsWhenDataIsNil() {
         // Given
-        let serializer = Request.propertyListResponseSerializer()
+        let serializer = DataRequest.propertyListResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, nil, nil)
@@ -468,7 +468,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatPropertyListResponseSerializerFailsWhenDataIsEmpty() {
         // Given
-        let serializer = Request.propertyListResponseSerializer()
+        let serializer = DataRequest.propertyListResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, Data(), nil)
@@ -487,7 +487,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatPropertyListResponseSerializerSucceedsWhenDataIsValidPropertyListData() {
         // Given
-        let serializer = Request.propertyListResponseSerializer()
+        let serializer = DataRequest.propertyListResponseSerializer()
         let data = NSKeyedArchiver.archivedData(withRootObject: ["foo": "bar"])
 
         // When
@@ -501,7 +501,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatPropertyListResponseSerializerFailsWhenDataIsInvalidPropertyListData() {
         // Given
-        let serializer = Request.propertyListResponseSerializer()
+        let serializer = DataRequest.propertyListResponseSerializer()
         let data = "definitely not valid plist data".data(using: String.Encoding.utf8)!
 
         // When
@@ -522,7 +522,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatPropertyListResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
-        let serializer = Request.propertyListResponseSerializer()
+        let serializer = DataRequest.propertyListResponseSerializer()
 
         // When
         let result = serializer.serializeResponse(nil, nil, nil, error)
@@ -541,7 +541,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatPropertyListResponseSerializerFailsWhenDataIsNilWithNon204ResponseStatusCode() {
         // Given
-        let serializer = Request.propertyListResponseSerializer()
+        let serializer = DataRequest.propertyListResponseSerializer()
         let url = URL(string: "https://httpbin.org/get")!
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
 
@@ -562,7 +562,7 @@ class ResponseSerializationTestCase: BaseTestCase {
 
     func testThatPropertyListResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
         // Given
-        let serializer = Request.propertyListResponseSerializer()
+        let serializer = DataRequest.propertyListResponseSerializer()
         let url = URL(string: "https://httpbin.org/get")!
         let response = HTTPURLResponse(url: url, statusCode: 204, httpVersion: "HTTP/1.1", headerFields: nil)
 
