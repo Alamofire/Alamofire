@@ -92,7 +92,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     }
 
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
-    /// response, the server data and the response serialization result.
+    /// response, the server data, the response serialization result and the timeline.
     public var debugDescription: String {
         var output: [String] = []
 
@@ -116,7 +116,10 @@ public struct DefaultDownloadResponse {
     /// The server's response to the URL request.
     public let response: HTTPURLResponse?
 
-    /// The final destination URL of the data returned from the server.
+    /// The temporary destination URL of the data returned from the server.
+    public let temporaryURL: URL?
+
+    /// The final destination URL of the data returned from the server if it was moved.
     public let destinationURL: URL?
 
     /// The resume data generated if the request was cancelled.
@@ -136,7 +139,10 @@ public struct DownloadResponse<Value> {
     /// The server's response to the URL request.
     public let response: HTTPURLResponse?
 
-    /// The final destination URL of the data returned from the server.
+    /// The temporary destination URL of the data returned from the server.
+    public let temporaryURL: URL?
+
+    /// The final destination URL of the data returned from the server if it was moved.
     public let destinationURL: URL?
 
     /// The resume data generated if the request was cancelled.
@@ -152,7 +158,8 @@ public struct DownloadResponse<Value> {
     ///
     /// - parameter request:        The URL request sent to the server.
     /// - parameter response:       The server's response to the URL request.
-    /// - parameter destinationURL: The final destination URL of the data returned from the server.
+    /// - parameter temporaryURL:   The temporary destination URL of the data returned from the server.
+    /// - parameter destinationURL: The final destination URL of the data returned from the server if it was moved.
     /// - parameter resumeData:     The resume data generated if the request was cancelled.
     /// - parameter result:         The result of response serialization.
     /// - parameter timeline:       The timeline of the complete lifecycle of the `Request`. Defaults to `Timeline()`.
@@ -161,6 +168,7 @@ public struct DownloadResponse<Value> {
     public init(
         request: URLRequest?,
         response: HTTPURLResponse?,
+        temporaryURL: URL?,
         destinationURL: URL?,
         resumeData: Data?,
         result: Result<Value>,
@@ -168,6 +176,7 @@ public struct DownloadResponse<Value> {
     {
         self.request = request
         self.response = response
+        self.temporaryURL = temporaryURL
         self.destinationURL = destinationURL
         self.resumeData = resumeData
         self.result = result
@@ -185,12 +194,14 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     }
 
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
-    /// response, the server data and the response serialization result.
+    /// response, the temporary and destination URLs, the resume data, the response serialization result and the 
+    /// timeline.
     public var debugDescription: String {
         var output: [String] = []
 
         output.append(request != nil ? "[Request]: \(request!)" : "[Request]: nil")
         output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
+        output.append("[TemporaryURL]: \(temporaryURL?.path ?? "nil")")
         output.append("[DestinationURL]: \(destinationURL?.path ?? "nil")")
         output.append("[ResumeData]: \(resumeData?.count ?? 0) bytes")
         output.append("[Result]: \(result.debugDescription)")

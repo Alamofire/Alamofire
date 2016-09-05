@@ -271,7 +271,7 @@ class SessionManagerTestCase: BaseTestCase {
 
         // When
         let destination = DownloadRequest.suggestedDownloadDestination()
-        let request = sessionManager.download("https://httpbin.org/get", to: destination, withMethod: .get)
+        let request = sessionManager.download("https://httpbin.org/get", to: destination)
 
         // Then
         XCTAssertEqual(request.task.originalRequest?.httpMethod, adapter.method.rawValue)

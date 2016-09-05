@@ -312,6 +312,9 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
     var resumeData: Data?
     override var data: Data? { return resumeData }
 
+    var destination: DownloadRequest.DownloadFileDestination?
+
+    var temporaryURL: URL?
     var destinationURL: URL?
 
     // MARK: Lifecycle
@@ -339,12 +342,28 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
         downloadTask: URLSessionDownloadTask,
         didFinishDownloadingTo location: URL)
     {
-        if let downloadTaskDidFinishDownloadingToURL = downloadTaskDidFinishDownloadingToURL {
-            do {
-                let destination = downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
-                try FileManager.default.moveItem(at: location, to: destination)
+        temporaryURL = location
 
+        if let destination = destination {
+            let result = destination(location, downloadTask.response as! HTTPURLResponse)
+            let destination = result.destinationURL
+            let options = result.options
+
+            do {
                 destinationURL = destination
+
+                if options.contains(.removePreviousFile) {
+                    if FileManager.default.fileExists(atPath: destination.path) {
+                        try FileManager.default.removeItem(at: destination)
+                    }
+                }
+
+                if options.contains(.createIntermediateDirectories) {
+                    let directory = destination.deletingLastPathComponent()
+                    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
+                }
+
+                try FileManager.default.moveItem(at: location, to: destination)
             } catch {
                 self.error = error
             }

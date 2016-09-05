@@ -398,10 +398,42 @@ open class DownloadRequest: Request {
 
     // MARK: Helper Types
 
-    /// A closure executed once a request has successfully completed in order to determine where to move the temporary
-    /// file written to during the download process. The closure takes two arguments: the temporary file URL and the URL
-    /// response, and returns a single argument: the file URL where the temporary file should be moved.
-    public typealias DownloadFileDestination = (URL, HTTPURLResponse) -> URL
+    /// A collection of options to be executed prior to moving a downloaded file from the temporary URL to the
+    /// destination URL.
+    public struct DownloadOptions: OptionSet {
+        /// Defines the `RawValue` type as `UInt` to satisfy the `RawRepresentable` protocol.
+        public typealias RawValue = UInt
+
+        /// Returns the raw bitmask value of the option and satisfies the `RawRepresentable` protocol.
+        public let rawValue: RawValue
+
+        private static let createIntermediateDirectoriesBitmask: RawValue = 1 << 0
+        private static let removePreviousFileBitmask: RawValue            = 1 << 1
+
+        /// A `DownloadOptions` flag that creates intermediate directories for the destination URL if specified.
+        public static let createIntermediateDirectories = DownloadOptions(rawValue: createIntermediateDirectoriesBitmask)
+
+        /// A `DownloadOptions` flag that removes a previous file from the destination URL if specified.
+        public static let removePreviousFile = DownloadOptions(rawValue: removePreviousFileBitmask)
+
+        // MARK: Initialization Methods
+
+        /// Creates a `DownloadFileDestinationOptions` instance with the specified raw value.
+        ///
+        /// - parameter rawValue: The raw bitmask value for the option.
+        ///
+        /// - returns: A new log level instance.
+        public init(rawValue: RawValue) { self.rawValue = rawValue }
+    }
+
+    /// A closure executed once a download request has successfully completed in order to determine where to move the 
+    /// temporary file written to during the download process. The closure takes two arguments: the temporary file URL
+    /// and the URL response, and returns a two arguments: the file URL where the temporary file should be moved and 
+    /// the options defining how the file should be moved.
+    public typealias DownloadFileDestination = (
+        _ temporaryURL: URL,
+        _ response: HTTPURLResponse)
+        -> (destinationURL: URL, options: DownloadOptions)
 
     enum Downloadable: TaskConvertible {
         case request(URLRequest)
@@ -485,14 +517,14 @@ open class DownloadRequest: Request {
         in domain: FileManager.SearchPathDomainMask = .userDomainMask)
         -> DownloadFileDestination
     {
-        return { temporaryURL, response -> URL in
+        return { temporaryURL, response in
             let directoryURLs = FileManager.default.urls(for: directory, in: domain)
 
             if !directoryURLs.isEmpty {
-                return directoryURLs[0].appendingPathComponent(response.suggestedFilename!)
+                return (directoryURLs[0].appendingPathComponent(response.suggestedFilename!), [])
             }
 
-            return temporaryURL
+            return (temporaryURL, [])
         }
     }
 }

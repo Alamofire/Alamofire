@@ -177,6 +177,7 @@ extension DownloadRequest {
                 let downloadResponse = DefaultDownloadResponse(
                     request: self.request,
                     response: self.response,
+                    temporaryURL: self.downloadDelegate.temporaryURL,
                     destinationURL: self.downloadDelegate.destinationURL,
                     resumeData: self.downloadDelegate.resumeData,
                     error: self.downloadDelegate.error
@@ -225,6 +226,7 @@ extension DownloadRequest {
             let response = DownloadResponse<T.SerializedObject>(
                 request: self.request,
                 response: self.response,
+                temporaryURL: self.downloadDelegate.temporaryURL,
                 destinationURL: self.downloadDelegate.destinationURL,
                 resumeData: self.downloadDelegate.resumeData,
                 result: result,
@@ -233,7 +235,7 @@ extension DownloadRequest {
 
             (queue ?? DispatchQueue.main).async { completionHandler(response) }
         }
-        
+
         return self
     }
 }

@@ -255,45 +255,51 @@ open class SessionManager {
     /// Creates a `DownloadRequest` to retrieve the contents of a URL based on the specified `urlString`, `method`,
     /// `parameters`, `encoding`, `headers` and save them to the `destination`.
     ///
+    /// If `destination` is not specified, the contents will remain in the temporary location determined by the
+    /// URL session.
+    /// 
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
     /// - parameter urlString:   The URL string.
-    /// - parameter destination: The closure used to determine the destination of the downloaded file.
-    /// - parameter method:      The HTTP method.
+    /// - parameter method:      The HTTP method. `.get` by default.
     /// - parameter parameters:  The parameters. `nil` by default.
     /// - parameter encoding:    The parameter encoding. `.url` by default.
     /// - parameter headers:     The HTTP headers. `nil` by default.
+    /// - parameter destination: The closure used to determine the destination of the downloaded file. `nil` by default.
     ///
     /// - returns: The created `DownloadRequest`.
     @discardableResult
     open func download(
         _ urlString: URLStringConvertible,
-        to destination: DownloadRequest.DownloadFileDestination,
-        withMethod method: HTTPMethod,
+        method: HTTPMethod = .get,
         parameters: [String: Any]? = nil,
         encoding: ParameterEncoding = .url,
-        headers: [String: String]? = nil)
+        headers: [String: String]? = nil,
+        to destination: DownloadRequest.DownloadFileDestination? = nil)
         -> DownloadRequest
     {
         let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
         let encodedURLRequest = encoding.encode(urlRequest, parameters: parameters).0
 
-        return download(encodedURLRequest, to: destination)
+        return download(resource: encodedURLRequest, to: destination)
     }
 
     /// Creates a `DownloadRequest` to retrieve the contents of a URL based on the specified `urlRequest` and save
     /// them to the `destination`.
     ///
+    /// If `destination` is not specified, the contents will remain in the temporary location determined by the
+    /// URL session.
+    ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
     /// - parameter urlRequest:  The URL request
-    /// - parameter destination: The closure used to determine the destination of the downloaded file.
+    /// - parameter destination: The closure used to determine the destination of the downloaded file. `nil` by default.
     ///
     /// - returns: The created `DownloadRequest`.
     @discardableResult
     open func download(
-        _ urlRequest: URLRequestConvertible,
-        to destination: DownloadRequest.DownloadFileDestination)
+        resource urlRequest: URLRequestConvertible,
+        to destination: DownloadRequest.DownloadFileDestination? = nil)
         -> DownloadRequest
     {
         return download(.request(urlRequest.urlRequest), to: destination)
@@ -304,18 +310,21 @@ open class SessionManager {
     /// Creates a `DownloadRequest` from the `resumeData` produced from a previous request cancellation to retrieve
     /// the contents of the original request and save them to the `destination`.
     ///
+    /// If `destination` is not specified, the contents will remain in the temporary location determined by the
+    /// URL session.
+    ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
     /// - parameter resumeData:  The resume data. This is an opaque data blob produced by `URLSessionDownloadTask`
     ///                          when a task is cancelled. See `URLSession -downloadTask(withResumeData:)` for
     ///                          additional information.
-    /// - parameter destination: The closure used to determine the destination of the downloaded file.
+    /// - parameter destination: The closure used to determine the destination of the downloaded file. `nil` by default.
     ///
     /// - returns: The created `DownloadRequest`.
     @discardableResult
     open func download(
         resourceWithin resumeData: Data,
-        to destination: DownloadRequest.DownloadFileDestination)
+        to destination: DownloadRequest.DownloadFileDestination? = nil)
         -> DownloadRequest
     {
         return download(.resumeData(resumeData), to: destination)
@@ -325,15 +334,13 @@ open class SessionManager {
 
     private func download(
         _ downloadable: DownloadRequest.Downloadable,
-        to destination: DownloadRequest.DownloadFileDestination)
+        to destination: DownloadRequest.DownloadFileDestination?)
         -> DownloadRequest
     {
         let task = downloadable.task(session: session, adapter: adapter, queue: queue)
         let request = DownloadRequest(session: session, task: task, originalTask: downloadable)
 
-        request.downloadDelegate.downloadTaskDidFinishDownloadingToURL = { session, task, URL in
-            return destination(URL, task.response as! HTTPURLResponse)
-        }
+        request.downloadDelegate.destination = destination
 
         delegate[request.delegate.task] = request
 

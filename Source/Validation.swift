@@ -220,9 +220,9 @@ extension DataRequest {
 // MARK: -
 
 extension DownloadRequest {
-    /// A closure used to validate a request that takes a URL request, a URL response and destination URL, and returns
-    /// whether the request was valid.
-    public typealias Validation = (URLRequest?, HTTPURLResponse, URL?) -> ValidationResult
+    /// A closure used to validate a request that takes a URL request, a URL response, a temporary URL and a 
+    /// destination URL, and returns whether the request was valid.
+    public typealias Validation = (URLRequest?, HTTPURLResponse, _ temporary: URL?, _ destination: URL?) -> ValidationResult
 
     /// Validates the request, using the specified closure.
     ///
@@ -234,10 +234,14 @@ extension DownloadRequest {
     @discardableResult
     public func validate(_ validation: Validation) -> Self {
         let validationExecution: () -> Void = {
+            let request = self.request
+            let temporaryURL = self.downloadDelegate.temporaryURL
+            let destinationURL = self.downloadDelegate.destinationURL
+
             if
                 let response = self.response,
                 self.delegate.error == nil,
-                case let .failure(error) = validation(self.request, response, self.downloadDelegate.destinationURL)
+                case let .failure(error) = validation(request, response, temporaryURL, destinationURL)
             {
                 self.delegate.error = error
             }
@@ -257,7 +261,7 @@ extension DownloadRequest {
     /// - returns: The request.
     @discardableResult
     public func validate<S: Sequence>(statusCode acceptableStatusCodes: S) -> Self where S.Iterator.Element == Int {
-        return validate { _, response, _ in
+        return validate { _, response, _, _ in
             return self.validate(statusCode: acceptableStatusCodes, response: response)
         }
     }
@@ -271,16 +275,18 @@ extension DownloadRequest {
     /// - returns: The request.
     @discardableResult
     public func validate<S: Sequence>(contentType acceptableContentTypes: S) -> Self where S.Iterator.Element == String {
-        return validate { _, response, fileURL in
-            guard let fileURL = fileURL else {
+        return validate { _, response, temporaryURL, destinationURL in
+            let fileURL = self.downloadDelegate.destination != nil ? destinationURL : temporaryURL
+
+            guard let validFileURL = fileURL else {
                 return .failure(AFError.responseValidationFailed(reason: .dataFileNil))
             }
 
             do {
-                let data = try Data(contentsOf: fileURL)
+                let data = try Data(contentsOf: validFileURL)
                 return self.validate(contentType: acceptableContentTypes, response: response, data: data)
             } catch {
-                return .failure(AFError.responseValidationFailed(reason: .dataFileReadFailed(at: fileURL)))
+                return .failure(AFError.responseValidationFailed(reason: .dataFileReadFailed(at: validFileURL)))
             }
         }
     }
