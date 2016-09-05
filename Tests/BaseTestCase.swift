@@ -35,6 +35,10 @@ class BaseTestCase: XCTestCase {
         FileManager.removeAllItemsInsideDirectory(atPath: FileManager.applicationSupportDirectory)
         FileManager.removeAllItemsInsideDirectory(atPath: FileManager.cachesDirectory)
         FileManager.removeAllItemsInsideDirectory(atPath: FileManager.documentsDirectory)
+
+        FileManager.createDirectory(atPath: FileManager.applicationSupportDirectory)
+        FileManager.createDirectory(atPath: FileManager.cachesDirectory)
+        FileManager.createDirectory(atPath: FileManager.documentsDirectory)
     }
 
     func url(forResource fileName: String, withExtension ext: String) -> URL {

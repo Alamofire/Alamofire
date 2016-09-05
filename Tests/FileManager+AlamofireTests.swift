@@ -51,6 +51,16 @@ extension FileManager {
     // MARK: - File System Modification
 
     @discardableResult
+    static func createDirectory(atPath path: String) -> Bool {
+        do {
+            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    @discardableResult
     static func removeItem(atPath path: String) -> Bool {
         do {
             try FileManager.default.removeItem(atPath: path)
