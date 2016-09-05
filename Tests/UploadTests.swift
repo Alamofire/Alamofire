@@ -194,8 +194,8 @@ class UploadDataTestCase: BaseTestCase {
             .uploadProgress { progress in
                 uploadProgressValues.append((progress.completedUnitCount, progress.totalUnitCount))
             }
-            .uploadProgress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-                let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
+            .uploadProgress { bytesSent, totalBytesSent, totalBytesExpectedToSend in
+                let bytes = (bytes: bytesSent, totalBytes: totalBytesSent, totalBytesExpected: totalBytesExpectedToSend)
                 uploadByteValues.append(bytes)
             }
             .downloadProgress { progress in
@@ -678,8 +678,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                         .uploadProgress { progress in
                             uploadProgressValues.append((progress.completedUnitCount, progress.totalUnitCount))
                         }
-                        .uploadProgress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-                            let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
+                        .uploadProgress { bytesSent, totalBytesSent, totalBytesExpectedToSend in
+                            let bytes = (bytes: bytesSent, totalBytes: totalBytesSent, totalBytesExpected: totalBytesExpectedToSend)
                             uploadByteValues.append(bytes)
                         }
                         .downloadProgress { progress in
