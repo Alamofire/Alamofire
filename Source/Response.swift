@@ -177,7 +177,7 @@ public struct DownloadResponse<Value> {
 
 // MARK: -
 
-extension DownloadResponse: CustomStringConvertible {
+extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertible {
     /// The textual representation used when written to an output stream, which includes whether the result was a
     /// success or failure.
     public var description: String {
