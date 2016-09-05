@@ -32,13 +32,13 @@ class BaseTestCase: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.applicationSupportDirectory)
-        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.cachesDirectory)
-        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.documentsDirectory)
+        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.applicationSupportDirectoryPath)
+        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.cachesDirectoryPath)
+        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.documentsDirectoryPath)
 
-        FileManager.createDirectory(atPath: FileManager.applicationSupportDirectory)
-        FileManager.createDirectory(atPath: FileManager.cachesDirectory)
-        FileManager.createDirectory(atPath: FileManager.documentsDirectory)
+        FileManager.createDirectory(atPath: FileManager.applicationSupportDirectoryPath)
+        FileManager.createDirectory(atPath: FileManager.cachesDirectoryPath)
+        FileManager.createDirectory(atPath: FileManager.documentsDirectoryPath)
     }
 
     func url(forResource fileName: String, withExtension ext: String) -> URL {

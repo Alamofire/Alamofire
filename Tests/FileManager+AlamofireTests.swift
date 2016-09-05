@@ -28,24 +28,44 @@ extension FileManager {
 
     // MARK: - Common Directories
 
-    static var documentsDirectory: String {
+    static var documentsDirectoryPath: String {
         return NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
     }
 
-    static var libraryDirectory: String {
+    static var documentsDirectoryURL: URL {
+        return URL(fileURLWithPath: FileManager.documentsDirectoryPath, isDirectory: true)
+    }
+
+    static var libraryDirectoryPath: String {
         return NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
     }
 
-    static var applicationSupportDirectory: String {
+    static var libraryDirectoryURL: URL {
+        return URL(fileURLWithPath: FileManager.libraryDirectoryPath, isDirectory: true)
+    }
+
+    static var applicationSupportDirectoryPath: String {
         return NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)[0]
     }
 
-    static var cachesDirectory: String {
+    static var applicationSupportDirectoryURL: URL {
+        return URL(fileURLWithPath: FileManager.applicationSupportDirectoryPath, isDirectory: true)
+    }
+
+    static var cachesDirectoryPath: String {
         return NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
     }
 
-    static var temporaryDirectory: String {
+    static var cachesDirectoryURL: URL {
+        return URL(fileURLWithPath: FileManager.cachesDirectoryPath, isDirectory: true)
+    }
+
+    static var temporaryDirectoryPath: String {
         return NSTemporaryDirectory()
+    }
+
+    static var temporaryDirectoryURL: URL {
+        return URL(fileURLWithPath: FileManager.temporaryDirectoryPath, isDirectory: true)
     }
 
     // MARK: - File System Modification
