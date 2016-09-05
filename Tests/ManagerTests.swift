@@ -40,6 +40,53 @@ class ManagerTestCase: BaseTestCase {
         XCTAssertNil(manager.session.serverTrustPolicyManager, "session server trust policy manager should be nil")
     }
 
+    func testDefaultUserAgentHeader() {
+        // Given, When
+        let userAgent = Manager.defaultHTTPHeaders["User-Agent"]
+
+        // Then
+        let osNameVersion: String = {
+            let versionString: String
+
+            if #available(OSX 10.10, *) {
+                let version = NSProcessInfo.processInfo().operatingSystemVersion
+                versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+            } else {
+                versionString = "10.9"
+            }
+
+            let osName: String = {
+                #if os(iOS)
+                    return "iOS"
+                #elseif os(watchOS)
+                    return "watchOS"
+                #elseif os(tvOS)
+                    return "tvOS"
+                #elseif os(OSX)
+                    return "OS X"
+                #elseif os(Linux)
+                    return "Linux"
+                #else
+                    return "Unknown"
+                #endif
+            }()
+
+            return "\(osName) \(versionString)"
+        }()
+
+        let alamofireVersion: String = {
+            guard
+                let afInfo = NSBundle(forClass: Manager.self).infoDictionary,
+                build = afInfo["CFBundleShortVersionString"]
+            else { return "Unknown" }
+
+            return "Alamofire/\(build)"
+        }()
+
+        let expectedUserAgent = "Unknown/Unknown (Unknown; build:Unknown; \(osNameVersion)) \(alamofireVersion)"
+        XCTAssertEqual(userAgent, expectedUserAgent)
+    }
+
     func testInitializerWithSpecifiedArguments() {
         // Given
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()

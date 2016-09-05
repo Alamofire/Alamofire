@@ -387,6 +387,14 @@ Alamofire.request(.GET, "https://httpbin.org/get", headers: headers)
          }
 ```
 
+The default Alamofire `Manager` provides a common set of headers for every request. These include:
+
+* `Accept-Encoding`, which defaults to `gzip;q=1.0, compress;q=0.5`, per [RFC7230](https://tools.ietf.org/html/rfc7230#section-4.2.3).
+* `Accept-Language`, which defaults to up to the top 6 preferred languages on the system, formatted like `en;q=1.0`, per [RFC7231](https://tools.ietf.org/html/rfc7231#section-5.3.5).
+* `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 9.3.0) Alamofire/3.4.2`, per [RFC7231](https://tools.ietf.org/html/rfc7231#section-5.5.3).
+
+Customizing these headers, since they need to be added to every request, should be done by creating a customized `Manager` instance and modifying the `defaultHTTPHeaders` dictionary, as shown in the [Modifying Session Configuration](#modifying-session-configuration) section.
+
 ### Caching
 
 Caching is handled on the system framework level by [`NSURLCache`](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLCache_Class/Reference/Reference.html#//apple_ref/occ/cl/NSURLCache).
