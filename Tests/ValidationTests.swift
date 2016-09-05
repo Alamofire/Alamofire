@@ -360,12 +360,9 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 -> DownloadRequest
             {
                 let originalRequest = urlRequest.urlRequest
-                let adaptedRequest = originalRequest.adapt(using: adapter)
-
-                var task: URLSessionDownloadTask!
-                queue.sync { task = self.session.downloadTask(with: adaptedRequest) }
-
                 let originalTask = DownloadRequest.Downloadable.request(originalRequest)
+
+                let task = originalTask.task(session: session, adapter: adapter, queue: queue)
                 let request = MockDownloadRequest(session: session, task: task, originalTask: originalTask)
 
                 request.downloadDelegate.downloadTaskDidFinishDownloadingToURL = { session, task, URL in
