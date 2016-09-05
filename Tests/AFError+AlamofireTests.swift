@@ -102,6 +102,16 @@ extension AFError {
         return false
     }
 
+    var isInputFileNil: Bool {
+        if case let .responseSerializationFailed(reason) = self, reason.isInputFileNil { return true }
+        return false
+    }
+
+    var isInputFileReadFailed: Bool {
+        if case let .responseSerializationFailed(reason) = self, reason.isInputFileReadFailed { return true }
+        return false
+    }
+
     var isStringSerializationFailed: Bool {
         if case let .responseSerializationFailed(reason) = self, reason.isStringSerializationFailed { return true }
         return false
@@ -214,6 +224,16 @@ extension AFError.SerializationFailureReason {
 
     var isInputDataNilOrZeroLength: Bool {
         if case .inputDataNilOrZeroLength = self { return true }
+        return false
+    }
+
+    var isInputFileNil: Bool {
+        if case .inputFileNil = self { return true }
+        return false
+    }
+
+    var isInputFileReadFailed: Bool {
+        if case .inputFileReadFailed = self { return true }
         return false
     }
 
