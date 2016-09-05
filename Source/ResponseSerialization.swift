@@ -540,7 +540,7 @@ extension DownloadRequest {
     /// - parameter options: The JSON serialization reading options. Defaults to `.allowFragments`.
     ///
     /// - returns: A JSON object response serializer.
-    public static func JSONResponseSerializer(
+    public static func jsonResponseSerializer(
         options: JSONSerialization.ReadingOptions = .allowFragments)
         -> DownloadResponseSerializer<Any>
     {
@@ -575,7 +575,7 @@ extension DownloadRequest {
     {
         return response(
             queue: queue,
-            responseSerializer: DownloadRequest.JSONResponseSerializer(options: options),
+            responseSerializer: DownloadRequest.jsonResponseSerializer(options: options),
             completionHandler: completionHandler
         )
     }
