@@ -227,13 +227,140 @@ class DownloadResponseTestCase: BaseTestCase {
 
         if
             let data = try? Data(contentsOf: fileURL),
-            let jsonObject = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions(rawValue: 0)),
+            let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
             let json = jsonObject as? [String: Any],
             let headers = json["headers"] as? [String: String]
         {
             XCTAssertEqual(headers["Authorization"], "123456")
         } else {
             XCTFail("headers parameter in JSON should not be nil")
+        }
+    }
+
+    func testThatDownloadingFileAndMovingToDirectoryThatDoesNotExistThrowsError() {
+        // Given
+        let fileURL = FileManager.cachesDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
+
+        let expectation = self.expectation(description: "Download request should download data but fail to move file")
+        var response: DefaultDownloadResponse?
+
+        // When
+        Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.temporaryURL)
+        XCTAssertNotNil(response?.destinationURL)
+        XCTAssertNil(response?.resumeData)
+        XCTAssertNotNil(response?.error)
+
+        if let error = response?.error as? CocoaError {
+            XCTAssertEqual(error.code, .fileNoSuchFileError)
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
+
+    func testThatDownloadOptionsCanCreateIntermediateDirectoriesPriorToMovingFile() {
+        // Given
+        let fileURL = FileManager.cachesDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
+
+        let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
+        var response: DefaultDownloadResponse?
+
+        // When
+        Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.createIntermediateDirectories])})
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.temporaryURL)
+        XCTAssertNotNil(response?.destinationURL)
+        XCTAssertNil(response?.resumeData)
+        XCTAssertNil(response?.error)
+    }
+
+    func testThatDownloadingFileAndMovingToDestinationThatIsOccupiedThrowsError() {
+        do {
+            // Given
+            let directoryURL = FileManager.cachesDirectoryURL.appendingPathComponent("some/random/folder")
+            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+
+            let fileURL = directoryURL.appendingPathComponent("test_output.json")
+            try "random_data".write(to: fileURL, atomically: true, encoding: .utf8)
+
+            let expectation = self.expectation(description: "Download should complete but fail to move file")
+            var response: DefaultDownloadResponse?
+
+            // When
+            Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
+                .response { resp in
+                    response = resp
+                    expectation.fulfill()
+                }
+
+            waitForExpectations(timeout: timeout, handler: nil)
+
+            // Then
+            XCTAssertNotNil(response?.request)
+            XCTAssertNotNil(response?.response)
+            XCTAssertNotNil(response?.temporaryURL)
+            XCTAssertNotNil(response?.destinationURL)
+            XCTAssertNil(response?.resumeData)
+            XCTAssertNotNil(response?.error)
+
+            if let error = response?.error as? CocoaError {
+                XCTAssertEqual(error.code, .fileWriteFileExistsError)
+            } else {
+                XCTFail("error should not be nil")
+            }
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
+        }
+    }
+
+    func testThatDownloadOptionsCanRemovePreviousFilePriorToMovingFile() {
+        do {
+            // Given
+            let directoryURL = FileManager.cachesDirectoryURL.appendingPathComponent("some/random/folder")
+            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+
+            let fileURL = directoryURL.appendingPathComponent("test_output.json")
+
+            let expectation = self.expectation(description: "Download should complete and move file to URL: \(fileURL)")
+            var response: DefaultDownloadResponse?
+
+            // When
+            Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile])})
+                .response { resp in
+                    response = resp
+                    expectation.fulfill()
+                }
+
+            waitForExpectations(timeout: timeout, handler: nil)
+
+            // Then
+            XCTAssertNotNil(response?.request)
+            XCTAssertNotNil(response?.response)
+            XCTAssertNotNil(response?.temporaryURL)
+            XCTAssertNotNil(response?.destinationURL)
+            XCTAssertNil(response?.resumeData)
+            XCTAssertNil(response?.error)
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
         }
     }
 }
