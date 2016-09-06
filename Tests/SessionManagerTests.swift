@@ -177,6 +177,49 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNil(manager, "manager should be nil")
     }
 
+    // MARK: Tests - Default HTTP Headers
+
+    func testDefaultUserAgentHeader() {
+        // Given, When
+        let userAgent = SessionManager.defaultHTTPHeaders["User-Agent"]
+
+        // Then
+        let osNameVersion: String = {
+            let version = ProcessInfo.processInfo.operatingSystemVersion
+            let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+
+            let osName: String = {
+                #if os(iOS)
+                    return "iOS"
+                #elseif os(watchOS)
+                    return "watchOS"
+                #elseif os(tvOS)
+                    return "tvOS"
+                #elseif os(OSX)
+                    return "OS X"
+                #elseif os(Linux)
+                    return "Linux"
+                #else
+                    return "Unknown"
+                #endif
+            }()
+
+            return "\(osName) \(versionString)"
+        }()
+
+        let alamofireVersion: String = {
+            guard
+                let afInfo = Bundle(for: SessionManager.self).infoDictionary,
+                let build = afInfo["CFBundleShortVersionString"]
+            else { return "Unknown" }
+
+            return "Alamofire/\(build)"
+        }()
+
+        let expectedUserAgent = "Unknown/Unknown (Unknown; build:Unknown; \(osNameVersion)) \(alamofireVersion)"
+        XCTAssertEqual(userAgent, expectedUserAgent)
+    }
+
     // MARK: Tests - Start Requests Immediately
 
     func testSetStartRequestsImmediatelyToFalseAndResumeRequest() {

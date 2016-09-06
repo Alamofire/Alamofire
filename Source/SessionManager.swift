@@ -64,6 +64,7 @@ open class SessionManager {
         }.joined(separator: ", ")
 
         // User-Agent Header; see https://tools.ietf.org/html/rfc7231#section-5.5.3
+        // Example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 9.3.0) Alamofire/3.4.2`
         let userAgent: String = {
             if let info = Bundle.main.infoDictionary {
                 let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
@@ -94,7 +95,16 @@ open class SessionManager {
                     return "\(osName) \(versionString)"
                 }()
 
-                return "\(executable)/\(bundle) (\(appVersion)/\(appBuild)); \(osNameVersion))"
+                let alamofireVersion: String = {
+                    guard
+                        let afInfo = Bundle(for: SessionManager.self).infoDictionary,
+                        let build = afInfo["CFBundleShortVersionString"]
+                    else { return "Unknown" }
+
+                    return "Alamofire/\(build)"
+                }()
+
+                return "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
             }
 
             return "Alamofire"
