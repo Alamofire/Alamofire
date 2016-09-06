@@ -43,9 +43,11 @@ extension Request {
         let type: String
         let subtype: String
 
+        var isWildcard: Bool { return type == "*" && subtype == "*" }
+
         init?(_ string: String) {
             let components: [String] = {
-                let stripped = string.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                let stripped = string.trimmingCharacters(in: .whitespacesAndNewlines)
                 let split = stripped.substring(to: stripped.range(of: ";")?.lowerBound ?? stripped.endIndex)
                 return split.components(separatedBy: "/")
             }()
@@ -112,7 +114,7 @@ extension Request {
             let responseMIMEType = MIMEType(responseContentType)
         else {
             for contentType in acceptableContentTypes {
-                if let mimeType = MIMEType(contentType), mimeType.type == "*" && mimeType.subtype == "*" {
+                if let mimeType = MIMEType(contentType), mimeType.isWildcard {
                     return .success
                 }
             }
