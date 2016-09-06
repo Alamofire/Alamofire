@@ -168,7 +168,7 @@ open class Request {
     /// - parameter password: The password.
     ///
     /// - returns: A tuple with Authorization header and credential value if encoding succeeds, `nil` otherwise.
-    open static func authorizationHeaderFrom(user: String, password: String) -> (key: String, value: String)? {
+    open static func authorizationHeader(user: String, password: String) -> (key: String, value: String)? {
         guard let data = "\(user):\(password)".data(using: .utf8) else { return nil }
 
         let credential = data.base64EncodedString(options: [])

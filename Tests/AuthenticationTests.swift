@@ -130,7 +130,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
         var headers: [String: String]?
 
-        if let authorizationHeader = Request.authorizationHeaderFrom(user: user, password: password) {
+        if let authorizationHeader = Request.authorizationHeader(user: user, password: password) {
             headers = [authorizationHeader.key: authorizationHeader.value]
         }
 
