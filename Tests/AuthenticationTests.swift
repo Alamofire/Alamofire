@@ -68,7 +68,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .authenticate(user: "invalid", password: "credentials")
             .response { resp in
                 response = resp
@@ -92,7 +92,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .authenticate(user: user, password: password)
             .response { resp in
                 response = resp
@@ -123,7 +123,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get, headers: headers)
+        manager.request(urlString, headers: headers)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -157,7 +157,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .authenticate(user: "invalid", password: "credentials")
             .response { resp in
                 response = resp
@@ -181,7 +181,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .authenticate(user: user, password: password)
             .response { resp in
                 response = resp

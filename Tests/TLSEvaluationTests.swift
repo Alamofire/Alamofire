@@ -84,7 +84,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -116,7 +116,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -152,7 +152,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -192,7 +192,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -226,7 +226,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -254,7 +254,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -282,7 +282,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -312,7 +312,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -346,7 +346,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -374,7 +374,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -402,7 +402,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -428,7 +428,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -460,7 +460,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -490,7 +490,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         var error: Error?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()

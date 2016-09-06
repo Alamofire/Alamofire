@@ -32,7 +32,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/"
 
         // When
-        let request = Alamofire.request(urlString, withMethod: .get)
+        let request = Alamofire.request(urlString)
 
         // Then
         XCTAssertNotNil(request.request)
@@ -46,7 +46,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
 
         // When
-        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        let request = Alamofire.request(urlString, parameters: ["foo": "bar"])
 
         // Then
         XCTAssertNotNil(request.request)
@@ -62,7 +62,7 @@ class RequestInitializationTestCase: BaseTestCase {
         let headers = ["Authorization": "123456"]
 
         // When
-        let request = Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"], headers: headers)
+        let request = Alamofire.request(urlString, parameters: ["foo": "bar"], headers: headers)
 
         // Then
         XCTAssertNotNil(request.request)
@@ -86,7 +86,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
+        Alamofire.request(urlString, parameters: ["foo": "bar"])
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -113,7 +113,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        Alamofire.request(urlString, withMethod: .get)
+        Alamofire.request(urlString)
             .downloadProgress { progress in
                 progressValues.append((progress.completedUnitCount, progress.totalUnitCount))
             }
@@ -168,7 +168,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        Alamofire.request(urlString, withMethod: .get)
+        Alamofire.request(urlString)
             .downloadProgress { progress in
                 progressValues.append((progress.completedUnitCount, progress.totalUnitCount))
             }
@@ -230,7 +230,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        Alamofire.request(urlString, withMethod: .post, parameters: parameters)
+        Alamofire.request(urlString, method: .post, parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -282,7 +282,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        Alamofire.request(urlString, withMethod: .post, parameters: parameters)
+        Alamofire.request(urlString, method: .post, parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -337,7 +337,7 @@ class RequestExtensionTestCase: BaseTestCase {
         var responses: [String] = []
 
         // When
-        Alamofire.request(urlString, withMethod: .get)
+        Alamofire.request(urlString)
             .preValidate {
                 responses.append("preValidate")
             }
@@ -369,7 +369,7 @@ class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
         let urlString = "https://httpbin.org/get"
-        let request = Alamofire.request(urlString, withMethod: .get)
+        let request = Alamofire.request(urlString)
         let initialRequestDescription = request.description
 
         let expectation = self.expectation(description: "Request description should update: \(urlString)")
@@ -445,7 +445,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
 
         // When
-        let request = manager.request(urlString, withMethod: .get)
+        let request = manager.request(urlString)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -460,7 +460,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
         // When
         let headers = [ "Accept-Language": "en-GB" ]
-        let request = managerWithAcceptLanguageHeader.request(urlString, withMethod: .get, headers: headers)
+        let request = managerWithAcceptLanguageHeader.request(urlString, headers: headers)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -479,7 +479,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
 
         // When
-        let request = manager.request(urlString, withMethod: .post)
+        let request = manager.request(urlString, method: .post)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -499,7 +499,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         ]
 
         // When
-        let request = manager.request(urlString, withMethod: .post, parameters: parameters, encoding: .json)
+        let request = manager.request(urlString, method: .post, parameters: parameters, encoding: .json)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -530,7 +530,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         manager.session.configuration.httpCookieStorage?.setCookie(cookie)
 
         // When
-        let request = manager.request(urlString, withMethod: .post)
+        let request = manager.request(urlString, method: .post)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -555,7 +555,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         managerDisallowingCookies.session.configuration.httpCookieStorage?.setCookie(cookie)
 
         // When
-        let request = managerDisallowingCookies.request(urlString, withMethod: .post)
+        let request = managerDisallowingCookies.request(urlString, method: .post)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -578,7 +578,6 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
                 multipartFormData.append(japaneseData, withName: "japanese")
             },
             to: urlString,
-            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case .success(let upload, _, _):
@@ -612,7 +611,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let urlString = "invalid_url"
 
         // When
-        let request = manager.request(urlString, withMethod: .get)
+        let request = manager.request(urlString)
         let debugDescription = request.debugDescription
 
         // Then

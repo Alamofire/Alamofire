@@ -33,7 +33,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
 
         // When
-        let request = Alamofire.upload(imageURL, to: urlString, withMethod: .post)
+        let request = Alamofire.upload(imageURL, to: urlString)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -49,7 +49,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
 
         // When
-        let request = Alamofire.upload(imageURL, to: urlString, withMethod: .post, headers: headers)
+        let request = Alamofire.upload(imageURL, to: urlString, method: .post, headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -71,7 +71,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/"
 
         // When
-        let request = Alamofire.upload(Data(), to: urlString, withMethod: .post)
+        let request = Alamofire.upload(Data(), to: urlString)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -86,7 +86,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
         let headers = ["Authorization": "123456"]
 
         // When
-        let request = Alamofire.upload(Data(), to: urlString, withMethod: .post, headers: headers)
+        let request = Alamofire.upload(Data(), to: urlString, headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -110,7 +110,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         let imageStream = InputStream(url: imageURL)!
 
         // When
-        let request = Alamofire.upload(imageStream, to: urlString, withMethod: .post)
+        let request = Alamofire.upload(imageStream, to: urlString)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -127,7 +127,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         let imageStream = InputStream(url: imageURL)!
 
         // When
-        let request = Alamofire.upload(imageStream, to: urlString, withMethod: .post, headers: headers)
+        let request = Alamofire.upload(imageStream, to: urlString, headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
@@ -153,7 +153,7 @@ class UploadDataTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        Alamofire.upload(data, to: urlString, withMethod: .post)
+        Alamofire.upload(data, to: urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -190,7 +190,7 @@ class UploadDataTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        Alamofire.upload(data, to: urlString, withMethod: .post)
+        Alamofire.upload(data, to: urlString)
             .uploadProgress { progress in
                 uploadProgressValues.append((progress.completedUnitCount, progress.totalUnitCount))
             }
@@ -282,7 +282,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 formData = multipartFormData
             },
             to: urlString,
-            withMethod: .post,
+            method: .post,
             encodingCompletion: { result in
                 switch result {
                 case .success(let upload, _, _):
@@ -331,7 +331,6 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 multipartFormData.append(japaneseData, withName: "japanese")
             },
             to: urlString,
-            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case .success(let upload, _, _):
@@ -380,7 +379,6 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 multipartFormData.append(japaneseData, withName: "japanese")
             },
             to: urlString,
-            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case let .success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
@@ -425,7 +423,6 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 formData = multipartFormData
             },
             to: urlString,
-            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case let .success(upload, uploadStreamingFromDisk, _):
@@ -480,7 +477,6 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             },
             usingThreshold: 0,
             to: urlString,
-            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case let .success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
@@ -530,7 +526,6 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             },
             usingThreshold: 0,
             to: urlString,
-            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case let .success(upload, uploadStreamingFromDisk, _):
@@ -670,7 +665,6 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             },
             usingThreshold: streamFromDisk ? 0 : 100_000_000,
             to: urlString,
-            withMethod: .post,
             encodingCompletion: { result in
                 switch result {
                 case .success(let upload, _, _):

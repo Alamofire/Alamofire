@@ -106,7 +106,7 @@ extension URLRequest {
 /// specified `urlString`, `method`, `parameters`, `encoding` and `headers`.
 ///
 /// - parameter urlString:  The URL string.
-/// - parameter method:     The HTTP method.
+/// - parameter method:     The HTTP method. `.get` by default.
 /// - parameter parameters: The parameters. `nil` by default.
 /// - parameter encoding:   The parameter encoding. `.url` by default.
 /// - parameter headers:    The HTTP headers. `nil` by default.
@@ -115,7 +115,7 @@ extension URLRequest {
 @discardableResult
 public func request(
     _ urlString: URLStringConvertible,
-    withMethod method: HTTPMethod,
+    method: HTTPMethod = .get,
     parameters: [String: Any]? = nil,
     encoding: ParameterEncoding = .url,
     headers: [String: String]? = nil)
@@ -123,7 +123,7 @@ public func request(
 {
     return SessionManager.default.request(
         urlString,
-        withMethod: method,
+        method: method,
         parameters: parameters,
         encoding: encoding,
         headers: headers
@@ -137,8 +137,8 @@ public func request(
 ///
 /// - returns: The created `DataRequest`.
 @discardableResult
-public func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
-    return SessionManager.default.request(urlRequest.urlRequest)
+public func request(resource urlRequest: URLRequestConvertible) -> DataRequest {
+    return SessionManager.default.request(resource: urlRequest)
 }
 
 // MARK: - Download Request
@@ -229,8 +229,8 @@ public func download(
 /// and `headers` for uploading the `file`.
 ///
 /// - parameter file:      The file to upload.
-/// - parameter method:    The HTTP method.
 /// - parameter urlString: The URL string.
+/// - parameter method:    The HTTP method. `.post` by default.
 /// - parameter headers:   The HTTP headers. `nil` by default.
 ///
 /// - returns: The created `UploadRequest`.
@@ -238,11 +238,11 @@ public func download(
 public func upload(
     _ fileURL: URL,
     to urlString: URLStringConvertible,
-    withMethod method: HTTPMethod,
+    method: HTTPMethod = .post,
     headers: [String: String]? = nil)
     -> UploadRequest
 {
-    return SessionManager.default.upload(fileURL, to: urlString, withMethod: method, headers: headers)
+    return SessionManager.default.upload(fileURL, to: urlString, method: method, headers: headers)
 }
 
 /// Creates a `UploadRequest` using the default `SessionManager` from the specified `urlRequest` for
@@ -264,7 +264,7 @@ public func upload(_ fileURL: URL, with urlRequest: URLRequestConvertible) -> Up
 ///
 /// - parameter data:      The data to upload.
 /// - parameter urlString: The URL string.
-/// - parameter method:    The HTTP method.
+/// - parameter method:    The HTTP method. `.post` by default.
 /// - parameter headers:   The HTTP headers. `nil` by default.
 ///
 /// - returns: The created `UploadRequest`.
@@ -272,11 +272,11 @@ public func upload(_ fileURL: URL, with urlRequest: URLRequestConvertible) -> Up
 public func upload(
     _ data: Data,
     to urlString: URLStringConvertible,
-    withMethod method: HTTPMethod,
+    method: HTTPMethod = .post,
     headers: [String: String]? = nil)
     -> UploadRequest
 {
-    return SessionManager.default.upload(data, to: urlString, withMethod: method, headers: headers)
+    return SessionManager.default.upload(data, to: urlString, method: method, headers: headers)
 }
 
 /// Creates an `UploadRequest` using the default `SessionManager` from the specified `urlRequest` for
@@ -298,7 +298,7 @@ public func upload(_ data: Data, with urlRequest: URLRequestConvertible) -> Uplo
 ///
 /// - parameter stream:    The stream to upload.
 /// - parameter urlString: The URL string.
-/// - parameter method:    The HTTP method.
+/// - parameter method:    The HTTP method. `.post` by default.
 /// - parameter headers:   The HTTP headers. `nil` by default.
 ///
 /// - returns: The created `UploadRequest`.
@@ -306,11 +306,11 @@ public func upload(_ data: Data, with urlRequest: URLRequestConvertible) -> Uplo
 public func upload(
     _ stream: InputStream,
     to urlString: URLStringConvertible,
-    withMethod method: HTTPMethod,
+    method: HTTPMethod = .post,
     headers: [String: String]? = nil)
     -> UploadRequest
 {
-    return SessionManager.default.upload(stream, to: urlString, withMethod: method, headers: headers)
+    return SessionManager.default.upload(stream, to: urlString, method: method, headers: headers)
 }
 
 /// Creates an `UploadRequest` using the default `SessionManager` from the specified `urlRequest` for
@@ -347,14 +347,14 @@ public func upload(_ stream: InputStream, with urlRequest: URLRequestConvertible
 /// - parameter encodingMemoryThreshold: The encoding memory threshold in bytes.
 ///                                      `multipartFormDataEncodingMemoryThreshold` by default.
 /// - parameter urlString:               The URL string.
-/// - parameter method:                  The HTTP method.
+/// - parameter method:                  The HTTP method. `.post` by default.
 /// - parameter headers:                 The HTTP headers. `nil` by default.
 /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
 public func upload(
     multipartFormData: @escaping (MultipartFormData) -> Void,
     usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
     to urlString: URLStringConvertible,
-    withMethod method: HTTPMethod,
+    method: HTTPMethod = .post,
     headers: [String: String]? = nil,
     encodingCompletion: ((SessionManager.MultipartFormDataEncodingResult) -> Void)?)
 {
@@ -362,7 +362,7 @@ public func upload(
         multipartFormData: multipartFormData,
         usingThreshold: encodingMemoryThreshold,
         to: urlString,
-        withMethod: method,
+        method: method,
         headers: headers,
         encodingCompletion: encodingCompletion
     )

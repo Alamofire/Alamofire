@@ -76,7 +76,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.request("https://httpbin.org/get", withMethod: .get).responseJSON { closureResponse in
+        manager.request("https://httpbin.org/get").responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
@@ -101,7 +101,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.request("https://httpbin.org/get", withMethod: .get).responseJSON { closureResponse in
+        manager.request("https://httpbin.org/get").responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
@@ -125,7 +125,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -153,7 +153,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -188,7 +188,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -223,7 +223,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -258,7 +258,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -293,7 +293,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -337,7 +337,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -383,7 +383,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(urlString, withMethod: .get)
+        manager.request(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -435,7 +435,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        manager.request(urlString, withMethod: .get, headers: headers)
+        manager.request(urlString, headers: headers)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -470,7 +470,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.request("https://httpbin.org/get", withMethod: .get).responseJSON { closureResponse in
+        manager.request("https://httpbin.org/get").responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
@@ -495,7 +495,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.request("https://httpbin.org/get", withMethod: .get).responseJSON { closureResponse in
+        manager.request("https://httpbin.org/get").responseJSON { closureResponse in
             response = closureResponse.response
             expectation.fulfill()
         }
