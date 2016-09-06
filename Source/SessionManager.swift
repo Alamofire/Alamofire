@@ -241,7 +241,7 @@ open class SessionManager {
         var task: URLSessionDataTask!
         queue.sync { task = self.session.dataTask(with: adaptedRequest) }
 
-        let originalTask = DataRequest.Requestable.request(originalRequest)
+        let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
         let request = DataRequest(session: session, task: task, originalTask: originalTask)
 
         delegate[request.delegate.task] = request

@@ -331,15 +331,12 @@ open class DataRequest: Request {
 
     // MARK: Helper Types
 
-    enum Requestable: TaskConvertible {
-        case request(URLRequest)
+    struct Requestable: TaskConvertible {
+        let urlRequest: URLRequest
 
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
-            switch self {
-            case let .request(urlRequest):
-                let urlRequest = urlRequest.adapt(using: adapter)
-                return queue.syncResult { session.dataTask(with: urlRequest) }
-            }
+            let urlRequest = self.urlRequest.adapt(using: adapter)
+            return queue.syncResult { session.dataTask(with: urlRequest) }
         }
     }
 
