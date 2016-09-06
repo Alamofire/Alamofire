@@ -403,21 +403,19 @@ extension SessionDelegate: URLSessionTaskDelegate {
         /// should be retried. Otherwise, complete the task by notifying the task delegate.
         if let retrier = retrier, let error = error {
             retrier.should(sessionManager, retry: request, with: error) { [weak self] shouldRetry, delay in
-                if shouldRetry {
-                    DispatchQueue.utility.after(delay) { [weak self] in
-                        guard let strongSelf = self else { return }
+                guard shouldRetry else { completeTask(session, task, error) ; return }
 
-                        let retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false
+                DispatchQueue.utility.after(delay) { [weak self] in
+                    guard let strongSelf = self else { return }
 
-                        if retrySucceeded {
-                            strongSelf[request.task] = request
-                            return
-                        } else {
-                            completeTask(session, task, error)
-                        }
+                    let retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false
+
+                    if retrySucceeded {
+                        strongSelf[request.task] = request
+                        return
+                    } else {
+                        completeTask(session, task, error)
                     }
-                } else {
-                    completeTask(session, task, error)
                 }
             }
         } else {
