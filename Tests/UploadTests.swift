@@ -282,7 +282,6 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 formData = multipartFormData
             },
             to: urlString,
-            method: .post,
             encodingCompletion: { result in
                 switch result {
                 case .success(let upload, _, _):

@@ -210,7 +210,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DefaultDownloadResponse?
 
         // When
-        Alamofire.download(urlString, method: .get, headers: headers, to: destination)
+        Alamofire.download(urlString, headers: headers, to: destination)
             .response { resp in
                 response = resp
                 expectation.fulfill()
