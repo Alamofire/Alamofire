@@ -185,7 +185,7 @@ class DataTaskDelegate: TaskDelegate, URLSessionDataDelegate {
     var progressHandler: (closure: Request.ProgressHandler, queue: DispatchQueue)?
     var progressDebugHandler: (closure: Request.DownloadProgressHandler, queue: DispatchQueue)?
 
-    var dataStream: ((_ data: Data) -> Void)? // this should use handler pattern also
+    var dataStream: ((_ data: Data) -> Void)?
 
     private var totalBytesReceived: Int64 = 0
     private var mutableData: Data
