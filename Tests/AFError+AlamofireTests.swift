@@ -25,6 +25,9 @@
 import Alamofire
 
 extension AFError {
+
+    // MultipartEncodingFailureReason
+
     var isBodyPartURLInvalid: Bool {
         if case let .multipartEncodingFailed(reason) = self, reason.isBodyPartURLInvalid { return true }
         return false
@@ -128,6 +131,16 @@ extension AFError {
     }
 
     // ValidationFailureReason
+
+    var isDataFileNil: Bool {
+        if case let .responseValidationFailed(reason) = self, reason.isDataFileNil { return true }
+        return false
+    }
+
+    var isDataFileReadFailed: Bool {
+        if case let .responseValidationFailed(reason) = self, reason.isDataFileReadFailed { return true }
+        return false
+    }
 
     var isMissingContentType: Bool {
         if case let .responseValidationFailed(reason) = self, reason.isMissingContentType { return true }
@@ -256,6 +269,16 @@ extension AFError.SerializationFailureReason {
 // MARK: -
 
 extension AFError.ValidationFailureReason {
+    var isDataFileNil: Bool {
+        if case .dataFileNil = self { return true }
+        return false
+    }
+
+    var isDataFileReadFailed: Bool {
+        if case .dataFileReadFailed = self { return true }
+        return false
+    }
+
     var isMissingContentType: Bool {
         if case .missingContentType = self { return true }
         return false

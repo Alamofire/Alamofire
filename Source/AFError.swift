@@ -51,8 +51,8 @@ public enum AFError: Error {
     /// - `.bodyPartInputStreamCreationFailed`:     An `InputStream` could not be created for the provided `fileURL`.
     /// - `.outputStreamCreationFailed`:            An `OutputStream` could not be created when attempting to write the
     ///                                             encoded data to disk.
-    /// - `.outputStreamFileAlreadyExists`:         The encoded body data could not be writtent disk because a file already
-    ///                                             exists at the provided `fileURL`.
+    /// - `.outputStreamFileAlreadyExists`:         The encoded body data could not be writtent disk because a file 
+    ///                                             already exists at the provided `fileURL`.
     /// - `.outputStreamURLInvalid`:                The `fileURL` provided for writing the encoded body data to disk is
     ///                                             not a file URL.
     /// - `.outputStreamWriteFailed`:               The attempt to write the encoded body data to disk failed with an
@@ -79,12 +79,16 @@ public enum AFError: Error {
 
     /// The reason underlying the `AFError.responseValidationFailed` state.
     ///
+    /// - `.dataFileNil`:               The data file containing the server response did not exist.
+    /// - `.dataFileReadFailed`:        The data file containing the server response could not be read.
     /// - `.missingContentType`:        The response did not contain a `Content-Type` and the `acceptableContentTypes`
     ///                                 provided did not contain wildcard type.
     /// - `unacceptableContentType`:    The response `Content-Type` did not match any type in the provided
     ///    .                            `acceptableContentTypes`.
     /// - `.unacceptableStatusCode`:    The response status code was not acceptable.
     public enum ValidationFailureReason {
+        case dataFileNil
+        case dataFileReadFailed(at: URL)
         case missingContentType(acceptableContentTypes: [String])
         case unacceptableContentType(acceptableContentTypes: [String], responseContentType: String)
         case unacceptableStatusCode(code: Int)
@@ -210,8 +214,9 @@ extension AFError.MultipartEncodingFailureReason {
     var url: URL? {
         switch self {
         case .bodyPartURLInvalid(let url), .bodyPartFilenameInvalid(let url), .bodyPartFileNotReachable(let url),
-             .bodyPartFileIsDirectory(let url), .bodyPartFileSizeNotAvailable(let url), .bodyPartInputStreamCreationFailed(let url),
-             .outputStreamCreationFailed(let url), .outputStreamFileAlreadyExists(let url), .outputStreamURLInvalid(let url),
+             .bodyPartFileIsDirectory(let url), .bodyPartFileSizeNotAvailable(let url),
+             .bodyPartInputStreamCreationFailed(let url), .outputStreamCreationFailed(let url),
+             .outputStreamFileAlreadyExists(let url), .outputStreamURLInvalid(let url),
              .bodyPartFileNotReachableWithError(let url, _), .bodyPartFileSizeQueryFailedWithError(let url, _):
             return url
         default:
@@ -294,6 +299,45 @@ extension AFError: LocalizedError {
     }
 }
 
+extension AFError.MultipartEncodingFailureReason {
+    var localizedDescription: String {
+        switch self {
+        case .bodyPartURLInvalid(let url):
+            return "The URL provided is not a file URL: \(url)"
+        case .bodyPartFilenameInvalid(let url):
+            return "The URL provided does not have a valid filename: \(url)"
+        case .bodyPartFileNotReachable(let url):
+            return "The URL provided is not reachable: \(url)"
+        case .bodyPartFileNotReachableWithError(let url, let error):
+            return (
+                "The system returned an error while checking the provided URL for " +
+                "reachability.\nURL: \(url)\nError: \(error)"
+            )
+        case .bodyPartFileIsDirectory(let url):
+            return "The URL provided is a directory: \(url)"
+        case .bodyPartFileSizeNotAvailable(let url):
+            return "Could not fetch the file size from the provided URL: \(url)"
+        case .bodyPartFileSizeQueryFailedWithError(let url, let error):
+            return (
+                "The system returned an error while attempting to fetch the file size from the " +
+                "provided URL.\nURL: \(url)\nError: \(error)"
+            )
+        case .bodyPartInputStreamCreationFailed(let url):
+            return "Failed to create an InputStream for the provided URL: \(url)"
+        case .outputStreamCreationFailed(let url):
+            return "Failed to create an OutputStream for URL: \(url)"
+        case .outputStreamFileAlreadyExists(let url):
+            return "A file already exists at the provided URL: \(url)"
+        case .outputStreamURLInvalid(let url):
+            return "The provided OutputStream URL is invalid: \(url)"
+        case .outputStreamWriteFailed(let error):
+            return "OutputStream write failed with error: \(error)"
+        case .inputStreamReadFailed(let error):
+            return "InputStream read failed with error: \(error)"
+        }
+    }
+}
+
 extension AFError.SerializationFailureReason {
     var localizedDescription: String {
         switch self {
@@ -318,45 +362,22 @@ extension AFError.SerializationFailureReason {
 extension AFError.ValidationFailureReason {
     var localizedDescription: String {
         switch self {
+        case .dataFileNil:
+            return "Response could not be validated, data file was nil."
+        case .dataFileReadFailed(let url):
+            return "Response could not be validated, data file could not be read: \(url)."
         case .missingContentType(let types):
-            return "Response Content-Type was missing and acceptable content types (\(types.joined(separator: ","))) do not match \"*/*\"."
+            return (
+                "Response Content-Type was missing and acceptable content types " +
+                "(\(types.joined(separator: ","))) do not match \"*/*\"."
+            )
         case .unacceptableContentType(let acceptableTypes, let responseType):
-            return "Response Content-Type \"\(responseType)\" does not match any acceptable types: \(acceptableTypes.joined(separator: ","))."
+            return (
+                "Response Content-Type \"\(responseType)\" does not match any acceptable types: " +
+                "\(acceptableTypes.joined(separator: ","))."
+            )
         case .unacceptableStatusCode(let code):
             return "Response status code was unacceptable: \(code)."
-        }
-    }
-}
-
-extension AFError.MultipartEncodingFailureReason {
-    var localizedDescription: String {
-        switch self {
-        case .bodyPartURLInvalid(let url):
-            return "The URL provided is not a file URL: \(url)"
-        case .bodyPartFilenameInvalid(let url):
-            return "The URL provided does not have a valid filename: \(url)"
-        case .bodyPartFileNotReachable(let url):
-            return "The URL provided is not reachable: \(url)"
-        case .bodyPartFileNotReachableWithError(let url, let error):
-            return "The system returned an error while checking the provided URL for reachability.\nURL: \(url)\nError: \(error)"
-        case .bodyPartFileIsDirectory(let url):
-            return "The URL provided is a directory: \(url)"
-        case .bodyPartFileSizeNotAvailable(let url):
-            return "Could not fetch the file size from the provided URL: \(url)"
-        case .bodyPartFileSizeQueryFailedWithError(let url, let error):
-            return "The system returned an error while attempting to fetch the file size from the provided URL.\nURL: \(url)\nError: \(error)"
-        case .bodyPartInputStreamCreationFailed(let url):
-            return "Failed to create an InputStream for the provided URL: \(url)"
-        case .outputStreamCreationFailed(let url):
-            return "Failed to create an OutputStream for URL: \(url)"
-        case .outputStreamFileAlreadyExists(let url):
-            return "A file already exists at the provided URL: \(url)"
-        case .outputStreamURLInvalid(let url):
-            return "The provided OutputStream URL is invalid: \(url)"
-        case .outputStreamWriteFailed(let error):
-            return "OutputStream write failed with error: \(error)"
-        case .inputStreamReadFailed(let error):
-            return "InputStream read failed with error: \(error)"
         }
     }
 }

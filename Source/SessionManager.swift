@@ -236,12 +236,9 @@ open class SessionManager {
     /// - returns: The created `DataRequest`.
     open func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
         let originalRequest = urlRequest.urlRequest
-        let adaptedRequest = originalRequest.adapt(using: adapter)
-
-        var task: URLSessionDataTask!
-        queue.sync { task = self.session.dataTask(with: adaptedRequest) }
-
         let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
+
+        let task = originalTask.task(session: session, adapter: adapter, queue: queue)
         let request = DataRequest(session: session, task: task, originalTask: originalTask)
 
         delegate[request.delegate.task] = request
@@ -331,16 +328,7 @@ open class SessionManager {
         to destination: DownloadRequest.DownloadFileDestination)
         -> DownloadRequest
     {
-        var task: URLSessionDownloadTask!
-
-        switch downloadable {
-        case let .request(urlRequest):
-            let urlRequest = urlRequest.adapt(using: adapter)
-            queue.sync { task = self.session.downloadTask(with: urlRequest) }
-        case let .resumeData(resumeData):
-            queue.sync { task = self.session.downloadTask(withResumeData: resumeData) }
-        }
-
+        let task = downloadable.task(session: session, adapter: adapter, queue: queue)
         let request = DownloadRequest(session: session, task: task, originalTask: downloadable)
 
         request.downloadDelegate.downloadTaskDidFinishDownloadingToURL = { session, task, URL in
@@ -593,26 +581,11 @@ open class SessionManager {
     // MARK: Private - Upload Implementation
 
     private func upload(_ uploadable: UploadRequest.Uploadable) -> UploadRequest {
-        var task: URLSessionUploadTask!
-        var HTTPBodyStream: InputStream?
-
-        switch uploadable {
-        case let .data(data, urlRequest):
-            let urlRequest = urlRequest.adapt(using: adapter)
-            queue.sync { task = self.session.uploadTask(with: urlRequest, from: data) }
-        case let .file(fileURL, urlRequest):
-            let urlRequest = urlRequest.adapt(using: adapter)
-            queue.sync { task = self.session.uploadTask(with: urlRequest, fromFile: fileURL) }
-        case let .stream(stream, urlRequest):
-            let urlRequest = urlRequest.adapt(using: adapter)
-            queue.sync { task = self.session.uploadTask(withStreamedRequest: urlRequest) }
-            HTTPBodyStream = stream
-        }
-
+        let task = uploadable.task(session: session, adapter: adapter, queue: queue)
         let request = UploadRequest(session: session, task: task, originalTask: uploadable)
 
-        if HTTPBodyStream != nil {
-            request.delegate.taskNeedNewBodyStream = { _, _ in HTTPBodyStream }
+        if case let .stream(inputStream, _) = uploadable {
+            request.delegate.taskNeedNewBodyStream = { _, _ in inputStream }
         }
 
         delegate[request.delegate.task] = request
@@ -658,15 +631,7 @@ open class SessionManager {
     // MARK: Private - Stream Implementation
 
     private func stream(_ streamable: StreamRequest.Streamable) -> StreamRequest {
-        var task: URLSessionStreamTask!
-
-        switch streamable {
-        case let .stream(hostName, port):
-            queue.sync { task = self.session.streamTask(withHostName: hostName, port: port) }
-        case .netService(let netService):
-            queue.sync { task = self.session.streamTask(with: netService) }
-        }
-
+        let task = streamable.task(session: session, adapter: adapter, queue: queue)
         let request = StreamRequest(session: session, task: task, originalTask: streamable)
 
         delegate[request.delegate.task] = request
