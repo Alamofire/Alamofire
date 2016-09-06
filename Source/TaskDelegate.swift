@@ -317,6 +317,8 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
     var temporaryURL: URL?
     var destinationURL: URL?
 
+    var fileURL: URL? { return destination != nil ? destinationURL : temporaryURL }
+
     // MARK: Lifecycle
 
     override init(task: URLSessionTask) {

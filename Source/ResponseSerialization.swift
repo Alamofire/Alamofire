@@ -209,7 +209,7 @@ extension DownloadRequest {
             let result = responseSerializer.serializeResponse(
                 self.request,
                 self.response,
-                self.downloadDelegate.destinationURL,
+                self.downloadDelegate.fileURL,
                 self.downloadDelegate.error
             )
 
