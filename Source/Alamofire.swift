@@ -149,7 +149,7 @@ public func request(resource urlRequest: URLRequestConvertible) -> DataRequest {
 /// specified `urlString`, `method`, `parameters`, `encoding`, `headers` and save them to the `destination`.
 ///
 /// If `destination` is not specified, the contents will remain in the temporary location determined by the
-/// URL session.
+/// underlying URL session.
 ///
 /// - parameter urlString:   The URL string.
 /// - parameter method:      The HTTP method. `.get` by default.
@@ -183,7 +183,7 @@ public func download(
 /// specified `urlRequest` and save them to the `destination`.
 ///
 /// If `destination` is not specified, the contents will remain in the temporary location determined by the
-/// URL session.
+/// underlying URL session.
 ///
 /// - parameter urlRequest:  The URL request.
 /// - parameter destination: The closure used to determine the destination of the downloaded file. `nil` by default.
@@ -204,7 +204,7 @@ public func download(
 /// previous request cancellation to retrieve the contents of the original request and save them to the `destination`.
 ///
 /// If `destination` is not specified, the contents will remain in the temporary location determined by the
-/// URL session.
+/// underlying URL session.
 ///
 /// - parameter resumeData:  The resume data. This is an opaque data blob produced by `URLSessionDownloadTask`
 ///                          when a task is cancelled. See `URLSession -downloadTask(withResumeData:)` for additional
