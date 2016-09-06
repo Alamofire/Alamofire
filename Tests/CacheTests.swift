@@ -171,7 +171,11 @@ class CacheTestCase: BaseTestCase {
         var urlRequest = URLRequest(url: url, cachePolicy: cachePolicy, timeoutInterval: requestTimeout)
         urlRequest.httpMethod = HTTPMethod.get.rawValue
 
-        return ParameterEncoding.url.encode(urlRequest, parameters: parameters).0
+        do {
+            return try ParameterEncoding.url.encode(urlRequest, with: parameters)
+        } catch {
+            return urlRequest
+        }
     }
 
     @discardableResult

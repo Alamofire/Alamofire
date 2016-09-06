@@ -232,9 +232,15 @@ open class SessionManager {
         -> DataRequest
     {
         let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
-        let encodedURLRequest = encoding.encode(urlRequest, parameters: parameters).0
 
-        return request(resource: encodedURLRequest)
+        do {
+            let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
+            return request(resource: encodedURLRequest)
+        } catch {
+            let request = self.request(resource: urlRequest)
+            request.delegate.error = error
+            return request
+        }
     }
 
     /// Creates a `DataRequest` to retrieve the contents of a URL based on the specified `urlRequest`.
@@ -289,9 +295,15 @@ open class SessionManager {
         -> DownloadRequest
     {
         let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
-        let encodedURLRequest = encoding.encode(urlRequest, parameters: parameters).0
 
-        return download(resource: encodedURLRequest, to: destination)
+        do {
+            let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
+            return download(resource: encodedURLRequest, to: destination)
+        } catch {
+            let request = download(resource: urlRequest, to: destination)
+            request.delegate.error = error
+            return request
+        }
     }
 
     /// Creates a `DownloadRequest` to retrieve the contents of a URL based on the specified `urlRequest` and save

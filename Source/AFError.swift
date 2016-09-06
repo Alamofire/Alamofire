@@ -31,6 +31,12 @@ import Foundation
 /// - responseValidationFailed:    Returned when a `validate()` call fails.
 /// - responseSerializationFailed: Returned when a response serializer encounters an error in the serialization process.
 public enum AFError: Error {
+    // TODO: Need docstring...also need above!
+    public enum ParameterEncodingFailureReason {
+        case jsonSerializationFailed(error: Error)
+        case propertyListSerializationFailed(error: Error)
+    }
+
     /// The underlying reason the multipart encoding error occurred.
     ///
     /// - bodyPartURLInvalid:                   The `fileURL` provided for reading an encodable body part isn't a
@@ -110,6 +116,7 @@ public enum AFError: Error {
         case propertyListSerializationFailed(error: Error)
     }
 
+    case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
     case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
     case responseValidationFailed(reason: ValidationFailureReason)
     case responseSerializationFailed(reason: SerializationFailureReason)
@@ -286,12 +293,25 @@ extension AFError.SerializationFailureReason {
 extension AFError: LocalizedError {
     public var errorDescription: String? {
         switch self {
+        case .parameterEncodingFailed(let reason):
+            return reason.localizedDescription
         case .multipartEncodingFailed(let reason):
             return reason.localizedDescription
         case .responseValidationFailed(let reason):
             return reason.localizedDescription
         case .responseSerializationFailed(let reason):
             return reason.localizedDescription
+        }
+    }
+}
+
+extension AFError.ParameterEncodingFailureReason {
+    var localizedDescription: String {
+        switch self {
+        case .jsonSerializationFailed(let error):
+            return "JSON could not be serialized because of error:\n\(error.localizedDescription)"
+        case .propertyListSerializationFailed(let error):
+            return "PropertyList could not be serialized because of error:\n\(error.localizedDescription)"
         }
     }
 }
