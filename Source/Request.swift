@@ -577,7 +577,7 @@ open class UploadRequest: DataRequest {
 /// Specific type of `Request` that manages an underlying `URLSessionStreamTask`.
 open class StreamRequest: Request {
     enum Streamable: TaskConvertible {
-        case stream(String, Int)
+        case stream(hostName: String, port: Int)
         case netService(NetService)
 
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {

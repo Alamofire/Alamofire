@@ -638,7 +638,7 @@ open class SessionManager {
     /// - returns: The created `StreamRequest`.
     @discardableResult
     open func stream(withHostName hostName: String, port: Int) -> StreamRequest {
-        return stream(.stream(hostName, port))
+        return stream(.stream(hostName: hostName, port: port))
     }
 
     // MARK: NetService
