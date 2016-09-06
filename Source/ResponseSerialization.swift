@@ -25,7 +25,7 @@
 import Foundation
 
 /// The type in which all data response serializers must conform to in order to serialize a response.
-public protocol DataResponseSerializerType {
+public protocol DataResponseSerializerProtocol {
     /// The type of serialized object to be created by this `DataResponseSerializerType`.
     associatedtype SerializedObject
 
@@ -36,7 +36,7 @@ public protocol DataResponseSerializerType {
 // MARK: -
 
 /// A generic `DataResponseSerializerType` used to serialize a request, response, and data into a serialized object.
-public struct DataResponseSerializer<Value>: DataResponseSerializerType {
+public struct DataResponseSerializer<Value>: DataResponseSerializerProtocol {
     /// The type of serialized object to be created by this `DataResponseSerializer`.
     public typealias SerializedObject = Value
 
@@ -56,7 +56,7 @@ public struct DataResponseSerializer<Value>: DataResponseSerializerType {
 // MARK: -
 
 /// The type in which all download response serializers must conform to in order to serialize a response.
-public protocol DownloadResponseSerializerType {
+public protocol DownloadResponseSerializerProtocol {
     /// The type of serialized object to be created by this `DownloadResponseSerializerType`.
     associatedtype SerializedObject
 
@@ -67,7 +67,7 @@ public protocol DownloadResponseSerializerType {
 // MARK: -
 
 /// A generic `DownloadResponseSerializerType` used to serialize a request, response, and data into a serialized object.
-public struct DownloadResponseSerializer<Value>: DownloadResponseSerializerType {
+public struct DownloadResponseSerializer<Value>: DownloadResponseSerializerProtocol {
     /// The type of serialized object to be created by this `DownloadResponseSerializer`.
     public typealias SerializedObject = Value
 
@@ -120,7 +120,7 @@ extension DataRequest {
     ///
     /// - returns: The request.
     @discardableResult
-    public func response<T: DataResponseSerializerType>(
+    public func response<T: DataResponseSerializerProtocol>(
         queue: DispatchQueue? = nil,
         responseSerializer: T,
         completionHandler: @escaping (DataResponse<T.SerializedObject>) -> Void)
@@ -198,7 +198,7 @@ extension DownloadRequest {
     ///
     /// - returns: The request.
     @discardableResult
-    public func response<T: DownloadResponseSerializerType>(
+    public func response<T: DownloadResponseSerializerProtocol>(
         queue: DispatchQueue? = nil,
         responseSerializer: T,
         completionHandler: @escaping (DownloadResponse<T.SerializedObject>) -> Void)
