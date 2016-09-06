@@ -32,7 +32,7 @@ class ResponseDataTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<Data>?
+        var response: DataResponse<Data>?
 
         // When
         Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
@@ -59,7 +59,7 @@ class ResponseDataTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: Response<Data>?
+        var response: DataResponse<Data>?
 
         // When
         Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
@@ -90,7 +90,7 @@ class ResponseStringTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<String>?
+        var response: DataResponse<String>?
 
         // When
         Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
@@ -117,7 +117,7 @@ class ResponseStringTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: Response<String>?
+        var response: DataResponse<String>?
 
         // When
         Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
@@ -148,7 +148,7 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<Any>?
+        var response: DataResponse<Any>?
 
         // When
         Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
@@ -175,7 +175,7 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: Response<Any>?
+        var response: DataResponse<Any>?
 
         // When
         Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
@@ -202,7 +202,7 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<Any>?
+        var response: DataResponse<Any>?
 
         // When
         Alamofire.request(urlString, withMethod: .get, parameters: ["foo": "bar"])
@@ -237,7 +237,7 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: Response<Any>?
+        var response: DataResponse<Any>?
 
         // When
         Alamofire.request(urlString, withMethod: .post, parameters: ["foo": "bar"])

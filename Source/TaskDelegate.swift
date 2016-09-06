@@ -312,6 +312,8 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
     var resumeData: Data?
     override var data: Data? { return resumeData }
 
+    var destinationURL: URL?
+
     // MARK: Lifecycle
 
     override init(task: URLSessionTask) {
@@ -341,6 +343,8 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
             do {
                 let destination = downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
                 try FileManager.default.moveItem(at: location, to: destination)
+
+                destinationURL = destination
             } catch {
                 self.error = error
             }

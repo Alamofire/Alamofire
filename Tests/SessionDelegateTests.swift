@@ -122,31 +122,25 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
-        var request: URLRequest?
-        var response: HTTPURLResponse?
-        var data: Data?
-        var error: Error?
+        var response: DefaultDataResponse?
 
         // When
         manager.request(urlString, withMethod: .get)
-            .response { responseRequest, responseResponse, responseData, responseError in
-                request = responseRequest
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
-        XCTAssertEqual(response?.url?.urlString ?? "", redirectURLString, "response URL should match the redirect URL")
-        XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
+
+        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
     func testThatRequestWillPerformRedirectionMultipleTimesByDefault() {
@@ -156,32 +150,25 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
-        var request: URLRequest?
-        var response: HTTPURLResponse?
-        var data: Data?
-        var error: Error?
+        var response: DefaultDataResponse?
 
         // When
         manager.request(urlString, withMethod: .get)
-            .response { responseRequest, responseResponse, responseData, responseError in
-                request = responseRequest
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.url?.urlString ?? "", redirectURLString, "response URL should match the redirect URL")
-        XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
+        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
     func testThatTaskOverrideClosureCanPerformHTTPRedirection() {
@@ -198,31 +185,25 @@ class SessionDelegateTestCase: BaseTestCase {
             return request
         }
 
-        var request: URLRequest?
-        var response: HTTPURLResponse?
-        var data: Data?
-        var error: Error?
+        var response: DefaultDataResponse?
 
         // When
         manager.request(urlString, withMethod: .get)
-            .response { responseRequest, responseResponse, responseData, responseError in
-                request = responseRequest
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
-        XCTAssertEqual(response?.url?.urlString ?? "", redirectURLString, "response URL should match the redirect URL")
-        XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
+
+        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
     func testThatTaskOverrideClosureWithCompletionCanPerformHTTPRedirection() {
@@ -239,32 +220,25 @@ class SessionDelegateTestCase: BaseTestCase {
             callbackExpectation.fulfill()
         }
 
-        var request: URLRequest?
-        var response: HTTPURLResponse?
-        var data: Data?
-        var error: Error?
+        var response: DefaultDataResponse?
 
         // When
         manager.request(urlString, withMethod: .get)
-            .response { responseRequest, responseResponse, responseData, responseError in
-                request = responseRequest
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.url?.urlString ?? "", redirectURLString, "response URL should match the redirect URL")
-        XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
+        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
     func testThatTaskOverrideClosureCanCancelHTTPRedirection() {
@@ -281,32 +255,25 @@ class SessionDelegateTestCase: BaseTestCase {
             completion(nil)
         }
 
-        var request: URLRequest?
-        var response: HTTPURLResponse?
-        var data: Data?
-        var error: Error?
+        var response: DefaultDataResponse?
 
         // When
         manager.request(urlString, withMethod: .get)
-            .response { responseRequest, responseResponse, responseData, responseError in
-                request = responseRequest
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.url?.urlString ?? "", urlString, "response URL should match the origin URL")
-        XCTAssertEqual(response?.statusCode ?? -1, 302, "response should have a 302 status code")
+        XCTAssertEqual(response?.response?.url?.urlString, urlString)
+        XCTAssertEqual(response?.response?.statusCode, 302)
     }
 
     func testThatTaskOverrideClosureWithCompletionCanCancelHTTPRedirection() {
@@ -323,32 +290,25 @@ class SessionDelegateTestCase: BaseTestCase {
             return nil
         }
 
-        var request: URLRequest?
-        var response: HTTPURLResponse?
-        var data: Data?
-        var error: Error?
+        var response: DefaultDataResponse?
 
         // When
         manager.request(urlString, withMethod: .get)
-            .response { responseRequest, responseResponse, responseData, responseError in
-                request = responseRequest
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.url?.urlString ?? "", urlString, "response URL should match the origin URL")
-        XCTAssertEqual(response?.statusCode ?? -1, 302, "response should have a 302 status code")
+        XCTAssertEqual(response?.response?.url?.urlString, urlString)
+        XCTAssertEqual(response?.response?.statusCode, 302)
     }
 
     func testThatTaskOverrideClosureIsCalledMultipleTimesForMultipleHTTPRedirects() {
@@ -374,32 +334,25 @@ class SessionDelegateTestCase: BaseTestCase {
             return request
         }
 
-        var request: URLRequest?
-        var response: HTTPURLResponse?
-        var data: Data?
-        var error: Error?
+        var response: DefaultDataResponse?
 
         // When
         manager.request(urlString, withMethod: .get)
-            .response { responseRequest, responseResponse, responseData, responseError in
-                request = responseRequest
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.url?.urlString ?? "", redirectURLString, "response URL should match the redirect URL")
-        XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
+        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
     func testThatTaskOverrideClosureWithCompletionIsCalledMultipleTimesForMultipleHTTPRedirects() {
@@ -427,32 +380,25 @@ class SessionDelegateTestCase: BaseTestCase {
             completion(request)
         }
 
-        var request: URLRequest?
-        var response: HTTPURLResponse?
-        var data: Data?
-        var error: Error?
+        var response: DefaultDataResponse?
 
         // When
         manager.request(urlString, withMethod: .get)
-            .response { responseRequest, responseResponse, responseData, responseError in
-                request = responseRequest
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.url?.urlString ?? "", redirectURLString, "response URL should match the redirect URL")
-        XCTAssertEqual(response?.statusCode ?? -1, 200, "response should have a 200 status code")
+        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
     func testThatRedirectedRequestContainsAllHeadersFromOriginalRequest() {
@@ -486,7 +432,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
-        var response: Response<Any>?
+        var response: DataResponse<Any>?
 
         // When
         manager.request(urlString, withMethod: .get, headers: headers)
@@ -498,14 +444,14 @@ class SessionDelegateTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(response?.request, "request should not be nil")
-        XCTAssertNotNil(response?.response, "response should not be nil")
-        XCTAssertNotNil(response?.data, "data should not be nil")
-        XCTAssertTrue(response?.result.isSuccess ?? false, "response result should be a success")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertEqual(response?.result.isSuccess, true)
 
         if let json = response?.result.value as? [String: Any], let headers = json["headers"] as? [String: String] {
-            XCTAssertEqual(headers["Custom-Header"], "foobar", "Custom-Header should be equal to foobar")
-            XCTAssertEqual(headers["Authorization"], "1234", "Authorization header should be equal to 1234")
+            XCTAssertEqual(headers["Authorization"], "1234")
+            XCTAssertEqual(headers["Custom-Header"], "foobar")
         }
     }
 

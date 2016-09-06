@@ -92,14 +92,18 @@ public enum AFError: Error {
 
     /// The reason underlying the `AFError.responseSerializationFailed` state.
     ///
-    /// - `.inputDataNil`:                      The response contained no data.
-    /// - `.inputDataNilOrZeroLength`:          The response contained no data or the data was zero length.
+    /// - `.inputDataNil`:                      The server response contained no data.
+    /// - `.inputDataNilOrZeroLength`:          The server response contained no data or the data was zero length.
+    /// - `.inputFileNil`:                      The file containing the server response did not exist.
+    /// - `.inputFileReadFailed`:               The file containing the server response could not be read.
     /// - `.stringSerializationFailed`:         String serialization failed using the provided `String.Encoding`.
     /// - `.jsonSerializationFailed`:           JSON serialization failed with an underlying system error.
     /// - `.propertyListSerializationFailed`:   Proptery list serialization failed with an underlying system error.
     public enum SerializationFailureReason {
         case inputDataNil
         case inputDataNilOrZeroLength
+        case inputFileNil
+        case inputFileReadFailed(at: URL)
         case stringSerializationFailed(encoding: String.Encoding)
         case jsonSerializationFailed(error: Error)
         case propertyListSerializationFailed(error: Error)
@@ -297,6 +301,10 @@ extension AFError.SerializationFailureReason {
             return "Response could not be serialized, input data was nil."
         case .inputDataNilOrZeroLength:
             return "Response could not be serialized, input data was nil or zero length."
+        case .inputFileNil:
+            return "Response could not be serialized, input file was nil."
+        case .inputFileReadFailed(let url):
+            return "Response could not be serialized, input file could not be read: \(url)."
         case .stringSerializationFailed(let encoding):
             return "String could not be serialized with encoding: \(encoding)."
         case .jsonSerializationFailed(let error):
