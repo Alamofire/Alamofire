@@ -149,7 +149,7 @@ open class TaskDelegate: NSObject {
             taskDidCompleteWithError(session, task, error)
         } else {
             if let error = error {
-                self.error = error
+                if self.error == nil { self.error = error }
 
                 if
                     let downloadDelegate = self as? DownloadTaskDelegate,
