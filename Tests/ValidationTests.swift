@@ -240,8 +240,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 let originalRequest = urlRequest.urlRequest
                 let adaptedRequest = originalRequest.adapt(using: adapter)
 
-                var task: URLSessionDataTask!
-                queue.sync { task = self.session.dataTask(with: adaptedRequest) }
+                let task: URLSessionDataTask = queue.syncResult { session.dataTask(with: adaptedRequest) }
 
                 let originalTask = DataRequest.Requestable.request(originalRequest)
                 let request = MockRequest(session: session, task: task, originalTask: originalTask)

@@ -335,15 +335,11 @@ open class DataRequest: Request {
         case request(URLRequest)
 
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
-            var task: URLSessionTask!
-
             switch self {
             case let .request(urlRequest):
                 let urlRequest = urlRequest.adapt(using: adapter)
-                queue.sync { task = session.dataTask(with: urlRequest) }
+                return queue.syncResult { session.dataTask(with: urlRequest) }
             }
-
-            return task
         }
     }
 
@@ -415,14 +411,14 @@ open class DownloadRequest: Request {
         case resumeData(Data)
 
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
-            var task: URLSessionTask!
+            let task: URLSessionTask
 
             switch self {
             case let .request(urlRequest):
                 let urlRequest = urlRequest.adapt(using: adapter)
-                queue.sync { task = session.downloadTask(with: urlRequest) }
+                task = queue.syncResult { session.downloadTask(with: urlRequest) }
             case let .resumeData(resumeData):
-                queue.sync { task = session.downloadTask(withResumeData: resumeData) }
+                task = queue.syncResult { session.downloadTask(withResumeData: resumeData) }
             }
 
             return task
@@ -517,18 +513,18 @@ open class UploadRequest: DataRequest {
         case stream(InputStream, URLRequest)
 
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
-            var task: URLSessionTask!
+            let task: URLSessionTask
 
             switch self {
             case let .data(data, urlRequest):
                 let urlRequest = urlRequest.adapt(using: adapter)
-                queue.sync { task = session.uploadTask(with: urlRequest, from: data) }
+                task = queue.syncResult { session.uploadTask(with: urlRequest, from: data) }
             case let .file(url, urlRequest):
                 let urlRequest = urlRequest.adapt(using: adapter)
-                queue.sync { task = session.uploadTask(with: urlRequest, fromFile: url) }
+                task = queue.syncResult { session.uploadTask(with: urlRequest, fromFile: url) }
             case let .stream(_, urlRequest):
                 let urlRequest = urlRequest.adapt(using: adapter)
-                queue.sync { task = session.uploadTask(withStreamedRequest: urlRequest) }
+                task = queue.syncResult { session.uploadTask(withStreamedRequest: urlRequest) }
             }
 
             return task
@@ -588,18 +584,18 @@ open class StreamRequest: Request {
         case netService(NetService)
 
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
-            var task: URLSessionTask!
+            let task: URLSessionTask
 
             switch self {
             case let .stream(hostName, port):
-                queue.sync { task = session.streamTask(withHostName: hostName, port: port) }
+                task = queue.syncResult { session.streamTask(withHostName: hostName, port: port) }
             case let .netService(netService):
-                queue.sync { task = session.streamTask(with: netService) }
+                task = queue.syncResult { session.streamTask(with: netService) }
             }
-            
+
             return task
         }
     }
 }
-    
+
 #endif
