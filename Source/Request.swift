@@ -401,29 +401,23 @@ open class DownloadRequest: Request {
     /// A collection of options to be executed prior to moving a downloaded file from the temporary URL to the
     /// destination URL.
     public struct DownloadOptions: OptionSet {
-        /// Defines the `RawValue` type as `UInt` to satisfy the `RawRepresentable` protocol.
-        public typealias RawValue = UInt
-
         /// Returns the raw bitmask value of the option and satisfies the `RawRepresentable` protocol.
-        public let rawValue: RawValue
-
-        private static let createIntermediateDirectoriesBitmask: RawValue = 1 << 0
-        private static let removePreviousFileBitmask: RawValue            = 1 << 1
+        public let rawValue: UInt
 
         /// A `DownloadOptions` flag that creates intermediate directories for the destination URL if specified.
-        public static let createIntermediateDirectories = DownloadOptions(rawValue: createIntermediateDirectoriesBitmask)
+        public static let createIntermediateDirectories = DownloadOptions(rawValue: 1 << 0)
 
         /// A `DownloadOptions` flag that removes a previous file from the destination URL if specified.
-        public static let removePreviousFile = DownloadOptions(rawValue: removePreviousFileBitmask)
-
-        // MARK: Initialization Methods
+        public static let removePreviousFile = DownloadOptions(rawValue: 1 << 1)
 
         /// Creates a `DownloadFileDestinationOptions` instance with the specified raw value.
         ///
         /// - parameter rawValue: The raw bitmask value for the option.
         ///
         /// - returns: A new log level instance.
-        public init(rawValue: RawValue) { self.rawValue = rawValue }
+        public init(rawValue: UInt) {
+            self.rawValue = rawValue
+        }
     }
 
     /// A closure executed once a download request has successfully completed in order to determine where to move the 
