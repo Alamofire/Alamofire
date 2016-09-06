@@ -1149,6 +1149,10 @@ sessionManager.request("https://httpbin.org/get", withMethod: .get)
 
 The `RequestRetrier` protocol allows a `Request` that encountered an `Error` while being executed to be retried. When using both the `RequestAdapter` and `RequestRetrier` protocols together, you can create credential refresh systems for OAuth1, OAuth2, Basic Auth and even exponential backoff retry policies. The possibilities are endless. Here's a short example of how you could implement a refresh flow for OAuth2 access tokens.
 
+> Please note that this is not a global `OAuth2` solution. It is merely an example demonstrating how one could use the `RequestAdapter` in conjunction with the `RequestRetrier` to create a thread-safe refresh system. 
+
+> To reiterate, **do NOT copy** this sample code and drop it into a production application. This is merely an example. Each authentication system must be tailored to a particular platform and authentication type.
+
 ```swift
 class OAuth2Handler: RequestAdapter, RequestRetrier {
     private typealias RefreshCompletion = (_ succeeded: Bool, _ accessToken: String?, _ refreshToken: String?) -> Void
@@ -1276,8 +1280,6 @@ Once the `OAuth2Handler` is applied as both the `adapter` and `retrier` for the 
 The example above only checks for a `401` response code which is not nearly robust enough, but does demonstrate how one could check for an invalid access token error. In a production application, one would want to check the `realm` and most likely the `www-authenticate` header response although it depends on the OAuth2 implementation.
 
 Another important note is that this authentication system could be shared between multiple session managers. For example, you may need to use both a `default` and `ephemeral` session configuration for the same set of web services. The example above allows the same `oauthHandler` instance to be shared across multiple session managers to manage the single refresh flow.
-
-> Please note that this is not a global OAuth2 solution. It is merely an example demonstrating how one could use the `RequestAdapter` in conjunction with the `RequestRetrier` to create a thread-safe refresh system.
 
 ### Security
 
