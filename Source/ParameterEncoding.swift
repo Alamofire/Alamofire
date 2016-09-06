@@ -70,25 +70,21 @@ public enum ParameterEncoding {
     case urlEncodedInURL
     case json
     case propertyList(PropertyListSerialization.PropertyListFormat, PropertyListSerialization.WriteOptions)
-    case custom((URLRequestConvertible, [String: Any]?) -> (URLRequest, Error?))
+    case custom((URLRequestConvertible, [String: Any]?) throws -> URLRequest)
 
     /// Creates a URL request by encoding parameters and applying them onto an existing request.
     ///
     /// - parameter urlRequest: The request to have parameters applied.
     /// - parameter parameters: The parameters to apply.
     ///
+    /// - throws: An `AFError.parameterEncodingFailed` error if json or property list serialization fails.
+    ///
     /// - returns: A tuple containing the constructed request and the error that occurred during parameter encoding,
     ///            if any.
-    public func encode(
-        _ urlRequest: URLRequestConvertible,
-        parameters: [String: Any]?)
-        -> (URLRequest, Error?)
-    {
+    public func encode(_ urlRequest: URLRequestConvertible, with parameters: [String: Any]?) throws -> URLRequest {
         var urlRequest = urlRequest.urlRequest
 
-        guard let parameters = parameters else { return (urlRequest, nil) }
-
-        var encodingError: Error? = nil
+        guard let parameters = parameters else { return urlRequest }
 
         switch self {
         case .url, .urlEncodedInURL:
@@ -151,7 +147,7 @@ public enum ParameterEncoding {
 
                 urlRequest.httpBody = data
             } catch {
-                encodingError = error
+                throw AFError.parameterEncodingFailed(reason: .jsonSerializationFailed(error: error))
             }
         case .propertyList(let format, let options):
             do {
@@ -167,13 +163,13 @@ public enum ParameterEncoding {
 
                 urlRequest.httpBody = data
             } catch {
-                encodingError = error
+                throw AFError.parameterEncodingFailed(reason: .propertyListSerializationFailed(error: error))
             }
         case .custom(let closure):
-            (urlRequest, encodingError) = closure(urlRequest, parameters)
+            urlRequest = try closure(urlRequest, parameters)
         }
 
-        return (urlRequest, encodingError)
+        return urlRequest
     }
 
     /// Creates percent-escaped, URL encoded query string components from the given key-value pair using recursion.
