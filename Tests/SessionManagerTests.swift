@@ -55,8 +55,8 @@ class SessionManagerTestCase: BaseTestCase {
             adaptedCount += 1
 
             if shouldApplyAuthorizationHeader && adaptedCount > 1 {
-                Request.authorizationHeaderFrom(user: "user", password: "password").forEach { header, value in
-                    urlRequest.setValue(value, forHTTPHeaderField: header)
+                if let header = Request.authorizationHeader(user: "user", password: "password") {
+                    urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
                 }
             }
 
@@ -270,7 +270,7 @@ class SessionManagerTestCase: BaseTestCase {
         sessionManager.startRequestsImmediately = false
 
         // When
-        let destination = Request.suggestedDownloadDestination()
+        let destination = DownloadRequest.suggestedDownloadDestination()
         let request = sessionManager.download("https://httpbin.org/get", to: destination, withMethod: .get)
 
         // Then

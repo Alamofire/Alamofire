@@ -117,7 +117,7 @@ open class SessionDelegate: NSObject {
     open var streamTaskBetterRouteDiscovered: ((URLSession, URLSessionStreamTask) -> Void)?
 
     /// Overrides default behavior for URLSessionStreamDelegate method `urlSession(_:streamTask:didBecome:outputStream:)`.
-    open var streamTaskDidBecomeInputStream: ((URLSession, URLSessionStreamTask, InputStream, OutputStream) -> Void)?
+    open var streamTaskDidBecomeInputAndOutputStreams: ((URLSession, URLSessionStreamTask, InputStream, OutputStream) -> Void)?
 
 #endif
 
@@ -162,6 +162,21 @@ open class SessionDelegate: NSObject {
         #if !os(OSX)
             if selector == #selector(URLSessionDelegate.urlSessionDidFinishEvents(forBackgroundURLSession:)) {
                 return sessionDidFinishEventsForBackgroundURLSession != nil
+            }
+        #endif
+
+        #if !os(watchOS)
+            switch selector {
+            case #selector(URLSessionStreamDelegate.urlSession(_:readClosedFor:)):
+                return streamTaskReadClosed != nil
+            case #selector(URLSessionStreamDelegate.urlSession(_:writeClosedFor:)):
+                return streamTaskWriteClosed != nil
+            case #selector(URLSessionStreamDelegate.urlSession(_:betterRouteDiscoveredFor:)):
+                return streamTaskBetterRouteDiscovered != nil
+            case #selector(URLSessionStreamDelegate.urlSession(_:streamTask:didBecome:outputStream:)):
+                return streamTaskDidBecomeInputAndOutputStreams != nil
+            default:
+                break
             }
         #endif
 
@@ -644,7 +659,7 @@ extension SessionDelegate: URLSessionStreamDelegate {
         didBecome inputStream: InputStream,
         outputStream: OutputStream)
     {
-        streamTaskDidBecomeInputStream?(session, streamTask, inputStream, outputStream)
+        streamTaskDidBecomeInputAndOutputStreams?(session, streamTask, inputStream, outputStream)
     }
 }
 
