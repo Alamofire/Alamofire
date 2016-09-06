@@ -33,7 +33,10 @@ open class TaskDelegate: NSObject {
     /// The serial operation queue used to execute all operations after the task completes.
     open let queue: OperationQueue
 
-    var task: URLSessionTask
+    var task: URLSessionTask {
+        didSet { reset() }
+    }
+
     let progress: Progress
 
     var data: Data? { return nil }
@@ -56,6 +59,11 @@ open class TaskDelegate: NSObject {
 
             return operationQueue
         }()
+    }
+
+    func reset() {
+        error = nil
+        initialResponseTime = nil
     }
 
     // MARK: URLSessionTaskDelegate
@@ -189,6 +197,14 @@ class DataTaskDelegate: TaskDelegate, URLSessionDataDelegate {
         super.init(task: task)
     }
 
+    override func reset() {
+        super.reset()
+
+        totalBytesReceived = 0
+        mutableData = Data()
+        expectedContentLength = nil
+    }
+
     // MARK: URLSessionDataDelegate
 
     var dataTaskDidReceiveResponse: ((URLSession, URLSessionDataTask, URLResponse) -> URLSession.ResponseDisposition)?
@@ -275,6 +291,14 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
 
     var resumeData: Data?
     override var data: Data? { return resumeData }
+
+
+    // MARK: Lifecycle
+
+    override func reset() {
+        super.reset()
+        resumeData = nil
+    }
 
     // MARK: URLSessionDownloadDelegate
 

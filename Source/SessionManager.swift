@@ -44,12 +44,32 @@ open class SessionManager {
     private enum Downloadable {
         case request(URLRequest)
         case resumeData(Data)
+
+        var task: Request.TaskConvertible {
+            switch self {
+            case let .request(urlRequest):
+                return .download(urlRequest)
+            case let .resumeData(resumeData):
+                return .downloadResumeData(resumeData)
+            }
+        }
     }
 
     private enum Uploadable {
         case data(Data, URLRequest)
         case file(URL, URLRequest)
         case stream(InputStream, URLRequest)
+
+        var task: Request.TaskConvertible {
+            switch self {
+            case let .data(data, urlRequest):
+                return .uploadData(data, urlRequest)
+            case let .file(url, urlRequest):
+                return .uploadFile(url, urlRequest)
+            case let .stream(stream, urlRequest):
+                return .uploadStream(stream, urlRequest)
+            }
+        }
     }
 
 #if !os(watchOS)
@@ -139,6 +159,15 @@ open class SessionManager {
     /// Whether to start requests immediately after being constructed. `true` by default.
     open var startRequestsImmediately: Bool = true
 
+    /// The request adapter called each time a new request is created.
+    open var adapter: RequestAdapter?
+
+    /// The request retrier called each time a request encounters an error to determine whether to retry the request.
+    open var retrier: RequestRetrier? {
+        get { return delegate.retrier }
+        set { delegate.retrier = newValue }
+    }
+
     /// The background completion handler closure provided by the UIApplicationDelegate
     /// `application:handleEventsForBackgroundURLSession:completionHandler:` method. By setting the background
     /// completion handler, the SessionDelegate `sessionDidFinishEventsForBackgroundURLSession` closure implementation
@@ -199,6 +228,8 @@ open class SessionManager {
     private func commonInit(serverTrustPolicyManager: ServerTrustPolicyManager?) {
         session.serverTrustPolicyManager = serverTrustPolicyManager
 
+        delegate.sessionManager = self
+
         delegate.sessionDidFinishEventsForBackgroundURLSession = { [weak self] session in
             guard let strongSelf = self else { return }
             DispatchQueue.main.async { strongSelf.backgroundCompletionHandler?() }
@@ -244,10 +275,13 @@ open class SessionManager {
     ///
     /// - returns: The created data `Request`.
     open func request(_ urlRequest: URLRequestConvertible) -> Request {
-        var dataTask: URLSessionDataTask!
-        queue.sync { dataTask = self.session.dataTask(with: urlRequest.urlRequest) }
+        let originalRequest = urlRequest.urlRequest
+        let adaptedRequest = adapt(originalRequest)
 
-        let request = Request(session: session, task: dataTask)
+        var dataTask: URLSessionDataTask!
+        queue.sync { dataTask = self.session.dataTask(with: adaptedRequest) }
+
+        let request = Request(session: session, task: dataTask, originalTask: .data(originalRequest))
         delegate[request.delegate.task] = request
 
         if startRequestsImmediately {
@@ -328,25 +362,18 @@ open class SessionManager {
 
     // MARK: Private - Download Implementation
 
-    private func download(
-        _ downloadable: Downloadable,
-        to destination: Request.DownloadFileDestination)
-        -> Request
-    {
+    private func download(_ downloadable: Downloadable, to destination: Request.DownloadFileDestination) -> Request {
         var downloadTask: URLSessionDownloadTask!
 
         switch downloadable {
-        case .request(let request):
-            queue.sync {
-                downloadTask = self.session.downloadTask(with: request)
-            }
-        case .resumeData(let resumeData):
-            queue.sync {
-                downloadTask = self.session.downloadTask(withResumeData: resumeData)
-            }
+        case let .request(urlRequest):
+            let urlRequest = adapt(urlRequest)
+            queue.sync { downloadTask = self.session.downloadTask(with: urlRequest) }
+        case let .resumeData(resumeData):
+            queue.sync { downloadTask = self.session.downloadTask(withResumeData: resumeData) }
         }
 
-        let request = Request(session: session, task: downloadTask)
+        let request = Request(session: session, task: downloadTask, originalTask: downloadable.task)
 
         if let downloadDelegate = request.delegate as? DownloadTaskDelegate {
             downloadDelegate.downloadTaskDidFinishDownloadingToURL = { session, downloadTask, URL in
@@ -606,28 +633,22 @@ open class SessionManager {
         var HTTPBodyStream: InputStream?
 
         switch uploadable {
-        case .data(let data, let request):
-            queue.sync {
-                uploadTask = self.session.uploadTask(with: request, from: data)
-            }
-        case .file(let fileURL, let request):
-            queue.sync {
-                uploadTask = self.session.uploadTask(with: request, fromFile: fileURL)
-            }
-        case .stream(let stream, let request):
-            queue.sync {
-                uploadTask = self.session.uploadTask(withStreamedRequest: request)
-            }
-
+        case let .data(data, urlRequest):
+            let urlRequest = adapt(urlRequest)
+            queue.sync { uploadTask = self.session.uploadTask(with: urlRequest, from: data) }
+        case let .file(fileURL, urlRequest):
+            let urlRequest = adapt(urlRequest)
+            queue.sync { uploadTask = self.session.uploadTask(with: urlRequest, fromFile: fileURL) }
+        case let .stream(stream, urlRequest):
+            let urlRequest = adapt(urlRequest)
+            queue.sync { uploadTask = self.session.uploadTask(withStreamedRequest: urlRequest) }
             HTTPBodyStream = stream
         }
 
-        let request = Request(session: session, task: uploadTask)
+        let request = Request(session: session, task: uploadTask, originalTask: uploadable.task)
 
         if HTTPBodyStream != nil {
-            request.delegate.taskNeedNewBodyStream = { _, _ in
-                return HTTPBodyStream
-            }
+            request.delegate.taskNeedNewBodyStream = { _, _ in HTTPBodyStream }
         }
 
         delegate[request.delegate.task] = request
@@ -679,16 +700,12 @@ open class SessionManager {
 
         switch streamable {
         case .stream(let hostName, let port):
-            queue.sync {
-                streamTask = self.session.streamTask(withHostName: hostName, port: port)
-            }
+            queue.sync { streamTask = self.session.streamTask(withHostName: hostName, port: port) }
         case .netService(let netService):
-            queue.sync {
-                streamTask = self.session.streamTask(with: netService)
-            }
+            queue.sync { streamTask = self.session.streamTask(with: netService) }
         }
 
-        let request = Request(session: session, task: streamTask)
+        let request = Request(session: session, task: streamTask, originalTask: nil)
 
         delegate[request.delegate.task] = request
 
@@ -700,4 +717,50 @@ open class SessionManager {
     }
 
 #endif
+
+    // MARK: - Internal - Adapt Request
+
+    func adapt(_ urlRequest: URLRequest) -> URLRequest {
+        guard let adapter = adapter else { return urlRequest }
+        return adapter.adapt(urlRequest)
+    }
+
+    // MARK: - Internal - Retry Request
+
+    func retry(_ request: Request) -> Bool {
+        guard let originalTask = request.originalTask else { return false }
+
+        var task: URLSessionTask!
+
+        queue.sync {
+            switch originalTask {
+            case let .data(urlRequest):
+                let urlRequest = adapt(urlRequest)
+                task = self.session.dataTask(with: urlRequest)
+            case let .download(urlRequest):
+                let urlRequest = adapt(urlRequest)
+                task = self.session.downloadTask(with: urlRequest)
+            case let .downloadResumeData(resumeData):
+                task = self.session.downloadTask(withResumeData: resumeData)
+            case let .uploadData(data, urlRequest):
+                let urlRequest = adapt(urlRequest)
+                task = self.session.uploadTask(with: urlRequest, from: data)
+            case let .uploadFile(url, urlRequest):
+                let urlRequest = adapt(urlRequest)
+                task = self.session.uploadTask(with: urlRequest, fromFile: url)
+            case let .uploadStream(_, urlRequest):
+                let urlRequest = adapt(urlRequest)
+                task = self.session.uploadTask(withStreamedRequest: urlRequest)
+            }
+        }
+
+        request.delegate.task = task // resets all task delegate data
+
+        request.startTime = CFAbsoluteTimeGetCurrent()
+        request.endTime = nil
+
+        task.resume()
+
+        return true
+    }
 }

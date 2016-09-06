@@ -237,13 +237,12 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Given
         class MockManager: SessionManager {
             override func request(_ urlRequest: URLRequestConvertible) -> Request {
+                let urlRequest = urlRequest.urlRequest
                 var dataTask: URLSessionDataTask!
 
-                queue.sync {
-                    dataTask = self.session.dataTask(with: urlRequest.urlRequest)
-                }
+                queue.sync { dataTask = self.session.dataTask(with: urlRequest) }
 
-                let request = MockRequest(session: session, task: dataTask)
+                let request = MockRequest(session: session, task: dataTask, originalTask: .data(urlRequest))
                 delegate[request.delegate.task] = request
 
                 if startRequestsImmediately {
