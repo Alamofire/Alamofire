@@ -378,7 +378,7 @@ extension Request {
 }
 
 extension DataRequest {
-    /// Creates a response serializer that returns a result string type initialized from the response data with 
+    /// Creates a response serializer that returns a result string type initialized from the response data with
     /// the specified string encoding.
     ///
     /// - parameter encoding: The string encoding. If `nil`, the string encoding will be determined from the server
@@ -465,7 +465,7 @@ extension DownloadRequest {
 // MARK: - JSON
 
 extension Request {
-    /// Returns a JSON object contained in a result type constructed from the response data using `JSONSerialization` 
+    /// Returns a JSON object contained in a result type constructed from the response data using `JSONSerialization`
     /// with the specified reading options.
     ///
     /// - parameter options:  The JSON serialization reading options. Defaults to `.allowFragments`.
@@ -586,7 +586,7 @@ extension DownloadRequest {
 // MARK: - Property List
 
 extension Request {
-    /// Returns a plist object contained in a result type constructed from the response data using 
+    /// Returns a plist object contained in a result type constructed from the response data using
     /// `PropertyListSerialization` with the specified reading options.
     ///
     /// - parameter options:  The property list reading options. Defaults to `[]`.

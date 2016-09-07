@@ -898,7 +898,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-        
+
         if let string = result.value {
             XCTAssertEqual(string, "")
         }
@@ -1196,7 +1196,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-        
+
         if let plist = result.value as? NSNull {
             XCTAssertEqual(plist, NSNull(), "plist should be equal to NSNull")
         }

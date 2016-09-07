@@ -262,7 +262,7 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
 
         if let error = response?.error as? CocoaError {
-            XCTAssertEqual(error.code, .fileNoSuchFileError)
+            XCTAssertEqual(error.code, .fileNoSuchFile)
         } else {
             XCTFail("error should not be nil")
         }
@@ -323,7 +323,7 @@ class DownloadResponseTestCase: BaseTestCase {
             XCTAssertNotNil(response?.error)
 
             if let error = response?.error as? CocoaError {
-                XCTAssertEqual(error.code, .fileWriteFileExistsError)
+                XCTAssertEqual(error.code, .fileWriteFileExists)
             } else {
                 XCTFail("error should not be nil")
             }

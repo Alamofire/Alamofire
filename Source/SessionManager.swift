@@ -267,7 +267,7 @@ open class SessionManager {
     ///
     /// If `destination` is not specified, the contents will remain in the temporary location determined by the
     /// underlying URL session.
-    /// 
+    ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
     /// - parameter urlString:   The URL string.

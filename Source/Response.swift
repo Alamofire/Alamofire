@@ -194,7 +194,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     }
 
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
-    /// response, the temporary and destination URLs, the resume data, the response serialization result and the 
+    /// response, the temporary and destination URLs, the resume data, the response serialization result and the
     /// timeline.
     public var debugDescription: String {
         var output: [String] = []
