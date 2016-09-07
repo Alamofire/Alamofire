@@ -27,14 +27,20 @@ import Foundation
 /// `AFError` is the error type returned by Alamofire. It encompasses a few different types of errors, each with
 /// their own associated reasons.
 ///
+/// - parameterEncodingFailed:     Returned when a parameter encoding object throws an error during the encoding process.
 /// - multipartEncodingFailed:     Returned when some step in the multipart encoding process fails.
 /// - responseValidationFailed:    Returned when a `validate()` call fails.
 /// - responseSerializationFailed: Returned when a response serializer encounters an error in the serialization process.
 public enum AFError: Error {
-    // TODO: Need docstring...also need above!
+    /// The underlying reason the parameter encoding error occurred.
+    ///
+    /// - jsonEncodingFailed:         JSON serialization failed with an underlying system error during the
+    ///                               encoding process.
+    /// - propertyListEncodingFailed: Property list serialization failed with an underlying system error during 
+    ///                               encoding process.
     public enum ParameterEncodingFailureReason {
-        case jsonSerializationFailed(error: Error)
-        case propertyListSerializationFailed(error: Error)
+        case jsonEncodingFailed(error: Error)
+        case propertyListEncodingFailed(error: Error)
     }
 
     /// The underlying reason the multipart encoding error occurred.
@@ -89,7 +95,7 @@ public enum AFError: Error {
     /// - unacceptableContentType: The response `Content-Type` did not match any type in the provided
     ///                            `acceptableContentTypes`.
     /// - unacceptableStatusCode:  The response status code was not acceptable.
-    public enum ValidationFailureReason {
+    public enum ResponseValidationFailureReason {
         case dataFileNil
         case dataFileReadFailed(at: URL)
         case missingContentType(acceptableContentTypes: [String])
@@ -105,8 +111,8 @@ public enum AFError: Error {
     /// - inputFileReadFailed:             The file containing the server response could not be read.
     /// - stringSerializationFailed:       String serialization failed using the provided `String.Encoding`.
     /// - jsonSerializationFailed:         JSON serialization failed with an underlying system error.
-    /// - propertyListSerializationFailed: Proptery list serialization failed with an underlying system error.
-    public enum SerializationFailureReason {
+    /// - propertyListSerializationFailed: Property list serialization failed with an underlying system error.
+    public enum ResponseSerializationFailureReason {
         case inputDataNil
         case inputDataNilOrZeroLength
         case inputFileNil
@@ -118,28 +124,35 @@ public enum AFError: Error {
 
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
     case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
-    case responseValidationFailed(reason: ValidationFailureReason)
-    case responseSerializationFailed(reason: SerializationFailureReason)
+    case responseValidationFailed(reason: ResponseValidationFailureReason)
+    case responseSerializationFailed(reason: ResponseSerializationFailureReason)
 }
 
 // MARK: - Error Booleans
 
 extension AFError {
-    /// Returns whether the AFError is a multipart encoding error. When true, the `url` and `underlyingError` properties
+    /// Returns whether the AFError is a parameter encoding error. When `true`, the `underlyingError` property will 
+    /// contain the associated value.
+    public var isParameterEncodingError: Bool {
+        if case .multipartEncodingFailed = self { return true }
+        return false
+    }
+
+    /// Returns whether the AFError is a multipart encoding error. When `true`, the `url` and `underlyingError` properties
     /// will contain the associated values.
     public var isMultipartEncodingError: Bool {
         if case .multipartEncodingFailed = self { return true }
         return false
     }
 
-    /// Returns whether the `AFError` is a response validation error. When true, the `acceptableContentTypes`,
+    /// Returns whether the `AFError` is a response validation error. When `true`, the `acceptableContentTypes`,
     /// `responseContentType`, and `responseCode` properties will contain the associated values.
     public var isResponseValidationError: Bool {
         if case .responseValidationFailed = self { return true }
         return false
     }
 
-    /// Returns whether the `AFError` is a response serialization error. When true, the `failedStringEncoding` and
+    /// Returns whether the `AFError` is a response serialization error. When `true`, the `failedStringEncoding` and
     /// `underlyingError` properties will contain the associated values.
     public var isResponseSerializationError: Bool {
         if case .responseSerializationFailed = self { return true }
@@ -160,10 +173,12 @@ extension AFError {
         }
     }
 
-    /// The `Error` returned by a system framework associated with a `.multipartEncodingFailed` or
-    /// `.responseSerializationFailed` error.
+    /// The `Error` returned by a system framework associated with a `.parameterEncodingFailed`, 
+    /// `.multipartEncodingFailed` or `.responseSerializationFailed` error.
     public var underlyingError: Error? {
         switch self {
+        case .parameterEncodingFailed(let reason):
+            return reason.underlyingError
         case .multipartEncodingFailed(let reason):
             return reason.underlyingError
         case .responseSerializationFailed(let reason):
@@ -214,6 +229,15 @@ extension AFError {
     }
 }
 
+extension AFError.ParameterEncodingFailureReason {
+    var underlyingError: Error? {
+        switch self {
+        case .jsonEncodingFailed(let error), .propertyListEncodingFailed(let error):
+            return error
+        }
+    }
+}
+
 extension AFError.MultipartEncodingFailureReason {
     var url: URL? {
         switch self {
@@ -239,7 +263,7 @@ extension AFError.MultipartEncodingFailureReason {
     }
 }
 
-extension AFError.ValidationFailureReason {
+extension AFError.ResponseValidationFailureReason {
     var acceptableContentTypes: [String]? {
         switch self {
         case .missingContentType(let types), .unacceptableContentType(let types, _):
@@ -268,7 +292,7 @@ extension AFError.ValidationFailureReason {
     }
 }
 
-extension AFError.SerializationFailureReason {
+extension AFError.ResponseSerializationFailureReason {
     var failedStringEncoding: String.Encoding? {
         switch self {
         case .stringSerializationFailed(let encoding):
@@ -308,10 +332,10 @@ extension AFError: LocalizedError {
 extension AFError.ParameterEncodingFailureReason {
     var localizedDescription: String {
         switch self {
-        case .jsonSerializationFailed(let error):
-            return "JSON could not be serialized because of error:\n\(error.localizedDescription)"
-        case .propertyListSerializationFailed(let error):
-            return "PropertyList could not be serialized because of error:\n\(error.localizedDescription)"
+        case .jsonEncodingFailed(let error):
+            return "JSON could not be encoded because of error:\n\(error.localizedDescription)"
+        case .propertyListEncodingFailed(let error):
+            return "PropertyList could not be encoded because of error:\n\(error.localizedDescription)"
         }
     }
 }
@@ -355,7 +379,7 @@ extension AFError.MultipartEncodingFailureReason {
     }
 }
 
-extension AFError.SerializationFailureReason {
+extension AFError.ResponseSerializationFailureReason {
     var localizedDescription: String {
         switch self {
         case .inputDataNil:
@@ -376,7 +400,7 @@ extension AFError.SerializationFailureReason {
     }
 }
 
-extension AFError.ValidationFailureReason {
+extension AFError.ResponseValidationFailureReason {
     var localizedDescription: String {
         switch self {
         case .dataFileNil:
