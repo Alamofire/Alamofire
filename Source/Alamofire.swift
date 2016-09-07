@@ -108,7 +108,7 @@ extension URLRequest {
 /// - parameter urlString:  The URL string.
 /// - parameter method:     The HTTP method. `.get` by default.
 /// - parameter parameters: The parameters. `nil` by default.
-/// - parameter encoding:   The parameter encoding. `.url` by default.
+/// - parameter encoding:   The parameter encoding. `URLEncoding.default` by default.
 /// - parameter headers:    The HTTP headers. `nil` by default.
 ///
 /// - returns: The created `DataRequest`.
@@ -116,8 +116,8 @@ extension URLRequest {
 public func request(
     _ urlString: URLStringConvertible,
     method: HTTPMethod = .get,
-    parameters: [String: Any]? = nil,
-    encoding: ParameterEncoding = .url,
+    parameters: Parameters? = nil,
+    encoding: ParameterEncoding = URLEncoding.default,
     headers: [String: String]? = nil)
     -> DataRequest
 {
@@ -154,7 +154,7 @@ public func request(resource urlRequest: URLRequestConvertible) -> DataRequest {
 /// - parameter urlString:   The URL string.
 /// - parameter method:      The HTTP method. `.get` by default.
 /// - parameter parameters:  The parameters. `nil` by default.
-/// - parameter encoding:    The parameter encoding. `.url` by default.
+/// - parameter encoding:    The parameter encoding. `URLEncoding.default` by default.
 /// - parameter headers:     The HTTP headers. `nil` by default.
 /// - parameter destination: The closure used to determine the destination of the downloaded file. `nil` by default.
 ///
@@ -163,8 +163,8 @@ public func request(resource urlRequest: URLRequestConvertible) -> DataRequest {
 public func download(
     _ urlString: URLStringConvertible,
     method: HTTPMethod = .get,
-    parameters: [String: Any]? = nil,
-    encoding: ParameterEncoding = .url,
+    parameters: Parameters? = nil,
+    encoding: ParameterEncoding = URLEncoding.default,
     headers: [String: String]? = nil,
     to destination: DownloadRequest.DownloadFileDestination? = nil)
     -> DownloadRequest

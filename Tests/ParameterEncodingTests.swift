@@ -36,7 +36,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 
     // MARK: Properties
 
-    let encoding: ParameterEncoding = .url
+    let encoding = URLEncoding.default
 
     // MARK: Tests - Parameter Types
 
@@ -547,7 +547,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
             let parameters = ["foo": 1, "bar": 2]
 
             // When
-            let urlRequest = try ParameterEncoding.urlEncodedInURL.encode(mutableURLRequest, with: parameters)
+            let urlRequest = try URLEncoding.queryString.encode(mutableURLRequest, with: parameters)
 
             // Then
             XCTAssertEqual(urlRequest.url?.query, "bar=2&foo=1")
@@ -564,7 +564,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
 class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
     // MARK: Properties
 
-    let encoding: ParameterEncoding = .json
+    let encoding = JSONEncoding.default
 
     // MARK: Tests
 
@@ -649,7 +649,7 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
 class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
     // MARK: Properties
 
-    let encoding: ParameterEncoding = .propertyList(.xml, 0)
+    let encoding = PropertyListEncoding.default
 
     // MARK: Tests
 
@@ -758,44 +758,6 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
             // Then
             XCTAssertNil(urlRequest.url?.query)
             XCTAssertEqual(urlRequest.value(forHTTPHeaderField: "Content-Type"), "application/custom-plist-type+plist")
-        } catch {
-            XCTFail("Test encountered unexpected error: \(error)")
-        }
-    }
-}
-
-// MARK: -
-
-class CustomParameterEncodingTestCase: ParameterEncodingTestCase {
-
-    // MARK: Tests
-
-    func testCustomParameterEncode() {
-        do {
-            // Given
-            let encodingClosure: (URLRequestConvertible, [String: Any]?) throws -> URLRequest = { urlRequest, parameters in
-                guard let parameters = parameters else { return urlRequest.urlRequest }
-
-                var urlString = urlRequest.urlRequest.urlString + "?"
-
-                parameters.forEach { urlString += "\($0)=\($1)" }
-
-                var mutableURLRequest = urlRequest.urlRequest
-                mutableURLRequest.url = URL(string: urlString)!
-
-                return mutableURLRequest
-            }
-
-            // When
-            let encoding: ParameterEncoding = .custom(encodingClosure)
-
-            // Then
-            let url = URL(string: "https://example.com")!
-            let urlRequest = URLRequest(url: url)
-            let parameters = ["foo": "bar"]
-
-            let result = try encoding.encode(urlRequest, with: parameters)
-            XCTAssertEqual(result.urlString, "https://example.com?foo=bar")
         } catch {
             XCTFail("Test encountered unexpected error: \(error)")
         }

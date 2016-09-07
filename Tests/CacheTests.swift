@@ -172,7 +172,7 @@ class CacheTestCase: BaseTestCase {
         urlRequest.httpMethod = HTTPMethod.get.rawValue
 
         do {
-            return try ParameterEncoding.url.encode(urlRequest, with: parameters)
+            return try URLEncoding.default.encode(urlRequest, with: parameters)
         } catch {
             return urlRequest
         }

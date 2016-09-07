@@ -218,7 +218,7 @@ open class SessionManager {
     /// - parameter urlString:  The URL string.
     /// - parameter method:     The HTTP method. `.get` by default.
     /// - parameter parameters: The parameters. `nil` by default.
-    /// - parameter encoding:   The parameter encoding. `.url` by default.
+    /// - parameter encoding:   The parameter encoding. `URLEncoding.default` by default.
     /// - parameter headers:    The HTTP headers. `nil` by default.
     ///
     /// - returns: The created `DataRequest`.
@@ -226,8 +226,8 @@ open class SessionManager {
     open func request(
         _ urlString: URLStringConvertible,
         method: HTTPMethod = .get,
-        parameters: [String: Any]? = nil,
-        encoding: ParameterEncoding = .url,
+        parameters: Parameters? = nil,
+        encoding: ParameterEncoding = URLEncoding.default,
         headers: [String: String]? = nil)
         -> DataRequest
     {
@@ -279,7 +279,7 @@ open class SessionManager {
     /// - parameter urlString:   The URL string.
     /// - parameter method:      The HTTP method. `.get` by default.
     /// - parameter parameters:  The parameters. `nil` by default.
-    /// - parameter encoding:    The parameter encoding. `.url` by default.
+    /// - parameter encoding:    The parameter encoding. `URLEncoding.default` by default.
     /// - parameter headers:     The HTTP headers. `nil` by default.
     /// - parameter destination: The closure used to determine the destination of the downloaded file. `nil` by default.
     ///
@@ -288,8 +288,8 @@ open class SessionManager {
     open func download(
         _ urlString: URLStringConvertible,
         method: HTTPMethod = .get,
-        parameters: [String: Any]? = nil,
-        encoding: ParameterEncoding = .url,
+        parameters: Parameters? = nil,
+        encoding: ParameterEncoding = URLEncoding.default,
         headers: [String: String]? = nil,
         to destination: DownloadRequest.DownloadFileDestination? = nil)
         -> DownloadRequest
