@@ -161,7 +161,7 @@ extension DataRequest {
     ///
     /// - returns: The request.
     @discardableResult
-    public func validate(_ validation: Validation) -> Self {
+    public func validate(_ validation: @escaping Validation) -> Self {
         let validationExecution: () -> Void = {
             if
                 let response = self.response,
@@ -232,7 +232,7 @@ extension DownloadRequest {
     ///
     /// - returns: The request.
     @discardableResult
-    public func validate(_ validation: Validation) -> Self {
+    public func validate(_ validation: @escaping Validation) -> Self {
         let validationExecution: () -> Void = {
             let request = self.request
             let temporaryURL = self.downloadDelegate.temporaryURL

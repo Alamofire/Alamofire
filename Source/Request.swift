@@ -373,7 +373,7 @@ open class DataRequest: Request {
     ///
     /// - returns: The request.
     @discardableResult
-    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: ProgressHandler) -> Self {
+    open func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         dataDelegate.progressHandler = (closure, queue)
         return self
     }
@@ -385,7 +385,7 @@ open class DataRequest: Request {
     ///
     /// - returns: The request.
     @discardableResult
-    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: DownloadProgressHandler) -> Self {
+    open func downloadProgress(queue: DispatchQueue = .main, closure: @escaping DownloadProgressHandler) -> Self {
         dataDelegate.progressDebugHandler = (closure, queue)
         return self
     }
@@ -480,7 +480,7 @@ open class DownloadRequest: Request {
     ///
     /// - returns: The request.
     @discardableResult
-    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: ProgressHandler) -> Self {
+    open func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         downloadDelegate.progressHandler = (closure, queue)
         return self
     }
@@ -492,7 +492,7 @@ open class DownloadRequest: Request {
     ///
     /// - returns: The request.
     @discardableResult
-    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: DownloadProgressHandler) -> Self {
+    open func downloadProgress(queue: DispatchQueue = .main, closure: @escaping DownloadProgressHandler) -> Self {
         downloadDelegate.progressDebugHandler = (closure, queue)
         return self
     }
@@ -574,7 +574,7 @@ open class UploadRequest: DataRequest {
     ///
     /// - returns: The request.
     @discardableResult
-    open func uploadProgress(queue: DispatchQueue = DispatchQueue.main, closure: ProgressHandler) -> Self {
+    open func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         uploadDelegate.uploadProgressHandler = (closure, queue)
         return self
     }
@@ -590,7 +590,7 @@ open class UploadRequest: DataRequest {
     ///
     /// - returns: The request.
     @discardableResult
-    open func uploadProgress(queue: DispatchQueue = DispatchQueue.main, closure: UploadProgressHandler) -> Self {
+    open func uploadProgress(queue: DispatchQueue = .main, closure: @escaping UploadProgressHandler) -> Self {
         uploadDelegate.uploadProgressDebugHandler = (closure, queue)
         return self
     }
