@@ -24,41 +24,38 @@
 
 import Foundation
 
-/// `AFError` is the error type returned by the Alamofire framework. It encompasses a few
-/// different types of errors, each with their own associated reasons.
+/// `AFError` is the error type returned by Alamofire. It encompasses a few different types of errors, each with
+/// their own associated reasons.
 ///
-/// - `.multipartEncodingFailed` errors are returned when some step in the multipart encoding process fails.
-///
-/// - `.responseValidationFailed` errors are returned when a `validate()` call fails.
-///
-/// - `.responseSerializationFailed` errors are returned when a response serializer encounters an error in the
-///     serialization process.
+/// - multipartEncodingFailed:     Returned when some step in the multipart encoding process fails.
+/// - responseValidationFailed:    Returned when a `validate()` call fails.
+/// - responseSerializationFailed: Returned when a response serializer encounters an error in the serialization process.
 public enum AFError: Error {
-    /// The reason underlying the `AFError.multipartEncodingFailed` state.
+    /// The underlying reason the multipart encoding error occurred.
     ///
-    /// - `.bodyPartURLInvalid`:                    The `fileURL` provided for reading an encodable body part isn't a
-    ///                                             file URL.
-    /// - `.bodyPartFilenameInvalid`:               The filename of the `fileURL` provided has either an empty
-    ///                                             `lastPathComponent` or `pathExtension.
-    /// - `.bodyPartFileNotReachable`:              The file at the `fileURL` provided was not reachable.
-    /// - `.bodyPartFileNotReachableWithError`:     Attempting to check the reachability of the `fileURL` provided threw
-    ///                                             an error.
-    /// - `.bodyPartFileIsDirectory`:               The file at the `fileURL` provided is actually a directory.
-    /// - `.bodyPartFileSizeNotAvailable`:          The size of the file at the `fileURL` provided was not returned by
-    ///                                             the system.
-    /// - `.bodyPartFileSizeQueryFailedWithError`:  The attempt to find the size of the file at the `fileURL` provided
-    ///                                             threw an error.
-    /// - `.bodyPartInputStreamCreationFailed`:     An `InputStream` could not be created for the provided `fileURL`.
-    /// - `.outputStreamCreationFailed`:            An `OutputStream` could not be created when attempting to write the
-    ///                                             encoded data to disk.
-    /// - `.outputStreamFileAlreadyExists`:         The encoded body data could not be writtent disk because a file 
-    ///                                             already exists at the provided `fileURL`.
-    /// - `.outputStreamURLInvalid`:                The `fileURL` provided for writing the encoded body data to disk is
-    ///                                             not a file URL.
-    /// - `.outputStreamWriteFailed`:               The attempt to write the encoded body data to disk failed with an
-    ///                                             underlying error.
-    /// - `.inputStreamReadFailed`:                 The attempt to read an encoded body part `InputStream` failed with
-    ///                                             underlying system error.
+    /// - bodyPartURLInvalid:                   The `fileURL` provided for reading an encodable body part isn't a
+    ///                                         file URL.
+    /// - bodyPartFilenameInvalid:              The filename of the `fileURL` provided has either an empty
+    ///                                         `lastPathComponent` or `pathExtension.
+    /// - bodyPartFileNotReachable:             The file at the `fileURL` provided was not reachable.
+    /// - bodyPartFileNotReachableWithError:    Attempting to check the reachability of the `fileURL` provided threw
+    ///                                         an error.
+    /// - bodyPartFileIsDirectory:              The file at the `fileURL` provided is actually a directory.
+    /// - bodyPartFileSizeNotAvailable:         The size of the file at the `fileURL` provided was not returned by
+    ///                                         the system.
+    /// - bodyPartFileSizeQueryFailedWithError: The attempt to find the size of the file at the `fileURL` provided
+    ///                                         threw an error.
+    /// - bodyPartInputStreamCreationFailed:    An `InputStream` could not be created for the provided `fileURL`.
+    /// - outputStreamCreationFailed:           An `OutputStream` could not be created when attempting to write the
+    ///                                         encoded data to disk.
+    /// - outputStreamFileAlreadyExists:        The encoded body data could not be writtent disk because a file
+    ///                                         already exists at the provided `fileURL`.
+    /// - outputStreamURLInvalid:               The `fileURL` provided for writing the encoded body data to disk is
+    ///                                         not a file URL.
+    /// - outputStreamWriteFailed:              The attempt to write the encoded body data to disk failed with an
+    ///                                         underlying error.
+    /// - inputStreamReadFailed:                The attempt to read an encoded body part `InputStream` failed with
+    ///                                         underlying system error.
     public enum MultipartEncodingFailureReason {
         case bodyPartURLInvalid(url: URL)
         case bodyPartFilenameInvalid(in: URL)
@@ -77,15 +74,15 @@ public enum AFError: Error {
         case inputStreamReadFailed(error: Error)
     }
 
-    /// The reason underlying the `AFError.responseValidationFailed` state.
+    /// The underlying reason the response validation error occurred.
     ///
-    /// - `.dataFileNil`:               The data file containing the server response did not exist.
-    /// - `.dataFileReadFailed`:        The data file containing the server response could not be read.
-    /// - `.missingContentType`:        The response did not contain a `Content-Type` and the `acceptableContentTypes`
-    ///                                 provided did not contain wildcard type.
-    /// - `unacceptableContentType`:    The response `Content-Type` did not match any type in the provided
-    ///    .                            `acceptableContentTypes`.
-    /// - `.unacceptableStatusCode`:    The response status code was not acceptable.
+    /// - dataFileNil:             The data file containing the server response did not exist.
+    /// - dataFileReadFailed:      The data file containing the server response could not be read.
+    /// - missingContentType:      The response did not contain a `Content-Type` and the `acceptableContentTypes`
+    ///                            provided did not contain wildcard type.
+    /// - unacceptableContentType: The response `Content-Type` did not match any type in the provided
+    ///                            `acceptableContentTypes`.
+    /// - unacceptableStatusCode:  The response status code was not acceptable.
     public enum ValidationFailureReason {
         case dataFileNil
         case dataFileReadFailed(at: URL)
@@ -94,15 +91,15 @@ public enum AFError: Error {
         case unacceptableStatusCode(code: Int)
     }
 
-    /// The reason underlying the `AFError.responseSerializationFailed` state.
+    /// The underlying reason the response serialization error occurred.
     ///
-    /// - `.inputDataNil`:                      The server response contained no data.
-    /// - `.inputDataNilOrZeroLength`:          The server response contained no data or the data was zero length.
-    /// - `.inputFileNil`:                      The file containing the server response did not exist.
-    /// - `.inputFileReadFailed`:               The file containing the server response could not be read.
-    /// - `.stringSerializationFailed`:         String serialization failed using the provided `String.Encoding`.
-    /// - `.jsonSerializationFailed`:           JSON serialization failed with an underlying system error.
-    /// - `.propertyListSerializationFailed`:   Proptery list serialization failed with an underlying system error.
+    /// - inputDataNil:                    The server response contained no data.
+    /// - inputDataNilOrZeroLength:        The server response contained no data or the data was zero length.
+    /// - inputFileNil:                    The file containing the server response did not exist.
+    /// - inputFileReadFailed:             The file containing the server response could not be read.
+    /// - stringSerializationFailed:       String serialization failed using the provided `String.Encoding`.
+    /// - jsonSerializationFailed:         JSON serialization failed with an underlying system error.
+    /// - propertyListSerializationFailed: Proptery list serialization failed with an underlying system error.
     public enum SerializationFailureReason {
         case inputDataNil
         case inputDataNilOrZeroLength
@@ -120,7 +117,7 @@ public enum AFError: Error {
 
 // MARK: - Error Booleans
 
-public extension AFError {
+extension AFError {
     /// Returns whether the AFError is a multipart encoding error. When true, the `url` and `underlyingError` properties
     /// will contain the associated values.
     public var isMultipartEncodingError: Bool {
@@ -145,7 +142,7 @@ public extension AFError {
 
 // MARK: - Convenience Properties
 
-public extension AFError {
+extension AFError {
     /// The `URL` associated with the error.
     public var url: URL? {
         switch self {
