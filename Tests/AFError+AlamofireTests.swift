@@ -28,6 +28,11 @@ extension AFError {
 
     // ParameterEncodingFailureReason
 
+    var isMissingURLFailed: Bool {
+        if case let .parameterEncodingFailed(reason) = self, reason.isMissingURL { return true }
+        return false
+    }
+
     var isJSONEncodingFailed: Bool {
         if case let .parameterEncodingFailed(reason) = self, reason.isJSONEncodingFailed { return true }
         return false
@@ -173,6 +178,11 @@ extension AFError {
 // MARK: -
 
 extension AFError.ParameterEncodingFailureReason {
+    var isMissingURL: Bool {
+        if case .missingURL = self { return true }
+        return false
+    }
+
     var isJSONEncodingFailed: Bool {
         if case .jsonEncodingFailed = self { return true }
         return false

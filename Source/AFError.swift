@@ -34,11 +34,13 @@ import Foundation
 public enum AFError: Error {
     /// The underlying reason the parameter encoding error occurred.
     ///
+    /// - missingURL:                 The URL request did not have a URL to encode.
     /// - jsonEncodingFailed:         JSON serialization failed with an underlying system error during the
     ///                               encoding process.
     /// - propertyListEncodingFailed: Property list serialization failed with an underlying system error during 
     ///                               encoding process.
     public enum ParameterEncodingFailureReason {
+        case missingURL
         case jsonEncodingFailed(error: Error)
         case propertyListEncodingFailed(error: Error)
     }
@@ -234,6 +236,8 @@ extension AFError.ParameterEncodingFailureReason {
         switch self {
         case .jsonEncodingFailed(let error), .propertyListEncodingFailed(let error):
             return error
+        default:
+            return nil
         }
     }
 }
@@ -332,6 +336,8 @@ extension AFError: LocalizedError {
 extension AFError.ParameterEncodingFailureReason {
     var localizedDescription: String {
         switch self {
+        case .missingURL:
+            return "URL request to encode was missing a URL"
         case .jsonEncodingFailed(let error):
             return "JSON could not be encoded because of error:\n\(error.localizedDescription)"
         case .propertyListEncodingFailed(let error):

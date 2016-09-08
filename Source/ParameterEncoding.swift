@@ -125,11 +125,15 @@ public struct URLEncoding: ParameterEncoding {
 
         guard let parameters = parameters else { return urlRequest }
 
-        if let method = HTTPMethod(rawValue: urlRequest.httpMethod!), encodesParametersInURL(with: method) {
-            if var URLComponents = URLComponents(url: urlRequest.url!, resolvingAgainstBaseURL: false), !parameters.isEmpty {
-                let percentEncodedQuery = (URLComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)
-                URLComponents.percentEncodedQuery = percentEncodedQuery
-                urlRequest.url = URLComponents.url
+        if let method = HTTPMethod(rawValue: urlRequest.httpMethod ?? "GET"), encodesParametersInURL(with: method) {
+            guard let url = urlRequest.url else {
+                throw AFError.parameterEncodingFailed(reason: .missingURL)
+            }
+
+            if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), !parameters.isEmpty {
+                let percentEncodedQuery = (urlComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)
+                urlComponents.percentEncodedQuery = percentEncodedQuery
+                urlRequest.url = urlComponents.url
             }
         } else {
             if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
