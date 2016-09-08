@@ -93,10 +93,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         waitForExpectationsWithTimeout(timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertNotNil(error)
 
-        if let code = error?.code {
-            XCTAssertEqual(code, NSURLErrorServerCertificateUntrusted, "code should be untrusted server certficate")
+        if let error = error where error.domain == NSURLErrorDomain {
+            XCTAssertEqual(error.code, NSURLErrorServerCertificateUntrusted)
+        } else if let error = error where error.domain == (kCFErrorDomainCFNetwork as String) {
+            XCTAssertEqual(error.code, Int(CFNetworkErrors.CFErrorHTTPSProxyConnectionFailure.rawValue))
         } else {
             XCTFail("error should be an NSError")
         }
