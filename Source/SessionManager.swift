@@ -224,7 +224,7 @@ open class SessionManager {
     /// - returns: The created `DataRequest`.
     @discardableResult
     open func request(
-        _ urlString: URLStringConvertible,
+        url urlString: URLStringConvertible,
         method: HTTPMethod = .get,
         parameters: Parameters? = nil,
         encoding: ParameterEncoding = URLEncoding.default,
