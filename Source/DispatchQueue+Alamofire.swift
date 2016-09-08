@@ -1,5 +1,5 @@
 //
-//  NSURLSessionConfiguration+AlamofireTests.swift
+//  DispatchQueue+Alamofire.swift
 //
 //  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -22,18 +22,21 @@
 //  THE SOFTWARE.
 //
 
-import Foundation
+import Dispatch
 
-extension NSURLSessionConfiguration {
-    static func backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier: String) -> NSURLSessionConfiguration {
-        let configuration: NSURLSessionConfiguration
+extension DispatchQueue {
+    static var userInteractive: DispatchQueue { return DispatchQueue.global(qos: .userInteractive) }
+    static var userInitiated: DispatchQueue { return DispatchQueue.global(qos: .userInitiated) }
+    static var utility: DispatchQueue { return DispatchQueue.global(qos: .utility) }
+    static var background: DispatchQueue { return DispatchQueue.global(qos: .background) }
 
-        if #available(OSX 10.10, *) {
-            configuration = NSURLSessionConfiguration.backgroundSessionConfigurationWithIdentifier(identifier)
-        } else {
-            configuration = NSURLSessionConfiguration.backgroundSessionConfiguration(identifier)
-        }
+    func after(_ delay: TimeInterval, execute closure: @escaping () -> Void) {
+        asyncAfter(deadline: .now() + delay, execute: closure)
+    }
 
-        return configuration
+    func syncResult<T>(_ closure: () -> T) -> T {
+        var result: T!
+        sync { result = closure() }
+        return result
     }
 }

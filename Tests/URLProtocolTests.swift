@@ -26,58 +26,64 @@ import Alamofire
 import Foundation
 import XCTest
 
-class ProxyURLProtocol: NSURLProtocol {
+class ProxyURLProtocol: URLProtocol {
 
     // MARK: Properties
 
     struct PropertyKeys {
-        static let HandledByForwarderURLProtocol = "HandledByProxyURLProtocol"
+        static let handledByForwarderURLProtocol = "HandledByProxyURLProtocol"
     }
 
-    lazy var session: NSURLSession = {
-        let configuration: NSURLSessionConfiguration = {
-            let configuration = NSURLSessionConfiguration.ephemeralSessionConfiguration()
-            configuration.HTTPAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
+    lazy var session: URLSession = {
+        let configuration: URLSessionConfiguration = {
+            let configuration = URLSessionConfiguration.ephemeral
+            configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
 
             return configuration
         }()
 
-        let session = NSURLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        let session = Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
 
         return session
     }()
 
-    var activeTask: NSURLSessionTask?
+    var activeTask: URLSessionTask?
 
     // MARK: Class Request Methods
 
-    override class func canInitWithRequest(request: NSURLRequest) -> Bool {
-        if NSURLProtocol.propertyForKey(PropertyKeys.HandledByForwarderURLProtocol, inRequest: request) != nil {
+    override class func canInit(with request: URLRequest) -> Bool {
+        if URLProtocol.property(forKey: PropertyKeys.handledByForwarderURLProtocol, in: request) != nil {
             return false
         }
 
         return true
     }
 
-    override class func canonicalRequestForRequest(request: NSURLRequest) -> NSURLRequest {
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
         if let headers = request.allHTTPHeaderFields {
-            return ParameterEncoding.URL.encode(request, parameters: headers).0
+            do {
+                return try URLEncoding.default.encode(request, with: headers)
+            } catch {
+                return request
+            }
         }
 
         return request
     }
 
-    override class func requestIsCacheEquivalent(a: NSURLRequest, toRequest b: NSURLRequest) -> Bool {
+    override class func requestIsCacheEquivalent(_ a: URLRequest, to b: URLRequest) -> Bool {
         return false
     }
 
     // MARK: Loading Methods
 
     override func startLoading() {
-        let mutableRequest = request.URLRequest
-        NSURLProtocol.setProperty(true, forKey: PropertyKeys.HandledByForwarderURLProtocol, inRequest: mutableRequest)
-
-        activeTask = session.dataTaskWithRequest(mutableRequest)
+        // rdar://26849668
+        // Hopefully will be fixed in a future seed
+        // URLProtocol had some API's that didnt make the value type conversion
+        let mutableRequest = (request.urlRequest as NSURLRequest).mutableCopy() as! NSMutableURLRequest
+        URLProtocol.setProperty(true, forKey: PropertyKeys.handledByForwarderURLProtocol, in: mutableRequest)
+        activeTask = session.dataTask(with: mutableRequest as URLRequest)
         activeTask?.resume()
     }
 
@@ -88,27 +94,27 @@ class ProxyURLProtocol: NSURLProtocol {
 
 // MARK: -
 
-extension ProxyURLProtocol: NSURLSessionDelegate {
+extension ProxyURLProtocol: URLSessionDelegate {
 
     // MARK: NSURLSessionDelegate
 
-    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        client?.URLProtocol(self, didLoadData: data)
+    func URLSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceiveData data: Data) {
+        client?.urlProtocol(self, didLoad: data)
     }
 
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+    func URLSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let response = task.response {
-            client?.URLProtocol(self, didReceiveResponse: response, cacheStoragePolicy: .NotAllowed)
+            client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         }
 
-        client?.URLProtocolDidFinishLoading(self)
+        client?.urlProtocolDidFinishLoading(self)
     }
 }
 
 // MARK: -
 
 class URLProtocolTestCase: BaseTestCase {
-    var manager: Manager!
+    var manager: SessionManager!
 
     // MARK: Setup and Teardown
 
@@ -116,15 +122,15 @@ class URLProtocolTestCase: BaseTestCase {
         super.setUp()
 
         manager = {
-            let configuration: NSURLSessionConfiguration = {
-                let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
+            let configuration: URLSessionConfiguration = {
+                let configuration = URLSessionConfiguration.default
                 configuration.protocolClasses = [ProxyURLProtocol.self]
-                configuration.HTTPAdditionalHeaders = ["session-configuration-header": "foo"]
+                configuration.httpAdditionalHeaders = ["session-configuration-header": "foo"]
 
                 return configuration
             }()
 
-            return Manager(configuration: configuration)
+            return SessionManager(configuration: configuration)
         }()
     }
 
@@ -132,48 +138,35 @@ class URLProtocolTestCase: BaseTestCase {
 
     func testThatURLProtocolReceivesRequestHeadersAndSessionConfigurationHeaders() {
         // Given
-        let URLString = "https://httpbin.org/response-headers"
-        let URL = NSURL(string: URLString)!
+        let urlString = "https://httpbin.org/response-headers"
+        let url = URL(string: urlString)!
 
-        let URLRequest = NSMutableURLRequest(URL: URL)
-        URLRequest.HTTPMethod = Method.GET.rawValue
-        URLRequest.setValue("foobar", forHTTPHeaderField: "request-header")
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = HTTPMethod.get.rawValue
+        urlRequest.setValue("foobar", forHTTPHeaderField: "request-header")
 
-        let expectation = expectationWithDescription("GET request should succeed")
+        let expectation = self.expectation(description: "GET request should succeed")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
-        var error: NSError?
+        var response: DefaultDataResponse?
 
         // When
-        manager.request(URLRequest)
-            .response { responseRequest, responseResponse, responseData, responseError in
-                request = responseRequest
-                response = responseResponse
-                data = responseData
-                error = responseError
-
+        manager.request(urlRequest)
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        if let headers = response?.allHeaderFields as? [String: String] {
-            XCTAssertEqual(headers["request-header"], "foobar")
-
-            // Configuration headers are only passed in on iOS 9.0+
-            if #available(iOS 9.0, *) {
-                XCTAssertEqual(headers["session-configuration-header"], "foo")
-            } else {
-                XCTAssertNil(headers["session-configuration-header"])
-            }
+        if let headers = response?.response?.allHeaderFields {
+            XCTAssertEqual(headers["request-header"] as? String, "foobar")
+            XCTAssertEqual(headers["session-configuration-header"] as? String, "foo")
         } else {
             XCTFail("headers should not be nil")
         }
