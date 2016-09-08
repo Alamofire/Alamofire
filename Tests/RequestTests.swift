@@ -499,7 +499,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         ]
 
         // When
-        let request = manager.request(urlString, method: .post, parameters: parameters, encoding: .json)
+        let request = manager.request(urlString, method: .post, parameters: parameters, encoding: JSONEncoding.default)
         let components = cURLCommandComponents(for: request)
 
         // Then

@@ -403,8 +403,8 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         // When
         let download = Alamofire.download(urlString)
-        download.downloadProgress { _, _, _ in
-            download.cancel()
+        download.downloadProgress { _, totalBytesReceived, _ in
+            if totalBytesReceived > 10_000 { download.cancel() }
         }
         download.response { resp in
             response = resp
@@ -420,7 +420,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
 
-        XCTAssertNotNil(download.resumeData, "resume data should not be nil")
+        XCTAssertNotNil(download.resumeData)
 
         if let responseResumeData = response?.resumeData, let resumeData = download.resumeData {
             XCTAssertEqual(responseResumeData, resumeData)
@@ -436,8 +436,8 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         // When
         let download = Alamofire.download(urlString)
-        download.downloadProgress { _, _, _ in
-            download.cancel()
+        download.downloadProgress { _, totalBytesReceived, _ in
+            if totalBytesReceived > 10_000 { download.cancel() }
         }
         download.responseJSON { resp in
             response = resp

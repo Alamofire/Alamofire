@@ -28,7 +28,7 @@ extension Request {
 
     // MARK: Helper Types
 
-    fileprivate typealias ErrorReason = AFError.ValidationFailureReason
+    fileprivate typealias ErrorReason = AFError.ResponseValidationFailureReason
 
     /// Used to represent whether validation was successful or encountered an error resulting in a failure.
     ///

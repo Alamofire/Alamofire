@@ -218,7 +218,7 @@ open class SessionManager {
     /// - parameter urlString:  The URL string.
     /// - parameter method:     The HTTP method. `.get` by default.
     /// - parameter parameters: The parameters. `nil` by default.
-    /// - parameter encoding:   The parameter encoding. `.url` by default.
+    /// - parameter encoding:   The parameter encoding. `URLEncoding.default` by default.
     /// - parameter headers:    The HTTP headers. `nil` by default.
     ///
     /// - returns: The created `DataRequest`.
@@ -226,15 +226,21 @@ open class SessionManager {
     open func request(
         _ urlString: URLStringConvertible,
         method: HTTPMethod = .get,
-        parameters: [String: Any]? = nil,
-        encoding: ParameterEncoding = .url,
+        parameters: Parameters? = nil,
+        encoding: ParameterEncoding = URLEncoding.default,
         headers: [String: String]? = nil)
         -> DataRequest
     {
         let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
-        let encodedURLRequest = encoding.encode(urlRequest, parameters: parameters).0
 
-        return request(resource: encodedURLRequest)
+        do {
+            let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
+            return request(resource: encodedURLRequest)
+        } catch {
+            let request = self.request(resource: urlRequest)
+            request.delegate.error = error
+            return request
+        }
     }
 
     /// Creates a `DataRequest` to retrieve the contents of a URL based on the specified `urlRequest`.
@@ -273,7 +279,7 @@ open class SessionManager {
     /// - parameter urlString:   The URL string.
     /// - parameter method:      The HTTP method. `.get` by default.
     /// - parameter parameters:  The parameters. `nil` by default.
-    /// - parameter encoding:    The parameter encoding. `.url` by default.
+    /// - parameter encoding:    The parameter encoding. `URLEncoding.default` by default.
     /// - parameter headers:     The HTTP headers. `nil` by default.
     /// - parameter destination: The closure used to determine the destination of the downloaded file. `nil` by default.
     ///
@@ -282,16 +288,22 @@ open class SessionManager {
     open func download(
         _ urlString: URLStringConvertible,
         method: HTTPMethod = .get,
-        parameters: [String: Any]? = nil,
-        encoding: ParameterEncoding = .url,
+        parameters: Parameters? = nil,
+        encoding: ParameterEncoding = URLEncoding.default,
         headers: [String: String]? = nil,
         to destination: DownloadRequest.DownloadFileDestination? = nil)
         -> DownloadRequest
     {
         let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
-        let encodedURLRequest = encoding.encode(urlRequest, parameters: parameters).0
 
-        return download(resource: encodedURLRequest, to: destination)
+        do {
+            let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
+            return download(resource: encodedURLRequest, to: destination)
+        } catch {
+            let request = download(resource: urlRequest, to: destination)
+            request.delegate.error = error
+            return request
+        }
     }
 
     /// Creates a `DownloadRequest` to retrieve the contents of a URL based on the specified `urlRequest` and save

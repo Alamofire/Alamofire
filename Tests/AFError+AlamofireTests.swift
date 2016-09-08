@@ -26,6 +26,23 @@ import Alamofire
 
 extension AFError {
 
+    // ParameterEncodingFailureReason
+
+    var isMissingURLFailed: Bool {
+        if case let .parameterEncodingFailed(reason) = self, reason.isMissingURL { return true }
+        return false
+    }
+
+    var isJSONEncodingFailed: Bool {
+        if case let .parameterEncodingFailed(reason) = self, reason.isJSONEncodingFailed { return true }
+        return false
+    }
+
+    var isPropertyListEncodingFailed: Bool {
+        if case let .parameterEncodingFailed(reason) = self, reason.isPropertyListEncodingFailed { return true }
+        return false
+    }
+
     // MultipartEncodingFailureReason
 
     var isBodyPartURLInvalid: Bool {
@@ -93,7 +110,7 @@ extension AFError {
         return false
     }
 
-    // SerializationFailureReason
+    // ResponseSerializationFailureReason
 
     var isInputDataNil: Bool {
         if case let .responseSerializationFailed(reason) = self, reason.isInputDataNil { return true }
@@ -130,7 +147,7 @@ extension AFError {
         return false
     }
 
-    // ValidationFailureReason
+    // ResponseValidationFailureReason
 
     var isDataFileNil: Bool {
         if case let .responseValidationFailed(reason) = self, reason.isDataFileNil { return true }
@@ -154,6 +171,25 @@ extension AFError {
 
     var isUnacceptableStatusCode: Bool {
         if case let .responseValidationFailed(reason) = self, reason.isUnacceptableStatusCode { return true }
+        return false
+    }
+}
+
+// MARK: -
+
+extension AFError.ParameterEncodingFailureReason {
+    var isMissingURL: Bool {
+        if case .missingURL = self { return true }
+        return false
+    }
+
+    var isJSONEncodingFailed: Bool {
+        if case .jsonEncodingFailed = self { return true }
+        return false
+    }
+
+    var isPropertyListEncodingFailed: Bool {
+        if case .propertyListEncodingFailed = self { return true }
         return false
     }
 }
@@ -229,7 +265,7 @@ extension AFError.MultipartEncodingFailureReason {
 
 // MARK: -
 
-extension AFError.SerializationFailureReason {
+extension AFError.ResponseSerializationFailureReason {
     var isInputDataNil: Bool {
         if case .inputDataNil = self { return true }
         return false
@@ -268,7 +304,7 @@ extension AFError.SerializationFailureReason {
 
 // MARK: -
 
-extension AFError.ValidationFailureReason {
+extension AFError.ResponseValidationFailureReason {
     var isDataFileNil: Bool {
         if case .dataFileNil = self { return true }
         return false
