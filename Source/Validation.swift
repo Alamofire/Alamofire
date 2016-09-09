@@ -222,7 +222,12 @@ extension DataRequest {
 extension DownloadRequest {
     /// A closure used to validate a request that takes a URL request, a URL response, a temporary URL and a
     /// destination URL, and returns whether the request was valid.
-    public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLResponse, _ temporary: URL?, _ destination: URL?) -> ValidationResult
+    public typealias Validation = (
+        _ request: URLRequest?,
+        _ response: HTTPURLResponse,
+        _ temporaryURL: URL?,
+        _ destinationURL: URL?)
+        -> ValidationResult
 
     /// Validates the request, using the specified closure.
     ///
