@@ -37,7 +37,7 @@ class RequestInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request)
         XCTAssertEqual(request.request?.httpMethod, "GET")
-        XCTAssertEqual(request.request?.urlString, urlString)
+        XCTAssertEqual(request.request?.url?.urlString, urlString)
         XCTAssertNil(request.response)
     }
 
@@ -51,7 +51,7 @@ class RequestInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request)
         XCTAssertEqual(request.request?.httpMethod, "GET")
-        XCTAssertNotEqual(request.request?.urlString, urlString)
+        XCTAssertNotEqual(request.request?.url?.urlString, urlString)
         XCTAssertEqual(request.request?.url?.query, "foo=bar")
         XCTAssertNil(request.response)
     }
@@ -67,7 +67,7 @@ class RequestInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request)
         XCTAssertEqual(request.request?.httpMethod, "GET")
-        XCTAssertNotEqual(request.request?.urlString, urlString)
+        XCTAssertNotEqual(request.request?.url?.urlString, urlString)
         XCTAssertEqual(request.request?.url?.query, "foo=bar")
         XCTAssertEqual(request.request?.value(forHTTPHeaderField: "Authorization"), "123456")
         XCTAssertNil(request.response)

@@ -376,7 +376,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         class MockDataRequest: DataRequest {
             override var response: HTTPURLResponse? {
                 return MockHTTPURLResponse(
-                    url: URL(string: request!.urlString)!,
+                    url: request!.url!,
                     statusCode: 204,
                     httpVersion: "HTTP/1.1",
                     headerFields: nil
@@ -387,7 +387,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         class MockDownloadRequest: DownloadRequest {
             override var response: HTTPURLResponse? {
                 return MockHTTPURLResponse(
-                    url: URL(string: request!.urlString)!,
+                    url: request!.url!,
                     statusCode: 204,
                     httpVersion: "HTTP/1.1",
                     headerFields: nil
