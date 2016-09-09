@@ -447,7 +447,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
 
         // When
-        let request = manager.request(urlString)
+        let request = manager.request(url: urlString)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -462,7 +462,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
         // When
         let headers = [ "Accept-Language": "en-GB" ]
-        let request = managerWithAcceptLanguageHeader.request(urlString, headers: headers)
+        let request = managerWithAcceptLanguageHeader.request(url: urlString, headers: headers)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -481,7 +481,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
 
         // When
-        let request = manager.request(urlString, method: .post)
+        let request = manager.request(url: urlString, method: .post)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -501,7 +501,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         ]
 
         // When
-        let request = manager.request(urlString, method: .post, parameters: parameters, encoding: JSONEncoding.default)
+        let request = manager.request(url: urlString, method: .post, parameters: parameters, encoding: JSONEncoding.default)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -532,7 +532,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         manager.session.configuration.httpCookieStorage?.setCookie(cookie)
 
         // When
-        let request = manager.request(urlString, method: .post)
+        let request = manager.request(url: urlString, method: .post)
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -557,12 +557,39 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         managerDisallowingCookies.session.configuration.httpCookieStorage?.setCookie(cookie)
 
         // When
-        let request = managerDisallowingCookies.request(urlString, method: .post)
+        let request = managerDisallowingCookies.request(url: urlString, method: .post)
         let components = cURLCommandComponents(for: request)
 
         // Then
         let cookieComponents = components.filter { $0 == "-b" }
         XCTAssertTrue(cookieComponents.isEmpty)
+    }
+
+    func testPOSTRequestWithURLRequest() {
+        // Given
+        let manager = SessionManager()
+
+        let url = URL(string: "https://httpbin.org/post")!
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = HTTPMethod.post.rawValue
+
+        let expectation = self.expectation(description: "\(url)")
+
+        var request: URLRequest?
+
+        // When
+        manager.request(resource: urlRequest)
+            .response { resp in
+                request = resp.request
+                expectation.fulfill()
+            }
+            .resume()
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(request, "request should not be nil")
+        XCTAssertEqual(request?.httpMethod, "POST")
     }
 
     func testMultipartFormDataRequestWithDuplicateHeadersDebugDescription() {
@@ -613,7 +640,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let urlString = "invalid_url"
 
         // When
-        let request = manager.request(urlString)
+        let request = manager.request(url: urlString)
         let debugDescription = request.debugDescription
 
         // Then

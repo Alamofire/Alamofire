@@ -419,7 +419,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var downloadResponse: DefaultDownloadResponse?
 
         // When
-        manager.request(urlString, method: .delete)
+        manager.request(url: urlString, method: .delete)
             .validate(contentType: ["*/*"])
             .response { resp in
                 requestResponse = resp

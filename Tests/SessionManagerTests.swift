@@ -298,7 +298,7 @@ class SessionManagerTestCase: BaseTestCase {
         sessionManager.startRequestsImmediately = false
 
         // When
-        let request = sessionManager.request("https://httpbin.org/get")
+        let request = sessionManager.request(url: "https://httpbin.org/get")
 
         // Then
         XCTAssertEqual(request.task.originalRequest?.httpMethod, adapter.method.rawValue)
@@ -381,7 +381,7 @@ class SessionManagerTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        sessionManager.request("https://httpbin.org/basic-auth/user/password")
+        sessionManager.request(url: "https://httpbin.org/basic-auth/user/password")
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -409,7 +409,7 @@ class SessionManagerTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        sessionManager.request("https://httpbin.org/basic-auth/user/password")
+        sessionManager.request(url: "https://httpbin.org/basic-auth/user/password")
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -479,7 +479,7 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        manager.request("https://httpbin.org/headers")
+        manager.request(url: "https://httpbin.org/headers")
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()

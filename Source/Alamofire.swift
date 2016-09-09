@@ -117,7 +117,7 @@ public func request(
     -> DataRequest
 {
     return SessionManager.default.request(
-        urlString,
+        url: urlString,
         method: method,
         parameters: parameters,
         encoding: encoding,
