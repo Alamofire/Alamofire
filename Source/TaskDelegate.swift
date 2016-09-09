@@ -42,6 +42,7 @@ open class TaskDelegate: NSObject {
 
     var initialResponseTime: CFAbsoluteTime?
     var credential: URLCredential?
+    var metrics: AnyObject? // URLSessionTaskMetrics
 
     // MARK: Lifecycle
 

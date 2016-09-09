@@ -374,6 +374,21 @@ extension SessionDelegate: URLSessionTaskDelegate {
         }
     }
 
+#if !os(watchOS)
+
+    /// Tells the delegate that the session finished collecting metrics for the task.
+    ///
+    /// - parameter session: The session collecting the metrics.
+    /// - parameter task:    The task whose metrics have been collected.
+    /// - parameter metrics: The collected metrics.
+    @available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
+    @objc(URLSession:task:didFinishCollectingMetrics:)
+    open func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+        self[task]?.delegate.metrics = metrics
+    }
+
+#endif
+
     /// Tells the delegate that the task finished transferring data.
     ///
     /// - parameter session: The session containing the task whose request finished transferring data.

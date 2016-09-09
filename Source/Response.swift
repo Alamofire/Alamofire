@@ -37,6 +37,15 @@ public struct DefaultDataResponse {
 
     /// The error encountered while executing or validating the request.
     public let error: Error?
+
+    var _metrics: AnyObject?
+
+    init(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) {
+        self.request = request
+        self.response = response
+        self.data = data
+        self.error = error
+    }
 }
 
 // MARK: -
@@ -57,6 +66,8 @@ public struct DataResponse<Value> {
 
     /// The timeline of the complete lifecycle of the `Request`.
     public let timeline: Timeline
+
+    var _metrics: AnyObject?
 
     /// Creates a `DataResponse` instance with the specified parameters derived from response serialization.
     ///
@@ -127,6 +138,24 @@ public struct DefaultDownloadResponse {
 
     /// The error encountered while executing or validating the request.
     public let error: Error?
+
+    var _metrics: AnyObject?
+
+    init(
+        request: URLRequest?, 
+        response: HTTPURLResponse?,
+        temporaryURL: URL?,
+        destinationURL: URL?,
+        resumeData: Data?,
+        error: Error?)
+    {
+        self.request = request
+        self.response = response
+        self.temporaryURL = temporaryURL
+        self.destinationURL = destinationURL
+        self.resumeData = resumeData
+        self.error = error
+    }
 }
 
 // MARK: -
@@ -153,6 +182,8 @@ public struct DownloadResponse<Value> {
 
     /// The timeline of the complete lifecycle of the request.
     public let timeline: Timeline
+
+    var _metrics: AnyObject?
 
     /// Creates a `DownloadResponse` instance with the specified parameters derived from response serialization.
     ///
@@ -209,4 +240,57 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
 
         return output.joined(separator: "\n")
     }
+}
+
+// MARK: -
+
+protocol Response {
+    /// The task metrics containing the request / response statistics.
+    var _metrics: AnyObject? { get set }
+    mutating func add(_ metrics: AnyObject?)
+}
+
+extension Response {
+    mutating func add(_ metrics: AnyObject?) {
+        #if !os(watchOS)
+            guard #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) else { return }
+            guard let metrics = metrics as? URLSessionTaskMetrics else { return }
+
+            _metrics = metrics
+        #endif
+    }
+}
+
+// MARK: -
+
+@available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
+extension DefaultDataResponse: Response {
+#if !os(watchOS)
+    /// The task metrics containing the request / response statistics.
+    public var metrics: URLSessionTaskMetrics? { return _metrics as? URLSessionTaskMetrics }
+#endif
+}
+
+@available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
+extension DataResponse: Response {
+#if !os(watchOS)
+    /// The task metrics containing the request / response statistics.
+    public var metrics: URLSessionTaskMetrics? { return _metrics as? URLSessionTaskMetrics }
+#endif
+}
+
+@available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
+extension DefaultDownloadResponse: Response {
+#if !os(watchOS)
+    /// The task metrics containing the request / response statistics.
+    public var metrics: URLSessionTaskMetrics? { return _metrics as? URLSessionTaskMetrics }
+#endif
+}
+
+@available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
+extension DownloadResponse: Response {
+#if !os(watchOS)
+    /// The task metrics containing the request / response statistics.
+    public var metrics: URLSessionTaskMetrics? { return _metrics as? URLSessionTaskMetrics }
+#endif
 }
