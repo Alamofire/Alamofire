@@ -63,7 +63,7 @@ class SessionManagerTestCase: BaseTestCase {
             return urlRequest
         }
 
-        func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: RequestRetryCompletion) {
+        func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             retryCount += 1
 
             if retryCount < 2 {
