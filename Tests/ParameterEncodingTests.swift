@@ -117,6 +117,36 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         }
     }
 
+    func testURLParameterEncodeStringKeyNSNumberIntegerValueParameter() {
+        do {
+            // Given
+            let parameters = ["foo": NSNumber(value: 25)]
+
+            // When
+            let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
+
+            // Then
+            XCTAssertEqual(urlRequest.url?.query, "foo=25")
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
+        }
+    }
+
+    func testURLParameterEncodeStringKeyNSNumberBoolValueParameter() {
+        do {
+            // Given
+            let parameters = ["foo": NSNumber(value: false)]
+
+            // When
+            let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
+
+            // Then
+            XCTAssertEqual(urlRequest.url?.query, "foo=0")
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
+        }
+    }
+
     func testURLParameterEncodeStringKeyIntegerValueParameter() {
         do {
             // Given
