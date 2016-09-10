@@ -387,12 +387,19 @@ class DownloadResumeDataTestCase: BaseTestCase {
     func testThatCancelledDownloadResponseDataMatchesResumeData() {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")
+        var cancelled = false
+
         var response: DefaultDownloadResponse?
 
         // When
         let download = Alamofire.download(urlString)
         download.downloadProgress { progress in
-            if progress.fractionCompleted > 0.1 { download.cancel() }
+            guard !cancelled else { return }
+
+            if progress.fractionCompleted > 0.1 {
+                download.cancel()
+                cancelled = true
+            }
         }
         download.response { resp in
             response = resp
@@ -405,27 +412,30 @@ class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNil(response?.destinationURL)
-        XCTAssertNotNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
 
+        XCTAssertNotNil(response?.resumeData)
         XCTAssertNotNil(download.resumeData)
 
-        if let responseResumeData = response?.resumeData, let resumeData = download.resumeData {
-            XCTAssertEqual(responseResumeData, resumeData)
-        } else {
-            XCTFail("response resume data or resume data was unexpectedly nil")
-        }
+        XCTAssertEqual(response?.resumeData, download.resumeData)
     }
 
     func testThatCancelledDownloadResumeDataIsAvailableWithJSONResponseSerializer() {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")
+        var cancelled = false
+
         var response: DownloadResponse<Any>?
 
         // When
         let download = Alamofire.download(urlString)
         download.downloadProgress { progress in
-            if progress.fractionCompleted > 0.1 { download.cancel() }
+            guard !cancelled else { return }
+
+            if progress.fractionCompleted > 0.1 {
+                download.cancel()
+                cancelled = true
+            }
         }
         download.responseJSON { resp in
             response = resp
@@ -438,10 +448,12 @@ class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNil(response?.destinationURL)
-        XCTAssertNotNil(response?.resumeData)
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertNotNil(response?.result.error)
 
+        XCTAssertNotNil(response?.resumeData)
         XCTAssertNotNil(download.resumeData)
+
+        XCTAssertEqual(response?.resumeData, download.resumeData)
     }
 }
