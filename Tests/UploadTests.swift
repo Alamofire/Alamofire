@@ -210,7 +210,7 @@ class UploadDataTestCase: BaseTestCase {
         var previousUploadProgress: Double = uploadProgressValues.first ?? 0.0
 
         for progress in uploadProgressValues {
-            XCTAssertGreaterThan(progress, previousUploadProgress)
+            XCTAssertGreaterThanOrEqual(progress, previousUploadProgress)
             previousUploadProgress = progress
         }
 
@@ -223,7 +223,7 @@ class UploadDataTestCase: BaseTestCase {
         var previousDownloadProgress: Double = downloadProgressValues.first ?? 0.0
 
         for progress in downloadProgressValues {
-            XCTAssertGreaterThan(progress, previousDownloadProgress)
+            XCTAssertGreaterThanOrEqual(progress, previousDownloadProgress)
             previousDownloadProgress = progress
         }
 
@@ -668,7 +668,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var previousUploadProgress: Double = uploadProgressValues.first ?? 0.0
 
         for progress in uploadProgressValues {
-            XCTAssertGreaterThan(progress, previousUploadProgress)
+            XCTAssertGreaterThanOrEqual(progress, previousUploadProgress)
             previousUploadProgress = progress
         }
 
@@ -681,7 +681,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var previousDownloadProgress: Double = downloadProgressValues.first ?? 0.0
 
         for progress in downloadProgressValues {
-            XCTAssertGreaterThan(progress, previousDownloadProgress)
+            XCTAssertGreaterThanOrEqual(progress, previousDownloadProgress)
             previousDownloadProgress = progress
         }
 

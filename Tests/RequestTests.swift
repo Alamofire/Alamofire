@@ -132,7 +132,7 @@ class RequestResponseTestCase: BaseTestCase {
         var previousProgress: Double = progressValues.first ?? 0.0
 
         for progress in progressValues {
-            XCTAssertGreaterThan(progress, previousProgress)
+            XCTAssertGreaterThanOrEqual(progress, previousProgress)
             previousProgress = progress
         }
 
@@ -179,7 +179,7 @@ class RequestResponseTestCase: BaseTestCase {
         var previousProgress: Double = progressValues.first ?? 0.0
 
         for progress in progressValues {
-            XCTAssertGreaterThan(progress, previousProgress)
+            XCTAssertGreaterThanOrEqual(progress, previousProgress)
             previousProgress = progress
         }
 
