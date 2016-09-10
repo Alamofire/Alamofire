@@ -57,7 +57,6 @@ Some of the common classes have been moved into the global namespace to make the
 - `Request.DataTaskDelegate` is now `DataTaskDelegate`
 - `Request.DownloadTaskDelegate` is now `DownloadTaskDelegate`
 - `Request.UploadTaskDelegate` is now `UploadTaskDelegate`
-- `Request.UploadTaskDelegate` is now `UploadTaskDelegate`
 
 We've also reorganized the file structure and organization patterns significantly to make it easier to follow the code. We hope that this will encourage more users to get to know the internal structure and implementation of Alamofire. Knowledge is power.
 
