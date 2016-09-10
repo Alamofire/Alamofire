@@ -78,12 +78,10 @@ class ProxyURLProtocol: URLProtocol {
     // MARK: Loading Methods
 
     override func startLoading() {
-        // rdar://26849668
-        // Hopefully will be fixed in a future seed
-        // URLProtocol had some API's that didnt make the value type conversion
-        let mutableRequest = (request.urlRequest as NSURLRequest).mutableCopy() as! NSMutableURLRequest
-        URLProtocol.setProperty(true, forKey: PropertyKeys.handledByForwarderURLProtocol, in: mutableRequest)
-        activeTask = session.dataTask(with: mutableRequest as URLRequest)
+        // rdar://26849668 - URLProtocol had some API's that didnt make the value type conversion
+        let urlRequest = (request.urlRequest as NSURLRequest).mutableCopy() as! NSMutableURLRequest
+        URLProtocol.setProperty(true, forKey: PropertyKeys.handledByForwarderURLProtocol, in: urlRequest)
+        activeTask = session.dataTask(with: urlRequest as URLRequest)
         activeTask?.resume()
     }
 
