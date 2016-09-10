@@ -60,15 +60,15 @@ open class ServerTrustPolicyManager {
 
 extension URLSession {
     private struct AssociatedKeys {
-        static var ManagerKey = "URLSession.ServerTrustPolicyManager"
+        static var managerKey = "URLSession.ServerTrustPolicyManager"
     }
 
     var serverTrustPolicyManager: ServerTrustPolicyManager? {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.ManagerKey) as? ServerTrustPolicyManager
+            return objc_getAssociatedObject(self, &AssociatedKeys.managerKey) as? ServerTrustPolicyManager
         }
         set (manager) {
-            objc_setAssociatedObject(self, &AssociatedKeys.ManagerKey, manager, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &AssociatedKeys.managerKey, manager, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
