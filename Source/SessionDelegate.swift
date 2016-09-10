@@ -440,8 +440,8 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
                     let retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false
 
-                    if retrySucceeded {
-                        strongSelf[request.task] = request
+                    if retrySucceeded, let task = request.task {
+                        strongSelf[task] = request
                         return
                     } else {
                         completeTask(session, task, error)

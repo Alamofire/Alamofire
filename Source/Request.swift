@@ -87,16 +87,16 @@ open class Request {
     }
 
     /// The underlying task.
-    open var task: URLSessionTask { return delegate.task }
+    open var task: URLSessionTask? { return delegate.task }
 
     /// The session belonging to the underlying task.
     open let session: URLSession
 
     /// The request sent or to be sent to the server.
-    open var request: URLRequest? { return task.originalRequest }
+    open var request: URLRequest? { return task?.originalRequest }
 
     /// The response received from the server, if any.
-    open var response: HTTPURLResponse? { return task.response as? HTTPURLResponse }
+    open var response: HTTPURLResponse? { return task?.response as? HTTPURLResponse }
 
     let originalTask: TaskConvertible?
 
@@ -177,6 +177,8 @@ open class Request {
 
     /// Resumes the request.
     open func resume() {
+        guard let task = task else { return }
+
         if startTime == nil { startTime = CFAbsoluteTimeGetCurrent() }
 
         task.resume()
@@ -190,6 +192,8 @@ open class Request {
 
     /// Suspends the request.
     open func suspend() {
+        guard let task = task else { return }
+
         task.suspend()
 
         NotificationCenter.default.post(
@@ -201,6 +205,8 @@ open class Request {
 
     /// Cancels the request.
     open func cancel() {
+        guard let task = task else { return }
+
         task.cancel()
 
         NotificationCenter.default.post(

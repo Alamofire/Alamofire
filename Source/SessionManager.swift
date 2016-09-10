@@ -257,7 +257,7 @@ open class SessionManager {
         let task = originalTask.task(session: session, adapter: adapter, queue: queue)
         let request = DataRequest(session: session, task: task, originalTask: originalTask)
 
-        delegate[request.delegate.task] = request
+        delegate[task] = request
 
         if startRequestsImmediately { request.resume() }
 
@@ -364,7 +364,7 @@ open class SessionManager {
 
         request.downloadDelegate.destination = destination
 
-        delegate[request.delegate.task] = request
+        delegate[task] = request
 
         if startRequestsImmediately { request.resume() }
 
@@ -629,7 +629,7 @@ open class SessionManager {
             request.delegate.taskNeedNewBodyStream = { _, _ in inputStream }
         }
 
-        delegate[request.delegate.task] = request
+        delegate[task] = request
 
         if startRequestsImmediately { request.resume() }
 
@@ -675,7 +675,7 @@ open class SessionManager {
         let task = streamable.task(session: session, adapter: adapter, queue: queue)
         let request = StreamRequest(session: session, task: task, originalTask: streamable)
 
-        delegate[request.delegate.task] = request
+        delegate[task] = request
 
         if startRequestsImmediately { request.resume() }
 

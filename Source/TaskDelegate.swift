@@ -33,7 +33,7 @@ open class TaskDelegate: NSObject {
     /// The serial operation queue used to execute all operations after the task completes.
     open let queue: OperationQueue
 
-    var task: URLSessionTask {
+    var task: URLSessionTask? {
         didSet { reset() }
     }
 
