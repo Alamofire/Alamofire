@@ -589,7 +589,19 @@ open class SessionManager {
                 let fileURL = directoryURL.appendingPathComponent(fileName)
 
                 do {
-                    try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                    var directoryError: Error?
+
+                    // Create directory inside serial queue to ensure two threads don't do this in parallel
+                    self.queue.sync {
+                        do {
+                            try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                        } catch {
+                            directoryError = error
+                        }
+                    }
+
+                    if let directoryError = directoryError { throw directoryError }
+
                     try formData.writeEncodedData(to: fileURL)
 
                     DispatchQueue.main.async {
