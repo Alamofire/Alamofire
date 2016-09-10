@@ -108,18 +108,13 @@ class RequestResponseTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
 
-        var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
-        var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
+        var progressValues: [Double] = []
         var response: DefaultDataResponse?
 
         // When
         Alamofire.request(urlString)
             .downloadProgress { progress in
-                progressValues.append((progress.completedUnitCount, progress.totalUnitCount))
-            }
-            .downloadProgress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-                let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
-                byteValues.append(bytes)
+                progressValues.append(progress.fractionCompleted)
             }
             .response { resp in
                 response = resp
@@ -134,24 +129,17 @@ class RequestResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(byteValues.count, progressValues.count)
+        var previousProgress: Double = progressValues.first ?? 0.0
 
-        if byteValues.count == progressValues.count {
-            for (byteValue, progressValue) in zip(byteValues, progressValues) {
-                XCTAssertGreaterThan(byteValue.bytes, 0)
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount)
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount)
-            }
+        for progress in progressValues {
+            XCTAssertGreaterThan(progress, previousProgress)
+            previousProgress = progress
         }
 
-        if let lastByteValue = byteValues.last, let lastProgressValue = progressValues.last {
-            let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
-            let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
-
-            XCTAssertEqual(byteValueFractionalCompletion, 1.0)
-            XCTAssertEqual(progressValueFractionalCompletion, 1.0)
+        if let lastProgressValue = progressValues.last {
+            XCTAssertEqual(lastProgressValue, 1.0)
         } else {
-            XCTFail("last item in bytesValues and progressValues should not be nil")
+            XCTFail("last item in progressValues should not be nil")
         }
     }
 
@@ -162,19 +150,14 @@ class RequestResponseTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
 
-        var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
-        var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
+        var progressValues: [Double] = []
         var accumulatedData = [Data]()
         var response: DefaultDataResponse?
 
         // When
         Alamofire.request(urlString)
             .downloadProgress { progress in
-                progressValues.append((progress.completedUnitCount, progress.totalUnitCount))
-            }
-            .downloadProgress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-                let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
-                byteValues.append(bytes)
+                progressValues.append(progress.fractionCompleted)
             }
             .stream { data in
                 accumulatedData.append(data)
@@ -193,25 +176,17 @@ class RequestResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
         XCTAssertGreaterThanOrEqual(accumulatedData.count, 1)
 
-        XCTAssertEqual(byteValues.count, progressValues.count)
+        var previousProgress: Double = progressValues.first ?? 0.0
 
-        if byteValues.count == progressValues.count {
-            for (byteValue, progressValue) in zip(byteValues, progressValues) {
-                XCTAssertGreaterThan(byteValue.bytes, 0)
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount)
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount)
-            }
+        for progress in progressValues {
+            XCTAssertGreaterThan(progress, previousProgress)
+            previousProgress = progress
         }
 
-        if let lastByteValue = byteValues.last, let lastProgressValue = progressValues.last {
-            let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
-            let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
-
-            XCTAssertEqual(byteValueFractionalCompletion, 1.0)
-            XCTAssertEqual(progressValueFractionalCompletion, 1.0)
-            XCTAssertEqual(accumulatedData.reduce(Int64(0)) { $0 + $1.count }, lastByteValue.totalBytes)
+        if let lastProgress = progressValues.last {
+            XCTAssertEqual(lastProgress, 1.0)
         } else {
-            XCTFail("last item in bytesValues and progressValues should not be nil")
+            XCTFail("last item in progressValues should not be nil")
         }
     }
 

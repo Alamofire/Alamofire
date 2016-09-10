@@ -181,29 +181,18 @@ class UploadDataTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Bytes upload progress should be reported: \(urlString)")
 
-        var uploadByteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
-        var uploadProgressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
-
-        var downloadByteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
-        var downloadProgressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
+        var uploadProgressValues: [Double] = []
+        var downloadProgressValues: [Double] = []
 
         var response: DefaultDataResponse?
 
         // When
         Alamofire.upload(data, to: urlString)
             .uploadProgress { progress in
-                uploadProgressValues.append((progress.completedUnitCount, progress.totalUnitCount))
-            }
-            .uploadProgress { bytesSent, totalBytesSent, totalBytesExpectedToSend in
-                let bytes = (bytes: bytesSent, totalBytes: totalBytesSent, totalBytesExpected: totalBytesExpectedToSend)
-                uploadByteValues.append(bytes)
+                uploadProgressValues.append(progress.fractionCompleted)
             }
             .downloadProgress { progress in
-                downloadProgressValues.append((progress.completedUnitCount, progress.totalUnitCount))
-            }
-            .downloadProgress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-                let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
-                downloadByteValues.append(bytes)
+                downloadProgressValues.append(progress.fractionCompleted)
             }
             .response { resp in
                 response = resp
@@ -218,43 +207,30 @@ class UploadDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(uploadByteValues.count, uploadProgressValues.count)
-        XCTAssertEqual(downloadByteValues.count, downloadProgressValues.count)
+        var previousUploadProgress: Double = uploadProgressValues.first ?? 0.0
 
-        if uploadByteValues.count == uploadProgressValues.count {
-            for (byteValue, progressValue) in zip(uploadByteValues, uploadProgressValues) {
-                XCTAssertGreaterThan(byteValue.bytes, 0)
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount)
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount)
-            }
+        for progress in uploadProgressValues {
+            XCTAssertGreaterThan(progress, previousUploadProgress)
+            previousUploadProgress = progress
         }
 
-        if let lastUploadByteValue = uploadByteValues.last, let lastUploadProgressValue = uploadProgressValues.last {
-            let byteValueFractionalCompletion = Double(lastUploadByteValue.totalBytes) / Double(lastUploadByteValue.totalBytesExpected)
-            let progressValueFractionalCompletion = Double(lastUploadProgressValue.0) / Double(lastUploadProgressValue.1)
-
-            XCTAssertEqual(byteValueFractionalCompletion, 1.0)
-            XCTAssertEqual(progressValueFractionalCompletion, 1.0)
+        if let lastProgressValue = uploadProgressValues.last {
+            XCTAssertEqual(lastProgressValue, 1.0)
         } else {
-            XCTFail("last item in uploadByteValues and uploadProgressValues should not be nil")
+            XCTFail("last item in uploadProgressValues should not be nil")
         }
 
-        if downloadByteValues.count == downloadProgressValues.count {
-            for (byteValue, progressValue) in zip(downloadByteValues, downloadProgressValues) {
-                XCTAssertGreaterThan(byteValue.bytes, 0)
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount)
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount)
-            }
+        var previousDownloadProgress: Double = downloadProgressValues.first ?? 0.0
+
+        for progress in downloadProgressValues {
+            XCTAssertGreaterThan(progress, previousDownloadProgress)
+            previousDownloadProgress = progress
         }
 
-        if let lastDownloadByteValue = downloadByteValues.last, let lastDownloadProgressValue = downloadProgressValues.last {
-            let byteValueFractionalCompletion = Double(lastDownloadByteValue.totalBytes) / Double(lastDownloadByteValue.totalBytesExpected)
-            let progressValueFractionalCompletion = Double(lastDownloadProgressValue.0) / Double(lastDownloadProgressValue.1)
-
-            XCTAssertEqual(byteValueFractionalCompletion, 1.0)
-            XCTAssertEqual(progressValueFractionalCompletion, 1.0)
+        if let lastProgressValue = downloadProgressValues.last {
+            XCTAssertEqual(lastProgressValue, 1.0)
         } else {
-            XCTFail("last item in downloadByteValues and downloadProgressValues should not be nil")
+            XCTFail("last item in downloadProgressValues should not be nil")
         }
     }
 }
@@ -648,11 +624,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
-        var uploadByteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
-        var uploadProgressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
-
-        var downloadByteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
-        var downloadProgressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
+        var uploadProgressValues: [Double] = []
+        var downloadProgressValues: [Double] = []
 
         var response: DefaultDataResponse?
 
@@ -669,18 +642,10 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 case .success(let upload, _, _):
                     upload
                         .uploadProgress { progress in
-                            uploadProgressValues.append((progress.completedUnitCount, progress.totalUnitCount))
-                        }
-                        .uploadProgress { bytesSent, totalBytesSent, totalBytesExpectedToSend in
-                            let bytes = (bytes: bytesSent, totalBytes: totalBytesSent, totalBytesExpected: totalBytesExpectedToSend)
-                            uploadByteValues.append(bytes)
+                            uploadProgressValues.append(progress.fractionCompleted)
                         }
                         .downloadProgress { progress in
-                            downloadProgressValues.append((progress.completedUnitCount, progress.totalUnitCount))
-                        }
-                        .downloadProgress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-                            let bytes = (bytes: bytesRead, totalBytes: totalBytesRead, totalBytesExpected: totalBytesExpectedToRead)
-                            downloadByteValues.append(bytes)
+                            downloadProgressValues.append(progress.fractionCompleted)
                         }
                         .response { resp in
                             response = resp
@@ -700,43 +665,30 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(uploadByteValues.count, uploadProgressValues.count)
-        XCTAssertEqual(downloadByteValues.count, downloadProgressValues.count)
+        var previousUploadProgress: Double = uploadProgressValues.first ?? 0.0
 
-        if uploadByteValues.count == uploadProgressValues.count {
-            for (byteValue, progressValue) in zip(uploadByteValues, uploadProgressValues) {
-                XCTAssertGreaterThan(byteValue.bytes, 0)
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount)
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount)
-            }
+        for progress in uploadProgressValues {
+            XCTAssertGreaterThan(progress, previousUploadProgress)
+            previousUploadProgress = progress
         }
 
-        if let lastUploadByteValue = uploadByteValues.last, let lastUploadProgressValue = uploadProgressValues.last {
-            let byteValueFractionalCompletion = Double(lastUploadByteValue.totalBytes) / Double(lastUploadByteValue.totalBytesExpected)
-            let progressValueFractionalCompletion = Double(lastUploadProgressValue.0) / Double(lastUploadProgressValue.1)
-
-            XCTAssertEqual(byteValueFractionalCompletion, 1.0)
-            XCTAssertEqual(progressValueFractionalCompletion, 1.0)
+        if let lastProgressValue = uploadProgressValues.last {
+            XCTAssertEqual(lastProgressValue, 1.0)
         } else {
-            XCTFail("last item in uploadByteValues and uploadProgressValues should not be nil")
+            XCTFail("last item in uploadProgressValues should not be nil")
         }
 
-        if downloadByteValues.count == downloadProgressValues.count {
-            for (byteValue, progressValue) in zip(downloadByteValues, downloadProgressValues) {
-                XCTAssertGreaterThan(byteValue.bytes, 0)
-                XCTAssertEqual(byteValue.totalBytes, progressValue.completedUnitCount)
-                XCTAssertEqual(byteValue.totalBytesExpected, progressValue.totalUnitCount)
-            }
+        var previousDownloadProgress: Double = downloadProgressValues.first ?? 0.0
+
+        for progress in downloadProgressValues {
+            XCTAssertGreaterThan(progress, previousDownloadProgress)
+            previousDownloadProgress = progress
         }
 
-        if let lastDownloadByteValue = downloadByteValues.last, let lastDownloadProgressValue = downloadProgressValues.last {
-            let byteValueFractionalCompletion = Double(lastDownloadByteValue.totalBytes) / Double(lastDownloadByteValue.totalBytesExpected)
-            let progressValueFractionalCompletion = Double(lastDownloadProgressValue.0) / Double(lastDownloadProgressValue.1)
-
-            XCTAssertEqual(byteValueFractionalCompletion, 1.0)
-            XCTAssertEqual(progressValueFractionalCompletion, 1.0)
+        if let lastProgressValue = downloadProgressValues.last {
+            XCTAssertEqual(lastProgressValue, 1.0)
         } else {
-            XCTFail("last item in downloadByteValues and downloadProgressValues should not be nil")
+            XCTFail("last item in downloadProgressValues should not be nil")
         }
     }
 }

@@ -72,12 +72,6 @@ open class Request {
     /// A closure executed when monitoring upload or download progress of a request.
     public typealias ProgressHandler = (Progress) -> Void
 
-    /// A closure executed when monitoring the download progress of a request.
-    public typealias DownloadProgressHandler = (_ bytesReceived: Int64, _ totalBytesReceived: Int64, _ totalBytesExpectedToReceive: Int64) -> Void
-
-    /// A closure executed when monitoring the upload progress of a request.
-    public typealias UploadProgressHandler = (_ bytesSent: Int64, _ totalBytesSent: Int64, _ totalBytesExpectedToSend: Int64) -> Void
-
     // MARK: Properties
 
     /// The delegate for the underlying task.
@@ -380,18 +374,6 @@ open class DataRequest: Request {
         dataDelegate.progressHandler = (closure, queue)
         return self
     }
-
-    /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
-    ///
-    /// - parameter queue:   The dispatch queue to execute the closure on.
-    /// - parameter closure: The code to be executed periodically as data is read from the server.
-    ///
-    /// - returns: The request.
-    @discardableResult
-    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping DownloadProgressHandler) -> Self {
-        dataDelegate.progressDebugHandler = (closure, queue)
-        return self
-    }
 }
 
 // MARK: -
@@ -488,18 +470,6 @@ open class DownloadRequest: Request {
         return self
     }
 
-    /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
-    ///
-    /// - parameter queue:   The dispatch queue to execute the closure on.
-    /// - parameter closure: The code to be executed periodically as data is read from the server.
-    ///
-    /// - returns: The request.
-    @discardableResult
-    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping DownloadProgressHandler) -> Self {
-        downloadDelegate.progressDebugHandler = (closure, queue)
-        return self
-    }
-
     // MARK: Destination
 
     /// Creates a download file destination closure which uses the default file manager to move the temporary file to a
@@ -579,22 +549,6 @@ open class UploadRequest: DataRequest {
     @discardableResult
     open func uploadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping ProgressHandler) -> Self {
         uploadDelegate.uploadProgressHandler = (closure, queue)
-        return self
-    }
-
-    /// Sets a closure to be called periodically during the lifecycle of the `UploadRequest` as data is sent to
-    /// the server.
-    ///
-    /// After the data is sent to the server, the `progress(queue:closure:)` APIs can be used to monitor the progress
-    /// of data being read from the server.
-    ///
-    /// - parameter queue:   The dispatch queue to execute the closure on.
-    /// - parameter closure: The code to be executed periodically as data is sent to the server.
-    ///
-    /// - returns: The request.
-    @discardableResult
-    open func uploadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping UploadProgressHandler) -> Self {
-        uploadDelegate.uploadProgressDebugHandler = (closure, queue)
         return self
     }
 }
