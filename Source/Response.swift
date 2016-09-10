@@ -142,7 +142,7 @@ public struct DefaultDownloadResponse {
     var _metrics: AnyObject?
 
     init(
-        request: URLRequest?, 
+        request: URLRequest?,
         response: HTTPURLResponse?,
         temporaryURL: URL?,
         destinationURL: URL?,
