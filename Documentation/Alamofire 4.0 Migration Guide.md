@@ -586,7 +586,7 @@ By making this split, Alamofire 4 was able to create customized chaining APIs fo
 
 #### Download and Upload Progress
 
-The progress reporting system for data, download and upload requests has been completely redesigned. Each request type contains two types of progress APIs, one that passes a `Progress` instance and the other that passes broken out `Int64` values. Both APIs will call the closure on a specified dispatch queue that defaults to main.
+The progress reporting system for data, download and upload requests has been completely redesigned. Each request type contains progress APIs for executing a closure during each progress update by returning the underlying `Progress` instance. The closure will be called on the specified queue that defaults to main.
 
 **Data Request Progress**
 
@@ -596,16 +596,10 @@ Alamofire.request(urlString)
         // Called on main dispatch queue by default
         print("Download progress: \(progress.fractionCompleted)")
     }
-    .downloadProgress(queue: DispatchQueue.utility) { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-        // Called on utility dispatch queue
-        print("Read: \(bytesRead), Total Read: \(totalBytesRead), Total Expected: \(totalBytesExpectedToRead)")
-    }
     .responseJSON { response in
         debugPrint(response)
     }
 ```
-
-> Please note that you would not actually chain both `downloadProgress` APIs onto the same request. Both are shown in this example just to show the differences in usage.
 
 **Download Request Progress**
 
@@ -614,10 +608,6 @@ Alamofire.download(urlString, to: destination)
     .downloadProgress(queue: DispatchQueue.utility) { progress in
         // Called on utility dispatch queue
         print("Download progress: \(progress.fractionCompleted)")
-    }
-    .downloadProgress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-        // Called on main dispatch queue by default
-        print("Read: \(bytesRead), Total Read: \(totalBytesRead), Total Expected: \(totalBytesExpectedToRead)")
     }
     .responseJSON { response in
         debugPrint(response)
@@ -632,24 +622,16 @@ Alamofire.upload(data, to: urlString, withMethod: .post)
         // Called on main dispatch queue by default
         print("Upload progress: \(progress.fractionCompleted)")
     }
-    .uploadProgress(queue: DispatchQueue.utility) { bytesSent, totalBytesSent, totalBytesExpectedToSend in
-        // Can customize the dispatch queue for background operations if needed
-        print("Sent: \(bytesSent), Total Sent: \(totalBytesSent), Total Expected: \(totalBytesExpectedToSend)")
-    }
     .downloadProgress { progress in
         // Called on main dispatch queue by default
         print("Download progress: \(progress.fractionCompleted)")
-    }
-    .downloadProgress { bytesRead, totalBytesRead, totalBytesExpectedToRead in
-        // Called on main dispatch queue by default
-        print("Read: \(bytesRead), Total Read: \(totalBytesRead), Total Expected: \(totalBytesExpectedToRead)")
     }
     .responseData { response in
         debugPrint(response)
     }
 ```
 
-It's now easy to differentiate between upload and download progress for upload requests. Deciding with to use the `Progress` or `Int64` variant is purely personal preference. We would recommend using the `Progress` APIs though purely for convenience.
+It's now easy to differentiate between upload and download progress for upload requests.
 
 > See [PR-1455](https://github.com/Alamofire/Alamofire/pull/1455) for more info.
 

@@ -638,10 +638,9 @@ Alamofire.download("https://httpbin.org/image/png", to: destination)
 
 #### Download Progress
 
-Many times it can be helpful to report download progress to the user. Any `DownloadRequest` can report download progress using the `downloadProgress` APIs.
+Many times it can be helpful to report download progress to the user. Any `DownloadRequest` can report download progress using the `downloadProgress` API.
 
 ```swift
-// Reports Progress with `Progress` instance
 Alamofire.download("https://httpbin.org/image/png")
     .downloadProgress { progress in
         print("Download Progress: \(progress.fractionCompleted)")
@@ -651,23 +650,11 @@ Alamofire.download("https://httpbin.org/image/png")
 	        let image = UIImage(data: data)
     	}
     }
-
-// Reports Progress with `Int64	` Values
-Alamofire.download("https://httpbin.org/image/png")
-    .downloadProgress { bytesRead, totalBytesReceived, totalBytesExpectedToRead in
-        print("Download Progress: \(bytesRead), \(totalBytesReceived), \(totalBytesExpectedToRead) bytes")
-    }
-    .responseData { response in
-    	if let data = response.result.value {
-	        let image = UIImage(data: data)
-    	}
-    }
 ```
 
-Both of the `downloadProgress` APIs also take a `queue` parameter which defines which `DispatchQueue` the download progress closure should be called on.
+The `downloadProgress` API also takes a `queue` parameter which defines which `DispatchQueue` the download progress closure should be called on.
 
 ```swift
-// Reports progress on the utility queue
 let utilityQueue = DispatchQueue.global(qos: .utility)
 
 Alamofire.download("https://httpbin.org/image/png")
@@ -775,25 +762,12 @@ While your user is waiting for their upload to complete, sometimes it can be han
 ```swift
 let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
 
-// Reports Progress with `Progress` instance
 Alamofire.upload(fileURL, to: "https://httpbin.org/post")
     .uploadProgress { progress in // main queue by default
         print("Upload Progress: \(progress.fractionCompleted)")
     }
     .downloadProgress { progress in // main queue by default
         print("Download Progress: \(progress.fractionCompleted)")
-    }
-    .responseJSON { response in
-        debugPrint(response)
-    }
-
-// Reports Progress with `Int64	` Values
-Alamofire.upload(fileURL, to: "https://httpbin.org/post")
-    .uploadProgress { bytesSent, totalBytesSent, totalBytesExpectedToSend in // main queue by default
-        print("Upload Progress: \(bytesSent), \(totalBytesSent), \(totalBytesExpectedToSend) bytes")
-    }
-    .downloadProgress { bytesRead, totalBytesReceived, totalBytesExpectedToRead in // main queue by default
-        print("Download Progress: \(bytesRead), \(totalBytesReceived), \(totalBytesExpectedToRead) bytes")
     }
     .responseJSON { response in
         debugPrint(response)
