@@ -53,7 +53,7 @@ open class SessionManager {
     }()
 
     /// Creates default values for the "Accept-Encoding", "Accept-Language" and "User-Agent" headers.
-    open static let defaultHTTPHeaders: [String: String] = {
+    open static let defaultHTTPHeaders: HTTPHeaders = {
         // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
         let acceptEncoding: String = "gzip;q=1.0, compress;q=0.5"
 
@@ -228,7 +228,7 @@ open class SessionManager {
         method: HTTPMethod = .get,
         parameters: Parameters? = nil,
         encoding: ParameterEncoding = URLEncoding.default,
-        headers: [String: String]? = nil)
+        headers: HTTPHeaders? = nil)
         -> DataRequest
     {
         let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
@@ -290,7 +290,7 @@ open class SessionManager {
         method: HTTPMethod = .get,
         parameters: Parameters? = nil,
         encoding: ParameterEncoding = URLEncoding.default,
-        headers: [String: String]? = nil,
+        headers: HTTPHeaders? = nil,
         to destination: DownloadRequest.DownloadFileDestination? = nil)
         -> DownloadRequest
     {
@@ -390,7 +390,7 @@ open class SessionManager {
         _ fileURL: URL,
         to urlString: URLStringConvertible,
         method: HTTPMethod = .post,
-        headers: [String: String]? = nil)
+        headers: HTTPHeaders? = nil)
         -> UploadRequest
     {
         let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
@@ -427,7 +427,7 @@ open class SessionManager {
         _ data: Data,
         to urlString: URLStringConvertible,
         method: HTTPMethod = .post,
-        headers: [String: String]? = nil)
+        headers: HTTPHeaders? = nil)
         -> UploadRequest
     {
         let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
@@ -464,7 +464,7 @@ open class SessionManager {
         _ stream: InputStream,
         to urlString: URLStringConvertible,
         method: HTTPMethod = .post,
-        headers: [String: String]? = nil)
+        headers: HTTPHeaders? = nil)
         -> UploadRequest
     {
         let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
@@ -516,7 +516,7 @@ open class SessionManager {
         usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
         to urlString: URLStringConvertible,
         method: HTTPMethod = .post,
-        headers: [String: String]? = nil,
+        headers: HTTPHeaders? = nil,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
         let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)

@@ -61,6 +61,9 @@ protocol TaskConvertible {
     func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask
 }
 
+/// A dictionary of headers to apply to a `URLRequest`.
+public typealias HTTPHeaders = [String: String]
+
 // MARK: -
 
 /// Responsible for sending a request and receiving the response and associated data from the server, as well as

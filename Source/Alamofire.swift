@@ -75,7 +75,7 @@ extension URLRequest {
     /// - parameter headers:   The HTTP headers. `nil` by default.
     ///
     /// - returns: The new `URLRequest` instance.
-    public init(urlString: URLStringConvertible, method: HTTPMethod, headers: [String: String]? = nil) {
+    public init(urlString: URLStringConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil) {
         self.init(url: URL(string: urlString.urlString)!)
 
         if let request = urlString as? URLRequest { self = request }
@@ -113,7 +113,7 @@ public func request(
     method: HTTPMethod = .get,
     parameters: Parameters? = nil,
     encoding: ParameterEncoding = URLEncoding.default,
-    headers: [String: String]? = nil)
+    headers: HTTPHeaders? = nil)
     -> DataRequest
 {
     return SessionManager.default.request(
@@ -160,7 +160,7 @@ public func download(
     method: HTTPMethod = .get,
     parameters: Parameters? = nil,
     encoding: ParameterEncoding = URLEncoding.default,
-    headers: [String: String]? = nil,
+    headers: HTTPHeaders? = nil,
     to destination: DownloadRequest.DownloadFileDestination? = nil)
     -> DownloadRequest
 {
@@ -234,7 +234,7 @@ public func upload(
     _ fileURL: URL,
     to urlString: URLStringConvertible,
     method: HTTPMethod = .post,
-    headers: [String: String]? = nil)
+    headers: HTTPHeaders? = nil)
     -> UploadRequest
 {
     return SessionManager.default.upload(fileURL, to: urlString, method: method, headers: headers)
@@ -268,7 +268,7 @@ public func upload(
     _ data: Data,
     to urlString: URLStringConvertible,
     method: HTTPMethod = .post,
-    headers: [String: String]? = nil)
+    headers: HTTPHeaders? = nil)
     -> UploadRequest
 {
     return SessionManager.default.upload(data, to: urlString, method: method, headers: headers)
@@ -302,7 +302,7 @@ public func upload(
     _ stream: InputStream,
     to urlString: URLStringConvertible,
     method: HTTPMethod = .post,
-    headers: [String: String]? = nil)
+    headers: HTTPHeaders? = nil)
     -> UploadRequest
 {
     return SessionManager.default.upload(stream, to: urlString, method: method, headers: headers)
@@ -350,7 +350,7 @@ public func upload(
     usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
     to urlString: URLStringConvertible,
     method: HTTPMethod = .post,
-    headers: [String: String]? = nil,
+    headers: HTTPHeaders? = nil,
     encodingCompletion: ((SessionManager.MultipartFormDataEncodingResult) -> Void)?)
 {
     return SessionManager.default.upload(

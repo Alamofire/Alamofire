@@ -114,7 +114,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         let urlString = "http://httpbin.org/hidden-basic-auth/\(user)/\(password)"
         let expectation = self.expectation(description: "\(urlString) 200")
 
-        var headers: [String: String]?
+        var headers: HTTPHeaders?
 
         if let authorizationHeader = Request.authorizationHeader(user: user, password: password) {
             headers = [authorizationHeader.key: authorizationHeader.value]

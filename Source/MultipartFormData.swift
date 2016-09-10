@@ -76,13 +76,13 @@ open class MultipartFormData {
     }
 
     class BodyPart {
-        let headers: [String: String]
+        let headers: HTTPHeaders
         let bodyStream: InputStream
         let bodyContentLength: UInt64
         var hasInitialBoundary = false
         var hasFinalBoundary = false
 
-        init(headers: [String: String], bodyStream: InputStream, bodyContentLength: UInt64) {
+        init(headers: HTTPHeaders, bodyStream: InputStream, bodyContentLength: UInt64) {
             self.headers = headers
             self.bodyStream = bodyStream
             self.bodyContentLength = bodyContentLength
@@ -330,7 +330,7 @@ open class MultipartFormData {
     /// - parameter stream:  The input stream to encode in the multipart form data.
     /// - parameter length:  The content length of the stream.
     /// - parameter headers: The HTTP headers for the body part.
-    public func append(_ stream: InputStream, withLength length: UInt64, headers: [String: String]) {
+    public func append(_ stream: InputStream, withLength length: UInt64, headers: HTTPHeaders) {
         let bodyPart = BodyPart(headers: headers, bodyStream: stream, bodyContentLength: length)
         bodyParts.append(bodyPart)
     }
