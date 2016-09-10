@@ -9,6 +9,7 @@ This guide is provided in order to ease the transition of existing applications 
 - [Breaking API Changes](#breaking-api-changes)
 	- [Namespace Changes](#namespace-changes)
 	- [Making Requests](#making-requests)
+	- [URLStringConvertible Conformance](#urlstringconvertible-conformance)
 - [New Features](#new-features)
 	- [Request Adapter](#request-adapter)
 	- [Request Retrier](#request-retrier)
@@ -283,6 +284,24 @@ Alamofire.upload(fileURL, to: urlString, method: .put)
 ```
 
 As you can see, there are many breaking API changes, but the common APIs still adhere to the original design goals of being able to make complex requests through a single line of code in a concise, well defined manner.
+
+### URLStringConvertible Conformance
+
+The `URLRequest` no longer conforms to the `URLStringConvertible` protocol. This was always a bit of a stretch in the previous versions of Alamofire and wasn't really necessary. It also had a high potential to introduce ambiguity into many Alamofire APIs. Because of these reasons, `URLRequest` no longer conforms to `URLStringConvertible`.
+
+What this means in code is that you can no longer do the following:
+
+```swift
+let urlRequest = URLRequest(url: URL(string: "https://httpbin.org/get")!)
+let urlString = urlRequest.urlString
+```
+
+Instead, in Alamofire 4, you now have to do the following:
+
+```swift
+let urlRequest = URLRequest(url: URL(string: "https://httpbin.org/get")!)
+let urlString = urlRequest.url?.urlString
+```
 
 ---
 
