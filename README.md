@@ -83,7 +83,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 $ gem install cocoapods
 ```
 
-> CocoaPods 1.0.0+ is required to build Alamofire 4.0.0+.
+> CocoaPods 1.1.0+ is required to build Alamofire 4.0.0+.
 
 To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
@@ -150,8 +150,8 @@ $ git submodule add https://github.com/Alamofire/Alamofire.git
 - Click on the `+` button under the "Embedded Binaries" section.
 - You will see two different `Alamofire.xcodeproj` folders each with two different versions of the `Alamofire.framework` nested inside a `Products` folder.
 
-    > It does not matter which `Products` folder you choose from, but it does matter whether you choose the top or bottom `Alamofire.framework`. 
-    
+    > It does not matter which `Products` folder you choose from, but it does matter whether you choose the top or bottom `Alamofire.framework`.
+
 - Select the top `Alamofire.framework` for iOS and the bottom one for OS X.
 
     > You can verify which one you selected by inspecting the build log for your project. The build target for `Alamofire` will be listed as either `Alamofire iOS`, `Alamofire macOS`, `Alamofire tvOS` or `Alamofire watchOS`.
@@ -198,37 +198,37 @@ Alamofire contains five different response handlers by default including:
 ```swift
 // Response Handler - Unserialized Response
 func response(
-    queue: DispatchQueue?, 
-    completionHandler: (DefaultDownloadResponse) -> Void) 
+    queue: DispatchQueue?,
+    completionHandler: @escaping (DefaultDownloadResponse) -> Void)
     -> Self
 
 // Response Data Handler - Serialized into Data
 func responseData(
-    queue: DispatchQueue?, 
-    completionHandler: @escaping (DataResponse<Data>) -> Void) 
+    queue: DispatchQueue?,
+    completionHandler: @escaping (DataResponse<Data>) -> Void)
     -> Self
 
 // Response String Handler - Serialized into String
 func responseString(
-    queue: DispatchQueue?, 
-    encoding: String.Encoding?, 
+    queue: DispatchQueue?,
+    encoding: String.Encoding?,
     completionHandler: @escaping (DataResponse<String>) -> Void)
     -> Self
 
 // Response JSON Handler - Serialized into Any
 func responseJSON(
-    queue: DispatchQueue?, 
+    queue: DispatchQueue?,
     completionHandler: @escaping (DataResponse<Any>) -> Void)
     -> Self
 
 // Response PropertyList (plist) Handler - Serialized into Any
 func responsePropertyList(
-    queue: DispatchQueue?, 
+    queue: DispatchQueue?,
     completionHandler: @escaping (DataResponse<Any>) -> Void))
     -> Self
 ```
 
-None of the response handlers perform any validation of the `HTTPURLResponse` it gets back from the server. 
+None of the response handlers perform any validation of the `HTTPURLResponse` it gets back from the server.
 
 > For example, response status codes in the `400..<499` and `500..<599` ranges do NOT automatically trigger an `Error`. Alamofire uses [Response Validation](#response-validation) method chaining to achieve this.
 
@@ -241,7 +241,7 @@ Alamofire.request("https://httpbin.org/get").response { response in
     print("Request: \(response.request)")
     print("Response: \(response.response)")
     print("Error: \(response.data)")
-    
+
     if let data = data, let utf8Text = String(data: data, encoding: .utf8) {
     	print("Data: \(utf8Text)")
     }
@@ -333,9 +333,9 @@ Alamofire.request("https://httpbin.org/get")
     .validate(contentType: ["application/json"])
     .response { response in
 	    switch response.result {
-	    case .Success:
+	    case .success:
     	    print("Validation Successful")
-	    case .Failure(let error):
+	    case .failure(let error):
     	    print(error)
 	    }
     }
@@ -348,9 +348,9 @@ Automatically validates status code within `200...299` range, and that the `Cont
 ```swift
 Alamofire.request("https://httpbin.org/get").validate().responseJSON { response in
     switch response.result {
-    case .Success:
+    case .success:
         print("Validation Successful")
-    case .Failure(let error):
+    case .failure(let error):
         print(error)
     }
 }
@@ -526,7 +526,7 @@ The default Alamofire `SessionManager` provides a default set of headers for eve
 
 - `Accept-Encoding`, which defaults to `gzip;q=1.0, compress;q=0.5`, per [RFC 7230 §4.2.3](https://tools.ietf.org/html/rfc7230#section-4.2.3).
 - `Accept-Language`, which defaults to up to the top 6 preferred languages on the system, formatted like `en;q=1.0`, per [RFC 7231 §5.3.5](https://tools.ietf.org/html/rfc7231#section-5.3.5).
-* `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 9.3.0) Alamofire/3.4.2`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
+* `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
 
 If you need to customize these headers, a custom `URLSessionManagerConfiguration` should be created, the `defaultHTTPHeaders` property updated and the configuration applied to a new `SessionManager` instance.
 
@@ -589,11 +589,11 @@ Alamofire.request("https://httpbin.org/basic-auth/\(user)/\(password)")
     }
 ```
 
-> It is important to note that when using a `URLCredential` for authentication, the underlying `URLSession` will actually end up making two requests if a challenge is issued by the server. The first request will not include the credential which "may" trigger a challenge from the server. The challenge is then received by Alamofire, the credential is appended and the request is retried.
+> It is important to note that when using a `URLCredential` for authentication, the underlying `URLSession` will actually end up making two requests if a challenge is issued by the server. The first request will not include the credential which "may" trigger a challenge from the server. The challenge is then received by Alamofire, the credential is appended and the request is retried by the underlying `URLSession`.
 
 ### Downloading Data to a File
 
-Requests made in Alamofire that fetch data from a server can download the data in-memory or on-disk. The `Alamofire.request` APIs used in all the examples so far always download the server data in-memory. This is great for smaller payloads because it's more efficient, but really bad for larger payloads because the download could run your entire application out-of-memory. Because of this, you can also use the `Alamofire.download` APIs to download the server data to a temporary file on-disk.
+Requests made in Alamofire that fetch data from a server can download the data in-memory or on-disk. The `Alamofire.request` APIs used in all the examples so far always downloads the server data in-memory. This is great for smaller payloads because it's more efficient, but really bad for larger payloads because the download could run your entire application out-of-memory. Because of this, you can also use the `Alamofire.download` APIs to download the server data to a temporary file on-disk.
 
 ```swift
 Alamofire.download("https://httpbin.org/image/png").responseData { response in
@@ -683,15 +683,15 @@ class ImageRequestor {
 		let destination: DownloadRequest.DownloadFileDestination = { _, _ in
 			let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
 			let fileURL = documentsURL.appendPathComponent("pig.png")
-		
+
 		    return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
 		}
-    
+
     	let request: DownloadRequest
 
         if let resumeData = resumeData {
 			request = Alamofire.download(resourceWithin: resumeData)
-		} else {            
+		} else {
 			request = Alamofire.download("https://httpbin.org/image/png")
         }
 
@@ -983,7 +983,7 @@ Generally speaking, either the default implementation or the override closures s
 
 ### Request
 
-The result of a `request`, `download`, `upload` or `stream` methods are a `DataRequest`, `DownloadRequest`, `UploadRequest` and StreamRequest` which all inherit from `Request`. All `Request` instances are always created by an owning session manager, and never initialized directly.
+The result of a `request`, `download`, `upload` or `stream` methods are a `DataRequest`, `DownloadRequest`, `UploadRequest` and `StreamRequest` which all inherit from `Request`. All `Request` instances are always created by an owning session manager, and never initialized directly.
 
 Each subclass has specialized methods such as `authenticate`, `validate`, `responseJSON` and `uploadProgress` that each return the caller instance in order to facilitate method chaining.
 
@@ -1009,7 +1009,7 @@ let url = URL(string: urlString)!
 Alamofire.request(url, method: .post)
 
 let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
-Alamofire.request(.POST, URLComponents)
+Alamofire.request(.post, URLComponents)
 ```
 
 Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLStringConvertible` as a convenient way to map domain-specific models to server resources.
@@ -1089,7 +1089,7 @@ enum Router: URLRequestConvertible {
 ```
 
 ```swift
-Alamofire.request(Router.search(query: "foo bar", page: 1)) // ?q=foo%20bar&offset=50
+Alamofire.request(resource: Router.search(query: "foo bar", page: 1)) // ?q=foo%20bar&offset=50
 ```
 
 ##### CRUD & Authorization
@@ -1158,7 +1158,7 @@ enum Router: URLRequestConvertible {
 ```
 
 ```swift
-Alamofire.request(Router.ReadUser("mattt")) // GET /users/mattt
+Alamofire.request(resource: Router.ReadUser("mattt")) // GET /users/mattt
 ```
 
 ### Adapting and Retrying Requests
@@ -1174,7 +1174,7 @@ The `RequestAdapter` protocol allows each `Request` made on a `SessionManager` t
 ```swift
 class AccessTokenAdapter: RequestAdapter {
 	private let accessToken: String
-	
+
 	init(accessToken: String) {
 		self.accessToken = accessToken
 	}
@@ -1329,9 +1329,9 @@ sessionManager.request(urlString).validate().responseJSON { response in
 }
 ```
 
-Once the `OAuth2Handler` is applied as both the `adapter` and `retrier` for the `SessionManager`, it will handle an invalid access token error by automatically refreshing the access token and retrying all failed requests in the same order they failed. 
+Once the `OAuth2Handler` is applied as both the `adapter` and `retrier` for the `SessionManager`, it will handle an invalid access token error by automatically refreshing the access token and retrying all failed requests in the same order they failed.
 
-> If you needed them to execute in the same order they were created, you could sort them by their task identifiers. 
+> If you needed them to execute in the same order they were created, you could sort them by their task identifiers.
 
 The example above only checks for a `401` response code which is not nearly robust enough, but does demonstrate how one could check for an invalid access token error. In a production application, one would want to check the `realm` and most likely the `www-authenticate` header response although it depends on the OAuth2 implementation.
 
@@ -1341,17 +1341,17 @@ Another important note is that this authentication system could be shared betwee
 
 #### Handling Errors
 
-Before implementing custom response serializers or object serialization methods, it's important to be prepared to handle any errors that may occur. The recommended way of handling these errors is by creating your own enumeration that conforms to `Error`. 
+Before implementing custom response serializers or object serialization methods, it's important to consider how to handle any errors that may occur. There are two basic options: passing existing errors along unmodified, to be dealt with at response time; or, wrapping all errors in an `Error` type specific to your app.
 
-For example, here's a simple `BackendError` which will be used in later examples:
+For example, here's a simple `BackendError` enum which will be used in later examples:
 
 ```swift
 enum BackendError: Error {
-    case network(error: Error)
-    case dataSerialization(reason: String)
+    case network(error: Error) // Capture any underlying Error from the URLSession API
+    case dataSerialization(error: Error)
     case jsonSerialization(error: Error)
-    case objectSerialization(reason: String)
     case xmlSerialization(error: Error)
+    case objectSerialization(reason: String)
 }
 ```
 
@@ -1365,10 +1365,14 @@ For example, here's how a response handler using [Ono](https://github.com/mattt/
 extension DataRequest {
     static func xmlResponseSerializer() -> DataResponseSerializer<ONOXMLDocument> {
         return DataResponseSerializer { request, response, data, error in
+            // Pass through any underlying URLSession error to the .network case.
             guard error == nil else { return .failure(BackendError.network(error: error!)) }
 
-            guard let validData = data else {
-                return .failure(BackendError.dataSerialization(reason: "Input data was nil."))
+            // Use Alamofire's existing data serializer to extract the data, passing the error as nil, as it has
+            // alreaady been handled.
+            let result = Request.serializeResponseData(response: response, data: data, error: nil)
+            guard case let .success(validData) = result else {
+                return .failure(BackendError.dataSerialization(error: result.error! as! AFError))
             }
 
             do {
@@ -1414,18 +1418,16 @@ extension DataRequest {
             guard error == nil else { return .failure(BackendError.network(error: error!)) }
 
             let jsonResponseSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
-            let result = jsonResponseSerializer.serializeResponse(request, response, data, error)
-
-            switch result {
-            case .success(let value):
-                if let response = response, let responseObject = T(response: response, representation: value) {
-                    return .success(responseObject)
-                } else {
-                    return .failure(BackendError.objectSerialization(reason: "JSON could not be serialized: \(value)"))
-                }
-            case .failure(let error):
-                return .failure(BackendError.jsonSerialization(error: error))
+            let result = jsonResponseSerializer.serializeResponse(request, response, data, nil)
+            guard case let .success(jsonObject) = result else {
+                return .failure(BackendError.jsonSerialization(error: result.error!))
             }
+
+            guard let response = response, let responseObject = T(response: response, representation: jsonObject) else {
+                return .failure(BackendError.objectSerialization(reason: "JSON could not be serialized: \(jsonObject)"))
+            }
+
+            return .success(responseObject)
         }
 
         return response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
@@ -1500,19 +1502,17 @@ extension DataRequest {
             guard error == nil else { return .failure(BackendError.network(error: error!)) }
 
             let jsonSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
-            let result = jsonSerializer.serializeResponse(request, response, data, error)
-
-            switch result {
-            case .success(let value):
-                if let response = response {
-                    return .success(T.collection(from: response, withRepresentation: value))
-                } else {
-                    let reason = "Response collection could not be serialized due to nil response"
-                    return .failure(BackendError.objectSerialization(reason: reason))
-                }
-            case .failure(let error):
-                return .failure(BackendError.jsonSerialization(error: error))
+            let result = jsonSerializer.serializeResponse(request, response, data, nil)
+            guard case let .success(jsonObject) = result else {
+                return .failure(BackendError.jsonSerialization(error: result.error!))
             }
+
+            guard let response = response else {
+                let reason = "Response collection could not be serialized due to nil response."
+                return .failure(BackendError.objectSerialization(reason: reason))
+            }
+
+            return .success(T.collection(from: response, withRepresentation: jsonObject))
         }
 
         return response(responseSerializer: responseSerializer, completionHandler: completionHandler)
@@ -1558,7 +1558,7 @@ Using a secure HTTPS connection when communicating with servers and web services
 
 #### ServerTrustPolicy
 
-The `ServerTrustPolicy` enumeration evaluates the server trust generally provided by an `NSURLAuthenticationChallenge` when connecting to a server over a secure HTTPS connection.
+The `ServerTrustPolicy` enumeration evaluates the server trust generally provided by an `URLAuthenticationChallenge` when connecting to a server over a secure HTTPS connection.
 
 ```swift
 let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
@@ -1570,7 +1570,7 @@ let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
 
 There are many different cases of server trust evaluation giving you complete control over the validation process:
 
-* `performDefaultEvaluation`: Uses the default server trust evaluation while allowing you to control whether to validate the host provided by the challenge. 
+* `performDefaultEvaluation`: Uses the default server trust evaluation while allowing you to control whether to validate the host provided by the challenge.
 * `pinCertificates`: Uses the pinned certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates.
 * `pinPublicKeys`: Uses the pinned public keys to validate the server trust. The server trust is considered valid if one of the pinned public keys match one of the server certificate public keys.
 * `disableEvaluation`: Disables all evaluation which in turn will always consider any server trust as valid.
@@ -1578,7 +1578,7 @@ There are many different cases of server trust evaluation giving you complete co
 
 #### Server Trust Policy Manager
 
-The `ServerTrustPolicyManager` is responsible for storing an internal mapping of server trust policies to a particular host. This allows Alamofire to evaluate each host against a different server trust policy. 
+The `ServerTrustPolicyManager` is responsible for storing an internal mapping of server trust policies to a particular host. This allows Alamofire to evaluate each host against a different server trust policy.
 
 ```swift
 let serverTrustPolicies: [String: ServerTrustPolicy] = [
