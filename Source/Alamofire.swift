@@ -27,29 +27,45 @@ import Foundation
 /// Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to
 /// construct URL requests.
 public protocol URLStringConvertible {
-    /// A URL that conforms to RFC 2396.
+    /// A URL string that conforms to RFC 2396.
     ///
     /// Methods accepting a `URLStringConvertible` type parameter parse it according to RFCs 1738 and 1808.
     ///
     /// See https://tools.ietf.org/html/rfc2396
     /// See https://tools.ietf.org/html/rfc1738
     /// See https://tools.ietf.org/html/rfc1808
-    var urlString: String { get }
+    var urlString: String? { get }
+
+    /// Returns a URL string that conforms to RFC 2396 or throws if an `Error` was encoutered.
+    ///
+    /// Methods accepting a `URLStringConvertible` type parameter parse it according to RFCs 1738 and 1808.
+    ///
+    /// - throws: An `Error` if underlying url string is `nil`.
+    ///
+    /// - returns: A URL string.
+    func asURLString() throws -> String
+}
+
+extension URLStringConvertible {
+    public var urlString: String? { return try? asURLString() }
 }
 
 extension String: URLStringConvertible {
-    /// The URL string.
-    public var urlString: String { return self }
+    /// Returns a URL string that conforms to RFC 2396.
+    public func asURLString() throws -> String { return self }
 }
 
 extension URL: URLStringConvertible {
-    /// The URL string.
-    public var urlString: String { return absoluteString }
+    /// Returns a URL string that conforms to RFC 2396.
+    public func asURLString() throws -> String { return absoluteString }
 }
 
 extension URLComponents: URLStringConvertible {
-    /// The URL string.
-    public var urlString: String { return url!.urlString }
+    /// Returns a URL string that conforms to RFC 2396.
+    public func asURLString() throws -> String {
+        guard let urlString = url?.urlString else { throw AFError.invalidURLString(urlString: self) }
+        return urlString
+    }
 }
 
 // MARK: -
@@ -57,12 +73,25 @@ extension URLComponents: URLStringConvertible {
 /// Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests.
 public protocol URLRequestConvertible {
     /// The URL request.
-    var urlRequest: URLRequest { get }
+    var urlRequest: URLRequest? { get }
+
+    /// Returns a URL request or throws if an `Error` was encountered.
+    ///
+    /// - throws: An `Error` if the underlying `URLRequest` is `nil`.
+    ///
+    /// - returns: A URL request.
+    func asURLRequest() throws -> URLRequest
 }
 
-extension URLRequest: URLRequestConvertible {
+extension URLRequestConvertible {
     /// The URL request.
-    public var urlRequest: URLRequest { return self }
+    public var urlRequest: URLRequest? { return try? asURLRequest() }
+}
+
+
+extension URLRequest: URLRequestConvertible {
+    /// Returns a URL request or throws if an `Error` was encountered.
+    public func asURLRequest() throws -> URLRequest { return self }
 }
 
 // MARK: -
@@ -75,10 +104,12 @@ extension URLRequest {
     /// - parameter headers:   The HTTP headers. `nil` by default.
     ///
     /// - returns: The new `URLRequest` instance.
-    public init(urlString: URLStringConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil) {
-        self.init(url: URL(string: urlString.urlString)!)
+    public init(urlString: URLStringConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil) throws {
+        let urlString = try urlString.asURLString()
 
-        if let request = urlString as? URLRequest { self = request }
+        guard let url = URL(string: urlString) else { throw AFError.invalidURLString(urlString: urlString) }
+
+        self.init(url: url)
 
         httpMethod = method.rawValue
 
@@ -89,9 +120,9 @@ extension URLRequest {
         }
     }
 
-    func adapt(using adapter: RequestAdapter?) -> URLRequest {
+    func adapt(using adapter: RequestAdapter?) throws -> URLRequest {
         guard let adapter = adapter else { return self }
-        return adapter.adapt(self)
+        return try adapter.adapt(self)
     }
 }
 

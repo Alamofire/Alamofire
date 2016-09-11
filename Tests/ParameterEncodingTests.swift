@@ -85,7 +85,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testURLParameterEncodeOneStringKeyStringValueParameterAppendedToQuery() {
         do {
             // Given
-            var mutableURLRequest = self.urlRequest.urlRequest
+            var mutableURLRequest = self.urlRequest
             var urlComponents = URLComponents(url: mutableURLRequest.url!, resolvingAgainstBaseURL: false)!
             urlComponents.query = "baz=qux"
             mutableURLRequest.url = urlComponents.url
@@ -529,7 +529,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testThatURLParameterEncodingEncodesGETParametersInURL() {
         do {
             // Given
-            var mutableURLRequest = self.urlRequest.urlRequest
+            var mutableURLRequest = self.urlRequest
             mutableURLRequest.httpMethod = HTTPMethod.get.rawValue
             let parameters = ["foo": 1, "bar": 2]
 
@@ -548,7 +548,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testThatURLParameterEncodingEncodesPOSTParametersInHTTPBody() {
         do {
             // Given
-            var mutableURLRequest = self.urlRequest.urlRequest
+            var mutableURLRequest = self.urlRequest
             mutableURLRequest.httpMethod = HTTPMethod.post.rawValue
             let parameters = ["foo": 1, "bar": 2]
 
@@ -572,7 +572,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testThatURLEncodedInURLParameterEncodingEncodesPOSTParametersInURL() {
         do {
             // Given
-            var mutableURLRequest = self.urlRequest.urlRequest
+            var mutableURLRequest = self.urlRequest
             mutableURLRequest.httpMethod = HTTPMethod.post.rawValue
             let parameters = ["foo": 1, "bar": 2]
 

@@ -46,7 +46,7 @@ open class TaskDelegate: NSObject {
 
     // MARK: Lifecycle
 
-    init(task: URLSessionTask) {
+    init(task: URLSessionTask?) {
         self.task = task
 
         self.queue = {
@@ -193,7 +193,7 @@ class DataTaskDelegate: TaskDelegate, URLSessionDataDelegate {
 
     // MARK: Lifecycle
 
-    override init(task: URLSessionTask) {
+    override init(task: URLSessionTask?) {
         mutableData = Data()
         progress = Progress(totalUnitCount: 0)
 
@@ -305,7 +305,7 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
 
     // MARK: Lifecycle
 
-    override init(task: URLSessionTask) {
+    override init(task: URLSessionTask?) {
         progress = Progress(totalUnitCount: 0)
         super.init(task: task)
     }
@@ -411,7 +411,7 @@ class UploadTaskDelegate: DataTaskDelegate {
 
     // MARK: Lifecycle
 
-    override init(task: URLSessionTask) {
+    override init(task: URLSessionTask?) {
         uploadProgress = Progress(totalUnitCount: 0)
         super.init(task: task)
     }

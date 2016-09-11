@@ -264,7 +264,7 @@ class SessionManagerTestCase: BaseTestCase {
         manager = nil
 
         // Then
-        XCTAssertTrue(request?.task.state == .suspended, "request task state should be '.Suspended'")
+        XCTAssertTrue(request?.task?.state == .suspended, "request task state should be '.Suspended'")
         XCTAssertNil(manager, "manager should be nil")
     }
 
@@ -282,7 +282,7 @@ class SessionManagerTestCase: BaseTestCase {
         manager = nil
 
         // Then
-        let state = request.task.state
+        let state = request.task?.state
         XCTAssertTrue(state == .canceling || state == .completed, "state should be .Canceling or .Completed")
         XCTAssertNil(manager, "manager should be nil")
     }
@@ -301,7 +301,7 @@ class SessionManagerTestCase: BaseTestCase {
         let request = sessionManager.request("https://httpbin.org/get")
 
         // Then
-        XCTAssertEqual(request.task.originalRequest?.httpMethod, adapter.method.rawValue)
+        XCTAssertEqual(request.task?.originalRequest?.httpMethod, adapter.method.rawValue)
     }
 
     func testThatSessionManagerCallsRequestAdapterWhenCreatingDownloadRequest() {
@@ -317,7 +317,7 @@ class SessionManagerTestCase: BaseTestCase {
         let request = sessionManager.download("https://httpbin.org/get", to: destination)
 
         // Then
-        XCTAssertEqual(request.task.originalRequest?.httpMethod, adapter.method.rawValue)
+        XCTAssertEqual(request.task?.originalRequest?.httpMethod, adapter.method.rawValue)
     }
 
     func testThatSessionManagerCallsRequestAdapterWhenCreatingUploadRequestWithData() {
@@ -332,7 +332,7 @@ class SessionManagerTestCase: BaseTestCase {
         let request = sessionManager.upload("data".data(using: .utf8)!, to: "https://httpbin.org/post")
 
         // Then
-        XCTAssertEqual(request.task.originalRequest?.httpMethod, adapter.method.rawValue)
+        XCTAssertEqual(request.task?.originalRequest?.httpMethod, adapter.method.rawValue)
     }
 
     func testThatSessionManagerCallsRequestAdapterWhenCreatingUploadRequestWithFile() {
@@ -348,7 +348,7 @@ class SessionManagerTestCase: BaseTestCase {
         let request = sessionManager.upload(fileURL, to: "https://httpbin.org/post")
 
         // Then
-        XCTAssertEqual(request.task.originalRequest?.httpMethod, adapter.method.rawValue)
+        XCTAssertEqual(request.task?.originalRequest?.httpMethod, adapter.method.rawValue)
     }
 
     func testThatSessionManagerCallsRequestAdapterWhenCreatingUploadRequestWithInputStream() {
@@ -364,7 +364,7 @@ class SessionManagerTestCase: BaseTestCase {
         let request = sessionManager.upload(inputStream, to: "https://httpbin.org/post")
 
         // Then
-        XCTAssertEqual(request.task.originalRequest?.httpMethod, adapter.method.rawValue)
+        XCTAssertEqual(request.task?.originalRequest?.httpMethod, adapter.method.rawValue)
     }
 
     // MARK: Tests - Request Retrier

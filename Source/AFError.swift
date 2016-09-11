@@ -27,6 +27,7 @@ import Foundation
 /// `AFError` is the error type returned by Alamofire. It encompasses a few different types of errors, each with
 /// their own associated reasons.
 ///
+/// - invalidURLString:            Returned when a URL string is missing or fails to create a valid `URL`.
 /// - parameterEncodingFailed:     Returned when a parameter encoding object throws an error during the encoding process.
 /// - multipartEncodingFailed:     Returned when some step in the multipart encoding process fails.
 /// - responseValidationFailed:    Returned when a `validate()` call fails.
@@ -124,6 +125,7 @@ public enum AFError: Error {
         case propertyListSerializationFailed(error: Error)
     }
 
+    case invalidURLString(urlString: URLStringConvertible)
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
     case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
     case responseValidationFailed(reason: ResponseValidationFailureReason)
@@ -133,6 +135,13 @@ public enum AFError: Error {
 // MARK: - Error Booleans
 
 extension AFError {
+    /// Returns whether the AFError is an invalid URL string error. When `true`, the `urlString` property will
+    /// contain the associated value.
+    public var isInvalidURLStringError: Bool {
+        if case .invalidURLString = self { return true }
+        return false
+    }
+
     /// Returns whether the AFError is a parameter encoding error. When `true`, the `underlyingError` property will
     /// contain the associated value.
     public var isParameterEncodingError: Bool {
@@ -170,6 +179,16 @@ extension AFError {
         switch self {
         case .multipartEncodingFailed(let reason):
             return reason.url
+        default:
+            return nil
+        }
+    }
+
+    /// The `URLStringConvertible` associated with the error.
+    public var urlString: URLStringConvertible? {
+        switch self {
+        case .invalidURLString(let urlString):
+            return urlString
         default:
             return nil
         }
@@ -321,6 +340,8 @@ extension AFError.ResponseSerializationFailureReason {
 extension AFError: LocalizedError {
     public var errorDescription: String? {
         switch self {
+        case .invalidURLString(let urlString):
+            return "URL string is not valid: \(urlString)"
         case .parameterEncodingFailed(let reason):
             return reason.localizedDescription
         case .multipartEncodingFailed(let reason):

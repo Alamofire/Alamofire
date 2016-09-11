@@ -337,19 +337,27 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Given
         class MockManager: SessionManager {
             override func request(resource urlRequest: URLRequestConvertible) -> DataRequest {
-                let originalRequest = urlRequest.urlRequest
-                let adaptedRequest = originalRequest.adapt(using: adapter)
+                do {
+                    let originalRequest = try urlRequest.asURLRequest()
+                    let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
 
-                let task: URLSessionDataTask = queue.syncResult { session.dataTask(with: adaptedRequest) }
+                    let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
 
-                let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
-                let request = MockDataRequest(session: session, task: task, originalTask: originalTask)
+                    let request = MockDataRequest(
+                        session: session,
+                        requestType: .data,
+                        task: task,
+                        originalTask: originalTask
+                    )
 
-                delegate[request.delegate.task] = request
+                    delegate[task] = request
 
-                if startRequestsImmediately { request.resume() }
+                    if startRequestsImmediately { request.resume() }
 
-                return request
+                    return request
+                } catch {
+                    return DataRequest(session: session, requestType: .data, error: error)
+                }
             }
 
             override func download(
@@ -357,19 +365,29 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 to destination: DownloadRequest.DownloadFileDestination? = nil)
                 -> DownloadRequest
             {
-                let originalRequest = urlRequest.urlRequest
-                let originalTask = DownloadRequest.Downloadable.request(originalRequest)
+                do {
+                    let originalRequest = try urlRequest.asURLRequest()
+                    let originalTask = DownloadRequest.Downloadable.request(originalRequest)
 
-                let task = originalTask.task(session: session, adapter: adapter, queue: queue)
-                let request = MockDownloadRequest(session: session, task: task, originalTask: originalTask)
+                    let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
 
-                request.downloadDelegate.destination = destination
+                    let request = MockDownloadRequest(
+                        session: session,
+                        requestType: .download,
+                        task: task,
+                        originalTask: originalTask
+                    )
 
-                delegate[request.delegate.task] = request
+                    request.downloadDelegate.destination = destination
 
-                if startRequestsImmediately { request.resume() }
+                    delegate[task] = request
 
-                return request
+                    if startRequestsImmediately { request.resume() }
+
+                    return request
+                } catch {
+                    return DownloadRequest(session: session, requestType: .download, error: error)
+                }
             }
         }
 

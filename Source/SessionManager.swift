@@ -231,15 +231,12 @@ open class SessionManager {
         headers: HTTPHeaders? = nil)
         -> DataRequest
     {
-        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
-
         do {
+            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
             let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
             return request(resource: encodedURLRequest)
         } catch {
-            let request = self.request(resource: urlRequest)
-            request.delegate.error = error
-            return request
+            return DataRequest(session: session, requestType: .data, error: error)
         }
     }
 
@@ -251,17 +248,21 @@ open class SessionManager {
     ///
     /// - returns: The created `DataRequest`.
     open func request(resource urlRequest: URLRequestConvertible) -> DataRequest {
-        let originalRequest = urlRequest.urlRequest
-        let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
+        do {
+            let originalRequest = try urlRequest.asURLRequest()
+            let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
 
-        let task = originalTask.task(session: session, adapter: adapter, queue: queue)
-        let request = DataRequest(session: session, task: task, originalTask: originalTask)
+            let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
+            let request = DataRequest(session: session, requestType: .data, task: task, originalTask: originalTask)
 
-        delegate[task] = request
+            delegate[task] = request
 
-        if startRequestsImmediately { request.resume() }
+            if startRequestsImmediately { request.resume() }
 
-        return request
+            return request
+        } catch {
+            return DataRequest(session: session, requestType: .data, error: error)
+        }
     }
 
     // MARK: - Download Request
@@ -294,15 +295,12 @@ open class SessionManager {
         to destination: DownloadRequest.DownloadFileDestination? = nil)
         -> DownloadRequest
     {
-        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
-
         do {
+            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
             let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
             return download(resource: encodedURLRequest, to: destination)
         } catch {
-            let request = download(resource: urlRequest, to: destination)
-            request.delegate.error = error
-            return request
+            return DownloadRequest(session: session, requestType: .download, error: error)
         }
     }
 
@@ -324,7 +322,12 @@ open class SessionManager {
         to destination: DownloadRequest.DownloadFileDestination? = nil)
         -> DownloadRequest
     {
-        return download(.request(urlRequest.urlRequest), to: destination)
+        do {
+            let urlRequest = try urlRequest.asURLRequest()
+            return download(.request(urlRequest), to: destination)
+        } catch {
+            return DownloadRequest(session: session, requestType: .download, error: error)
+        }
     }
 
     // MARK: Resume Data
@@ -359,16 +362,20 @@ open class SessionManager {
         to destination: DownloadRequest.DownloadFileDestination?)
         -> DownloadRequest
     {
-        let task = downloadable.task(session: session, adapter: adapter, queue: queue)
-        let request = DownloadRequest(session: session, task: task, originalTask: downloadable)
+        do {
+            let task = try downloadable.task(session: session, adapter: adapter, queue: queue)
+            let request = DownloadRequest(session: session, requestType: .download, task: task, originalTask: downloadable)
 
-        request.downloadDelegate.destination = destination
+            request.downloadDelegate.destination = destination
 
-        delegate[task] = request
+            delegate[task] = request
 
-        if startRequestsImmediately { request.resume() }
+            if startRequestsImmediately { request.resume() }
 
-        return request
+            return request
+        } catch {
+            return DownloadRequest(session: session, requestType: .download, error: error)
+        }
     }
 
     // MARK: - Upload Request
@@ -393,8 +400,12 @@ open class SessionManager {
         headers: HTTPHeaders? = nil)
         -> UploadRequest
     {
-        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
-        return upload(fileURL, with: urlRequest)
+        do {
+            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
+            return upload(fileURL, with: urlRequest)
+        } catch {
+            return UploadRequest(session: session, requestType: .upload, error: error)
+        }
     }
 
     /// Creates a `UploadRequest` from the specified `urlRequest` for uploading the `file`.
@@ -407,7 +418,12 @@ open class SessionManager {
     /// - returns: The created `UploadRequest`.
     @discardableResult
     open func upload(_ fileURL: URL, with urlRequest: URLRequestConvertible) -> UploadRequest {
-        return upload(.file(fileURL, urlRequest.urlRequest))
+        do {
+            let urlRequest = try urlRequest.asURLRequest()
+            return upload(.file(fileURL, urlRequest))
+        } catch {
+            return UploadRequest(session: session, requestType: .upload, error: error)
+        }
     }
 
     // MARK: Data
@@ -430,8 +446,12 @@ open class SessionManager {
         headers: HTTPHeaders? = nil)
         -> UploadRequest
     {
-        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
-        return upload(data, with: urlRequest)
+        do {
+            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
+            return upload(data, with: urlRequest)
+        } catch {
+            return UploadRequest(session: session, requestType: .upload, error: error)
+        }
     }
 
     /// Creates an `UploadRequest` from the specified `urlRequest` for uploading the `data`.
@@ -444,7 +464,12 @@ open class SessionManager {
     /// - returns: The created `UploadRequest`.
     @discardableResult
     open func upload(_ data: Data, with urlRequest: URLRequestConvertible) -> UploadRequest {
-        return upload(.data(data, urlRequest.urlRequest))
+        do {
+            let urlRequest = try urlRequest.asURLRequest()
+            return upload(.data(data, urlRequest))
+        } catch {
+            return UploadRequest(session: session, requestType: .upload, error: error)
+        }
     }
 
     // MARK: InputStream
@@ -467,8 +492,12 @@ open class SessionManager {
         headers: HTTPHeaders? = nil)
         -> UploadRequest
     {
-        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
-        return upload(stream, with: urlRequest)
+        do {
+            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
+            return upload(stream, with: urlRequest)
+        } catch {
+            return UploadRequest(session: session, requestType: .upload, error: error)
+        }
     }
 
     /// Creates an `UploadRequest` from the specified `urlRequest` for uploading the `stream`.
@@ -481,7 +510,12 @@ open class SessionManager {
     /// - returns: The created `UploadRequest`.
     @discardableResult
     open func upload(_ stream: InputStream, with urlRequest: URLRequestConvertible) -> UploadRequest {
-        return upload(.stream(stream, urlRequest.urlRequest))
+        do {
+            let urlRequest = try urlRequest.asURLRequest()
+            return upload(.stream(stream, urlRequest))
+        } catch {
+            return UploadRequest(session: session, requestType: .upload, error: error)
+        }
     }
 
     // MARK: MultipartFormData
@@ -519,14 +553,18 @@ open class SessionManager {
         headers: HTTPHeaders? = nil,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
-        let urlRequest = URLRequest(urlString: urlString, method: method, headers: headers)
+        do {
+            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
 
-        return upload(
-            multipartFormData: multipartFormData,
-            usingThreshold: encodingMemoryThreshold,
-            with: urlRequest,
-            encodingCompletion: encodingCompletion
-        )
+            return upload(
+                multipartFormData: multipartFormData,
+                usingThreshold: encodingMemoryThreshold,
+                with: urlRequest,
+                encodingCompletion: encodingCompletion
+            )
+        } catch {
+            DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
+        }
     }
 
     /// Encodes `multipartFormData` using `encodingMemoryThreshold` and calls `encodingCompletion` with new
@@ -562,13 +600,13 @@ open class SessionManager {
             let formData = MultipartFormData()
             multipartFormData(formData)
 
-            var urlRequestWithContentType = urlRequest.urlRequest
-            urlRequestWithContentType.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
+            do {
+                var urlRequestWithContentType = try urlRequest.asURLRequest()
+                urlRequestWithContentType.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
 
-            let isBackgroundSession = self.session.configuration.identifier != nil
+                let isBackgroundSession = self.session.configuration.identifier != nil
 
-            if formData.contentLength < encodingMemoryThreshold && !isBackgroundSession {
-                do {
+                if formData.contentLength < encodingMemoryThreshold && !isBackgroundSession {
                     let data = try formData.encode()
 
                     let encodingResult = MultipartFormDataEncodingResult.success(
@@ -578,17 +616,13 @@ open class SessionManager {
                     )
 
                     DispatchQueue.main.async { encodingCompletion?(encodingResult) }
-                } catch {
-                    DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
-                }
-            } else {
-                let fileManager = FileManager.default
-                let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-                let directoryURL = tempDirectoryURL.appendingPathComponent("org.alamofire.manager/multipart.form.data")
-                let fileName = UUID().uuidString
-                let fileURL = directoryURL.appendingPathComponent(fileName)
+                } else {
+                    let fileManager = FileManager.default
+                    let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+                    let directoryURL = tempDirectoryURL.appendingPathComponent("org.alamofire.manager/multipart.form.data")
+                    let fileName = UUID().uuidString
+                    let fileURL = directoryURL.appendingPathComponent(fileName)
 
-                do {
                     var directoryError: Error?
 
                     // Create directory inside serial queue to ensure two threads don't do this in parallel
@@ -612,9 +646,9 @@ open class SessionManager {
                         )
                         encodingCompletion?(encodingResult)
                     }
-                } catch {
-                    DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
                 }
+            } catch {
+                DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
             }
         }
     }
@@ -622,18 +656,22 @@ open class SessionManager {
     // MARK: Private - Upload Implementation
 
     private func upload(_ uploadable: UploadRequest.Uploadable) -> UploadRequest {
-        let task = uploadable.task(session: session, adapter: adapter, queue: queue)
-        let request = UploadRequest(session: session, task: task, originalTask: uploadable)
+        do {
+            let task = try uploadable.task(session: session, adapter: adapter, queue: queue)
+            let request = UploadRequest(session: session, requestType: .upload, task: task, originalTask: uploadable)
 
-        if case let .stream(inputStream, _) = uploadable {
-            request.delegate.taskNeedNewBodyStream = { _, _ in inputStream }
+            if case let .stream(inputStream, _) = uploadable {
+                request.delegate.taskNeedNewBodyStream = { _, _ in inputStream }
+            }
+
+            delegate[task] = request
+
+            if startRequestsImmediately { request.resume() }
+
+            return request
+        } catch {
+            return UploadRequest(session: session, requestType: .upload, error: error)
         }
-
-        delegate[task] = request
-
-        if startRequestsImmediately { request.resume() }
-
-        return request
     }
 
 #if !os(watchOS)
@@ -672,14 +710,18 @@ open class SessionManager {
     // MARK: Private - Stream Implementation
 
     private func stream(_ streamable: StreamRequest.Streamable) -> StreamRequest {
-        let task = streamable.task(session: session, adapter: adapter, queue: queue)
-        let request = StreamRequest(session: session, task: task, originalTask: streamable)
+        do {
+            let task = try streamable.task(session: session, adapter: adapter, queue: queue)
+            let request = StreamRequest(session: session, requestType: .upload, task: task, originalTask: streamable)
 
-        delegate[task] = request
+            delegate[task] = request
 
-        if startRequestsImmediately { request.resume() }
+            if startRequestsImmediately { request.resume() }
 
-        return request
+            return request
+        } catch {
+            return StreamRequest(session: session, requestType: .upload, error: error)
+        }
     }
 
 #endif
@@ -689,15 +731,20 @@ open class SessionManager {
     func retry(_ request: Request) -> Bool {
         guard let originalTask = request.originalTask else { return false }
 
-        let task = originalTask.task(session: session, adapter: adapter, queue: queue)
+        do {
+            let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
 
-        request.delegate.task = task // resets all task delegate data
+            request.delegate.task = task // resets all task delegate data
 
-        request.startTime = CFAbsoluteTimeGetCurrent()
-        request.endTime = nil
+            request.startTime = CFAbsoluteTimeGetCurrent()
+            request.endTime = nil
 
-        task.resume()
+            task.resume()
 
-        return true
+            return true
+        } catch {
+            request.delegate.error = error
+            return false
+        }
     }
 }
