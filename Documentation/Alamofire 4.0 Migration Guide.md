@@ -82,20 +82,6 @@ Alamofire.request(urlString).response { response in // method defaults to `.get`
 }
 ```
 
-#### Data Request - Simple with URL request
-
-```swift
-// Alamofire 3
-Alamofire.request(urlRequest).validate().responseData { response in
-	debugPrint(response)
-}
-
-// Alamofire 4
-Alamofire.request(resource: urlRequest).validate().responseData { response in
-	debugPrint(response)
-}
-```
-
 #### Data Request - Complex with URL string
 
 ```swift
@@ -168,7 +154,7 @@ Alamofire.download(urlRequest, destination: destination).validate().responseData
 }
 
 // Alamofire 4
-Alamofire.download(resource: urlRequest, to: destination).validate().responseData { response in
+Alamofire.download(urlRequest, to: destination).validate().responseData { response in
 	debugPrint(response)
 	print(response.temporaryURL)
 	print(response.destinationURL)
@@ -289,9 +275,9 @@ As you can see, there are many breaking API changes, but the common APIs still a
 
 There are two changes to the `URLStringConvertible` protocol that are worth noting.
 
-#### API Changes
+#### URLConvertible
 
-The first MAJOR change worth noting on the `URLStringConvertible` is the fact that it's APIs have changed. In Alamofire 3.x, the `URLStringConvertible` was defined as:
+The first MAJOR change worth noting on the `URLStringConvertible` is that it has been renamed to `URLConvertible`. In Alamofire 3.x, the `URLStringConvertible` was defined as:
 
 ```swift
 public protocol URLStringConvertible {
@@ -299,30 +285,25 @@ public protocol URLStringConvertible {
 }
 ```
 
-Now in Alamofire 4, it is defined as:
+Now in Alamofire 4, the `URLConvertible` protocol is defined as:
 
 ```swift
-public protocol URLStringConvertible {
-    var urlString: String? { get }
-    func asURLString() throws -> String
-}
-
-extension URLStringConvertible {
-    public var urlString: String? { return try? asURLString() }
+public protocol URLConvertible {
+    func asURL() throws -> URL
 }
 ```
 
-As you can see, the `urlString` property still exists, but is now optional and lowercased. It is also implemented in a protocol extension, so you don't ever need to declare it on your own extensions. The new addition is the `asURLString` method that throws. To explain, let's first backup.
+As you can see, the `URLString` property is completely gone and replaced by a new `asURL` method that throws. To explain, let's first backup.
 
 A VERY common problem in Alamofire is that users forget to percent escape their URL strings and Alamofire will crash. Up until now, we (the Alamofire team) have taken the stance that this is how Alamofire is designed and your URLs need to conform to [RFC 2396](https://tools.ietf.org/html/rfc2396). This is certainly not ideal for the community because we all would rather have Alamofire tell us that our URL was invalid rather than having it crash.
 
-Now, back to the `URLStringConvertible` protocol. The reason Alamofire was not previously able to safely handle invalid URL strings was, in fact, due to the lack of safety on `URLStringConvertible`. It's not possible for Alamofire to know how to intelligently make an invalid URL string valid. Therefore, if the `URL` is unable to be created from the `URLStringConvertible`, an `AFError.invalidURLString` error is thrown.
+Now, back to the new `URLConvertible` protocol. The reason Alamofire was not previously able to safely handle invalid URL strings was, in fact, due to the lack of safety on `URLStringConvertible`. It's not possible for Alamofire to know how to intelligently make an invalid URL string valid. Therefore, if the `URL` is unable to be created from the `URLConvertible`, an `AFError.invalidURL` error is thrown.
 
-This change (along with many others) allows Alamofire to safely handle invalid URL strings and report the error back in the response handlers.
+This change (along with many others) allows Alamofire to safely handle invalid URLs and report the error back in the response handlers.
 
 #### URLRequest Conformance
 
-The `URLRequest` no longer conforms to the `URLStringConvertible` protocol. This was always a bit of a stretch in the previous versions of Alamofire and wasn't really necessary. It also had a high potential to introduce ambiguity into many Alamofire APIs. Because of these reasons, `URLRequest` no longer conforms to `URLStringConvertible`.
+The `URLRequest` no longer conforms to the `URLStringConvertible`, now `URLConvertible` protocol. This was always a bit of a stretch in the previous versions of Alamofire and wasn't really necessary. It also had a high potential to introduce ambiguity into many Alamofire APIs. Because of these reasons, `URLRequest` no longer conforms to `URLStringConvertible` (now `URLConvertible`).
 
 What this means in code is that you can no longer do the following:
 
@@ -335,7 +316,7 @@ Instead, in Alamofire 4, you now have to do the following:
 
 ```swift
 let urlRequest = URLRequest(url: URL(string: "https://httpbin.org/get")!)
-let urlString = urlRequest.url?.urlString
+let urlString = urlRequest.url?.absoluteString
 ```
 
 > See [PR-1505](https://github.com/Alamofire/Alamofire/pull/1505) for more info.
@@ -354,18 +335,13 @@ Now, in Alamofire 4, it is:
 
 ```swift
 public protocol URLRequestConvertible {
-    var urlRequest: URLRequest? { get }
     func asURLRequest() throws -> URLRequest
-}
-
-extension URLRequestConvertible {
-    public var urlRequest: URLRequest? { return try? asURLRequest() }
 }
 ```
 
-As you can see, the `urlRequest` property still exists, but is now optional and lowercased and is implemented in the protocol extension. The new addition is the `asURLRequest` method that throws when encountering an error generating the `URLRequest`.
+As you can see, the `URLRequest` property has been replaced by an `asURLRequest` method that throws when encountering an error generating the `URLRequest`.
 
-The most likely place this will affect your code is in the `Router` design pattern. If you have a `Router`, it's going to have to change, but for the better! You will now implement the `asURLRequest` method instead of the property which gives you the ability to throw an error if necessary. You no longer have to force unwrap unsafe data or parameters. Any error encountered in a `Router` can now be automatically handled by Alamofire.
+The most likely place this will affect your code is in the `Router` design pattern. If you have a `Router`, it's going to have to change, but for the better! You will now implement the `asURLRequest` method instead of the property which gives you the ability to throw an error if necessary. You no longer have to force unwrap unsafe data or parameters or wrap `ParameterEncoding` in a do-catch. Any error encountered in a `Router` can now be automatically handled by Alamofire.
 
 > See [PR-1505](https://github.com/Alamofire/Alamofire/pull/1505) for more info.
 
@@ -483,6 +459,7 @@ Alamofire 4 contains many new features and enhancments on existing ones. This se
 
 Alamofire 4 contains a completely new error system that adopts the new pattern proposed in [SE-0112](https://github.com/apple/swift-evolution/blob/master/proposals/0112-nserror-bridging.md). At the heart of the new error system is `AFError`, a new `Error` type enumeration backed by four main cases.
 
+- `.invalidURL(url: URLConvertible)` - Returned when a `URLConvertible` type fails to create a valid `URL`.
 - `.parameterEncodingFailed(reason: ParameterEncodingFailureReason)` - Returned when a parameter encoding object throws an error during the encoding process.
 - `.multipartEncodingFailed(reason: MultipartEncodingFailureReason)` - Returned when some step in the multipart encoding process fails. 
 - `.responseValidationFailed(reason: ResponseValidationFailureReason)` - Returned when a `validate()` call fails.
@@ -496,6 +473,8 @@ Alamofire.request(urlString).responseJSON { response in
 
     if let error = error as? AFError {
         switch error {
+        case .invalidURL(let url):
+            print("Invalid URL: \(url) - \(error.localizedDescription)")
         case .parameterEncodingFailed(let reason):
             print("Parameter encoding failed: \(error.localizedDescription)")
             print("Failure Reason: \(reason)")
