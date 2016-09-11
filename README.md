@@ -1020,7 +1020,7 @@ Applications interacting with web applications in a significant manner are encou
 extension User: URLStringConvertible {
     static let baseURLString = "https://example.com"
 
-    var urlString: String {
+    func asURLString() throws -> String {
         return User.baseURLString + "/users/\(username)/"
     }
 }
@@ -1066,7 +1066,7 @@ enum Router: URLRequestConvertible {
 
     // MARK: URLRequestConvertible
 
-    var urlRequest: URLRequest {
+    func asURLRequest() throws -> URLRequest {
         let result: (path: String, parameters: Parameters) = {
             switch self {
             case let .search(query, page) where page > 0:
@@ -1133,23 +1133,21 @@ enum Router: URLRequestConvertible {
 
     // MARK: URLRequestConvertible
 
-    var urlRequest: URLRequest {
-        let url = URL(string: Router.baseURLString)!
+    func asURLRequest() throws -> URLRequest {
+    	guard let url = URL(string: Router.baseURLString) else {
+    	    throw AFError.invalidURLString(urlString: Router.baseURLString)
+    	}
 
         var urlRequest = URLRequest(url: url.appendingPathComponent(path))
         urlRequest.httpMethod = method.rawValue
 
-        do {
-            switch self {
-            case .createUser(let parameters):
-                urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
-            case .updateUser(_, let parameters):
-                urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
-            default:
-                break
-            }
-        } catch {
-            // No-op
+        switch self {
+        case .createUser(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+        case .updateUser(_, let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+        default:
+            break
         }
 
         return urlRequest
@@ -1179,7 +1177,7 @@ class AccessTokenAdapter: RequestAdapter {
 		self.accessToken = accessToken
 	}
 
-	func adapt(_ urlRequest: URLRequest) -> URLRequest {
+	func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
 	    var urlRequest = urlRequest
 
 	    if urlRequest.urlString.hasPrefix("https://httpbin.org") {
@@ -1238,7 +1236,7 @@ class OAuth2Handler: RequestAdapter, RequestRetrier {
 
     // MARK: - RequestAdapter
 
-    func adapt(_ urlRequest: URLRequest) -> URLRequest {
+    func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
         if let url = urlRequest.url, url.urlString.hasPrefix(baseURLString) {
             var urlRequest = urlRequest
             urlRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
