@@ -236,7 +236,7 @@ open class SessionManager {
             let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
             return request(resource: encodedURLRequest)
         } catch {
-            return DataRequest(session: session, requestType: .data, error: error)
+            return request(failedWith: error)
         }
     }
 
@@ -261,8 +261,16 @@ open class SessionManager {
 
             return request
         } catch {
-            return DataRequest(session: session, requestType: .data, error: error)
+            return request(failedWith: error)
         }
+    }
+
+    // MARK: Private - Request Implementation
+
+    private func request(failedWith error: Error) -> DataRequest {
+        let request = DataRequest(session: session, requestType: .data, error: error)
+        if startRequestsImmediately { request.resume() }
+        return request
     }
 
     // MARK: - Download Request
@@ -300,7 +308,7 @@ open class SessionManager {
             let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
             return download(resource: encodedURLRequest, to: destination)
         } catch {
-            return DownloadRequest(session: session, requestType: .download, error: error)
+            return download(failedWith: error)
         }
     }
 
@@ -326,7 +334,7 @@ open class SessionManager {
             let urlRequest = try urlRequest.asURLRequest()
             return download(.request(urlRequest), to: destination)
         } catch {
-            return DownloadRequest(session: session, requestType: .download, error: error)
+            return download(failedWith: error)
         }
     }
 
@@ -374,8 +382,14 @@ open class SessionManager {
 
             return request
         } catch {
-            return DownloadRequest(session: session, requestType: .download, error: error)
+            return download(failedWith: error)
         }
+    }
+
+    private func download(failedWith error: Error) -> DownloadRequest {
+        let download = DownloadRequest(session: session, requestType: .download, error: error)
+        if startRequestsImmediately { download.resume() }
+        return download
     }
 
     // MARK: - Upload Request
@@ -404,7 +418,7 @@ open class SessionManager {
             let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
             return upload(fileURL, with: urlRequest)
         } catch {
-            return UploadRequest(session: session, requestType: .upload, error: error)
+            return upload(failedWith: error)
         }
     }
 
@@ -422,7 +436,7 @@ open class SessionManager {
             let urlRequest = try urlRequest.asURLRequest()
             return upload(.file(fileURL, urlRequest))
         } catch {
-            return UploadRequest(session: session, requestType: .upload, error: error)
+            return upload(failedWith: error)
         }
     }
 
@@ -450,7 +464,7 @@ open class SessionManager {
             let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
             return upload(data, with: urlRequest)
         } catch {
-            return UploadRequest(session: session, requestType: .upload, error: error)
+            return upload(failedWith: error)
         }
     }
 
@@ -468,7 +482,7 @@ open class SessionManager {
             let urlRequest = try urlRequest.asURLRequest()
             return upload(.data(data, urlRequest))
         } catch {
-            return UploadRequest(session: session, requestType: .upload, error: error)
+            return upload(failedWith: error)
         }
     }
 
@@ -496,7 +510,7 @@ open class SessionManager {
             let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
             return upload(stream, with: urlRequest)
         } catch {
-            return UploadRequest(session: session, requestType: .upload, error: error)
+            return upload(failedWith: error)
         }
     }
 
@@ -514,7 +528,7 @@ open class SessionManager {
             let urlRequest = try urlRequest.asURLRequest()
             return upload(.stream(stream, urlRequest))
         } catch {
-            return UploadRequest(session: session, requestType: .upload, error: error)
+            return upload(failedWith: error)
         }
     }
 
@@ -670,8 +684,14 @@ open class SessionManager {
 
             return request
         } catch {
-            return UploadRequest(session: session, requestType: .upload, error: error)
+            return upload(failedWith: error)
         }
+    }
+
+    private func upload(failedWith error: Error) -> UploadRequest {
+        let upload = UploadRequest(session: session, requestType: .upload, error: error)
+        if startRequestsImmediately { upload.resume() }
+        return upload
     }
 
 #if !os(watchOS)
@@ -720,8 +740,14 @@ open class SessionManager {
 
             return request
         } catch {
-            return StreamRequest(session: session, requestType: .upload, error: error)
+            return stream(failedWith: error)
         }
+    }
+
+    private func stream(failedWith error: Error) -> StreamRequest {
+        let stream = StreamRequest(session: session, requestType: .stream, error: error)
+        if startRequestsImmediately { stream.resume() }
+        return stream
     }
 
 #endif
