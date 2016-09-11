@@ -342,13 +342,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                     let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
 
                     let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
-
-                    let request = MockDataRequest(
-                        session: session,
-                        requestType: .data,
-                        task: task,
-                        originalTask: originalTask
-                    )
+                    let request = MockDataRequest(session: session, requestTask: .data(originalTask, task))
 
                     delegate[task] = request
 
@@ -356,7 +350,9 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
                     return request
                 } catch {
-                    return DataRequest(session: session, requestType: .data, error: error)
+                    let request = DataRequest(session: session, requestTask: .data(nil, nil), error: error)
+                    if startRequestsImmediately { request.resume() }
+                    return request
                 }
             }
 
@@ -370,13 +366,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                     let originalTask = DownloadRequest.Downloadable.request(originalRequest)
 
                     let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
-
-                    let request = MockDownloadRequest(
-                        session: session,
-                        requestType: .download,
-                        task: task,
-                        originalTask: originalTask
-                    )
+                    let request = MockDownloadRequest(session: session, requestTask: .download(originalTask, task))
 
                     request.downloadDelegate.destination = destination
 
@@ -386,7 +376,9 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
                     return request
                 } catch {
-                    return DownloadRequest(session: session, requestType: .download, error: error)
+                    let download = DownloadRequest(session: session, requestTask: .download(nil, nil), error: error)
+                    if startRequestsImmediately { download.resume() }
+                    return download
                 }
             }
         }

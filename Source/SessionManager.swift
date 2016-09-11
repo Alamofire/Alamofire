@@ -253,7 +253,7 @@ open class SessionManager {
             let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
 
             let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
-            let request = DataRequest(session: session, requestType: .data, task: task, originalTask: originalTask)
+            let request = DataRequest(session: session, requestTask: .data(originalTask, task))
 
             delegate[task] = request
 
@@ -268,7 +268,7 @@ open class SessionManager {
     // MARK: Private - Request Implementation
 
     private func request(failedWith error: Error) -> DataRequest {
-        let request = DataRequest(session: session, requestType: .data, error: error)
+        let request = DataRequest(session: session, requestTask: .data(nil, nil), error: error)
         if startRequestsImmediately { request.resume() }
         return request
     }
@@ -372,7 +372,7 @@ open class SessionManager {
     {
         do {
             let task = try downloadable.task(session: session, adapter: adapter, queue: queue)
-            let request = DownloadRequest(session: session, requestType: .download, task: task, originalTask: downloadable)
+            let request = DownloadRequest(session: session, requestTask: .download(downloadable, task))
 
             request.downloadDelegate.destination = destination
 
@@ -387,7 +387,7 @@ open class SessionManager {
     }
 
     private func download(failedWith error: Error) -> DownloadRequest {
-        let download = DownloadRequest(session: session, requestType: .download, error: error)
+        let download = DownloadRequest(session: session, requestTask: .download(nil, nil), error: error)
         if startRequestsImmediately { download.resume() }
         return download
     }
@@ -672,24 +672,24 @@ open class SessionManager {
     private func upload(_ uploadable: UploadRequest.Uploadable) -> UploadRequest {
         do {
             let task = try uploadable.task(session: session, adapter: adapter, queue: queue)
-            let request = UploadRequest(session: session, requestType: .upload, task: task, originalTask: uploadable)
+            let upload = UploadRequest(session: session, requestTask: .upload(uploadable, task))
 
             if case let .stream(inputStream, _) = uploadable {
-                request.delegate.taskNeedNewBodyStream = { _, _ in inputStream }
+                upload.delegate.taskNeedNewBodyStream = { _, _ in inputStream }
             }
 
-            delegate[task] = request
+            delegate[task] = upload
 
-            if startRequestsImmediately { request.resume() }
+            if startRequestsImmediately { upload.resume() }
 
-            return request
+            return upload
         } catch {
             return upload(failedWith: error)
         }
     }
 
     private func upload(failedWith error: Error) -> UploadRequest {
-        let upload = UploadRequest(session: session, requestType: .upload, error: error)
+        let upload = UploadRequest(session: session, requestTask: .upload(nil, nil), error: error)
         if startRequestsImmediately { upload.resume() }
         return upload
     }
@@ -732,7 +732,7 @@ open class SessionManager {
     private func stream(_ streamable: StreamRequest.Streamable) -> StreamRequest {
         do {
             let task = try streamable.task(session: session, adapter: adapter, queue: queue)
-            let request = StreamRequest(session: session, requestType: .upload, task: task, originalTask: streamable)
+            let request = StreamRequest(session: session, requestTask: .stream(streamable, task))
 
             delegate[task] = request
 
@@ -745,7 +745,7 @@ open class SessionManager {
     }
 
     private func stream(failedWith error: Error) -> StreamRequest {
-        let stream = StreamRequest(session: session, requestType: .stream, error: error)
+        let stream = StreamRequest(session: session, requestTask: .stream(nil, nil), error: error)
         if startRequestsImmediately { stream.resume() }
         return stream
     }

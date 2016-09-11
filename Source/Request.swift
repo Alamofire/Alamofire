@@ -77,8 +77,11 @@ open class Request {
     /// A closure executed when monitoring upload or download progress of a request.
     public typealias ProgressHandler = (Progress) -> Void
 
-    enum RequestType {
-        case data, download, upload, stream
+    enum RequestTask {
+        case data(TaskConvertible?, URLSessionTask?)
+        case download(TaskConvertible?, URLSessionTask?)
+        case upload(TaskConvertible?, URLSessionTask?)
+        case stream(TaskConvertible?, URLSessionTask?)
     }
 
     // MARK: Properties
@@ -119,25 +122,22 @@ open class Request {
 
     // MARK: Lifecycle
 
-    init(
-        session: URLSession,
-        requestType: RequestType,
-        task: URLSessionTask? = nil,
-        originalTask: TaskConvertible? = nil,
-        error: Error? = nil)
-    {
+    init(session: URLSession, requestTask: RequestTask, error: Error? = nil) {
         self.session = session
-        self.originalTask = originalTask
 
-        switch (task, requestType) {
-        case (is URLSessionUploadTask, .upload), (nil, .upload):
-            taskDelegate = UploadTaskDelegate(task: task)
-        case (is URLSessionDataTask, .data), (nil, .data):
+        switch requestTask {
+        case .data(let originalTask, let task):
             taskDelegate = DataTaskDelegate(task: task)
-        case (is URLSessionDownloadTask, .download), (nil, .download):
+            self.originalTask = originalTask
+        case .download(let originalTask, let task):
             taskDelegate = DownloadTaskDelegate(task: task)
-        default:
+            self.originalTask = originalTask
+        case .upload(let originalTask, let task):
+            taskDelegate = UploadTaskDelegate(task: task)
+            self.originalTask = originalTask
+        case .stream(let originalTask, let task):
             taskDelegate = TaskDelegate(task: task)
+            self.originalTask = originalTask
         }
 
         delegate.error = error
