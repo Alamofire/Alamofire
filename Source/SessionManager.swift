@@ -234,7 +234,7 @@ open class SessionManager {
         do {
             let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
             let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
-            return request(resource: encodedURLRequest)
+            return request(encodedURLRequest)
         } catch {
             return request(failedWith: error)
         }
@@ -247,7 +247,7 @@ open class SessionManager {
     /// - parameter urlRequest: The URL request.
     ///
     /// - returns: The created `DataRequest`.
-    open func request(resource urlRequest: URLRequestConvertible) -> DataRequest {
+    open func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
         do {
             let originalRequest = try urlRequest.asURLRequest()
             let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
@@ -306,7 +306,7 @@ open class SessionManager {
         do {
             let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
             let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
-            return download(resource: encodedURLRequest, to: destination)
+            return download(encodedURLRequest, to: destination)
         } catch {
             return download(failedWith: error)
         }
@@ -326,7 +326,7 @@ open class SessionManager {
     /// - returns: The created `DownloadRequest`.
     @discardableResult
     open func download(
-        resource urlRequest: URLRequestConvertible,
+        _ urlRequest: URLRequestConvertible,
         to destination: DownloadRequest.DownloadFileDestination? = nil)
         -> DownloadRequest
     {
@@ -356,7 +356,7 @@ open class SessionManager {
     /// - returns: The created `DownloadRequest`.
     @discardableResult
     open func download(
-        resourceWithin resumeData: Data,
+        resumingWith resumeData: Data,
         to destination: DownloadRequest.DownloadFileDestination? = nil)
         -> DownloadRequest
     {

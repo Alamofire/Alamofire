@@ -243,7 +243,7 @@ class SessionManagerTestCase: BaseTestCase {
         var response: HTTPURLResponse?
 
         // When
-        manager.request(resource: urlRequest)
+        manager.request(urlRequest)
             .response { resp in
                 response = resp.response
                 expectation.fulfill()
@@ -268,7 +268,7 @@ class SessionManagerTestCase: BaseTestCase {
         let urlRequest = URLRequest(url: url)
 
         // When
-        let request = manager?.request(resource: urlRequest)
+        let request = manager?.request(urlRequest)
         manager = nil
 
         // Then
@@ -285,7 +285,7 @@ class SessionManagerTestCase: BaseTestCase {
         let urlRequest = URLRequest(url: url)
 
         // When
-        let request = manager!.request(resource: urlRequest)
+        let request = manager!.request(urlRequest)
         request.cancel()
         manager = nil
 

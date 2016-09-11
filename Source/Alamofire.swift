@@ -173,8 +173,8 @@ public func request(
 ///
 /// - returns: The created `DataRequest`.
 @discardableResult
-public func request(resource urlRequest: URLRequestConvertible) -> DataRequest {
-    return SessionManager.default.request(resource: urlRequest)
+public func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+    return SessionManager.default.request(urlRequest)
 }
 
 // MARK: - Download Request
@@ -227,11 +227,11 @@ public func download(
 /// - returns: The created `DownloadRequest`.
 @discardableResult
 public func download(
-    resource urlRequest: URLRequestConvertible,
+    _ urlRequest: URLRequestConvertible,
     to destination: DownloadRequest.DownloadFileDestination? = nil)
     -> DownloadRequest
 {
-    return SessionManager.default.download(resource: urlRequest, to: destination)
+    return SessionManager.default.download(urlRequest, to: destination)
 }
 
 // MARK: Resume Data
@@ -250,11 +250,11 @@ public func download(
 /// - returns: The created `DownloadRequest`.
 @discardableResult
 public func download(
-    resourceWithin resumeData: Data,
+    resumingWith resumeData: Data,
     to destination: DownloadRequest.DownloadFileDestination? = nil)
     -> DownloadRequest
 {
-    return SessionManager.default.download(resourceWithin: resumeData, to: destination)
+    return SessionManager.default.download(resumingWith: resumeData, to: destination)
 }
 
 // MARK: - Upload Request

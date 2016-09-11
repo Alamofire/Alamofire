@@ -336,7 +336,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
         class MockManager: SessionManager {
-            override func request(resource urlRequest: URLRequestConvertible) -> DataRequest {
+            override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
                 do {
                     let originalRequest = try urlRequest.asURLRequest()
                     let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
@@ -357,7 +357,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
             }
 
             override func download(
-                resource urlRequest: URLRequestConvertible,
+                _ urlRequest: URLRequestConvertible,
                 to destination: DownloadRequest.DownloadFileDestination? = nil)
                 -> DownloadRequest
             {
@@ -604,19 +604,15 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(resource: urlRequest)
-            .validate()
-            .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
-            }
+        Alamofire.request(urlRequest).validate().response { resp in
+            requestError = resp.error
+            expectation1.fulfill()
+        }
 
-        Alamofire.download(resource: urlRequest)
-            .validate()
-            .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
-            }
+        Alamofire.download(urlRequest).validate().response { resp in
+            downloadError = resp.error
+            expectation2.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -679,19 +675,15 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(resource: urlRequest)
-            .validate()
-            .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
-            }
+        Alamofire.request(urlRequest).validate().response { resp in
+            requestError = resp.error
+            expectation1.fulfill()
+        }
 
-        Alamofire.download(resource: urlRequest)
-            .validate()
-            .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
-            }
+        Alamofire.download(urlRequest).validate().response { resp in
+            downloadError = resp.error
+            expectation2.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -715,19 +707,15 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(resource: urlRequest)
-            .validate()
-            .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
-            }
+        Alamofire.request(urlRequest).validate().response { resp in
+            requestError = resp.error
+            expectation1.fulfill()
+        }
 
-        Alamofire.download(resource: urlRequest)
-            .validate()
-            .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
-            }
+        Alamofire.download(urlRequest).validate().response { resp in
+            downloadError = resp.error
+            expectation2.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -749,19 +737,15 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(resource: urlRequest)
-            .validate()
-            .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
-            }
+        Alamofire.request(urlRequest).validate().response { resp in
+            requestError = resp.error
+            expectation1.fulfill()
+        }
 
-        Alamofire.download(resource: urlRequest)
-            .validate()
-            .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
-            }
+        Alamofire.download(urlRequest).validate().response { resp in
+            downloadError = resp.error
+            expectation2.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 

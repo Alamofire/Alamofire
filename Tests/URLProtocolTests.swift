@@ -148,7 +148,7 @@ class URLProtocolTestCase: BaseTestCase {
         var response: DefaultDataResponse?
 
         // When
-        manager.request(resource: urlRequest)
+        manager.request(urlRequest)
             .response { resp in
                 response = resp
                 expectation.fulfill()
