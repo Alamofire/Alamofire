@@ -38,7 +38,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.urlString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
@@ -54,7 +54,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.urlString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
 
         let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
@@ -76,7 +76,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.urlString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
@@ -91,7 +91,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.urlString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
 
         let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
@@ -115,7 +115,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.urlString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
@@ -132,7 +132,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
         XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.url?.urlString, urlString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
 
         let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")

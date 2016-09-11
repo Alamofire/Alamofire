@@ -212,10 +212,10 @@ open class SessionManager {
 
     // MARK: - Data Request
 
-    /// Creates a `DataRequest` to retrieve the contents of a URL based on the specified `urlString`, `method`,
-    /// `parameters`, `encoding` and `headers`.
+    /// Creates a `DataRequest` to retrieve the contents of the specified `url`, `method`, `parameters`, `encoding`
+    /// and `headers`.
     ///
-    /// - parameter urlString:  The URL string.
+    /// - parameter url:        The URL.
     /// - parameter method:     The HTTP method. `.get` by default.
     /// - parameter parameters: The parameters. `nil` by default.
     /// - parameter encoding:   The parameter encoding. `URLEncoding.default` by default.
@@ -224,7 +224,7 @@ open class SessionManager {
     /// - returns: The created `DataRequest`.
     @discardableResult
     open func request(
-        _ urlString: URLStringConvertible,
+        _ url: URLConvertible,
         method: HTTPMethod = .get,
         parameters: Parameters? = nil,
         encoding: ParameterEncoding = URLEncoding.default,
@@ -232,7 +232,7 @@ open class SessionManager {
         -> DataRequest
     {
         do {
-            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
+            let urlRequest = try URLRequest(url: url, method: method, headers: headers)
             let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
             return request(encodedURLRequest)
         } catch {
@@ -277,15 +277,15 @@ open class SessionManager {
 
     // MARK: URL Request
 
-    /// Creates a `DownloadRequest` to retrieve the contents of a URL based on the specified `urlString`, `method`,
-    /// `parameters`, `encoding`, `headers` and save them to the `destination`.
+    /// Creates a `DownloadRequest` to retrieve the contents the specified `url`, `method`, `parameters`, `encoding`,
+    /// `headers` and save them to the `destination`.
     ///
     /// If `destination` is not specified, the contents will remain in the temporary location determined by the
     /// underlying URL session.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter urlString:   The URL string.
+    /// - parameter url:         The URL.
     /// - parameter method:      The HTTP method. `.get` by default.
     /// - parameter parameters:  The parameters. `nil` by default.
     /// - parameter encoding:    The parameter encoding. `URLEncoding.default` by default.
@@ -295,7 +295,7 @@ open class SessionManager {
     /// - returns: The created `DownloadRequest`.
     @discardableResult
     open func download(
-        _ urlString: URLStringConvertible,
+        _ url: URLConvertible,
         method: HTTPMethod = .get,
         parameters: Parameters? = nil,
         encoding: ParameterEncoding = URLEncoding.default,
@@ -304,7 +304,7 @@ open class SessionManager {
         -> DownloadRequest
     {
         do {
-            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
+            let urlRequest = try URLRequest(url: url, method: method, headers: headers)
             let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
             return download(encodedURLRequest, to: destination)
         } catch {
@@ -396,26 +396,26 @@ open class SessionManager {
 
     // MARK: File
 
-    /// Creates an `UploadRequest` from the specified `method`, `urlString` and `headers` for uploading the `file`.
+    /// Creates an `UploadRequest` from the specified `url`, `method` and `headers` for uploading the `file`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter file:      The file to upload.
-    /// - parameter urlString: The URL string.
-    /// - parameter method:    The HTTP method. `.post` by default.
-    /// - parameter headers:   The HTTP headers. `nil` by default.
+    /// - parameter file:    The file to upload.
+    /// - parameter url:     The URL.
+    /// - parameter method:  The HTTP method. `.post` by default.
+    /// - parameter headers: The HTTP headers. `nil` by default.
     ///
     /// - returns: The created `UploadRequest`.
     @discardableResult
     open func upload(
         _ fileURL: URL,
-        to urlString: URLStringConvertible,
+        to url: URLConvertible,
         method: HTTPMethod = .post,
         headers: HTTPHeaders? = nil)
         -> UploadRequest
     {
         do {
-            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
+            let urlRequest = try URLRequest(url: url, method: method, headers: headers)
             return upload(fileURL, with: urlRequest)
         } catch {
             return upload(failedWith: error)
@@ -442,26 +442,26 @@ open class SessionManager {
 
     // MARK: Data
 
-    /// Creates an `UploadRequest` from the specified `method`, `urlString` and `headers` for uploading the `data`.
+    /// Creates an `UploadRequest` from the specified `url`, `method` and `headers` for uploading the `data`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter data:      The data to upload.
-    /// - parameter urlString: The URL string.
-    /// - parameter method:    The HTTP method. `.post` by default.
-    /// - parameter headers:   The HTTP headers. `nil` by default.
+    /// - parameter data:    The data to upload.
+    /// - parameter url:     The URL.
+    /// - parameter method:  The HTTP method. `.post` by default.
+    /// - parameter headers: The HTTP headers. `nil` by default.
     ///
     /// - returns: The created `UploadRequest`.
     @discardableResult
     open func upload(
         _ data: Data,
-        to urlString: URLStringConvertible,
+        to url: URLConvertible,
         method: HTTPMethod = .post,
         headers: HTTPHeaders? = nil)
         -> UploadRequest
     {
         do {
-            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
+            let urlRequest = try URLRequest(url: url, method: method, headers: headers)
             return upload(data, with: urlRequest)
         } catch {
             return upload(failedWith: error)
@@ -488,26 +488,26 @@ open class SessionManager {
 
     // MARK: InputStream
 
-    /// Creates an `UploadRequest` from the specified `method`, `urlString` and `headers` for uploading the `stream`.
+    /// Creates an `UploadRequest` from the specified `url`, `method` and `headers` for uploading the `stream`.
     ///
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
-    /// - parameter stream:    The stream to upload.
-    /// - parameter urlString: The URL string.
-    /// - parameter method:    The HTTP method. `.post` by default.
-    /// - parameter headers:   The HTTP headers. `nil` by default.
+    /// - parameter stream:  The stream to upload.
+    /// - parameter url:     The URL.
+    /// - parameter method:  The HTTP method. `.post` by default.
+    /// - parameter headers: The HTTP headers. `nil` by default.
     ///
     /// - returns: The created `UploadRequest`.
     @discardableResult
     open func upload(
         _ stream: InputStream,
-        to urlString: URLStringConvertible,
+        to url: URLConvertible,
         method: HTTPMethod = .post,
         headers: HTTPHeaders? = nil)
         -> UploadRequest
     {
         do {
-            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
+            let urlRequest = try URLRequest(url: url, method: method, headers: headers)
             return upload(stream, with: urlRequest)
         } catch {
             return upload(failedWith: error)
@@ -535,7 +535,7 @@ open class SessionManager {
     // MARK: MultipartFormData
 
     /// Encodes `multipartFormData` using `encodingMemoryThreshold` and calls `encodingCompletion` with new
-    /// `UploadRequest` using the `method`, `urlString` and `headers`.
+    /// `UploadRequest` using the `url`, `method` and `headers`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
@@ -555,20 +555,20 @@ open class SessionManager {
     /// - parameter multipartFormData:       The closure used to append body parts to the `MultipartFormData`.
     /// - parameter encodingMemoryThreshold: The encoding memory threshold in bytes.
     ///                                      `multipartFormDataEncodingMemoryThreshold` by default.
-    /// - parameter urlString:               The URL string.
+    /// - parameter url:                     The URL.
     /// - parameter method:                  The HTTP method. `.post` by default.
     /// - parameter headers:                 The HTTP headers. `nil` by default.
     /// - parameter encodingCompletion:      The closure called when the `MultipartFormData` encoding is complete.
     open func upload(
         multipartFormData: @escaping (MultipartFormData) -> Void,
         usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
-        to urlString: URLStringConvertible,
+        to url: URLConvertible,
         method: HTTPMethod = .post,
         headers: HTTPHeaders? = nil,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
         do {
-            let urlRequest = try URLRequest(urlString: urlString, method: method, headers: headers)
+            let urlRequest = try URLRequest(url: url, method: method, headers: headers)
 
             return upload(
                 multipartFormData: multipartFormData,

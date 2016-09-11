@@ -40,7 +40,7 @@ class SessionManagerTestCase: BaseTestCase {
         }
 
         func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-            guard !throwsError else { throw AFError.invalidURLString(urlString: "") }
+            guard !throwsError else { throw AFError.invalidURL(url: "") }
 
             var urlRequest = urlRequest
             urlRequest.httpMethod = method.rawValue
@@ -56,7 +56,7 @@ class SessionManagerTestCase: BaseTestCase {
         var throwsErrorOnSecondAdapt = false
 
         func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-            if throwsErrorOnSecondAdapt && adaptedCount == 1 { throw AFError.invalidURLString(urlString: "") }
+            if throwsErrorOnSecondAdapt && adaptedCount == 1 { throw AFError.invalidURL(url: "") }
 
             var urlRequest = urlRequest
 
@@ -320,8 +320,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
 
         if let error = response?.error as? AFError {
-            XCTAssertTrue(error.isInvalidURLStringError)
-            XCTAssertEqual(error.urlString?.urlString, "https://httpbin.org/get/äëïöü")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
             XCTFail("error should not be nil")
         }
@@ -351,8 +351,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
 
         if let error = response?.error as? AFError {
-            XCTAssertTrue(error.isInvalidURLStringError)
-            XCTAssertEqual(error.urlString?.urlString, "https://httpbin.org/get/äëïöü")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
             XCTFail("error should not be nil")
         }
@@ -381,8 +381,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
 
         if let error = response?.error as? AFError {
-            XCTAssertTrue(error.isInvalidURLStringError)
-            XCTAssertEqual(error.urlString?.urlString, "https://httpbin.org/get/äëïöü")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
             XCTFail("error should not be nil")
         }
@@ -411,8 +411,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
 
         if let error = response?.error as? AFError {
-            XCTAssertTrue(error.isInvalidURLStringError)
-            XCTAssertEqual(error.urlString?.urlString, "https://httpbin.org/get/äëïöü")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
             XCTFail("error should not be nil")
         }
@@ -441,8 +441,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
 
         if let error = response?.error as? AFError {
-            XCTAssertTrue(error.isInvalidURLStringError)
-            XCTAssertEqual(error.urlString?.urlString, "https://httpbin.org/get/äëïöü")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
             XCTFail("error should not be nil")
         }
@@ -541,8 +541,8 @@ class SessionManagerTestCase: BaseTestCase {
 
         // Then
         if let error = request.delegate.error as? AFError {
-            XCTAssertTrue(error.isInvalidURLStringError)
-            XCTAssertEqual(error.urlString?.urlString, "")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "")
         } else {
             XCTFail("error should not be nil")
         }
@@ -633,8 +633,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isSuccess, false)
 
         if let error = response?.result.error as? AFError {
-            XCTAssertTrue(error.isInvalidURLStringError)
-            XCTAssertEqual(error.urlString?.urlString, "")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "")
         } else {
             XCTFail("error should not be nil")
         }

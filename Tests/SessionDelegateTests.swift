@@ -139,7 +139,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
@@ -167,7 +167,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
@@ -202,7 +202,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
@@ -237,7 +237,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
@@ -272,7 +272,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.response?.url?.urlString, urlString)
+        XCTAssertEqual(response?.response?.url?.absoluteString, urlString)
         XCTAssertEqual(response?.response?.statusCode, 302)
     }
 
@@ -307,7 +307,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.response?.url?.urlString, urlString)
+        XCTAssertEqual(response?.response?.url?.absoluteString, urlString)
         XCTAssertEqual(response?.response?.statusCode, 302)
     }
 
@@ -351,7 +351,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
@@ -397,7 +397,7 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
 
-        XCTAssertEqual(response?.response?.url?.urlString, redirectURLString)
+        XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
