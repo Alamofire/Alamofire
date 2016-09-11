@@ -32,7 +32,7 @@ Released on 2016-08-29. All issues associated with this milestone can be found u
 
 #### Fixed
 - Build issue with `Manager` class due to cherry picked change that merged incorrectly.
-  - Fixed by [Christian Noon](https://github.com/cnoon) in Regards to Issue
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#1438](https://github.com/Alamofire/Alamofire/pull/1438).
 
 ## [4.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/4.0.0-beta.1)
@@ -87,7 +87,6 @@ This release requires Xcode 8.0 beta 6+ because it has been completely refactore
 This release is the start of the Alamofire 4.0.0 beta releases. We still have quite a few large changes we're trying to squeeze in before the Xcode 8 GM drops, so the APIs will continue to change over the next few weeks. Please keep in mind that each beta will likely bring new APIs and also refactor others. The betas **WILL NOT** follow semantic versioning. We'll most likely conform to semantic versioning once we start releasing the RCs unless we run into a major unforeseen issue.
 
 We'd really appreciate everyone trying out the betas and letting us know if you find issues. We want to address every possible issue prior to the official Alamofire 4.0.0 release.
->>>>>>> swift3
 
 ## [3.5.0](https://github.com/Alamofire/Alamofire/releases/tag/3.5.0)
 Released on 2016-09-07. All issues associated with this milestone can be found using this
@@ -96,7 +95,7 @@ Released on 2016-09-07. All issues associated with this milestone can be found u
 #### Updated
 - The `User-Agent` header generation formatting and also added docs and tests.
   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request
-  [#1456](https://github.com/Alamofire/Alamofire/pull/1456) in Regards to Issue
+  [#1456](https://github.com/Alamofire/Alamofire/pull/1456) in regards to Issue
   [#1452](https://github.com/Alamofire/Alamofire/issues/1452).
 - All source, test and example logic as well as project settings to compile against
   Xcode 7 and 8 against Swift 2.2 or 2.3 respectively.
@@ -152,7 +151,7 @@ Released on 2016-06-12. All issues associated with this milestone can be found u
   - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#1262](https://github.com/Alamofire/Alamofire/pull/1262).
 - A new `debugDescription` test for a MultipartFormData Request with duplicate headers.
-  - Added by [Christian Noon](https://github.com/cnoon) in Regards to Issue
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#1303](https://github.com/Alamofire/Alamofire/issues/1303).
 
 #### Updated
@@ -164,14 +163,14 @@ Released on 2016-06-12. All issues associated with this milestone can be found u
   [#1273](https://github.com/Alamofire/Alamofire/pull/1273).
 - The generation of the `User-Agent` header to use non-localized sources.
   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request
-  [#1292](https://github.com/Alamofire/Alamofire/pull/1292) in Regards to Issue
+  [#1292](https://github.com/Alamofire/Alamofire/pull/1292) in regards to Issue
   [#1269](https://github.com/Alamofire/Alamofire/pull/1269).
 - The `Generic Response Object Serialization` section of the README to use protocol extension.
   - Updated by [Raphael Oliveira](https://github.com/raphaeloliveira) in Pull Request
   [#1257](https://github.com/Alamofire/Alamofire/pull/1257).
 - Reachability by removing explicit IPv6 logic since OS handles this automatically.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
-  [#1308](https://github.com/Alamofire/Alamofire/pull/1308) in Regards to Issue
+  [#1308](https://github.com/Alamofire/Alamofire/pull/1308) in regards to Issue
   [#1228](https://github.com/Alamofire/Alamofire/pull/1228).
 - Host manager reachability test to use different hostname to improve test reliability.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
@@ -184,7 +183,7 @@ Released on 2016-06-12. All issues associated with this milestone can be found u
 #### Fixed
 - Memory leak in `Timeline` description and debugDescription due to string interpolation.
   - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request
-  [#1262](https://github.com/Alamofire/Alamofire/issues/1262) in Regards to Issue
+  [#1262](https://github.com/Alamofire/Alamofire/issues/1262) in regards to Issue
   [#1232](https://github.com/Alamofire/Alamofire/issues/1232).
 
 ## [3.4.0](https://github.com/Alamofire/Alamofire/releases/tag/3.4.0)
@@ -201,23 +200,23 @@ Released on 2016-05-08. All issues associated with this milestone can be found u
 
 #### Updated
 - URLProtocol tests to demonstrate using `NSURLProtocol` with `NSURLSession`.
-  - Updated by [Christian Noon](https://github.com/cnoon) in Regards to Issue
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#1160](https://github.com/Alamofire/Alamofire/issues/1160).
 - The `SesionDelegate` to no longer be `final` to allow subclassing.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
-  [#1172](https://github.com/Alamofire/Alamofire/issues/1172) in Regards to Issue
+  [#1172](https://github.com/Alamofire/Alamofire/issues/1172) in regards to Issue
   [#1145](https://github.com/Alamofire/Alamofire/issues/1145).  
 - The `SessionDelegate` subscript public to allow full control when subclassing.
   - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
   [#1172](https://github.com/Alamofire/Alamofire/issues/1172).
 - The `Response Serialization` section of the README to include validation examples.
-  - Updated by [Christian Noon](https://github.com/cnoon) in Regards to Issue
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#1213](https://github.com/Alamofire/Alamofire/issues/1213).
 - The delegate guard in the `Manager` initializer in front of property assignment.
   - Updated by [Broccoliii](https://github.com/broccolii) in Pull Request
   [#1226](https://github.com/Alamofire/Alamofire/issues/1226).
 - Header example in the README to use `Accept` header instead of `Content-Type`.
-  - Updated by [Christian Noon](https://github.com/cnoon) in Regards to Pull Request
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Pull Request
   [#1229](https://github.com/Alamofire/Alamofire/issues/1229).
 
 #### Deprecated
@@ -228,13 +227,13 @@ Released on 2016-05-08. All issues associated with this milestone can be found u
 #### Fixed
 - Issue where Requests with invalid credentials were not terminating with 401 status code.
   - Fixed by [Cédric Luthi](https://github.com/0xced) in Pull Request
-  [#1164](https://github.com/Alamofire/Alamofire/pull/1164) in Regards to Issue
+  [#1164](https://github.com/Alamofire/Alamofire/pull/1164) in regards to Issue
   [#1159](https://github.com/Alamofire/Alamofire/issues/1159).
 - Issue in URLProtocol test where config headers are not passed prior to iOS 9.0.
   - Fixed by [Christian Noon](https://github.com/cnoon).
 - Issue where Request `cURLRepresentation` method was not coalescing duplicate headers.
   - Fixed by [Chris Richards](https://github.com/chrisrichards) in Pull Request
-  [#1186](https://github.com/Alamofire/Alamofire/pull/1186) in Regards to Issue
+  [#1186](https://github.com/Alamofire/Alamofire/pull/1186) in regards to Issue
   [#1184](https://github.com/Alamofire/Alamofire/issues/1184).
 - Issue where incorrect dash in License file was breaking markdown parsing.
   - Fixed by [Gemma Barlow](https://github.com/gemmakbarlow) in Pull Request
@@ -264,7 +263,7 @@ Released on 2016-04-06. All issues associated with this milestone can be found u
 #### Fixed
 - The `respondsToSelector` check for the new HTTP redirect closure with completion.
   - Fixed by [Kevin Harwood](https://github.com/kcharwood) in Pull Request
-  [#1141](https://github.com/Alamofire/Alamofire/issues/1141) in Regards to Issue
+  [#1141](https://github.com/Alamofire/Alamofire/issues/1141) in regards to Issue
   [#1140](https://github.com/Alamofire/Alamofire/issues/1140).
 - Issue where the challenge and response `SessionDelegate` override closures were not called.
   - Fixed by [Christian Noon](https://github.com/cnoon).
@@ -284,13 +283,13 @@ Released on 2016-03-23. All issues associated with this milestone can be found u
 
 #### Updated
 - The `User-Agent` header implementation to use more aggresive type-safety checks.
-  - Updated by [Christian Noon](https://github.com/cnoon) in Regards to Issue
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#1100](https://github.com/Alamofire/Alamofire/issues/1100).
 - All shared response serializers to accept a custom queue for execution.
   - Updated by [Luca Torella](https://github.com/lucatorella) in Pull Request
   [#1112](https://github.com/Alamofire/Alamofire/pull/1112).
 - The network reachability manager to use IPv4 on iOS 8.x and OSX 10.9.x.
-  - Updated by [Christian Noon](https://github.com/cnoon) in Regards to Issue
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#1086](https://github.com/Alamofire/Alamofire/issues/1086).
 - All source, test and example code to compile against Swift 2.2.
   - Updated by [James Barrow](https://github.com/Baza207) and [Dominik Hadl](https://github.com/nickskull) in Pull Requests
@@ -363,14 +362,14 @@ Released on 2016-02-07. All issues associated with this milestone can be found u
 - The `NSURLSessionStream` APIs to support `tvOS`.
   - Updated by [Christian Noon](https://github.com/cnoon).
 - The `ParameterEncoding` encode method to allow empty parameters to still be encoded.
-  - Updated by [Christian Noon](https://github.com/cnoon) in Regards to Issues
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issues
   [#1032](https://github.com/Alamofire/Alamofire/issues/1032) and
   [#1049](https://github.com/Alamofire/Alamofire/issues/1049).
 
 #### Fixed
 - Broken CocoaDocs generation by moving iOS Example project into Examples folder.
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request
-  [#1027](https://github.com/Alamofire/Alamofire/issues/1027) in Regards to Issue
+  [#1027](https://github.com/Alamofire/Alamofire/issues/1027) in regards to Issue
   [#1025](https://github.com/Alamofire/Alamofire/issues/1025).
 
 ---
