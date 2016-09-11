@@ -1076,14 +1076,10 @@ enum Router: URLRequestConvertible {
             }
         }()
 
-        let url = URL(string: Router.baseURLString)!
+        let url = try URL(urlString: Router.baseURLString)
         let urlRequest = URLRequest(url: url.appendingPathComponent(result.path))
 
-        do {
-            return try URLEncoding.default.encode(urlRequest, with: result.parameters)
-        } catch {
-            return urlRequest
-        }
+        return try URLEncoding.default.encode(urlRequest, with: result.parameters)
     }
 }
 ```
@@ -1134,9 +1130,7 @@ enum Router: URLRequestConvertible {
     // MARK: URLRequestConvertible
 
     func asURLRequest() throws -> URLRequest {
-    	guard let url = URL(string: Router.baseURLString) else {
-    	    throw AFError.invalidURLString(urlString: Router.baseURLString)
-    	}
+    	let url = try URL(urlString: Router.baseURLString)
 
         var urlRequest = URLRequest(url: url.appendingPathComponent(path))
         urlRequest.httpMethod = method.rawValue

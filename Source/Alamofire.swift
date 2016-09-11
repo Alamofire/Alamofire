@@ -58,6 +58,19 @@ extension String: URLStringConvertible {
 extension URL: URLStringConvertible {
     /// Returns a URL string that conforms to RFC 2396.
     public func asURLString() throws -> String { return absoluteString }
+
+    /// Creates a URL with the specified URL string if possible, otherwise throws an `Error`.
+    ///
+    /// - parameter urlString: The URL string convertible to create the URL with.
+    ///
+    /// - throws: An `AFError.invalidURLString` if invalid.
+    ///
+    /// - returns: A URL if created successfully, otherwise throws an `AFError`.
+    public init(urlString: URLStringConvertible) throws {
+        let urlString = try urlString.asURLString()
+        guard let url = URL(string: urlString) else { throw AFError.invalidURLString(urlString: urlString) }
+        self = url
+    }
 }
 
 extension URLComponents: URLStringConvertible {
@@ -88,7 +101,6 @@ extension URLRequestConvertible {
     public var urlRequest: URLRequest? { return try? asURLRequest() }
 }
 
-
 extension URLRequest: URLRequestConvertible {
     /// Returns a URL request or throws if an `Error` was encountered.
     public func asURLRequest() throws -> URLRequest { return self }
@@ -105,9 +117,7 @@ extension URLRequest {
     ///
     /// - returns: The new `URLRequest` instance.
     public init(urlString: URLStringConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil) throws {
-        let urlString = try urlString.asURLString()
-
-        guard let url = URL(string: urlString) else { throw AFError.invalidURLString(urlString: urlString) }
+        let url = try URL(urlString: urlString)
 
         self.init(url: url)
 
