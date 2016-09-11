@@ -336,40 +336,50 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
         class MockManager: SessionManager {
-            override func request(resource urlRequest: URLRequestConvertible) -> DataRequest {
-                let originalRequest = urlRequest.urlRequest
-                let adaptedRequest = originalRequest.adapt(using: adapter)
+            override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+                do {
+                    let originalRequest = try urlRequest.asURLRequest()
+                    let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
 
-                let task: URLSessionDataTask = queue.syncResult { session.dataTask(with: adaptedRequest) }
+                    let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
+                    let request = MockDataRequest(session: session, requestTask: .data(originalTask, task))
 
-                let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
-                let request = MockDataRequest(session: session, task: task, originalTask: originalTask)
+                    delegate[task] = request
 
-                delegate[request.delegate.task] = request
+                    if startRequestsImmediately { request.resume() }
 
-                if startRequestsImmediately { request.resume() }
-
-                return request
+                    return request
+                } catch {
+                    let request = DataRequest(session: session, requestTask: .data(nil, nil), error: error)
+                    if startRequestsImmediately { request.resume() }
+                    return request
+                }
             }
 
             override func download(
-                resource urlRequest: URLRequestConvertible,
+                _ urlRequest: URLRequestConvertible,
                 to destination: DownloadRequest.DownloadFileDestination? = nil)
                 -> DownloadRequest
             {
-                let originalRequest = urlRequest.urlRequest
-                let originalTask = DownloadRequest.Downloadable.request(originalRequest)
+                do {
+                    let originalRequest = try urlRequest.asURLRequest()
+                    let originalTask = DownloadRequest.Downloadable.request(originalRequest)
 
-                let task = originalTask.task(session: session, adapter: adapter, queue: queue)
-                let request = MockDownloadRequest(session: session, task: task, originalTask: originalTask)
+                    let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
+                    let request = MockDownloadRequest(session: session, requestTask: .download(originalTask, task))
 
-                request.downloadDelegate.destination = destination
+                    request.downloadDelegate.destination = destination
 
-                delegate[request.delegate.task] = request
+                    delegate[task] = request
 
-                if startRequestsImmediately { request.resume() }
+                    if startRequestsImmediately { request.resume() }
 
-                return request
+                    return request
+                } catch {
+                    let download = DownloadRequest(session: session, requestTask: .download(nil, nil), error: error)
+                    if startRequestsImmediately { download.resume() }
+                    return download
+                }
             }
         }
 
@@ -594,19 +604,15 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(resource: urlRequest)
-            .validate()
-            .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
-            }
+        Alamofire.request(urlRequest).validate().response { resp in
+            requestError = resp.error
+            expectation1.fulfill()
+        }
 
-        Alamofire.download(resource: urlRequest)
-            .validate()
-            .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
-            }
+        Alamofire.download(urlRequest).validate().response { resp in
+            downloadError = resp.error
+            expectation2.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -669,19 +675,15 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(resource: urlRequest)
-            .validate()
-            .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
-            }
+        Alamofire.request(urlRequest).validate().response { resp in
+            requestError = resp.error
+            expectation1.fulfill()
+        }
 
-        Alamofire.download(resource: urlRequest)
-            .validate()
-            .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
-            }
+        Alamofire.download(urlRequest).validate().response { resp in
+            downloadError = resp.error
+            expectation2.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -705,19 +707,15 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(resource: urlRequest)
-            .validate()
-            .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
-            }
+        Alamofire.request(urlRequest).validate().response { resp in
+            requestError = resp.error
+            expectation1.fulfill()
+        }
 
-        Alamofire.download(resource: urlRequest)
-            .validate()
-            .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
-            }
+        Alamofire.download(urlRequest).validate().response { resp in
+            downloadError = resp.error
+            expectation2.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -739,19 +737,15 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(resource: urlRequest)
-            .validate()
-            .response { resp in
-                requestError = resp.error
-                expectation1.fulfill()
-            }
+        Alamofire.request(urlRequest).validate().response { resp in
+            requestError = resp.error
+            expectation1.fulfill()
+        }
 
-        Alamofire.download(resource: urlRequest)
-            .validate()
-            .response { resp in
-                downloadError = resp.error
-                expectation2.fulfill()
-            }
+        Alamofire.download(urlRequest).validate().response { resp in
+            downloadError = resp.error
+            expectation2.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 

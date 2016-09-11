@@ -30,8 +30,10 @@ public protocol RequestAdapter {
     ///
     /// - parameter urlRequest: The URL request to adapt.
     ///
+    /// - throws: An `Error` if the adaptation encounters an error.
+    ///
     /// - returns: The adapted `URLRequest`.
-    func adapt(_ urlRequest: URLRequest) -> URLRequest
+    func adapt(_ urlRequest: URLRequest) throws -> URLRequest
 }
 
 // MARK: -
@@ -58,7 +60,7 @@ public protocol RequestRetrier {
 // MARK: -
 
 protocol TaskConvertible {
-    func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask
+    func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask
 }
 
 /// A dictionary of headers to apply to a `URLRequest`.
@@ -69,8 +71,18 @@ public typealias HTTPHeaders = [String: String]
 /// Responsible for sending a request and receiving the response and associated data from the server, as well as
 /// managing its underlying `URLSessionTask`.
 open class Request {
+
+    // MARK: Helper Types
+
     /// A closure executed when monitoring upload or download progress of a request.
     public typealias ProgressHandler = (Progress) -> Void
+
+    enum RequestTask {
+        case data(TaskConvertible?, URLSessionTask?)
+        case download(TaskConvertible?, URLSessionTask?)
+        case upload(TaskConvertible?, URLSessionTask?)
+        case stream(TaskConvertible?, URLSessionTask?)
+    }
 
     // MARK: Properties
 
@@ -87,16 +99,16 @@ open class Request {
     }
 
     /// The underlying task.
-    open var task: URLSessionTask { return delegate.task }
+    open var task: URLSessionTask? { return delegate.task }
 
     /// The session belonging to the underlying task.
     open let session: URLSession
 
     /// The request sent or to be sent to the server.
-    open var request: URLRequest? { return task.originalRequest }
+    open var request: URLRequest? { return task?.originalRequest }
 
     /// The response received from the server, if any.
-    open var response: HTTPURLResponse? { return task.response as? HTTPURLResponse }
+    open var response: HTTPURLResponse? { return task?.response as? HTTPURLResponse }
 
     let originalTask: TaskConvertible?
 
@@ -110,21 +122,25 @@ open class Request {
 
     // MARK: Lifecycle
 
-    init(session: URLSession, task: URLSessionTask, originalTask: TaskConvertible?) {
+    init(session: URLSession, requestTask: RequestTask, error: Error? = nil) {
         self.session = session
-        self.originalTask = originalTask
 
-        switch task {
-        case is URLSessionUploadTask:
-            taskDelegate = UploadTaskDelegate(task: task)
-        case is URLSessionDataTask:
+        switch requestTask {
+        case .data(let originalTask, let task):
             taskDelegate = DataTaskDelegate(task: task)
-        case is URLSessionDownloadTask:
+            self.originalTask = originalTask
+        case .download(let originalTask, let task):
             taskDelegate = DownloadTaskDelegate(task: task)
-        default:
+            self.originalTask = originalTask
+        case .upload(let originalTask, let task):
+            taskDelegate = UploadTaskDelegate(task: task)
+            self.originalTask = originalTask
+        case .stream(let originalTask, let task):
             taskDelegate = TaskDelegate(task: task)
+            self.originalTask = originalTask
         }
 
+        delegate.error = error
         delegate.queue.addOperation { self.endTime = CFAbsoluteTimeGetCurrent() }
     }
 
@@ -177,6 +193,8 @@ open class Request {
 
     /// Resumes the request.
     open func resume() {
+        guard let task = task else { delegate.queue.isSuspended = false ; return }
+
         if startTime == nil { startTime = CFAbsoluteTimeGetCurrent() }
 
         task.resume()
@@ -190,6 +208,8 @@ open class Request {
 
     /// Suspends the request.
     open func suspend() {
+        guard let task = task else { return }
+
         task.suspend()
 
         NotificationCenter.default.post(
@@ -201,6 +221,8 @@ open class Request {
 
     /// Cancels the request.
     open func cancel() {
+        guard let task = task else { return }
+
         task.cancel()
 
         NotificationCenter.default.post(
@@ -305,10 +327,7 @@ extension Request: CustomDebugStringConvertible {
             components.append("-H \"\(field): \(value)\"")
         }
 
-        if
-            let httpBodyData = request.httpBody,
-            let httpBody = String(data: httpBodyData, encoding: String.Encoding.utf8)
-        {
+        if let httpBodyData = request.httpBody, let httpBody = String(data: httpBodyData, encoding: .utf8) {
             var escapedBody = httpBody.replacingOccurrences(of: "\\\"", with: "\\\\\"")
             escapedBody = escapedBody.replacingOccurrences(of: "\"", with: "\\\"")
 
@@ -331,8 +350,8 @@ open class DataRequest: Request {
     struct Requestable: TaskConvertible {
         let urlRequest: URLRequest
 
-        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
-            let urlRequest = self.urlRequest.adapt(using: adapter)
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
+            let urlRequest = try self.urlRequest.adapt(using: adapter)
             return queue.syncResult { session.dataTask(with: urlRequest) }
         }
     }
@@ -418,12 +437,12 @@ open class DownloadRequest: Request {
         case request(URLRequest)
         case resumeData(Data)
 
-        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
             let task: URLSessionTask
 
             switch self {
             case let .request(urlRequest):
-                let urlRequest = urlRequest.adapt(using: adapter)
+                let urlRequest = try urlRequest.adapt(using: adapter)
                 task = queue.syncResult { session.downloadTask(with: urlRequest) }
             case let .resumeData(resumeData):
                 task = queue.syncResult { session.downloadTask(withResumeData: resumeData) }
@@ -508,18 +527,18 @@ open class UploadRequest: DataRequest {
         case file(URL, URLRequest)
         case stream(InputStream, URLRequest)
 
-        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
             let task: URLSessionTask
 
             switch self {
             case let .data(data, urlRequest):
-                let urlRequest = urlRequest.adapt(using: adapter)
+                let urlRequest = try urlRequest.adapt(using: adapter)
                 task = queue.syncResult { session.uploadTask(with: urlRequest, from: data) }
             case let .file(url, urlRequest):
-                let urlRequest = urlRequest.adapt(using: adapter)
+                let urlRequest = try urlRequest.adapt(using: adapter)
                 task = queue.syncResult { session.uploadTask(with: urlRequest, fromFile: url) }
             case let .stream(_, urlRequest):
-                let urlRequest = urlRequest.adapt(using: adapter)
+                let urlRequest = try urlRequest.adapt(using: adapter)
                 task = queue.syncResult { session.uploadTask(withStreamedRequest: urlRequest) }
             }
 
@@ -563,7 +582,7 @@ open class StreamRequest: Request {
         case stream(hostName: String, port: Int)
         case netService(NetService)
 
-        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) -> URLSessionTask {
+        func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
             let task: URLSessionTask
 
             switch self {

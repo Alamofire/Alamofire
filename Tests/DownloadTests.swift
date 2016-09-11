@@ -40,7 +40,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request)
         XCTAssertEqual(request.request?.httpMethod, "GET")
-        XCTAssertEqual(request.request?.url?.urlString, urlString)
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
         XCTAssertNil(request.response)
     }
 
@@ -55,7 +55,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(request.request)
         XCTAssertEqual(request.request?.httpMethod, "GET")
-        XCTAssertEqual(request.request?.url?.urlString, urlString)
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
         XCTAssertEqual(request.request?.value(forHTTPHeaderField: "Authorization"), "123456")
         XCTAssertNil(request.response)
     }

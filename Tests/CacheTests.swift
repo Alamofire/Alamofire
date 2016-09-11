@@ -187,7 +187,7 @@ class CacheTestCase: BaseTestCase {
         -> URLRequest
     {
         let urlRequest = self.urlRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)
-        let request = manager.request(resource: urlRequest)
+        let request = manager.request(urlRequest)
 
         request.response(
             queue: queue,

@@ -526,7 +526,7 @@ The default Alamofire `SessionManager` provides a default set of headers for eve
 
 - `Accept-Encoding`, which defaults to `gzip;q=1.0, compress;q=0.5`, per [RFC 7230 §4.2.3](https://tools.ietf.org/html/rfc7230#section-4.2.3).
 - `Accept-Language`, which defaults to up to the top 6 preferred languages on the system, formatted like `en;q=1.0`, per [RFC 7231 §5.3.5](https://tools.ietf.org/html/rfc7231#section-5.3.5).
-* `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
+- `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
 
 If you need to customize these headers, a custom `URLSessionManagerConfiguration` should be created, the `defaultHTTPHeaders` property updated and the configuration applied to a new `SessionManager` instance.
 
@@ -690,7 +690,7 @@ class ImageRequestor {
     	let request: DownloadRequest
 
         if let resumeData = resumeData {
-			request = Alamofire.download(resourceWithin: resumeData)
+			request = Alamofire.download(resumingWith: resumeData)
 		} else {
 			request = Alamofire.download("https://httpbin.org/image/png")
         }
@@ -995,11 +995,11 @@ Requests can be suspended, resumed and cancelled:
 
 ### Routing Requests
 
-As apps grow in size, it's important to adopt common patterns as you build out your network stack. An important part of that design is how to route your requests. The Alamofire `URLStringConvertible` and `URLRequestConvertible` protocols along with the `Router` design pattern are here to help.
+As apps grow in size, it's important to adopt common patterns as you build out your network stack. An important part of that design is how to route your requests. The Alamofire `URLConvertible` and `URLRequestConvertible` protocols along with the `Router` design pattern are here to help.
 
-#### URLStringConvertible
+#### URLConvertible
 
-Types adopting the `URLStringConvertible` protocol can be used to construct URL strings, which are then used to construct URL requests internally. `String`, `URL`, and `URLComponents` conform to `URLStringConvertible` by default, allowing any of them to be passed as `urlString` parameters to the `request`, `upload`, and `download` methods:
+Types adopting the `URLConvertible` protocol can be used to construct URLs, which are then used to construct URL requests internally. `String`, `URL`, and `URLComponents` conform to `URLConvertible` by default, allowing any of them to be passed as `url` parameters to the `request`, `upload`, and `download` methods:
 
 ```swift
 let urlString = "https://httpbin.org/post"
@@ -1012,16 +1012,17 @@ let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
 Alamofire.request(.post, URLComponents)
 ```
 
-Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLStringConvertible` as a convenient way to map domain-specific models to server resources.
+Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLConvertible` as a convenient way to map domain-specific models to server resources.
 
 ##### Type-Safe Routing
 
 ```swift
-extension User: URLStringConvertible {
+extension User: URLConvertible {
     static let baseURLString = "https://example.com"
 
-    var urlString: String {
-        return User.baseURLString + "/users/\(username)/"
+    func asURL() throws -> URL {
+    	let urlString = User.baseURLString + "/users/\(username)/"
+        return try urlString.asURL()
     }
 }
 ```
@@ -1033,7 +1034,7 @@ Alamofire.request(user) // https://example.com/users/mattt
 
 #### URLRequestConvertible
 
-Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request(resource:)`, `upload(resource:)`, and `download(resource:)` methods directly (this is the recommended way to specify custom HTTP body for individual requests):
+Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly (this is the recommended way to specify custom HTTP body for individual requests):
 
 ```swift
 let url = URL(string: "https://httpbin.org/post")!
@@ -1050,7 +1051,7 @@ do {
 
 urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-Alamofire.request(resource: urlRequest)
+Alamofire.request(urlRequest)
 ```
 
 Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLRequestConvertible` as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage authentication credentials and other state.
@@ -1066,7 +1067,7 @@ enum Router: URLRequestConvertible {
 
     // MARK: URLRequestConvertible
 
-    var urlRequest: URLRequest {
+    func asURLRequest() throws -> URLRequest {
         let result: (path: String, parameters: Parameters) = {
             switch self {
             case let .search(query, page) where page > 0:
@@ -1076,20 +1077,16 @@ enum Router: URLRequestConvertible {
             }
         }()
 
-        let url = URL(string: Router.baseURLString)!
+        let url = try Router.baseURLString.asURL()
         let urlRequest = URLRequest(url: url.appendingPathComponent(result.path))
 
-        do {
-            return try URLEncoding.default.encode(urlRequest, with: result.parameters)
-        } catch {
-            return urlRequest
-        }
+        return try URLEncoding.default.encode(urlRequest, with: result.parameters)
     }
 }
 ```
 
 ```swift
-Alamofire.request(resource: Router.search(query: "foo bar", page: 1)) // ?q=foo%20bar&offset=50
+Alamofire.request(Router.search(query: "foo bar", page: 1)) // ?q=foo%20bar&offset=50
 ```
 
 ##### CRUD & Authorization
@@ -1133,23 +1130,19 @@ enum Router: URLRequestConvertible {
 
     // MARK: URLRequestConvertible
 
-    var urlRequest: URLRequest {
-        let url = URL(string: Router.baseURLString)!
+    func asURLRequest() throws -> URLRequest {
+    	let url = try Router.baseURLString.asURL()
 
         var urlRequest = URLRequest(url: url.appendingPathComponent(path))
         urlRequest.httpMethod = method.rawValue
 
-        do {
-            switch self {
-            case .createUser(let parameters):
-                urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
-            case .updateUser(_, let parameters):
-                urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
-            default:
-                break
-            }
-        } catch {
-            // No-op
+        switch self {
+        case .createUser(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+        case .updateUser(_, let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+        default:
+            break
         }
 
         return urlRequest
@@ -1158,7 +1151,7 @@ enum Router: URLRequestConvertible {
 ```
 
 ```swift
-Alamofire.request(resource: Router.ReadUser("mattt")) // GET /users/mattt
+Alamofire.request(Router.readUser("mattt")) // GET /users/mattt
 ```
 
 ### Adapting and Retrying Requests
@@ -1179,7 +1172,7 @@ class AccessTokenAdapter: RequestAdapter {
 		self.accessToken = accessToken
 	}
 
-	func adapt(_ urlRequest: URLRequest) -> URLRequest {
+	func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
 	    var urlRequest = urlRequest
 
 	    if urlRequest.urlString.hasPrefix("https://httpbin.org") {
@@ -1238,7 +1231,7 @@ class OAuth2Handler: RequestAdapter, RequestRetrier {
 
     // MARK: - RequestAdapter
 
-    func adapt(_ urlRequest: URLRequest) -> URLRequest {
+    func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
         if let url = urlRequest.url, url.urlString.hasPrefix(baseURLString) {
             var urlRequest = urlRequest
             urlRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
@@ -1602,12 +1595,12 @@ let sessionManager = SessionManager(
 
 These server trust policies will result in the following behavior:
 
-* `test.example.com` will always use certificate pinning with certificate chain and host validation enabled thus requiring the following criteria to be met to allow the TLS handshake to succeed:
-  * Certificate chain MUST be valid.
-  * Certificate chain MUST include one of the pinned certificates.
-  * Challenge host MUST match the host in the certificate chain's leaf certificate.
-* `insecure.expired-apis.com` will never evaluate the certificate chain and will always allow the TLS handshake to succeed.
-* All other hosts will use the default evaluation provided by Apple.
+- `test.example.com` will always use certificate pinning with certificate chain and host validation enabled thus requiring the following criteria to be met to allow the TLS handshake to succeed:
+	- Certificate chain MUST be valid.
+	- Certificate chain MUST include one of the pinned certificates.
+	- Challenge host MUST match the host in the certificate chain's leaf certificate.
+- `insecure.expired-apis.com` will never evaluate the certificate chain and will always allow the TLS handshake to succeed.
+- All other hosts will use the default evaluation provided by Apple.
 
 ##### Subclassing Server Trust Policy Manager
 
@@ -1736,11 +1729,11 @@ If you believe you have identified a security vulnerability with Alamofire, you 
 
 The [ASF](https://github.com/Alamofire/Foundation#members) is looking to raise money to officially register as a federal non-profit organization. Registering will allow us members to gain some legal protections and also allow us to put donations to use, tax free. Donating to the ASF will enable us to:
 
-* Pay our legal fees to register as a federal non-profit organization
-* Pay our yearly legal fees to keep the non-profit in good status
-* Pay for our mail servers to help us stay on top of all questions and security issues
-* Potentially fund test servers to make it easier for us to test the edge cases
-* Potentially fund developers to work on one of our projects full-time
+- Pay our legal fees to register as a federal non-profit organization
+- Pay our yearly legal fees to keep the non-profit in good status
+- Pay for our mail servers to help us stay on top of all questions and security issues
+- Potentially fund test servers to make it easier for us to test the edge cases
+- Potentially fund developers to work on one of our projects full-time
 
 The community adoption of the ASF libraries has been amazing. We are greatly humbled by your enthusiam around the projects, and want to continue to do everything we can to move the needle forward. With your continued support, the ASF will be able to improve its reach and also provide better legal safety for the core members. If you use any of our libraries for work, see if your employers would be interested in donating. Our initial goal is to raise $1000 to get all our legal ducks in a row and kickstart this campaign. Any amount you can donate today to help us reach our goal would be greatly appreciated.
 

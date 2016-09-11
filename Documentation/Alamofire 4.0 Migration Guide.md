@@ -9,7 +9,8 @@ This guide is provided in order to ease the transition of existing applications 
 - [Breaking API Changes](#breaking-api-changes)
 	- [Namespace Changes](#namespace-changes)
 	- [Making Requests](#making-requests)
-	- [URLStringConvertible Conformance](#urlstringconvertible-conformance)
+	- [URLStringConvertible](#urlstringconvertible)
+	- [URLRequestConvertible](#urlrequestconvertible)
 - [New Features](#new-features)
 	- [Request Adapter](#request-adapter)
 	- [Request Retrier](#request-retrier)
@@ -78,20 +79,6 @@ Alamofire.request(.GET, urlString).response { request, response, data, error in
 // Alamofire 4
 Alamofire.request(urlString).response { response in // method defaults to `.get`
     debugPrint(response)
-}
-```
-
-#### Data Request - Simple with URL request
-
-```swift
-// Alamofire 3
-Alamofire.request(urlRequest).validate().responseData { response in
-	debugPrint(response)
-}
-
-// Alamofire 4
-Alamofire.request(resource: urlRequest).validate().responseData { response in
-	debugPrint(response)
 }
 ```
 
@@ -167,7 +154,7 @@ Alamofire.download(urlRequest, destination: destination).validate().responseData
 }
 
 // Alamofire 4
-Alamofire.download(resource: urlRequest, to: destination).validate().responseData { response in
+Alamofire.download(urlRequest, to: destination).validate().responseData { response in
 	debugPrint(response)
 	print(response.temporaryURL)
 	print(response.destinationURL)
@@ -284,9 +271,39 @@ Alamofire.upload(fileURL, to: urlString, method: .put)
 
 As you can see, there are many breaking API changes, but the common APIs still adhere to the original design goals of being able to make complex requests through a single line of code in a concise, well defined manner.
 
-### URLStringConvertible Conformance
+### URLStringConvertible
 
-The `URLRequest` no longer conforms to the `URLStringConvertible` protocol. This was always a bit of a stretch in the previous versions of Alamofire and wasn't really necessary. It also had a high potential to introduce ambiguity into many Alamofire APIs. Because of these reasons, `URLRequest` no longer conforms to `URLStringConvertible`.
+There are two changes to the `URLStringConvertible` protocol that are worth noting.
+
+#### URLConvertible
+
+The first MAJOR change worth noting on the `URLStringConvertible` is that it has been renamed to `URLConvertible`. In Alamofire 3.x, the `URLStringConvertible` was defined as:
+
+```swift
+public protocol URLStringConvertible {
+    var URLString: String { get }
+}
+```
+
+Now in Alamofire 4, the `URLConvertible` protocol is defined as:
+
+```swift
+public protocol URLConvertible {
+    func asURL() throws -> URL
+}
+```
+
+As you can see, the `URLString` property is completely gone and replaced by a new `asURL` method that throws. To explain, let's first backup.
+
+A VERY common problem in Alamofire is that users forget to percent escape their URL strings and Alamofire will crash. Up until now, we (the Alamofire team) have taken the stance that this is how Alamofire is designed and your URLs need to conform to [RFC 2396](https://tools.ietf.org/html/rfc2396). This is certainly not ideal for the community because we all would rather have Alamofire tell us that our URL was invalid rather than having it crash.
+
+Now, back to the new `URLConvertible` protocol. The reason Alamofire was not previously able to safely handle invalid URL strings was, in fact, due to the lack of safety on `URLStringConvertible`. It's not possible for Alamofire to know how to intelligently make an invalid URL string valid. Therefore, if the `URL` is unable to be created from the `URLConvertible`, an `AFError.invalidURL` error is thrown.
+
+This change (along with many others) allows Alamofire to safely handle invalid URLs and report the error back in the response handlers.
+
+#### URLRequest Conformance
+
+The `URLRequest` no longer conforms to the `URLStringConvertible`, now `URLConvertible` protocol. This was always a bit of a stretch in the previous versions of Alamofire and wasn't really necessary. It also had a high potential to introduce ambiguity into many Alamofire APIs. Because of these reasons, `URLRequest` no longer conforms to `URLStringConvertible` (now `URLConvertible`).
 
 What this means in code is that you can no longer do the following:
 
@@ -299,8 +316,34 @@ Instead, in Alamofire 4, you now have to do the following:
 
 ```swift
 let urlRequest = URLRequest(url: URL(string: "https://httpbin.org/get")!)
-let urlString = urlRequest.url?.urlString
+let urlString = urlRequest.url?.absoluteString
 ```
+
+> See [PR-1505](https://github.com/Alamofire/Alamofire/pull/1505) for more info.
+
+### URLRequestConvertible
+
+The `URLRequestConvertible` was susceptible to the same safety issues concerns as the `URLStringConvertible` in Alamofire 3.x. In Alamofire 3, the `URLRequestConvertible` was:
+
+```swift
+public protocol URLRequestConvertible {
+    var URLRequest: URLRequest { get }
+}
+```
+
+Now, in Alamofire 4, it is:
+
+```swift
+public protocol URLRequestConvertible {
+    func asURLRequest() throws -> URLRequest
+}
+```
+
+As you can see, the `URLRequest` property has been replaced by an `asURLRequest` method that throws when encountering an error generating the `URLRequest`.
+
+The most likely place this will affect your code is in the `Router` design pattern. If you have a `Router`, it's going to have to change, but for the better! You will now implement the `asURLRequest` method instead of the property which gives you the ability to throw an error if necessary. You no longer have to force unwrap unsafe data or parameters or wrap `ParameterEncoding` in a do-catch. Any error encountered in a `Router` can now be automatically handled by Alamofire.
+
+> See [PR-1505](https://github.com/Alamofire/Alamofire/pull/1505) for more info.
 
 ---
 
@@ -312,7 +355,7 @@ The `RequestAdapter` protocol is a completely new feature in Alamofire 4.
 
 ```swift
 public protocol RequestAdapter {
-    func adapt(_ urlRequest: URLRequest) -> URLRequest
+    func adapt(_ urlRequest: URLRequest) throws -> URLRequest
 }
 ```
 
@@ -326,7 +369,7 @@ class AccessTokenAdapter: RequestAdapter {
         self.accessToken = accessToken
     }
 
-    func adapt(_ urlRequest: URLRequest) -> URLRequest {
+    func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
         var urlRequest = urlRequest
 
         if urlRequest.urlString.hasPrefix("https://httpbin.org") {
@@ -342,6 +385,8 @@ sessionManager.adapter = AccessTokenAdapter(accessToken: "1234")
 
 sessionManager.request("https://httpbin.org/get")
 ```
+
+If an `Error` occurs during the adaptation process, it should be thrown and will be delivered in the response handler of the `Request`.
 
 > See [PR-1450](https://github.com/Alamofire/Alamofire/pull/1450) for more info.
 
@@ -414,6 +459,7 @@ Alamofire 4 contains many new features and enhancments on existing ones. This se
 
 Alamofire 4 contains a completely new error system that adopts the new pattern proposed in [SE-0112](https://github.com/apple/swift-evolution/blob/master/proposals/0112-nserror-bridging.md). At the heart of the new error system is `AFError`, a new `Error` type enumeration backed by four main cases.
 
+- `.invalidURL(url: URLConvertible)` - Returned when a `URLConvertible` type fails to create a valid `URL`.
 - `.parameterEncodingFailed(reason: ParameterEncodingFailureReason)` - Returned when a parameter encoding object throws an error during the encoding process.
 - `.multipartEncodingFailed(reason: MultipartEncodingFailureReason)` - Returned when some step in the multipart encoding process fails. 
 - `.responseValidationFailed(reason: ResponseValidationFailureReason)` - Returned when a `validate()` call fails.
@@ -427,6 +473,8 @@ Alamofire.request(urlString).responseJSON { response in
 
     if let error = error as? AFError {
         switch error {
+        case .invalidURL(let url):
+            print("Invalid URL: \(url) - \(error.localizedDescription)")
         case .parameterEncodingFailed(let reason):
             print("Parameter encoding failed: \(error.localizedDescription)")
             print("Failure Reason: \(reason)")
