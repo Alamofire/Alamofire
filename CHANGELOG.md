@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 4.x Releases
+- `4.0.x` Releases - [4.0.0](#400)
 - `4.0.0` Betas - [4.0.0-beta.1](#400-beta1) | [4.0.0-beta.2](#400-beta2)
 
 #### 3.x Releases
@@ -23,6 +24,179 @@ All notable changes to this project will be documented in this file.
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [4.0.0](https://github.com/Alamofire/Alamofire/releases/tag/4.0.0)
+Released on 2016-09-11. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.0.0).
+
+#### Added
+- Internal `DispatchQueue` extension set of convenience properties and methods.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1450](https://github.com/Alamofire/Alamofire/pull/1450).
+- `RequestAdapter` and `RequestRetrier` protocols allowing requests to be retried.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1450](https://github.com/Alamofire/Alamofire/pull/1450).
+- `RequestAdapter` tests on all testable `SessionManager` request APIs.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1450](https://github.com/Alamofire/Alamofire/pull/1450).
+- Added an `Adapting and Retrying Requests` section to the README.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1450](https://github.com/Alamofire/Alamofire/pull/1450).
+- `DataRequest`, `DownloadRequest`, `UploadRequest` and `StreamRequest` subclasses.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1455](https://github.com/Alamofire/Alamofire/pull/1455).
+- Top-level APIs for creating `StreamRequest` instances.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1455](https://github.com/Alamofire/Alamofire/pull/1455).
+- Extra `responseToSelector` overrides for stream delegate APIs.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1455](https://github.com/Alamofire/Alamofire/pull/1455).
+- A new `syncResult` extension to `DispatchQueue` to simplify thread-safe locking.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1455](https://github.com/Alamofire/Alamofire/pull/1455).
+- Two serialization failure reasons to support download response serializers.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1457](https://github.com/Alamofire/Alamofire/pull/1457).
+- Download response serialization tests for all serializer types.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1457](https://github.com/Alamofire/Alamofire/pull/1457).
+- The `dataFileNil` and `dataFileReadFailed` cases to `ResponseValidationFailureReason`.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1461](https://github.com/Alamofire/Alamofire/pull/1461).
+- The `isWildcard` property to MIMEType struct for convenience.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1461](https://github.com/Alamofire/Alamofire/pull/1461).
+- Missing `CustomDebugStringCovertible` conformance to `DownloadResponse`.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1462](https://github.com/Alamofire/Alamofire/pull/1462).
+- URL variants to the `FileManager` extension in the test suite.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1462](https://github.com/Alamofire/Alamofire/pull/1462).
+- `DownloadOptions` option set to make moving files more robust.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1462](https://github.com/Alamofire/Alamofire/pull/1462).
+- Tests validating success and failure scenarios for `DownloadOptions`.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1462](https://github.com/Alamofire/Alamofire/pull/1462).
+- Parameter encoding failure docstrings and refactored reasons to be consistent.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1465](https://github.com/Alamofire/Alamofire/pull/1465).
+- Safeguards to url parameter encoding when extracting the url request’s url.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1465](https://github.com/Alamofire/Alamofire/pull/1465).
+- The new `URLSessionTaskMetrics` to all `Response types`.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1492](https://github.com/Alamofire/Alamofire/pull/1492).
+- The Alamofire 4.0 Migration Guide to the README.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- `HTTPHeaders` typealias for top-level API convenience.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Complete safeguards to `URLStringConvertible`, `URLRequestConvertible` and `RequestAdapter`.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1505](https://github.com/Alamofire/Alamofire/pull/1505).
+- Tests around invalidURL error cases for `Request` creation and adaptation.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1505](https://github.com/Alamofire/Alamofire/pull/1505).
+
+#### Updated
+- The `authorizationHeader` static method over to returning optional tuple.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1455](https://github.com/Alamofire/Alamofire/pull/1455).
+- `SessionManager` queues to each have a unique name using a UUID suffix.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1455](https://github.com/Alamofire/Alamofire/pull/1455).
+- The progress tracking system across all `Request` subclasses to improve accuracy.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1455](https://github.com/Alamofire/Alamofire/pull/1455).
+- `BaseTestCase` to delete contents of common directories at the start of each test.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1457](https://github.com/Alamofire/Alamofire/pull/1457).
+- Response handler extensions by moving them into `DataRequest` and added equivalents 
+  for `DownloadRequest`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1457](https://github.com/Alamofire/Alamofire/pull/1457).
+- The response serializer types to use the `Protocol` suffix.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1457](https://github.com/Alamofire/Alamofire/pull/1457).
+- `Validation` typealias to include response data in a `DataRequest` type.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1461](https://github.com/Alamofire/Alamofire/pull/1461).
+- `Validation` typealias to include temporary and destination URLs in a `DownloadRequest` type.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1461](https://github.com/Alamofire/Alamofire/pull/1461).
+- `SessionManager` APIs to all leverage `TaskConvertible` conformance.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1461](https://github.com/Alamofire/Alamofire/pull/1461).
+- `DownloadFileDestination` closures to be optional on top-level `DownloadRequest` APIs.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1462](https://github.com/Alamofire/Alamofire/pull/1462).
+- The `request` and `download` APIs now default to `.get` method and `upload` defaults to `.post`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1462](https://github.com/Alamofire/Alamofire/pull/1462).
+- The `ParameterEncoding` encode API to throw instead of returning tuple.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1465](https://github.com/Alamofire/Alamofire/pull/1465).
+- The `TaskDelegate` to only store the url session task error if `error` is `nil`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1465](https://github.com/Alamofire/Alamofire/pull/1465).
+- `ParameterEncoding` enum by switching to a protocol backed by url, json and plist structs.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1465](https://github.com/Alamofire/Alamofire/pull/1465).
+- Updated RequestRetrier completion to be escaping.
+  - Updated by [Aron Cedercrantz](https://github.com/rastersize) in Pull Request
+  [#1489](https://github.com/Alamofire/Alamofire/pull/1489).
+- Code signing to automatic with no team on framework, test and app targets.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- README for Swift 3 and Alamofire 4 along with reorganization.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- README with improved `Error` examples as well as typo and whitespace fixes.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#1504](https://github.com/Alamofire/Alamofire/pull/1504).
+- `Request` task property is now optional allowing errors to propagate through.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1505](https://github.com/Alamofire/Alamofire/pull/1505).
+- The Travis-CI device list in the yaml file.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1505](https://github.com/Alamofire/Alamofire/pull/1505).
+- The top-level APIs by removing external `resource` parameter name.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1505](https://github.com/Alamofire/Alamofire/pull/1505).
+- The `URLStringCovertible` by renaming to `URLConvertible` and removed protocol property.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1505](https://github.com/Alamofire/Alamofire/pull/1505).
+- The README and migration guide with the `URLConvertible` and top-level API changes.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1505](https://github.com/Alamofire/Alamofire/pull/1505).
+
+#### Removed
+- Unnecessary `public` ACL declarations on `AFError` extensions.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+- `URLStringConvertible` conformance on `URLRequest`.
+  - Removed by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1491](https://github.com/Alamofire/Alamofire/pull/1491).
+- Removed `downloadProgress` and `uploadProgress` Int64 variants.
+  - Removed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#1467](https://github.com/Alamofire/Alamofire/issues/1467) reported by
+  [thebluepotato](https://github.com/thebluepotato).
+- Duplicated change log message in the migration guide.
+  - Removed by [Justin Jia](https://github.com/JustinJiaDev) in Pull Request
+  [#1503](https://github.com/Alamofire/Alamofire/pull/1503).
+- Code coverage generation by default to improve test suite stability.
+  - Removed by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- Fixed `URLEncoding` issue around `NSNumber` parameter encoding.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#1458](https://github.com/Alamofire/Alamofire/issues/1458) reported by
+  [Dhanush Balachandran](https://github.com/dhanushram).
+- Issue where `MultipartFormData` temp directory creation needed to be done serially.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#1333](https://github.com/Alamofire/Alamofire/issues/1333) reported by
+  [Fernando Mazzon](https://github.com/fer662).
+- Issue in resume data tests where request was being cancelled multiple times.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
 
 ---
 
