@@ -1151,7 +1151,7 @@ enum Router: URLRequestConvertible {
 ```
 
 ```swift
-Alamofire.request(Router.ReadUser("mattt")) // GET /users/mattt
+Alamofire.request(Router.readUser("mattt")) // GET /users/mattt
 ```
 
 ### Adapting and Retrying Requests
