@@ -441,7 +441,7 @@ It's important to note that these APIs are only available on iOS and tvOS 10+ an
 
 ```swift
 Alamofire.request(urlString).response { response in
-    if #available(iOS 10.0. *) {
+    if #available(iOS 10.0, *) {
 		debugPrint(response.metrics)
     }
 }
