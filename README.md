@@ -311,7 +311,7 @@ Alamofire.request("https://httpbin.org/get")
 
 #### Response Handler Queue
 
-Reponse handlers by default are executed on the main dispatch queue. However, a custom dispatch queue can be provided instead.
+Response handlers by default are executed on the main dispatch queue. However, a custom dispatch queue can be provided instead.
 
 ```swift
 let utilityQueue = DispatchQueue.global(qos: .utility)
