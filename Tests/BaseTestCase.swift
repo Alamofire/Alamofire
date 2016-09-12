@@ -29,16 +29,14 @@ import XCTest
 class BaseTestCase: XCTestCase {
     let timeout: TimeInterval = 30.0
 
+    static var testDirectoryURL: URL { return FileManager.temporaryDirectoryURL.appendingPathComponent("org.alamofire.tests") }
+    var testDirectoryURL: URL { return BaseTestCase.testDirectoryURL }
+
     override func setUp() {
         super.setUp()
 
-        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.applicationSupportDirectoryPath)
-        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.cachesDirectoryPath)
-        FileManager.removeAllItemsInsideDirectory(atPath: FileManager.documentsDirectoryPath)
-
-        FileManager.createDirectory(atPath: FileManager.applicationSupportDirectoryPath)
-        FileManager.createDirectory(atPath: FileManager.cachesDirectoryPath)
-        FileManager.createDirectory(atPath: FileManager.documentsDirectoryPath)
+        FileManager.removeAllItemsInsideDirectory(at: testDirectoryURL)
+        FileManager.createDirectory(at: testDirectoryURL)
     }
 
     func url(forResource fileName: String, withExtension ext: String) -> URL {

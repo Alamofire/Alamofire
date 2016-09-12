@@ -58,22 +58,7 @@ struct BoundaryGenerator {
     }
 }
 
-private func temporaryFileURL() -> URL {
-    let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-    let directoryURL = tempDirectoryURL.appendingPathComponent("org.alamofire.test/multipart.form.data")
-
-    let fileManager = FileManager.default
-    do {
-        try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
-    } catch {
-        // No-op - will cause tests to fail, not crash
-    }
-
-    let fileName = UUID().uuidString
-    let fileURL = directoryURL.appendingPathComponent(fileName)
-
-    return fileURL
-}
+private func temporaryFileURL() -> URL { return BaseTestCase.testDirectoryURL.appendingPathComponent(UUID().uuidString) }
 
 // MARK: -
 

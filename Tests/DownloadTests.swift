@@ -27,9 +27,6 @@ import Foundation
 import XCTest
 
 class DownloadInitializationTestCase: BaseTestCase {
-    let searchPathDirectory: FileManager.SearchPathDirectory = .cachesDirectory
-    let searchPathDomain: FileManager.SearchPathDomainMask = .userDomainMask
-
     func testDownloadClassMethodWithMethodURLAndDestination() {
         // Given
         let urlString = "https://httpbin.org/"
@@ -65,7 +62,7 @@ class DownloadInitializationTestCase: BaseTestCase {
 
 class DownloadResponseTestCase: BaseTestCase {
     private var randomCachesFileURL: URL {
-        return FileManager.cachesDirectoryURL.appendingPathComponent("\(UUID().uuidString).json")
+        return testDirectoryURL.appendingPathComponent("\(UUID().uuidString).json")
     }
 
     func testDownloadRequest() {
@@ -227,7 +224,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
     func testThatDownloadingFileAndMovingToDirectoryThatDoesNotExistThrowsError() {
         // Given
-        let fileURL = FileManager.cachesDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
+        let fileURL = testDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
 
         let expectation = self.expectation(description: "Download request should download data but fail to move file")
         var response: DefaultDownloadResponse?
@@ -258,7 +255,7 @@ class DownloadResponseTestCase: BaseTestCase {
 
     func testThatDownloadOptionsCanCreateIntermediateDirectoriesPriorToMovingFile() {
         // Given
-        let fileURL = FileManager.cachesDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
+        let fileURL = testDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
         var response: DefaultDownloadResponse?
@@ -284,8 +281,8 @@ class DownloadResponseTestCase: BaseTestCase {
     func testThatDownloadingFileAndMovingToDestinationThatIsOccupiedThrowsError() {
         do {
             // Given
-            let directoryURL = FileManager.cachesDirectoryURL.appendingPathComponent("some/random/folder")
-            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+            let directoryURL = testDirectoryURL.appendingPathComponent("some/random/folder")
+            let directoryCreated = FileManager.createDirectory(at: directoryURL)
 
             let fileURL = directoryURL.appendingPathComponent("test_output.json")
             try "random_data".write(to: fileURL, atomically: true, encoding: .utf8)
@@ -303,6 +300,8 @@ class DownloadResponseTestCase: BaseTestCase {
             waitForExpectations(timeout: timeout, handler: nil)
 
             // Then
+            XCTAssertTrue(directoryCreated)
+
             XCTAssertNotNil(response?.request)
             XCTAssertNotNil(response?.response)
             XCTAssertNotNil(response?.temporaryURL)
@@ -321,35 +320,33 @@ class DownloadResponseTestCase: BaseTestCase {
     }
 
     func testThatDownloadOptionsCanRemovePreviousFilePriorToMovingFile() {
-        do {
-            // Given
-            let directoryURL = FileManager.cachesDirectoryURL.appendingPathComponent("some/random/folder")
-            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+        // Given
+        let directoryURL = testDirectoryURL.appendingPathComponent("some/random/folder")
+        let directoryCreated = FileManager.createDirectory(at: directoryURL)
 
-            let fileURL = directoryURL.appendingPathComponent("test_output.json")
+        let fileURL = directoryURL.appendingPathComponent("test_output.json")
 
-            let expectation = self.expectation(description: "Download should complete and move file to URL: \(fileURL)")
-            var response: DefaultDownloadResponse?
+        let expectation = self.expectation(description: "Download should complete and move file to URL: \(fileURL)")
+        var response: DefaultDownloadResponse?
 
-            // When
-            Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile])})
-                .response { resp in
-                    response = resp
-                    expectation.fulfill()
-                }
-
-            waitForExpectations(timeout: timeout, handler: nil)
-
-            // Then
-            XCTAssertNotNil(response?.request)
-            XCTAssertNotNil(response?.response)
-            XCTAssertNotNil(response?.temporaryURL)
-            XCTAssertNotNil(response?.destinationURL)
-            XCTAssertNil(response?.resumeData)
-            XCTAssertNil(response?.error)
-        } catch {
-            XCTFail("Test encountered unexpected error: \(error)")
+        // When
+        Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile])})
+            .response { resp in
+                response = resp
+                expectation.fulfill()
         }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertTrue(directoryCreated)
+
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.temporaryURL)
+        XCTAssertNotNil(response?.destinationURL)
+        XCTAssertNil(response?.resumeData)
+        XCTAssertNil(response?.error)
     }
 }
 

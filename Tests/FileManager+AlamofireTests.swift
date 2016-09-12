@@ -28,38 +28,6 @@ extension FileManager {
 
     // MARK: - Common Directories
 
-    static var documentsDirectoryPath: String {
-        return NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-    }
-
-    static var documentsDirectoryURL: URL {
-        return URL(fileURLWithPath: FileManager.documentsDirectoryPath, isDirectory: true)
-    }
-
-    static var libraryDirectoryPath: String {
-        return NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0]
-    }
-
-    static var libraryDirectoryURL: URL {
-        return URL(fileURLWithPath: FileManager.libraryDirectoryPath, isDirectory: true)
-    }
-
-    static var applicationSupportDirectoryPath: String {
-        return NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)[0]
-    }
-
-    static var applicationSupportDirectoryURL: URL {
-        return URL(fileURLWithPath: FileManager.applicationSupportDirectoryPath, isDirectory: true)
-    }
-
-    static var cachesDirectoryPath: String {
-        return NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
-    }
-
-    static var cachesDirectoryURL: URL {
-        return URL(fileURLWithPath: FileManager.cachesDirectoryPath, isDirectory: true)
-    }
-
     static var temporaryDirectoryPath: String {
         return NSTemporaryDirectory()
     }
@@ -81,6 +49,11 @@ extension FileManager {
     }
 
     @discardableResult
+    static func createDirectory(at url: URL) -> Bool {
+        return createDirectory(atPath: url.path)
+    }
+
+    @discardableResult
     static func removeItem(atPath path: String) -> Bool {
         do {
             try FileManager.default.removeItem(atPath: path)
@@ -88,6 +61,11 @@ extension FileManager {
         } catch {
             return false
         }
+    }
+
+    @discardableResult
+    static func removeItem(at url: URL) -> Bool {
+        return removeItem(atPath: url.path)
     }
 
     @discardableResult
@@ -101,5 +79,10 @@ extension FileManager {
         }
 
         return result
+    }
+
+    @discardableResult
+    static func removeAllItemsInsideDirectory(at url: URL) -> Bool {
+        return removeAllItemsInsideDirectory(atPath: url.path)
     }
 }
