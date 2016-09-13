@@ -55,7 +55,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 
 ## Requirements
 
-- iOS 9.0+ / Mac OS X 10.11+ / tvOS 9.0+ / watchOS 2.0+
+- iOS 9.0+ / macOS 10.11+ / tvOS 9.0+ / watchOS 2.0+
 - Xcode 8.0+
 - Swift 3.0+
 
@@ -1364,7 +1364,7 @@ extension DataRequest {
             // Use Alamofire's existing data serializer to extract the data, passing the error as nil, as it has
             // alreaady been handled.
             let result = Request.serializeResponseData(response: response, data: data, error: nil)
-            
+
             guard case let .success(validData) = result else {
                 return .failure(BackendError.dataSerialization(error: result.error! as! AFError))
             }
@@ -1413,7 +1413,7 @@ extension DataRequest {
 
             let jsonResponseSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
             let result = jsonResponseSerializer.serializeResponse(request, response, data, nil)
-            
+
             guard case let .success(jsonObject) = result else {
                 return .failure(BackendError.jsonSerialization(error: result.error!))
             }
@@ -1498,7 +1498,7 @@ extension DataRequest {
 
             let jsonSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
             let result = jsonSerializer.serializeResponse(request, response, data, nil)
-            
+
             guard case let .success(jsonObject) = result else {
                 return .failure(BackendError.jsonSerialization(error: result.error!))
             }
