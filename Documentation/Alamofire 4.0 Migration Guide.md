@@ -189,7 +189,7 @@ let destination: Request.DownloadFileDestination = { _, _ in
 }
 let parameters: Parameters = ["foo": "bar"]
 
-Alamofire.download(urlString, method: .get, parameters: parameters, encoding: JSONEncoding.default)
+Alamofire.download(urlString, method: .get, parameters: parameters, encoding: JSONEncoding.default, to: destination)
 	.downloadProgress(queue: DispatchQueue.utility) { progress in
 		print("Progress: \(progress.fractionCompleted)")
 	}
