@@ -694,63 +694,6 @@ open class SessionManager {
         return upload
     }
 
-#if !os(watchOS)
-
-    // MARK: - Stream Request
-
-    // MARK: Hostname and Port
-
-    /// Creates a `StreamRequest` for bidirectional streaming using the `hostname` and `port`.
-    ///
-    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
-    ///
-    /// - parameter hostName: The hostname of the server to connect to.
-    /// - parameter port:     The port of the server to connect to.
-    ///
-    /// - returns: The created `StreamRequest`.
-    @discardableResult
-    open func stream(withHostName hostName: String, port: Int) -> StreamRequest {
-        return stream(.stream(hostName: hostName, port: port))
-    }
-
-    // MARK: NetService
-
-    /// Creates a `StreamRequest` for bidirectional streaming using the `netService`.
-    ///
-    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
-    ///
-    /// - parameter netService: The net service used to identify the endpoint.
-    ///
-    /// - returns: The created `StreamRequest`.
-    @discardableResult
-    open func stream(with netService: NetService) -> StreamRequest {
-        return stream(.netService(netService))
-    }
-
-    // MARK: Private - Stream Implementation
-
-    private func stream(_ streamable: StreamRequest.Streamable) -> StreamRequest {
-        do {
-            let task = try streamable.task(session: session, adapter: adapter, queue: queue)
-            let request = StreamRequest(session: session, requestTask: .stream(streamable, task))
-
-            delegate[task] = request
-
-            if startRequestsImmediately { request.resume() }
-
-            return request
-        } catch {
-            return stream(failedWith: error)
-        }
-    }
-
-    private func stream(failedWith error: Error) -> StreamRequest {
-        let stream = StreamRequest(session: session, requestTask: .stream(nil, nil), error: error)
-        if startRequestsImmediately { stream.resume() }
-        return stream
-    }
-
-#endif
 
     // MARK: - Internal - Retry Request
 
