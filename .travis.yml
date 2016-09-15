@@ -51,8 +51,7 @@ script:
       xcodebuild -workspace "$WORKSPACE" -scheme "$EXAMPLE_SCHEME" -sdk "$SDK" -destination "$DESTINATION" -configuration Debug ONLY_ACTIVE_ARCH=NO build | xcpretty -c;
     fi
 
-  # Temporarily disabling pod lib lint check due to CocoaPods issue: https://github.com/CocoaPods/CocoaPods/issues/5661
   # Run `pod lib lint` if specified
-  # - if [ $POD_LINT == "YES" ]; then
-  #     pod lib lint;
-  #   fi
+  - if [ $POD_LINT == "YES" ]; then
+      pod lib lint;
+    fi
