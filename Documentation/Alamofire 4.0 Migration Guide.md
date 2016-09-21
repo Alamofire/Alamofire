@@ -453,7 +453,7 @@ Alamofire.request(urlString).response { response in
 
 ## Updated Features
 
-Alamofire 4 contains many new features and enhancments on existing ones. This section is designed to give a brief overview of the features and demonstrate their uses. For more information on each each, please refer to the linked pull request.
+Alamofire 4 contains many new features and enhancements on existing ones. This section is designed to give a brief overview of the features and demonstrate their uses. For more information on each each, please refer to the linked pull request.
 
 ### Errors
 
