@@ -1,12 +1,16 @@
 ![Alamofire: Elegant Networking in Swift](https://raw.githubusercontent.com/Alamofire/Alamofire/assets/alamofire.png)
 
-[![Build Status](https://travis-ci.org/Alamofire/Alamofire.svg?branch=master)](https://travis-ci.org/Alamofire/Alamofire)
-[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Alamofire.svg)](https://img.shields.io/cocoapods/v/Alamofire.svg)
+[![Build Status](https://travis-ci.org/Alamofire/Alamofire.svg?branch=master)](https://travis-ci.org/Alamofire/Alamofire
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Platform](https://img.shields.io/cocoapods/p/Alamofire.svg?style=flat)](http://cocoadocs.org/docsets/Alamofire)
 [![Twitter](https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat)](http://twitter.com/AlamofireSF)
 
-Alamofire is an HTTP networking library written in Swift.
+### Punchh changes
+- [PR#1](https://github.com/punchh/Alamofire/pull/1) iOS 8.0+ support from Xcode8 and Swift 3.0
+- [PR#2](https://github.com/punchh/Alamofire/pull/2) Readme updates for carthage supports only.
+- New Tag created as 4.0.0.1
+
+### Alamofire is an HTTP networking library written in Swift.
 
 - [Features](#features)
 - [Component Libraries](#component-libraries)
@@ -19,7 +23,7 @@ Alamofire is an HTTP networking library written in Swift.
 	- **HTTP -** [HTTP Methods](#http-methods), [Parameter Encoding](#parameter-encoding), [HTTP Headers](#http-headers), [Authentication](#authentication)
 	- **Large Data -** [Downloading Data to a File](#downloading-data-to-a-file), [Uploading Data to a Server](#uploading-data-to-a-server)
 	- **Tools -** [Statistical Metrics](#statistical-metrics), [cURL Command Output](#curl-command-output)
-- [Advanced Usage](#advanced-usage)
+- [Advanced Usage](#advanced-usage) [Punchh Modified]
 	- **URL Session -** [Session Manager](#session-manager), [Session Delegate](#session-delegate), [Request](#request)
 	- **Routing -** [Routing Requests](#routing-requests), [Adapting and Retrying Requests](#adapting-and-retrying-requests)
 	- **Model Objects -** [Custom Response Serialization](#custom-response-serialization)
@@ -55,7 +59,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 
 ## Requirements
 
-- iOS 9.0+ / Mac OS X 10.11+ / tvOS 9.0+ / watchOS 2.0+
+- iOS 8.0+ / Mac OS X 10.11+ / tvOS 9.0+ / watchOS 2.0+
 - Xcode 8.0+
 - Swift 3.0+
 
@@ -75,34 +79,6 @@ In order to keep Alamofire focused specifically on core networking implementatio
 
 ## Installation
 
-### CocoaPods
-
-[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
-
-```bash
-$ gem install cocoapods
-```
-
-> CocoaPods 1.1.0+ is required to build Alamofire 4.0.0+.
-
-To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
-
-```ruby
-source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '10.0'
-use_frameworks!
-
-target '<Your Target Name>' do
-    pod 'Alamofire', '~> 4.0'
-end
-```
-
-Then, run the following command:
-
-```bash
-$ pod install
-```
-
 ### Carthage
 
 [Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks.
@@ -117,7 +93,7 @@ $ brew install carthage
 To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" ~> 4.0
+github "punchh/Alamofire" ~> 4.0
 ```
 
 Run `carthage update` to build the framework and drag the built `Alamofire.framework` into your Xcode project.
@@ -137,7 +113,7 @@ $ git init
 - Add Alamofire as a git [submodule](http://git-scm.com/docs/git-submodule) by running the following command:
 
 ```bash
-$ git submodule add https://github.com/Alamofire/Alamofire.git
+$ git submodule add https://github.com/punchh/Alamofire.git
 ```
 
 - Open the new `Alamofire` folder, and drag the `Alamofire.xcodeproj` into the Project Navigator of your application's Xcode project.
@@ -1364,7 +1340,7 @@ extension DataRequest {
             // Use Alamofire's existing data serializer to extract the data, passing the error as nil, as it has
             // alreaady been handled.
             let result = Request.serializeResponseData(response: response, data: data, error: nil)
-            
+
             guard case let .success(validData) = result else {
                 return .failure(BackendError.dataSerialization(error: result.error! as! AFError))
             }
@@ -1413,7 +1389,7 @@ extension DataRequest {
 
             let jsonResponseSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
             let result = jsonResponseSerializer.serializeResponse(request, response, data, nil)
-            
+
             guard case let .success(jsonObject) = result else {
                 return .failure(BackendError.jsonSerialization(error: result.error!))
             }
@@ -1498,7 +1474,7 @@ extension DataRequest {
 
             let jsonSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
             let result = jsonSerializer.serializeResponse(request, response, data, nil)
-            
+
             guard case let .success(jsonObject) = result else {
                 return .failure(BackendError.jsonSerialization(error: result.error!))
             }
