@@ -45,7 +45,7 @@ Doing this helps prioritize the most common problems and requests.
 When reporting issues, please include the following:
 
 * The version of Xcode you're using
-* The version of iOS or OS X you're targeting
+* The version of iOS or macOS you're targeting
 * The full output of any stack trace or compiler error
 * A code snippet that reproduces the described behavior, if applicable
 * Any other details that would be useful in understanding the problem

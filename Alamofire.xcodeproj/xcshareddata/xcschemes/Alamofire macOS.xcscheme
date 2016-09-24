@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4DD67C0A1A5C55C900ED2280"
                BuildableName = "Alamofire.framework"
-               BlueprintName = "Alamofire OSX"
+               BlueprintName = "Alamofire macOS"
                ReferencedContainer = "container:Alamofire.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F829C6B11A7A94F100A2CD59"
-               BuildableName = "Alamofire OSX Tests.xctest"
-               BlueprintName = "Alamofire OSX Tests"
+               BuildableName = "Alamofire macOS Tests.xctest"
+               BlueprintName = "Alamofire macOS Tests"
                ReferencedContainer = "container:Alamofire.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,8 +47,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F829C6B11A7A94F100A2CD59"
-               BuildableName = "Alamofire OSX Tests.xctest"
-               BlueprintName = "Alamofire OSX Tests"
+               BuildableName = "Alamofire macOS Tests.xctest"
+               BlueprintName = "Alamofire macOS Tests"
                ReferencedContainer = "container:Alamofire.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -58,7 +58,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4DD67C0A1A5C55C900ED2280"
             BuildableName = "Alamofire.framework"
-            BlueprintName = "Alamofire OSX"
+            BlueprintName = "Alamofire macOS"
             ReferencedContainer = "container:Alamofire.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -80,7 +80,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4DD67C0A1A5C55C900ED2280"
             BuildableName = "Alamofire.framework"
-            BlueprintName = "Alamofire OSX"
+            BlueprintName = "Alamofire macOS"
             ReferencedContainer = "container:Alamofire.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -98,7 +98,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4DD67C0A1A5C55C900ED2280"
             BuildableName = "Alamofire.framework"
-            BlueprintName = "Alamofire OSX"
+            BlueprintName = "Alamofire macOS"
             ReferencedContainer = "container:Alamofire.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

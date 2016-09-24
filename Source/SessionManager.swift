@@ -83,7 +83,7 @@ open class SessionManager {
                             return "watchOS"
                         #elseif os(tvOS)
                             return "tvOS"
-                        #elseif os(OSX)
+                        #elseif os(macOS)
                             return "OS X"
                         #elseif os(Linux)
                             return "Linux"
