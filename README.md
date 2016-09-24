@@ -1362,7 +1362,7 @@ extension DataRequest {
             guard error == nil else { return .failure(BackendError.network(error: error!)) }
 
             // Use Alamofire's existing data serializer to extract the data, passing the error as nil, as it has
-            // alreaady been handled.
+            // already been handled.
             let result = Request.serializeResponseData(response: response, data: data, error: nil)
             
             guard case let .success(validData) = result else {
