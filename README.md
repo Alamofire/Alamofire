@@ -242,7 +242,7 @@ Alamofire.request("https://httpbin.org/get").response { response in
     print("Response: \(response.response)")
     print("Error: \(response.data)")
 
-    if let data = data, let utf8Text = String(data: data, encoding: .utf8) {
+    if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
     	print("Data: \(utf8Text)")
     }
 }
