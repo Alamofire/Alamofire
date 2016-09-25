@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 4.x Releases
-- `4.0.x` Releases - [4.0.0](#400)
+- `4.0.x` Releases - [4.0.0](#400) | [4.0.1](#401)
 - `4.0.0` Betas - [4.0.0-beta.1](#400-beta1) | [4.0.0-beta.2](#400-beta2)
 
 #### 3.x Releases
@@ -26,6 +26,64 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [4.0.1](https://github.com/Alamofire/Alamofire/releases/tag/4.0.1)
+Released on 2016-09-24. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.0.1).
+
+#### Added
+- The `OS_ACTIVITY_MODE` environment variable to iOS, tvOS and iOS Example.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Test verifying download request can be resumed with resume data.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- All instances of `com.alamofire` with `org.alamofire` throughout the project.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Project by adding `.swift-version` file and re-enabling `pod lib lint` in Travis file.
+  - Updated by [Thibault Vlacich](https://github.com/ThibaultVlacich) in Pull Request
+  [#1534](https://github.com/Alamofire/Alamofire/pull/1534).
+- The entire project to use `macOS` in place of `OS X`.
+  - Updated by [Justin Jia](https://github.com/JustinJiaDev) in Pull Request
+  [#1520](https://github.com/Alamofire/Alamofire/pull/1520).
+- Framework and test target override settings that duplicated the project settings.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- Issue where the test suite was accidentally deleting contents of `~/Library/Application Support`
+  on macOS.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#1512](https://github.com/Alamofire/Alamofire/issues/1512).
+- Typo in the migration guide around availability checks.
+  - Fixed by [Alexsander Akers](https://github.com/a2) in Pull Request
+  [#1510](https://github.com/Alamofire/Alamofire/pull/1510).
+- Typo in the README around response handlers.
+  - Fixed by [Glenn R. Fisher](https://github.com/glennrfisher) in Pull Request
+  [#1515](https://github.com/Alamofire/Alamofire/pull/1515).
+- Issue in the download example in the README where a `to` parameter was missing.
+  - Fixed by [Julien Colin](https://github.com/Toldy) in Pull Request
+  [#1532](https://github.com/Alamofire/Alamofire/pull/1532).
+- Issue in `AFError` where wrong case was used in several property implementations.
+  - Fixed by [Victor Chee](https://github.com/victorchee) in Pull Request
+  [#1558](https://github.com/Alamofire/Alamofire/pull/1558).
+- Typo in AF 4 migration guide where "enhancements" was spelled incorrectly.
+  - Fixed by [YeralYamil](https://github.com/YeralYamil) in Pull Request
+  [#1590](https://github.com/Alamofire/Alamofire/pull/1590).
+- Typo in code sample documentation where "already" was misspelled.
+  - Fixed by [Fuad Kamal](https://github.com/abunur) in Pull Request
+  [#1599](https://github.com/Alamofire/Alamofire/pull/1599).
+- Typos in the Open Radars and Donations sections of README.
+  - Fixed by [Brian Lu](https://github.com/bakemecookies) in Pull Request
+  [#1606](https://github.com/Alamofire/Alamofire/pull/1606).
+- Issue in `DispatchQueue` extension where `Foundation` needed to be imported for submodules.
+  - Fixed by [CodeEagle](https://github.com/CodeEagle) in Pull Request
+  [#1603](https://github.com/Alamofire/Alamofire/pull/1603).
+- Memory leak in `Validation` closures where reference to `self` was causing retain cycle.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#1551](https://github.com/Alamofire/Alamofire/issues/1551).
+- Compilation issue in response handler section of the README.
+  - Fixed by [Vishrut Shah](https://github.com/vishrutshah) in Pull Request
+  [#1612](https://github.com/Alamofire/Alamofire/pull/1612).
 
 ## [4.0.0](https://github.com/Alamofire/Alamofire/releases/tag/4.0.0)
 Released on 2016-09-11. All issues associated with this milestone can be found using this
