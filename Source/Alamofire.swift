@@ -24,7 +24,7 @@
 
 import Foundation
 
-/// Types adopting the `URLConvertible` protocol can be used to construct URLs, which are then used to construct 
+/// Types adopting the `URLConvertible` protocol can be used to construct URLs, which are then used to construct
 /// URL requests.
 public protocol URLConvertible {
     /// Returns a URL that conforms to RFC 2396 or throws an `Error`.
@@ -241,7 +241,7 @@ public func download(
 
 // MARK: File
 
-/// Creates an `UploadRequest` using the default `SessionManager` from the specified `url`, `method` and `headers` 
+/// Creates an `UploadRequest` using the default `SessionManager` from the specified `url`, `method` and `headers`
 /// for uploading the `file`.
 ///
 /// - parameter file:    The file to upload.
@@ -275,7 +275,7 @@ public func upload(_ fileURL: URL, with urlRequest: URLRequestConvertible) -> Up
 
 // MARK: Data
 
-/// Creates an `UploadRequest` using the default `SessionManager` from the specified `url`, `method` and `headers` 
+/// Creates an `UploadRequest` using the default `SessionManager` from the specified `url`, `method` and `headers`
 /// for uploading the `data`.
 ///
 /// - parameter data:    The data to upload.
@@ -309,7 +309,7 @@ public func upload(_ data: Data, with urlRequest: URLRequestConvertible) -> Uplo
 
 // MARK: InputStream
 
-/// Creates an `UploadRequest` using the default `SessionManager` from the specified `url`, `method` and `headers` 
+/// Creates an `UploadRequest` using the default `SessionManager` from the specified `url`, `method` and `headers`
 /// for uploading the `stream`.
 ///
 /// - parameter stream:  The stream to upload.
