@@ -331,7 +331,7 @@ By default, Alamofire treats any completed request to be successful, regardless 
 Alamofire.request("https://httpbin.org/get")
     .validate(statusCode: 200..<300)
     .validate(contentType: ["application/json"])
-    .response { response in
+    .responseData { response in
 	    switch response.result {
 	    case .success:
     	    print("Validation Successful")
