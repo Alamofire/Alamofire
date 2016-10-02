@@ -320,6 +320,8 @@ This release is the start of the Alamofire 4.0.0 beta releases. We still have qu
 
 We'd really appreciate everyone trying out the betas and letting us know if you find issues. We want to address every possible issue prior to the official Alamofire 4.0.0 release.
 
+---
+
 ## [3.5.0](https://github.com/Alamofire/Alamofire/releases/tag/3.5.0)
 Released on 2016-09-07. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.5.0).
