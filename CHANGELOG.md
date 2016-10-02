@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 3.x Releases
-- `3.5.x` Releases - [3.5.0](#350)
+- `3.5.x` Releases - [3.5.0](#350) | [3.5.1](#351)
 - `3.4.x` Releases - [3.4.0](#340) | [3.4.1](#341) | [3.4.2](#342)
 - `3.3.x` Releases - [3.3.0](#330) | [3.3.1](#331)
 - `3.2.x` Releases - [3.2.0](#320) | [3.2.1](#321)
@@ -20,6 +20,19 @@ All notable changes to this project will be documented in this file.
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [3.5.1](https://github.com/Alamofire/Alamofire/releases/tag/3.5.1)
+Released on 2016-10-01. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A3.5.1).
+
+#### Fixed
+- Assorted memory leaks caused by underlying Swift runtime bugs.
+  - Fixed by [Jon Shier](https://github.com/jshier) in regards to Issue [#1626](https://github.com/Alamofire/Alamofire/issues/1626).
+- Updated test logic for a result change in macOS 10.12.
+  - Fixed by [Jon Shier](https://github.com/jshier).
+
 
 ---
 
