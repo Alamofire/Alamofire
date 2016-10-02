@@ -102,7 +102,7 @@ public class Manager {
                     return "Alamofire/\(build)"
                 }()
 
-                return "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
+                return executable + "/" + appVersion + " (" + bundle + "; build:" + appBuild + "; " + osNameVersion + ") " + alamofireVersion
             }
 
             return "Alamofire"

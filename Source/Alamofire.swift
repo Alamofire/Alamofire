@@ -89,10 +89,10 @@ func URLRequest(
 {
     let mutableURLRequest: NSMutableURLRequest
 
-    if let request = URLString as? NSMutableURLRequest {
-        mutableURLRequest = request
-    } else if let request = URLString as? NSURLRequest {
-        mutableURLRequest = request.URLRequest
+    if URLString.dynamicType == NSMutableURLRequest.self {
+        mutableURLRequest = URLString as! NSMutableURLRequest
+    } else if URLString.dynamicType == NSURLRequest.self {
+        mutableURLRequest = (URLString as! NSURLRequest).URLRequest
     } else {
         mutableURLRequest = NSMutableURLRequest(URL: NSURL(string: URLString.URLString)!)
     }
