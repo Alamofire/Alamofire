@@ -23,5 +23,6 @@
 import PackageDescription
 
 let package = Package(
-  name: "Alamofire"
+    name: "Alamofire",
+    exclude: ["Tests"]
 )
