@@ -184,7 +184,7 @@ Alamofire.download(.GET, urlString, parameters: parameters, encoding: .JSON, to:
 
 // Alamofire 4
 let fileURL: URL
-let destination: Request.DownloadFileDestination = { _, _ in 
+let destination: DownloadRequest.DownloadFileDestination = { _, _ in 
 	return (fileURL, [.createIntermediateDirectories, .removePreviousFile]) 
 }
 let parameters: Parameters = ["foo": "bar"]
