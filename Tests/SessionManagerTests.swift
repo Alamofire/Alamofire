@@ -562,7 +562,7 @@ class SessionManagerTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        sessionManager.request("https://httpbin.org/basic-auth/user/password")
+        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -574,6 +574,7 @@ class SessionManagerTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
     }
 
@@ -590,7 +591,7 @@ class SessionManagerTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        sessionManager.request("https://httpbin.org/basic-auth/user/password")
+        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -602,6 +603,7 @@ class SessionManagerTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
     }
 
@@ -618,7 +620,7 @@ class SessionManagerTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        sessionManager.request("https://httpbin.org/basic-auth/user/password")
+        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse
@@ -630,6 +632,7 @@ class SessionManagerTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(handler.adaptedCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(request.retryCount, 0)
         XCTAssertEqual(response?.result.isSuccess, false)
 
         if let error = response?.result.error as? AFError {

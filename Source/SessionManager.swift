@@ -769,6 +769,7 @@ open class SessionManager {
 
             request.delegate.task = task // resets all task delegate data
 
+            request.retryCount += 1
             request.startTime = CFAbsoluteTimeGetCurrent()
             request.endTime = nil
 
