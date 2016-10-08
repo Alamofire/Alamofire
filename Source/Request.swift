@@ -110,6 +110,9 @@ open class Request {
     /// The response received from the server, if any.
     open var response: HTTPURLResponse? { return task?.response as? HTTPURLResponse }
 
+    /// The number of times the request has been retried.
+    open internal(set) var retryCount: UInt = 0
+
     let originalTask: TaskConvertible?
 
     var startTime: CFAbsoluteTime?
