@@ -132,6 +132,19 @@ public enum AFError: Error {
     case responseSerializationFailed(reason: ResponseSerializationFailureReason)
 }
 
+// MARK: - Adapt Error
+
+struct AdaptError: Error {
+    let error: Error
+}
+
+extension Error {
+    var extractedAdaptError: Error {
+        guard let error = self as? AdaptError else { return self }
+        return error.error
+    }
+}
+
 // MARK: - Error Booleans
 
 extension AFError {
