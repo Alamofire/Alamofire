@@ -580,6 +580,7 @@ open class UploadRequest: DataRequest {
 #if !os(watchOS)
 
 /// Specific type of `Request` that manages an underlying `URLSessionStreamTask`.
+@available(iOS 9.0, *)
 open class StreamRequest: Request {
     enum Streamable: TaskConvertible {
         case stream(hostName: String, port: Int)
