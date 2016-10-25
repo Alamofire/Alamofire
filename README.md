@@ -623,7 +623,7 @@ let destination: DownloadRequest.DownloadFileDestination = { _, _ in
 Alamofire.download(urlString, to: destination).response { response in
     print(response)
 
-	if response.result.isSuccess, let imagePath = response.destinationURL?.path {
+	if response.error == nil, let imagePath = response.destinationURL?.path {
 	    let image = UIImage(contentsOfFile: imagePath)
 	}
 }
