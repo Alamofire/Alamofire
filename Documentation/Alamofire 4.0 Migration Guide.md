@@ -104,7 +104,7 @@ Alamofire.request(.GET, urlString, parameters: parameters, encoding: .JSON)
 let parameters: Parameters = ["foo": "bar"]
 
 Alamofire.request(urlString, method: .get, parameters: parameters, encoding: JSONEncoding.default)
-	.downloadProgress(queue: DispatchQueue.utility) { progress in
+	.downloadProgress(queue: DispatchQueue.global(qos: .utility)) { progress in
 		print("Progress: \(progress.fractionCompleted)")
 	}
 	.validate { request, response, data in
@@ -190,7 +190,7 @@ let destination: DownloadRequest.DownloadFileDestination = { _, _ in
 let parameters: Parameters = ["foo": "bar"]
 
 Alamofire.download(urlString, method: .get, parameters: parameters, encoding: JSONEncoding.default, to: destination)
-	.downloadProgress(queue: DispatchQueue.utility) { progress in
+	.downloadProgress(queue: DispatchQueue.global(qos: .utility)) { progress in
 		print("Progress: \(progress.fractionCompleted)")
 	}
 	.validate { request, response, temporaryURL, destinationURL in
@@ -254,7 +254,7 @@ Alamofire.upload(.PUT, urlString, file: fileURL)
 
 // Alamofire 4
 Alamofire.upload(fileURL, to: urlString, method: .put)
-	.uploadProgress(queue: DispatchQueue.utility) { progress in
+	.uploadProgress(queue: DispatchQueue.global(qos: .utility)) { progress in
 		print("Upload Progress: \(progress.fractionCompleted)")
 	}
 	.downloadProgress { progress in // called on main queue by default
@@ -652,7 +652,7 @@ Alamofire.request(urlString)
 
 ```swift
 Alamofire.download(urlString, to: destination)
-    .downloadProgress(queue: DispatchQueue.utility) { progress in
+    .downloadProgress(queue: DispatchQueue.global(qos: .utility)) { progress in
         // Called on utility dispatch queue
         print("Download progress: \(progress.fractionCompleted)")
     }
