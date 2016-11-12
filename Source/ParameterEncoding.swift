@@ -125,16 +125,9 @@ public struct URLEncoding: ParameterEncoding {
 
         guard let parameters = parameters else { return urlRequest }
 
-        if let method = HTTPMethod(rawValue: urlRequest.httpMethod ?? "GET"), encodesParametersInURL(with: method) {
-            guard let url = urlRequest.url else {
-                throw AFError.parameterEncodingFailed(reason: .missingURL)
-            }
-
-            if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), !parameters.isEmpty {
-                let percentEncodedQuery = (urlComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)
-                urlComponents.percentEncodedQuery = percentEncodedQuery
-                urlRequest.url = urlComponents.url
-            }
+        if let method = HTTPMethod(rawValue: urlRequest.httpMethod ?? "GET"),
+            encodesParametersInURL(with: method), (destination == Destination.methodDependent || destination == Destination.queryString) {
+            urlRequest.url = try encode(parameters: parameters, inRequestUrl: urlRequest.url)
         } else {
             if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
                 urlRequest.setValue("application/x-www-form-urlencoded; charset=utf-8", forHTTPHeaderField: "Content-Type")
@@ -145,91 +138,7 @@ public struct URLEncoding: ParameterEncoding {
 
         return urlRequest
     }
-
-    /// Creates percent-escaped, URL encoded query string components from the given key-value pair using recursion.
-    ///
-    /// - parameter key:   The key of the query component.
-    /// - parameter value: The value of the query component.
-    ///
-    /// - returns: The percent-escaped, URL encoded query string components.
-    public func queryComponents(fromKey key: String, value: Any) -> [(String, String)] {
-        var components: [(String, String)] = []
-
-        if let dictionary = value as? [String: Any] {
-            for (nestedKey, value) in dictionary {
-                components += queryComponents(fromKey: "\(key)[\(nestedKey)]", value: value)
-            }
-        } else if let array = value as? [Any] {
-            for value in array {
-                components += queryComponents(fromKey: "\(key)[]", value: value)
-            }
-        } else if let value = value as? NSNumber {
-            if value.isBool {
-                components.append((escape(key), escape((value.boolValue ? "1" : "0"))))
-            } else {
-                components.append((escape(key), escape("\(value)")))
-            }
-        } else if let bool = value as? Bool {
-            components.append((escape(key), escape((bool ? "1" : "0"))))
-        } else {
-            components.append((escape(key), escape("\(value)")))
-        }
-
-        return components
-    }
-
-    /// Returns a percent-escaped string following RFC 3986 for a query string key or value.
-    ///
-    /// RFC 3986 states that the following characters are "reserved" characters.
-    ///
-    /// - General Delimiters: ":", "#", "[", "]", "@", "?", "/"
-    /// - Sub-Delimiters: "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "="
-    ///
-    /// In RFC 3986 - Section 3.4, it states that the "?" and "/" characters should not be escaped to allow
-    /// query strings to include a URL. Therefore, all "reserved" characters with the exception of "?" and "/"
-    /// should be percent-escaped in the query string.
-    ///
-    /// - parameter string: The string to be percent-escaped.
-    ///
-    /// - returns: The percent-escaped string.
-    public func escape(_ string: String) -> String {
-        let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
-        let subDelimitersToEncode = "!$&'()*+,;="
-
-        var allowedCharacterSet = CharacterSet.urlQueryAllowed
-        allowedCharacterSet.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
-
-        return string.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? string
-    }
-
-    private func query(_ parameters: [String: Any]) -> String {
-        var components: [(String, String)] = []
-
-        for key in parameters.keys.sorted(by: <) {
-            let value = parameters[key]!
-            components += queryComponents(fromKey: key, value: value)
-        }
-
-        return components.map { "\($0)=\($1)" }.joined(separator: "&")
-    }
-
-    private func encodesParametersInURL(with method: HTTPMethod) -> Bool {
-        switch destination {
-        case .queryString:
-            return true
-        case .httpBody:
-            return false
-        default:
-            break
-        }
-
-        switch method {
-        case .get, .head, .delete:
-            return true
-        default:
-            return false
-        }
-    }
+    
 }
 
 // MARK: -
@@ -275,16 +184,20 @@ public struct JSONEncoding: ParameterEncoding {
 
         guard let parameters = parameters else { return urlRequest }
 
-        do {
-            let data = try JSONSerialization.data(withJSONObject: parameters, options: options)
+        if let method = HTTPMethod(rawValue: urlRequest.httpMethod ?? "GET"), encodesParametersInURL(with: method) {
+            urlRequest.url = try encode(parameters: parameters, inRequestUrl: urlRequest.url)
+        } else {
+            do {
+                let data = try JSONSerialization.data(withJSONObject: parameters, options: options)
 
-            if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
-                urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
+                    urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                }
+
+                urlRequest.httpBody = data
+            } catch {
+                throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
             }
-
-            urlRequest.httpBody = data
-        } catch {
-            throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
         }
 
         return urlRequest
@@ -346,20 +259,24 @@ public struct PropertyListEncoding: ParameterEncoding {
 
         guard let parameters = parameters else { return urlRequest }
 
-        do {
-            let data = try PropertyListSerialization.data(
-                fromPropertyList: parameters,
-                format: format,
-                options: options
-            )
+        if let method = HTTPMethod(rawValue: urlRequest.httpMethod ?? "GET"), encodesParametersInURL(with: method) {
+            urlRequest.url = try encode(parameters: parameters, inRequestUrl: urlRequest.url)
+        } else {
+            do {
+                let data = try PropertyListSerialization.data(
+                    fromPropertyList: parameters,
+                    format: format,
+                    options: options
+                )
 
-            if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
-                urlRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
+                if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
+                    urlRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
+                }
+
+                urlRequest.httpBody = data
+            } catch {
+                throw AFError.parameterEncodingFailed(reason: .propertyListEncodingFailed(error: error))
             }
-
-            urlRequest.httpBody = data
-        } catch {
-            throw AFError.parameterEncodingFailed(reason: .propertyListEncodingFailed(error: error))
         }
 
         return urlRequest
@@ -370,4 +287,99 @@ public struct PropertyListEncoding: ParameterEncoding {
 
 extension NSNumber {
     fileprivate var isBool: Bool { return CFBooleanGetTypeID() == CFGetTypeID(self) }
+}
+
+extension ParameterEncoding {
+    
+    fileprivate func encode(parameters: Parameters, inRequestUrl requestUrl: URL?) throws -> URL? {
+        
+        guard let url = requestUrl else {
+            throw AFError.parameterEncodingFailed(reason: .missingURL)
+        }
+        
+        if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), !parameters.isEmpty {
+            let percentEncodedQuery = (urlComponents.percentEncodedQuery.map { $0 + "&" } ?? "") + query(parameters)
+            urlComponents.percentEncodedQuery = percentEncodedQuery
+            return urlComponents.url
+        } else {
+            return requestUrl
+        }
+    }
+    
+    /// Creates percent-escaped, URL encoded query string components from the given key-value pair using recursion.
+    ///
+    /// - parameter key:   The key of the query component.
+    /// - parameter value: The value of the query component.
+    ///
+    /// - returns: The percent-escaped, URL encoded query string components.
+    public func queryComponents(fromKey key: String, value: Any) -> [(String, String)] {
+        var components: [(String, String)] = []
+        
+        if let dictionary = value as? [String: Any] {
+            for (nestedKey, value) in dictionary {
+                components += queryComponents(fromKey: "\(key)[\(nestedKey)]", value: value)
+            }
+        } else if let array = value as? [Any] {
+            for value in array {
+                components += queryComponents(fromKey: "\(key)[]", value: value)
+            }
+        } else if let value = value as? NSNumber {
+            if value.isBool {
+                components.append((escape(key), escape((value.boolValue ? "1" : "0"))))
+            } else {
+                components.append((escape(key), escape("\(value)")))
+            }
+        } else if let bool = value as? Bool {
+            components.append((escape(key), escape((bool ? "1" : "0"))))
+        } else {
+            components.append((escape(key), escape("\(value)")))
+        }
+        
+        return components
+    }
+    
+    /// Returns a percent-escaped string following RFC 3986 for a query string key or value.
+    ///
+    /// RFC 3986 states that the following characters are "reserved" characters.
+    ///
+    /// - General Delimiters: ":", "#", "[", "]", "@", "?", "/"
+    /// - Sub-Delimiters: "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "="
+    ///
+    /// In RFC 3986 - Section 3.4, it states that the "?" and "/" characters should not be escaped to allow
+    /// query strings to include a URL. Therefore, all "reserved" characters with the exception of "?" and "/"
+    /// should be percent-escaped in the query string.
+    ///
+    /// - parameter string: The string to be percent-escaped.
+    ///
+    /// - returns: The percent-escaped string.
+    public func escape(_ string: String) -> String {
+        let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
+        let subDelimitersToEncode = "!$&'()*+,;="
+        
+        var allowedCharacterSet = CharacterSet.urlQueryAllowed
+        allowedCharacterSet.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
+        
+        return string.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? string
+    }
+    
+    fileprivate func query(_ parameters: [String: Any]) -> String {
+        var components: [(String, String)] = []
+        
+        for key in parameters.keys.sorted(by: <) {
+            let value = parameters[key]!
+            components += queryComponents(fromKey: key, value: value)
+        }
+        
+        return components.map { "\($0)=\($1)" }.joined(separator: "&")
+    }
+    
+    fileprivate func encodesParametersInURL(with method: HTTPMethod) -> Bool {
+        switch method {
+        case .get, .head, .delete:
+            return true
+        default:
+            return false
+        }
+    }
+    
 }
