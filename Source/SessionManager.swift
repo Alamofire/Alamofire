@@ -279,12 +279,10 @@ open class SessionManager {
             requestTask = .data(originalTask, nil)
         }
 
-        let isAdaptError = error is AdaptError
-        let error = error.extractedAdaptError
+        let underlyingError = error.underlyingAdaptError ?? error
+        let request = DataRequest(session: session, requestTask: requestTask, error: underlyingError)
 
-        let request = DataRequest(session: session, requestTask: requestTask, error: error)
-
-        if let retrier = retrier, isAdaptError {
+        if let retrier = retrier, error is AdaptError {
             allowRetrier(retrier, toRetry: request, with: error)
         } else {
             if startRequestsImmediately { request.resume() }
@@ -425,13 +423,12 @@ open class SessionManager {
             downloadTask = .download(downloadable, nil)
         }
 
-        let isAdaptError = error is AdaptError
-        let error = error.extractedAdaptError
+        let underlyingError = error.underlyingAdaptError ?? error
 
-        let download = DownloadRequest(session: session, requestTask: downloadTask, error: error)
+        let download = DownloadRequest(session: session, requestTask: downloadTask, error: underlyingError)
         download.downloadDelegate.destination = destination
 
-        if let retrier = retrier, isAdaptError {
+        if let retrier = retrier, error is AdaptError {
             allowRetrier(retrier, toRetry: download, with: error)
         } else {
             if startRequestsImmediately { download.resume() }
@@ -743,12 +740,10 @@ open class SessionManager {
             uploadTask = .upload(uploadable, nil)
         }
 
-        let isAdaptError = error is AdaptError
-        let error = error.extractedAdaptError
+        let underlyingError = error.underlyingAdaptError ?? error
+        let upload = UploadRequest(session: session, requestTask: uploadTask, error: underlyingError)
 
-        let upload = UploadRequest(session: session, requestTask: uploadTask, error: error)
-
-        if let retrier = retrier, isAdaptError {
+        if let retrier = retrier, error is AdaptError {
             allowRetrier(retrier, toRetry: upload, with: error)
         } else {
             if startRequestsImmediately { upload.resume() }
@@ -833,7 +828,7 @@ open class SessionManager {
 
             return true
         } catch {
-            request.delegate.error = error.extractedAdaptError
+            request.delegate.error = error.underlyingAdaptError ?? error
             return false
         }
     }
