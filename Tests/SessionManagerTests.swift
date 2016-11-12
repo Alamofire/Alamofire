@@ -52,11 +52,15 @@ class SessionManagerTestCase: BaseTestCase {
     private class RequestHandler: RequestAdapter, RequestRetrier {
         var adaptedCount = 0
         var retryCount = 0
+
         var shouldApplyAuthorizationHeader = false
         var throwsErrorOnSecondAdapt = false
 
         func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-            if throwsErrorOnSecondAdapt && adaptedCount == 1 { throw AFError.invalidURL(url: "") }
+            if throwsErrorOnSecondAdapt && adaptedCount == 1 {
+                throwsErrorOnSecondAdapt = false
+                throw AFError.invalidURL(url: "")
+            }
 
             var urlRequest = urlRequest
 
@@ -576,6 +580,36 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 2)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
+    }
+
+    func testThatSessionManagerCallsRequestRetrierWhenRequestInitiallyEncountersAdaptError() {
+        // Given
+        let handler = RequestHandler()
+        handler.adaptedCount = 1
+        handler.throwsErrorOnSecondAdapt = true
+        handler.shouldApplyAuthorizationHeader = true
+
+        let sessionManager = SessionManager()
+        sessionManager.adapter = handler
+        sessionManager.retrier = handler
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        // When
+        sessionManager.request("https://httpbin.org/basic-auth/user/password")
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, true)
     }
 
     func testThatSessionManagerCallsAdapterWhenRequestIsRetried() {

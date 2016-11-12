@@ -806,7 +806,7 @@ open class SessionManager {
         DispatchQueue.utility.async { [weak self] in
             guard let strongSelf = self else { return }
 
-            retrier.should(strongSelf, retry: request, with: error) { [weak self] shouldRetry, timeDelay in
+            retrier.should(strongSelf, retry: request, with: error) { shouldRetry, timeDelay in
                 guard let strongSelf = self else { return }
 
                 guard shouldRetry else {
