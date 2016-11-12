@@ -445,17 +445,21 @@ open class DownloadRequest: Request {
         case resumeData(Data)
 
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
-            let task: URLSessionTask
+            do {
+                let task: URLSessionTask
 
-            switch self {
-            case let .request(urlRequest):
-                let urlRequest = try urlRequest.adapt(using: adapter)
-                task = queue.syncResult { session.downloadTask(with: urlRequest) }
-            case let .resumeData(resumeData):
-                task = queue.syncResult { session.downloadTask(withResumeData: resumeData) }
+                switch self {
+                case let .request(urlRequest):
+                    let urlRequest = try urlRequest.adapt(using: adapter)
+                    task = queue.syncResult { session.downloadTask(with: urlRequest) }
+                case let .resumeData(resumeData):
+                    task = queue.syncResult { session.downloadTask(withResumeData: resumeData) }
+                }
+
+                return task
+            } catch {
+                throw AdaptError(error: error)
             }
-
-            return task
         }
     }
 

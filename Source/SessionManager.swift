@@ -328,7 +328,7 @@ open class SessionManager {
             let encodedURLRequest = try encoding.encode(urlRequest, with: parameters)
             return download(encodedURLRequest, to: destination)
         } catch {
-            return download(failedWith: error)
+            return download(nil, to: destination, failedWith: error)
         }
     }
 
@@ -354,7 +354,7 @@ open class SessionManager {
             let urlRequest = try urlRequest.asURLRequest()
             return download(.request(urlRequest), to: destination)
         } catch {
-            return download(failedWith: error)
+            return download(nil, to: destination, failedWith: error)
         }
     }
 
@@ -399,23 +399,44 @@ open class SessionManager {
     {
         do {
             let task = try downloadable.task(session: session, adapter: adapter, queue: queue)
-            let request = DownloadRequest(session: session, requestTask: .download(downloadable, task))
+            let download = DownloadRequest(session: session, requestTask: .download(downloadable, task))
 
-            request.downloadDelegate.destination = destination
+            download.downloadDelegate.destination = destination
 
-            delegate[task] = request
+            delegate[task] = download
 
-            if startRequestsImmediately { request.resume() }
+            if startRequestsImmediately { download.resume() }
 
-            return request
+            return download
         } catch {
-            return download(failedWith: error)
+            return download(downloadable, to: destination, failedWith: error)
         }
     }
 
-    private func download(failedWith error: Error) -> DownloadRequest {
-        let download = DownloadRequest(session: session, requestTask: .download(nil, nil), error: error)
-        if startRequestsImmediately { download.resume() }
+    private func download(
+        _ downloadable: DownloadRequest.Downloadable?,
+        to destination: DownloadRequest.DownloadFileDestination?,
+        failedWith error: Error)
+        -> DownloadRequest
+    {
+        var downloadTask: Request.RequestTask = .download(nil, nil)
+
+        if let downloadable = downloadable {
+            downloadTask = .download(downloadable, nil)
+        }
+
+        let isAdaptError = error is AdaptError
+        let error = error.extractedAdaptError
+
+        let download = DownloadRequest(session: session, requestTask: downloadTask, error: error)
+        download.downloadDelegate.destination = destination
+
+        if let retrier = retrier, isAdaptError {
+            allowRetrier(retrier, toRetry: download, with: error)
+        } else {
+            if startRequestsImmediately { download.resume() }
+        }
+
         return download
     }
 
