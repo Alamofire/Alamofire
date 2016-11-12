@@ -86,6 +86,24 @@ class SessionManagerTestCase: BaseTestCase {
         }
     }
 
+    private class UploadHandler: RequestAdapter, RequestRetrier {
+        var adaptedCount = 0
+        var retryCount = 0
+
+        func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
+            adaptedCount += 1
+
+            if adaptedCount == 1 { throw AFError.invalidURL(url: "") }
+
+            return urlRequest
+        }
+
+        func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
+            retryCount += 1
+            completion(true, 0.0)
+        }
+    }
+
     // MARK: Tests - Initialization
 
     func testInitializerWithDefaultArguments() {
@@ -633,6 +651,35 @@ class SessionManagerTestCase: BaseTestCase {
 
         // When
         sessionManager.download("https://httpbin.org/basic-auth/user/password", to: destination)
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, true)
+    }
+
+    func testThatSessionManagerCallsRequestRetrierWhenUploadInitiallyEncountersAdaptError() {
+        // Given
+        let handler = UploadHandler()
+
+        let sessionManager = SessionManager()
+        sessionManager.adapter = handler
+        sessionManager.retrier = handler
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        let uploadData = "upload data".data(using: .utf8, allowLossyConversion: false)!
+
+        // When
+        sessionManager.upload(uploadData, to: "https://httpbin.org/post")
             .validate()
             .responseJSON { jsonResponse in
                 response = jsonResponse

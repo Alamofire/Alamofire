@@ -466,7 +466,7 @@ open class SessionManager {
             let urlRequest = try URLRequest(url: url, method: method, headers: headers)
             return upload(fileURL, with: urlRequest)
         } catch {
-            return upload(failedWith: error)
+            return upload(nil, failedWith: error)
         }
     }
 
@@ -484,7 +484,7 @@ open class SessionManager {
             let urlRequest = try urlRequest.asURLRequest()
             return upload(.file(fileURL, urlRequest))
         } catch {
-            return upload(failedWith: error)
+            return upload(nil, failedWith: error)
         }
     }
 
@@ -512,7 +512,7 @@ open class SessionManager {
             let urlRequest = try URLRequest(url: url, method: method, headers: headers)
             return upload(data, with: urlRequest)
         } catch {
-            return upload(failedWith: error)
+            return upload(nil, failedWith: error)
         }
     }
 
@@ -530,7 +530,7 @@ open class SessionManager {
             let urlRequest = try urlRequest.asURLRequest()
             return upload(.data(data, urlRequest))
         } catch {
-            return upload(failedWith: error)
+            return upload(nil, failedWith: error)
         }
     }
 
@@ -558,7 +558,7 @@ open class SessionManager {
             let urlRequest = try URLRequest(url: url, method: method, headers: headers)
             return upload(stream, with: urlRequest)
         } catch {
-            return upload(failedWith: error)
+            return upload(nil, failedWith: error)
         }
     }
 
@@ -576,7 +576,7 @@ open class SessionManager {
             let urlRequest = try urlRequest.asURLRequest()
             return upload(.stream(stream, urlRequest))
         } catch {
-            return upload(failedWith: error)
+            return upload(nil, failedWith: error)
         }
     }
 
@@ -732,13 +732,28 @@ open class SessionManager {
 
             return upload
         } catch {
-            return upload(failedWith: error)
+            return upload(uploadable, failedWith: error)
         }
     }
 
-    private func upload(failedWith error: Error) -> UploadRequest {
-        let upload = UploadRequest(session: session, requestTask: .upload(nil, nil), error: error)
-        if startRequestsImmediately { upload.resume() }
+    private func upload(_ uploadable: UploadRequest.Uploadable?, failedWith error: Error) -> UploadRequest {
+        var uploadTask: Request.RequestTask = .upload(nil, nil)
+
+        if let uploadable = uploadable {
+            uploadTask = .upload(uploadable, nil)
+        }
+
+        let isAdaptError = error is AdaptError
+        let error = error.extractedAdaptError
+
+        let upload = UploadRequest(session: session, requestTask: uploadTask, error: error)
+
+        if let retrier = retrier, isAdaptError {
+            allowRetrier(retrier, toRetry: upload, with: error)
+        } else {
+            if startRequestsImmediately { upload.resume() }
+        }
+
         return upload
     }
 

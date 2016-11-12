@@ -539,21 +539,25 @@ open class UploadRequest: DataRequest {
         case stream(InputStream, URLRequest)
 
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
-            let task: URLSessionTask
+            do {
+                let task: URLSessionTask
 
-            switch self {
-            case let .data(data, urlRequest):
-                let urlRequest = try urlRequest.adapt(using: adapter)
-                task = queue.syncResult { session.uploadTask(with: urlRequest, from: data) }
-            case let .file(url, urlRequest):
-                let urlRequest = try urlRequest.adapt(using: adapter)
-                task = queue.syncResult { session.uploadTask(with: urlRequest, fromFile: url) }
-            case let .stream(_, urlRequest):
-                let urlRequest = try urlRequest.adapt(using: adapter)
-                task = queue.syncResult { session.uploadTask(withStreamedRequest: urlRequest) }
+                switch self {
+                case let .data(data, urlRequest):
+                    let urlRequest = try urlRequest.adapt(using: adapter)
+                    task = queue.syncResult { session.uploadTask(with: urlRequest, from: data) }
+                case let .file(url, urlRequest):
+                    let urlRequest = try urlRequest.adapt(using: adapter)
+                    task = queue.syncResult { session.uploadTask(with: urlRequest, fromFile: url) }
+                case let .stream(_, urlRequest):
+                    let urlRequest = try urlRequest.adapt(using: adapter)
+                    task = queue.syncResult { session.uploadTask(withStreamedRequest: urlRequest) }
+                }
+
+                return task
+            } catch {
+                throw AdaptError(error: error)
             }
-
-            return task
         }
     }
 
