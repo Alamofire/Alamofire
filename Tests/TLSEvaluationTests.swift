@@ -295,7 +295,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
     #if os(iOS) || os(macOS)
-        if #available(iOS 10.0, macOS 10.12.0, *) {
+        if #available(iOS 10.1, macOS 10.12.0, *) {
             XCTAssertNotNil(error, "error should not be nil")
         } else {
             XCTAssertNil(error, "error should be nil")
@@ -423,7 +423,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
     #if os(iOS) || os(macOS)
-        if #available(iOS 10.0, macOS 10.12.0, *) {
+        if #available(iOS 10.1, macOS 10.12.0, *) {
             XCTAssertNotNil(error, "error should not be nil")
         } else {
             XCTAssertNil(error, "error should be nil")
