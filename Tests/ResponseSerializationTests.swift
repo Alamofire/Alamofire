@@ -44,7 +44,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNotNil() {
         // Given
         let serializer = DataRequest.dataResponseSerializer()
-        let data = "data".data(using: String.Encoding.utf8)!
+        let data = "data".data(using: .utf8)!
 
         // When
         let result = serializer.serializeResponse(nil, nil, data, nil)

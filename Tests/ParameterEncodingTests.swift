@@ -742,7 +742,7 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
         do {
             // Given
             let date: Date = Date()
-            let data: Data = "data".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+            let data: Data = "data".data(using: .utf8, allowLossyConversion: false)!
 
             let parameters: [String: Any] = [
                 "date": date,

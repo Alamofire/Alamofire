@@ -543,7 +543,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     func testMultipartFormDataRequestWithDuplicateHeadersDebugDescription() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let japaneseData = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
         let expectation = self.expectation(description: "multipart form data encoding should succeed")
 
         var request: Request?

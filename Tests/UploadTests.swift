@@ -147,7 +147,7 @@ class UploadDataTestCase: BaseTestCase {
     func testUploadDataRequest() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let data = "Lorem ipsum dolor sit amet".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let data = "Lorem ipsum dolor sit amet".data(using: .utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "Upload request should succeed: \(urlString)")
         var response: DefaultDataResponse?
@@ -176,7 +176,7 @@ class UploadDataTestCase: BaseTestCase {
                 text += "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
             }
 
-            return text.data(using: String.Encoding.utf8, allowLossyConversion: false)!
+            return text.data(using: .utf8, allowLossyConversion: false)!
         }()
 
         let expectation = self.expectation(description: "Bytes upload progress should be reported: \(urlString)")
@@ -244,7 +244,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     func testThatUploadingMultipartFormDataSetsContentTypeHeader() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let uploadData = "upload_data".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let uploadData = "upload_data".data(using: .utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
@@ -293,8 +293,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     func testThatUploadingMultipartFormDataSucceedsWithDefaultParameters() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let frenchData = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
-        let japaneseData = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let frenchData = "français".data(using: .utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
         var response: DefaultDataResponse?
@@ -339,8 +339,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     func testThatUploadingMultipartFormDataBelowMemoryThresholdStreamsFromMemory() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let frenchData = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
-        let japaneseData = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let frenchData = "français".data(using: .utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
@@ -383,7 +383,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     func testThatUploadingMultipartFormDataBelowMemoryThresholdSetsContentTypeHeader() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let uploadData = "upload data".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let uploadData = "upload data".data(using: .utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
@@ -436,8 +436,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     func testThatUploadingMultipartFormDataAboveMemoryThresholdStreamsFromDisk() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let frenchData = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
-        let japaneseData = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let frenchData = "français".data(using: .utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
@@ -485,7 +485,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     func testThatUploadingMultipartFormDataAboveMemoryThresholdSetsContentTypeHeader() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let uploadData = "upload data".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        let uploadData = "upload data".data(using: .utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
@@ -547,8 +547,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 //        }()
 //
 //        let urlString = "https://httpbin.org/post"
-//        let french = "français".data(using: String.Encoding.utf8, allowLossyConversion: false)!
-//        let japanese = "日本語".data(using: String.Encoding.utf8, allowLossyConversion: false)!
+//        let french = "français".data(using: .utf8, allowLossyConversion: false)!
+//        let japanese = "日本語".data(using: .utf8, allowLossyConversion: false)!
 //
 //        let expectation = self.expectation(description: "multipart form data upload should succeed")
 //
@@ -611,7 +611,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 loremValues.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
             }
 
-            return loremValues.joined(separator: " ").data(using: String.Encoding.utf8, allowLossyConversion: false)!
+            return loremValues.joined(separator: " ").data(using: .utf8, allowLossyConversion: false)!
         }()
         let loremData2: Data = {
             var loremValues: [String] = []
@@ -619,7 +619,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 loremValues.append("Lorem ipsum dolor sit amet, nam no graeco recusabo appellantur.")
             }
 
-            return loremValues.joined(separator: " ").data(using: String.Encoding.utf8, allowLossyConversion: false)!
+            return loremValues.joined(separator: " ").data(using: .utf8, allowLossyConversion: false)!
         }()
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
