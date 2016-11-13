@@ -109,7 +109,7 @@ public enum AFError: Error {
     /// The underlying reason the response serialization error occurred.
     ///
     /// - inputDataNil:                    The server response contained no data.
-    /// - inputDataNilOrZeroLength:        The server response contained no data or the data was zero length.
+    /// - inputDataZeroLength:             The server response data was zero length.
     /// - inputFileNil:                    The file containing the server response did not exist.
     /// - inputFileReadFailed:             The file containing the server response could not be read.
     /// - stringSerializationFailed:       String serialization failed using the provided `String.Encoding`.
@@ -117,7 +117,7 @@ public enum AFError: Error {
     /// - propertyListSerializationFailed: Property list serialization failed with an underlying system error.
     public enum ResponseSerializationFailureReason {
         case inputDataNil
-        case inputDataNilOrZeroLength
+        case inputDataZeroLength
         case inputFileNil
         case inputFileReadFailed(at: URL)
         case stringSerializationFailed(encoding: String.Encoding)
@@ -420,8 +420,8 @@ extension AFError.ResponseSerializationFailureReason {
         switch self {
         case .inputDataNil:
             return "Response could not be serialized, input data was nil."
-        case .inputDataNilOrZeroLength:
-            return "Response could not be serialized, input data was nil or zero length."
+        case .inputDataZeroLength:
+            return "Response could not be serialized, input data was zero length."
         case .inputFileNil:
             return "Response could not be serialized, input file was nil."
         case .inputFileReadFailed(let url):

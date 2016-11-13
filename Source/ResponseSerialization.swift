@@ -253,18 +253,19 @@ extension DownloadRequest {
 extension Request {
     /// Returns a result data type that contains the response data as-is.
     ///
+    /// - parameter request:  The request performed.
     /// - parameter response: The response from the server.
     /// - parameter data:     The data returned from the server.
     /// - parameter error:    The error already encountered if it exists.
     ///
     /// - returns: The result data type.
-    public static func serializeResponseData(response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Data> {
+    public static func serializeResponseData(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Data> {
         guard error == nil else { return .failure(error!) }
-
-        if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(Data()) }
-
+        
         guard let validData = data else {
-            return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
+            return isValidNoDataResponse(request: request, response: response) ?
+                .success(Data()) :
+                .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
 
         return .success(validData)
@@ -276,8 +277,8 @@ extension DataRequest {
     ///
     /// - returns: A data response serializer.
     public static func dataResponseSerializer() -> DataResponseSerializer<Data> {
-        return DataResponseSerializer { _, response, data, error in
-            return Request.serializeResponseData(response: response, data: data, error: error)
+        return DataResponseSerializer { request, response, data, error in
+            return Request.serializeResponseData(request: request, response: response, data: data, error: error)
         }
     }
 
@@ -305,7 +306,7 @@ extension DownloadRequest {
     ///
     /// - returns: A data response serializer.
     public static func dataResponseSerializer() -> DownloadResponseSerializer<Data> {
-        return DownloadResponseSerializer { _, response, fileURL, error in
+        return DownloadResponseSerializer { request, response, fileURL, error in
             guard error == nil else { return .failure(error!) }
 
             guard let fileURL = fileURL else {
@@ -314,7 +315,7 @@ extension DownloadRequest {
 
             do {
                 let data = try Data(contentsOf: fileURL)
-                return Request.serializeResponseData(response: response, data: data, error: error)
+                return Request.serializeResponseData(request: request, response: response, data: data, error: error)
             } catch {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
             }
@@ -347,6 +348,7 @@ extension Request {
     ///
     /// - parameter encoding: The string encoding. If `nil`, the string encoding will be determined from the server
     ///                       response, falling back to the default HTTP default character set, ISO-8859-1.
+    /// - parameter request:  The request performed.
     /// - parameter response: The response from the server.
     /// - parameter data:     The data returned from the server.
     /// - parameter error:    The error already encountered if it exists.
@@ -354,19 +356,20 @@ extension Request {
     /// - returns: The result data type.
     public static func serializeResponseString(
         encoding: String.Encoding?,
+        request: URLRequest?,
         response: HTTPURLResponse?,
         data: Data?,
         error: Error?)
         -> Result<String>
     {
         guard error == nil else { return .failure(error!) }
-
-        if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success("") }
-
+        
         guard let validData = data else {
-            return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
+            return isValidNoDataResponse(request: request, response: response) ?
+                .success("") :
+                .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
-
+        
         var convertedEncoding = encoding
 
         if let encodingName = response?.textEncodingName as CFString!, convertedEncoding == nil {
@@ -394,8 +397,8 @@ extension DataRequest {
     ///
     /// - returns: A string response serializer.
     public static func stringResponseSerializer(encoding: String.Encoding? = nil) -> DataResponseSerializer<String> {
-        return DataResponseSerializer { _, response, data, error in
-            return Request.serializeResponseString(encoding: encoding, response: response, data: data, error: error)
+        return DataResponseSerializer { request, response, data, error in
+            return Request.serializeResponseString(encoding: encoding, request: request, response: response, data: data, error: error)
         }
     }
 
@@ -431,7 +434,7 @@ extension DownloadRequest {
     ///
     /// - returns: A string response serializer.
     public static func stringResponseSerializer(encoding: String.Encoding? = nil) -> DownloadResponseSerializer<String> {
-        return DownloadResponseSerializer { _, response, fileURL, error in
+        return DownloadResponseSerializer { request, response, fileURL, error in
             guard error == nil else { return .failure(error!) }
 
             guard let fileURL = fileURL else {
@@ -440,7 +443,7 @@ extension DownloadRequest {
 
             do {
                 let data = try Data(contentsOf: fileURL)
-                return Request.serializeResponseString(encoding: encoding, response: response, data: data, error: error)
+                return Request.serializeResponseString(encoding: encoding, request: request, response: response, data: data, error: error)
             } catch {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
             }
@@ -477,6 +480,7 @@ extension Request {
     /// with the specified reading options.
     ///
     /// - parameter options:  The JSON serialization reading options. Defaults to `.allowFragments`.
+    /// - parameter request:  The request performed.
     /// - parameter response: The response from the server.
     /// - parameter data:     The data returned from the server.
     /// - parameter error:    The error already encountered if it exists.
@@ -484,17 +488,22 @@ extension Request {
     /// - returns: The result data type.
     public static func serializeResponseJSON(
         options: JSONSerialization.ReadingOptions,
+        request: URLRequest?,
         response: HTTPURLResponse?,
         data: Data?,
         error: Error?)
         -> Result<Any>
     {
         guard error == nil else { return .failure(error!) }
-
-        if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(NSNull()) }
-
-        guard let validData = data, validData.count > 0 else {
-            return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
+        
+        guard let validData = data else {
+            return isValidNoDataResponse(request: request, response: response) ?
+                .success(NSNull()) :
+                .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
+        }
+        
+        guard !validData.isEmpty else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputDataZeroLength))
         }
 
         do {
@@ -517,8 +526,8 @@ extension DataRequest {
         options: JSONSerialization.ReadingOptions = .allowFragments)
         -> DataResponseSerializer<Any>
     {
-        return DataResponseSerializer { _, response, data, error in
-            return Request.serializeResponseJSON(options: options, response: response, data: data, error: error)
+        return DataResponseSerializer { request, response, data, error in
+            return Request.serializeResponseJSON(options: options, request: request, response: response, data: data, error: error)
         }
     }
 
@@ -554,7 +563,7 @@ extension DownloadRequest {
         options: JSONSerialization.ReadingOptions = .allowFragments)
         -> DownloadResponseSerializer<Any>
     {
-        return DownloadResponseSerializer { _, response, fileURL, error in
+        return DownloadResponseSerializer { request, response, fileURL, error in
             guard error == nil else { return .failure(error!) }
 
             guard let fileURL = fileURL else {
@@ -563,7 +572,7 @@ extension DownloadRequest {
 
             do {
                 let data = try Data(contentsOf: fileURL)
-                return Request.serializeResponseJSON(options: options, response: response, data: data, error: error)
+                return Request.serializeResponseJSON(options: options, request: request, response: response, data: data, error: error)
             } catch {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
             }
@@ -598,6 +607,7 @@ extension Request {
     /// `PropertyListSerialization` with the specified reading options.
     ///
     /// - parameter options:  The property list reading options. Defaults to `[]`.
+    /// - parameter request:  The request performed.
     /// - parameter response: The response from the server.
     /// - parameter data:     The data returned from the server.
     /// - parameter error:    The error already encountered if it exists.
@@ -605,17 +615,22 @@ extension Request {
     /// - returns: The result data type.
     public static func serializeResponsePropertyList(
         options: PropertyListSerialization.ReadOptions,
+        request: URLRequest?,
         response: HTTPURLResponse?,
         data: Data?,
         error: Error?)
         -> Result<Any>
     {
         guard error == nil else { return .failure(error!) }
-
-        if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(NSNull()) }
-
-        guard let validData = data, validData.count > 0 else {
-            return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
+        
+        guard let validData = data else {
+            return isValidNoDataResponse(request: request, response: response) ?
+                .success(NSNull()) :
+                .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
+        }
+        
+        guard !validData.isEmpty else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputDataZeroLength))
         }
 
         do {
@@ -638,8 +653,8 @@ extension DataRequest {
         options: PropertyListSerialization.ReadOptions = [])
         -> DataResponseSerializer<Any>
     {
-        return DataResponseSerializer { _, response, data, error in
-            return Request.serializeResponsePropertyList(options: options, response: response, data: data, error: error)
+        return DataResponseSerializer { request, response, data, error in
+            return Request.serializeResponsePropertyList(options: options, request: request, response: response, data: data, error: error)
         }
     }
 
@@ -675,7 +690,7 @@ extension DownloadRequest {
         options: PropertyListSerialization.ReadOptions = [])
         -> DownloadResponseSerializer<Any>
     {
-        return DownloadResponseSerializer { _, response, fileURL, error in
+        return DownloadResponseSerializer { request, response, fileURL, error in
             guard error == nil else { return .failure(error!) }
 
             guard let fileURL = fileURL else {
@@ -684,7 +699,7 @@ extension DownloadRequest {
 
             do {
                 let data = try Data(contentsOf: fileURL)
-                return Request.serializeResponsePropertyList(options: options, response: response, data: data, error: error)
+                return Request.serializeResponsePropertyList(options: options, request: request, response: response, data: data, error: error)
             } catch {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
             }
@@ -712,5 +727,32 @@ extension DownloadRequest {
     }
 }
 
-/// A set of HTTP response status code that do not contain response data.
-private let emptyDataStatusCodes: Set<Int> = [204, 205]
+// MARK: - Empty Data Handling
+
+extension Request {
+    /// A set of HTTP response status code that do not contain response data.
+    fileprivate static let emptyDataStatusCodes: Set<Int> = [204, 205]
+    
+    
+    /// A set of `HTTPMethod`s that are not required to contained response data.
+    fileprivate static let emptyDataHTTPMethods: Set<HTTPMethod> = [.head]
+    
+    
+    /// Determines whether it's valid for the request / response combination to have empty response data.
+    ///
+    /// - Parameters:
+    ///   - request: The `URLRequest` performed.
+    ///   - response: The `HTTPURLResponse` received.
+    /// - Returns: Whether or not the request / response combination can have an empty response.
+    public static func isValidNoDataResponse(request: URLRequest?, response: HTTPURLResponse?) -> Bool {
+        if let response = response {
+            return emptyDataStatusCodes.contains(response.statusCode)
+        }
+        
+        if let rawHTTPMethod = request?.httpMethod, let method = HTTPMethod(rawValue: rawHTTPMethod) {
+            return emptyDataHTTPMethods.contains(method)
+        }
+        
+        return false
+    }
+}

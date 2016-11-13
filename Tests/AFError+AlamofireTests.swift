@@ -117,8 +117,8 @@ extension AFError {
         return false
     }
 
-    var isInputDataNilOrZeroLength: Bool {
-        if case let .responseSerializationFailed(reason) = self, reason.isInputDataNilOrZeroLength { return true }
+    var isInputDataZeroLength: Bool {
+        if case let .responseSerializationFailed(reason) = self, reason.isInputDataZeroLength { return true }
         return false
     }
 
@@ -271,8 +271,8 @@ extension AFError.ResponseSerializationFailureReason {
         return false
     }
 
-    var isInputDataNilOrZeroLength: Bool {
-        if case .inputDataNilOrZeroLength = self { return true }
+    var isInputDataZeroLength: Bool {
+        if case .inputDataZeroLength = self { return true }
         return false
     }
 
