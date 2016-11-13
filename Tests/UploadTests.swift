@@ -475,10 +475,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         if let streamingFromDisk = streamingFromDisk, let streamFilePath = streamFileURL?.path {
             XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
-            XCTAssertTrue(
-                FileManager.default.fileExists(atPath: streamFilePath),
-                "stream file path should exist"
-            )
+            XCTAssertFalse(FileManager.default.fileExists(atPath: streamFilePath), "stream file path should not exist")
         }
     }
 

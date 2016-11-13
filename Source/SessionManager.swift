@@ -697,12 +697,24 @@ open class SessionManager {
 
                     try formData.writeEncodedData(to: fileURL)
 
+                    let upload = self.upload(fileURL, with: urlRequestWithContentType)
+
+                    // Cleanup the temp file once the upload is complete
+                    upload.delegate.queue.addOperation {
+                        do {
+                            try FileManager.default.removeItem(at: fileURL)
+                        } catch {
+                            // No-op
+                        }
+                    }
+
                     DispatchQueue.main.async {
                         let encodingResult = MultipartFormDataEncodingResult.success(
-                            request: self.upload(fileURL, with: urlRequestWithContentType),
+                            request: upload,
                             streamingFromDisk: true,
                             streamFileURL: fileURL
                         )
+
                         encodingCompletion?(encodingResult)
                     }
                 }
