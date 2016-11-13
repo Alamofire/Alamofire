@@ -261,7 +261,7 @@ extension Request {
     /// - returns: The result data type.
     public static func serializeResponseData(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Data> {
         guard error == nil else { return .failure(error!) }
-        
+
         guard let validData = data else {
             return isValidNoDataResponse(request: request, response: response) ?
                 .success(Data()) :
@@ -363,13 +363,13 @@ extension Request {
         -> Result<String>
     {
         guard error == nil else { return .failure(error!) }
-        
+
         guard let validData = data else {
             return isValidNoDataResponse(request: request, response: response) ?
                 .success("") :
                 .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
-        
+
         var convertedEncoding = encoding
 
         if let encodingName = response?.textEncodingName as CFString!, convertedEncoding == nil {
@@ -495,13 +495,13 @@ extension Request {
         -> Result<Any>
     {
         guard error == nil else { return .failure(error!) }
-        
+
         guard let validData = data else {
             return isValidNoDataResponse(request: request, response: response) ?
                 .success(NSNull()) :
                 .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
-        
+
         guard !validData.isEmpty else {
             return .failure(AFError.responseSerializationFailed(reason: .inputDataZeroLength))
         }
@@ -622,13 +622,13 @@ extension Request {
         -> Result<Any>
     {
         guard error == nil else { return .failure(error!) }
-        
+
         guard let validData = data else {
             return isValidNoDataResponse(request: request, response: response) ?
                 .success(NSNull()) :
                 .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
-        
+
         guard !validData.isEmpty else {
             return .failure(AFError.responseSerializationFailed(reason: .inputDataZeroLength))
         }
@@ -732,12 +732,12 @@ extension DownloadRequest {
 extension Request {
     /// A set of HTTP response status code that do not contain response data.
     fileprivate static let emptyDataStatusCodes: Set<Int> = [204, 205]
-    
-    
+
+
     /// A set of `HTTPMethod`s that are not required to contained response data.
     fileprivate static let emptyDataHTTPMethods: Set<HTTPMethod> = [.head]
-    
-    
+
+
     /// Determines whether it's valid for the request / response combination to have empty response data.
     ///
     /// - Parameters:
@@ -748,11 +748,11 @@ extension Request {
         if let response = response {
             return emptyDataStatusCodes.contains(response.statusCode)
         }
-        
+
         if let rawHTTPMethod = request?.httpMethod, let method = HTTPMethod(rawValue: rawHTTPMethod) {
             return emptyDataHTTPMethods.contains(method)
         }
-        
+
         return false
     }
 }

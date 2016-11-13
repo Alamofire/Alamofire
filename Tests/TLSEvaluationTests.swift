@@ -294,7 +294,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-    #if os(iOS) || (macOS)
+    #if os(iOS) || os(macOS)
         if #available(iOS 10.0, macOS 10.12.0, *) {
             XCTAssertNotNil(error, "error should not be nil")
         } else {
@@ -422,7 +422,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-    #if os(iOS) || (macOS)
+    #if os(iOS) || os(macOS)
         if #available(iOS 10.0, macOS 10.12.0, *) {
             XCTAssertNotNil(error, "error should not be nil")
         } else {
