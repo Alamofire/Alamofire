@@ -294,7 +294,15 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+    #if os(iOS) || os(macOS)
+        if #available(iOS 10.0, macOS 10.12.0, *) {
+            XCTAssertNotNil(error, "error should not be nil")
+        } else {
+            XCTAssertNil(error, "error should be nil")
+        }
+    #else
         XCTAssertNil(error, "error should be nil")
+    #endif
     }
 
     // MARK: Server Trust Policy - Public Key Pinning Tests
@@ -414,7 +422,15 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+    #if os(iOS) || os(macOS)
+        if #available(iOS 10.0, macOS 10.12.0, *) {
+            XCTAssertNotNil(error, "error should not be nil")
+        } else {
+            XCTAssertNil(error, "error should be nil")
+        }
+    #else
         XCTAssertNil(error, "error should be nil")
+    #endif
     }
 
     // MARK: Server Trust Policy - Disabling Evaluation Tests
