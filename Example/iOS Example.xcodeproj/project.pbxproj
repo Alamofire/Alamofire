@@ -118,7 +118,7 @@
 				31E4766A1C55DD5900968569 /* Alamofire.framework */,
 				31E4766C1C55DD5900968569 /* Alamofire iOS Tests.xctest */,
 				31E4766E1C55DD5900968569 /* Alamofire.framework */,
-				31E476701C55DD5900968569 /* Alamofire OSX Tests.xctest */,
+				31E476701C55DD5900968569 /* Alamofire macOS Tests.xctest */,
 				31E476721C55DD5900968569 /* Alamofire.framework */,
 				31E476741C55DD5900968569 /* Alamofire tvOS Tests.xctest */,
 				31E476761C55DD5900968569 /* Alamofire.framework */,
@@ -261,10 +261,10 @@
 			remoteRef = 31E4766D1C55DD5900968569 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		31E476701C55DD5900968569 /* Alamofire OSX Tests.xctest */ = {
+		31E476701C55DD5900968569 /* Alamofire macOS Tests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
-			path = "Alamofire OSX Tests.xctest";
+			path = "Alamofire macOS Tests.xctest";
 			remoteRef = 31E4766F1C55DD5900968569 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
