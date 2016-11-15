@@ -24,8 +24,8 @@ This guide is provided in order to ease the transition of existing applications 
 
 ## Requirements
 
-- iOS and tvOS 9.0+, macOS 10.11.0+, watchOS 2.0+
-- Xcode 8.0+
+- iOS 8.0+, macOS 10.10.0+, tvOS 9.0+ and watchOS 2.0+
+- Xcode 8.1+
 - Swift 3.0+
 
 For those of you that would like to use Alamofire on iOS 8 or macOS 10.9, please use the latest tagged 3.x release which supports both Swift 2.2 and 2.3.
