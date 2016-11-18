@@ -139,7 +139,7 @@ struct AdaptError: Error {
 }
 
 extension Error {
-    var underlyingAdaptError: Error? { return (self as? AdaptError)?.error }
+    public var underlyingAdaptError: Error? { return (self as? AdaptError)?.error }
 }
 
 // MARK: - Error Booleans

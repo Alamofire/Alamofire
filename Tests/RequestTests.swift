@@ -283,6 +283,105 @@ class RequestResponseTestCase: BaseTestCase {
 
 // MARK: -
 
+enum FailingRequestAdapterError: Error {
+    case expiredAccessToken
+}
+
+// Always throws the FailingRequestAdapterError.expiredAccessToken error when asked to adapt a URLRequest.
+class FailingRequestAdapter: RequestAdapter {
+    func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
+        throw FailingRequestAdapterError.expiredAccessToken
+    }
+}
+
+// MARK: -
+
+class RequestAdapterThrowsErrorTestCase: BaseTestCase {
+    private var sessionManager: SessionManager!
+
+    override func setUp() {
+        super.setUp()
+
+        sessionManager = SessionManager()
+        sessionManager.adapter = FailingRequestAdapter()
+    }
+
+    func testDataRequestHasURLRequest() {
+        // Given
+        let urlString = "https://httpbin.org/"
+
+        // When
+        let request = sessionManager.request(urlString)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "GET")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
+        XCTAssertNil(request.response)
+    }
+
+    func testDownloadRequestHasURLRequest() {
+        // Given
+        let urlString = "https://httpbin.org/"
+
+        // When
+        let request = sessionManager.download(urlString)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "GET")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
+        XCTAssertNil(request.response)
+    }
+
+    func testUploadDataRequestHasURLRequest() {
+        // Given
+        let urlString = "https://httpbin.org/"
+
+        // When
+        let request = sessionManager.upload(Data(), to: urlString)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
+        XCTAssertNil(request.response)
+    }
+
+    func testUploadFileRequestHasURLRequest() {
+        // Given
+        let urlString = "https://httpbin.org/"
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
+
+        // When
+        let request = sessionManager.upload(imageURL, to: urlString)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
+        XCTAssertNil(request.response)
+    }
+
+    func testUploadStreamRequestHasURLRequest() {
+        // Given
+        let urlString = "https://httpbin.org/"
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
+        let imageStream = InputStream(url: imageURL)!
+
+        // When
+        let request = sessionManager.upload(imageStream, to: urlString)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
+        XCTAssertNil(request.response)
+    }
+}
+
+// MARK: -
+
 extension Request {
     fileprivate func preValidate(operation: @escaping (Void) -> Void) -> Self {
         delegate.queue.addOperation {
