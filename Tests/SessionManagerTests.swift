@@ -52,6 +52,7 @@ class SessionManagerTestCase: BaseTestCase {
     private class RequestHandler: RequestAdapter, RequestRetrier {
         var adaptedCount = 0
         var retryCount = 0
+        var retryErrors: [Error] = []
 
         var shouldApplyAuthorizationHeader = false
         var throwsErrorOnSecondAdapt = false
@@ -77,6 +78,7 @@ class SessionManagerTestCase: BaseTestCase {
 
         func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             retryCount += 1
+            retryErrors.append(error)
 
             if retryCount < 2 {
                 completion(true, 0.0)
@@ -89,6 +91,7 @@ class SessionManagerTestCase: BaseTestCase {
     private class UploadHandler: RequestAdapter, RequestRetrier {
         var adaptedCount = 0
         var retryCount = 0
+        var retryErrors: [Error] = []
 
         func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
             adaptedCount += 1
@@ -100,6 +103,8 @@ class SessionManagerTestCase: BaseTestCase {
 
         func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             retryCount += 1
+            retryErrors.append(error)
+
             completion(true, 0.0)
         }
     }
@@ -628,6 +633,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
+
+        handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
     }
 
     func testThatSessionManagerCallsRequestRetrierWhenDownloadInitiallyEncountersAdaptError() {
@@ -663,6 +670,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
+
+        handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
     }
 
     func testThatSessionManagerCallsRequestRetrierWhenUploadInitiallyEncountersAdaptError() {
@@ -692,6 +701,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
+
+        handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
     }
 
     func testThatSessionManagerCallsAdapterWhenRequestIsRetried() {

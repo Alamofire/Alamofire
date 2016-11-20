@@ -283,7 +283,7 @@ open class SessionManager {
         let request = DataRequest(session: session, requestTask: requestTask, error: underlyingError)
 
         if let retrier = retrier, error is AdaptError {
-            allowRetrier(retrier, toRetry: request, with: error)
+            allowRetrier(retrier, toRetry: request, with: underlyingError)
         } else {
             if startRequestsImmediately { request.resume() }
         }
@@ -429,7 +429,7 @@ open class SessionManager {
         download.downloadDelegate.destination = destination
 
         if let retrier = retrier, error is AdaptError {
-            allowRetrier(retrier, toRetry: download, with: error)
+            allowRetrier(retrier, toRetry: download, with: underlyingError)
         } else {
             if startRequestsImmediately { download.resume() }
         }
@@ -756,7 +756,7 @@ open class SessionManager {
         let upload = UploadRequest(session: session, requestTask: uploadTask, error: underlyingError)
 
         if let retrier = retrier, error is AdaptError {
-            allowRetrier(retrier, toRetry: upload, with: error)
+            allowRetrier(retrier, toRetry: upload, with: underlyingError)
         } else {
             if startRequestsImmediately { upload.resume() }
         }
