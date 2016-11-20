@@ -1291,8 +1291,12 @@ class OAuth2Handler: RequestAdapter, RequestRetrier {
             .responseJSON { [weak self] response in
                 guard let strongSelf = self else { return }
 
-                if let json = response.result.value as? [String: String] {
-                    completion(true, json["access_token"], json["refresh_token"])
+                if 
+                    let json = response.result.value as? [String: Any], 
+                    let accessToken = json["access_token"] as? String, 
+                    let refreshToken = json["refresh_token"] as? String 
+                {
+                    completion(true, accessToken, refreshToken)
                 } else {
                     completion(false, nil, nil)
                 }
