@@ -659,6 +659,8 @@ open class SessionManager {
             let formData = MultipartFormData()
             multipartFormData(formData)
 
+            var tempFileURL: URL?
+
             do {
                 var urlRequestWithContentType = try urlRequest.asURLRequest()
                 urlRequestWithContentType.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
@@ -681,6 +683,8 @@ open class SessionManager {
                     let directoryURL = tempDirectoryURL.appendingPathComponent("org.alamofire.manager/multipart.form.data")
                     let fileName = UUID().uuidString
                     let fileURL = directoryURL.appendingPathComponent(fileName)
+
+                    tempFileURL = fileURL
 
                     var directoryError: Error?
 
@@ -719,6 +723,15 @@ open class SessionManager {
                     }
                 }
             } catch {
+                // Cleanup the temp file in the event that the multipart form data encoding failed
+                if let tempFileURL = tempFileURL {
+                    do {
+                        try FileManager.default.removeItem(at: tempFileURL)
+                    } catch {
+                        // No-op
+                    }
+                }
+
                 DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
             }
         }
