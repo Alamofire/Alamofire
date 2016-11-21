@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 4.x Releases
+- `4.2.x` Releases - [4.2.0](#420)
 - `4.1.x` Releases - [4.1.0](#410)
 - `4.0.x` Releases - [4.0.0](#400) | [4.0.1](#401)
 - `4.0.0` Betas - [4.0.0-beta.1](#400-beta1) | [4.0.0-beta.2](#400-beta2)
@@ -28,7 +29,38 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [4.1.0](https://github.com/Alamofire/Alamofire/releases/tag/4.0.1)
+## [4.2.0](https://github.com/Alamofire/Alamofire/releases/tag/4.2.0)
+Released on 2016-11-20. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.2.0).
+
+#### Added
+- Request property overrides to fallback on original task if available.
+  - Added by [Aron Cedercrantz](https://github.com/rastersize) in Pull Request
+  [#1792](https://github.com/Alamofire/Alamofire/pull/1792).
+- `Timeline` generation to `DefaultDataResponse` and `DefaultDownloadResponse`.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- JSON encoding `encode` method that takes a JSON object along with unit tests.
+  - Added by [Christian Noon](https://github.com/cnoon).
+
+#### Updated
+- The `RequestRetrier` example in the README to safely extract tokens.
+  - Updated by [Pontus Andersson](https://github.com/pontus-andersson) in Pull Request
+  [#1794](https://github.com/Alamofire/Alamofire/pull/1794).
+- `TaskDelegate` `data` and `error` properties to a `public` ACL.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+- Multipart form data uploads to now delete temp file if encoding fails.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+- Issue where `AdaptError` instances were being incorrectly sent to the `RequestRetrier`.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#1785](https://github.com/Alamofire/Alamofire/issues/1785).
+- Issue where TLS tests were failing on iOS 10.0 and not on iOS 10.1.
+  - Fixed by [Christian Noon](https://github.com/cnoon).
+
+---
+
+## [4.1.0](https://github.com/Alamofire/Alamofire/releases/tag/4.1.0)
 Released on 2016-11-15. All issues associated with this milestone can be found using this
 [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.1.0).
 
