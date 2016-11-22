@@ -24,11 +24,43 @@
 
 import Foundation
 
+public protocol SessionManagerProtocol {
+
+    associatedtype DefaultType
+    
+    static var `default`:DefaultType {get}
+
+    init(configuration: URLSessionConfiguration,// = URLSessionConfiguration.default,
+        delegate: SessionDelegate,// = SessionDelegate(),
+        serverTrustPolicyManager: ServerTrustPolicyManager?)
+    
+}
+
+public extension SessionManagerProtocol {
+
+    /// A default instance of `SessionManager`, used by top-level Alamofire request methods, and suitable for use
+    /// directly for any ad hoc requests.
+    public static var `default`: SessionManager {
+        let configuration = URLSessionConfiguration.default
+        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+        
+        return SessionManager(configuration: configuration,
+                              delegate: SessionDelegate(),
+                              serverTrustPolicyManager: nil)
+    }
+
+}
+
+
+
+
 /// Responsible for creating and managing `Request` objects, as well as their underlying `NSURLSession`.
-open class SessionManager {
+open class SessionManager: SessionManagerProtocol {
 
-    // MARK: - Helper Types
-
+    public typealias DefaultType = SessionManager
+    
+    // MARK: - Helper Types    
+    
     /// Defines whether the `MultipartFormData` encoding was successful and contains result of the encoding as
     /// associated values.
     ///
@@ -42,15 +74,6 @@ open class SessionManager {
     }
 
     // MARK: - Properties
-
-    /// A default instance of `SessionManager`, used by top-level Alamofire request methods, and suitable for use
-    /// directly for any ad hoc requests.
-    open static let `default`: SessionManager = {
-        let configuration = URLSessionConfiguration.default
-        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
-
-        return SessionManager(configuration: configuration)
-    }()
 
     /// Creates default values for the "Accept-Encoding", "Accept-Language" and "User-Agent" headers.
     open static let defaultHTTPHeaders: HTTPHeaders = {
@@ -163,10 +186,9 @@ open class SessionManager {
     ///                                       challenges. `nil` by default.
     ///
     /// - returns: The new `SessionManager` instance.
-    public init(
-        configuration: URLSessionConfiguration = URLSessionConfiguration.default,
-        delegate: SessionDelegate = SessionDelegate(),
-        serverTrustPolicyManager: ServerTrustPolicyManager? = nil)
+    public required init(configuration: URLSessionConfiguration = URLSessionConfiguration.default,
+                         delegate: SessionDelegate = SessionDelegate(),
+                         serverTrustPolicyManager: ServerTrustPolicyManager? = nil)
     {
         self.delegate = delegate
         self.session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
