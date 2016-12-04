@@ -66,6 +66,8 @@ private struct TestPublicKeys {
 class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     let urlString = "https://expired.badssl.com/"
     let host = "expired.badssl.com"
+    let revokedUrlString = "https://revoked.badssl.com"
+    let revokedHost = "revoked.badssl.com"
     var configuration: URLSessionConfiguration!
 
     // MARK: Setup and Teardown
@@ -433,6 +435,38 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     #endif
     }
 
+    // MARK: Server Trust Policy - Perform Revoked Tests
+    
+    func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
+        // Given
+        let policies = [revokedHost: ServerTrustPolicy.performRevokedEvaluation(validateHost: true, revocationFlags: kSecRevocationRequirePositiveResponse)]
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
+        
+        weak var expectation = self.expectation(description: "\(revokedUrlString)")
+        var error: Error?
+        
+        // When
+        manager.request(revokedUrlString)
+            .response { resp in
+                error = resp.error
+                expectation?.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertNotNil(error, "error should not be nil")
+        
+        if let error = error as? URLError {
+            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
+        } else {
+            XCTFail("error should be an URLError")
+        }
+    }
+    
     // MARK: Server Trust Policy - Disabling Evaluation Tests
 
     func testThatExpiredCertificateRequestSucceedsWhenDisablingEvaluation() {
