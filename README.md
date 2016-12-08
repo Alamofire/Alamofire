@@ -1088,7 +1088,7 @@ enum Router: URLRequestConvertible {
 ```
 
 ```swift
-Alamofire.request(Router.search(query: "foo bar", page: 1)) // ?q=foo%20bar&offset=50
+Alamofire.request(Router.search(query: "foo bar", page: 1)) // https://example.com/search?q=foo%20bar&offset=50
 ```
 
 ##### CRUD & Authorization
@@ -1153,7 +1153,7 @@ enum Router: URLRequestConvertible {
 ```
 
 ```swift
-Alamofire.request(Router.readUser("mattt")) // GET /users/mattt
+Alamofire.request(Router.readUser("mattt")) // GET https://example.com/users/mattt
 ```
 
 ### Adapting and Retrying Requests
