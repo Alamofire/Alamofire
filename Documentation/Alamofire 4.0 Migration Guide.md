@@ -120,7 +120,7 @@ Alamofire.request(urlString, method: .get, parameters: parameters, encoding: JSO
 
 ```swift
 // Alamofire 3
-let destination = Request.suggestedDownloadDestination()
+let destination = DownloadRequest.suggestedDownloadDestination()
 
 Alamofire.download(.GET, urlString, destination: destination).response { request, response, data, error in
 	// What is fileURL...not easy to get
@@ -131,7 +131,7 @@ Alamofire.download(.GET, urlString, destination: destination).response { request
 }
 
 // Alamofire 4
-let destination = Request.suggestedDownloadDestination()
+let destination = DownloadRequest.suggestedDownloadDestination()
 
 Alamofire.download(urlString, to: destination).response { response in // method defaults to `.get`
     print(response.request)
@@ -146,7 +146,7 @@ Alamofire.download(urlString, to: destination).response { response in // method 
 
 ```swift
 // Alamofire 3
-let destination = Request.suggestedDownloadDestination()
+let destination = DownloadRequest.suggestedDownloadDestination()
 
 Alamofire.download(urlRequest, destination: destination).validate().responseData { response in
 	// What is fileURL...not easy to get
