@@ -214,7 +214,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.success("success value")
         
         // Then
-        let mappedResult = result.map { $0.characters.count }
+        let mappedResult = result.flatMap { $0.characters.count }
         XCTAssertEqual(
             mappedResult.value ?? 0,
             13,
