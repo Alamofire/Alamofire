@@ -100,3 +100,82 @@ extension Result: CustomDebugStringConvertible {
         }
     }
 }
+
+// MARK: - Functional Tools
+
+extension Result {
+    /// Returns the success value, or throws the failure error.
+    ///
+    ///     let possibleString: Result<String> = .success("success")
+    ///     try print(possibleString.unwrap())
+    ///     // Prints "success"
+    ///
+    ///     let noString: Result<String> = .failure(error)
+    ///     try print(noString.unwrap())
+    ///     // Throws error
+    func unwrap() throws -> Value {
+        switch self {
+        case .success(let value):
+            return value
+        case .failure(let error):
+            throw error
+        }
+    }
+    
+    /// Evaluates the given closure when this `Result` is a success, passing the
+    /// unwrapped value as a parameter.
+    ///
+    /// Use the `map` method with a closure that does not throw. For example:
+    ///
+    ///     let possibleData: Result<Data> = .success(Data())
+    ///     let possibleInt = possibleData.map { $0.count }
+    ///     try print(possibleInt.unwrap())
+    ///     // Prints "0"
+    ///
+    ///     let noData: Result<Data> = .failure(error)
+    ///     let noInt = noData.map { $0.count }
+    ///     try print(noInt.unwrap())
+    ///     // Throws error
+    ///
+    /// - parameter transform: A closure that takes the success value of
+    ///   the instance.
+    /// - returns: A `Result` containing the result of the given closure. If
+    ///   this instance is a failure, returns the same failure.
+    func map<T>(_ transform: (Value) -> T) -> Result<T> {
+        switch self {
+        case .success(let value):
+            return .success(transform(value))
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+    
+    /// Evaluates the given closure when this `Result` is a success, passing the
+    /// unwrapped value as a parameter.
+    ///
+    /// Use the `flatMap` method with a closure that may throw an error.
+    /// For example:
+    ///
+    ///     let possibleData: Result<Data> = .success(Data(...))
+    ///     let possibleObject = possibleData.flatMap {
+    ///         try JSONSerialization.jsonObject(with: $0)
+    ///     }
+    ///
+    /// - parameter transform: A closure that takes the success value of
+    ///   the instance.
+    /// - returns: A success or failure `Result` depending on the result of the
+    ///   given closure. If this instance is a failure, returns the`
+    ///   same failure.
+    func flatMap<T>(_ transform: (Value) throws -> T) -> Result<T> {
+        switch self {
+        case .success(let value):
+            do {
+                return try .success(transform(value))
+            } catch {
+                return .failure(error)
+            }
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
+}
