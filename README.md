@@ -595,6 +595,8 @@ Alamofire.request("https://httpbin.org/basic-auth/\(user)/\(password)")
 
 Requests made in Alamofire that fetch data from a server can download the data in-memory or on-disk. The `Alamofire.request` APIs used in all the examples so far always downloads the server data in-memory. This is great for smaller payloads because it's more efficient, but really bad for larger payloads because the download could run your entire application out-of-memory. Because of this, you can also use the `Alamofire.download` APIs to download the server data to a temporary file on-disk.
 
+> This will only work on `macOS` as is. Other platforms don't allow access to the filesystem outside of your app's sandbox. To download files on other platforms, see the [Download File Destination](download-file-destination) section.
+
 ```swift
 Alamofire.download("https://httpbin.org/image/png").responseData { response in
 	if let data = response.result.value {
