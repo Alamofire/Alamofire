@@ -1012,8 +1012,8 @@ Alamofire.request(urlString, method: .post)
 let url = URL(string: urlString)!
 Alamofire.request(url, method: .post)
 
-let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
-Alamofire.request(.post, URLComponents)
+let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+Alamofire.request(urlComponents, method: .post)
 ```
 
 Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLConvertible` as a convenient way to map domain-specific models to server resources.
