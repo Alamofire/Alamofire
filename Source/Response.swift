@@ -43,7 +43,23 @@ public struct DefaultDataResponse {
 
     var _metrics: AnyObject?
 
-    init(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?, timeline: Timeline = Timeline()) {
+    /// Creates a `DefaultDataResponse` instance from the specified parameters.
+    ///
+    /// - Parameters:
+    ///   - request:  The URL request sent to the server.
+    ///   - response: The server's response to the URL request.
+    ///   - data:     The data returned by the server.
+    ///   - error:    The error encountered while executing or validating the request.
+    ///   - timeline: The timeline of the complete lifecycle of the request. `Timeline()` by default.
+    ///   - metrics:  The task metrics containing the request / response statistics. `nil` by default.
+    public init(
+        request: URLRequest?,
+        response: HTTPURLResponse?,
+        data: Data?,
+        error: Error?,
+        timeline: Timeline = Timeline(),
+        metrics: AnyObject? = nil)
+    {
         self.request = request
         self.response = response
         self.data = data
@@ -148,14 +164,26 @@ public struct DefaultDownloadResponse {
 
     var _metrics: AnyObject?
 
-    init(
+    /// Creates a `DefaultDownloadResponse` instance from the specified parameters.
+    ///
+    /// - Parameters:
+    ///   - request:        The URL request sent to the server.
+    ///   - response:       The server's response to the URL request.
+    ///   - temporaryURL:   The temporary destination URL of the data returned from the server.
+    ///   - destinationURL: The final destination URL of the data returned from the server if it was moved.
+    ///   - resumeData:     The resume data generated if the request was cancelled.
+    ///   - error:          The error encountered while executing or validating the request.
+    ///   - timeline:       The timeline of the complete lifecycle of the request. `Timeline()` by default.
+    ///   - metrics:        The task metrics containing the request / response statistics. `nil` by default.
+    public init(
         request: URLRequest?,
         response: HTTPURLResponse?,
         temporaryURL: URL?,
         destinationURL: URL?,
         resumeData: Data?,
         error: Error?,
-        timeline: Timeline = Timeline())
+        timeline: Timeline = Timeline(),
+        metrics: AnyObject? = nil)
     {
         self.request = request
         self.response = response
