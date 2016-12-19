@@ -471,10 +471,10 @@ extension SessionDelegate: URLSessionTaskDelegate {
         /// If an error occurred and the retrier is set, asynchronously ask the retrier if the request
         /// should be retried. Otherwise, complete the task by notifying the task delegate.
         if let retrier = retrier, let error = error {
-            retrier.should(sessionManager, retry: request, with: error) { [weak self] shouldRetry, delay in
+            retrier.should(sessionManager, retry: request, with: error) { [weak self] shouldRetry, timeDelay in
                 guard shouldRetry else { completeTask(session, task, error) ; return }
 
-                DispatchQueue.utility.after(delay) { [weak self] in
+                DispatchQueue.utility.after(timeDelay) { [weak self] in
                     guard let strongSelf = self else { return }
 
                     let retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false
