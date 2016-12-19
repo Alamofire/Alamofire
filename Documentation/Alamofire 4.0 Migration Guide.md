@@ -457,7 +457,7 @@ Alamofire 4 contains many new features and enhancements on existing ones. This s
 
 ### Errors
 
-Alamofire 4 contains a completely new error system that adopts the new pattern proposed in [SE-0112](https://github.com/apple/swift-evolution/blob/master/proposals/0112-nserror-bridging.md). At the heart of the new error system is `AFError`, a new `Error` type enumeration backed by four main cases.
+Alamofire 4 contains a completely new error system that adopts the new pattern proposed in [SE-0112](https://github.com/apple/swift-evolution/blob/master/proposals/0112-nserror-bridging.md). At the heart of the new error system is `AFError`, a new `Error` type enumeration backed by five main cases.
 
 - `.invalidURL(url: URLConvertible)` - Returned when a `URLConvertible` type fails to create a valid `URL`.
 - `.parameterEncodingFailed(reason: ParameterEncodingFailureReason)` - Returned when a parameter encoding object throws an error during the encoding process.
