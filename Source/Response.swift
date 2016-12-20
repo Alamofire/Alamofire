@@ -87,6 +87,12 @@ public struct DataResponse<Value> {
     /// The timeline of the complete lifecycle of the request.
     public let timeline: Timeline
 
+    /// Returns the associated value of the result if it is a success, `nil` otherwise.
+    public var value: Value? { return result.value }
+
+    /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
+    public var error: Error? { return result.error }
+
     var _metrics: AnyObject?
 
     /// Creates a `DataResponse` instance with the specified parameters derived from response serialization.
@@ -219,6 +225,12 @@ public struct DownloadResponse<Value> {
 
     /// The timeline of the complete lifecycle of the request.
     public let timeline: Timeline
+
+    /// Returns the associated value of the result if it is a success, `nil` otherwise.
+    public var value: Value? { return result.value }
+
+    /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
+    public var error: Error? { return result.error }
 
     var _metrics: AnyObject?
 
