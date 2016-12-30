@@ -56,6 +56,37 @@ class RequestInitializationTestCase: BaseTestCase {
         XCTAssertNil(request.response)
     }
 
+    func testRequestClassMethodWithMethodAndQueryURLAndParameters() {
+        // Given
+        let urlString = "https://httpbin.org/"
+
+        // When
+        let queryUrl = QueryURL(url: urlString, parameters: ["lorem": "ipsum"])
+        let bodyParameters = ["foo": "bar"]
+        let request = Alamofire.request(queryUrl, method: .post, parameters: bodyParameters, encoding: JSONEncoding.default)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "POST")
+        XCTAssertNotEqual(request.request?.url?.absoluteString, urlString)
+        XCTAssertEqual(request.request?.url?.query, "lorem=ipsum")
+        XCTAssertNotNil(request.request?.httpBody)
+
+        if let httpBody = request.request?.httpBody {
+            do {
+                let json = try JSONSerialization.jsonObject(with: httpBody, options: .allowFragments)
+
+                if let json = json as? NSObject {
+                    XCTAssertEqual(json, bodyParameters as NSObject)
+                } else {
+                    XCTFail("json should be an NSObject")
+                }
+            } catch {
+                XCTFail("json should not be nil")
+            }
+        }
+    }
+
     func testRequestClassMethodWithMethodURLParametersAndHeaders() {
         // Given
         let urlString = "https://httpbin.org/get"

@@ -64,6 +64,37 @@ extension URLComponents: URLConvertible {
     }
 }
 
+/// Wrapper around URLConvertible to force-include query parameters on body-enabled requests.
+/// Use this if you want to pass body parameters and query paramters in one request.
+public class QueryURL: URLConvertible {
+    let url: URLConvertible
+    let parameters: Parameters
+
+    /// Creates a new QueryURL object with given url and query parameters.
+    ///
+    /// - parameter url:        The URL.
+    /// - parameter parameters: The parameters to be included into the URL as query params.
+    public init(url: URLConvertible, parameters: Parameters) {
+        self.url = url
+        self.parameters = parameters
+    }
+}
+
+extension QueryURL {
+    /// Returns a URL that conforms to RFC 2396 or throws an `Error`.
+    ///
+    /// - throws: An `Error` if the type cannot be converted to a `URL`.
+    ///
+    /// - returns: A URL or throws an `Error`.
+    public func asURL() throws -> URL {
+        let url = try self.url.asURL()
+        let fakeUrlRequest = URLRequest(url: url)
+        let queryFakeUrlRequest = try URLEncoding.default.encode(fakeUrlRequest, with: self.parameters)
+        guard let queryUrl = queryFakeUrlRequest.url else { throw AFError.invalidURL(url: self) }
+        return queryUrl
+    }
+}
+
 // MARK: -
 
 /// Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests.
