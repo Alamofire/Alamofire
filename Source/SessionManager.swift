@@ -231,12 +231,44 @@ open class SessionManager {
         headers: HTTPHeaders? = nil)
         -> DataRequest
     {
+        return request(
+            url,
+            method: method,
+            queryParameters: nil,
+            bodyParameters: parameters,
+            bodyEncoding: encoding,
+            headers: headers
+        )
+    }
+
+    /// Creates a `DataRequest` to retrieve the contents of the specified `url`, `method`, `queryParameters`,
+    /// `bodyParameters`, `bodyEncoding` and `headers`.
+    ///
+    /// - parameter url:                The URL.
+    /// - parameter method:             The HTTP method. `.get` by default.
+    /// - parameter queryParameters:    The query parameters. `nil` by default.
+    /// - parameter bodyParameters:     The body parameters. `nil` by default.
+    /// - parameter encoding:           The body parameter encoding. `URLEncoding.default` by default.
+    /// - parameter headers:            The HTTP headers. `nil` by default.
+    ///
+    /// - returns: The created `DataRequest`.
+    @discardableResult
+    open func request(
+        _ url: URLConvertible,
+        method: HTTPMethod = .get,
+        queryParameters: Parameters?,
+        bodyParameters: Parameters? = nil,
+        bodyEncoding: ParameterEncoding = URLEncoding.default,
+        headers: HTTPHeaders? = nil)
+        -> DataRequest
+    {
         var originalRequest: URLRequest?
 
         do {
             originalRequest = try URLRequest(url: url, method: method, headers: headers)
-            let encodedURLRequest = try encoding.encode(originalRequest!, with: parameters)
-            return request(encodedURLRequest)
+            let queryEncodedURLRequest = try URLEncoding.default.encode(originalRequest!, with: queryParameters)
+            let queryAndBodyEncodedURLRequest = try bodyEncoding.encode(queryEncodedURLRequest, with: bodyParameters)
+            return request(queryAndBodyEncodedURLRequest)
         } catch {
             return request(originalRequest, failedWith: error)
         }

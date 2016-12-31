@@ -146,6 +146,37 @@ public func request(
     )
 }
 
+/// Creates a `DataRequest` using the default `SessionManager` to retrieve the contents of the specified `url`,
+/// `method`, `queryParameters`, `bodyParameters`, `bodyEncoding` and `headers`.
+///
+/// - parameter url:                The URL.
+/// - parameter method:             The HTTP method. `.get` by default.
+/// - parameter queryParameters:    The query parameters. `nil` by default.
+/// - parameter bodyParameters:     The body parameters. `nil` by default.
+/// - parameter encoding:           The body parameter encoding. `URLEncoding.default` by default.
+/// - parameter headers:            The HTTP headers. `nil` by default.
+///
+/// - returns: The created `DataRequest`.
+@discardableResult
+public func request(
+    _ url: URLConvertible,
+    method: HTTPMethod = .get,
+    queryParameters: Parameters?,
+    bodyParameters: Parameters? = nil,
+    bodyEncoding: ParameterEncoding = URLEncoding.default,
+    headers: HTTPHeaders? = nil)
+    -> DataRequest
+{
+    return SessionManager.default.request(
+        url,
+        method: method,
+        queryParameters: queryParameters,
+        bodyParameters: bodyParameters,
+        bodyEncoding: bodyEncoding,
+        headers: headers
+    )
+}
+
 /// Creates a `DataRequest` using the default `SessionManager` to retrieve the contents of a URL based on the
 /// specified `urlRequest`.
 ///
