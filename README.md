@@ -6,6 +6,8 @@
 [![Platform](https://img.shields.io/cocoapods/p/Alamofire.svg?style=flat)](http://cocoadocs.org/docsets/Alamofire)
 [![Twitter](https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat)](http://twitter.com/AlamofireSF)
 
+## [简体中文](README.zh_CN.md)
+
 Alamofire is an HTTP networking library written in Swift.
 
 - [Features](#features)
