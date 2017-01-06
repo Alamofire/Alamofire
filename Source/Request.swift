@@ -356,7 +356,7 @@ open class DataRequest: Request {
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
             do {
                 let urlRequest = try self.urlRequest.adapt(using: adapter)
-                return queue.syncResult { session.dataTask(with: urlRequest) }
+                return queue.sync { session.dataTask(with: urlRequest) }
             } catch {
                 throw AdaptError(error: error)
             }
@@ -459,9 +459,9 @@ open class DownloadRequest: Request {
                 switch self {
                 case let .request(urlRequest):
                     let urlRequest = try urlRequest.adapt(using: adapter)
-                    task = queue.syncResult { session.downloadTask(with: urlRequest) }
+                    task = queue.sync { session.downloadTask(with: urlRequest) }
                 case let .resumeData(resumeData):
-                    task = queue.syncResult { session.downloadTask(withResumeData: resumeData) }
+                    task = queue.sync { session.downloadTask(withResumeData: resumeData) }
                 }
 
                 return task
@@ -564,13 +564,13 @@ open class UploadRequest: DataRequest {
                 switch self {
                 case let .data(data, urlRequest):
                     let urlRequest = try urlRequest.adapt(using: adapter)
-                    task = queue.syncResult { session.uploadTask(with: urlRequest, from: data) }
+                    task = queue.sync { session.uploadTask(with: urlRequest, from: data) }
                 case let .file(url, urlRequest):
                     let urlRequest = try urlRequest.adapt(using: adapter)
-                    task = queue.syncResult { session.uploadTask(with: urlRequest, fromFile: url) }
+                    task = queue.sync { session.uploadTask(with: urlRequest, fromFile: url) }
                 case let .stream(_, urlRequest):
                     let urlRequest = try urlRequest.adapt(using: adapter)
-                    task = queue.syncResult { session.uploadTask(withStreamedRequest: urlRequest) }
+                    task = queue.sync { session.uploadTask(withStreamedRequest: urlRequest) }
                 }
 
                 return task
@@ -634,9 +634,9 @@ open class StreamRequest: Request {
 
             switch self {
             case let .stream(hostName, port):
-                task = queue.syncResult { session.streamTask(withHostName: hostName, port: port) }
+                task = queue.sync { session.streamTask(withHostName: hostName, port: port) }
             case let .netService(netService):
-                task = queue.syncResult { session.streamTask(with: netService) }
+                task = queue.sync { session.streamTask(with: netService) }
             }
 
             return task
