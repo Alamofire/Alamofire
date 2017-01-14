@@ -102,6 +102,10 @@ extension URLSession {
 ///                             Applications are encouraged to always validate the host and require a valid certificate
 ///                             chain in production environments.
 ///
+/// - performRevokedEvaluation: Uses the default server trust evaluation while allowing you to control whether to
+///                             validate the host provided by the challenge. And this option also check status of revoked
+///                             server certificate.
+///
 /// - disableEvaluation:        Disables all evaluation which in turn will always consider any server trust as valid.
 ///
 /// - customEvaluation:         Uses the associated closure to evaluate the validity of the server trust.
@@ -109,6 +113,7 @@ public enum ServerTrustPolicy {
     case performDefaultEvaluation(validateHost: Bool)
     case pinCertificates(certificates: [SecCertificate], validateCertificateChain: Bool, validateHost: Bool)
     case pinPublicKeys(publicKeys: [SecKey], validateCertificateChain: Bool, validateHost: Bool)
+    case performRevokedEvaluation(validateHost: Bool, revocationFlags: CFOptionFlags)
     case disableEvaluation
     case customEvaluation((_ serverTrust: SecTrust, _ host: String) -> Bool)
 
@@ -214,6 +219,12 @@ public enum ServerTrustPolicy {
                     }
                 }
             }
+        case let .performRevokedEvaluation(validateHost, revocationFlags):
+            let policyDefault = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
+            let policyRevoked = SecPolicyCreateRevocation(revocationFlags)
+            SecTrustSetPolicies(serverTrust, [policyDefault, policyRevoked] as CFTypeRef)
+            
+            serverTrustIsValid = trustIsValid(serverTrust)
         case .disableEvaluation:
             serverTrustIsValid = true
         case let .customEvaluation(closure):

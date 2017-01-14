@@ -64,8 +64,10 @@ private struct TestPublicKeys {
 // MARK: -
 
 class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
-    let urlString = "https://expired.badssl.com/"
-    let host = "expired.badssl.com"
+    let expiredUrlString = "https://expired.badssl.com/"
+    let expiredHost = "expired.badssl.com"
+    let revokedUrlString = "https://revoked.badssl.com"
+    let revokedHost = "revoked.badssl.com"
     var configuration: URLSessionConfiguration!
 
     // MARK: Setup and Teardown
@@ -79,12 +81,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWithNoServerTrustPolicy() {
         // Given
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         let manager = SessionManager(configuration: configuration)
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -109,17 +111,17 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWithDefaultServerTrustPolicy() {
         // Given
-        let policies = [host: ServerTrustPolicy.performDefaultEvaluation(validateHost: true)]
+        let policies = [expiredHost: ServerTrustPolicy.performDefaultEvaluation(validateHost: true)]
         let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -143,7 +145,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.leaf]
         let policies: [String: ServerTrustPolicy] = [
-            host: .pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
+            expiredHost: .pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -151,11 +153,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -183,7 +185,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         ]
 
         let policies: [String: ServerTrustPolicy] = [
-            host: .pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
+            expiredHost: .pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -191,11 +193,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -217,7 +219,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.leaf]
         let policies: [String: ServerTrustPolicy] = [
-            host: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+            expiredHost: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -225,11 +227,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -245,7 +247,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.intermediateCA2]
         let policies: [String: ServerTrustPolicy] = [
-            host: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+            expiredHost: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -253,11 +255,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -273,7 +275,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.rootCA]
         let policies: [String: ServerTrustPolicy] = [
-            host: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+            expiredHost: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -281,11 +283,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -311,7 +313,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.leaf]
         let policies: [String: ServerTrustPolicy] = [
-            host: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: true, validateHost: true)
+            expiredHost: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: true, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -319,11 +321,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -345,7 +347,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.leaf]
         let policies: [String: ServerTrustPolicy] = [
-            host: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
+            expiredHost: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -353,11 +355,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -373,7 +375,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.intermediateCA2]
         let policies: [String: ServerTrustPolicy] = [
-            host: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
+            expiredHost: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -381,11 +383,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -401,7 +403,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.rootCA]
         let policies: [String: ServerTrustPolicy] = [
-            host: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
+            expiredHost: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -409,11 +411,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -433,21 +435,53 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     #endif
     }
 
+    // MARK: Server Trust Policy - Perform Revoked Tests
+    
+    func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
+        // Given
+        let policies = [revokedHost: ServerTrustPolicy.performRevokedEvaluation(validateHost: true, revocationFlags: kSecRevocationRequirePositiveResponse)]
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
+        
+        weak var expectation = self.expectation(description: "\(revokedUrlString)")
+        var error: Error?
+        
+        // When
+        manager.request(revokedUrlString)
+            .response { resp in
+                error = resp.error
+                expectation?.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertNotNil(error, "error should not be nil")
+        
+        if let error = error as? URLError {
+            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
+        } else {
+            XCTFail("error should be an URLError")
+        }
+    }
+    
     // MARK: Server Trust Policy - Disabling Evaluation Tests
 
     func testThatExpiredCertificateRequestSucceedsWhenDisablingEvaluation() {
         // Given
-        let policies = [host: ServerTrustPolicy.disableEvaluation]
+        let policies = [expiredHost: ServerTrustPolicy.disableEvaluation]
         let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -464,7 +498,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenCustomEvaluationReturnsTrue() {
         // Given
         let policies = [
-            host: ServerTrustPolicy.customEvaluation { _, _ in
+            expiredHost: ServerTrustPolicy.customEvaluation { _, _ in
                 // Implement a custom evaluation routine here...
                 return true
             }
@@ -475,11 +509,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()
@@ -494,7 +528,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWhenCustomEvaluationReturnsFalse() {
         // Given
         let policies = [
-            host: ServerTrustPolicy.customEvaluation { _, _ in
+            expiredHost: ServerTrustPolicy.customEvaluation { _, _ in
                 // Implement a custom evaluation routine here...
                 return false
             }
@@ -505,11 +539,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
         )
 
-        weak var expectation = self.expectation(description: "\(urlString)")
+        weak var expectation = self.expectation(description: "\(expiredUrlString)")
         var error: Error?
 
         // When
-        manager.request(urlString)
+        manager.request(expiredUrlString)
             .response { resp in
                 error = resp.error
                 expectation?.fulfill()

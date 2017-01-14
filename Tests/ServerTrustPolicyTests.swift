@@ -1325,6 +1325,173 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
     }
 }
 
+// MARK: - Server Revoke Policy Tests -
+
+class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCase {
+    
+    // MARK: Do NOT Validate Host
+    
+    func testThatValidCertificateChainPassesEvaluationWithoutHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafValidDNSName.trust
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: false, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+    
+    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.trustWithCertificates([
+            TestCertificates.leafValidDNSName,
+            TestCertificates.intermediateCA2
+            ])
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: false, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+    
+    func testThatMissingDNSNameLeafCertificatePassesEvaluationWithoutHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: false, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+    
+    func testThatExpiredCertificateChainFailsEvaluationWithoutHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafExpired.trust
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: false, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+    
+    func testThatMissingIntermediateCertificateInChainFailsEvaluationWithoutHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: false, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+    
+    // MARK: Validate Host
+    
+    func testThatValidCertificateChainPassesEvaluationWithHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafValidDNSName.trust
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: true, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+    
+    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.trustWithCertificates([
+            TestCertificates.leafValidDNSName,
+            TestCertificates.intermediateCA2
+            ])
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: true, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+    
+    func testThatMissingDNSNameLeafCertificateFailsEvaluationWithHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: true, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+    
+    func testThatWildcardedLeafCertificateChainPassesEvaluationWithHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafWildcard.trust
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: true, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should pass evaluation")
+    }
+    
+    func testThatExpiredCertificateChainFailsEvaluationWithHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafExpired.trust
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: true, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+    
+    func testThatMissingIntermediateCertificateInChainFailsEvaluationWithHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
+        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(validateHost: true, revocationFlags: kSecRevocationRequirePositiveResponse)
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+}
+
 // MARK: -
 
 class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
