@@ -74,6 +74,19 @@ class DataResponseSerializationTestCase: BaseTestCase {
         }
     }
 
+    func testThatDataResponseSerializerSucceedsWhenDataIsEmpty() {
+        // Given
+        let serializer = DataRequest.dataResponseSerializer()
+
+        // When
+        let result = serializer.serializeResponse(nil, nil, Data(), nil)
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+    }
+
     func testThatDataResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
         let serializer = DataRequest.dataResponseSerializer()
@@ -129,6 +142,22 @@ class DataResponseSerializationTestCase: BaseTestCase {
         if let data = result.value {
             XCTAssertEqual(data.count, 0)
         }
+    }
+
+    func testThatDataResponseSerializerSucceedsWhenDataIsNilWithEmptyRequestMethod() {
+        // Given
+        let serializer = DataRequest.dataResponseSerializer()
+        var request = URLRequest(url: URL(string: "https://httpbin.org/head")!)
+        request.httpMethod = HTTPMethod.head.rawValue
+
+        // When
+        let result = serializer.serializeResponse(request, nil, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+        XCTAssertEqual(result.value, Data())
     }
 
     // MARK: Tests - String Response Serializer
@@ -299,10 +328,23 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
+        XCTAssertEqual(result.value, "")
+    }
 
-        if let string = result.value {
-            XCTAssertEqual(string, "")
-        }
+    func testThatStringResponseSerializerSucceedsWhenDataIsNilWithEmptyRequestMethod() {
+        // Given
+        let serializer = DataRequest.stringResponseSerializer()
+        var request = URLRequest(url: URL(string: "https://httpbin.org/head")!)
+        request.httpMethod = HTTPMethod.head.rawValue
+
+        // When
+        let result = serializer.serializeResponse(request, nil, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+        XCTAssertEqual(result.value, "")
     }
 
     // MARK: Tests - JSON Response Serializer
@@ -320,7 +362,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
 
         if let error = result.error as? AFError {
-            XCTAssertTrue(error.isInputDataNilOrZeroLength)
+            XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
         }
@@ -339,7 +381,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
 
         if let error = result.error as? AFError {
-            XCTAssertTrue(error.isInputDataNilOrZeroLength)
+            XCTAssertTrue(error.isInputDataZeroLength)
         } else {
             XCTFail("error should not be nil")
         }
@@ -413,7 +455,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
 
         if let error = result.error as? AFError {
-            XCTAssertTrue(error.isInputDataNilOrZeroLength)
+            XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
         }
@@ -426,6 +468,25 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
         // When
         let result = serializer.serializeResponse(nil, response, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+
+        if let json = result.value as? NSNull {
+            XCTAssertEqual(json, NSNull())
+        }
+    }
+
+    func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithEmptyRequestMethod() {
+        // Given
+        let serializer = DataRequest.jsonResponseSerializer()
+        var request = URLRequest(url: URL(string: "https://httpbin.org/head")!)
+        request.httpMethod = HTTPMethod.head.rawValue
+
+        // When
+        let result = serializer.serializeResponse(request, nil, nil, nil)
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -452,7 +513,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
 
         if let error = result.error as? AFError {
-            XCTAssertTrue(error.isInputDataNilOrZeroLength)
+            XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
         }
@@ -471,7 +532,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
 
         if let error = result.error as? AFError {
-            XCTAssertTrue(error.isInputDataNilOrZeroLength)
+            XCTAssertTrue(error.isInputDataZeroLength)
         } else {
             XCTFail("error should not be nil")
         }
@@ -545,7 +606,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
 
         if let error = result.error as? AFError {
-            XCTAssertTrue(error.isInputDataNilOrZeroLength)
+            XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
         }
@@ -558,6 +619,25 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
         // When
         let result = serializer.serializeResponse(nil, response, nil, nil)
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+
+        if let plist = result.value as? NSNull {
+            XCTAssertEqual(plist, NSNull())
+        }
+    }
+
+    func testThatPropertyListResponseSerializerSucceedsWhenDataIsNilWithEmptyRequestMethod() {
+        // Given
+        let serializer = DataRequest.propertyListResponseSerializer()
+        var request = URLRequest(url: URL(string: "https://httpbin.org/head")!)
+        request.httpMethod = HTTPMethod.head.rawValue
+
+        // When
+        let result = serializer.serializeResponse(request, nil, nil, nil)
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -607,7 +687,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.error)
     }
 
-    func testThatDataResponseSerializerSucceedsWhenFileDataIsNil() {
+    func testThatDataResponseSerializerSucceedsWhenFileDataIsEmpty() {
         // Given
         let serializer = DownloadRequest.dataResponseSerializer()
 
@@ -957,7 +1037,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
 
         if let error = result.error as? AFError {
-            XCTAssertTrue(error.isInputDataNilOrZeroLength)
+            XCTAssertTrue(error.isInputDataZeroLength)
         } else {
             XCTFail("error should not be nil")
         }
@@ -1029,7 +1109,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
 
         if let error = result.error as? AFError {
-            XCTAssertTrue(error.isInputDataNilOrZeroLength)
+            XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
         }
@@ -1106,7 +1186,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
 
         if let error = result.error as? AFError {
-            XCTAssertTrue(error.isInputDataNilOrZeroLength)
+            XCTAssertTrue(error.isInputDataZeroLength)
         } else {
             XCTFail("error should not be nil")
         }
@@ -1178,7 +1258,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
 
         if let error = result.error as? AFError {
-            XCTAssertTrue(error.isInputDataNilOrZeroLength)
+            XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
         }
