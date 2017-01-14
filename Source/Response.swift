@@ -133,7 +133,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     public var debugDescription: String {
         var output: [String] = []
 
-        output.append(request != nil ? "[Request]: \(request!)" : "[Request]: nil")
+        output.append(request != nil ? "[Request]: \(request!.httpMethod!) \(request!)" : "[Request]: nil")
         output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
         output.append("[Data]: \(data?.count ?? 0) bytes")
         output.append("[Result]: \(result.debugDescription)")
@@ -279,7 +279,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     public var debugDescription: String {
         var output: [String] = []
 
-        output.append(request != nil ? "[Request]: \(request!)" : "[Request]: nil")
+        output.append(request != nil ? "[Request]: \(request!.httpMethod!) \(request!)" : "[Request]: nil")
         output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
         output.append("[TemporaryURL]: \(temporaryURL?.path ?? "nil")")
         output.append("[DestinationURL]: \(destinationURL?.path ?? "nil")")
