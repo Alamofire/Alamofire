@@ -1191,7 +1191,7 @@ class AccessTokenAdapter: RequestAdapter {
 	func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
 	    var urlRequest = urlRequest
 
-	    if urlRequest.urlString.hasPrefix("https://httpbin.org") {
+	    if urlRequest.url.hasPrefix("https://httpbin.org") {
 		    urlRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
 	    }
 
@@ -1248,7 +1248,7 @@ class OAuth2Handler: RequestAdapter, RequestRetrier {
     // MARK: - RequestAdapter
 
     func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-        if let url = urlRequest.url, url.urlString.hasPrefix(baseURLString) {
+        if let url = urlRequest.url, url.hasPrefix(baseURLString) {
             var urlRequest = urlRequest
             urlRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
             return urlRequest
