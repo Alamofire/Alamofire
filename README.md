@@ -1191,7 +1191,7 @@ class AccessTokenAdapter: RequestAdapter {
 	func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
 	    var urlRequest = urlRequest
 
-	    if urlRequest.urlString.hasPrefix("https://httpbin.org") {
+        if let urlString = urlRequest.url?.absoluteString, urlString.hasPrefix("https://httpbin.org") {
 		    urlRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
 	    }
 
@@ -1248,7 +1248,7 @@ class OAuth2Handler: RequestAdapter, RequestRetrier {
     // MARK: - RequestAdapter
 
     func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-        if let url = urlRequest.url, url.urlString.hasPrefix(baseURLString) {
+        if let urlString = urlRequest.url?.absoluteString, urlString.hasPrefix(baseURLString) {
             var urlRequest = urlRequest
             urlRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
             return urlRequest
@@ -1262,7 +1262,7 @@ class OAuth2Handler: RequestAdapter, RequestRetrier {
     func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
         lock.lock() ; defer { lock.unlock() }
 
-        if let response = request.task.response as? HTTPURLResponse, response.statusCode == 401 {
+        if let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 {
             requestsToRetry.append(completion)
 
             if !isRefreshing {
