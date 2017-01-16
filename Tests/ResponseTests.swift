@@ -363,9 +363,7 @@ class ResponseMapTestCase: BaseTestCase {
         
         // When
         Alamofire.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp.map { json in
-                fatalError("should not run")
-            }
+            response = resp.map { json in "ignored" }
             expectation.fulfill()
         }
         
@@ -462,9 +460,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
         
         // When
         Alamofire.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp.flatMap { json in
-                fatalError("should not run")
-            }
+            response = resp.flatMap { json in "ignored" }
             expectation.fulfill()
         }
         

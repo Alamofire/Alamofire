@@ -590,9 +590,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         // When
         Alamofire.download(urlString, parameters: ["foo": "bar"])
             .responseJSON { resp in
-                response = resp.map { json in
-                    fatalError("should not run")
-                }
+                response = resp.map { json in "ignored" }
                 expectation.fulfill()
         }
         
@@ -698,9 +696,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         // When
         Alamofire.download(urlString, parameters: ["foo": "bar"])
             .responseJSON { resp in
-                response = resp.flatMap { json in
-                    fatalError("should not run")
-                }
+                response = resp.flatMap { json in "ignored" }
                 expectation.fulfill()
         }
         
