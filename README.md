@@ -122,7 +122,7 @@ github "Alamofire/Alamofire" ~> 4.3
 
 Run `carthage update` to build the framework and drag the built `Alamofire.framework` into your Xcode project.
 
-### Swift Pacakge Manager
+### Swift Package Manager
 
 The [Swift Pacakage Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler. It is in early development, but Alamofire does support its use on supported platforms. 
 
