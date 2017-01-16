@@ -93,7 +93,7 @@ platform :ios, '10.0'
 use_frameworks!
 
 target '<Your Target Name>' do
-    pod 'Alamofire', '~> 4.0'
+    pod 'Alamofire', '~> 4.3'
 end
 ```
 
@@ -117,7 +117,7 @@ $ brew install carthage
 To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" ~> 4.0
+github "Alamofire/Alamofire" ~> 4.3
 ```
 
 Run `carthage update` to build the framework and drag the built `Alamofire.framework` into your Xcode project.

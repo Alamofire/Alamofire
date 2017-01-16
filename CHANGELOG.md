@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 4.x Releases
+- `4.3.x` Releases - [4.3.0](#430)
 - `4.2.x` Releases - [4.2.0](#420)
 - `4.1.x` Releases - [4.1.0](#410)
 - `4.0.x` Releases - [4.0.0](#400) | [4.0.1](#401)
@@ -26,6 +27,76 @@ All notable changes to this project will be documented in this file.
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [4.3.0](https://github.com/Alamofire/Alamofire/releases/tag/4.3.0)
+Released on 2017-01-15. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.3.0).
+
+#### Added
+- The host and path to router example in README.
+  - Added by [Michael](https://github.com/muescha) in Pull Request
+  [#1830](https://github.com/Alamofire/Alamofire/pull/1830).
+- A `macOS` disclaimer to download request example in README.
+  - Added by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#1818](https://github.com/Alamofire/Alamofire/issues/1818).
+- New `value` and `error` computed properties to data and download responses.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull request
+  [#1865](https://github.com/Alamofire/Alamofire/pull/1865).
+- The HTTP method to the data and download response debug descriptions.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull request
+  [#1880](https://github.com/Alamofire/Alamofire/pull/1880).
+- A README entry about installing through SPM.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull request
+  [#1898](https://github.com/Alamofire/Alamofire/pull/1898).
+- The `dependencies` parameter to `Package` file for SPM since it's now required.
+  - Added by [Arnaldo Capo](https://github.com/cyberdude) in Pull request
+  [#1905](https://github.com/Alamofire/Alamofire/pull/1905).
+- TLS evaluation tests for revoked certs for no policy and default policy.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- New server trust policy for revoked certificates along with matching tests.
+  - Added by [Wataru Suzuki](https://github.com/WataruSuzuki) in Pull request
+  [#1822](https://github.com/Alamofire/Alamofire/pull/1822).
+
+#### Updated
+
+- Project to Xcode 8.2 recommend settings.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull request
+  [#1854](https://github.com/Alamofire/Alamofire/pull/1854).
+- The `NetworkReachabilityManager` to have a `public` instead of `open` ACL.
+  - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
+  [#1809](https://github.com/Alamofire/Alamofire/issues/1809).
+- The initializers for both default responses public and added metrics parameter.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1865](https://github.com/Alamofire/Alamofire/pull/1865).
+- Internals by replacing `syncResult` extension with DispatchQueue `sync`.
+  - Updated by [Alexander Ignition](https://github.com/Alexander-Ignition) in Pull Request
+  [#1893](https://github.com/Alamofire/Alamofire/pull/1893).
+- TLS tests for tvOS 10.1 and added expiration test for revoked evaluation.
+  - Updated by [Christian Noon](https://github.com/cnoon).
+
+#### Fixed
+
+- `DownloadRequest` sample code issue in AF 4 migration guide.
+  - Fixed by [Luca Torella](https://github.com/lucatorella) in Pull Request
+  [#1802](https://github.com/Alamofire/Alamofire/pull/1802).
+- `URLConvertible` compiler issue in the README example.
+  - Fixed by [Wu Zhong](https://github.com/zhongwuzw) in Pull Request
+  [#1844](https://github.com/Alamofire/Alamofire/pull/1844).
+- An invalid comment in AF 4 migration guide.
+  - Fixed by [Tom Brow](https://github.com/brow) in Pull Request
+  [#1863](https://github.com/Alamofire/Alamofire/pull/1863).
+- An issue where the `SessionManager` did not respect retry time delay.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#1864](https://github.com/Alamofire/Alamofire/pull/1864) in regards to Issue
+  [#1853](https://github.com/Alamofire/Alamofire/issues/1853).
+- A broken reference link in the README.
+  - Fixed by [Ulug'bek Ro'zimboyev](https://github.com/ulugbekrozimboyev) in Pull Request
+  [#1866](https://github.com/Alamofire/Alamofire/pull/1866).
+- Compiler issues in `RequestAdapter` and `RequestRetrier` examples in README.
+  - Fixed by [William Entriken](https://github.com/fulldecent) in Pull Request
+  [#1916](https://github.com/Alamofire/Alamofire/pull/1916).
 
 ---
 
