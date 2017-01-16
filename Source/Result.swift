@@ -104,6 +104,26 @@ extension Result: CustomDebugStringConvertible {
 // MARK: - Functional Tools
 
 extension Result {
+    /// Creates a Result from the result of a closure: a failure when the
+    /// closure throws, and a success when the closure succeeds without error.
+    ///
+    ///     func someString() throws -> String { ... }
+    ///     let result = Result(value: {
+    ///         return try someString()
+    ///     })
+    ///     // The type of result is Result<String>
+    ///
+    /// The trailing closure syntax is supported:
+    ///
+    ///     let result = Result { try someString() }
+    public init(value: () throws -> Value) {
+        do {
+            self = try .success(value())
+        } catch {
+            self = .failure(error)
+        }
+    }
+    
     /// Returns the success value, or throws the failure error.
     ///
     ///     let possibleString: Result<String> = .success("success")
@@ -113,7 +133,7 @@ extension Result {
     ///     let noString: Result<String> = .failure(error)
     ///     try print(noString.unwrap())
     ///     // Throws error
-    func unwrap() throws -> Value {
+    public func unwrap() throws -> Value {
         switch self {
         case .success(let value):
             return value
@@ -141,7 +161,7 @@ extension Result {
     ///   the instance.
     /// - returns: A `Result` containing the result of the given closure. If
     ///   this instance is a failure, returns the same failure.
-    func map<T>(_ transform: (Value) -> T) -> Result<T> {
+    public func map<T>(_ transform: (Value) -> T) -> Result<T> {
         switch self {
         case .success(let value):
             return .success(transform(value))
@@ -166,7 +186,7 @@ extension Result {
     /// - returns: A success or failure `Result` depending on the result of the
     ///   given closure. If this instance is a failure, returns the`
     ///   same failure.
-    func flatMap<T>(_ transform: (Value) throws -> T) -> Result<T> {
+    public func flatMap<T>(_ transform: (Value) throws -> T) -> Result<T> {
         switch self {
         case .success(let value):
             do {
