@@ -159,7 +159,7 @@ extension DataResponse {
     /// - returns: A `DataResponse` whose result wraps the value returned by the
     ///   given closure. If this instance's result is a failure, returns a
     ///   response wrapping the same failure.
-    func map<T>(_ transform: (Value) -> T) -> DataResponse<T> {
+    public func map<T>(_ transform: (Value) -> T) -> DataResponse<T> {
         var response = DataResponse<T>(
             request: request,
             response: self.response,
@@ -186,7 +186,7 @@ extension DataResponse {
     /// - returns: A success or failure `DataResponse` depending on the result
     ///   of the given closure. If this instance's result is a failure, returns
     ///   the same failure.
-    func flatMap<T>(_ transform: (Value) throws -> T) -> DataResponse<T> {
+    public func flatMap<T>(_ transform: (Value) throws -> T) -> DataResponse<T> {
         var response = DataResponse<T>(
             request: request,
             response: self.response,
@@ -362,7 +362,7 @@ extension DownloadResponse {
     /// - returns: A `DownloadResponse` whose result wraps the value returned by the
     ///   given closure. If this instance's result is a failure, returns a
     ///   response wrapping the same failure.
-    func map<T>(_ transform: (Value) -> T) -> DownloadResponse<T> {
+    public func map<T>(_ transform: (Value) -> T) -> DownloadResponse<T> {
         var response = DownloadResponse<T>(
             request: request,
             response: self.response,
@@ -391,7 +391,7 @@ extension DownloadResponse {
     /// - returns: A success or failure `DownloadResponse` depending on the result
     ///   of the given closure. If this instance's result is a failure, returns
     ///   the same failure.
-    func flatMap<T>(_ transform: (Value) throws -> T) -> DownloadResponse<T> {
+    public func flatMap<T>(_ transform: (Value) throws -> T) -> DownloadResponse<T> {
         var response = DownloadResponse<T>(
             request: request,
             response: self.response,

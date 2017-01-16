@@ -320,3 +320,65 @@ class ResponseJSONTestCase: BaseTestCase {
         }
     }
 }
+
+// MARK: -
+
+class ResponseMapTestCase: BaseTestCase {
+    func testThatMapTransformsSuccessValue() {
+        // Given
+        let urlString = "https://httpbin.org/get"
+        let expectation = self.expectation(description: "request should succeed")
+        
+        var response: DataResponse<String>?
+        
+        // When
+        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+            response = resp.map { json in
+                // json["args"]["foo"] is "bar": use this invariant to test the map function
+                return ((json as! [String: Any])["args"] as! [String: Any])["foo"] as! String
+            }
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertEqual(response?.result.value, "bar")
+        
+        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
+            XCTAssertNotNil(response?.metrics)
+        }
+    }
+    
+    func testThatMapPreservesFailureError() {
+        // Given
+        let urlString = "https://invalid-url-here.org/this/does/not/exist"
+        let expectation = self.expectation(description: "request should fail with 404")
+        
+        var response: DataResponse<String>?
+        
+        // When
+        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+            response = resp.map { json in
+                fatalError("should not run")
+            }
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertEqual(response?.result.isFailure, true)
+        
+        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
+            XCTAssertNotNil(response?.metrics)
+        }
+    }
+}
