@@ -117,7 +117,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         }
     }
 
-    func testThatRevokedCertificateRequestFailsWithNoServerTrustPolicy() {
+    func disabled_testRevokedCertificateRequestBehaviorWithNoServerTrustPolicy() {
+        // Disabled due to the instability of due revocation testing of default evaluation from all platforms. This
+        // test is left for debugging purposes only. Should not be committed into the test suite while enabled.
+
         // Given
         let expectation = self.expectation(description: "\(revokedURLString)")
         let manager = SessionManager(configuration: configuration)
@@ -174,7 +177,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         }
     }
 
-    func testThatRevokedCertificateRequestSucceedsWithDefaultServerTrustPolicy() {
+    func disabled_testRevokedCertificateRequestBehaviorWithDefaultServerTrustPolicy() {
+        // Disabled due to the instability of due revocation testing of default evaluation from all platforms. This
+        // test is left for debugging purposes only. Should not be committed into the test suite while enabled.
+
         // Given
         let defaultPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
         let policies = [revokedHost: defaultPolicy]
@@ -206,6 +212,42 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     }
 
     // MARK: Server Trust Policy - Perform Revoked Tests
+
+    func testThatExpiredCertificateRequestFailsWithRevokedServerTrustPolicy() {
+        // Given
+        let policy = ServerTrustPolicy.performRevokedEvaluation(
+            validateHost: true,
+            revocationFlags: kSecRevocationUseAnyAvailableMethod
+        )
+
+        let policies = [expiredHost: policy]
+
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
+
+        let expectation = self.expectation(description: "\(expiredURLString)")
+        var error: Error?
+
+        // When
+        manager.request(expiredURLString)
+            .response { resp in
+                error = resp.error
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(error, "error should not be nil")
+
+        if let error = error as? URLError {
+            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
+        } else {
+            XCTFail("error should be an URLError")
+        }
+    }
 
     func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
@@ -400,15 +442,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-    #if os(iOS) || os(macOS)
-        if #available(iOS 10.1, macOS 10.12.0, *) {
+        if #available(iOS 10.1, macOS 10.12.0, tvOS 10.1, *) {
             XCTAssertNotNil(error, "error should not be nil")
         } else {
             XCTAssertNil(error, "error should be nil")
         }
-    #else
-        XCTAssertNil(error, "error should be nil")
-    #endif
     }
 
     // MARK: Server Trust Policy - Public Key Pinning Tests
@@ -528,15 +566,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-    #if os(iOS) || os(macOS)
-        if #available(iOS 10.1, macOS 10.12.0, *) {
+        if #available(iOS 10.1, macOS 10.12.0, tvOS 10.1, *) {
             XCTAssertNotNil(error, "error should not be nil")
         } else {
             XCTAssertNil(error, "error should be nil")
         }
-    #else
-        XCTAssertNil(error, "error should be nil")
-    #endif
     }
 
     // MARK: Server Trust Policy - Disabling Evaluation Tests
