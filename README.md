@@ -122,7 +122,7 @@ github "Alamofire/Alamofire" ~> 4.3
 
 Run `carthage update` to build the framework and drag the built `Alamofire.framework` into your Xcode project.
 
-### Swift Pacakge Manager
+### Swift Package Manager
 
 The [Swift Pacakage Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler. It is in early development, but Alamofire does support its use on supported platforms. 
 
@@ -1351,6 +1351,90 @@ The example above only checks for a `401` response code which is not nearly robu
 Another important note is that this authentication system could be shared between multiple session managers. For example, you may need to use both a `default` and `ephemeral` session configuration for the same set of web services. The example above allows the same `oauthHandler` instance to be shared across multiple session managers to manage the single refresh flow.
 
 ### Custom Response Serialization
+
+Alamofire provides built-in response serialization for data, strings, JSON, and property lists:
+
+```swift
+Alamofire.request(...).responseData { (resp: DataResponse<Data>) in ... }
+Alamofire.request(...).responseString { (resp: DataResponse<String>) in ... }
+Alamofire.request(...).responseJSON { (resp: DataResponse<Any>) in ... }
+Alamofire.request(...).responsePropertyList { resp: DataResponse<Any>) in ... }
+```
+
+Those responses wrap deserialized *values* (Data, String, Any) or *errors* (network, validation errors), as well as *meta-data* (URL request, HTTP headers, status code, [metrics](#statistical-metrics), ...).
+
+You have several ways to customize all of those response elements:
+
+- [Response Mapping](#response-mapping)
+- [Handling Errors](#handling-errors)
+- [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
+- [Generic Response Object Serialization](#generic-response-object-serialization)
+
+#### Response Mapping
+
+Response mapping is the simplest way to produce customized responses. It transforms the value of a response, while preserving eventual errors and meta-data. For example, you can turn a json response `DataResponse<Any>` into a response that holds an application model, such as `DataResponse<User>`. You perform response mapping with the `DataResponse.map` method:
+
+```swift
+Alamofire.request("https://example.com/users/mattt").responseJSON { (response: DataResponse<Any>) in
+    let userResponse = response.map { json in
+        // We assume an existing User(json: Any) initializer
+        return User(json: json)
+    }
+    // Process userResponse, of type DataResponse<User>:
+    if let user = userResponse.value {
+        print("User: { username: \(user.username), name: \(user.name) }")
+    }
+}
+```
+
+When the transformation may throw an error, use `flatMap` instead:
+
+```swift
+Alamofire.request("https://example.com/users/mattt").responseJSON { response in
+    let userResponse = response.flatMap { json in
+        try User(json: json)
+    }
+}
+```
+
+Response mapping is a good fit for your custom completion handlers:
+
+```swift
+@discardableResult
+func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) {
+    return Alamofire.request("https://example.com/users/mattt").responseJSON { response in
+        let userResponse = response.flatMap { json in
+            try User(json: json)
+        }
+        completionHandler(userResponse)
+    }
+}
+
+loadUser { response in
+    if let user = userResponse.value {
+        print("User: { username: \(user.username), name: \(user.name) }")
+    }
+}
+```
+
+When the map/flatMap closure may process a big amount of data, make sure you execute it outside of the main thread:
+
+```swift
+@discardableResult
+func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) {
+    let utilityQueue = DispatchQueue.global(qos: .utility)
+    return Alamofire.request("https://example.com/users/mattt").responseJSON(queue: utilityQueue) { response in
+        let userResponse = response.flatMap { json in
+            try User(json: json)
+        }
+        DispatchQueue.main.async {
+            completionHandler(userResponse)
+        }
+    }
+}
+```
+
+`map` and `flatMap` are also available for [download responses](#downloading-data-to-a-file).
 
 #### Handling Errors
 
