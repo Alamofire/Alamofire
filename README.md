@@ -1401,7 +1401,7 @@ Response mapping is a good fit for your custom completion handlers:
 
 ```swift
 @discardableResult
-func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) {
+func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) -> Alamofire.DataRequest {
     return Alamofire.request("https://example.com/users/mattt").responseJSON { response in
         let userResponse = response.flatMap { json in
             try User(json: json)
@@ -1421,7 +1421,7 @@ When the map/flatMap closure may process a big amount of data, make sure you exe
 
 ```swift
 @discardableResult
-func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) {
+func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) -> Alamofire.DataRequest {
     let utilityQueue = DispatchQueue.global(qos: .utility)
     return Alamofire.request("https://example.com/users/mattt").responseJSON(queue: utilityQueue) { response in
         let userResponse = response.flatMap { json in
