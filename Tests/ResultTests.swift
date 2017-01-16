@@ -145,6 +145,34 @@ class ResultTestCase: BaseTestCase {
         )
     }
     
+    // MARK: - Initializer from throwing closure Tests
+    
+    func testThatInitializerFromThrowingClosureStoresResultAsASuccess() {
+        // Given, When
+        let value = "success value"
+        let result1 = Result(value: { value })  // syntax 1
+        let result2 = Result { value }          // syntax 2
+        
+        // Then
+        for result in [result1, result2] {
+            XCTAssertTrue(result.isSuccess)
+            XCTAssertEqual(result.value, value)
+        }
+    }
+    
+    func testThatInitializerFromThrowingClosureCatchesErrorAsAFailure() {
+        // Given, When
+        struct ResultError : Error { }
+        let result1 = Result(value: { throw ResultError() })    // syntax 1
+        let result2 = Result { throw ResultError() }            // syntax 2
+        
+        // Then
+        for result in [result1, result2] {
+            XCTAssertTrue(result.isFailure)
+            XCTAssertTrue(result.error! is ResultError)
+        }
+    }
+    
     // MARK: - Unwrap Tests
     
     func testThatUnwrapReturnsSuccessValue() {
