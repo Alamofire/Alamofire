@@ -91,8 +91,8 @@ extension URLSession {
 /// - performRevokedEvaluation: Uses the default and revoked server trust evaluations allowing you to control whether to
 ///                             validate the host provided by the challenge as well as specify the revocation flags for
 ///                             testing for revoked certificates. Apple platforms did not start testing for revoked
-///                             certificates automatically until iOS 10.1, macOS 10.12 and tvOS 10.1 which is 
-///                             demonstrated in our TLS tests. Applications are encouraged to always validate the host 
+///                             certificates automatically until iOS 10.1, macOS 10.12 and tvOS 10.1 which is
+///                             demonstrated in our TLS tests. Applications are encouraged to always validate the host
 ///                             in production environments to guarantee the validity of the server's certificate chain.
 ///
 /// - pinCertificates:          Uses the pinned certificates to validate the server trust. The server trust is
