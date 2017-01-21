@@ -913,7 +913,7 @@ let sessionManager = Alamofire.SessionManager(configuration: configuration)
 #### Modifying the Session Configuration
 
 ```swift
-var defaultHeaders = Alamofire.SessionManager.default.defaultHTTPHeaders
+var defaultHeaders = Alamofire.SessionManager.defaultHTTPHeaders
 defaultHeaders["DNT"] = "1 (Do Not Track Enabled)"
 
 let configuration = URLSessionConfiguration.default
