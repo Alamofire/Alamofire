@@ -100,3 +100,31 @@ extension Result: CustomDebugStringConvertible {
         }
     }
 }
+
+// MARK: ResultType Conformance
+
+extension Result {
+
+    /// Constructs a success wrapping a `value`.
+    public init(value: Value) {
+        self = .Success(value)
+    }
+
+    /// Constructs a failure wrapping an `error`.
+    public init(error: Error) {
+        self = .Failure(error)
+    }
+
+    /// Case analysis for Result.
+    ///
+    /// Returns the value produced by applying `ifFailure` to `Failure` Results, or `ifSuccess` to `Success` Results.
+    public func analysis<Result>(@noescape ifSuccess ifSuccess: Value -> Result, @noescape ifFailure: Error -> Result) -> Result {
+        switch self {
+        case let .Success(value):
+            return ifSuccess(value)
+        case let .Failure(value):
+            return ifFailure(value)
+        }
+    }
+
+}
