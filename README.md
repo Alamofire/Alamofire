@@ -1578,7 +1578,7 @@ The `ServerTrustPolicy` enumeration evaluates the server trust generally provide
 
 ```swift
 let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-    certificates: ServerTrustPolicy.certificatesInBundle(),
+    certificates: ServerTrustPolicy.certificates(),
     validateCertificateChain: true,
     validateHost: true
 )
@@ -1599,7 +1599,7 @@ The `ServerTrustPolicyManager` is responsible for storing an internal mapping of
 ```swift
 let serverTrustPolicies: [String: ServerTrustPolicy] = [
     "test.example.com": .pinCertificates(
-        certificates: ServerTrustPolicy.certificatesInBundle(),
+        certificates: ServerTrustPolicy.certificates(),
         validateCertificateChain: true,
         validateHost: true
     ),
@@ -1700,6 +1700,7 @@ manager?.startListening()
 ```
 
 > Make sure to remember to retain the `manager` in the above example, or no status changes will be reported.
+> Also, do not include the scheme in the `host` string or reachability won't function correctly.
 
 There are some important things to remember when using network reachability to determine what to do next.
 
