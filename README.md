@@ -445,9 +445,9 @@ let parameters: Parameters = [
 ]
 
 // All three of these calls are equivalent
-Alamofire.request("https://httpbin.org/post", parameters: parameters)
-Alamofire.request("https://httpbin.org/post", parameters: parameters, encoding: URLEncoding.default)
-Alamofire.request("https://httpbin.org/post", parameters: parameters, encoding: URLEncoding.httpBody)
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters)
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.default)
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.httpBody)
 
 // HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
 ```
