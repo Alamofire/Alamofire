@@ -1353,6 +1353,94 @@ Another important note is that this authentication system could be shared betwee
 
 ### Custom Response Serialization
 
+Alamofire provides built-in response serialization for data, strings, JSON, and property lists:
+
+```swift
+Alamofire.request(...).responseData { (resp: DataResponse<Data>) in ... }
+Alamofire.request(...).responseString { (resp: DataResponse<String>) in ... }
+Alamofire.request(...).responseJSON { (resp: DataResponse<Any>) in ... }
+Alamofire.request(...).responsePropertyList { resp: DataResponse<Any>) in ... }
+```
+
+Those responses wrap deserialized *values* (Data, String, Any) or *errors* (network, validation errors), as well as *meta-data* (URL request, HTTP headers, status code, [metrics](#statistical-metrics), ...).
+
+You have several ways to customize all of those response elements:
+
+- [Response Mapping](#response-mapping)
+- [Handling Errors](#handling-errors)
+- [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
+- [Generic Response Object Serialization](#generic-response-object-serialization)
+
+#### Response Mapping
+
+Response mapping is the simplest way to produce customized responses. It transforms the value of a response, while preserving eventual errors and meta-data. For example, you can turn a json response `DataResponse<Any>` into a response that holds an application model, such as `DataResponse<User>`. You perform response mapping with the `DataResponse.map` method:
+
+```swift
+Alamofire.request("https://example.com/users/mattt").responseJSON { (response: DataResponse<Any>) in
+    let userResponse = response.map { json in
+        // We assume an existing User(json: Any) initializer
+        return User(json: json)
+    }
+
+    // Process userResponse, of type DataResponse<User>:
+    if let user = userResponse.value {
+        print("User: { username: \(user.username), name: \(user.name) }")
+    }
+}
+```
+
+When the transformation may throw an error, use `flatMap` instead:
+
+```swift
+Alamofire.request("https://example.com/users/mattt").responseJSON { response in
+    let userResponse = response.flatMap { json in
+        try User(json: json)
+    }
+}
+```
+
+Response mapping is a good fit for your custom completion handlers:
+
+```swift
+@discardableResult
+func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) -> Alamofire.DataRequest {
+    return Alamofire.request("https://example.com/users/mattt").responseJSON { response in
+        let userResponse = response.flatMap { json in
+            try User(json: json)
+        }
+
+        completionHandler(userResponse)
+    }
+}
+
+loadUser { response in
+    if let user = userResponse.value {
+        print("User: { username: \(user.username), name: \(user.name) }")
+    }
+}
+```
+
+When the map/flatMap closure may process a big amount of data, make sure you execute it outside of the main thread:
+
+```swift
+@discardableResult
+func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) -> Alamofire.DataRequest {
+    let utilityQueue = DispatchQueue.global(qos: .utility)
+
+    return Alamofire.request("https://example.com/users/mattt").responseJSON(queue: utilityQueue) { response in
+        let userResponse = response.flatMap { json in
+            try User(json: json)
+        }
+
+        DispatchQueue.main.async {
+            completionHandler(userResponse)
+        }
+    }
+}
+```
+
+`map` and `flatMap` are also available for [download responses](#downloading-data-to-a-file).
+
 #### Handling Errors
 
 Before implementing custom response serializers or object serialization methods, it's important to consider how to handle any errors that may occur. There are two basic options: passing existing errors along unmodified, to be dealt with at response time; or, wrapping all errors in an `Error` type specific to your app.

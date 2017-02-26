@@ -145,6 +145,64 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
 
 // MARK: -
 
+extension DataResponse {
+    /// Evaluates the specified closure when the result of this `DataResponse` is a success, passing the unwrapped
+    /// result value as a parameter.
+    ///
+    /// Use the `map` method with a closure that does not throw. For example:
+    ///
+    ///     let possibleData: DataResponse<Data> = ...
+    ///     let possibleInt = possibleData.map { $0.count }
+    ///
+    /// - parameter transform: A closure that takes the success value of the instance's result.
+    ///
+    /// - returns: A `DataResponse` whose result wraps the value returned by the given closure. If this instance's
+    ///            result is a failure, returns a response wrapping the same failure.
+    public func map<T>(_ transform: (Value) -> T) -> DataResponse<T> {
+        var response = DataResponse<T>(
+            request: request,
+            response: self.response,
+            data: data,
+            result: result.map(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+
+    /// Evaluates the given closure when the result of this `DataResponse` is a success, passing the unwrapped result
+    /// value as a parameter.
+    ///
+    /// Use the `flatMap` method with a closure that may throw an error. For example:
+    ///
+    ///     let possibleData: DataResponse<Data> = ...
+    ///     let possibleObject = possibleData.flatMap {
+    ///         try JSONSerialization.jsonObject(with: $0)
+    ///     }
+    ///
+    /// - parameter transform: A closure that takes the success value of the instance's result.
+    ///
+    /// - returns: A success or failure `DataResponse` depending on the result of the given closure. If this instance's
+    ///            result is a failure, returns the same failure.
+    public func flatMap<T>(_ transform: (Value) throws -> T) -> DataResponse<T> {
+        var response = DataResponse<T>(
+            request: request,
+            response: self.response,
+            data: data,
+            result: result.flatMap(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+}
+
+// MARK: -
+
 /// Used to store all data associated with an non-serialized response of a download request.
 public struct DefaultDownloadResponse {
     /// The URL request sent to the server.
@@ -288,6 +346,68 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
         output.append("[Timeline]: \(timeline.debugDescription)")
 
         return output.joined(separator: "\n")
+    }
+}
+
+// MARK: -
+
+extension DownloadResponse {
+    /// Evaluates the given closure when the result of this `DownloadResponse` is a success, passing the unwrapped
+    /// result value as a parameter.
+    ///
+    /// Use the `map` method with a closure that does not throw. For example:
+    ///
+    ///     let possibleData: DownloadResponse<Data> = ...
+    ///     let possibleInt = possibleData.map { $0.count }
+    ///
+    /// - parameter transform: A closure that takes the success value of the instance's result.
+    ///
+    /// - returns: A `DownloadResponse` whose result wraps the value returned by the given closure. If this instance's
+    ///            result is a failure, returns a response wrapping the same failure.
+    public func map<T>(_ transform: (Value) -> T) -> DownloadResponse<T> {
+        var response = DownloadResponse<T>(
+            request: request,
+            response: self.response,
+            temporaryURL: temporaryURL,
+            destinationURL: destinationURL,
+            resumeData: resumeData,
+            result: result.map(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+
+    /// Evaluates the given closure when the result of this `DownloadResponse` is a success, passing the unwrapped
+    /// result value as a parameter.
+    ///
+    /// Use the `flatMap` method with a closure that may throw an error. For example:
+    ///
+    ///     let possibleData: DownloadResponse<Data> = ...
+    ///     let possibleObject = possibleData.flatMap {
+    ///         try JSONSerialization.jsonObject(with: $0)
+    ///     }
+    ///
+    /// - parameter transform: A closure that takes the success value of the instance's result.
+    ///
+    /// - returns: A success or failure `DownloadResponse` depending on the result of the given closure. If this
+    /// instance's result is a failure, returns the same failure.
+    public func flatMap<T>(_ transform: (Value) throws -> T) -> DownloadResponse<T> {
+        var response = DownloadResponse<T>(
+            request: request,
+            response: self.response,
+            temporaryURL: temporaryURL,
+            destinationURL: destinationURL,
+            resumeData: resumeData,
+            result: result.flatMap(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
     }
 }
 
