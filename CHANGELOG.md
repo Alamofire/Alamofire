@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 4.x Releases
+- `4.4.x` Releases - [4.4.0](#440)
 - `4.3.x` Releases - [4.3.0](#430)
 - `4.2.x` Releases - [4.2.0](#420)
 - `4.1.x` Releases - [4.1.0](#410)
@@ -27,6 +28,38 @@ All notable changes to this project will be documented in this file.
 - `1.2.x` Releases - [1.2.0](#120) | [1.2.1](#121) | [1.2.2](#122) | [1.2.3](#123)
 - `1.1.x` Releases - [1.1.0](#110) | [1.1.1](#111) | [1.1.2](#112) | [1.1.3](#113) | [1.1.4](#114) | [1.1.5](#115)
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
+
+---
+
+## [4.4.0](https://github.com/Alamofire/Alamofire/releases/tag/4.4.0)
+Released on 2017-02-26. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.4.0).
+
+#### Added
+- A new `Alamofire/Alamofire` Gitter channel and also added badge to the README.
+  - Added by [Christian Noon](https://github.com/cnoon).
+- Functional extensions for Result, Data and Download Response.
+  - Added by [Gwendal Roué](https://github.com/groue) in Pull Request
+  [#1836](https://github.com/Alamofire/Alamofire/pull/1836).
+
+### Fixed
+- Typo in the README in the Swift Package Manager section.
+  - Fixed by [Sebastian Limbach](https://github.com/bastilimbach) in Pull Request
+  [#1918](https://github.com/Alamofire/Alamofire/pull/1918).
+- Issue in the "Modifying the Session Configuration" example code of the README where the 
+  `defaultHTTPHeaders` property was called incorrectly.
+  - Fixed by [Artur Antonov](https://github.com/goingreen) in Pull Request
+  [#1927](https://github.com/Alamofire/Alamofire/pull/1927).
+- Issue in the "Security" section of the README where some example code was outdated.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#1973](https://github.com/Alamofire/Alamofire/pull/1973).
+- Issue in the README where the POST request with parameters example was using the wrong method.
+  - Fixed by [Pablo Bartolome](https://github.com/pbartolome) in Pull Request
+  [#1984](https://github.com/Alamofire/Alamofire/pull/1984).
+- Issue where `taskDidComplete` override closure was not calling task delegate leading to 
+  potential memory leaks.
+  - Fixed by [Jon Shier](https://github.com/jshier) in regards to Issue
+  [#1938](https://github.com/Alamofire/Alamofire/pull/1938).
 
 ---
 
@@ -60,7 +93,6 @@ Released on 2017-01-15. All issues associated with this milestone can be found u
   [#1822](https://github.com/Alamofire/Alamofire/pull/1822).
 
 #### Updated
-
 - Project to Xcode 8.2 recommend settings.
   - Updated by [Jon Shier](https://github.com/jshier) in Pull request
   [#1854](https://github.com/Alamofire/Alamofire/pull/1854).
@@ -77,7 +109,6 @@ Released on 2017-01-15. All issues associated with this milestone can be found u
   - Updated by [Christian Noon](https://github.com/cnoon).
 
 #### Fixed
-
 - `DownloadRequest` sample code issue in AF 4 migration guide.
   - Fixed by [Luca Torella](https://github.com/lucatorella) in Pull Request
   [#1802](https://github.com/Alamofire/Alamofire/pull/1802).
