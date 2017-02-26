@@ -144,4 +144,144 @@ class ResultTestCase: BaseTestCase {
             "result debug description should match expected value for failure case"
         )
     }
+    
+    // MARK: - Initializer from throwing closure Tests
+    
+    func testThatInitializerFromThrowingClosureStoresResultAsASuccess() {
+        // Given, When
+        let value = "success value"
+        let result1 = Result(value: { value })  // syntax 1
+        let result2 = Result { value }          // syntax 2
+        
+        // Then
+        for result in [result1, result2] {
+            XCTAssertTrue(result.isSuccess)
+            XCTAssertEqual(result.value, value)
+        }
+    }
+    
+    func testThatInitializerFromThrowingClosureCatchesErrorAsAFailure() {
+        // Given, When
+        struct ResultError : Error { }
+        let result1 = Result(value: { throw ResultError() })    // syntax 1
+        let result2 = Result { throw ResultError() }            // syntax 2
+        
+        // Then
+        for result in [result1, result2] {
+            XCTAssertTrue(result.isFailure)
+            XCTAssertTrue(result.error! is ResultError)
+        }
+    }
+    
+    // MARK: - Unwrap Tests
+    
+    func testThatUnwrapReturnsSuccessValue() {
+        // Given, When
+        let result = Result<String>.success("success value")
+        
+        // Then
+        XCTAssertEqual(
+            try result.unwrap(),
+            "success value",
+            "result unwrapping should return the success value"
+        )
+    }
+    
+    func testThatUnwrapThrowsFailureError() {
+        // Given, When
+        struct ResultError : Error { }
+        let result = Result<String>.failure(ResultError())
+        
+        // Then
+        do {
+            _ = try result.unwrap()
+            XCTFail("result unwrapping should throw the failure error")
+        } catch {
+            XCTAssert(
+                error is ResultError,
+                "result unwrapping should throw the failure error")
+        }
+    }
+    
+    // MARK: - Map Tests
+    
+    func testThatMapTransformsSuccessValue() {
+        // Given, When
+        let result = Result<String>.success("success value")
+        
+        // Then
+        let mappedResult = result.map { $0.characters.count }
+        XCTAssertEqual(
+            mappedResult.value ?? 0,
+            13,
+            "map should transform the success value"
+        )
+    }
+    
+    func testThatMapPreservesFailureError() {
+        // Given, When
+        struct ResultError : Error { }
+        let result = Result<String>.failure(ResultError())
+        
+        // Then
+        let mappedResult = result.map { $0.characters.count }
+        if let error = mappedResult.error {
+            XCTAssertTrue(
+                error is ResultError,
+                "map should preserve the failure error"
+            )
+        } else {
+            XCTFail("map should preserve the failure error")
+        }
+    }
+    
+    // MARK: - FlatMap Tests
+    
+    func testThatFlatMapTransformsSuccessValue() {
+        // Given, When
+        let result = Result<String>.success("success value")
+        
+        // Then
+        let mappedResult = result.flatMap { $0.characters.count }
+        XCTAssertEqual(
+            mappedResult.value ?? 0,
+            13,
+            "flatMap should transform the success value"
+        )
+    }
+    
+    func testThatFlatMapCatchesTransformationError() {
+        // Given, When
+        let result = Result<String>.success("success value")
+        
+        // Then
+        struct TransformError : Error { }
+        let mappedResult = result.flatMap { _ in throw TransformError() }
+        if let error = mappedResult.error {
+            XCTAssertTrue(
+                error is TransformError,
+                "flatMap should catch the transformation error"
+            )
+        } else {
+            XCTFail("flatMap should catch the transformation error")
+        }
+    }
+    
+    func testThatFlatMapPreservesFailureError() {
+        // Given, When
+        struct ResultError : Error { }
+        let result = Result<String>.failure(ResultError())
+        
+        // Then
+        struct TransformError : Error { }
+        let mappedResult = result.flatMap { _ in throw TransformError() }
+        if let error = mappedResult.error {
+            XCTAssertTrue(
+                error is ResultError,
+                "flatMap should preserve the failure error"
+            )
+        } else {
+            XCTFail("flatMap should preserve the failure error")
+        }
+    }
 }
