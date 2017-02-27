@@ -629,8 +629,8 @@ You can also provide a `DownloadFileDestination` closure to move the file from t
 
 ```swift
 let destination: DownloadRequest.DownloadFileDestination = { _, _ in
-	let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-	let fileURL = documentsURL.appendPathComponent("pig.png")
+	let documentsURL:URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+	let fileURL:URL = documentsURL.appendPathComponent("pig.png")
 
     return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
 }
