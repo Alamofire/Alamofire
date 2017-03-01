@@ -506,7 +506,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
             // Given
             let repeatedCount = 2_000
             let url = URL(string: "https://example.com/movies")!
-            let parameters = ["chinese": String(count: repeatedCount, repeatedString: "一二三四五六七八九十")]
+            let parameters = ["chinese": String(repeating: "一二三四五六七八九十", count: repeatedCount)]
 
             // When
             let urlRequest = try encoding.encode(URLRequest(url: url), with: parameters)
