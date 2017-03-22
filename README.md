@@ -143,15 +143,15 @@ If you prefer not to use either of the aforementioned dependency managers, you c
 
 - Open up Terminal, `cd` into your top-level project directory, and run the following command "if" your project is not initialized as a git repository:
 
-```bash
-$ git init
-```
+  ```bash
+  $ git init
+  ```
 
 - Add Alamofire as a git [submodule](http://git-scm.com/docs/git-submodule) by running the following command:
 
-```bash
-$ git submodule add https://github.com/Alamofire/Alamofire.git
-```
+  ```bash
+  $ git submodule add https://github.com/Alamofire/Alamofire.git
+  ```
 
 - Open the new `Alamofire` folder, and drag the `Alamofire.xcodeproj` into the Project Navigator of your application's Xcode project.
 
