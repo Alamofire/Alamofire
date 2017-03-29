@@ -581,7 +581,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
         XCTAssertEqual(components[3..<5], ["-X", "POST"])
 
-        XCTAssertNotNil(request.debugDescription.range(of: "-H \"Content-Type: application/json\""))
+        XCTAssertNotNil(request.debugDescription.range(of: "-H \"Content-Type: application/json; charset=utf-8\""))
         XCTAssertNotNil(request.debugDescription.range(of: "-d \"{"))
         XCTAssertNotNil(request.debugDescription.range(of: "\\\"f'oo\\\":\\\"ba'r\\\""))
         XCTAssertNotNil(request.debugDescription.range(of: "\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\""))

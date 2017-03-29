@@ -158,8 +158,8 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // When
         Alamofire.request(urlString)
             .validate(contentType: ["application/json"])
-            .validate(contentType: ["application/json;charset=utf8"])
-            .validate(contentType: ["application/json;q=0.8;charset=utf8"])
+            .validate(contentType: ["application/json; charset=utf-8"])
+            .validate(contentType: ["application/json; q=0.8; charset=utf-8"])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
@@ -167,8 +167,8 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
         Alamofire.download(urlString)
             .validate(contentType: ["application/json"])
-            .validate(contentType: ["application/json;charset=utf8"])
-            .validate(contentType: ["application/json;q=0.8;charset=utf8"])
+            .validate(contentType: ["application/json; charset=utf-8"])
+            .validate(contentType: ["application/json; q=0.8; charset=utf-8"])
             .response { resp in
                 downloadError = resp.error
                 expectation2.fulfill()
