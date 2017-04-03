@@ -1851,4 +1851,4 @@ The community adoption of the ASF libraries has been amazing. We are greatly hum
 
 ## License
 
-Alamofire is released under the MIT license. See LICENSE for details.
+Alamofire is released under the MIT license. [See LICENSE](https://github.com/Alamofire/Alamofire/blob/master/LICENSE) for details.
