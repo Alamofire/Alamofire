@@ -1414,7 +1414,7 @@ func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) -> Alam
 }
 
 loadUser { response in
-    if let user = userResponse.value {
+    if let user = response.value {
         print("User: { username: \(user.username), name: \(user.name) }")
     }
 }
