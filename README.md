@@ -491,7 +491,7 @@ struct JSONStringArrayEncoding: ParameterEncoding {
     }
 
     func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
-        var urlRequest = urlRequest.urlRequest
+        var urlRequest = try urlRequest.asURLRequest()
 
         let data = try JSONSerialization.data(withJSONObject: array, options: [])
 
