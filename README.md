@@ -647,7 +647,7 @@ Alamofire.download(urlString, to: destination).response { response in
 You can also use the suggested download destination API.
 
 ```swift
-let destination = DownloadRequest.suggestedDownloadDestination(directory: .documentDirectory)
+let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
 Alamofire.download("https://httpbin.org/image/png", to: destination)
 ```
 
