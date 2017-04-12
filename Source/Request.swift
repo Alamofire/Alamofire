@@ -269,7 +269,7 @@ extension Request: CustomDebugStringConvertible {
     }
 
     func cURLRepresentation() -> String {
-        var components = ["$ curl -i"]
+        var components = ["$ curl -v"]
 
         guard let request = self.request,
               let url = request.url,
