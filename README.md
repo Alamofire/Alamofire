@@ -190,14 +190,13 @@ Alamofire.request("https://httpbin.org/get")
 Handling the `Response` of a `Request` made in Alamofire involves chaining a response handler onto the `Request`.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
-    print(response.request)  // original URL request
-    print(response.response) // HTTP URL response
-    print(response.data)     // server data
-    print(response.result)   // result of response serialization
-
-    if let JSON = response.result.value {
-        print("JSON: \(JSON)")
+Alamofire.request("https://httpbin.org/get").response { response in
+    print("Request: \(String(describing: response.request))")
+    print("Response: \(String(describing: response.response))")
+    print("Error: \(String(describing: response.error))")
+    
+    if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
+        print("Data: \(utf8Text)")
     }
 }
 ```
