@@ -243,7 +243,7 @@ func responsePropertyList(
 
 None of the response handlers perform any validation of the `HTTPURLResponse` it gets back from the server.
 
-> For example, response status codes in the `400..<499` and `500..<599` ranges do NOT automatically trigger an `Error`. Alamofire uses [Response Validation](#response-validation) method chaining to achieve this.
+> For example, response status codes in the `400..<500` and `500..<600` ranges do NOT automatically trigger an `Error`. Alamofire uses [Response Validation](#response-validation) method chaining to achieve this.
 
 #### Response Handler
 
@@ -356,7 +356,7 @@ Alamofire.request("https://httpbin.org/get")
 
 #### Automatic Validation
 
-Automatically validates status code within `200...299` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
+Automatically validates status code within `200..<300` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
 
 ```swift
 Alamofire.request("https://httpbin.org/get").validate().responseJSON { response in
