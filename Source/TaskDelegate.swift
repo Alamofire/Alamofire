@@ -306,6 +306,8 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
     // MARK: Properties
 
     var downloadTask: URLSessionDownloadTask { return task as! URLSessionDownloadTask }
+    
+    let fileManager: FileManager
 
     var progress: Progress
     var progressHandler: (closure: Request.ProgressHandler, queue: DispatchQueue)?
@@ -322,8 +324,9 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
 
     // MARK: Lifecycle
 
-    override init(task: URLSessionTask?) {
+    init(task: URLSessionTask?, fileManager: FileManager) {
         progress = Progress(totalUnitCount: 0)
+        self.fileManager = fileManager
         super.init(task: task)
     }
 
@@ -359,16 +362,16 @@ class DownloadTaskDelegate: TaskDelegate, URLSessionDownloadDelegate {
         self.destinationURL = destinationURL
 
         do {
-            if options.contains(.removePreviousFile), FileManager.default.fileExists(atPath: destinationURL.path) {
-                try FileManager.default.removeItem(at: destinationURL)
+            if options.contains(.removePreviousFile), fileManager.fileExists(atPath: destinationURL.path) {
+                try fileManager.removeItem(at: destinationURL)
             }
 
             if options.contains(.createIntermediateDirectories) {
                 let directory = destinationURL.deletingLastPathComponent()
-                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
             }
 
-            try FileManager.default.moveItem(at: location, to: destinationURL)
+            try fileManager.moveItem(at: location, to: destinationURL)
         } catch {
             self.error = error
         }

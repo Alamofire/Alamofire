@@ -125,7 +125,7 @@ open class Request {
 
     // MARK: Lifecycle
 
-    init(session: URLSession, requestTask: RequestTask, error: Error? = nil) {
+    init(session: URLSession, requestTask: RequestTask, error: Error? = nil, fileManager: FileManager) {
         self.session = session
 
         switch requestTask {
@@ -133,7 +133,7 @@ open class Request {
             taskDelegate = DataTaskDelegate(task: task)
             self.originalTask = originalTask
         case .download(let originalTask, let task):
-            taskDelegate = DownloadTaskDelegate(task: task)
+            taskDelegate = DownloadTaskDelegate(task: task, fileManager: fileManager)
             self.originalTask = originalTask
         case .upload(let originalTask, let task):
             taskDelegate = UploadTaskDelegate(task: task)

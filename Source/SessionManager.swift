@@ -125,6 +125,9 @@ open class SessionManager {
 
     /// The session delegate handling all the task and session delegate callbacks.
     open let delegate: SessionDelegate
+    
+    /// The file manager handling file related operations.
+    open let fileManager: FileManager
 
     /// Whether to start requests immediately after being constructed. `true` by default.
     open var startRequestsImmediately: Bool = true
@@ -166,10 +169,12 @@ open class SessionManager {
     public init(
         configuration: URLSessionConfiguration = URLSessionConfiguration.default,
         delegate: SessionDelegate = SessionDelegate(),
-        serverTrustPolicyManager: ServerTrustPolicyManager? = nil)
+        serverTrustPolicyManager: ServerTrustPolicyManager? = nil,
+        fileManager: FileManager = .default)
     {
         self.delegate = delegate
         self.session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        self.fileManager = fileManager
 
         commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
     }
@@ -185,12 +190,14 @@ open class SessionManager {
     public init?(
         session: URLSession,
         delegate: SessionDelegate,
-        serverTrustPolicyManager: ServerTrustPolicyManager? = nil)
+        serverTrustPolicyManager: ServerTrustPolicyManager? = nil,
+        fileManager: FileManager = .default)
     {
         guard delegate === session.delegate else { return nil }
 
         self.delegate = delegate
         self.session = session
+        self.fileManager = fileManager
 
         commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
     }
@@ -199,6 +206,7 @@ open class SessionManager {
         session.serverTrustPolicyManager = serverTrustPolicyManager
 
         delegate.sessionManager = self
+        delegate.fileManager = fileManager
 
         delegate.sessionDidFinishEventsForBackgroundURLSession = { [weak self] session in
             guard let strongSelf = self else { return }
@@ -258,7 +266,7 @@ open class SessionManager {
             let originalTask = DataRequest.Requestable(urlRequest: originalRequest!)
 
             let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
-            let request = DataRequest(session: session, requestTask: .data(originalTask, task))
+            let request = DataRequest(session: session, requestTask: .data(originalTask, task), fileManager: fileManager)
 
             delegate[task] = request
 
@@ -281,7 +289,7 @@ open class SessionManager {
         }
 
         let underlyingError = error.underlyingAdaptError ?? error
-        let request = DataRequest(session: session, requestTask: requestTask, error: underlyingError)
+        let request = DataRequest(session: session, requestTask: requestTask, error: underlyingError, fileManager: fileManager)
 
         if let retrier = retrier, error is AdaptError {
             allowRetrier(retrier, toRetry: request, with: underlyingError)
@@ -398,7 +406,7 @@ open class SessionManager {
     {
         do {
             let task = try downloadable.task(session: session, adapter: adapter, queue: queue)
-            let download = DownloadRequest(session: session, requestTask: .download(downloadable, task))
+            let download = DownloadRequest(session: session, requestTask: .download(downloadable, task), fileManager: fileManager)
 
             download.downloadDelegate.destination = destination
 
@@ -426,7 +434,7 @@ open class SessionManager {
 
         let underlyingError = error.underlyingAdaptError ?? error
 
-        let download = DownloadRequest(session: session, requestTask: downloadTask, error: underlyingError)
+        let download = DownloadRequest(session: session, requestTask: downloadTask, error: underlyingError, fileManager: fileManager)
         download.downloadDelegate.destination = destination
 
         if let retrier = retrier, error is AdaptError {
@@ -679,7 +687,6 @@ open class SessionManager {
 
                     DispatchQueue.main.async { encodingCompletion?(encodingResult) }
                 } else {
-                    let fileManager = FileManager.default
                     let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
                     let directoryURL = tempDirectoryURL.appendingPathComponent("org.alamofire.manager/multipart.form.data")
                     let fileName = UUID().uuidString
@@ -692,7 +699,11 @@ open class SessionManager {
                     // Create directory inside serial queue to ensure two threads don't do this in parallel
                     self.queue.sync {
                         do {
-                            try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                            try self.fileManager.createDirectory(
+                                at: directoryURL,
+                                withIntermediateDirectories: true,
+                                attributes: nil
+                            )
                         } catch {
                             directoryError = error
                         }
@@ -707,7 +718,7 @@ open class SessionManager {
                     // Cleanup the temp file once the upload is complete
                     upload.delegate.queue.addOperation {
                         do {
-                            try FileManager.default.removeItem(at: fileURL)
+                            try self.fileManager.removeItem(at: fileURL)
                         } catch {
                             // No-op
                         }
@@ -727,7 +738,7 @@ open class SessionManager {
                 // Cleanup the temp file in the event that the multipart form data encoding failed
                 if let tempFileURL = tempFileURL {
                     do {
-                        try FileManager.default.removeItem(at: tempFileURL)
+                        try self.fileManager.removeItem(at: tempFileURL)
                     } catch {
                         // No-op
                     }
@@ -743,7 +754,7 @@ open class SessionManager {
     private func upload(_ uploadable: UploadRequest.Uploadable) -> UploadRequest {
         do {
             let task = try uploadable.task(session: session, adapter: adapter, queue: queue)
-            let upload = UploadRequest(session: session, requestTask: .upload(uploadable, task))
+            let upload = UploadRequest(session: session, requestTask: .upload(uploadable, task), fileManager: fileManager)
 
             if case let .stream(inputStream, _) = uploadable {
                 upload.delegate.taskNeedNewBodyStream = { _, _ in inputStream }
@@ -767,7 +778,7 @@ open class SessionManager {
         }
 
         let underlyingError = error.underlyingAdaptError ?? error
-        let upload = UploadRequest(session: session, requestTask: uploadTask, error: underlyingError)
+        let upload = UploadRequest(session: session, requestTask: uploadTask, error: underlyingError, fileManager: fileManager)
 
         if let retrier = retrier, error is AdaptError {
             allowRetrier(retrier, toRetry: upload, with: underlyingError)
@@ -819,7 +830,7 @@ open class SessionManager {
     private func stream(_ streamable: StreamRequest.Streamable) -> StreamRequest {
         do {
             let task = try streamable.task(session: session, adapter: adapter, queue: queue)
-            let request = StreamRequest(session: session, requestTask: .stream(streamable, task))
+            let request = StreamRequest(session: session, requestTask: .stream(streamable, task), fileManager: fileManager)
 
             delegate[task] = request
 
@@ -833,7 +844,7 @@ open class SessionManager {
 
     @available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
     private func stream(failedWith error: Error) -> StreamRequest {
-        let stream = StreamRequest(session: session, requestTask: .stream(nil, nil), error: error)
+        let stream = StreamRequest(session: session, requestTask: .stream(nil, nil), error: error, fileManager: fileManager)
         if startRequestsImmediately { stream.resume() }
         return stream
     }
