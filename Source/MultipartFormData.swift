@@ -99,6 +99,9 @@ open class MultipartFormData {
 
     /// The boundary used to separate the body parts in the encoded form data.
     public let boundary: String
+    
+    /// The file manager handling file related operations.
+    public let fileManager: FileManager
 
     private var bodyParts: [BodyPart]
     private var bodyPartError: AFError?
@@ -109,7 +112,7 @@ open class MultipartFormData {
     /// Creates a multipart form data object.
     ///
     /// - returns: The multipart form data object.
-    public init() {
+    public init(fileManager: FileManager = .default) {
         self.boundary = BoundaryGenerator.randomBoundary()
         self.bodyParts = []
 
@@ -120,6 +123,8 @@ open class MultipartFormData {
         ///
 
         self.streamBufferSize = 1024
+        
+        self.fileManager = fileManager
     }
 
     // MARK: - Body Parts

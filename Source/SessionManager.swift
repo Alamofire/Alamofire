@@ -665,7 +665,7 @@ open class SessionManager {
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
         DispatchQueue.global(qos: .utility).async {
-            let formData = MultipartFormData()
+            let formData = MultipartFormData(fileManager: self.fileManager)
             multipartFormData(formData)
 
             var tempFileURL: URL?
