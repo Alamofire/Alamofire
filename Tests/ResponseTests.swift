@@ -80,7 +80,7 @@ class ResponseTestCase: BaseTestCase {
     }
 }
 
-// MARK: -
+// MARK: - Testing Data Responses
 
 class ResponseDataTestCase: BaseTestCase {
     func testThatResponseDataReturnsSuccessResultWithValidData() {
@@ -137,7 +137,7 @@ class ResponseDataTestCase: BaseTestCase {
     }
 }
 
-// MARK: -
+// MARK: - Testing String Responses
 
 class ResponseStringTestCase: BaseTestCase {
     func testThatResponseStringReturnsSuccessResultWithValidString() {
@@ -194,7 +194,7 @@ class ResponseStringTestCase: BaseTestCase {
     }
 }
 
-// MARK: -
+// MARK: - Testing JSON Responses
 
 class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
@@ -321,7 +321,7 @@ class ResponseJSONTestCase: BaseTestCase {
     }
 }
 
-// MARK: -
+// MARK: - Testing Response Mappping
 
 class ResponseMapTestCase: BaseTestCase {
     func testThatMapTransformsSuccessValue() {
@@ -382,7 +382,7 @@ class ResponseMapTestCase: BaseTestCase {
     }
 }
 
-// MARK: -
+// MARK: - Testing Flat Response Mappping
 
 class ResponseFlatMapTestCase: BaseTestCase {
     func testThatFlatMapTransformsSuccessValue() {
