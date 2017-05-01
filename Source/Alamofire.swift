@@ -53,7 +53,7 @@ extension URL: URLConvertible {
 }
 
 extension URLComponents: URLConvertible {
-    /// Returns a URL if `url` is not nil, otherise throws an `Error`.
+    /// Returns a URL if `url` is not nil, otherwise throws an `Error`.
     ///
     /// - throws: An `AFError.invalidURL` if `url` is `nil`.
     ///
