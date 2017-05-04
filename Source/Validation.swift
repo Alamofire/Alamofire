@@ -292,11 +292,13 @@ extension DownloadRequest {
             guard let validFileURL = fileURL else {
                 return .failure(AFError.responseValidationFailed(reason: .dataFileNil))
             }
-
-            do {
-                let data = try Data(contentsOf: validFileURL)
+            
+            if
+                self.fileManager.isReadableFile(atPath: validFileURL.path),
+                let data = self.fileManager.contents(atPath: validFileURL.path)
+            {
                 return self.validate(contentType: acceptableContentTypes, response: response, data: data)
-            } catch {
+            } else {
                 return .failure(AFError.responseValidationFailed(reason: .dataFileReadFailed(at: validFileURL)))
             }
         }
