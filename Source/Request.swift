@@ -103,6 +103,9 @@ open class Request {
 
     /// The session belonging to the underlying task.
     open let session: URLSession
+    
+    /// The file manager handling file related operations.
+    open let fileManager: FileManager
 
     /// The request sent or to be sent to the server.
     open var request: URLRequest? { return task?.originalRequest }
@@ -127,6 +130,7 @@ open class Request {
 
     init(session: URLSession, requestTask: RequestTask, error: Error? = nil, fileManager: FileManager) {
         self.session = session
+        self.fileManager = fileManager
 
         switch requestTask {
         case .data(let originalTask, let task):
