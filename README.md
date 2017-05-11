@@ -816,7 +816,7 @@ In iOS and tvOS 10 and macOS 10.12, Apple introduced the new [URLSessionTaskMetr
 
 ```swift
 Alamofire.request("https://httpbin.org/get").responseJSON { response in
-	print(response.metrics)
+    print(response.metrics)
 }
 ```
 
@@ -824,8 +824,8 @@ It's important to note that these APIs are only available on iOS and tvOS 10 and
 
 ```swift
 Alamofire.request("https://httpbin.org/get").responseJSON { response in
-    if #available(iOS 10.0. *) {
-		print(response.metrics)
+    if #available(iOS 10.0, *) {
+        print(response.metrics)
     }
 }
 ```
