@@ -743,7 +743,7 @@ Released on 2016-03-23. All issues associated with this milestone can be found u
   [#1099](https://github.com/Alamofire/Alamofire/pull/1099).
 
 #### Updated
-- The `User-Agent` header implementation to use more aggresive type-safety checks.
+- The `User-Agent` header implementation to use more aggressive type-safety checks.
   - Updated by [Christian Noon](https://github.com/cnoon) in regards to Issue
   [#1100](https://github.com/Alamofire/Alamofire/issues/1100).
 - All shared response serializers to accept a custom queue for execution.
