@@ -83,6 +83,27 @@ open class Request {
         case upload(TaskConvertible?, URLSessionTask?)
         case stream(TaskConvertible?, URLSessionTask?)
     }
+    
+    public enum RequestState: Int {
+        case running
+        case suspended
+        case canceling
+        case completed
+        case unspecified
+        
+        static func from(taskState state: URLSessionTask.State) -> RequestState {
+            switch state {
+            case .running:
+                return .running
+            case .suspended:
+                return .suspended
+            case .canceling:
+                return .canceling
+            case .completed:
+                return .completed
+            }
+        }
+    }
 
     // MARK: Properties
 
@@ -233,6 +254,13 @@ open class Request {
             object: self,
             userInfo: [Notification.Key.Task: task]
         )
+    }
+    
+    /// Returns the request's state.
+    open var state: RequestState {
+        guard let task = task else { return .unspecified }
+        
+        return RequestState.from(taskState: task.state)
     }
 }
 
