@@ -148,20 +148,22 @@ public struct URLEncoding: ParameterEncoding {
 
     /// Creates percent-escaped, URL encoded query string components from the given key-value pair using recursion.
     ///
-    /// - parameter key:   The key of the query component.
-    /// - parameter value: The value of the query component.
-    ///
+    /// - parameter key:            The key of the query component.
+    /// - parameter value:          The value of the query component.
+    /// - parameter indexFromKey:   Maintain the index for a given key when an is contained.
     /// - returns: The percent-escaped, URL encoded query string components.
-    public func queryComponents(fromKey key: String, value: Any) -> [(String, String)] {
+    public func queryComponents(fromKey key: String, value: Any, indexFromKey: [String: Int] = [String: Int]()) -> [(String, String)] {
         var components: [(String, String)] = []
-
+        var indexFromKey = indexFromKey
+        
         if let dictionary = value as? [String: Any] {
             for (nestedKey, value) in dictionary {
                 components += queryComponents(fromKey: "\(key)[\(nestedKey)]", value: value)
             }
         } else if let array = value as? [Any] {
             for value in array {
-                components += queryComponents(fromKey: "\(key)[]", value: value)
+                indexFromKey[key] = (indexFromKey[key] == nil) ? 0 : indexFromKey[key]! + 1
+                components += queryComponents(fromKey: "\(key)[\(indexFromKey[key]!)]", value: value, indexFromKey: indexFromKey)
             }
         } else if let value = value as? NSNumber {
             if value.isBool {
@@ -174,7 +176,7 @@ public struct URLEncoding: ParameterEncoding {
         } else {
             components.append((escape(key), escape("\(value)")))
         }
-
+        
         return components
     }
 
