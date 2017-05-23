@@ -1584,7 +1584,7 @@ extension ResponseCollectionSerializable where Self: ResponseObjectSerializable 
 
         if let representation = representation as? [[String: Any]] {
             for itemRepresentation in representation {
-                if let item = Self(response: response, representation: itemRepresentation) {
+                if let item = Self(response: response, representation: itemRepresentation as AnyObject) {
                     collection.append(item)
                 }
             }
