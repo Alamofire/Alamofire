@@ -794,7 +794,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
 class MultipartFormDataFailureTestCase: BaseTestCase {
     func testThatAppendingFileBodyPartWithInvalidLastPathComponentReturnsError() {
         // Given
-        let fileURL = NSURL(string: "") as! URL
+        let fileURL = NSURL(string: "")! as URL
         let multipartFormData = MultipartFormData()
         multipartFormData.append(fileURL, withName: "empty_data")
 

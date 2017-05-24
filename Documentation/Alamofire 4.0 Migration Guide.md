@@ -699,7 +699,7 @@ Alamofire.download(urlString).responseData { response in
 }
 ```
 
-> We'll cover the `DownloadResponse` type in more detail in the [Reponse Serializers](#response-serializers) section.
+> We'll cover the `DownloadResponse` type in more detail in the [Response Serializers](#response-serializers) section.
 
 #### Download Options
 
