@@ -202,6 +202,39 @@ Alamofire.request("https://httpbin.org/get").responseJSON { response in
 }
 ```
 
+Result
+```
+Optional(https://httpbin.org/get)
+Optional(<NSHTTPURLResponse: 0x608000028d20> { URL: https://httpbin.org/get } { status code: 200, headers {
+    "Access-Control-Allow-Credentials" = true;
+    "Access-Control-Allow-Origin" = "*";
+    Connection = "keep-alive";
+    "Content-Length" = 400;
+    "Content-Type" = "application/json";
+    Date = "D, DD MM YYYY HH:MM:SS GMT";
+    Server = "meinheld/0.6.1";
+    Via = "1.1 vegur";
+    "X-Powered-By" = Flask;
+    "X-Processed-Time" = "0.000675916671753";
+} })
+Optional(400 bytes)
+SUCCESS
+JSON: {
+    args =     {
+    };
+    headers =     {
+        Accept = "*/*";
+        "Accept-Encoding" = "gzip;q=1.0, compress;q=0.5";
+        "Accept-Language" = "en;q=1.0";
+        Connection = close;
+        Host = "httpbin.org";
+        "User-Agent" = "your project name (your bundle id; build:number of times you build; iOS OS version) Alamofire/4.4.0";
+    };
+    origin = "IP address you use";
+    url = "https://httpbin.org/get";
+}
+```
+
 In the above example, the `responseJSON` handler is appended to the `Request` to be executed once the `Request` is complete. Rather than blocking execution to wait for a response from the server, a [callback](http://en.wikipedia.org/wiki/Callback_%28computer_programming%29) in the form of a closure is specified to handle the response once it's received. The result of a request is only available inside the scope of a response closure. Any execution contingent on the response or data received from the server must be done within a response closure.
 
 > Networking in Alamofire is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
@@ -261,6 +294,44 @@ Alamofire.request("https://httpbin.org/get").response { response in
 }
 ```
 
+Result (Success)
+```
+Request: Optional(https://httpbin.org/get)
+Response: Optional(<NSHTTPURLResponse: 0x6000002232e0> { URL: https://httpbin.org/get } { status code: 200, headers {
+    "Access-Control-Allow-Credentials" = true;
+    "Access-Control-Allow-Origin" = "*";
+    Connection = "keep-alive";
+    "Content-Length" = 400;
+    "Content-Type" = "application/json";
+    Date = "D, DD MM YYYY HH:MM:SS GMT";
+    Server = "meinheld/0.6.1";
+    Via = "1.1 vegur";
+    "X-Powered-By" = Flask;
+    "X-Processed-Time" = "0.000665903091431";
+} })
+Error: nil
+Data: {
+  "args": {}, 
+  "headers": {
+    "Accept": "*/*", 
+    "Accept-Encoding": "gzip;q=1.0, compress;q=0.5", 
+    "Accept-Language": "en;q=1.0", 
+    "Connection": "close", 
+    "Host": "httpbin.org", 
+    "User-Agent": "your project name (your bundle id; build:number of times your build; iOS OS version) Alamofire/4.4.0"
+  }, 
+  "origin": "IP address you use", 
+  "url": "https://httpbin.org/get"
+}
+```
+Result (Failure)
+```
+Request: Optional(https://httpbin)
+Response: nil
+Error: Optional(Error Domain=NSURLErrorDomain Code=-1003 "A server with the specified hostname could not be found." UserInfo={NSUnderlyingError=0x6000002406f0 {Error Domain=kCFErrorDomainCFNetwork Code=-1003 "(null)" UserInfo={_kCFStreamErrorCodeKey=8, _kCFStreamErrorDomainKey=12}}, NSErrorFailingURLStringKey=https://httpbin/, NSErrorFailingURLKey=https://httpbin/, _kCFStreamErrorDomainKey=12, _kCFStreamErrorCodeKey=8, NSLocalizedDescription=A server with the specified hostname could not be found.})
+Data: 
+```
+
 > We strongly encourage you to leverage the other response serializers taking advantage of `Response` and `Result` types.
 
 #### Response Data Handler
@@ -277,6 +348,30 @@ Alamofire.request("https://httpbin.org/get").responseData { response in
 }
 ```
 
+Result (Success)
+```
+"All Response Info: SUCCESS: 400 bytes"
+Data: {
+  "args": {}, 
+  "headers": {
+    "Accept": "*/*", 
+    "Accept-Encoding": "gzip;q=1.0, compress;q=0.5", 
+    "Accept-Language": "en;q=1.0", 
+    "Connection": "close", 
+    "Host": "httpbin.org", 
+    "User-Agent": "your project name (your bundle id; build:number of times you build; iOS OS version) Alamofire/4.4.0"
+  }, 
+  "origin": "IP address you use", 
+  "url": "https://httpbin.org/get"
+}
+```
+
+Result (Failure)
+```
+"All Response Info: FAILURE: Error Domain=NSURLErrorDomain Code=-1003 \"A server with the specified hostname could not be found.\" UserInfo={NSUnderlyingError=0x60000005ac10 {Error Domain=kCFErrorDomainCFNetwork Code=-1003 \"(null)\" UserInfo={_kCFStreamErrorCodeKey=8, _kCFStreamErrorDomainKey=12}}, NSErrorFailingURLStringKey=https://httpbin/, NSErrorFailingURLKey=https://httpbin/, _kCFStreamErrorDomainKey=12, _kCFStreamErrorCodeKey=8, NSLocalizedDescription=A server with the specified hostname could not be found.}"
+```
+
+
 #### Response String Handler
 
 The `responseString` handler uses the `responseStringSerializer` to convert the `Data` returned by the server into a `String` with the specified encoding. If no errors occur and the server data is successfully serialized into a `String`, the response `Result` will be a `.success` and the `value` will be of type `String`.
@@ -286,6 +381,18 @@ Alamofire.request("https://httpbin.org/get").responseString { response in
     print("Success: \(response.result.isSuccess)")
     print("Response String: \(response.result.value)")
 }
+```
+
+Result (Success)
+```
+Success: true
+Response String: Optional("{\n  \"args\": {}, \n  \"headers\": {\n    \"Accept\": \"*/*\", \n    \"Accept-Encoding\": \"gzip;q=1.0, compress;q=0.5\", \n    \"Accept-Language\": \"en;q=1.0\", \n    \"Connection\": \"close\", \n    \"Host\": \"httpbin.org\", \n    \"User-Agent\": \"your project name (your bundle id; build:number of time you build; iOS OS version) Alamofire/4.4.0\"\n  }, \n  \"origin\": \"124.219.242.114\", \n  \"url\": \"https://httpbin.org/get\"\n}\n")
+```
+
+Result (Failure)
+```
+Success: false
+Response String: nil
 ```
 
 > If no encoding is specified, Alamofire will use the text encoding specified in the `HTTPURLResponse` from the server. If the text encoding cannot be determined by the server response, it defaults to `.isoLatin1`.
@@ -304,6 +411,62 @@ Alamofire.request("https://httpbin.org/get").responseJSON { response in
 }
 ```
 
+Result (Success)
+```
+[Request]: GET https://httpbin.org/get
+[Response]: <NSHTTPURLResponse: 0x600000028da0> { URL: https://httpbin.org/get } { status code: 200, headers {
+    "Access-Control-Allow-Credentials" = true;
+    "Access-Control-Allow-Origin" = "*";
+    Connection = "keep-alive";
+    "Content-Length" = 400;
+    "Content-Type" = "application/json";
+    Date = "D, DD MM YYYY HH:MM:SS GMT";
+    Server = "meinheld/0.6.1";
+    Via = "1.1 vegur";
+    "X-Powered-By" = Flask;
+    "X-Processed-Time" = "0.00577902793884";
+} }
+[Data]: 400 bytes
+[Result]: SUCCESS: {
+    args =     {
+    };
+    headers =     {
+        Accept = "*/*";
+        "Accept-Encoding" = "gzip;q=1.0, compress;q=0.5";
+        "Accept-Language" = "en;q=1.0";
+        Connection = close;
+        Host = "httpbin.org";
+        "User-Agent" = "your project name (your bundle id; build:number of times you build; iOS OS version) Alamofire/4.4.0";
+    };
+    origin = "IP address you use";
+    url = "https://httpbin.org/get";
+}
+[Timeline]: Timeline: { "Request Start Time": 517557082.540, "Initial Response Time": 517557083.354, "Request Completed Time": 517557083.355, "Serialization Completed Time": 517557083.356, "Latency": 0.814 secs, "Request Duration": 0.815 secs, "Serialization Duration": 0.001 secs, "Total Duration": 0.816 secs }
+JSON: {
+    args =     {
+    };
+    headers =     {
+        Accept = "*/*";
+        "Accept-Encoding" = "gzip;q=1.0, compress;q=0.5";
+        "Accept-Language" = "en;q=1.0";
+        Connection = close;
+        Host = "httpbin.org";
+        "User-Agent" = "your project name (your bundle id; build:number of times you build; iOS OS version) Alamofire/4.4.0";
+    };
+    origin = "IP address you use";
+    url = "https://httpbin.org/get";
+}
+```
+
+Result (Failure)
+```
+[Request]: GET https://httpbin
+[Response]: nil
+[Data]: 0 bytes
+[Result]: FAILURE: Error Domain=NSURLErrorDomain Code=-1003 "A server with the specified hostname could not be found." UserInfo={NSUnderlyingError=0x60800004b790 {Error Domain=kCFErrorDomainCFNetwork Code=-1003 "(null)" UserInfo={_kCFStreamErrorCodeKey=8, _kCFStreamErrorDomainKey=12}}, NSErrorFailingURLStringKey=https://httpbin/, NSErrorFailingURLKey=https://httpbin/, _kCFStreamErrorDomainKey=12, _kCFStreamErrorCodeKey=8, NSLocalizedDescription=A server with the specified hostname could not be found.}
+[Timeline]: Timeline: { "Request Start Time": 517557263.170, "Initial Response Time": 517557263.242, "Request Completed Time": 517557263.242, "Serialization Completed Time": 517557263.242, "Latency": 0.072 secs, "Request Duration": 0.072 secs, "Serialization Duration": 0.000 secs, "Total Duration": 0.072 secs }
+```
+
 > All JSON serialization is handled by the `JSONSerialization` API in the `Foundation` framework.
 
 #### Chained Response Handlers
@@ -318,6 +481,31 @@ Alamofire.request("https://httpbin.org/get")
     .responseJSON { response in
         print("Response JSON: \(response.result.value)")
     }
+```
+
+Result (Success)
+```
+Response String: Optional("{\n  \"args\": {}, \n  \"headers\": {\n    \"Accept\": \"*/*\", \n    \"Accept-Encoding\": \"gzip;q=1.0, compress;q=0.5\", \n    \"Accept-Language\": \"en;q=1.0\", \n    \"Connection\": \"close\", \n    \"Host\": \"httpbin.org\", \n    \"User-Agent\": \"your project name (your bundle id; build:number of time you build; iOS OS version) Alamofire/4.4.0\"\n  }, \n  \"origin\": \"IP address you use\", \n  \"url\": \"https://httpbin.org/get\"\n}\n")
+Response JSON: Optional({
+    args =     {
+    };
+    headers =     {
+        Accept = "*/*";
+        "Accept-Encoding" = "gzip;q=1.0, compress;q=0.5";
+        "Accept-Language" = "en;q=1.0";
+        Connection = close;
+        Host = "httpbin.org";
+        "User-Agent" = "your project name (your bundle id; build:number of times you build; iOS OS version) Alamofire/4.4.0";
+    };
+    origin = "IP address you use";
+    url = "https://httpbin.org/get";
+})
+```
+
+Result (Failure)
+```
+Response String: nil
+Response JSON: nil
 ```
 
 > It is important to note that using multiple response handlers on the same `Request` requires the server data to be serialized multiple times. Once for each response handler.
