@@ -26,7 +26,7 @@ import Foundation
 
 /// The task delegate is responsible for handling all delegate callbacks for the underlying task as well as
 /// executing all operations attached to the serial operation queue upon task completion.
-open class TaskDelegate: NSObject {
+open class TaskDelegate: NSObject, URLSessionTaskDelegate {
 
     // MARK: Properties
 
@@ -75,8 +75,7 @@ open class TaskDelegate: NSObject {
     var taskNeedNewBodyStream: ((URLSession, URLSessionTask) -> InputStream?)?
     var taskDidCompleteWithError: ((URLSession, URLSessionTask, Error?) -> Void)?
 
-    @objc(URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:)
-    func urlSession(
+    public func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
         willPerformHTTPRedirection response: HTTPURLResponse,
@@ -92,8 +91,7 @@ open class TaskDelegate: NSObject {
         completionHandler(redirectRequest)
     }
 
-    @objc(URLSession:task:didReceiveChallenge:completionHandler:)
-    func urlSession(
+    public func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
         didReceive challenge: URLAuthenticationChallenge,
@@ -133,8 +131,7 @@ open class TaskDelegate: NSObject {
         completionHandler(disposition, credential)
     }
 
-    @objc(URLSession:task:needNewBodyStream:)
-    func urlSession(
+    public func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
         needNewBodyStream completionHandler: @escaping (InputStream?) -> Void)
@@ -148,8 +145,7 @@ open class TaskDelegate: NSObject {
         completionHandler(bodyStream)
     }
 
-    @objc(URLSession:task:didCompleteWithError:)
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let taskDidCompleteWithError = taskDidCompleteWithError {
             taskDidCompleteWithError(session, task, error)
         } else {
