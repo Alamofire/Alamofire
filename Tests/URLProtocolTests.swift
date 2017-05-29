@@ -35,16 +35,10 @@ class ProxyURLProtocol: URLProtocol {
     }
 
     lazy var session: URLSession = {
-        let configuration: URLSessionConfiguration = {
-            let configuration = URLSessionConfiguration.ephemeral
-            configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
 
-            return configuration
-        }()
-
-        let session = Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
-
-        return session
+        return Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }()
 
     var activeTask: URLSessionTask?
@@ -52,23 +46,17 @@ class ProxyURLProtocol: URLProtocol {
     // MARK: Class Request Methods
 
     override class func canInit(with request: URLRequest) -> Bool {
-        if URLProtocol.property(forKey: PropertyKeys.handledByForwarderURLProtocol, in: request) != nil {
-            return false
-        }
-
-        return true
+        return (URLProtocol.property(forKey: PropertyKeys.handledByForwarderURLProtocol, in: request) == nil)
     }
 
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
-        if let headers = request.allHTTPHeaderFields {
-            do {
-                return try URLEncoding.default.encode(request, with: headers)
-            } catch {
-                return request
-            }
+        guard let headers = request.allHTTPHeaderFields else { return request }
+        
+        do {
+            return try URLEncoding.default.encode(request, with: headers)
+        } catch {
+            return request
         }
-
-        return request
     }
 
     override class func requestIsCacheEquivalent(_ a: URLRequest, to b: URLRequest) -> Bool {
@@ -92,19 +80,19 @@ class ProxyURLProtocol: URLProtocol {
 
 // MARK: -
 
-extension ProxyURLProtocol: URLSessionDelegate {
+extension ProxyURLProtocol: URLSessionDataDelegate {
 
-    // MARK: NSURLSessionDelegate
-
-    func URLSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceiveData data: Data) {
+    // MARK: URLSessionDelegate
+    
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         client?.urlProtocol(self, didLoad: data)
     }
-
-    func URLSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let response = task.response {
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         }
-
+        
         client?.urlProtocolDidFinishLoading(self)
     }
 }

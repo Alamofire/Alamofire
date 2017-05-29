@@ -231,7 +231,7 @@ class SessionManagerTestCase: BaseTestCase {
                 #elseif os(tvOS)
                     return "tvOS"
                 #elseif os(macOS)
-                    return "OS X"
+                    return "macOS"
                 #elseif os(Linux)
                     return "Linux"
                 #else

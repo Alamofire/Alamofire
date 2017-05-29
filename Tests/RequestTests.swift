@@ -382,7 +382,7 @@ class RequestResponseTestCase: BaseTestCase {
 // MARK: -
 
 extension Request {
-    fileprivate func preValidate(operation: @escaping (Void) -> Void) -> Self {
+    fileprivate func preValidate(operation: @escaping () -> Void) -> Self {
         delegate.queue.addOperation {
             operation()
         }
@@ -390,7 +390,7 @@ extension Request {
         return self
     }
 
-    fileprivate func postValidate(operation: @escaping (Void) -> Void) -> Self {
+    fileprivate func postValidate(operation: @escaping () -> Void) -> Self {
         delegate.queue.addOperation {
             operation()
         }

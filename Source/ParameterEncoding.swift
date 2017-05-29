@@ -242,7 +242,7 @@ public struct URLEncoding: ParameterEncoding {
             components += queryComponents(fromKey: key, value: value)
         }
 
-        return components.map { "\($0)=\($1)" }.joined(separator: "&")
+        return components.map { "\($0.0)=\($0.1)" }.joined(separator: "&")
     }
 
     private func encodesParametersInURL(with method: HTTPMethod) -> Bool {
