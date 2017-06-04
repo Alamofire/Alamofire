@@ -1202,7 +1202,7 @@ class AccessTokenAdapter: RequestAdapter {
 ```
 
 ```swift
-let sessionManager = SessionManager()
+let sessionManager = Alamofire.SessionManager()
 sessionManager.adapter = AccessTokenAdapter(accessToken: "1234")
 
 sessionManager.request("https://httpbin.org/get")
