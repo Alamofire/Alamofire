@@ -24,7 +24,7 @@ This guide is provided in order to ease the transition of existing applications 
 
 ## Requirements
 
-- iOS 8.0+, macOS 10.10.0+, tvOS 9.0+ and watchOS 2.0+
+- iOS 9.0+, macOS 10.10.0+, tvOS 9.0+ and watchOS 2.0+
 - Xcode 8.1+
 - Swift 3.0+
 
