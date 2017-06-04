@@ -199,39 +199,7 @@ public struct URLEncoding: ParameterEncoding {
         var allowedCharacterSet = CharacterSet.urlQueryAllowed
         allowedCharacterSet.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
 
-        var escaped = ""
-
-        //==========================================================================================================
-        //
-        //  Batching is required for escaping due to an internal bug in iOS 8.1 and 8.2. Encoding more than a few
-        //  hundred Chinese characters causes various malloc error crashes. To avoid this issue until iOS 8 is no
-        //  longer supported, batching MUST be used for encoding. This introduces roughly a 20% overhead. For more
-        //  info, please refer to:
-        //
-        //      - https://github.com/Alamofire/Alamofire/issues/206
-        //
-        //==========================================================================================================
-
-        if #available(iOS 8.3, *) {
-            escaped = string.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? string
-        } else {
-            let batchSize = 50
-            var index = string.startIndex
-
-            while index != string.endIndex {
-                let startIndex = index
-                let endIndex = string.index(index, offsetBy: batchSize, limitedBy: string.endIndex) ?? string.endIndex
-                let range = startIndex..<endIndex
-
-                let substring = string.substring(with: range)
-
-                escaped += substring.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? substring
-
-                index = endIndex
-            }
-        }
-
-        return escaped
+        return string.safeAddingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? string
     }
 
     private func query(_ parameters: [String: Any]) -> String {
@@ -430,4 +398,38 @@ public struct PropertyListEncoding: ParameterEncoding {
 
 extension NSNumber {
     fileprivate var isBool: Bool { return CFBooleanGetTypeID() == CFGetTypeID(self) }
+}
+
+extension String {
+        //==========================================================================================================
+        //
+        //  Batching is required for escaping due to an internal bug in iOS 8.1 and 8.2. Encoding more than a few
+        //  hundred Chinese characters causes various malloc error crashes. To avoid this issue until iOS 8 is no
+        //  longer supported, batching MUST be used for encoding. This introduces roughly a 20% overhead. For more
+        //  info, please refer to:
+        //
+        //      - https://github.com/Alamofire/Alamofire/issues/206
+        //
+        //==========================================================================================================
+    fileprivate func safeAddingPercentEncoding(withAllowedCharacters allowedCharacters: CharacterSet) -> String? {
+        if #available(iOS 8.3, *) {
+            return addingPercentEncoding(withAllowedCharacters: allowedCharacters)
+        } else {
+            let batchSize = 50
+            var batchPosition = startIndex
+            var escaped = ""
+            while batchPosition < endIndex {
+                let batchRange = batchPosition ..< (index(batchPosition, offsetBy: batchSize, limitedBy: endIndex) ?? endIndex)
+                // To avoid breaking up character sequences such as 👴🏻👮🏽, actual range is larger
+                let range = rangeOfComposedCharacterSequences(for: batchRange)
+                let rangeSubstring = substring(with: range)
+                guard let percentEncodedSubstring = rangeSubstring.addingPercentEncoding(withAllowedCharacters: allowedCharacters) else {
+                    return nil
+                }
+                escaped.append(percentEncodedSubstring)
+                batchPosition = range.upperBound
+            }
+            return escaped
+        }
+    }
 }
