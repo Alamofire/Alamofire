@@ -86,6 +86,9 @@ public struct URLEncoding: ParameterEncoding {
 
     /// Returns a default `URLEncoding` instance.
     public static var `default`: URLEncoding { return URLEncoding() }
+    
+    /// Returns a `URLEncoding` instance with a query encoder that avoid the use of brackets in array parameters.
+    public static var noBrackets : URLEncoding { return URLEncoding(noBrackets: true) }
 
     /// Returns a `URLEncoding` instance with a `.methodDependent` destination.
     public static var methodDependent: URLEncoding { return URLEncoding() }
@@ -98,16 +101,21 @@ public struct URLEncoding: ParameterEncoding {
 
     /// The destination defining where the encoded query string is to be applied to the URL request.
     public let destination: Destination
+    
+    /// Defines if the encoded array parameters does not need square brackets to the URL request.
+    public let noBrackets: Bool
 
     // MARK: Initialization
 
     /// Creates a `URLEncoding` instance using the specified destination.
     ///
     /// - parameter destination: The destination defining where the encoded query string is to be applied.
+    /// - parameter noBrackets: Defines if the URL request should not contains square brackets
     ///
     /// - returns: The new `URLEncoding` instance.
-    public init(destination: Destination = .methodDependent) {
+    public init(destination: Destination = .methodDependent, noBrackets: Bool = false) {
         self.destination = destination
+        self.noBrackets = noBrackets
     }
 
     // MARK: Encoding
@@ -161,7 +169,7 @@ public struct URLEncoding: ParameterEncoding {
             }
         } else if let array = value as? [Any] {
             for value in array {
-                components += queryComponents(fromKey: "\(key)[]", value: value)
+                components += queryComponents(fromKey: noBrackets ? "\(key)" : "\(key)[]", value: value)
             }
         } else if let value = value as? NSNumber {
             if value.isBool {
