@@ -126,6 +126,7 @@ extension URLRequest {
 /// - parameter parameters: The parameters. `nil` by default.
 /// - parameter encoding:   The parameter encoding. `URLEncoding.default` by default.
 /// - parameter headers:    The HTTP headers. `nil` by default.
+/// - parameter timeout:    The Request timeout. `nil` by default.
 ///
 /// - returns: The created `DataRequest`.
 @discardableResult
@@ -134,7 +135,8 @@ public func request(
     method: HTTPMethod = .get,
     parameters: Parameters? = nil,
     encoding: ParameterEncoding = URLEncoding.default,
-    headers: HTTPHeaders? = nil)
+    headers: HTTPHeaders? = nil,
+    timeout: TimeInterval? = nil)
     -> DataRequest
 {
     return SessionManager.default.request(
@@ -142,7 +144,8 @@ public func request(
         method: method,
         parameters: parameters,
         encoding: encoding,
-        headers: headers
+        headers: headers,
+        timeout: timeout
     )
 }
 
@@ -153,8 +156,8 @@ public func request(
 ///
 /// - returns: The created `DataRequest`.
 @discardableResult
-public func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
-    return SessionManager.default.request(urlRequest)
+public func request(_ urlRequest: URLRequestConvertible, timeout: TimeInterval? = nil) -> DataRequest {
+    return SessionManager.default.request(urlRequest, timeout: timeout)
 }
 
 // MARK: - Download Request

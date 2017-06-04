@@ -220,6 +220,7 @@ open class SessionManager {
     /// - parameter parameters: The parameters. `nil` by default.
     /// - parameter encoding:   The parameter encoding. `URLEncoding.default` by default.
     /// - parameter headers:    The HTTP headers. `nil` by default.
+    /// - parameter timeout:    The Request timeout. `nil` by default.
     ///
     /// - returns: The created `DataRequest`.
     @discardableResult
@@ -228,7 +229,8 @@ open class SessionManager {
         method: HTTPMethod = .get,
         parameters: Parameters? = nil,
         encoding: ParameterEncoding = URLEncoding.default,
-        headers: HTTPHeaders? = nil)
+        headers: HTTPHeaders? = nil,
+        timeout: TimeInterval? = nil)
         -> DataRequest
     {
         var originalRequest: URLRequest?
@@ -236,7 +238,7 @@ open class SessionManager {
         do {
             originalRequest = try URLRequest(url: url, method: method, headers: headers)
             let encodedURLRequest = try encoding.encode(originalRequest!, with: parameters)
-            return request(encodedURLRequest)
+            return request(encodedURLRequest, timeout: timeout)
         } catch {
             return request(originalRequest, failedWith: error)
         }
@@ -247,12 +249,15 @@ open class SessionManager {
     /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
     ///
     /// - parameter urlRequest: The URL request.
+    /// - parameter timeout:    The Request timeout. `nil` by default.
     ///
     /// - returns: The created `DataRequest`.
-    open func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+    open func request(_ urlRequest: URLRequestConvertible, timeout: TimeInterval? = nil) -> DataRequest {
         var originalRequest: URLRequest?
 
         do {
+            self.session.configuration.timeoutIntervalForRequest = timeout ?? 60
+            
             originalRequest = try urlRequest.asURLRequest()
             let originalTask = DataRequest.Requestable(urlRequest: originalRequest!)
 

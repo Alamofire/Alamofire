@@ -336,7 +336,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
         class MockManager: SessionManager {
-            override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+            override func request(_ urlRequest: URLRequestConvertible, timeout: TimeInterval? = nil) -> DataRequest {
                 do {
                     let originalRequest = try urlRequest.asURLRequest()
                     let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
