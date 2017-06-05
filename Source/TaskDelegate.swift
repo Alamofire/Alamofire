@@ -105,8 +105,8 @@ open class TaskDelegate: NSObject {
         if let taskDidReceiveChallenge = taskDidReceiveChallenge {
             (disposition, credential) = taskDidReceiveChallenge(session, task, challenge)
         } else if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            let host = challenge.protectionSpace.host
-
+            let host = (session.configuration.httpAdditionalHeaders?["Host"] as? String) ?? challenge.protectionSpace.host
+            
             if
                 let serverTrustPolicy = session.serverTrustPolicyManager?.serverTrustPolicy(forHost: host),
                 let serverTrust = challenge.protectionSpace.serverTrust
