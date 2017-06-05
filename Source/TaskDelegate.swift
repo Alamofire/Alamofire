@@ -126,6 +126,8 @@ open class TaskDelegate: NSObject {
 
                 if credential != nil {
                     disposition = .useCredential
+                } else {
+                    disposition = .cancelAuthenticationChallenge
                 }
             }
         }
