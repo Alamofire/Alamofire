@@ -787,12 +787,12 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
         // Given, When, Then
         executeAuthorizationHeaderTest(for: .ephemeral)
     }
-
-//    ⚠️ This test has been removed as a result of rdar://26870455 in Xcode 8 Seed 1
-//    func testThatBackgroundConfigurationHeadersAreSentWithRequest() {
-//        // Given, When, Then
-//        executeAuthorizationHeaderTest(for: .background)
-//    }
+    #if os(macOS)
+    func testThatBackgroundConfigurationHeadersAreSentWithRequest() {
+        // Given, When, Then
+        executeAuthorizationHeaderTest(for: .background)
+    }
+    #endif
 
     private func executeAuthorizationHeaderTest(for type: ConfigurationType) {
         // Given
