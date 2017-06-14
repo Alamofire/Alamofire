@@ -712,4 +712,4 @@ extension DownloadRequest {
 }
 
 /// A set of HTTP response status code that do not contain response data.
-private let emptyDataStatusCodes: Set<Int> = [204, 205]
+private let emptyDataStatusCodes: Set<Int> = [201, 204, 205]
