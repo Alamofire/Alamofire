@@ -840,10 +840,9 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
             XCTAssertNotNil(response.data, "data should not be nil")
             XCTAssertTrue(response.result.isSuccess, "result should be a success")
 
-            // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
-            // - https://openradar.appspot.com/radar?id=5517037090635776
             if
-                let headers = (response.result.value as AnyObject?)?["headers" as NSString] as? [String: String],
+                let response = response.result.value as? [String : Any],
+                let headers = response["headers"] as? [String: String],
                 let authorization = headers["Authorization"]
             {
                 XCTAssertEqual(authorization, "Bearer 123456", "authorization header value does not match")

@@ -95,16 +95,16 @@ class ProxyURLProtocol: URLProtocol {
 extension ProxyURLProtocol: URLSessionDataDelegate {
 
     // MARK: NSURLSessionDelegate
-    
+
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         client?.urlProtocol(self, didLoad: data)
     }
-    
+
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let response = task.response {
             client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         }
-        
+
         client?.urlProtocolDidFinishLoading(self)
     }
 }

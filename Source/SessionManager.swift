@@ -70,7 +70,7 @@ open class SessionManager {
             return "\(languageCode);q=\(quality)"
         }.joined(separator: ", ")
         #endif
-        
+
         // User-Agent Header; see https://tools.ietf.org/html/rfc7231#section-5.5.3
         // Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`
         let userAgent: String = {
