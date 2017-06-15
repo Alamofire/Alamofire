@@ -532,7 +532,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTFail("Content-Type header value should not be nil")
         }
     }
-    
+
     #if os(macOS)
     func testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
@@ -564,20 +564,20 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             switch result {
             case let .success(upload, uploadStreamingFromDisk, _):
                 streamingFromDisk = uploadStreamingFromDisk
-                
+
                 upload.response { defaultResponse in
                     request = defaultResponse.request
                     response = defaultResponse.response
                     data = defaultResponse.data
                     error = defaultResponse.error
-                    
+
                     expectation.fulfill()
                 }
             case .failure:
                 expectation.fulfill()
             }
         })
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then

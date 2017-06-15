@@ -272,13 +272,13 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
+        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, watchOS 3.0, *) {
             XCTAssertNotNil(response?.metrics)
         }
 
-        // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
-        // - https://openradar.appspot.com/radar?id=5517037090635776
-        if let args = (response?.result.value as AnyObject?)?["args" as NSString] as? [String: String] {
+        if
+            let responseDictionary = response?.result.value as? [String : Any],
+            let args = responseDictionary["args"] as? [String : String] {
             XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
         } else {
             XCTFail("args should not be nil")
@@ -311,9 +311,9 @@ class ResponseJSONTestCase: BaseTestCase {
             XCTAssertNotNil(response?.metrics)
         }
 
-        // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
-        // - https://openradar.appspot.com/radar?id=5517037090635776
-        if let form = (response?.result.value as AnyObject?)?["form" as NSString] as? [String: String] {
+        if
+            let responseDictionary = response?.result.value as? [String : Any],
+            let form = responseDictionary["form"] as? [String : String] {
             XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
         } else {
             XCTFail("form should not be nil")
