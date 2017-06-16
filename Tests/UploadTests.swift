@@ -533,7 +533,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         }
     }
 
-    #if os(macOS)
+#if os(macOS)
     func testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
         let manager: SessionManager = {
@@ -556,27 +556,30 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var streamingFromDisk: Bool?
 
         // When
-        manager.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(french, withName: "french")
-            multipartFormData.append(japanese, withName: "japanese")
-        }, to: urlString,
-           encodingCompletion: { result in
-            switch result {
-            case let .success(upload, uploadStreamingFromDisk, _):
-                streamingFromDisk = uploadStreamingFromDisk
+        manager.upload(
+            multipartFormData: { multipartFormData in
+                multipartFormData.append(french, withName: "french")
+                multipartFormData.append(japanese, withName: "japanese")
+            },
+            to: urlString,
+            encodingCompletion: { result in
+                switch result {
+                case let .success(upload, uploadStreamingFromDisk, _):
+                    streamingFromDisk = uploadStreamingFromDisk
 
-                upload.response { defaultResponse in
-                    request = defaultResponse.request
-                    response = defaultResponse.response
-                    data = defaultResponse.data
-                    error = defaultResponse.error
+                    upload.response { defaultResponse in
+                        request = defaultResponse.request
+                        response = defaultResponse.response
+                        data = defaultResponse.data
+                        error = defaultResponse.error
 
+                        expectation.fulfill()
+                    }
+                case .failure:
                     expectation.fulfill()
                 }
-            case .failure:
-                expectation.fulfill()
             }
-        })
+        )
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -592,7 +595,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTFail("streaming from disk should not be nil")
         }
     }
-    #endif
+#endif
 
     // MARK: Combined Test Execution
 

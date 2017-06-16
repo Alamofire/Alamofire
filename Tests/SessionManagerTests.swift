@@ -787,12 +787,12 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
         // Given, When, Then
         executeAuthorizationHeaderTest(for: .ephemeral)
     }
-    #if os(macOS)
+#if os(macOS)
     func testThatBackgroundConfigurationHeadersAreSentWithRequest() {
         // Given, When, Then
         executeAuthorizationHeaderTest(for: .background)
     }
-    #endif
+#endif
 
     private func executeAuthorizationHeaderTest(for type: ConfigurationType) {
         // Given
@@ -841,7 +841,7 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
             XCTAssertTrue(response.result.isSuccess, "result should be a success")
 
             if
-                let response = response.result.value as? [String : Any],
+                let response = response.result.value as? [String: Any],
                 let headers = response["headers"] as? [String: String],
                 let authorization = headers["Authorization"]
             {
