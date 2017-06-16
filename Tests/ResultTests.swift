@@ -281,7 +281,7 @@ class ResultTestCase: BaseTestCase {
         }
     }
     
-    // MARK: - map/flatMapError Tests
+    // MARK: - Error Mapping Tests
     
     func testMapErrorTransformsErrorValue() {
         // Given
@@ -342,6 +342,7 @@ class ResultTestCase: BaseTestCase {
         
         // When
         let mappedResult = result.flatMapError { try OtherError(error: $0) }
+        
         // Then
         if let error = mappedResult.error {
             XCTAssertTrue(error is ThrownError)
@@ -350,7 +351,7 @@ class ResultTestCase: BaseTestCase {
         }
     }
     
-    // MARK: with/if Tests
+    // MARK: - With Value or Error Tests
     
     func testWithValueExecutesWhenSuccess() {
         // Given
@@ -387,7 +388,11 @@ class ResultTestCase: BaseTestCase {
         result.withError { string = "\(type(of: $0))" }
         
         // Then
+        #if swift(>=3.2)
+        XCTAssertEqual(string, "ResultError #1")
+        #else
         XCTAssertEqual(string, "(ResultError #1)")
+        #endif
     }
     
     func testWithErrorDoesNotExecuteWhenSuccess() {
@@ -401,6 +406,8 @@ class ResultTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(string, "success")
     }
+    
+    // MARK: - If Success or Failure Tests
     
     func testIfSuccessExecutesWhenSuccess() {
         // Given
@@ -452,6 +459,8 @@ class ResultTestCase: BaseTestCase {
         XCTAssertEqual(string, "success")
     }
     
+    // MARK: - Functional Chaining Tests
+    
     func testFunctionalMethodsCanBeChained() {
         // Given
         struct ResultError: Error {}
@@ -460,10 +469,11 @@ class ResultTestCase: BaseTestCase {
         var success = false
         
         // When
-        let endResult = result.map { _ in "second" }
-                              .flatMap { _ in "third" }
-                              .withValue { if $0 == "third" { string = "fourth" } }
-                              .ifSuccess { success = true }
+        let endResult = result
+            .map { _ in "second" }
+            .flatMap { _ in "third" }
+            .withValue { if $0 == "third" { string = "fourth" } }
+            .ifSuccess { success = true }
         
         // Then
         XCTAssertEqual(endResult.value, "third")
