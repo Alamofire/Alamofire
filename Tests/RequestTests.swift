@@ -524,7 +524,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let components = cURLCommandComponents(for: request)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertFalse(components.contains("-X"))
         XCTAssertEqual(components.last, "\"\(urlString)\"")
     }
@@ -539,7 +539,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let components = cURLCommandComponents(for: request)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertFalse(components.contains("-X"))
         XCTAssertEqual(components.last, "\"\(urlString)\"")
 
@@ -558,7 +558,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let components = cURLCommandComponents(for: request)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertEqual(components[3..<5], ["-X", "POST"])
         XCTAssertEqual(components.last, "\"\(urlString)\"")
     }
@@ -578,7 +578,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let components = cURLCommandComponents(for: request)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertEqual(components[3..<5], ["-X", "POST"])
 
         XCTAssertNotNil(request.debugDescription.range(of: "-H \"Content-Type: application/json; charset=utf-8\""))
@@ -609,7 +609,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let components = cURLCommandComponents(for: request)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertEqual(components[3..<5], ["-X", "POST"])
         XCTAssertEqual(components.last, "\"\(urlString)\"")
         XCTAssertEqual(components[5..<6], ["-b"])
@@ -671,7 +671,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         debugPrint(request!)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components.contains("-X"))
         XCTAssertEqual(components.last, "\"\(urlString)\"")
 
