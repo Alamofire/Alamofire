@@ -97,6 +97,10 @@ target '<Your Target Name>' do
     pod 'Alamofire', '~> 4.4'
 end
 ```
+<!--Please remove this line when xcode9 is merged into master -->
+If you're using the Xcode 9 Beta, replace `pod 'Alamofire', '~> 4.4'` with:
+
+`pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :branch => ‘xcode9’`
 
 Then, run the following command:
 
