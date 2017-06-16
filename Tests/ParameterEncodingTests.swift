@@ -631,7 +631,7 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
             // Then
             XCTAssertNil(URLRequest.url?.query)
             XCTAssertNotNil(URLRequest.value(forHTTPHeaderField: "Content-Type"))
-            XCTAssertEqual(URLRequest.value(forHTTPHeaderField: "Content-Type"), "application/json; charset=utf-8")
+            XCTAssertEqual(URLRequest.value(forHTTPHeaderField: "Content-Type"), "application/json")
             XCTAssertNotNil(URLRequest.httpBody)
 
             if let httpBody = URLRequest.httpBody {
@@ -663,7 +663,7 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
             // Then
             XCTAssertNil(URLRequest.url?.query)
             XCTAssertNotNil(URLRequest.value(forHTTPHeaderField: "Content-Type"))
-            XCTAssertEqual(URLRequest.value(forHTTPHeaderField: "Content-Type"), "application/json; charset=utf-8")
+            XCTAssertEqual(URLRequest.value(forHTTPHeaderField: "Content-Type"), "application/json")
             XCTAssertNotNil(URLRequest.httpBody)
 
             if let httpBody = URLRequest.httpBody {

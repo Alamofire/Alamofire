@@ -270,7 +270,7 @@ public struct URLEncoding: ParameterEncoding {
 // MARK: -
 
 /// Uses `JSONSerialization` to create a JSON representation of the parameters object, which is set as the body of the
-/// request. The `Content-Type` HTTP header field of an encoded request is set to `application/json; charset=utf-8`.
+/// request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
 public struct JSONEncoding: ParameterEncoding {
 
     // MARK: Properties
@@ -314,7 +314,7 @@ public struct JSONEncoding: ParameterEncoding {
             let data = try JSONSerialization.data(withJSONObject: parameters, options: options)
 
             if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
-                urlRequest.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+                urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
 
             urlRequest.httpBody = data
@@ -342,7 +342,7 @@ public struct JSONEncoding: ParameterEncoding {
             let data = try JSONSerialization.data(withJSONObject: jsonObject, options: options)
 
             if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
-                urlRequest.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+                urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
 
             urlRequest.httpBody = data
