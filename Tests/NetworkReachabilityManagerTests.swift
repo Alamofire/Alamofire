@@ -173,7 +173,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(networkReachabilityStatus, .notReachable)
     }
-    
+
     func testThatManagerReturnsNotReachableStatusWhenInterventionIsRequired() {
         // Given
         let manager = NetworkReachabilityManager()
@@ -234,7 +234,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(networkReachabilityStatus, .reachable(.wwan))
     }
-    
+
     func testThatManagerReturnsNotReachableOnWWANStatusWhenIsWWANAndConnectionIsRequired() {
         // Given
         let manager = NetworkReachabilityManager()

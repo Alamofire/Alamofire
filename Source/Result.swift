@@ -200,7 +200,7 @@ extension Result {
             return .failure(error)
         }
     }
-    
+
     /// Evaluates the specified closure when the `Result` is a failure, passing the unwrapped error as a parameter.
     ///
     /// Use the `mapError` function with a closure that does not throw. For example:
@@ -219,7 +219,7 @@ extension Result {
             return self
         }
     }
-    
+
     /// Evaluates the specified closure when the `Result` is a failure, passing the unwrapped error as a parameter.
     ///
     /// Use the `flatMapError` function with a closure that may throw an error. For example:
@@ -245,7 +245,7 @@ extension Result {
             return self
         }
     }
-    
+
     /// Evaluates the specified closure when the `Result` is a success, passing the unwrapped value as a parameter.
     ///
     /// Use the `withValue` function to evaluate the passed closure without modifying the `Result` instance.
@@ -255,10 +255,10 @@ extension Result {
     @discardableResult
     public func withValue(_ closure: (Value) -> Void) -> Result {
         if case let .success(value) = self { closure(value) }
-        
+
         return self
     }
-    
+
     /// Evaluates the specified closure when the `Result` is a failure, passing the unwrapped error as a parameter.
     ///
     /// Use the `withError` function to evaluate the passed closure without modifying the `Result` instance.
@@ -268,10 +268,10 @@ extension Result {
     @discardableResult
     public func withError(_ closure: (Error) -> Void) -> Result {
         if case let .failure(error) = self { closure(error) }
-        
+
         return self
     }
-    
+
     /// Evaluates the specified closure when the `Result` is a success.
     ///
     /// Use the `ifSuccess` function to evaluate the passed closure without modifying the `Result` instance.
@@ -281,10 +281,10 @@ extension Result {
     @discardableResult
     public func ifSuccess(_ closure: () -> Void) -> Result {
         if isSuccess { closure() }
-        
+
         return self
     }
-    
+
     /// Evaluates the specified closure when the `Result` is a failure.
     ///
     /// Use the `ifFailure` function to evaluate the passed closure without modifying the `Result` instance.
@@ -294,7 +294,7 @@ extension Result {
     @discardableResult
     public func ifFailure(_ closure: () -> Void) -> Result {
         if isFailure { closure() }
-        
+
         return self
     }
 }
