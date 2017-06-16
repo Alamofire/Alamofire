@@ -191,13 +191,16 @@ Handling the `Response` of a `Request` made in Alamofire involves chaining a res
 
 ```swift
 Alamofire.request("https://httpbin.org/get").responseJSON { response in
-    print(response.request)  // original URL request
-    print(response.response) // HTTP URL response
-    print(response.data)     // server data
-    print(response.result)   // result of response serialization
+    print("Request: \(String(describing: response.request))")   // original url request
+    print("Response: \(String(describing: response.response))") // http url response
+    print("Result: \(response.result)")                         // response serialization result
 
-    if let JSON = response.result.value {
-        print("JSON: \(JSON)")
+    if let json = response.result.value {
+        print("JSON: \(json)") // serialized json response
+    }
+
+    if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
+        print("Data: \(utf8Text)") // original server data as UTF8 string
     }
 }
 ```
