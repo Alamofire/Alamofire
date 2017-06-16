@@ -1,0 +1,2 @@
+platform :watchos do
+end

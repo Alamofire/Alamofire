@@ -1,0 +1,8 @@
+fastlane_version "2.37.0"
+
+import 'platforms/ios.rb'
+import 'platforms/macos.rb'
+import 'platforms/tvos.rb'
+import 'platforms/watchos.rb'
+
+import 'lanes/archive.rb'
