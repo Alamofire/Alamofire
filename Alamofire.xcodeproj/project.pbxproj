@@ -334,6 +334,8 @@
 		4CE292351EF4A397008DA555 /* Alamofire 2.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Alamofire 2.0 Migration Guide.md"; sourceTree = "<group>"; };
 		4CE292361EF4A397008DA555 /* Alamofire 3.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Alamofire 3.0 Migration Guide.md"; sourceTree = "<group>"; };
 		4CE292371EF4A397008DA555 /* Alamofire 4.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Alamofire 4.0 Migration Guide.md"; sourceTree = "<group>"; };
+		4CE292391EF4B12B008DA555 /* Alamofire.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = Alamofire.podspec; sourceTree = "<group>"; };
+		4CE2923A1EF4B12B008DA555 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		4CF626EF1BA7CB3E0011A099 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CF626F81BA7CB3E0011A099 /* Alamofire tvOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Alamofire tvOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CFB028F1D7CF28F0056F249 /* FileManager+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FileManager+AlamofireTests.swift"; sourceTree = "<group>"; };
@@ -610,7 +612,7 @@
 			name = Features;
 			sourceTree = "<group>";
 		};
-		4CE292301EF4A386008DA555 /* Docs */ = {
+		4CE292301EF4A386008DA555 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
 				4CE292321EF4A393008DA555 /* CHANGELOG.md */,
@@ -618,7 +620,7 @@
 				4CE292311EF4A393008DA555 /* README.md */,
 				4CE292341EF4A397008DA555 /* Documentation */,
 			);
-			name = Docs;
+			name = Documentation;
 			sourceTree = "<group>";
 		};
 		4CE292341EF4A397008DA555 /* Documentation */ = {
@@ -629,6 +631,15 @@
 				4CE292371EF4A397008DA555 /* Alamofire 4.0 Migration Guide.md */,
 			);
 			path = Documentation;
+			sourceTree = "<group>";
+		};
+		4CE292381EF4B116008DA555 /* Deployment */ = {
+			isa = PBXGroup;
+			children = (
+				4CE292391EF4B12B008DA555 /* Alamofire.podspec */,
+				4CE2923A1EF4B12B008DA555 /* Package.swift */,
+			);
+			name = Deployment;
 			sourceTree = "<group>";
 		};
 		4CFB02E81D7D2FA20056F249 /* Responses */ = {
@@ -689,7 +700,8 @@
 		F8111E2919A95C8B0040E7D1 = {
 			isa = PBXGroup;
 			children = (
-				4CE292301EF4A386008DA555 /* Docs */,
+				4CE292381EF4B116008DA555 /* Deployment */,
+				4CE292301EF4A386008DA555 /* Documentation */,
 				F8111E3519A95C8B0040E7D1 /* Source */,
 				F8111E3F19A95C8B0040E7D1 /* Tests */,
 				F8111E3419A95C8B0040E7D1 /* Products */,
