@@ -163,8 +163,7 @@
 				4C6D2C7F1C67EFE100846168 /* MasterViewController.swift */,
 				F8111E0819A951050040E7D1 /* Supporting Files */,
 			);
-			name = Source;
-			path = Example;
+			path = Source;
 			sourceTree = "<group>";
 		};
 		F8111E0819A951050040E7D1 /* Supporting Files */ = {
