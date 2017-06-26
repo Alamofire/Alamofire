@@ -22,7 +22,11 @@
 
 ## Alamofire Environment
 
-ℹ Please replace this with the Alamofire, Xcode, and OS versions where you see this issue.
+**Alamofire version:**
+**Xcode version:**
+**Swift version:**
+**Platform(s) running Alamofire:**
+**macOS version running Xcode:**
 
 ## Demo Project
 
