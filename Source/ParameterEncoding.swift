@@ -442,7 +442,7 @@ public struct PropertyListEncoding: ParameterEncoding {
 ///
 ///     baseUri/value1/value2
 ///
-struct PathComponents: ParameterEncoding {
+public struct PathComponents: ParameterEncoding {
     
     // MARK: Properties
     
@@ -459,7 +459,7 @@ struct PathComponents: ParameterEncoding {
     /// - throws: An `Error` if the encoding process encounters an error.
     ///
     /// - returns: The encoded request.
-    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
+    public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
         var urlRequest = try urlRequest.asURLRequest()
         
         guard let parameters = parameters else { return urlRequest }
