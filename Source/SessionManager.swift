@@ -58,18 +58,10 @@ open class SessionManager {
         let acceptEncoding: String = "gzip;q=1.0, compress;q=0.5"
 
         // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
-    #if swift(>=4.0)
-        let acceptLanguage = Locale.preferredLanguages.prefix(6).enumerated().map { enumeratedLanguage in
-            let (index, languageCode) = enumeratedLanguage
-            let quality = 1.0 - (Double(index) * 0.1)
-            return "\(languageCode);q=\(quality)"
-        }.joined(separator: ", ")
-    #else
         let acceptLanguage = Locale.preferredLanguages.prefix(6).enumerated().map { index, languageCode in
             let quality = 1.0 - (Double(index) * 0.1)
             return "\(languageCode);q=\(quality)"
         }.joined(separator: ", ")
-    #endif
 
         // User-Agent Header; see https://tools.ietf.org/html/rfc7231#section-5.5.3
         // Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`

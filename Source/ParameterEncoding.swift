@@ -241,11 +241,7 @@ public struct URLEncoding: ParameterEncoding {
             let value = parameters[key]!
             components += queryComponents(fromKey: key, value: value)
         }
-    #if swift(>=4.0)
-        return components.map { "\($0.0)=\($0.1)" }.joined(separator: "&")
-    #else
         return components.map { "\($0)=\($1)" }.joined(separator: "&")
-    #endif
     }
 
     private func encodesParametersInURL(with method: HTTPMethod) -> Bool {
