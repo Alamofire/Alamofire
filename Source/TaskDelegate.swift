@@ -39,9 +39,6 @@ open class TaskDelegate: NSObject {
     /// The error generated throughout the lifecyle of the task.
     public var error: Error?
 
-    private var _task: URLSessionTask? {
-        didSet { reset() }
-    }
     var task: URLSessionTask? {
         set {
             taskLock.lock(); defer { taskLock.unlock() }
@@ -52,11 +49,14 @@ open class TaskDelegate: NSObject {
             return _task
         }
     }
-
-    private let taskLock = NSLock()
     var initialResponseTime: CFAbsoluteTime?
     var credential: URLCredential?
     var metrics: AnyObject? // URLSessionTaskMetrics
+    
+    private var _task: URLSessionTask? {
+        didSet { reset() }
+    }
+    private let taskLock = NSLock()
 
     // MARK: Lifecycle
 
