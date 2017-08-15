@@ -576,17 +576,6 @@ class ContentTypeValidationTestCase: BaseTestCase {
         class MockHTTPURLResponse: HTTPURLResponse {
             override var mimeType: String? { return nil }
         }
-
-        class MockSiteMaintenanceRequest: DataRequest {
-            override var response: HTTPURLResponse? {
-                return MockHTTPURLResponse(
-                    url: request!.url!,
-                    statusCode: 503,
-                    httpVersion: "HTTP/1.1",
-                    headerFields: ["Retry-After" : DateFormatter().string(from: Date())]
-                )
-            }
-        }
         
         let manager: SessionManager = {
             let configuration: URLSessionConfiguration = {
