@@ -173,6 +173,11 @@ extension AFError {
         if case let .responseValidationFailed(reason) = self, reason.isUnacceptableStatusCode { return true }
         return false
     }
+    
+    var isSiteMaintenanceError: Bool {
+        if case let .responseValidationFailed(reason) = self, reason.isSiteMaintenanceError  { return true }
+        return false
+    }
 }
 
 // MARK: -
@@ -327,6 +332,11 @@ extension AFError.ResponseValidationFailureReason {
 
     var isUnacceptableStatusCode: Bool {
         if case .unacceptableStatusCode = self { return true }
+        return false
+    }
+    
+    var isSiteMaintenanceError: Bool {
+        if case .unacceptableStatusCodeSiteMaintenance = self { return true }
         return false
     }
 }

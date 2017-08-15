@@ -92,6 +92,9 @@ extension Request {
     {
         if acceptableStatusCodes.contains(response.statusCode) {
             return .success
+        } else if response.statusCode == 503 && response.allHeaderFields.keys.contains("Retry-After"), let retryAfter = response.allHeaderFields["Retry-After"] {
+            let reason: ErrorReason = .unacceptableStatusCodeSiteMaintenance(retryAfter: retryAfter)
+            return .failure(AFError.responseValidationFailed(reason: reason))
         } else {
             let reason: ErrorReason = .unacceptableStatusCode(code: response.statusCode)
             return .failure(AFError.responseValidationFailed(reason: reason))

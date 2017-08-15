@@ -140,6 +140,174 @@ class StatusCodeValidationTestCase: BaseTestCase {
             }
         }
     }
+    func testThatValidationForRequestWithSiteMaintenanceErrorFailsWithRetryAfterValue() {
+        // Given
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMMM yyyy"
+        let expectedRetryAfter:String = formatter.string(from: Date())
+        
+        class MockManager: SessionManager {
+            var retryAfter: String?
+            
+            override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+                do {
+                    let originalRequest = try urlRequest.asURLRequest()
+                    let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
+                    
+                    let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
+                    let request = MockSiteMaintenanceRequest(session: session, requestTask: .data(originalTask, task))
+                    request.retryAfter = retryAfter
+                    delegate[task] = request
+                    
+                    if startRequestsImmediately { request.resume() }
+                    
+                    return request
+                } catch {
+                    let request = DataRequest(session: session, requestTask: .data(nil, nil), error: error)
+                    if startRequestsImmediately { request.resume() }
+                    return request
+                }
+            }
+        }
+        
+        class MockSiteMaintenanceRequest: DataRequest {
+            var retryAfter: String?
+            override var response: HTTPURLResponse? {
+                return HTTPURLResponse(
+                    url: request!.url!,
+                    statusCode: 503,
+                    httpVersion: "HTTP/1.1",
+                    headerFields: ["Retry-After" : retryAfter!]
+                )
+            }
+        }
+        
+        let manager: SessionManager = {
+            let configuration: URLSessionConfiguration = {
+                let configuration = URLSessionConfiguration.ephemeral
+                configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+                
+                return configuration
+            }()
+            
+            let mockManager = MockManager(configuration: configuration)
+            mockManager.retryAfter = expectedRetryAfter
+            return mockManager
+        }()
+        
+        let urlString = "https://httpbin.org/get"
+        
+        let expectation1 = self.expectation(description: "request should be stubbed and return 204 status code")
+        
+        var error: Error?
+        
+        // When
+        manager.request(urlString, method: .delete)
+            .validate()
+            .response { resp in
+                error = resp.error
+                expectation1.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertNotNil(error)
+        if let error = error as? AFError {
+            XCTAssertTrue(error.isSiteMaintenanceError)
+            XCTAssertTrue(error.retryAfter is String)
+            XCTAssertEqual(error.responseCode, 503)
+            XCTAssertEqual(error.retryAfter as! String, expectedRetryAfter)
+        } else {
+            XCTFail("error should not be nil")
+        }
+        
+    }
+    
+    func testThatValidationForRequestWith503ErrorAndNoRetryAfterHeaderFailsWithIsUnacceptableStatusCode() {
+        // Given
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMMM yyyy"
+        let expectedRetryAfter:String = formatter.string(from: Date())
+        
+        class MockManager: SessionManager {
+            var retryAfter: String?
+            
+            override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+                do {
+                    let originalRequest = try urlRequest.asURLRequest()
+                    let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
+                    
+                    let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
+                    let request = MockSiteMaintenanceRequest(session: session, requestTask: .data(originalTask, task))
+                    request.retryAfter = retryAfter
+                    delegate[task] = request
+                    
+                    if startRequestsImmediately { request.resume() }
+                    
+                    return request
+                } catch {
+                    let request = DataRequest(session: session, requestTask: .data(nil, nil), error: error)
+                    if startRequestsImmediately { request.resume() }
+                    return request
+                }
+            }
+        }
+        
+        class MockSiteMaintenanceRequest: DataRequest {
+            var retryAfter: String?
+            override var response: HTTPURLResponse? {
+                return HTTPURLResponse(
+                    url: request!.url!,
+                    statusCode: 503,
+                    httpVersion: "HTTP/1.1",
+                    headerFields: nil
+                )
+            }
+        }
+        
+        let manager: SessionManager = {
+            let configuration: URLSessionConfiguration = {
+                let configuration = URLSessionConfiguration.ephemeral
+                configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+                
+                return configuration
+            }()
+            
+            let mockManager = MockManager(configuration: configuration)
+            mockManager.retryAfter = expectedRetryAfter
+            return mockManager
+        }()
+        
+        let urlString = "https://httpbin.org/get"
+        
+        let expectation1 = self.expectation(description: "request should be stubbed and return 204 status code")
+        
+        var error: Error?
+        
+        // When
+        manager.request(urlString, method: .delete)
+            .validate()
+            .response { resp in
+                error = resp.error
+                expectation1.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertNotNil(error)
+        if let error = error as? AFError {
+            XCTAssertFalse(error.isSiteMaintenanceError)
+            XCTAssertNil(error.retryAfter)
+            XCTAssertEqual(error.responseCode, 503)
+            XCTAssertTrue(error.isUnacceptableStatusCode)
+        } else {
+            XCTFail("error should not be nil")
+        }
+        
+    }
+
 }
 
 // MARK: -
@@ -409,6 +577,17 @@ class ContentTypeValidationTestCase: BaseTestCase {
             override var mimeType: String? { return nil }
         }
 
+        class MockSiteMaintenanceRequest: DataRequest {
+            override var response: HTTPURLResponse? {
+                return MockHTTPURLResponse(
+                    url: request!.url!,
+                    statusCode: 503,
+                    httpVersion: "HTTP/1.1",
+                    headerFields: ["Retry-After" : DateFormatter().string(from: Date())]
+                )
+            }
+        }
+        
         let manager: SessionManager = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.ephemeral

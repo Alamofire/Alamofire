@@ -104,6 +104,7 @@ public enum AFError: Error {
         case missingContentType(acceptableContentTypes: [String])
         case unacceptableContentType(acceptableContentTypes: [String], responseContentType: String)
         case unacceptableStatusCode(code: Int)
+        case unacceptableStatusCodeSiteMaintenance(retryAfter: Any)
     }
 
     /// The underlying reason the response serialization error occurred.
@@ -178,6 +179,17 @@ extension AFError {
         if case .responseSerializationFailed = self { return true }
         return false
     }
+    
+    /// Returns whether the `AFError` is a response validation error. When `true`, the `acceptableContentTypes`,
+    /// `responseContentType`, and `responseCode` properties will contain the associated values.
+    public var isSiteMaintenanceError: Bool {
+        switch self {
+        case .responseValidationFailed(let reason):
+            return reason.retyAfter != nil && reason.responseCode == 503
+        default:
+            return false
+        }
+    }
 }
 
 // MARK: - Convenience Properties
@@ -243,6 +255,15 @@ extension AFError {
         switch self {
         case .responseValidationFailed(let reason):
             return reason.responseCode
+        default:
+            return nil
+        }
+    }
+    
+    public var retryAfter: Any? {
+        switch self {
+        case .responseValidationFailed(let reason):
+            return reason.retyAfter
         default:
             return nil
         }
@@ -318,6 +339,16 @@ extension AFError.ResponseValidationFailureReason {
         switch self {
         case .unacceptableStatusCode(let code):
             return code
+        case .unacceptableStatusCodeSiteMaintenance:
+            return 503
+        default:
+            return nil
+        }
+    }
+    var retyAfter: Any? {
+        switch self {
+        case .unacceptableStatusCodeSiteMaintenance(let retryAfter):
+            return retryAfter
         default:
             return nil
         }
@@ -455,6 +486,8 @@ extension AFError.ResponseValidationFailureReason {
             )
         case .unacceptableStatusCode(let code):
             return "Response status code was unacceptable: \(code)."
+        case .unacceptableStatusCodeSiteMaintenance(let retryAfter):
+            return "Response status code was unacceptable due to site maintenance. Retry after: \(retryAfter)"
         }
     }
 }
