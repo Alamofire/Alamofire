@@ -736,7 +736,7 @@ When sending relatively small amounts of data to a server using JSON or URL enco
 #### Uploading Data
 
 ```swift
-let imageData = UIPNGRepresentation(image)!
+let imageData = UIImagePNGRepresentation(image)!
 
 Alamofire.upload(imageData, to: "https://httpbin.org/post").responseJSON { response in
     debugPrint(response)
