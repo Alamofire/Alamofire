@@ -92,7 +92,7 @@ extension Request {
     {
         if acceptableStatusCodes.contains(response.statusCode) {
             return .success
-        } else if response.statusCode == 503 && response.allHeaderFields.keys.contains("Retry-After"), let retryAfter = response.allHeaderFields["Retry-After"] {
+        } else if SiteMaintenanceResponse.isSiteMaintenanceResponse(response: response), let retryAfter = SiteMaintenanceResponse.getRetryAfter(allHeaderFields: response.allHeaderFields) {
             let reason: ErrorReason = .unacceptableStatusCodeSiteMaintenance(retryAfter: retryAfter)
             return .failure(AFError.responseValidationFailed(reason: reason))
         } else {
@@ -100,7 +100,7 @@ extension Request {
             return .failure(AFError.responseValidationFailed(reason: reason))
         }
     }
-
+    
     // MARK: Content Type
 
     fileprivate func validate<S: Sequence>(

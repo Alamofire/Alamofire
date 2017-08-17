@@ -142,9 +142,10 @@ class StatusCodeValidationTestCase: BaseTestCase {
     }
     func testThatValidationForRequestWithSiteMaintenanceErrorFailsWithRetryAfterValue() {
         // Given
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd MMMM yyyy"
-        let expectedRetryAfter:String = formatter.string(from: Date())
+        let dateString = "Fri, 31 Dec 2017 23:59:59 GMT"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE, dd LLL yyyy HH:mm:ss zzz"
+        let expectedDate = dateFormatter.date(from: dateString)
         
         class MockManager: SessionManager {
             var retryAfter: String?
@@ -191,7 +192,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
             }()
             
             let mockManager = MockManager(configuration: configuration)
-            mockManager.retryAfter = expectedRetryAfter
+            mockManager.retryAfter = dateString
             return mockManager
         }()
         
@@ -215,9 +216,9 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(error)
         if let error = error as? AFError {
             XCTAssertTrue(error.isSiteMaintenanceError)
-            XCTAssertTrue(error.retryAfter is String)
+            XCTAssertNotNil(error.retryAfter)
             XCTAssertEqual(error.responseCode, 503)
-            XCTAssertEqual(error.retryAfter as! String, expectedRetryAfter)
+            XCTAssertEqual(error.retryAfter?.date, expectedDate)
         } else {
             XCTFail("error should not be nil")
         }
