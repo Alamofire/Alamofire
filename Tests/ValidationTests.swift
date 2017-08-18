@@ -218,7 +218,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
             XCTAssertTrue(error.isSiteMaintenanceError)
             XCTAssertNotNil(error.retryAfter)
             XCTAssertEqual(error.responseCode, 503)
-            XCTAssertEqual(error.retryAfter?.date, expectedDate)
+            XCTAssertEqual(error.retryAfter?.dateValue, expectedDate)
         } else {
             XCTFail("error should not be nil")
         }

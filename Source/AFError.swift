@@ -98,14 +98,14 @@ public enum AFError: Error {
     /// - unacceptableContentType: The response `Content-Type` did not match any type in the provided
     ///                            `acceptableContentTypes`.
     /// - unacceptableStatusCode:  The response status code was not acceptable.
-    /// - unacceptableStatusCodeSiteMaintenance:  The response status code was HTTP 503 Service Unavailable, with a Retry-After header field set
+    /// - serviceUnavailable:  The response status code was HTTP 503 Service Unavailable, with a Retry-After header field set
     public enum ResponseValidationFailureReason {
         case dataFileNil
         case dataFileReadFailed(at: URL)
         case missingContentType(acceptableContentTypes: [String])
         case unacceptableContentType(acceptableContentTypes: [String], responseContentType: String)
         case unacceptableStatusCode(code: Int)
-        case unacceptableStatusCodeSiteMaintenance(retryAfter: RetryAfter)
+        case serviceUnavailable(retryAfter: RetryAfter)
     }
 
     /// The underlying reason the response serialization error occurred.

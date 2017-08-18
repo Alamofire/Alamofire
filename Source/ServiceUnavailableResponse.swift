@@ -30,7 +30,7 @@ public enum RetryAfter {
 }
 
 extension RetryAfter {
-    var seconds: Int? {
+    var secondsValue: Int? {
         switch self {
         case .seconds(let value):
             return value
@@ -41,7 +41,7 @@ extension RetryAfter {
 }
 
 extension RetryAfter {
-    var date: Date? {
+    var dateValue: Date? {
         switch self {
         case .date(let value):
             return value
@@ -59,10 +59,10 @@ fileprivate class HttpDateFormatter {
     }
 }
 
-class SiteMaintenanceResponse {
+class ServiceUnavailableResponse {
     fileprivate static let httpHeaderDateFormatter : DateFormatter = HttpDateFormatter.getHttpHeaderDateFormatter()
     
-    class func isSiteMaintenanceResponse(response: HTTPURLResponse) -> Bool {
+    class func isServiceUnavailableResponse(response: HTTPURLResponse) -> Bool {
         return response.statusCode == 503 && getRetryAfter(allHeaderFields: response.allHeaderFields) != nil
     }
     

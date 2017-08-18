@@ -24,14 +24,14 @@
 import XCTest
 @testable import Alamofire
 
-class SiteMaintenanceResponseTests: XCTestCase {
+class ServiceUnavailableResponseTests: XCTestCase {
     fileprivate let dummyUrl:URL = URL(string: "http://dummy")!
     
     func test_getRetryAfter_withRetryAfterHeaderSeconds_returnsFalse() {
         let expectedSeconds = 21
         let secondsHeader = ["Retry-After" : "\(expectedSeconds)"]
         
-        let retryAfter = SiteMaintenanceResponse.getRetryAfter(allHeaderFields: secondsHeader)
+        let retryAfter = ServiceUnavailableResponse.getRetryAfter(allHeaderFields: secondsHeader)
         XCTAssertNotNil(retryAfter)
         XCTAssertNotNil(retryAfter?.seconds)
         XCTAssertEqual(retryAfter?.seconds!, expectedSeconds)
@@ -44,7 +44,7 @@ class SiteMaintenanceResponseTests: XCTestCase {
         let expectedDate = dateFormatter.date(from: dateString)
         let httpFormattedDateHeader = ["Retry-After" : dateString]
         
-        let retryAfter = SiteMaintenanceResponse.getRetryAfter(allHeaderFields: httpFormattedDateHeader)
+        let retryAfter = ServiceUnavailableResponse.getRetryAfter(allHeaderFields: httpFormattedDateHeader)
         XCTAssertNotNil(retryAfter)
         XCTAssertNotNil(retryAfter?.date)
         XCTAssertEqual(retryAfter?.date, expectedDate)
@@ -54,7 +54,7 @@ class SiteMaintenanceResponseTests: XCTestCase {
         let invalidValue = "i'm invalid"
         let invalidValueHeader = ["Retry-After" : "\(invalidValue)"]
         
-        let retryAfter = SiteMaintenanceResponse.getRetryAfter(allHeaderFields: invalidValueHeader)
+        let retryAfter = ServiceUnavailableResponse.getRetryAfter(allHeaderFields: invalidValueHeader)
         XCTAssertNil(retryAfter)
     }
     
@@ -65,8 +65,8 @@ class SiteMaintenanceResponseTests: XCTestCase {
             httpVersion: "HTTP/1.1",
             headerFields: ["Retry-After" : "20"]
             )!
-        let isSiteMaintenanceResponse = SiteMaintenanceResponse.isSiteMaintenanceResponse(response: response503)
-        XCTAssertTrue(isSiteMaintenanceResponse)
+        let isServiceUnavailableResponse = ServiceUnavailableResponse.isServiceUnavailableResponse(response: response503)
+        XCTAssertTrue(isServiceUnavailableResponse)
     }
     
     func test_isSiteMaintenanceResponse_with503AndRetryAfterHeader24HourHTTPFormattedDate_returnsFalse() {
@@ -76,8 +76,8 @@ class SiteMaintenanceResponseTests: XCTestCase {
             httpVersion: "HTTP/1.1",
             headerFields: ["Retry-After" : "Fri, 31 Dec 2017 23:59:59 GMT"]
             )!
-        let isSiteMaintenanceResponse = SiteMaintenanceResponse.isSiteMaintenanceResponse(response: response503)
-        XCTAssertTrue(isSiteMaintenanceResponse)
+        let isServiceUnavailableResponse = ServiceUnavailableResponse.isServiceUnavailableResponse(response: response503)
+        XCTAssertTrue(isServiceUnavailableResponse)
     }
     
     func test_isSiteMaintenanceResponse_with503AndNoRetryAfterHeader_returnsFalse() {
@@ -87,8 +87,8 @@ class SiteMaintenanceResponseTests: XCTestCase {
             httpVersion: "HTTP/1.1",
             headerFields: nil
             )!
-        let isSiteMaintenanceResponse = SiteMaintenanceResponse.isSiteMaintenanceResponse(response: response503)
-        XCTAssertFalse(isSiteMaintenanceResponse)
+        let isServiceUnavailableResponse = ServiceUnavailableResponse.isServiceUnavailableResponse(response: response503)
+        XCTAssertFalse(isServiceUnavailableResponse)
     }
     
     func test_isSiteMaintenanceResponse_with200OK_returnsFalse() {
@@ -98,8 +98,8 @@ class SiteMaintenanceResponseTests: XCTestCase {
             httpVersion: "HTTP/1.1",
             headerFields: nil
         )!
-        let isSiteMaintenanceResponse = SiteMaintenanceResponse.isSiteMaintenanceResponse(response: response200Ok)
-        XCTAssertFalse(isSiteMaintenanceResponse)
+        let isServiceUnavailableResponse = ServiceUnavailableResponse.isServiceUnavailableResponse(response: response200Ok)
+        XCTAssertFalse(isServiceUnavailableResponse)
     }
     
     func test_isSiteMaintenanceResponse_with200OKEmptyHeaders_returnsFalse() {
@@ -109,8 +109,8 @@ class SiteMaintenanceResponseTests: XCTestCase {
             httpVersion: "HTTP/1.1",
             headerFields: [:]
             )!
-        let isSiteMaintenanceResponse = SiteMaintenanceResponse.isSiteMaintenanceResponse(response: response200Ok)
-        XCTAssertFalse(isSiteMaintenanceResponse)
+        let isServiceUnavailableResponse = ServiceUnavailableResponse.isServiceUnavailableResponse(response: response200Ok)
+        XCTAssertFalse(isServiceUnavailableResponse)
     }
     
     func test_isSiteMaintenanceResponse_with200OKAndRetryAfterHeader_returnsFalse() {
@@ -120,8 +120,8 @@ class SiteMaintenanceResponseTests: XCTestCase {
             httpVersion: "HTTP/1.1",
             headerFields: ["Retry-After" : "20"]
             )!
-        let isSiteMaintenanceResponse = SiteMaintenanceResponse.isSiteMaintenanceResponse(response: response200Ok)
-        XCTAssertFalse(isSiteMaintenanceResponse)
+        let isServiceUnavailableResponse = ServiceUnavailableResponse.isServiceUnavailableResponse(response: response200Ok)
+        XCTAssertFalse(isServiceUnavailableResponse)
     }
     
 }
