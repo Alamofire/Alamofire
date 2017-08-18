@@ -1,5 +1,5 @@
 //
-//  SiteMaintenanceResponseTests.swift
+//  ServiceUnavailableResponseTests.swift
 //
 //  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -58,7 +58,7 @@ class ServiceUnavailableResponseTests: XCTestCase {
         XCTAssertNil(retryAfter)
     }
     
-    func test_isSiteMaintenanceResponse_with503AndRetryAfterHeaderSeconds_returnsFalse() {
+    func test_isServiceUnavailableResponse_with503AndRetryAfterHeaderSeconds_returnsFalse() {
         let response503 = HTTPURLResponse(
             url: dummyUrl,
             statusCode: 503,
@@ -69,7 +69,7 @@ class ServiceUnavailableResponseTests: XCTestCase {
         XCTAssertTrue(isServiceUnavailableResponse)
     }
     
-    func test_isSiteMaintenanceResponse_with503AndRetryAfterHeader24HourHTTPFormattedDate_returnsFalse() {
+    func test_isServiceUnavailableResponse_with503AndRetryAfterHeader24HourHTTPFormattedDate_returnsFalse() {
         let response503 = HTTPURLResponse(
             url: dummyUrl,
             statusCode: 503,
@@ -80,7 +80,7 @@ class ServiceUnavailableResponseTests: XCTestCase {
         XCTAssertTrue(isServiceUnavailableResponse)
     }
     
-    func test_isSiteMaintenanceResponse_with503AndNoRetryAfterHeader_returnsFalse() {
+    func test_isServiceUnavailableResponse_with503AndNoRetryAfterHeader_returnsFalse() {
         let response503 = HTTPURLResponse(
             url: dummyUrl,
             statusCode: 503,
@@ -91,7 +91,7 @@ class ServiceUnavailableResponseTests: XCTestCase {
         XCTAssertFalse(isServiceUnavailableResponse)
     }
     
-    func test_isSiteMaintenanceResponse_with200OK_returnsFalse() {
+    func test_isServiceUnavailableResponse_with200OK_returnsFalse() {
         let response200Ok = HTTPURLResponse(
             url: dummyUrl,
             statusCode: 200,
@@ -102,7 +102,7 @@ class ServiceUnavailableResponseTests: XCTestCase {
         XCTAssertFalse(isServiceUnavailableResponse)
     }
     
-    func test_isSiteMaintenanceResponse_with200OKEmptyHeaders_returnsFalse() {
+    func test_isServiceUnavailableResponse_with200OKEmptyHeaders_returnsFalse() {
         let response200Ok = HTTPURLResponse(
             url: dummyUrl,
             statusCode: 200,
@@ -113,7 +113,7 @@ class ServiceUnavailableResponseTests: XCTestCase {
         XCTAssertFalse(isServiceUnavailableResponse)
     }
     
-    func test_isSiteMaintenanceResponse_with200OKAndRetryAfterHeader_returnsFalse() {
+    func test_isServiceUnavailableResponse_with200OKAndRetryAfterHeader_returnsFalse() {
         let response200Ok = HTTPURLResponse(
             url: dummyUrl,
             statusCode: 200,

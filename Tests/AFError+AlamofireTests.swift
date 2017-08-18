@@ -174,8 +174,8 @@ extension AFError {
         return false
     }
     
-    var isSiteMaintenanceError: Bool {
-        if case let .responseValidationFailed(reason) = self, reason.isSiteMaintenanceError  { return true }
+    var isServiceUnavailableError: Bool {
+        if case let .responseValidationFailed(reason) = self, reason.isServiceUnavailableError  { return true }
         return false
     }
 }
@@ -335,8 +335,8 @@ extension AFError.ResponseValidationFailureReason {
         return false
     }
     
-    var isSiteMaintenanceError: Bool {
-        if case .unacceptableStatusCodeSiteMaintenance = self { return true }
+    var isServiceUnavailableError: Bool {
+        if case .serviceUnavailable = self { return true }
         return false
     }
 }

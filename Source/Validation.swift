@@ -92,7 +92,7 @@ extension Request {
     {
         if acceptableStatusCodes.contains(response.statusCode) {
             return .success
-        } else if SiteMaintenanceResponse.isSiteMaintenanceResponse(response: response), let retryAfter = SiteMaintenanceResponse.getRetryAfter(allHeaderFields: response.allHeaderFields) {
+        } else if ServiceUnavailableResponse.isServiceUnavailableResponse(response: response), let retryAfter = ServiceUnavailableResponse.getRetryAfter(allHeaderFields: response.allHeaderFields) {
             let reason: ErrorReason = .serviceUnavailable(retryAfter: retryAfter)
             return .failure(AFError.responseValidationFailed(reason: reason))
         } else {

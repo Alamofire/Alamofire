@@ -183,7 +183,7 @@ extension AFError {
     
     /// Returns whether the `AFError` is a response validation error. When `true`, the `acceptableContentTypes`,
     /// `responseContentType`, and `responseCode` properties will contain the associated values.
-    public var isSiteMaintenanceError: Bool {
+    public var isServiceUnavailableError: Bool {
         switch self {
         case .responseValidationFailed(let reason):
             return reason.retyAfter != nil && reason.responseCode == 503
@@ -340,7 +340,7 @@ extension AFError.ResponseValidationFailureReason {
         switch self {
         case .unacceptableStatusCode(let code):
             return code
-        case .unacceptableStatusCodeSiteMaintenance:
+        case .serviceUnavailable:
             return 503
         default:
             return nil
@@ -348,7 +348,7 @@ extension AFError.ResponseValidationFailureReason {
     }
     var retyAfter: RetryAfter? {
         switch self {
-        case .unacceptableStatusCodeSiteMaintenance(let retryAfter):
+        case .serviceUnavailable(let retryAfter):
             return retryAfter
         default:
             return nil
@@ -487,8 +487,8 @@ extension AFError.ResponseValidationFailureReason {
             )
         case .unacceptableStatusCode(let code):
             return "Response status code was unacceptable: \(code)."
-        case .unacceptableStatusCodeSiteMaintenance(let retryAfter):
-            return "Response status code was unacceptable due to site maintenance. Retry after: \(retryAfter)"
+        case .serviceUnavailable(let retryAfter):
+            return "Response status code was unacceptable due to Service Unavailable. Retry after: \(retryAfter)"
         }
     }
 }

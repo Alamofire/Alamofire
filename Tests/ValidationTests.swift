@@ -140,7 +140,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
             }
         }
     }
-    func testThatValidationForRequestWithSiteMaintenanceErrorFailsWithRetryAfterValue() {
+    func testThatValidationForRequestWithServiceUnavailableErrorFailsWithRetryAfterValue() {
         // Given
         let dateString = "Fri, 31 Dec 2017 23:59:59 GMT"
         let dateFormatter = DateFormatter()
@@ -156,7 +156,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
                     let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
                     
                     let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
-                    let request = MockSiteMaintenanceRequest(session: session, requestTask: .data(originalTask, task))
+                    let request = MockServiceUnavailableRequest(session: session, requestTask: .data(originalTask, task))
                     request.retryAfter = retryAfter
                     delegate[task] = request
                     
@@ -171,7 +171,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
             }
         }
         
-        class MockSiteMaintenanceRequest: DataRequest {
+        class MockServiceUnavailableRequest: DataRequest {
             var retryAfter: String?
             override var response: HTTPURLResponse? {
                 return HTTPURLResponse(
@@ -215,7 +215,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
         if let error = error as? AFError {
-            XCTAssertTrue(error.isSiteMaintenanceError)
+            XCTAssertTrue(error.isServiceUnavailableError)
             XCTAssertNotNil(error.retryAfter)
             XCTAssertEqual(error.responseCode, 503)
             XCTAssertEqual(error.retryAfter?.dateValue, expectedDate)
@@ -240,7 +240,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
                     let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
                     
                     let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
-                    let request = MockSiteMaintenanceRequest(session: session, requestTask: .data(originalTask, task))
+                    let request = MockServiceUnavailableRequest(session: session, requestTask: .data(originalTask, task))
                     request.retryAfter = retryAfter
                     delegate[task] = request
                     
@@ -255,7 +255,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
             }
         }
         
-        class MockSiteMaintenanceRequest: DataRequest {
+        class MockServiceUnavailableRequest: DataRequest {
             var retryAfter: String?
             override var response: HTTPURLResponse? {
                 return HTTPURLResponse(
@@ -299,7 +299,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
         if let error = error as? AFError {
-            XCTAssertFalse(error.isSiteMaintenanceError)
+            XCTAssertFalse(error.isServiceUnavailableError)
             XCTAssertNil(error.retryAfter)
             XCTAssertEqual(error.responseCode, 503)
             XCTAssertTrue(error.isUnacceptableStatusCode)
