@@ -33,8 +33,8 @@ class ServiceUnavailableResponseTests: XCTestCase {
         
         let retryAfter = ServiceUnavailableResponse.getRetryAfter(allHeaderFields: secondsHeader)
         XCTAssertNotNil(retryAfter)
-        XCTAssertNotNil(retryAfter?.seconds)
-        XCTAssertEqual(retryAfter?.seconds!, expectedSeconds)
+        XCTAssertNotNil(retryAfter?.secondsValue)
+        XCTAssertEqual(retryAfter?.secondsValue!, expectedSeconds)
     }
     
     func test_getRetryAfter_withRetryAfterHeader24HourHTTPFormattedDate_returnsFalse() {
@@ -46,8 +46,8 @@ class ServiceUnavailableResponseTests: XCTestCase {
         
         let retryAfter = ServiceUnavailableResponse.getRetryAfter(allHeaderFields: httpFormattedDateHeader)
         XCTAssertNotNil(retryAfter)
-        XCTAssertNotNil(retryAfter?.date)
-        XCTAssertEqual(retryAfter?.date, expectedDate)
+        XCTAssertNotNil(retryAfter?.dateValue)
+        XCTAssertEqual(retryAfter?.dateValue, expectedDate)
     }
     
     func test_getRetryAfter_withInvalidHeaderValue_returnsFalse() {
