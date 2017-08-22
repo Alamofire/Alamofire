@@ -85,11 +85,6 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     // MARK: Default Behavior Tests
 
     func testThatExpiredCertificateRequestFailsWithNoServerTrustPolicy() {
-        // On iOS 8.0 - 8.4, this test passes by itself, but fails for no explanable reason when run with the rest of
-        // the suite. Because of this, there's no reliable way to run all these tests together pre iOS 9, so let's
-        // disable this one when run against the entire test suite.
-        guard #available(iOS 9.0, *) else { return }
-
         // Given
         let expectation = self.expectation(description: "\(expiredURLString)")
         let manager = SessionManager(configuration: configuration)
