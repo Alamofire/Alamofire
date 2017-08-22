@@ -92,12 +92,15 @@ extension Request {
     {
         if acceptableStatusCodes.contains(response.statusCode) {
             return .success
+        } else if ServiceUnavailableResponse.isServiceUnavailableResponse(response: response), let retryAfter = ServiceUnavailableResponse.getRetryAfter(allHeaderFields: response.allHeaderFields) {
+            let reason: ErrorReason = .serviceUnavailable(retryAfter: retryAfter)
+            return .failure(AFError.responseValidationFailed(reason: reason))
         } else {
             let reason: ErrorReason = .unacceptableStatusCode(code: response.statusCode)
             return .failure(AFError.responseValidationFailed(reason: reason))
         }
     }
-
+    
     // MARK: Content Type
 
     fileprivate func validate<S: Sequence>(

@@ -98,12 +98,14 @@ public enum AFError: Error {
     /// - unacceptableContentType: The response `Content-Type` did not match any type in the provided
     ///                            `acceptableContentTypes`.
     /// - unacceptableStatusCode:  The response status code was not acceptable.
+    /// - serviceUnavailable:  The response status code was HTTP 503 Service Unavailable, with a Retry-After header field set
     public enum ResponseValidationFailureReason {
         case dataFileNil
         case dataFileReadFailed(at: URL)
         case missingContentType(acceptableContentTypes: [String])
         case unacceptableContentType(acceptableContentTypes: [String], responseContentType: String)
         case unacceptableStatusCode(code: Int)
+        case serviceUnavailable(retryAfter: RetryAfter)
     }
 
     /// The underlying reason the response serialization error occurred.
@@ -178,6 +180,17 @@ extension AFError {
         if case .responseSerializationFailed = self { return true }
         return false
     }
+    
+    /// Returns whether the `AFError` is a response validation error. When `true`, the `acceptableContentTypes`,
+    /// `responseContentType`, and `responseCode` properties will contain the associated values.
+    public var isServiceUnavailableError: Bool {
+        switch self {
+        case .responseValidationFailed(let reason):
+            return reason.retyAfter != nil && reason.responseCode == 503
+        default:
+            return false
+        }
+    }
 }
 
 // MARK: - Convenience Properties
@@ -243,6 +256,15 @@ extension AFError {
         switch self {
         case .responseValidationFailed(let reason):
             return reason.responseCode
+        default:
+            return nil
+        }
+    }
+    
+    public var retryAfter: RetryAfter? {
+        switch self {
+        case .responseValidationFailed(let reason):
+            return reason.retyAfter
         default:
             return nil
         }
@@ -318,6 +340,16 @@ extension AFError.ResponseValidationFailureReason {
         switch self {
         case .unacceptableStatusCode(let code):
             return code
+        case .serviceUnavailable:
+            return 503
+        default:
+            return nil
+        }
+    }
+    var retyAfter: RetryAfter? {
+        switch self {
+        case .serviceUnavailable(let retryAfter):
+            return retryAfter
         default:
             return nil
         }
@@ -455,6 +487,8 @@ extension AFError.ResponseValidationFailureReason {
             )
         case .unacceptableStatusCode(let code):
             return "Response status code was unacceptable: \(code)."
+        case .serviceUnavailable(let retryAfter):
+            return "Response status code was unacceptable due to Service Unavailable. Retry after: \(retryAfter)"
         }
     }
 }
