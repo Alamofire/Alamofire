@@ -28,7 +28,7 @@ This guide is provided in order to ease the transition of existing applications 
 - Xcode 8.1+
 - Swift 3.0+
 
-For those of you that would like to use Alamofire on iOS 8 or macOS 10.9, please use the latest tagged 3.x release which supports both Swift 2.2 and 2.3.
+For those of you that would like to use Alamofire on macOS 10.9, please use the latest tagged 3.x release which supports both Swift 2.2 and 2.3.
 
 ## Benefits of Upgrading
 
