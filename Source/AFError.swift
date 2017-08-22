@@ -103,7 +103,7 @@ public enum AFError: Error {
         case dataFileReadFailed(at: URL)
         case missingContentType(acceptableContentTypes: [String])
         case unacceptableContentType(acceptableContentTypes: [String], responseContentType: String)
-        case unacceptableStatusCode(code: Int)
+        case unacceptableStatusCode(code: Int, headers: [AnyHashable : Any])
     }
 
     /// The underlying reason the response serialization error occurred.
@@ -247,6 +247,16 @@ extension AFError {
             return nil
         }
     }
+    
+    /// The response headers of a `.responseValidationFailed` error.
+    public var responseHeaders: [AnyHashable: Any]? {
+        switch self {
+        case .responseValidationFailed(let reason):
+            return reason.responseHeaders
+        default:
+            return nil
+        }
+    }
 
     /// The `String.Encoding` associated with a failed `.stringResponse()` call.
     public var failedStringEncoding: String.Encoding? {
@@ -316,8 +326,17 @@ extension AFError.ResponseValidationFailureReason {
 
     var responseCode: Int? {
         switch self {
-        case .unacceptableStatusCode(let code):
+        case .unacceptableStatusCode(let code,_):
             return code
+        default:
+            return nil
+        }
+    }
+    
+    var responseHeaders: [AnyHashable: Any]? {
+        switch self {
+        case .unacceptableStatusCode(_,let headers):
+            return headers
         default:
             return nil
         }

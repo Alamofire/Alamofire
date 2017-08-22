@@ -93,7 +93,7 @@ extension Request {
         if acceptableStatusCodes.contains(response.statusCode) {
             return .success
         } else {
-            let reason: ErrorReason = .unacceptableStatusCode(code: response.statusCode)
+            let reason: ErrorReason = .unacceptableStatusCode(code: response.statusCode, headers: response.allHeaderFields)
             return .failure(AFError.responseValidationFailed(reason: reason))
         }
     }

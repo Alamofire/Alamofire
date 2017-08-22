@@ -27,7 +27,7 @@ import Foundation
 import XCTest
 
 class ResultTestCase: BaseTestCase {
-    let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 404))
+    let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 404, headers: [:]))
 
     // MARK: - Is Success Tests
 

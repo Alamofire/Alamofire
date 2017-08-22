@@ -100,10 +100,90 @@ class StatusCodeValidationTestCase: BaseTestCase {
         }
     }
 
+    func testThatValidationForRequestWithUnacceptableStatusCodeResponseFailsWithResponseHeaders() {
+        // Given
+        let urlString = "https://httpbin.org/status/404"
+        let expectedResponseHeaders: [String: String] = ["X-Some-Header" : "some value"]
+        
+        class MockManager: SessionManager {
+            override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+                do {
+                    let originalRequest = try urlRequest.asURLRequest()
+                    let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
+                    
+                    let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
+                    let request = MockDataRequest(session: session, requestTask: .data(originalTask, task))
+                    
+                    delegate[task] = request
+                    
+                    if startRequestsImmediately { request.resume() }
+                    
+                    return request
+                } catch {
+                    let request = DataRequest(session: session, requestTask: .data(nil, nil), error: error)
+                    if startRequestsImmediately { request.resume() }
+                    return request
+                }
+            }
+        }
+        
+        class MockHTTPURLResponse: HTTPURLResponse {
+            override var mimeType: String? { return nil }
+        }
+
+        class MockDataRequest: DataRequest {
+            override var response: HTTPURLResponse? {
+                return MockHTTPURLResponse(
+                    url: request!.url!,
+                    statusCode: 204,
+                    httpVersion: "HTTP/1.1",
+                    headerFields: ["X-Some-Header" : "some value"]
+                )
+            }
+        }
+        
+        let manager: SessionManager = {
+            let configuration: URLSessionConfiguration = {
+                let configuration = URLSessionConfiguration.ephemeral
+                configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+                
+                return configuration
+            }()
+            
+            return MockManager(configuration: configuration)
+        }()
+       
+        let expectation1 = self.expectation(description: "request should return 404 status code")
+        
+        var error: Error?
+        
+        // When
+        manager.request(urlString)
+            .validate(statusCode: [200])
+            .response { resp in
+                error = resp.error
+                expectation1.fulfill()
+        }
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertNotNil(error)
+
+        if let error = error as? AFError, let statusCode = error.responseCode, let headers = error.responseHeaders as? [String:String] {
+            XCTAssertTrue(error.isUnacceptableStatusCode)
+            XCTAssertEqual(statusCode, 204)
+            XCTAssertEqual(headers, expectedResponseHeaders)
+        } else {
+            XCTFail("Error should not be nil, should be an AFError, and should have an associated statusCode.")
+        }
+
+    }
+    
     func testThatValidationForRequestWithNoAcceptableStatusCodesFails() {
         // Given
+        
         let urlString = "https://httpbin.org/status/201"
-
+        
         let expectation1 = self.expectation(description: "request should return 201 status code")
         let expectation2 = self.expectation(description: "download should return 201 status code")
 
