@@ -1,0 +1,439 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 44,
+      "symbol": "AFError.ParameterEncodingFailureReason.missingURL",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 45,
+      "symbol": "AFError.ParameterEncodingFailureReason.jsonEncodingFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 46,
+      "symbol": "AFError.ParameterEncodingFailureReason.propertyListEncodingFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 75,
+      "symbol": "AFError.MultipartEncodingFailureReason.bodyPartURLInvalid",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 76,
+      "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFilenameInvalid",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 77,
+      "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFileNotReachable",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 78,
+      "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFileNotReachableWithError",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 79,
+      "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFileIsDirectory",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 80,
+      "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFileSizeNotAvailable",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 81,
+      "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFileSizeQueryFailedWithError",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 82,
+      "symbol": "AFError.MultipartEncodingFailureReason.bodyPartInputStreamCreationFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 84,
+      "symbol": "AFError.MultipartEncodingFailureReason.outputStreamCreationFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 85,
+      "symbol": "AFError.MultipartEncodingFailureReason.outputStreamFileAlreadyExists",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 86,
+      "symbol": "AFError.MultipartEncodingFailureReason.outputStreamURLInvalid",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 87,
+      "symbol": "AFError.MultipartEncodingFailureReason.outputStreamWriteFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 89,
+      "symbol": "AFError.MultipartEncodingFailureReason.inputStreamReadFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 102,
+      "symbol": "AFError.ResponseValidationFailureReason.dataFileNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 103,
+      "symbol": "AFError.ResponseValidationFailureReason.dataFileReadFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 104,
+      "symbol": "AFError.ResponseValidationFailureReason.missingContentType",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 105,
+      "symbol": "AFError.ResponseValidationFailureReason.unacceptableContentType",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 106,
+      "symbol": "AFError.ResponseValidationFailureReason.unacceptableStatusCode",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 119,
+      "symbol": "AFError.ResponseSerializationFailureReason.inputDataNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 120,
+      "symbol": "AFError.ResponseSerializationFailureReason.inputDataNilOrZeroLength",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 121,
+      "symbol": "AFError.ResponseSerializationFailureReason.inputFileNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 122,
+      "symbol": "AFError.ResponseSerializationFailureReason.inputFileReadFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 123,
+      "symbol": "AFError.ResponseSerializationFailureReason.stringSerializationFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 124,
+      "symbol": "AFError.ResponseSerializationFailureReason.jsonSerializationFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 125,
+      "symbol": "AFError.ResponseSerializationFailureReason.propertyListSerializationFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 128,
+      "symbol": "AFError.invalidURL",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 129,
+      "symbol": "AFError.parameterEncodingFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 130,
+      "symbol": "AFError.multipartEncodingFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 131,
+      "symbol": "AFError.responseValidationFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/AFError.swift",
+      "line": 132,
+      "symbol": "AFError.responseSerializationFailed",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/NetworkReachabilityManager.swift",
+      "line": 43,
+      "symbol": "NetworkReachabilityManager.NetworkReachabilityStatus.unknown",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/NetworkReachabilityManager.swift",
+      "line": 44,
+      "symbol": "NetworkReachabilityManager.NetworkReachabilityStatus.notReachable",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/NetworkReachabilityManager.swift",
+      "line": 45,
+      "symbol": "NetworkReachabilityManager.NetworkReachabilityStatus.reachable",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/NetworkReachabilityManager.swift",
+      "line": 53,
+      "symbol": "NetworkReachabilityManager.ConnectionType.ethernetOrWiFi",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/NetworkReachabilityManager.swift",
+      "line": 54,
+      "symbol": "NetworkReachabilityManager.ConnectionType.wwan",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 31,
+      "symbol": "HTTPMethod.options",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 32,
+      "symbol": "HTTPMethod.get",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 33,
+      "symbol": "HTTPMethod.head",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 34,
+      "symbol": "HTTPMethod.post",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 35,
+      "symbol": "HTTPMethod.put",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 36,
+      "symbol": "HTTPMethod.patch",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 37,
+      "symbol": "HTTPMethod.delete",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 38,
+      "symbol": "HTTPMethod.trace",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 39,
+      "symbol": "HTTPMethod.connect",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 82,
+      "symbol": "URLEncoding.Destination.httpBody",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 82,
+      "symbol": "URLEncoding.Destination.methodDependent",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ParameterEncoding.swift",
+      "line": 82,
+      "symbol": "URLEncoding.Destination.queryString",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/Result.swift",
+      "line": 35,
+      "symbol": "Result.success",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/Result.swift",
+      "line": 36,
+      "symbol": "Result.failure",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ServerTrustPolicy.swift",
+      "line": 116,
+      "symbol": "ServerTrustPolicy.performDefaultEvaluation",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ServerTrustPolicy.swift",
+      "line": 117,
+      "symbol": "ServerTrustPolicy.performRevokedEvaluation",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ServerTrustPolicy.swift",
+      "line": 118,
+      "symbol": "ServerTrustPolicy.pinCertificates",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ServerTrustPolicy.swift",
+      "line": 119,
+      "symbol": "ServerTrustPolicy.pinPublicKeys",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ServerTrustPolicy.swift",
+      "line": 120,
+      "symbol": "ServerTrustPolicy.disableEvaluation",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/ServerTrustPolicy.swift",
+      "line": 121,
+      "symbol": "ServerTrustPolicy.customEvaluation",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/SessionManager.swift",
+      "line": 40,
+      "symbol": "SessionManager.MultipartFormDataEncodingResult.success",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/SessionManager.swift",
+      "line": 41,
+      "symbol": "SessionManager.MultipartFormDataEncodingResult.failure",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/Validation.swift",
+      "line": 38,
+      "symbol": "Request.ValidationResult.success",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/aamct/Documents/App-Projects/Alamofire/Source/Validation.swift",
+      "line": 39,
+      "symbol": "Request.ValidationResult.failure",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/aamct/Documents/App-Projects/Alamofire"
+}

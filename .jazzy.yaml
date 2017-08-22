@@ -1,0 +1,7 @@
+author: Alamofire Software Foundation
+author_url: http://alamofire.org/
+github_url: https://github.com/Alamofire/Alamofire
+module: Alamofire
+output: docs
+theme: fullwidth
+xcodebuild_arguments: [-workspace, 'Alamofire.xcworkspace', -scheme, 'Alamofire iOS']
