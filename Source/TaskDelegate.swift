@@ -40,17 +40,28 @@ open class TaskDelegate: NSObject {
     public var error: Error?
 
     var task: URLSessionTask? {
-        didSet { reset() }
+        set {
+            taskLock.lock(); defer { taskLock.unlock() }
+            _task = newValue
+        }
+        get {
+            taskLock.lock(); defer { taskLock.unlock() }
+            return _task
+        }
     }
-
     var initialResponseTime: CFAbsoluteTime?
     var credential: URLCredential?
     var metrics: AnyObject? // URLSessionTaskMetrics
+    
+    private var _task: URLSessionTask? {
+        didSet { reset() }
+    }
+    private let taskLock = NSLock()
 
     // MARK: Lifecycle
 
     init(task: URLSessionTask?) {
-        self.task = task
+        _task = task
 
         self.queue = {
             let operationQueue = OperationQueue()
