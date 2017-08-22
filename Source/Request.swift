@@ -293,11 +293,15 @@ extension Request: CustomDebugStringConvertible {
 
             if let credentials = credentialStorage.credentials(for: protectionSpace)?.values {
                 for credential in credentials {
-                    components.append("-u \(credential.user!):\(credential.password!)")
+                    let user = credential.user ?? ""
+                    let password = credential.password ?? ""
+                    components.append("-u \(user):\(password)")
                 }
             } else {
                 if let credential = delegate.credential {
-                    components.append("-u \(credential.user!):\(credential.password!)")
+                    let user = credential.user ?? ""
+                    let password = credential.password ?? ""
+                    components.append("-u \(user):\(password)")
                 }
             }
         }
