@@ -1,6 +1,7 @@
 author: Alamofire Software Foundation
 author_url: http://alamofire.org/
 github_url: https://github.com/Alamofire/Alamofire
+root_url: https://alamofire.github.io/Alamofire
 module: Alamofire
 output: docs
 theme: fullwidth
