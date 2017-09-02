@@ -30,7 +30,7 @@ public protocol DataResponseSerializerProtocol {
     associatedtype SerializedObject
 
     /// A closure used by response handlers that takes a request, response, data and error and returns a result.
-    var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<SerializedObject> { get }
+    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<SerializedObject>
 }
 
 // MARK: -
@@ -61,7 +61,7 @@ public protocol DownloadResponseSerializerProtocol {
     associatedtype SerializedObject
 
     /// A closure used by response handlers that takes a request, response, url and error and returns a result.
-    var serializeDownloadResponse: (URLRequest?, HTTPURLResponse?, URL?, Error?) -> Result<SerializedObject> { get }
+    func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) -> Result<SerializedObject>
 }
 
 // MARK: -
@@ -147,13 +147,10 @@ extension DataRequest {
         -> Self
     {
         delegate.queue.addOperation {
-            let result = responseSerializer.serializeResponse(
-                self.request,
-                self.response,
-                self.delegate.data,
-                self.delegate.error
-            )
-
+            let result = responseSerializer.serialize(request: self.request,
+                                                      response: self.response,
+                                                      data: self.delegate.data,
+                                                      error: self.delegate.error)
             var dataResponse = DataResponse<T.SerializedObject>(
                 request: self.request,
                 response: self.response,
@@ -221,13 +218,10 @@ extension DownloadRequest {
         -> Self
     {
         delegate.queue.addOperation {
-            let result = responseSerializer.serializeDownloadResponse(
-                self.request,
-                self.response,
-                self.downloadDelegate.fileURL,
-                self.downloadDelegate.error
-            )
-
+            let result = responseSerializer.serializeDownload(request: self.request,
+                                                              response: self.response,
+                                                              fileURL: self.downloadDelegate.fileURL,
+                                                              error: self.downloadDelegate.error)
             var downloadResponse = DownloadResponse<T.SerializedObject>(
                 request: self.request,
                 response: self.response,
@@ -269,11 +263,13 @@ extension DataRequest {
     }
 }
 
-public final class DataResponseSerializer {
+public typealias ResponseSerializer = DataResponseSerializerProtocol & DownloadResponseSerializerProtocol
+
+public final class DataResponseSerializer: ResponseSerializer {
     
     public init() { }
     
-    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Data> {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Data> {
         guard error == nil else { return .failure(error!) }
         
         if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(Data()) }
@@ -284,29 +280,19 @@ public final class DataResponseSerializer {
         
         return .success(validData)
     }
-}
-
-extension DataResponseSerializer: DataResponseSerializerProtocol {
-    public var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<Data> {
-        return serialize
-    }
-}
-
-extension DataResponseSerializer: DownloadResponseSerializerProtocol {
-    public var serializeDownloadResponse: (URLRequest?, HTTPURLResponse?, URL?, Error?) -> Result<Data> {
-        return { (request, response, fileURL, error) in
-            guard error == nil else { return .failure(error!) }
-            
-            guard let fileURL = fileURL else {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
-            }
-            
-            do {
-                let data = try Data(contentsOf: fileURL)
-                return self.serialize(request: request, response: response, data: data, error: error)
-            } catch {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
-            }
+    
+    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) -> Result<Data> {
+        guard error == nil else { return .failure(error!) }
+        
+        guard let fileURL = fileURL else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
+        }
+        
+        do {
+            let data = try Data(contentsOf: fileURL)
+            return self.serialize(request: request, response: response, data: data, error: error)
+        } catch {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
         }
     }
 }
@@ -333,14 +319,14 @@ extension DownloadRequest {
 
 // MARK: - String
 
-final public class StringResponseSerializer {
+final public class StringResponseSerializer: ResponseSerializer {
     let encoding: String.Encoding?
     
     public init(encoding: String.Encoding? = nil) {
         self.encoding = encoding
     }
 
-    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<String> {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<String> {
         guard error == nil else { return .failure(error!) }
         
         if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success("") }
@@ -365,29 +351,19 @@ final public class StringResponseSerializer {
             return .failure(AFError.responseSerializationFailed(reason: .stringSerializationFailed(encoding: actualEncoding)))
         }
     }
-}
-
-extension StringResponseSerializer: DataResponseSerializerProtocol {
-    public var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<String> {
-        return serialize
-    }
-}
-
-extension StringResponseSerializer: DownloadResponseSerializerProtocol {
-    public var serializeDownloadResponse: (URLRequest?, HTTPURLResponse?, URL?, Error?) -> Result<String> {
-        return { (request, response, fileURL, error) in
-            guard error == nil else { return .failure(error!) }
-            
-            guard let fileURL = fileURL else {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
-            }
-            
-            do {
-                let data = try Data(contentsOf: fileURL)
-                return self.serialize(request: request, response: response, data: data, error: error)
-            } catch {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
-            }
+    
+    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) -> Result<String> {
+        guard error == nil else { return .failure(error!) }
+        
+        guard let fileURL = fileURL else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
+        }
+        
+        do {
+            let data = try Data(contentsOf: fileURL)
+            return self.serialize(request: request, response: response, data: data, error: error)
+        } catch {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
         }
     }
 }
@@ -442,14 +418,14 @@ extension DownloadRequest {
 
 // MARK: - JSON
 
-public final class JSONResponseSerializer {
+public final class JSONResponseSerializer: ResponseSerializer {
     let options: JSONSerialization.ReadingOptions
     
     public init(options: JSONSerialization.ReadingOptions = []) {
         self.options = options
     }
     
-    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Any> {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Any> {
         guard error == nil else { return .failure(error!) }
         
         if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(NSNull()) }
@@ -465,29 +441,19 @@ public final class JSONResponseSerializer {
             return .failure(AFError.responseSerializationFailed(reason: .jsonSerializationFailed(error: error)))
         }
     }
-}
-
-extension JSONResponseSerializer: DataResponseSerializerProtocol {
-    public var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<Any> {
-        return serialize
-    }
-}
-
-extension JSONResponseSerializer: DownloadResponseSerializerProtocol {
-    public var serializeDownloadResponse: (URLRequest?, HTTPURLResponse?, URL?, Error?) -> Result<Any> {
-        return { (request, response, fileURL, error) in
-            guard error == nil else { return .failure(error!) }
-            
-            guard let fileURL = fileURL else {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
-            }
-            
-            do {
-                let data = try Data(contentsOf: fileURL)
-                return self.serialize(request: request, response: response, data: data, error: error)
-            } catch {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
-            }
+    
+    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) -> Result<Any> {
+        guard error == nil else { return .failure(error!) }
+        
+        guard let fileURL = fileURL else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
+        }
+        
+        do {
+            let data = try Data(contentsOf: fileURL)
+            return self.serialize(request: request, response: response, data: data, error: error)
+        } catch {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
         }
     }
 }
@@ -538,14 +504,14 @@ extension DownloadRequest {
 
 // MARK: - JSON Decodable
 
-public final class JSONDecodableResponseSerializer<T: Decodable> {
+public final class JSONDecodableResponseSerializer<T: Decodable>: ResponseSerializer {
     let decoder: JSONDecoder
     
     public init(decoder: JSONDecoder = JSONDecoder()) {
         self.decoder = decoder
     }
     
-    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<T> {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<T> {
         guard error == nil else { return .failure(error!) }
         
         if
@@ -571,29 +537,19 @@ public final class JSONDecodableResponseSerializer<T: Decodable> {
             return .failure(error)
         }
     }
-}
-
-extension JSONDecodableResponseSerializer: DataResponseSerializerProtocol {
-    public var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<T> {
-        return serialize
-    }
-}
-
-extension JSONDecodableResponseSerializer: DownloadResponseSerializerProtocol {
-    public var serializeDownloadResponse: (URLRequest?, HTTPURLResponse?, URL?, Error?) -> Result<T> {
-        return { (request, response, fileURL, error) in
-            guard error == nil else { return .failure(error!) }
-            
-            guard let fileURL = fileURL else {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
-            }
-            
-            do {
-                let data = try Data(contentsOf: fileURL)
-                return self.serialize(request: request, response: response, data: data, error: error)
-            } catch {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
-            }
+    
+    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) -> Result<T> {
+        guard error == nil else { return .failure(error!) }
+        
+        guard let fileURL = fileURL else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
+        }
+        
+        do {
+            let data = try Data(contentsOf: fileURL)
+            return self.serialize(request: request, response: response, data: data, error: error)
+        } catch {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
         }
     }
 }
@@ -625,7 +581,7 @@ extension DataRequest {
 
 // MARK: - Property List
 
-public final class PropertyListResponseSerializer {
+public final class PropertyListResponseSerializer: ResponseSerializer {
     
     let options: PropertyListSerialization.ReadOptions
     
@@ -633,7 +589,7 @@ public final class PropertyListResponseSerializer {
         self.options = options
     }
     
-    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Any> {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Any> {
         guard error == nil else { return .failure(error!) }
         
         if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(NSNull()) }
@@ -650,32 +606,18 @@ public final class PropertyListResponseSerializer {
         }
     }
     
-}
-
-extension PropertyListResponseSerializer: DataResponseSerializerProtocol {
-    
-    public var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<Any> {
-        return serialize
-    }
-    
-}
-
-extension PropertyListResponseSerializer: DownloadResponseSerializerProtocol {
-    
-    public var serializeDownloadResponse: (URLRequest?, HTTPURLResponse?, URL?, Error?) -> Result<Any> {
-        return { (request, response, fileURL, error) in
-            guard error == nil else { return .failure(error!) }
-            
-            guard let fileURL = fileURL else {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
-            }
-            
-            do {
-                let data = try Data(contentsOf: fileURL)
-                return self.serialize(request: request, response: response, data: data, error: error)
-            } catch {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
-            }
+    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) -> Result<Any> {
+        guard error == nil else { return .failure(error!) }
+        
+        guard let fileURL = fileURL else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
+        }
+        
+        do {
+            let data = try Data(contentsOf: fileURL)
+            return self.serialize(request: request, response: response, data: data, error: error)
+        } catch {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
         }
     }
     
@@ -727,14 +669,14 @@ extension DownloadRequest {
 
 //MARK: - PropertyList Decodable
 
-public final class PropertyListDecodableResponseSerializer<T: Decodable> {
+public final class PropertyListDecodableResponseSerializer<T: Decodable>: ResponseSerializer {
     let decoder: PropertyListDecoder
     
     public init(decoder: PropertyListDecoder = PropertyListDecoder()) {
         self.decoder = decoder
     }
     
-    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<T> {
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<T> {
         guard error == nil else { return .failure(error!) }
         
         guard let validData = data, validData.count > 0 else {
@@ -747,29 +689,19 @@ public final class PropertyListDecodableResponseSerializer<T: Decodable> {
             return .failure(error)
         }
     }
-}
-
-extension PropertyListDecodableResponseSerializer: DataResponseSerializerProtocol {
-    public var serializeResponse: (URLRequest?, HTTPURLResponse?, Data?, Error?) -> Result<T> {
-        return serialize
-    }
-}
-
-extension PropertyListDecodableResponseSerializer: DownloadResponseSerializerProtocol {
-    public var serializeDownloadResponse: (URLRequest?, HTTPURLResponse?, URL?, Error?) -> Result<T> {
-        return { (request, response, fileURL, error) in
-            guard error == nil else { return .failure(error!) }
-            
-            guard let fileURL = fileURL else {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
-            }
-            
-            do {
-                let data = try Data(contentsOf: fileURL)
-                return self.serialize(request: request, response: response, data: data, error: error)
-            } catch {
-                return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
-            }
+    
+    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) -> Result<T> {
+        guard error == nil else { return .failure(error!) }
+        
+        guard let fileURL = fileURL else {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
+        }
+        
+        do {
+            let data = try Data(contentsOf: fileURL)
+            return self.serialize(request: request, response: response, data: data, error: error)
+        } catch {
+            return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
         }
     }
 }
