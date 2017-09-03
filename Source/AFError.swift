@@ -115,6 +115,7 @@ public enum AFError: Error {
     /// - stringSerializationFailed:       String serialization failed using the provided `String.Encoding`.
     /// - jsonSerializationFailed:         JSON serialization failed with an underlying system error.
     /// - propertyListSerializationFailed: Property list serialization failed with an underlying system error.
+    /// - invalidEmptyResponse:            Generic serialization failed for an empty response that wasn't type `Empty`.
     public enum ResponseSerializationFailureReason {
         case inputDataNil
         case inputDataNilOrZeroLength
@@ -123,6 +124,7 @@ public enum AFError: Error {
         case stringSerializationFailed(encoding: String.Encoding)
         case jsonSerializationFailed(error: Error)
         case propertyListSerializationFailed(error: Error)
+        case invalidEmptyResponse(type: String)
     }
 
     case invalidURL(url: URLConvertible)
@@ -432,6 +434,8 @@ extension AFError.ResponseSerializationFailureReason {
             return "JSON could not be serialized because of error:\n\(error.localizedDescription)"
         case .propertyListSerializationFailed(let error):
             return "PropertyList could not be serialized because of error:\n\(error.localizedDescription)"
+        case .invalidEmptyResponse(let type):
+            return "Empty response could not be serialized to type: \(type). Use Empty as the expected type for such responses."
         }
     }
 }

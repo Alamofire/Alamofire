@@ -26,17 +26,6 @@ import Alamofire
 import Foundation
 import XCTest
 
-
-extension HTTPURLResponse {
-    convenience init(statusCode: Int, headers: HTTPHeaders? = nil) {
-        let url = URL(string: "https://httpbin.org/get")!
-        self.init(url: url, statusCode: statusCode, httpVersion: "HTTP/1.1", headerFields: headers)!
-    }
-}
-
-
-// MARK: -
-
 class DataResponseSerializationTestCase: BaseTestCase {
 
     // MARK: Properties
@@ -1374,5 +1363,12 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         } else {
             XCTFail("error should not be nil")
         }
+    }
+}
+
+extension HTTPURLResponse {
+    convenience init(statusCode: Int, headers: HTTPHeaders? = nil) {
+        let url = URL(string: "https://httpbin.org/get")!
+        self.init(url: url, statusCode: statusCode, httpVersion: "HTTP/1.1", headerFields: headers)!
     }
 }
