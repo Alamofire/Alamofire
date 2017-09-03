@@ -329,23 +329,23 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         let origin: String
         let url: String
     }
-    
+
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
-        
+
         var response: DataResponse<HTTPBinResponse>?
-        
+
         // When
         // TODO: Deal with conflict when not having parameters.
         Alamofire.request(urlString, parameters: [:]).responseJSONDecodable { (resp: DataResponse<HTTPBinResponse>) in
             response = resp
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
@@ -353,7 +353,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertEqual(response?.result.value?.url, "https://httpbin.org/get")
-        
+
         if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
             XCTAssertNotNil(response?.metrics)
         }

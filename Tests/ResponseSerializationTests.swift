@@ -93,7 +93,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
         // When
         let result = serializer.serialize(request: nil, response: response, data: nil, error: nil)
-        
+
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true")
         XCTAssertNil(result.value, "result value should be nil")
@@ -431,76 +431,76 @@ class DataResponseSerializationTestCase: BaseTestCase {
             XCTFail("json should not be nil")
         }
     }
-    
+
     // MARK: JSONDecodableResponseSerializer
 
     func testThatJSONDecodableResponseSerializerFailsWhenDataIsNil() {
         // Given
         let serializer = JSONDecodableResponseSerializer<DecodableValue>()
-        
+
         // When
         let result = serializer.serialize(request: nil, response: nil, data: nil, error: nil)
-        
+
         // Then
         XCTAssertTrue(result.isFailure)
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
-        
+
         if let error = result.error as? AFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
             XCTFail("error should not be nil")
         }
     }
-    
+
     func testThatJSONDecodableResponseSerializerFailsWhenDataIsEmpty() {
         // Given
         let serializer = JSONDecodableResponseSerializer<DecodableValue>()
-        
+
         // When
         let result = serializer.serialize(request: nil, response: nil, data: Data(), error: nil)
-        
+
         // Then
         XCTAssertTrue(result.isFailure)
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
-        
+
         if let error = result.error as? AFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
             XCTFail("error should not be nil")
         }
     }
-    
+
     func testThatJSONDecodableResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
         let json = "{\"string\":\"string\"}"
         let data = json.data(using: .utf8)!
         let serializer = JSONDecodableResponseSerializer<DecodableValue>()
-        
+
         // When
         let result = serializer.serialize(request: nil, response: nil, data: data, error: nil)
-        
+
         // Then
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertEqual(result.value?.string, "string")
         XCTAssertNil(result.error)
     }
-    
+
     func testThatJSONDecodableResponseSerializerFailsWhenDataIsInvalidJSON() {
         // Given
         let serializer = JSONDecodableResponseSerializer<DecodableValue>()
         let data = "definitely not valid json".data(using: .utf8)!
-        
+
         // When
         let result = serializer.serialize(request: nil, response: nil, data: data, error: nil)
-        
+
         // Then
         XCTAssertTrue(result.isFailure)
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
-        
+
         // TODO: Should we test the underlying decodable errors?
 //        if let error = result.error as? AFError, let underlyingError = error.underlyingError as? CocoaError {
 //            XCTAssertTrue(error.isJSONSerializationFailed)
@@ -509,54 +509,54 @@ class DataResponseSerializationTestCase: BaseTestCase {
 //            XCTFail("error should not be nil")
 //        }
     }
-    
+
     func testThatJSONDecodableResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
         let serializer = JSONDecodableResponseSerializer<DecodableValue>()
-        
+
         // When
         let result = serializer.serialize(request: nil, response: nil, data: nil, error: error)
-        
+
         // Then
         XCTAssertTrue(result.isFailure)
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
-        
+
         if let error = result.error as? AFError {
             XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
         }
     }
-    
+
     func testThatJSONDecodableResponseSerializerFailsWhenDataIsNilWithNonEmptyResponseStatusCode() {
         // Given
         let serializer = JSONDecodableResponseSerializer<DecodableValue>()
         let response = HTTPURLResponse(statusCode: 200)
-        
+
         // When
         let result = serializer.serialize(request: nil, response: response, data: nil, error: nil)
-        
+
         // Then
         XCTAssertTrue(result.isFailure)
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
-        
+
         if let error = result.error as? AFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
             XCTFail("error should not be nil")
         }
     }
-    
+
     func testThatJSONDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseStatusCode() {
         // Given
         let serializer = JSONDecodableResponseSerializer<Empty>()
         let response = HTTPURLResponse(statusCode: 204)
-        
+
         // When
         let result = serializer.serialize(request: nil, response: response, data: nil, error: nil)
-        
+
         // Then
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
@@ -694,31 +694,31 @@ class DataResponseSerializationTestCase: BaseTestCase {
             XCTAssertEqual(plist, NSNull())
         }
     }
-    
+
     func testThatPropertyListResponseSerializerSucceedsWhenDataIsNilWith204ResponseStatusCode() {
         // Given
         let serializer = PropertyListResponseSerializer()
         let response = HTTPURLResponse(statusCode: 204)
-        
+
         // When
         let result = serializer.serialize(request: nil, response: response, data: nil, error: nil)
-        
+
         // Then
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-        
+
         if let plist = result.value as? NSNull {
             XCTAssertEqual(plist, NSNull())
         } else {
             XCTFail("plist should not be nil")
         }
     }
-    
+
     struct DecodableValue: Codable {
         let string: String
     }
-    
+
     func testThatPropertyListDecodableResponseSerializerSucceedsWhenDataIsNonNil() {
         // Given
         let serializer = PropertyListDecodableResponseSerializer<DecodableValue>()
@@ -733,10 +733,10 @@ class DataResponseSerializationTestCase: BaseTestCase {
         </plist>
         """
         let data = plist.data(using: .utf8)!
-        
+
         // When
         let result = serializer.serialize(request: nil, response: nil, data: data, error: nil)
-        
+
         // Then
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
@@ -1343,21 +1343,21 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
             XCTFail("error should not be nil")
         }
     }
-    
-    
+
+
     func testThatPropertyListResponseSerializerFailsWhenDataIsNilWithNonEmptyResponseStatusCode() {
         // Given
         let serializer = PropertyListResponseSerializer()
         let response = HTTPURLResponse(statusCode: 200)
-        
+
         // When
         let result = serializer.serializeDownload(request: nil, response: response, fileURL: nil, error: nil)
-        
+
         // Then
         XCTAssertTrue(result.isFailure)
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
-        
+
         if let error = result.error as? AFError {
             XCTAssertTrue(error.isInputFileNil)
         } else {

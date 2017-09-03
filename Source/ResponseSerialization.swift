@@ -52,11 +52,11 @@ public typealias ResponseSerializer = DataResponseSerializerProtocol & DownloadR
 public extension DownloadResponseSerializerProtocol where Self: DataResponseSerializerProtocol {
     public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) -> Result<SerializedObject> {
         guard error == nil else { return .failure(error!) }
-        
+
         guard let fileURL = fileURL else {
             return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
         }
-        
+
         do {
             let data = try Data(contentsOf: fileURL)
             return self.serialize(request: request, response: response, data: data, error: error)
@@ -74,10 +74,10 @@ public final class AnyResponseSerializer<Value>: ResponseSerializer {
     public typealias DataSerializer = (_ request: URLRequest?, _ response: HTTPURLResponse?, _ data: Data?, _ error: Error?) -> Result<Value>
     /// A closure which can be used to serialize download reponses.
     public typealias DownloadSerializer = (_ request: URLRequest?, _ response: HTTPURLResponse?, _ fileURL: URL?, _ error: Error?) -> Result<Value>
-    
+
     let dataSerializer: DataSerializer
     let downloadSerializer: DownloadSerializer?
-    
+
     /// Initialze the instance with both a `DataSerializer` closure and a `DownloadSerializer` closure.
     ///
     /// - Parameters:
@@ -87,7 +87,7 @@ public final class AnyResponseSerializer<Value>: ResponseSerializer {
         self.dataSerializer = dataSerializer
         self.downloadSerializer = downloadSerializer
     }
-    
+
     /// Initialze the instance with a `DataSerializer` closure. Download serialization will fallback to a default
     /// implementation.
     ///
@@ -97,19 +97,19 @@ public final class AnyResponseSerializer<Value>: ResponseSerializer {
         self.dataSerializer = dataSerializer
         self.downloadSerializer = nil
     }
-    
+
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Value> {
         return dataSerializer(request, response, data, error)
     }
-    
+
     public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) -> Result<Value> {
         return downloadSerializer?(request, response, fileURL, error) ?? { (request, response, fileURL, error) in
             guard error == nil else { return .failure(error!) }
-            
+
             guard let fileURL = fileURL else {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
-            
+
             do {
                 let data = try Data(contentsOf: fileURL)
                 return self.serialize(request: request, response: response, data: data, error: error)
@@ -239,7 +239,7 @@ extension DownloadRequest {
 
         return self
     }
-    
+
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
@@ -308,18 +308,18 @@ extension DataRequest {
 /// request returning `nil` or no data is considered an error. However, if the response is has a status code valid for
 /// empty responses (`204`, `205`), then an empty `Data` value is returned.
 public final class DataResponseSerializer: ResponseSerializer {
-    
+
     public init() { }
-    
+
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Data> {
         guard error == nil else { return .failure(error!) }
-        
+
         if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success(Data()) }
-        
+
         guard let validData = data else {
             return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
-        
+
         return .success(validData)
     }
 }
@@ -353,7 +353,7 @@ extension DownloadRequest {
 /// then an empty `String` is returned.
 public final class StringResponseSerializer: ResponseSerializer {
     let encoding: String.Encoding?
-    
+
     /// Creates an instance with the given `String.Encoding`.
     ///
     /// - Parameter encoding: A string encoding. Defaults to `nil`, in which case the encoding will be determined from
@@ -364,23 +364,23 @@ public final class StringResponseSerializer: ResponseSerializer {
 
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<String> {
         guard error == nil else { return .failure(error!) }
-        
+
         if let response = response, emptyDataStatusCodes.contains(response.statusCode) { return .success("") }
-        
+
         guard let validData = data else {
             return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
-        
+
         var convertedEncoding = encoding
-        
+
         if let encodingName = response?.textEncodingName as CFString!, convertedEncoding == nil {
             convertedEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(
                 CFStringConvertIANACharSetNameToEncoding(encodingName))
             )
         }
-        
+
         let actualEncoding = convertedEncoding ?? .isoLatin1
-        
+
         if let string = String(data: validData, encoding: actualEncoding) {
             return .success(string)
         } else {
@@ -446,25 +446,25 @@ extension DownloadRequest {
 /// (`204`, `205`), then an `NSNull`  value is returned.
 public final class JSONResponseSerializer: ResponseSerializer {
     let options: JSONSerialization.ReadingOptions
-    
+
     /// Creates an instance with the given `JSONSerilization.ReadingOptions`.
     ///
     /// - Parameter options: The options to use. Defaults to `.allowFragments`.
     public init(options: JSONSerialization.ReadingOptions = .allowFragments) {
         self.options = options
     }
-    
+
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Any> {
         guard error == nil else { return .failure(error!) }
-        
+
         guard let validData = data, validData.count > 0 else {
             if let response = response, emptyDataStatusCodes.contains(response.statusCode) {
                 return .success(NSNull())
             }
-            
+
             return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
         }
-        
+
         do {
             let json = try JSONSerialization.jsonObject(with: validData, options: options)
             return .success(json)
@@ -536,29 +536,29 @@ public struct Empty: Decodable {
 /// empty responses (`204`, `205`), then the `Empty.response` value is returned.
 public final class JSONDecodableResponseSerializer<T: Decodable>: ResponseSerializer {
     let decoder: JSONDecoder
-    
+
     /// Creates an instance with the given `JSONDecoder` instance.
     ///
     /// - Parameter decoder: A decoder. Defaults to a `JSONDecoder` with default settings.
     public init(decoder: JSONDecoder = JSONDecoder()) {
         self.decoder = decoder
     }
-    
+
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<T> {
         guard error == nil else { return .failure(error!) }
-        
+
         guard let validData = data, validData.count > 0 else {
             if let response = response, emptyDataStatusCodes.contains(response.statusCode) {
                 guard let emptyResponse = Empty.response as? T else {
                     return .failure(AFError.responseSerializationFailed(reason: .invalidEmptyResponse(type: "\(T.self)")))
                 }
-                
+
                 return .success(emptyResponse)
             }
-            
+
             return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
         }
-        
+
         do {
             return .success(try decoder.decode(T.self, from: validData))
         } catch {
@@ -599,25 +599,25 @@ extension DataRequest {
 /// responses (`204`, `205`), then an `NSNull` value is returned.
 public final class PropertyListResponseSerializer: ResponseSerializer {
     let options: PropertyListSerialization.ReadOptions
-    
+
     /// Creates an instance with the given `JSONSerilization.ReadingOptions`.
     ///
     /// - Parameter options: The options to use. Defaults to `[]`.
     public init(options: PropertyListSerialization.ReadOptions = []) {
         self.options = options
     }
-    
+
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<Any> {
         guard error == nil else { return .failure(error!) }
-        
+
         guard let validData = data, validData.count > 0 else {
             if let response = response, emptyDataStatusCodes.contains(response.statusCode) {
                 return .success(NSNull())
             }
-            
+
             return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
         }
-        
+
         do {
             let plist = try PropertyListSerialization.propertyList(from: validData, options: options, format: nil)
             return .success(plist)
@@ -682,30 +682,30 @@ extension DownloadRequest {
 /// empty responses (`204`, `205`), then the `Empty.response` value is returned.
 public final class PropertyListDecodableResponseSerializer<T: Decodable>: ResponseSerializer {
     let decoder: PropertyListDecoder
-    
-    
+
+
     /// Creates an instance with the given `JSONDecoder` instance.
     ///
     /// - Parameter decoder: A decoder. Defaults to a `PropertyListDecoder` with default settings.
     public init(decoder: PropertyListDecoder = PropertyListDecoder()) {
         self.decoder = decoder
     }
-    
+
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<T> {
         guard error == nil else { return .failure(error!) }
-        
+
         guard let validData = data, validData.count > 0 else {
             if let response = response, emptyDataStatusCodes.contains(response.statusCode) {
                 guard let emptyResponse = Empty.response as? T else {
                     return .failure(AFError.responseSerializationFailed(reason: .invalidEmptyResponse(type: "\(T.self)")))
                 }
-                
+
                 return .success(emptyResponse)
             }
-            
+
             return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
         }
-        
+
         do {
             return .success(try decoder.decode(T.self, from: validData))
         } catch {
