@@ -322,21 +322,6 @@ public final class DataResponseSerializer: ResponseSerializer {
         
         return .success(validData)
     }
-    
-    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) -> Result<Data> {
-        guard error == nil else { return .failure(error!) }
-        
-        guard let fileURL = fileURL else {
-            return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
-        }
-        
-        do {
-            let data = try Data(contentsOf: fileURL)
-            return self.serialize(request: request, response: response, data: data, error: error)
-        } catch {
-            return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
-        }
-    }
 }
 
 extension DownloadRequest {
