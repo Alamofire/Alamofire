@@ -227,7 +227,7 @@ class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
-        let expectation = self.expectation(description: "request should fail with 404")
+        let expectation = self.expectation(description: "request should fail")
 
         var response: DataResponse<Any>?
 
@@ -338,7 +338,6 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         var response: DataResponse<HTTPBinResponse>?
 
         // When
-        // TODO: Deal with conflict when not having parameters.
         Alamofire.request(urlString, parameters: [:]).responseJSONDecodable { (resp: DataResponse<HTTPBinResponse>) in
             response = resp
             expectation.fulfill()
@@ -358,11 +357,33 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
             XCTAssertNotNil(response?.metrics)
         }
     }
+
+    func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
+        // Given
+        let urlString = "https://invalid-url-here.org/this/does/not/exist"
+        let expectation = self.expectation(description: "request should fail")
+
+        var response: DataResponse<HTTPBinResponse>?
+
+        // When
+        Alamofire.request(urlString, parameters: [:]).responseJSONDecodable { (resp: DataResponse<HTTPBinResponse>) in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertEqual(response?.result.isFailure, true)
+
+        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
+            XCTAssertNotNil(response?.metrics)
+        }
+    }
 }
-
-// MARK: -
-
-
 
 // MARK: -
 
