@@ -318,6 +318,9 @@
 		4C812C521B535F540017E0BF /* valid-dns-name.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "valid-dns-name.cer"; path = "alamofire.org/valid-dns-name.cer"; sourceTree = "<group>"; };
 		4C812C531B535F540017E0BF /* valid-uri.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "valid-uri.cer"; path = "alamofire.org/valid-uri.cer"; sourceTree = "<group>"; };
 		4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionDelegateTests.swift; sourceTree = "<group>"; };
+		4C9E88371F5FB3B0000BEC61 /* Alamofire 2.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "Alamofire 2.0 Migration Guide.md"; path = "Documentation/Alamofire 2.0 Migration Guide.md"; sourceTree = "<group>"; };
+		4C9E88381F5FB3B0000BEC61 /* Alamofire 3.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "Alamofire 3.0 Migration Guide.md"; path = "Documentation/Alamofire 3.0 Migration Guide.md"; sourceTree = "<group>"; };
+		4C9E88391F5FB3B0000BEC61 /* Alamofire 4.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "Alamofire 4.0 Migration Guide.md"; path = "Documentation/Alamofire 4.0 Migration Guide.md"; sourceTree = "<group>"; };
 		4CA028C41B7466C500C84163 /* ResultTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		4CB928281C66BFBC00CE5F08 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		4CCB20681D4549E000C64D5B /* expired.badssl.com-leaf.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-leaf.cer"; sourceTree = "<group>"; };
@@ -333,9 +336,6 @@
 		4CE292311EF4A393008DA555 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4CE292321EF4A393008DA555 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		4CE292331EF4A393008DA555 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
-		4CE292351EF4A397008DA555 /* Alamofire 2.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Alamofire 2.0 Migration Guide.md"; sourceTree = "<group>"; };
-		4CE292361EF4A397008DA555 /* Alamofire 3.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Alamofire 3.0 Migration Guide.md"; sourceTree = "<group>"; };
-		4CE292371EF4A397008DA555 /* Alamofire 4.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Alamofire 4.0 Migration Guide.md"; sourceTree = "<group>"; };
 		4CE292391EF4B12B008DA555 /* Alamofire.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = Alamofire.podspec; sourceTree = "<group>"; };
 		4CE2923A1EF4B12B008DA555 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		4CF626EF1BA7CB3E0011A099 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -574,6 +574,16 @@
 			name = alamofire.org;
 			sourceTree = "<group>";
 		};
+		4C9E88361F5FB39F000BEC61 /* Migration Guides */ = {
+			isa = PBXGroup;
+			children = (
+				4C9E88371F5FB3B0000BEC61 /* Alamofire 2.0 Migration Guide.md */,
+				4C9E88381F5FB3B0000BEC61 /* Alamofire 3.0 Migration Guide.md */,
+				4C9E88391F5FB3B0000BEC61 /* Alamofire 4.0 Migration Guide.md */,
+			);
+			name = "Migration Guides";
+			sourceTree = "<group>";
+		};
 		4CCB20671D4549E000C64D5B /* expired.badssl.com */ = {
 			isa = PBXGroup;
 			children = (
@@ -622,19 +632,9 @@
 				316250E41F00ABE900E207A6 /* ISSUE_TEMPLATE.md */,
 				316250E51F00ACD000E207A6 /* PULL_REQUEST_TEMPLATE.md */,
 				4CE292311EF4A393008DA555 /* README.md */,
-				4CE292341EF4A397008DA555 /* Documentation */,
+				4C9E88361F5FB39F000BEC61 /* Migration Guides */,
 			);
 			name = Documentation;
-			sourceTree = "<group>";
-		};
-		4CE292341EF4A397008DA555 /* Documentation */ = {
-			isa = PBXGroup;
-			children = (
-				4CE292351EF4A397008DA555 /* Alamofire 2.0 Migration Guide.md */,
-				4CE292361EF4A397008DA555 /* Alamofire 3.0 Migration Guide.md */,
-				4CE292371EF4A397008DA555 /* Alamofire 4.0 Migration Guide.md */,
-			);
-			path = Documentation;
 			sourceTree = "<group>";
 		};
 		4CE292381EF4B116008DA555 /* Deployment */ = {
