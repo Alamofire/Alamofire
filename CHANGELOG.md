@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 4.x Releases
-- `4.5.x` Releases - [4.5.0](#450)
+- `4.5.x` Releases - [4.5.0](#450) | [4.5.1](#451)
 - `4.4.x` Releases - [4.4.0](#440)
 - `4.3.x` Releases - [4.3.0](#430)
 - `4.2.x` Releases - [4.2.0](#420)
@@ -31,6 +31,50 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [4.5.1](https://github.com/Alamofire/Alamofire/releases/tag/4.5.1)
+Released on 2017-09-06. All issues associated with this milestone can be found using this
+[filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.5.1).
+
+#### Added
+- GitHub templates for issues and pull requests.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#2179](https://github.com/Alamofire/Alamofire/pull/2179).
+- Jazzy docs for the release to work with GitHub Pages.
+  - Added by [Aaron McTavish](https://github.com/aamctustwo) in Pull Request
+  [#2250](https://github.com/Alamofire/Alamofire/pull/2250).
+- Dash support for Jazzy docs.
+  - Added by [Jon Shier](https://github.com/jshier).
+
+#### Updated
+- The project to work with Xcode 9 beta 6 on Swift 3.2 and 4.0.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#2198](https://github.com/Alamofire/Alamofire/pull/2198).
+- The Travis CI config to work with Xcode 9 beta 6.
+  - Updated by [Jon Shier](https://github.com/jshier).
+- The cURL representation logic to no longer force unwrap `URLCredential` values.
+  - Updated by [Andrey Chernoprudov](https://github.com/achernoprudov) in Pull Request
+  [#2184](https://github.com/Alamofire/Alamofire/pull/2184).
+- The radars section of the README to split out open vs. resolved radars.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request
+  [#2263](https://github.com/Alamofire/Alamofire/pull/2263).
+- The installation section of the README to use the current version.
+  - Updated by [Kim de Vos](https://github.com/kimdv) in Pull Request
+  [#2266](https://github.com/Alamofire/Alamofire/pull/2266).
+
+#### Fixed
+- Issue in `TaskDelegate` where task access was not thread safe.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#2190](https://github.com/Alamofire/Alamofire/pull/2190).
+- Issue in AF 4 migration guide where supported iOS versions was incorrect.
+  - Fixed by [Antoine Cœur](https://github.com/Coeur) in Pull Request
+  [#2212](https://github.com/Alamofire/Alamofire/pull/2212).
+- Issue in README sample code where PNG representation API was incorrect.
+  - Fixed by [Andy Ron](https://github.com/andyRon) in Pull Request
+  [#2244](https://github.com/Alamofire/Alamofire/pull/2244).
+- Swift 3.2+ API warnings for `substring` APIs.
+  - Fixed by [htinlinn](https://github.com/htinlinn) in Pull Request
+  [#2240](https://github.com/Alamofire/Alamofire/pull/2240).
 
 ## [4.5.0](https://github.com/Alamofire/Alamofire/releases/tag/4.5.0)
 Released on 2017-06-16. All issues associated with this milestone can be found using this
