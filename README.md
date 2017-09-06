@@ -57,8 +57,8 @@ In order to keep Alamofire focused specifically on core networking implementatio
 ## Requirements
 
 - iOS 8.0+ / macOS 10.10+ / tvOS 9.0+ / watchOS 2.0+
-- Xcode 8.1, 8.2, 8.3, and 9.0
-- Swift 3.0, 3.1, 3.2, and 4.0
+- Xcode 8.3+
+- Swift 3.1+
 
 ## Migration Guides
 
@@ -84,7 +84,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 $ gem install cocoapods
 ```
 
-> CocoaPods 1.1.0+ is required to build Alamofire 4.0.0+.
+> CocoaPods 1.1+ is required to build Alamofire 4.0+.
 
 To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
