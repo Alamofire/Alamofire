@@ -21,6 +21,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		3191B5751F5F53A6003960A8 /* Mutex+Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */; };
+		3191B5761F5F53A6003960A8 /* Mutex+Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */; };
+		3191B5771F5F53A6003960A8 /* Mutex+Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */; };
+		3191B5781F5F53A6003960A8 /* Mutex+Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */; };
 		31ED52E81D73891B00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
 		31ED52E91D73891C00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
 		31ED52EA1D73891C00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
@@ -287,6 +291,7 @@
 /* Begin PBXFileReference section */
 		316250E41F00ABE900E207A6 /* ISSUE_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ISSUE_TEMPLATE.md; sourceTree = "<group>"; };
 		316250E51F00ACD000E207A6 /* PULL_REQUEST_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PULL_REQUEST_TEMPLATE.md; sourceTree = "<group>"; };
+		3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mutex+Protector.swift"; sourceTree = "<group>"; };
 		31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AFError+AlamofireTests.swift"; sourceTree = "<group>"; };
 		4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseSerializationTests.swift; sourceTree = "<group>"; };
 		4C0B62501BB1001C009302D3 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
@@ -597,6 +602,7 @@
 				4CFCFE2D1D56D31700A76388 /* SessionDelegate.swift */,
 				4CDE2C361AF8932A00BABAE5 /* SessionManager.swift */,
 				4CFCFE381D56E8D900A76388 /* TaskDelegate.swift */,
+				3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -1184,6 +1190,7 @@
 				4CFCFE301D56D31700A76388 /* SessionDelegate.swift in Sources */,
 				4CF6270C1BA7CBF60011A099 /* Result.swift in Sources */,
 				4CF627081BA7CBF60011A099 /* AFError.swift in Sources */,
+				3191B5771F5F53A6003960A8 /* Mutex+Protector.swift in Sources */,
 				4CF627131BA7CBF60011A099 /* Validation.swift in Sources */,
 				4CF6270E1BA7CBF60011A099 /* MultipartFormData.swift in Sources */,
 				4C80F9F81BB730EF001B46D2 /* Response.swift in Sources */,
@@ -1235,6 +1242,7 @@
 				4CFCFE2F1D56D31700A76388 /* SessionDelegate.swift in Sources */,
 				4CE272501AF88FB500F1D59A /* ParameterEncoding.swift in Sources */,
 				4CDE2C3B1AF899EC00BABAE5 /* Request.swift in Sources */,
+				3191B5761F5F53A6003960A8 /* Mutex+Protector.swift in Sources */,
 				4CDE2C471AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8551B68908E00476DE3 /* AFError.swift in Sources */,
 				4CDE2C381AF8932A00BABAE5 /* SessionManager.swift in Sources */,
@@ -1259,6 +1267,7 @@
 				4CEE82AD1C6813CF00E9C9F0 /* NetworkReachabilityManager.swift in Sources */,
 				4CFCFE311D56D31700A76388 /* SessionDelegate.swift in Sources */,
 				E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */,
+				3191B5781F5F53A6003960A8 /* Mutex+Protector.swift in Sources */,
 				E4202FD11B667AA100C997FB /* Request.swift in Sources */,
 				4CEC605A1B745C9100E684F4 /* AFError.swift in Sources */,
 				E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */,
@@ -1283,6 +1292,7 @@
 				4CFCFE2E1D56D31700A76388 /* SessionDelegate.swift in Sources */,
 				4CE2724F1AF88FB500F1D59A /* ParameterEncoding.swift in Sources */,
 				4CDE2C3A1AF899EC00BABAE5 /* Request.swift in Sources */,
+				3191B5751F5F53A6003960A8 /* Mutex+Protector.swift in Sources */,
 				4CDE2C461AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8541B68908E00476DE3 /* AFError.swift in Sources */,
 				4CDE2C371AF8932A00BABAE5 /* SessionManager.swift in Sources */,

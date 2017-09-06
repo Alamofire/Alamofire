@@ -126,19 +126,12 @@ open class SessionDelegate: NSObject {
     var retrier: RequestRetrier?
     weak var sessionManager: SessionManager?
 
-    private var requests: [Int: Request] = [:]
-    private let lock = NSLock()
+    private var protectedRequests = Protector<[Int: Request]>([:])
 
     /// Access the task delegate for the specified task in a thread-safe manner.
     open subscript(task: URLSessionTask) -> Request? {
-        get {
-            lock.lock() ; defer { lock.unlock() }
-            return requests[task.taskIdentifier]
-        }
-        set {
-            lock.lock() ; defer { lock.unlock() }
-            requests[task.taskIdentifier] = newValue
-        }
+        get { return protectedRequests.read { $0[task.taskIdentifier] } }
+        set { protectedRequests.write { $0[task.taskIdentifier] = newValue } }
     }
 
     // MARK: Lifecycle
