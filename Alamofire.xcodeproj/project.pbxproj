@@ -21,6 +21,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		297039A11F4B6C6700B915FE /* DataRequestCodableResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297039A01F4B6C6700B915FE /* DataRequestCodableResponse.swift */; };
+		297039A21F4B6C6700B915FE /* DataRequestCodableResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297039A01F4B6C6700B915FE /* DataRequestCodableResponse.swift */; };
+		297039A31F4B6C6700B915FE /* DataRequestCodableResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297039A01F4B6C6700B915FE /* DataRequestCodableResponse.swift */; };
+		297039A41F4B6C6700B915FE /* DataRequestCodableResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 297039A01F4B6C6700B915FE /* DataRequestCodableResponse.swift */; };
 		31ED52E81D73891B00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
 		31ED52E91D73891C00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
 		31ED52EA1D73891C00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
@@ -285,6 +289,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		297039A01F4B6C6700B915FE /* DataRequestCodableResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataRequestCodableResponse.swift; sourceTree = "<group>"; };
 		316250E41F00ABE900E207A6 /* ISSUE_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ISSUE_TEMPLATE.md; sourceTree = "<group>"; };
 		316250E51F00ACD000E207A6 /* PULL_REQUEST_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PULL_REQUEST_TEMPLATE.md; sourceTree = "<group>"; };
 		31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AFError+AlamofireTests.swift"; sourceTree = "<group>"; };
@@ -551,6 +556,7 @@
 			isa = PBXGroup;
 			children = (
 				4C43669A1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift */,
+				297039A01F4B6C6700B915FE /* DataRequestCodableResponse.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -1186,6 +1192,7 @@
 				4CF627081BA7CBF60011A099 /* AFError.swift in Sources */,
 				4CF627131BA7CBF60011A099 /* Validation.swift in Sources */,
 				4CF6270E1BA7CBF60011A099 /* MultipartFormData.swift in Sources */,
+				297039A31F4B6C6700B915FE /* DataRequestCodableResponse.swift in Sources */,
 				4C80F9F81BB730EF001B46D2 /* Response.swift in Sources */,
 				4CB9282B1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				4CF627091BA7CBF60011A099 /* SessionManager.swift in Sources */,
@@ -1237,6 +1244,7 @@
 				4CDE2C3B1AF899EC00BABAE5 /* Request.swift in Sources */,
 				4CDE2C471AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8551B68908E00476DE3 /* AFError.swift in Sources */,
+				297039A21F4B6C6700B915FE /* DataRequestCodableResponse.swift in Sources */,
 				4CDE2C381AF8932A00BABAE5 /* SessionManager.swift in Sources */,
 				4C0B62521BB1001C009302D3 /* Response.swift in Sources */,
 				4CB9282A1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
@@ -1261,6 +1269,7 @@
 				E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */,
 				E4202FD11B667AA100C997FB /* Request.swift in Sources */,
 				4CEC605A1B745C9100E684F4 /* AFError.swift in Sources */,
+				297039A41F4B6C6700B915FE /* DataRequestCodableResponse.swift in Sources */,
 				E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */,
 				E4202FD31B667AA100C997FB /* SessionManager.swift in Sources */,
 				4C0B62531BB1001C009302D3 /* Response.swift in Sources */,
@@ -1285,6 +1294,7 @@
 				4CDE2C3A1AF899EC00BABAE5 /* Request.swift in Sources */,
 				4CDE2C461AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8541B68908E00476DE3 /* AFError.swift in Sources */,
+				297039A11F4B6C6700B915FE /* DataRequestCodableResponse.swift in Sources */,
 				4CDE2C371AF8932A00BABAE5 /* SessionManager.swift in Sources */,
 				4C0B62511BB1001C009302D3 /* Response.swift in Sources */,
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
