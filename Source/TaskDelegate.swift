@@ -49,6 +49,7 @@ open class TaskDelegate: NSObject {
             return _task
         }
     }
+
     var initialResponseTime: CFAbsoluteTime?
     var credential: URLCredential?
     var metrics: AnyObject? // URLSessionTaskMetrics
@@ -56,6 +57,7 @@ open class TaskDelegate: NSObject {
     private var _task: URLSessionTask? {
         didSet { reset() }
     }
+
     private let taskLock = NSLock()
 
     // MARK: Lifecycle
