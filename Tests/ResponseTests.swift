@@ -349,7 +349,6 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
-        XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertEqual(response?.result.value?.url, "https://httpbin.org/get")
 
