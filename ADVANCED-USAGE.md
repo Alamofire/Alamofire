@@ -7,11 +7,29 @@
 [![Twitter](https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat)](http://twitter.com/AlamofireSF)
 [![Gitter](https://badges.gitter.im/Alamofire/Alamofire.svg)](https://gitter.im/Alamofire/Alamofire?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+- [Features](#features)
+- [Component Libraries](#component-libraries)
+- [Requirements](#requirements)
+- [Migration Guides](#migration-guides)
+- [Communication](#communication)
+- [Installation](#installation)
+- [Usage](USAGE.md)
+    - **Intro -** [Making a Request](USAGE.md/#making-a-request), [Response Handling](USAGE.md/#response-handling), [Response Validation](USAGE.md/#response-validation), [Response Caching](USAGE.md/#response-caching)
+    - **HTTP -** [HTTP Methods](USAGE.md/#http-methods), [Parameter Encoding](USAGE.md/#parameter-encoding), [HTTP Headers](USAGE.md/#http-headers), [Authentication](USAGE.md/#authentication)
+    - **Large Data -** [Downloading Data to a File](USAGE.md/#downloading-data-to-a-file), [Uploading Data to a Server](USAGE.md/#uploading-data-to-a-server)
+    - **Tools -** [Statistical Metrics](USAGE.md/#statistical-metrics), [cURL Command Output](USAGE.md/#curl-command-output)
+- [Advanced Usage](#advanced-usage)
+    - **URL Session -** [Session Manager](#session-manager), [Session Delegate](#session-delegate), [Request](#request)
+    - **Routing -** [Routing Requests](#routing-requests), [Adapting and Retrying Requests](#adapting-and-retrying-requests)
+    - **Model Objects -** [Custom Response Serialization](#custom-response-serialization)
+    - **Connection -** [Security](#security), [Network Reachability](#network-reachability)
+- [Open Radars](OPEN-RADARS.md/#open-radars)
+- [FAQ](FAQ.md/#faq)
+- [Credits](CREDITS.md/#credits)
+- [Donations](DONATIONS.md/#donations)
+- [License](LICENSE.md/#license)
+
 ## Advanced Usage
-- **URL Session -** [Session Manager](#session-manager), [Session Delegate](#session-delegate), [Request](#request)
-- **Routing -** [Routing Requests](#routing-requests), [Adapting and Retrying Requests](#adapting-and-retrying-requests)
-- **Model Objects -** [Custom Response Serialization](#custom-response-serialization)
-- **Connection -** [Security](#security), [Network Reachability](#network-reachability)
 
 Alamofire is built on `URLSession` and the Foundation URL Loading System. To make the most of this framework, it is recommended that you be familiar with the concepts and capabilities of the underlying networking stack.
 
@@ -21,8 +39,6 @@ Alamofire is built on `URLSession` and the Foundation URL Loading System. To mak
 - [URLSession Class Reference](https://developer.apple.com/reference/foundation/nsurlsession)
 - [URLCache Class Reference](https://developer.apple.com/reference/foundation/urlcache)
 - [URLAuthenticationChallenge Class Reference](https://developer.apple.com/reference/foundation/urlauthenticationchallenge)
-
----
 
 ### Session Manager
 

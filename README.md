@@ -15,13 +15,21 @@ Alamofire is an HTTP networking library written in Swift.
 - [Migration Guides](#migration-guides)
 - [Communication](#communication)
 - [Installation](#installation)
-- [Usage](USAGE.md)
-- [Advanced Usage](ADVANCED-USAGE.md)
-- [Open Radars](#open-radars)
-- [FAQ](#faq)
-- [Credits](#credits)
-- [Donations](#donations)
-- [License](#license)
+- [Usage](USAGE.md/#usage)
+    - **Intro -** [Making a Request](USAGE.md/#making-a-request), [Response Handling](USAGE.md/#response-handling), [Response Validation](USAGE.md/#response-validation), [Response Caching](USAGE.md/#response-caching)
+	- **HTTP -** [HTTP Methods](USAGE.md/#http-methods), [Parameter Encoding](USAGE.md/#parameter-encoding), [HTTP Headers](USAGE.md/#http-headers), [Authentication](USAGE.md/#authentication)
+	- **Large Data -** [Downloading Data to a File](USAGE.md/#downloading-data-to-a-file), [Uploading Data to a Server](USAGE.md/#uploading-data-to-a-server)
+	- **Tools -** [Statistical Metrics](USAGE.md/#statistical-metrics), [cURL Command Output](USAGE.md/#curl-command-output)
+- [Advanced Usage](ADVANCED-USAGE.md/#advanced-usage)
+	- **URL Session -** [Session Manager](ADVANCED-USAGE.md/#session-manager), [Session Delegate](ADVANCED-USAGE.md/#session-delegate), [Request](ADVANCED-USAGE.md/#request)
+	- **Routing -** [Routing Requests](ADVANCED-USAGE.md/#routing-requests), [Adapting and Retrying Requests](ADVANCED-USAGE.md/#adapting-and-retrying-requests)
+	- **Model Objects -** [Custom Response Serialization](ADVANCED-USAGE.md/#custom-response-serialization)
+	- **Connection -** [Security](ADVANCED-USAGE.md/#security), [Network Reachability](ADVANCED-USAGE.md/#network-reachability)
+- [Open Radars](OPEN-RADARS.md/#open-radars)
+- [FAQ](FAQ.md/#faq)
+- [Credits](CREDITS.md/#credits)
+- [Donations](DONATIONS.md/#donations)
+- [License](LICENSE.md/#license)
 
 ## Features
 
@@ -164,59 +172,3 @@ If you prefer not to use any of the aforementioned dependency managers, you can 
 - And that's it!
 
   > The `Alamofire.framework` is automagically added as a target dependency, linked framework and embedded framework in a copy files build phase which is all you need to build on the simulator and a device.
-
----
-
-## Open Radars
-
-The following radars have some effect on the current implementation of Alamofire.
-
-- [`rdar://21349340`](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
-- `rdar://26870455` - Background URL Session Configurations do not work in the simulator
-- `rdar://26849668` - Some URLProtocol APIs do not properly handle `URLRequest`
-
-## Resolved Radars
-
-The following radars have been resolved over time after being filed against the Alamofire project.
-
-- [`rdar://26761490`](http://www.openradar.me/radar?id=5010235949318144) - Swift string interpolation causing memory leak with common usage (Resolved on 9/1/17 in Xcode 9 beta 6).
-
-## FAQ
-
-### What's the origin of the name Alamofire?
-
-Alamofire is named after the [Alamo Fire flower](https://aggie-horticulture.tamu.edu/wildseed/alamofire.html), a hybrid variant of the Bluebonnet, the official state flower of Texas.
-
-### What logic belongs in a Router vs. a Request Adapter?
-
-Simple, static data such as paths, parameters and common headers belong in the `Router`. Dynamic data such as an `Authorization` header whose value can changed based on an authentication system belongs in a `RequestAdapter`.
-
-The reason the dynamic data MUST be placed into the `RequestAdapter` is to support retry operations. When a `Request` is retried, the original request is not rebuilt meaning the `Router` will not be called again. The `RequestAdapter` is called again allowing the dynamic data to be updated on the original request before retrying the `Request`.
-
----
-
-## Credits
-
-Alamofire is owned and maintained by the [Alamofire Software Foundation](http://alamofire.org). You can follow them on Twitter at [@AlamofireSF](https://twitter.com/AlamofireSF) for project updates and releases.
-
-### Security Disclosure
-
-If you believe you have identified a security vulnerability with Alamofire, you should report it as soon as possible via email to security@alamofire.org. Please do not post it to a public issue tracker.
-
-## Donations
-
-The [ASF](https://github.com/Alamofire/Foundation#members) is looking to raise money to officially register as a federal non-profit organization. Registering will allow us members to gain some legal protections and also allow us to put donations to use, tax free. Donating to the ASF will enable us to:
-
-- Pay our legal fees to register as a federal non-profit organization
-- Pay our yearly legal fees to keep the non-profit in good status
-- Pay for our mail servers to help us stay on top of all questions and security issues
-- Potentially fund test servers to make it easier for us to test the edge cases
-- Potentially fund developers to work on one of our projects full-time
-
-The community adoption of the ASF libraries has been amazing. We are greatly humbled by your enthusiasm around the projects, and want to continue to do everything we can to move the needle forward. With your continued support, the ASF will be able to improve its reach and also provide better legal safety for the core members. If you use any of our libraries for work, see if your employers would be interested in donating. Our initial goal is to raise $1000 to get all our legal ducks in a row and kickstart this campaign. Any amount you can donate today to help us reach our goal would be greatly appreciated.
-
-<a href='https://pledgie.com/campaigns/31474'><img alt='Click here to lend your support to: Alamofire Software Foundation and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/31474.png?skin_name=chrome' border='0' ></a>
-
-## License
-
-Alamofire is released under the MIT license. [See LICENSE](https://github.com/Alamofire/Alamofire/blob/master/LICENSE) for details.
