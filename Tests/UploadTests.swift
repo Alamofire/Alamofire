@@ -1,7 +1,7 @@
 //
 //  UploadTests.swift
 //
-//  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -29,33 +29,34 @@ import XCTest
 class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndFile() {
         // Given
-        let URLString = "https://httpbin.org/"
-        let imageURL = URLForResource("rainbow", withExtension: "jpg")
+        let urlString = "https://httpbin.org/"
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
 
         // When
-        let request = Alamofire.upload(.POST, URLString, file: imageURL)
+        let request = Alamofire.upload(imageURL, to: urlString)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request?.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
     func testUploadClassMethodWithMethodURLHeadersAndFile() {
         // Given
-        let URLString = "https://httpbin.org/"
-        let imageURL = URLForResource("rainbow", withExtension: "jpg")
+        let urlString = "https://httpbin.org/"
+        let headers = ["Authorization": "123456"]
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
 
         // When
-        let request = Alamofire.upload(.POST, URLString, headers: ["Authorization": "123456"], file: imageURL)
+        let request = Alamofire.upload(imageURL, to: urlString, method: .post, headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request?.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
 
-        let authorizationHeader = request.request?.valueForHTTPHeaderField("Authorization") ?? ""
+        let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
 
         XCTAssertNil(request.response, "response should be nil")
@@ -67,31 +68,32 @@ class UploadFileInitializationTestCase: BaseTestCase {
 class UploadDataInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndData() {
         // Given
-        let URLString = "https://httpbin.org/"
+        let urlString = "https://httpbin.org/"
 
         // When
-        let request = Alamofire.upload(.POST, URLString, data: NSData())
+        let request = Alamofire.upload(Data(), to: urlString)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request?.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
     func testUploadClassMethodWithMethodURLHeadersAndData() {
         // Given
-        let URLString = "https://httpbin.org/"
+        let urlString = "https://httpbin.org/"
+        let headers = ["Authorization": "123456"]
 
         // When
-        let request = Alamofire.upload(.POST, URLString, headers: ["Authorization": "123456"], data: NSData())
+        let request = Alamofire.upload(Data(), to: urlString, headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request?.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
 
-        let authorizationHeader = request.request?.valueForHTTPHeaderField("Authorization") ?? ""
+        let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
 
         XCTAssertNil(request.response, "response should be nil")
@@ -103,35 +105,36 @@ class UploadDataInitializationTestCase: BaseTestCase {
 class UploadStreamInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndStream() {
         // Given
-        let URLString = "https://httpbin.org/"
-        let imageURL = URLForResource("rainbow", withExtension: "jpg")
-        let imageStream = NSInputStream(URL: imageURL)!
+        let urlString = "https://httpbin.org/"
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
+        let imageStream = InputStream(url: imageURL)!
 
         // When
-        let request = Alamofire.upload(.POST, URLString, stream: imageStream)
+        let request = Alamofire.upload(imageStream, to: urlString)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request?.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
         XCTAssertNil(request.response, "response should be nil")
     }
 
     func testUploadClassMethodWithMethodURLHeadersAndStream() {
         // Given
-        let URLString = "https://httpbin.org/"
-        let imageURL = URLForResource("rainbow", withExtension: "jpg")
-        let imageStream = NSInputStream(URL: imageURL)!
+        let urlString = "https://httpbin.org/"
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
+        let headers = ["Authorization": "123456"]
+        let imageStream = InputStream(url: imageURL)!
 
         // When
-        let request = Alamofire.upload(.POST, URLString, headers: ["Authorization": "123456"], stream: imageStream)
+        let request = Alamofire.upload(imageStream, to: urlString, headers: headers)
 
         // Then
         XCTAssertNotNil(request.request, "request should not be nil")
-        XCTAssertEqual(request.request?.HTTPMethod ?? "", "POST", "request HTTP method should be POST")
-        XCTAssertEqual(request.request?.URLString ?? "", URLString, "request URL string should be equal")
+        XCTAssertEqual(request.request?.httpMethod ?? "", "POST", "request HTTP method should be POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString, "request URL string should be equal")
 
-        let authorizationHeader = request.request?.valueForHTTPHeaderField("Authorization") ?? ""
+        let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
 
         XCTAssertNil(request.response, "response should be nil")
@@ -143,119 +146,91 @@ class UploadStreamInitializationTestCase: BaseTestCase {
 class UploadDataTestCase: BaseTestCase {
     func testUploadDataRequest() {
         // Given
-        let URLString = "https://httpbin.org/post"
-        let data = "Lorem ipsum dolor sit amet".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        let urlString = "https://httpbin.org/post"
+        let data = "Lorem ipsum dolor sit amet".data(using: .utf8, allowLossyConversion: false)!
 
-        let expectation = expectationWithDescription("Upload request should succeed: \(URLString)")
-
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var error: NSError?
+        let expectation = self.expectation(description: "Upload request should succeed: \(urlString)")
+        var response: DefaultDataResponse?
 
         // When
-        Alamofire.upload(.POST, URLString, data: data)
-            .response { responseRequest, responseResponse, _, responseError in
-                request = responseRequest
-                response = responseResponse
-                error = responseError
-
+        Alamofire.upload(data, to: urlString)
+            .response { resp in
+                response = resp
                 expectation.fulfill()
             }
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.error)
     }
 
     func testUploadDataRequestWithProgress() {
         // Given
-        let URLString = "https://httpbin.org/post"
-        let data: NSData = {
+        let urlString = "https://httpbin.org/post"
+        let data: Data = {
             var text = ""
             for _ in 1...3_000 {
                 text += "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
             }
 
-            return text.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            return text.data(using: .utf8, allowLossyConversion: false)!
         }()
 
-        let expectation = expectationWithDescription("Bytes upload progress should be reported: \(URLString)")
+        let expectation = self.expectation(description: "Bytes upload progress should be reported: \(urlString)")
 
-        var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
-        var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
-        var responseRequest: NSURLRequest?
-        var responseResponse: NSHTTPURLResponse?
-        var responseData: NSData?
-        var responseError: ErrorType?
+        var uploadProgressValues: [Double] = []
+        var downloadProgressValues: [Double] = []
+
+        var response: DefaultDataResponse?
 
         // When
-        let upload = Alamofire.upload(.POST, URLString, data: data)
-        upload.progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
-            let bytes = (bytes: bytesWritten, totalBytes: totalBytesWritten, totalBytesExpected: totalBytesExpectedToWrite)
-            byteValues.append(bytes)
+        Alamofire.upload(data, to: urlString)
+            .uploadProgress { progress in
+                uploadProgressValues.append(progress.fractionCompleted)
+            }
+            .downloadProgress { progress in
+                downloadProgressValues.append(progress.fractionCompleted)
+            }
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
 
-            let progress = (
-                completedUnitCount: upload.progress.completedUnitCount,
-                totalUnitCount: upload.progress.totalUnitCount
-            )
-            progressValues.append(progress)
-        }
-        upload.response { request, response, data, error in
-            responseRequest = request
-            responseResponse = response
-            responseData = data
-            responseError = error
-
-            expectation.fulfill()
-        }
-
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(responseRequest, "response request should not be nil")
-        XCTAssertNotNil(responseResponse, "response response should not be nil")
-        XCTAssertNotNil(responseData, "response data should not be nil")
-        XCTAssertNil(responseError, "response error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        XCTAssertEqual(byteValues.count, progressValues.count, "byteValues count should equal progressValues count")
+        var previousUploadProgress: Double = uploadProgressValues.first ?? 0.0
 
-        if byteValues.count == progressValues.count {
-            for index in 0..<byteValues.count {
-                let byteValue = byteValues[index]
-                let progressValue = progressValues[index]
-
-                XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
-                XCTAssertEqual(
-                    byteValue.totalBytes,
-                    progressValue.completedUnitCount,
-                    "total bytes should be equal to completed unit count"
-                )
-                XCTAssertEqual(
-                    byteValue.totalBytesExpected,
-                    progressValue.totalUnitCount,
-                    "total bytes expected should be equal to total unit count"
-                )
-            }
+        for progress in uploadProgressValues {
+            XCTAssertGreaterThanOrEqual(progress, previousUploadProgress)
+            previousUploadProgress = progress
         }
 
-        if let
-            lastByteValue = byteValues.last,
-            lastProgressValue = progressValues.last
-        {
-            let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
-            let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
-
-            XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
-            XCTAssertEqual(
-                progressValueFractionalCompletion,
-                1.0,
-                "progress value fractional completion should equal 1.0"
-            )
+        if let lastProgressValue = uploadProgressValues.last {
+            XCTAssertEqual(lastProgressValue, 1.0)
         } else {
-            XCTFail("last item in bytesValues and progressValues should not be nil")
+            XCTFail("last item in uploadProgressValues should not be nil")
+        }
+
+        var previousDownloadProgress: Double = downloadProgressValues.first ?? 0.0
+
+        for progress in downloadProgressValues {
+            XCTAssertGreaterThanOrEqual(progress, previousDownloadProgress)
+            previousDownloadProgress = progress
+        }
+
+        if let lastProgressValue = downloadProgressValues.last {
+            XCTAssertEqual(lastProgressValue, 1.0)
+        } else {
+            XCTFail("last item in downloadProgressValues should not be nil")
         }
     }
 }
@@ -268,56 +243,48 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataSetsContentTypeHeader() {
         // Given
-        let URLString = "https://httpbin.org/post"
-        let uploadData = "upload_data".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        let urlString = "https://httpbin.org/post"
+        let uploadData = "upload_data".data(using: .utf8, allowLossyConversion: false)!
 
-        let expectation = expectationWithDescription("multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
-        var error: NSError?
+        var response: DefaultDataResponse?
 
         // When
         Alamofire.upload(
-            .POST,
-            URLString,
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: uploadData, name: "upload_data")
+                multipartFormData.append(uploadData, withName: "upload_data")
                 formData = multipartFormData
             },
+            to: urlString,
             encodingCompletion: { result in
                 switch result {
-                case .Success(let upload, _, _):
-                    upload.response { responseRequest, responseResponse, responseData, responseError in
-                        request = responseRequest
-                        response = responseResponse
-                        data = responseData
-                        error = responseError
-
+                case .success(let upload, _, _):
+                    upload.response { resp in
+                        response = resp
                         expectation.fulfill()
                     }
-                case .Failure:
+                case .failure:
                     expectation.fulfill()
                 }
             }
         )
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        if let
-            request = request,
-            multipartFormData = formData,
-            contentType = request.valueForHTTPHeaderField("Content-Type")
+        if
+            let request = response?.request,
+            let multipartFormData = formData,
+            let contentType = request.value(forHTTPHeaderField: "Content-Type")
         {
-            XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
+            XCTAssertEqual(contentType, multipartFormData.contentType)
         } else {
             XCTFail("Content-Type header value should not be nil")
         }
@@ -325,49 +292,40 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataSucceedsWithDefaultParameters() {
         // Given
-        let URLString = "https://httpbin.org/post"
-        let french = "français".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
-        let japanese = "日本語".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        let urlString = "https://httpbin.org/post"
+        let frenchData = "français".data(using: .utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
 
-        let expectation = expectationWithDescription("multipart form data upload should succeed")
-
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
-        var error: NSError?
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
+        var response: DefaultDataResponse?
 
         // When
         Alamofire.upload(
-            .POST,
-            URLString,
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: french, name: "french")
-                multipartFormData.appendBodyPart(data: japanese, name: "japanese")
+                multipartFormData.append(frenchData, withName: "french")
+                multipartFormData.append(japaneseData, withName: "japanese")
             },
+            to: urlString,
             encodingCompletion: { result in
                 switch result {
-                case .Success(let upload, _, _):
-                    upload.response { responseRequest, responseResponse, responseData, responseError in
-                        request = responseRequest
-                        response = responseResponse
-                        data = responseData
-                        error = responseError
-
+                case .success(let upload, _, _):
+                    upload.response { resp in
+                        response = resp
                         expectation.fulfill()
                     }
-                case .Failure:
+                case .failure:
                     expectation.fulfill()
                 }
             }
         )
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
     }
 
     func testThatUploadingMultipartFormDataWhileStreamingFromMemoryMonitorsProgress() {
@@ -380,39 +338,38 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataBelowMemoryThresholdStreamsFromMemory() {
         // Given
-        let URLString = "https://httpbin.org/post"
-        let french = "français".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
-        let japanese = "日本語".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        let urlString = "https://httpbin.org/post"
+        let frenchData = "français".data(using: .utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
 
-        let expectation = expectationWithDescription("multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var streamingFromDisk: Bool?
-        var streamFileURL: NSURL?
+        var streamFileURL: URL?
 
         // When
         Alamofire.upload(
-            .POST,
-            URLString,
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: french, name: "french")
-                multipartFormData.appendBodyPart(data: japanese, name: "japanese")
+                multipartFormData.append(frenchData, withName: "french")
+                multipartFormData.append(japaneseData, withName: "japanese")
             },
+            to: urlString,
             encodingCompletion: { result in
                 switch result {
-                case let .Success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
+                case let .success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
                     streamingFromDisk = uploadStreamingFromDisk
                     streamFileURL = uploadStreamFileURL
 
-                    upload.response { _, _, _, _ in
+                    upload.response { _ in
                         expectation.fulfill()
                     }
-                case .Failure:
+                case .failure:
                     expectation.fulfill()
                 }
             }
         )
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -425,39 +382,38 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataBelowMemoryThresholdSetsContentTypeHeader() {
         // Given
-        let URLString = "https://httpbin.org/post"
-        let uploadData = "upload data".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        let urlString = "https://httpbin.org/post"
+        let uploadData = "upload data".data(using: .utf8, allowLossyConversion: false)!
 
-        let expectation = expectationWithDescription("multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
-        var request: NSURLRequest?
+        var request: URLRequest?
         var streamingFromDisk: Bool?
 
         // When
         Alamofire.upload(
-            .POST,
-            URLString,
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: uploadData, name: "upload_data")
+                multipartFormData.append(uploadData, withName: "upload_data")
                 formData = multipartFormData
             },
+            to: urlString,
             encodingCompletion: { result in
                 switch result {
-                case let .Success(upload, uploadStreamingFromDisk, _):
+                case let .success(upload, uploadStreamingFromDisk, _):
                     streamingFromDisk = uploadStreamingFromDisk
 
-                    upload.response { responseRequest, _, _, _ in
-                        request = responseRequest
+                    upload.response { resp in
+                        request = resp.request
                         expectation.fulfill()
                     }
-                case .Failure:
+                case .failure:
                     expectation.fulfill()
                 }
             }
         )
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -466,10 +422,10 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTAssertFalse(streamingFromDisk, "streaming from disk should be false")
         }
 
-        if let
-            request = request,
-            multipartFormData = formData,
-            contentType = request.valueForHTTPHeaderField("Content-Type")
+        if
+            let request = request,
+            let multipartFormData = formData,
+            let contentType = request.value(forHTTPHeaderField: "Content-Type")
         {
             XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
         } else {
@@ -479,93 +435,85 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
     func testThatUploadingMultipartFormDataAboveMemoryThresholdStreamsFromDisk() {
         // Given
-        let URLString = "https://httpbin.org/post"
-        let french = "français".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
-        let japanese = "日本語".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        let urlString = "https://httpbin.org/post"
+        let frenchData = "français".data(using: .utf8, allowLossyConversion: false)!
+        let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
 
-        let expectation = expectationWithDescription("multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var streamingFromDisk: Bool?
-        var streamFileURL: NSURL?
+        var streamFileURL: URL?
 
         // When
         Alamofire.upload(
-            .POST,
-            URLString,
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: french, name: "french")
-                multipartFormData.appendBodyPart(data: japanese, name: "japanese")
+                multipartFormData.append(frenchData, withName: "french")
+                multipartFormData.append(japaneseData, withName: "japanese")
             },
-            encodingMemoryThreshold: 0,
+            usingThreshold: 0,
+            to: urlString,
             encodingCompletion: { result in
                 switch result {
-                case let .Success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
+                case let .success(upload, uploadStreamingFromDisk, uploadStreamFileURL):
                     streamingFromDisk = uploadStreamingFromDisk
                     streamFileURL = uploadStreamFileURL
 
-                    upload.response { _, _, _, _ in
+                    upload.response { _ in
                         expectation.fulfill()
                     }
-                case .Failure:
+                case .failure:
                     expectation.fulfill()
                 }
             }
         )
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
         XCTAssertNotNil(streamFileURL, "stream file URL should not be nil")
 
-        if let
-            streamingFromDisk = streamingFromDisk,
-            streamFilePath = streamFileURL?.path
-        {
+        if let streamingFromDisk = streamingFromDisk, let streamFilePath = streamFileURL?.path {
             XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
-            XCTAssertTrue(
-                NSFileManager.defaultManager().fileExistsAtPath(streamFilePath),
-                "stream file path should exist"
-            )
+            XCTAssertFalse(FileManager.default.fileExists(atPath: streamFilePath), "stream file path should not exist")
         }
     }
 
     func testThatUploadingMultipartFormDataAboveMemoryThresholdSetsContentTypeHeader() {
         // Given
-        let URLString = "https://httpbin.org/post"
-        let uploadData = "upload data".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        let urlString = "https://httpbin.org/post"
+        let uploadData = "upload data".data(using: .utf8, allowLossyConversion: false)!
 
-        let expectation = expectationWithDescription("multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
-        var request: NSURLRequest?
+        var request: URLRequest?
         var streamingFromDisk: Bool?
 
         // When
         Alamofire.upload(
-            .POST,
-            URLString,
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: uploadData, name: "upload_data")
+                multipartFormData.append(uploadData, withName: "upload_data")
                 formData = multipartFormData
             },
-            encodingMemoryThreshold: 0,
+            usingThreshold: 0,
+            to: urlString,
             encodingCompletion: { result in
                 switch result {
-                case let .Success(upload, uploadStreamingFromDisk, _):
+                case let .success(upload, uploadStreamingFromDisk, _):
                     streamingFromDisk = uploadStreamingFromDisk
 
-                    upload.response { responseRequest, _, _, _ in
-                        request = responseRequest
+                    upload.response { resp in
+                        request = resp.request
                         expectation.fulfill()
                     }
-                case .Failure:
+                case .failure:
                     expectation.fulfill()
                 }
             }
         )
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -574,10 +522,10 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTAssertTrue(streamingFromDisk, "streaming from disk should be true")
         }
 
-        if let
-            request = request,
-            multipartFormData = formData,
-            contentType = request.valueForHTTPHeaderField("Content-Type")
+        if
+            let request = request,
+            let multipartFormData = formData,
+            let contentType = request.value(forHTTPHeaderField: "Content-Type")
         {
             XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
         } else {
@@ -585,55 +533,55 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         }
     }
 
+#if os(macOS)
     func testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
-        let manager: Manager = {
-            let identifier = "com.alamofire.uploadtests.\(NSUUID().UUIDString)"
-            let configuration = NSURLSessionConfiguration.backgroundSessionConfigurationForAllPlatformsWithIdentifier(identifier)
+        let manager: SessionManager = {
+            let identifier = "org.alamofire.uploadtests.\(UUID().uuidString)"
+            let configuration = URLSessionConfiguration.background(withIdentifier: identifier)
 
-            return Manager(configuration: configuration, serverTrustPolicyManager: nil)
+            return SessionManager(configuration: configuration, serverTrustPolicyManager: nil)
         }()
 
-        let URLString = "https://httpbin.org/post"
-        let french = "français".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
-        let japanese = "日本語".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        let urlString = "https://httpbin.org/post"
+        let french = "français".data(using: .utf8, allowLossyConversion: false)!
+        let japanese = "日本語".data(using: .utf8, allowLossyConversion: false)!
 
-        let expectation = expectationWithDescription("multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
-        var error: NSError?
+        var request: URLRequest?
+        var response: HTTPURLResponse?
+        var data: Data?
+        var error: Error?
         var streamingFromDisk: Bool?
 
         // When
         manager.upload(
-            .POST,
-            URLString,
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: french, name: "french")
-                multipartFormData.appendBodyPart(data: japanese, name: "japanese")
+                multipartFormData.append(french, withName: "french")
+                multipartFormData.append(japanese, withName: "japanese")
             },
+            to: urlString,
             encodingCompletion: { result in
                 switch result {
-                case let .Success(upload, uploadStreamingFromDisk, _):
+                case let .success(upload, uploadStreamingFromDisk, _):
                     streamingFromDisk = uploadStreamingFromDisk
 
-                    upload.response { responseRequest, responseResponse, responseData, responseError in
-                        request = responseRequest
-                        response = responseResponse
-                        data = responseData
-                        error = responseError
+                    upload.response { defaultResponse in
+                        request = defaultResponse.request
+                        response = defaultResponse.response
+                        data = defaultResponse.data
+                        error = defaultResponse.error
 
                         expectation.fulfill()
                     }
-                case .Failure:
+                case .failure:
                     expectation.fulfill()
                 }
             }
         )
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -647,122 +595,97 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTFail("streaming from disk should not be nil")
         }
     }
+#endif
 
     // MARK: Combined Test Execution
 
-    private func executeMultipartFormDataUploadRequestWithProgress(streamFromDisk streamFromDisk: Bool) {
+    private func executeMultipartFormDataUploadRequestWithProgress(streamFromDisk: Bool) {
         // Given
-        let URLString = "https://httpbin.org/post"
-        let loremData1: NSData = {
+        let urlString = "https://httpbin.org/post"
+        let loremData1: Data = {
             var loremValues: [String] = []
             for _ in 1...1_500 {
                 loremValues.append("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
             }
 
-            return loremValues.joinWithSeparator(" ").dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            return loremValues.joined(separator: " ").data(using: .utf8, allowLossyConversion: false)!
         }()
-        let loremData2: NSData = {
+        let loremData2: Data = {
             var loremValues: [String] = []
             for _ in 1...1_500 {
                 loremValues.append("Lorem ipsum dolor sit amet, nam no graeco recusabo appellantur.")
             }
 
-            return loremValues.joinWithSeparator(" ").dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+            return loremValues.joined(separator: " ").data(using: .utf8, allowLossyConversion: false)!
         }()
 
-        let expectation = expectationWithDescription("multipart form data upload should succeed")
+        let expectation = self.expectation(description: "multipart form data upload should succeed")
 
-        var byteValues: [(bytes: Int64, totalBytes: Int64, totalBytesExpected: Int64)] = []
-        var progressValues: [(completedUnitCount: Int64, totalUnitCount: Int64)] = []
-        var request: NSURLRequest?
-        var response: NSHTTPURLResponse?
-        var data: NSData?
-        var error: NSError?
+        var uploadProgressValues: [Double] = []
+        var downloadProgressValues: [Double] = []
+
+        var response: DefaultDataResponse?
 
         // When
         Alamofire.upload(
-            .POST,
-            URLString,
             multipartFormData: { multipartFormData in
-                multipartFormData.appendBodyPart(data: loremData1, name: "lorem1")
-                multipartFormData.appendBodyPart(data: loremData2, name: "lorem2")
+                multipartFormData.append(loremData1, withName: "lorem1")
+                multipartFormData.append(loremData2, withName: "lorem2")
             },
-            encodingMemoryThreshold: streamFromDisk ? 0 : 100_000_000,
+            usingThreshold: streamFromDisk ? 0 : 100_000_000,
+            to: urlString,
             encodingCompletion: { result in
                 switch result {
-                case .Success(let upload, _, _):
-                    upload.progress { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
-                        let bytes = (
-                            bytes: bytesWritten,
-                            totalBytes: totalBytesWritten,
-                            totalBytesExpected: totalBytesExpectedToWrite
-                        )
-                        byteValues.append(bytes)
-
-                        let progress = (
-                            completedUnitCount: upload.progress.completedUnitCount,
-                            totalUnitCount: upload.progress.totalUnitCount
-                        )
-                        progressValues.append(progress)
-                    }
-                    upload.response { responseRequest, responseResponse, responseData, responseError in
-                        request = responseRequest
-                        response = responseResponse
-                        data = responseData
-                        error = responseError
-
-                        expectation.fulfill()
-                    }
-                case .Failure:
+                case .success(let upload, _, _):
+                    upload
+                        .uploadProgress { progress in
+                            uploadProgressValues.append(progress.fractionCompleted)
+                        }
+                        .downloadProgress { progress in
+                            downloadProgressValues.append(progress.fractionCompleted)
+                        }
+                        .response { resp in
+                            response = resp
+                            expectation.fulfill()
+                        }
+                case .failure:
                     expectation.fulfill()
                 }
             }
         )
 
-        waitForExpectationsWithTimeout(timeout, handler: nil)
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request, "request should not be nil")
-        XCTAssertNotNil(response, "response should not be nil")
-        XCTAssertNotNil(data, "data should not be nil")
-        XCTAssertNil(error, "error should be nil")
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
 
-        XCTAssertEqual(byteValues.count, progressValues.count, "byteValues count should equal progressValues count")
+        var previousUploadProgress: Double = uploadProgressValues.first ?? 0.0
 
-        if byteValues.count == progressValues.count {
-            for index in 0..<byteValues.count {
-                let byteValue = byteValues[index]
-                let progressValue = progressValues[index]
-
-                XCTAssertGreaterThan(byteValue.bytes, 0, "reported bytes should always be greater than 0")
-                XCTAssertEqual(
-                    byteValue.totalBytes,
-                    progressValue.completedUnitCount,
-                    "total bytes should be equal to completed unit count"
-                )
-                XCTAssertEqual(
-                    byteValue.totalBytesExpected,
-                    progressValue.totalUnitCount,
-                    "total bytes expected should be equal to total unit count"
-                )
-            }
+        for progress in uploadProgressValues {
+            XCTAssertGreaterThanOrEqual(progress, previousUploadProgress)
+            previousUploadProgress = progress
         }
 
-        if let
-            lastByteValue = byteValues.last,
-            lastProgressValue = progressValues.last
-        {
-            let byteValueFractionalCompletion = Double(lastByteValue.totalBytes) / Double(lastByteValue.totalBytesExpected)
-            let progressValueFractionalCompletion = Double(lastProgressValue.0) / Double(lastProgressValue.1)
-
-            XCTAssertEqual(byteValueFractionalCompletion, 1.0, "byte value fractional completion should equal 1.0")
-            XCTAssertEqual(
-                progressValueFractionalCompletion,
-                1.0,
-                "progress value fractional completion should equal 1.0"
-            )
+        if let lastProgressValue = uploadProgressValues.last {
+            XCTAssertEqual(lastProgressValue, 1.0)
         } else {
-            XCTFail("last item in bytesValues and progressValues should not be nil")
+            XCTFail("last item in uploadProgressValues should not be nil")
+        }
+
+        var previousDownloadProgress: Double = downloadProgressValues.first ?? 0.0
+
+        for progress in downloadProgressValues {
+            XCTAssertGreaterThanOrEqual(progress, previousDownloadProgress)
+            previousDownloadProgress = progress
+        }
+
+        if let lastProgressValue = downloadProgressValues.last {
+            XCTAssertEqual(lastProgressValue, 1.0)
+        } else {
+            XCTFail("last item in downloadProgressValues should not be nil")
         }
     }
 }

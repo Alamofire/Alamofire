@@ -1,7 +1,7 @@
 //
 //  ServerTrustPolicy.swift
 //
-//  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,119 +25,119 @@
 import Foundation
 
 /// Responsible for managing the mapping of `ServerTrustPolicy` objects to a given host.
-public class ServerTrustPolicyManager {
+open class ServerTrustPolicyManager {
     /// The dictionary of policies mapped to a particular host.
-    public let policies: [String: ServerTrustPolicy]
+    open let policies: [String: ServerTrustPolicy]
 
-    /**
-        Initializes the `ServerTrustPolicyManager` instance with the given policies.
-
-        Since different servers and web services can have different leaf certificates, intermediate and even root 
-        certficates, it is important to have the flexibility to specify evaluation policies on a per host basis. This 
-        allows for scenarios such as using default evaluation for host1, certificate pinning for host2, public key 
-        pinning for host3 and disabling evaluation for host4.
-
-        - parameter policies: A dictionary of all policies mapped to a particular host.
-
-        - returns: The new `ServerTrustPolicyManager` instance.
-    */
+    /// Initializes the `ServerTrustPolicyManager` instance with the given policies.
+    ///
+    /// Since different servers and web services can have different leaf certificates, intermediate and even root
+    /// certficates, it is important to have the flexibility to specify evaluation policies on a per host basis. This
+    /// allows for scenarios such as using default evaluation for host1, certificate pinning for host2, public key
+    /// pinning for host3 and disabling evaluation for host4.
+    ///
+    /// - parameter policies: A dictionary of all policies mapped to a particular host.
+    ///
+    /// - returns: The new `ServerTrustPolicyManager` instance.
     public init(policies: [String: ServerTrustPolicy]) {
         self.policies = policies
     }
 
-    /**
-        Returns the `ServerTrustPolicy` for the given host if applicable.
-
-        By default, this method will return the policy that perfectly matches the given host. Subclasses could override
-        this method and implement more complex mapping implementations such as wildcards.
-
-        - parameter host: The host to use when searching for a matching policy.
-
-        - returns: The server trust policy for the given host if found.
-    */
-    public func serverTrustPolicyForHost(host: String) -> ServerTrustPolicy? {
+    /// Returns the `ServerTrustPolicy` for the given host if applicable.
+    ///
+    /// By default, this method will return the policy that perfectly matches the given host. Subclasses could override
+    /// this method and implement more complex mapping implementations such as wildcards.
+    ///
+    /// - parameter host: The host to use when searching for a matching policy.
+    ///
+    /// - returns: The server trust policy for the given host if found.
+    open func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
         return policies[host]
     }
 }
 
 // MARK: -
 
-extension NSURLSession {
+extension URLSession {
     private struct AssociatedKeys {
-        static var ManagerKey = "NSURLSession.ServerTrustPolicyManager"
+        static var managerKey = "URLSession.ServerTrustPolicyManager"
     }
 
     var serverTrustPolicyManager: ServerTrustPolicyManager? {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.ManagerKey) as? ServerTrustPolicyManager
+            return objc_getAssociatedObject(self, &AssociatedKeys.managerKey) as? ServerTrustPolicyManager
         }
         set (manager) {
-            objc_setAssociatedObject(self, &AssociatedKeys.ManagerKey, manager, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &AssociatedKeys.managerKey, manager, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
 }
 
 // MARK: - ServerTrustPolicy
 
-/**
-    The `ServerTrustPolicy` evaluates the server trust generally provided by an `NSURLAuthenticationChallenge` when 
-    connecting to a server over a secure HTTPS connection. The policy configuration then evaluates the server trust 
-    with a given set of criteria to determine whether the server trust is valid and the connection should be made.
-
-    Using pinned certificates or public keys for evaluation helps prevent man-in-the-middle (MITM) attacks and other 
-    vulnerabilities. Applications dealing with sensitive customer data or financial information are strongly encouraged 
-    to route all communication over an HTTPS connection with pinning enabled.
-
-    - PerformDefaultEvaluation: Uses the default server trust evaluation while allowing you to control whether to 
-                                validate the host provided by the challenge. Applications are encouraged to always 
-                                validate the host in production environments to guarantee the validity of the server's 
-                                certificate chain.
-
-    - PinCertificates:          Uses the pinned certificates to validate the server trust. The server trust is
-                                considered valid if one of the pinned certificates match one of the server certificates. 
-                                By validating both the certificate chain and host, certificate pinning provides a very 
-                                secure form of server trust validation mitigating most, if not all, MITM attacks. 
-                                Applications are encouraged to always validate the host and require a valid certificate 
-                                chain in production environments.
-
-    - PinPublicKeys:            Uses the pinned public keys to validate the server trust. The server trust is considered
-                                valid if one of the pinned public keys match one of the server certificate public keys. 
-                                By validating both the certificate chain and host, public key pinning provides a very 
-                                secure form of server trust validation mitigating most, if not all, MITM attacks. 
-                                Applications are encouraged to always validate the host and require a valid certificate 
-                                chain in production environments.
-
-    - DisableEvaluation:        Disables all evaluation which in turn will always consider any server trust as valid.
-
-    - CustomEvaluation:         Uses the associated closure to evaluate the validity of the server trust.
-*/
+/// The `ServerTrustPolicy` evaluates the server trust generally provided by an `NSURLAuthenticationChallenge` when
+/// connecting to a server over a secure HTTPS connection. The policy configuration then evaluates the server trust
+/// with a given set of criteria to determine whether the server trust is valid and the connection should be made.
+///
+/// Using pinned certificates or public keys for evaluation helps prevent man-in-the-middle (MITM) attacks and other
+/// vulnerabilities. Applications dealing with sensitive customer data or financial information are strongly encouraged
+/// to route all communication over an HTTPS connection with pinning enabled.
+///
+/// - performDefaultEvaluation: Uses the default server trust evaluation while allowing you to control whether to
+///                             validate the host provided by the challenge. Applications are encouraged to always
+///                             validate the host in production environments to guarantee the validity of the server's
+///                             certificate chain.
+///
+/// - performRevokedEvaluation: Uses the default and revoked server trust evaluations allowing you to control whether to
+///                             validate the host provided by the challenge as well as specify the revocation flags for
+///                             testing for revoked certificates. Apple platforms did not start testing for revoked
+///                             certificates automatically until iOS 10.1, macOS 10.12 and tvOS 10.1 which is
+///                             demonstrated in our TLS tests. Applications are encouraged to always validate the host
+///                             in production environments to guarantee the validity of the server's certificate chain.
+///
+/// - pinCertificates:          Uses the pinned certificates to validate the server trust. The server trust is
+///                             considered valid if one of the pinned certificates match one of the server certificates.
+///                             By validating both the certificate chain and host, certificate pinning provides a very
+///                             secure form of server trust validation mitigating most, if not all, MITM attacks.
+///                             Applications are encouraged to always validate the host and require a valid certificate
+///                             chain in production environments.
+///
+/// - pinPublicKeys:            Uses the pinned public keys to validate the server trust. The server trust is considered
+///                             valid if one of the pinned public keys match one of the server certificate public keys.
+///                             By validating both the certificate chain and host, public key pinning provides a very
+///                             secure form of server trust validation mitigating most, if not all, MITM attacks.
+///                             Applications are encouraged to always validate the host and require a valid certificate
+///                             chain in production environments.
+///
+/// - disableEvaluation:        Disables all evaluation which in turn will always consider any server trust as valid.
+///
+/// - customEvaluation:         Uses the associated closure to evaluate the validity of the server trust.
 public enum ServerTrustPolicy {
-    case PerformDefaultEvaluation(validateHost: Bool)
-    case PinCertificates(certificates: [SecCertificate], validateCertificateChain: Bool, validateHost: Bool)
-    case PinPublicKeys(publicKeys: [SecKey], validateCertificateChain: Bool, validateHost: Bool)
-    case DisableEvaluation
-    case CustomEvaluation((serverTrust: SecTrust, host: String) -> Bool)
+    case performDefaultEvaluation(validateHost: Bool)
+    case performRevokedEvaluation(validateHost: Bool, revocationFlags: CFOptionFlags)
+    case pinCertificates(certificates: [SecCertificate], validateCertificateChain: Bool, validateHost: Bool)
+    case pinPublicKeys(publicKeys: [SecKey], validateCertificateChain: Bool, validateHost: Bool)
+    case disableEvaluation
+    case customEvaluation((_ serverTrust: SecTrust, _ host: String) -> Bool)
 
     // MARK: - Bundle Location
 
-    /**
-        Returns all certificates within the given bundle with a `.cer` file extension.
-
-        - parameter bundle: The bundle to search for all `.cer` files.
-
-        - returns: All certificates within the given bundle.
-    */
-    public static func certificatesInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecCertificate] {
+    /// Returns all certificates within the given bundle with a `.cer` file extension.
+    ///
+    /// - parameter bundle: The bundle to search for all `.cer` files.
+    ///
+    /// - returns: All certificates within the given bundle.
+    public static func certificates(in bundle: Bundle = Bundle.main) -> [SecCertificate] {
         var certificates: [SecCertificate] = []
 
         let paths = Set([".cer", ".CER", ".crt", ".CRT", ".der", ".DER"].map { fileExtension in
-            bundle.pathsForResourcesOfType(fileExtension, inDirectory: nil)
-        }.flatten())
+            bundle.paths(forResourcesOfType: fileExtension, inDirectory: nil)
+        }.joined())
 
         for path in paths {
-            if let
-                certificateData = NSData(contentsOfFile: path),
-                certificate = SecCertificateCreateWithData(nil, certificateData)
+            if
+                let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)) as CFData,
+                let certificate = SecCertificateCreateWithData(nil, certificateData)
             {
                 certificates.append(certificate)
             }
@@ -146,18 +146,16 @@ public enum ServerTrustPolicy {
         return certificates
     }
 
-    /**
-        Returns all public keys within the given bundle with a `.cer` file extension.
-
-        - parameter bundle: The bundle to search for all `*.cer` files.
-
-        - returns: All public keys within the given bundle.
-    */
-    public static func publicKeysInBundle(bundle: NSBundle = NSBundle.mainBundle()) -> [SecKey] {
+    /// Returns all public keys within the given bundle with a `.cer` file extension.
+    ///
+    /// - parameter bundle: The bundle to search for all `*.cer` files.
+    ///
+    /// - returns: All public keys within the given bundle.
+    public static func publicKeys(in bundle: Bundle = Bundle.main) -> [SecKey] {
         var publicKeys: [SecKey] = []
 
-        for certificate in certificatesInBundle(bundle) {
-            if let publicKey = publicKeyForCertificate(certificate) {
+        for certificate in certificates(in: bundle) {
+            if let publicKey = publicKey(for: certificate) {
                 publicKeys.append(publicKey)
             }
         }
@@ -167,57 +165,61 @@ public enum ServerTrustPolicy {
 
     // MARK: - Evaluation
 
-    /**
-        Evaluates whether the server trust is valid for the given host.
-
-        - parameter serverTrust: The server trust to evaluate.
-        - parameter host:        The host of the challenge protection space.
-
-        - returns: Whether the server trust is valid.
-    */
-    public func evaluateServerTrust(serverTrust: SecTrust, isValidForHost host: String) -> Bool {
+    /// Evaluates whether the server trust is valid for the given host.
+    ///
+    /// - parameter serverTrust: The server trust to evaluate.
+    /// - parameter host:        The host of the challenge protection space.
+    ///
+    /// - returns: Whether the server trust is valid.
+    public func evaluate(_ serverTrust: SecTrust, forHost host: String) -> Bool {
         var serverTrustIsValid = false
 
         switch self {
-        case let .PerformDefaultEvaluation(validateHost):
+        case let .performDefaultEvaluation(validateHost):
             let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
-            SecTrustSetPolicies(serverTrust, [policy])
+            SecTrustSetPolicies(serverTrust, policy)
 
             serverTrustIsValid = trustIsValid(serverTrust)
-        case let .PinCertificates(pinnedCertificates, validateCertificateChain, validateHost):
+        case let .performRevokedEvaluation(validateHost, revocationFlags):
+            let defaultPolicy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
+            let revokedPolicy = SecPolicyCreateRevocation(revocationFlags)
+            SecTrustSetPolicies(serverTrust, [defaultPolicy, revokedPolicy] as CFTypeRef)
+
+            serverTrustIsValid = trustIsValid(serverTrust)
+        case let .pinCertificates(pinnedCertificates, validateCertificateChain, validateHost):
             if validateCertificateChain {
                 let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
-                SecTrustSetPolicies(serverTrust, [policy])
+                SecTrustSetPolicies(serverTrust, policy)
 
-                SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates)
+                SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates as CFArray)
                 SecTrustSetAnchorCertificatesOnly(serverTrust, true)
 
                 serverTrustIsValid = trustIsValid(serverTrust)
             } else {
-                let serverCertificatesDataArray = certificateDataForTrust(serverTrust)
-                let pinnedCertificatesDataArray = certificateDataForCertificates(pinnedCertificates)
+                let serverCertificatesDataArray = certificateData(for: serverTrust)
+                let pinnedCertificatesDataArray = certificateData(for: pinnedCertificates)
 
                 outerLoop: for serverCertificateData in serverCertificatesDataArray {
                     for pinnedCertificateData in pinnedCertificatesDataArray {
-                        if serverCertificateData.isEqualToData(pinnedCertificateData) {
+                        if serverCertificateData == pinnedCertificateData {
                             serverTrustIsValid = true
                             break outerLoop
                         }
                     }
                 }
             }
-        case let .PinPublicKeys(pinnedPublicKeys, validateCertificateChain, validateHost):
+        case let .pinPublicKeys(pinnedPublicKeys, validateCertificateChain, validateHost):
             var certificateChainEvaluationPassed = true
 
             if validateCertificateChain {
                 let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
-                SecTrustSetPolicies(serverTrust, [policy])
+                SecTrustSetPolicies(serverTrust, policy)
 
                 certificateChainEvaluationPassed = trustIsValid(serverTrust)
             }
 
             if certificateChainEvaluationPassed {
-                outerLoop: for serverPublicKey in ServerTrustPolicy.publicKeysForTrust(serverTrust) as [AnyObject] {
+                outerLoop: for serverPublicKey in ServerTrustPolicy.publicKeys(for: serverTrust) as [AnyObject] {
                     for pinnedPublicKey in pinnedPublicKeys as [AnyObject] {
                         if serverPublicKey.isEqual(pinnedPublicKey) {
                             serverTrustIsValid = true
@@ -226,10 +228,10 @@ public enum ServerTrustPolicy {
                     }
                 }
             }
-        case .DisableEvaluation:
+        case .disableEvaluation:
             serverTrustIsValid = true
-        case let .CustomEvaluation(closure):
-            serverTrustIsValid = closure(serverTrust: serverTrust, host: host)
+        case let .customEvaluation(closure):
+            serverTrustIsValid = closure(serverTrust, host)
         }
 
         return serverTrustIsValid
@@ -237,15 +239,16 @@ public enum ServerTrustPolicy {
 
     // MARK: - Private - Trust Validation
 
-    private func trustIsValid(trust: SecTrust) -> Bool {
+    private func trustIsValid(_ trust: SecTrust) -> Bool {
         var isValid = false
 
-        var result = SecTrustResultType(kSecTrustResultInvalid)
+        var result = SecTrustResultType.invalid
         let status = SecTrustEvaluate(trust, &result)
 
         if status == errSecSuccess {
-            let unspecified = SecTrustResultType(kSecTrustResultUnspecified)
-            let proceed = SecTrustResultType(kSecTrustResultProceed)
+            let unspecified = SecTrustResultType.unspecified
+            let proceed = SecTrustResultType.proceed
+
 
             isValid = result == unspecified || result == proceed
         }
@@ -255,7 +258,7 @@ public enum ServerTrustPolicy {
 
     // MARK: - Private - Certificate Data
 
-    private func certificateDataForTrust(trust: SecTrust) -> [NSData] {
+    private func certificateData(for trust: SecTrust) -> [Data] {
         var certificates: [SecCertificate] = []
 
         for index in 0..<SecTrustGetCertificateCount(trust) {
@@ -264,22 +267,22 @@ public enum ServerTrustPolicy {
             }
         }
 
-        return certificateDataForCertificates(certificates)
+        return certificateData(for: certificates)
     }
 
-    private func certificateDataForCertificates(certificates: [SecCertificate]) -> [NSData] {
-        return certificates.map { SecCertificateCopyData($0) as NSData }
+    private func certificateData(for certificates: [SecCertificate]) -> [Data] {
+        return certificates.map { SecCertificateCopyData($0) as Data }
     }
 
     // MARK: - Private - Public Key Extraction
 
-    private static func publicKeysForTrust(trust: SecTrust) -> [SecKey] {
+    private static func publicKeys(for trust: SecTrust) -> [SecKey] {
         var publicKeys: [SecKey] = []
 
         for index in 0..<SecTrustGetCertificateCount(trust) {
-            if let
-                certificate = SecTrustGetCertificateAtIndex(trust, index),
-                publicKey = publicKeyForCertificate(certificate)
+            if
+                let certificate = SecTrustGetCertificateAtIndex(trust, index),
+                let publicKey = publicKey(for: certificate)
             {
                 publicKeys.append(publicKey)
             }
@@ -288,14 +291,14 @@ public enum ServerTrustPolicy {
         return publicKeys
     }
 
-    private static func publicKeyForCertificate(certificate: SecCertificate) -> SecKey? {
+    private static func publicKey(for certificate: SecCertificate) -> SecKey? {
         var publicKey: SecKey?
 
         let policy = SecPolicyCreateBasicX509()
         var trust: SecTrust?
         let trustCreationStatus = SecTrustCreateWithCertificates(certificate, policy, &trust)
 
-        if let trust = trust where trustCreationStatus == errSecSuccess {
+        if let trust = trust, trustCreationStatus == errSecSuccess {
             publicKey = SecTrustCopyPublicKey(trust)
         }
 

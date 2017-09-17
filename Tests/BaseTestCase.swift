@@ -1,7 +1,7 @@
 //
 //  BaseTestCase.swift
 //
-//  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -27,10 +27,20 @@ import Foundation
 import XCTest
 
 class BaseTestCase: XCTestCase {
-    let timeout: NSTimeInterval = 30.0
+    let timeout: TimeInterval = 30.0
 
-    func URLForResource(fileName: String, withExtension: String) -> NSURL {
-        let bundle = NSBundle(forClass: BaseTestCase.self)
-        return bundle.URLForResource(fileName, withExtension: withExtension)!
+    static var testDirectoryURL: URL { return FileManager.temporaryDirectoryURL.appendingPathComponent("org.alamofire.tests") }
+    var testDirectoryURL: URL { return BaseTestCase.testDirectoryURL }
+
+    override func setUp() {
+        super.setUp()
+
+        FileManager.removeAllItemsInsideDirectory(at: testDirectoryURL)
+        FileManager.createDirectory(at: testDirectoryURL)
+    }
+
+    func url(forResource fileName: String, withExtension ext: String) -> URL {
+        let bundle = Bundle(for: BaseTestCase.self)
+        return bundle.url(forResource: fileName, withExtension: ext)!
     }
 }
