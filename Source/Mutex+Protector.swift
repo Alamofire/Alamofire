@@ -67,6 +67,39 @@ final public class Mutex {
     }
 }
 
+/// An `os_unfair_lock` wrapper.
+@available (iOS 10.0, macOS 10.12, tvOS 10.0, watchOS 3.0, *)
+final public class UnfairLock {
+    private var unfairLock = os_unfair_lock()
+    
+    public init() { }
+    
+    fileprivate func lock() {
+        os_unfair_lock_lock(&unfairLock)
+    }
+    
+    fileprivate func unlock() {
+        os_unfair_lock_unlock(&unfairLock)
+    }
+    
+    /// Execute a value producing closure while aquiring the mutex.
+    ///
+    /// - Parameter closure: The closure to run.
+    /// - Returns:           The value the closure generated.
+    public func around<T>(closure: () -> T) -> T {
+        lock(); defer { unlock() }
+        return closure()
+    }
+    
+    /// Execute a closure while aquiring the mutex.
+    ///
+    /// - Parameter closure: The closure to run.
+    public func around(closure: () -> Void) {
+        lock(); defer { unlock() }
+        return closure()
+    }
+}
+
 /// A thread-safe wrapper around a value.
 public final class Protector<T> {
     private let mutex = Mutex()
