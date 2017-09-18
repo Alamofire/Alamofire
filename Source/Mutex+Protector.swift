@@ -76,8 +76,8 @@ public final class Protector<T> {
         self.ward = ward
     }
 
-    /// The contained value. Safe for single read (unchained) or setting.
-    public var value: T {
+    /// The contained value. Unsafe for anything more than direct read or write.
+    public var unsafeValue: T {
         get { return mutex.around { ward } }
         set { mutex.around { ward = newValue } }
     }
@@ -85,7 +85,7 @@ public final class Protector<T> {
     /// Synchronously read or transform the contained value.
     ///
     /// - Parameter closure: The closure to execute.
-    /// - Returns:         The return value of the closure passed.
+    /// - Returns:           The return value of the closure passed.
     public func read<U>(_ closure: (T) -> U) -> U {
         return mutex.around { closure(self.ward) }
     }
@@ -99,34 +99,33 @@ public final class Protector<T> {
         return mutex.around { closure(&self.ward) }
     }
 }
-//
-//public extension Protector where T: RangeReplaceableCollection {
-//
-//    func append(_ newElement: T.Iterator.Element) {
-//        write { (ward: inout T) in
-//            ward.append(newElement)
-//        }
-//    }
-//
-//    func append<S: Sequence>(contentsOf newElements: S) where S.Iterator.Element == T.Iterator.Element {
-//        write { (ward: inout T) in
-//            ward.append(contentsOf: newElements)
-//        }
-//    }
-//
-//    func append<C: Collection>(contentsOf newElements: C) where C.Iterator.Element == T.Iterator.Element {
-//        write { (ward: inout T) in
-//            ward.append(contentsOf: newElements)
-//        }
-//    }
-//}
-//
-//public extension Protector where T: Strideable {
-//
-//    func advance(by stride: T.Stride) {
-//        write { (ward: inout T) in
-//            ward = ward.advanced(by: stride)
-//        }
-//    }
-//}
 
+public extension Protector where T: RangeReplaceableCollection {
+
+    func append(_ newElement: T.Iterator.Element) {
+        write { (ward: inout T) in
+            ward.append(newElement)
+        }
+    }
+
+    func append<S: Sequence>(contentsOf newElements: S) where S.Iterator.Element == T.Iterator.Element {
+        write { (ward: inout T) in
+            ward.append(contentsOf: newElements)
+        }
+    }
+
+    func append<C: Collection>(contentsOf newElements: C) where C.Iterator.Element == T.Iterator.Element {
+        write { (ward: inout T) in
+            ward.append(contentsOf: newElements)
+        }
+    }
+}
+
+public extension Protector where T: Strideable {
+
+    func advance(by stride: T.Stride) {
+        write { (ward: inout T) in
+            ward = ward.advanced(by: stride)
+        }
+    }
+}

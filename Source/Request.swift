@@ -88,8 +88,8 @@ open class Request {
 
     /// The delegate for the underlying task.
     open internal(set) var delegate: TaskDelegate {
-        get { return protectedDelegate.value }
-        set { protectedDelegate.value = newValue }
+        get { return protectedDelegate.unsafeValue }
+        set { protectedDelegate.unsafeValue = newValue }
     }
 
     /// The underlying task.
