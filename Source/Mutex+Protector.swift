@@ -36,22 +36,22 @@ private protocol Lock {
 /// A `pthread_mutex` wrapper, inspired by ProcedureKit.
 final class Mutex: Lock {
     private var mutex = pthread_mutex_t()
-    
+
     public init() {
         let result = pthread_mutex_init(&mutex, nil)
         precondition(result == 0, "Failed to create pthread mutex")
     }
-    
+
     deinit {
         let result = pthread_mutex_destroy(&mutex)
         assert(result == 0, "Failed to destroy mutex")
     }
-    
+
     fileprivate func lock() {
         let result = pthread_mutex_lock(&mutex)
         assert(result == 0, "Failed to lock mutex")
     }
-    
+
     fileprivate func unlock() {
         let result = pthread_mutex_unlock(&mutex)
         assert(result == 0, "Failed to unlock mutex")
@@ -65,7 +65,7 @@ final class Mutex: Lock {
         lock(); defer { unlock() }
         return closure()
     }
-    
+
     /// Execute a closure while aquiring the mutex.
     ///
     /// - Parameter closure: The closure to run.
@@ -79,17 +79,17 @@ final class Mutex: Lock {
 @available (iOS 10.0, macOS 10.12, tvOS 10.0, watchOS 3.0, *)
 final class UnfairLock: Lock {
     private var unfairLock = os_unfair_lock()
-    
+
     public init() { }
-    
+
     fileprivate func lock() {
         os_unfair_lock_lock(&unfairLock)
     }
-    
+
     fileprivate func unlock() {
         os_unfair_lock_unlock(&unfairLock)
     }
-    
+
     /// Execute a value producing closure while aquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
@@ -98,7 +98,7 @@ final class UnfairLock: Lock {
         lock(); defer { unlock() }
         return closure()
     }
-    
+
     /// Execute a closure while aquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
