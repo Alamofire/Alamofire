@@ -594,6 +594,7 @@
 			isa = PBXGroup;
 			children = (
 				4C1DC8531B68908E00476DE3 /* AFError.swift */,
+				3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */,
 				4CB928281C66BFBC00CE5F08 /* Notifications.swift */,
 				4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */,
 				4CDE2C391AF899EC00BABAE5 /* Request.swift */,
@@ -602,7 +603,6 @@
 				4CFCFE2D1D56D31700A76388 /* SessionDelegate.swift */,
 				4CDE2C361AF8932A00BABAE5 /* SessionManager.swift */,
 				4CFCFE381D56E8D900A76388 /* TaskDelegate.swift */,
-				3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";

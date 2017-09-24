@@ -25,8 +25,16 @@
 import Foundation
 
 
+/// A lock abstraction.
+private protocol Lock {
+    func lock()
+    func unlock()
+    func around<T>(_ closure: () -> T) -> T
+    func around(_ closure: () -> Void)
+}
+
 /// A `pthread_mutex` wrapper, inspired by ProcedureKit.
-final public class Mutex {
+final class Mutex: Lock {
     private var mutex = pthread_mutex_t()
     
     public init() {
@@ -53,7 +61,7 @@ final public class Mutex {
     ///
     /// - Parameter closure: The closure to run.
     /// - Returns:           The value the closure generated.
-    public func around<T>(closure: () -> T) -> T {
+    func around<T>(_ closure: () -> T) -> T {
         lock(); defer { unlock() }
         return closure()
     }
@@ -61,7 +69,7 @@ final public class Mutex {
     /// Execute a closure while aquiring the mutex.
     ///
     /// - Parameter closure: The closure to run.
-    public func around(closure: () -> Void) {
+    func around(_ closure: () -> Void) {
         lock(); defer { unlock() }
         return closure()
     }
@@ -69,7 +77,7 @@ final public class Mutex {
 
 /// An `os_unfair_lock` wrapper.
 @available (iOS 10.0, macOS 10.12, tvOS 10.0, watchOS 3.0, *)
-final public class UnfairLock {
+final class UnfairLock: Lock {
     private var unfairLock = os_unfair_lock()
     
     public init() { }
@@ -82,45 +90,51 @@ final public class UnfairLock {
         os_unfair_lock_unlock(&unfairLock)
     }
     
-    /// Execute a value producing closure while aquiring the mutex.
+    /// Execute a value producing closure while aquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
     /// - Returns:           The value the closure generated.
-    public func around<T>(closure: () -> T) -> T {
+    func around<T>(_ closure: () -> T) -> T {
         lock(); defer { unlock() }
         return closure()
     }
     
-    /// Execute a closure while aquiring the mutex.
+    /// Execute a closure while aquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
-    public func around(closure: () -> Void) {
+    func around(_ closure: () -> Void) {
         lock(); defer { unlock() }
         return closure()
     }
 }
 
 /// A thread-safe wrapper around a value.
-public final class Protector<T> {
-    private let mutex = Mutex()
+final class Protector<T> {
+    private let lock: Lock = {
+        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, watchOS 3.0, *) {
+            return UnfairLock()
+        } else {
+            return Mutex()
+        }
+    }()
     private var ward: T
 
-    public init(_ ward: T) {
+    init(_ ward: T) {
         self.ward = ward
     }
 
     /// The contained value. Unsafe for anything more than direct read or write.
-    public var unsafeValue: T {
-        get { return mutex.around { ward } }
-        set { mutex.around { ward = newValue } }
+    var unsafeValue: T {
+        get { return lock.around { ward } }
+        set { lock.around { ward = newValue } }
     }
 
     /// Synchronously read or transform the contained value.
     ///
     /// - Parameter closure: The closure to execute.
     /// - Returns:           The return value of the closure passed.
-    public func read<U>(_ closure: (T) -> U) -> U {
-        return mutex.around { closure(self.ward) }
+    func read<U>(_ closure: (T) -> U) -> U {
+        return lock.around { closure(self.ward) }
     }
 
     /// Synchronously modify the protected value.
@@ -128,13 +142,12 @@ public final class Protector<T> {
     /// - Parameter closure: The closure to execute.
     /// - Returns:           The modified value.
     @discardableResult
-    public func write<U>(_ closure: (inout T) -> U) -> U {
-        return mutex.around { closure(&self.ward) }
+    func write<U>(_ closure: (inout T) -> U) -> U {
+        return lock.around { closure(&self.ward) }
     }
 }
 
-public extension Protector where T: RangeReplaceableCollection {
-
+extension Protector where T: RangeReplaceableCollection {
     func append(_ newElement: T.Iterator.Element) {
         write { (ward: inout T) in
             ward.append(newElement)
@@ -154,8 +167,7 @@ public extension Protector where T: RangeReplaceableCollection {
     }
 }
 
-public extension Protector where T: Strideable {
-
+extension Protector where T: Strideable {
     func advance(by stride: T.Stride) {
         write { (ward: inout T) in
             ward = ward.advanced(by: stride)
