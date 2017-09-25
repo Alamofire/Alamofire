@@ -412,7 +412,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let manager: SessionManager = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.ephemeral
-                configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+                configuration.httpHeaders = SessionManager.defaultHTTPHeaders
 
                 return configuration
             }()

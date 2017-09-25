@@ -44,7 +44,7 @@ class DownloadInitializationTestCase: BaseTestCase {
     func testDownloadClassMethodWithMethodURLHeadersAndDestination() {
         // Given
         let urlString = "https://httpbin.org/"
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = [.authorization("123456")]
 
         // When
         let request = Alamofire.download(urlString, headers: headers)
@@ -216,7 +216,7 @@ class DownloadResponseTestCase: BaseTestCase {
         // Given
         let fileURL = randomCachesFileURL
         let urlString = "https://httpbin.org/get"
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = [.authorization("123456")]
         let destination: DownloadRequest.DownloadFileDestination = { _, _ in (fileURL, []) }
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")

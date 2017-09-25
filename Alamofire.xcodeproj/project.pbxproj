@@ -25,6 +25,13 @@
 		3191B5761F5F53A6003960A8 /* Mutex+Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */; };
 		3191B5771F5F53A6003960A8 /* Mutex+Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */; };
 		3191B5781F5F53A6003960A8 /* Mutex+Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */; };
+		31CA99BF1F785F63001FA0DC /* HTTPHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CA99BE1F785F63001FA0DC /* HTTPHeaders.swift */; };
+		31CA99C01F785F63001FA0DC /* HTTPHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CA99BE1F785F63001FA0DC /* HTTPHeaders.swift */; };
+		31CA99C11F785F63001FA0DC /* HTTPHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CA99BE1F785F63001FA0DC /* HTTPHeaders.swift */; };
+		31CA99C21F785F63001FA0DC /* HTTPHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CA99BE1F785F63001FA0DC /* HTTPHeaders.swift */; };
+		31CA99C41F78929F001FA0DC /* HTTPHeadersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CA99C31F78929F001FA0DC /* HTTPHeadersTests.swift */; };
+		31CA99C51F78929F001FA0DC /* HTTPHeadersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CA99C31F78929F001FA0DC /* HTTPHeadersTests.swift */; };
+		31CA99C61F78929F001FA0DC /* HTTPHeadersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CA99C31F78929F001FA0DC /* HTTPHeadersTests.swift */; };
 		31ED52E81D73891B00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
 		31ED52E91D73891C00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
 		31ED52EA1D73891C00199085 /* AFError+AlamofireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */; };
@@ -292,6 +299,8 @@
 		316250E41F00ABE900E207A6 /* ISSUE_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ISSUE_TEMPLATE.md; sourceTree = "<group>"; };
 		316250E51F00ACD000E207A6 /* PULL_REQUEST_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PULL_REQUEST_TEMPLATE.md; sourceTree = "<group>"; };
 		3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Mutex+Protector.swift"; sourceTree = "<group>"; };
+		31CA99BE1F785F63001FA0DC /* HTTPHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeaders.swift; sourceTree = "<group>"; };
+		31CA99C31F78929F001FA0DC /* HTTPHeadersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeadersTests.swift; sourceTree = "<group>"; };
 		31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AFError+AlamofireTests.swift"; sourceTree = "<group>"; };
 		4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseSerializationTests.swift; sourceTree = "<group>"; };
 		4C0B62501BB1001C009302D3 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
@@ -461,6 +470,7 @@
 			isa = PBXGroup;
 			children = (
 				4C341BB91B1A865A00C1B34D /* CacheTests.swift */,
+				31CA99C31F78929F001FA0DC /* HTTPHeadersTests.swift */,
 				4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */,
 				4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */,
 				4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */,
@@ -610,6 +620,7 @@
 		4CDE2C491AF8A14E00BABAE5 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				31CA99BE1F785F63001FA0DC /* HTTPHeaders.swift */,
 				4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */,
 				4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */,
 				4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */,
@@ -1193,6 +1204,7 @@
 				3191B5771F5F53A6003960A8 /* Mutex+Protector.swift in Sources */,
 				4CF627131BA7CBF60011A099 /* Validation.swift in Sources */,
 				4CF6270E1BA7CBF60011A099 /* MultipartFormData.swift in Sources */,
+				31CA99C11F785F63001FA0DC /* HTTPHeaders.swift in Sources */,
 				4C80F9F81BB730EF001B46D2 /* Response.swift in Sources */,
 				4CB9282B1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				4CF627091BA7CBF60011A099 /* SessionManager.swift in Sources */,
@@ -1215,6 +1227,7 @@
 				4CF627211BA7CC240011A099 /* TLSEvaluationTests.swift in Sources */,
 				4CF627221BA7CC240011A099 /* UploadTests.swift in Sources */,
 				4C9DCE7A1CB1BCE2003E6463 /* SessionDelegateTests.swift in Sources */,
+				31CA99C61F78929F001FA0DC /* HTTPHeadersTests.swift in Sources */,
 				4CF6271E1BA7CC240011A099 /* MultipartFormDataTests.swift in Sources */,
 				31ED52EA1D73891C00199085 /* AFError+AlamofireTests.swift in Sources */,
 				4CF627201BA7CC240011A099 /* ServerTrustPolicyTests.swift in Sources */,
@@ -1245,6 +1258,7 @@
 				3191B5761F5F53A6003960A8 /* Mutex+Protector.swift in Sources */,
 				4CDE2C471AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8551B68908E00476DE3 /* AFError.swift in Sources */,
+				31CA99C01F785F63001FA0DC /* HTTPHeaders.swift in Sources */,
 				4CDE2C381AF8932A00BABAE5 /* SessionManager.swift in Sources */,
 				4C0B62521BB1001C009302D3 /* Response.swift in Sources */,
 				4CB9282A1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
@@ -1270,6 +1284,7 @@
 				3191B5781F5F53A6003960A8 /* Mutex+Protector.swift in Sources */,
 				E4202FD11B667AA100C997FB /* Request.swift in Sources */,
 				4CEC605A1B745C9100E684F4 /* AFError.swift in Sources */,
+				31CA99C21F785F63001FA0DC /* HTTPHeaders.swift in Sources */,
 				E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */,
 				E4202FD31B667AA100C997FB /* SessionManager.swift in Sources */,
 				4C0B62531BB1001C009302D3 /* Response.swift in Sources */,
@@ -1295,6 +1310,7 @@
 				3191B5751F5F53A6003960A8 /* Mutex+Protector.swift in Sources */,
 				4CDE2C461AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				4C1DC8541B68908E00476DE3 /* AFError.swift in Sources */,
+				31CA99BF1F785F63001FA0DC /* HTTPHeaders.swift in Sources */,
 				4CDE2C371AF8932A00BABAE5 /* SessionManager.swift in Sources */,
 				4C0B62511BB1001C009302D3 /* Response.swift in Sources */,
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
@@ -1317,6 +1333,7 @@
 				4C33A1431B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBA1B1A865A00C1B34D /* CacheTests.swift in Sources */,
 				4C9DCE781CB1BCE2003E6463 /* SessionDelegateTests.swift in Sources */,
+				31CA99C41F78929F001FA0DC /* HTTPHeadersTests.swift in Sources */,
 				4CA028C51B7466C500C84163 /* ResultTests.swift in Sources */,
 				31ED52E81D73891B00199085 /* AFError+AlamofireTests.swift in Sources */,
 				4CCFA79A1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,
@@ -1344,6 +1361,7 @@
 				4C33A1441B52089C00873DFF /* ServerTrustPolicyTests.swift in Sources */,
 				4C341BBB1B1A865A00C1B34D /* CacheTests.swift in Sources */,
 				4C9DCE791CB1BCE2003E6463 /* SessionDelegateTests.swift in Sources */,
+				31CA99C51F78929F001FA0DC /* HTTPHeadersTests.swift in Sources */,
 				4CA028C61B7466C500C84163 /* ResultTests.swift in Sources */,
 				31ED52E91D73891C00199085 /* AFError+AlamofireTests.swift in Sources */,
 				4CCFA79B1B2BE71600B6F460 /* URLProtocolTests.swift in Sources */,

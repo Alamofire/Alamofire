@@ -37,7 +37,7 @@ class ProxyURLProtocol: URLProtocol {
     lazy var session: URLSession = {
         let configuration: URLSessionConfiguration = {
             let configuration = URLSessionConfiguration.ephemeral
-            configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+            configuration.httpHeaders = SessionManager.defaultHTTPHeaders
 
             return configuration
         }()

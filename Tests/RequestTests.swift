@@ -59,7 +59,7 @@ class RequestInitializationTestCase: BaseTestCase {
     func testRequestClassMethodWithMethodURLParametersAndHeaders() {
         // Given
         let urlString = "https://httpbin.org/get"
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = [.authorization("123456")]
 
         // When
         let request = Alamofire.request(urlString, parameters: ["foo": "bar"], headers: headers)
@@ -534,7 +534,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
 
         // When
-        let headers = [ "Accept-Language": "en-GB" ]
+        let headers: HTTPHeaders = [.acceptLanguage("en-GB")]
         let request = managerWithAcceptLanguageHeader.request(urlString, headers: headers)
         let components = cURLCommandComponents(for: request)
 

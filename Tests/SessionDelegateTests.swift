@@ -405,7 +405,7 @@ class SessionDelegateTestCase: BaseTestCase {
         // Given
         let redirectURLString = "https://httpbin.org/get"
         let urlString = "https://httpbin.org/redirect-to?url=\(redirectURLString)"
-        let headers = [
+        let headers: HTTPHeaders = [
             "Authorization": "1234",
             "Custom-Header": "foobar",
         ]

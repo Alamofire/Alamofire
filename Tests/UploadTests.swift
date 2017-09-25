@@ -45,7 +45,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLHeadersAndFile() {
         // Given
         let urlString = "https://httpbin.org/"
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = [.authorization("123456")]
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
 
         // When
@@ -83,7 +83,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLHeadersAndData() {
         // Given
         let urlString = "https://httpbin.org/"
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = [.authorization("123456")]
 
         // When
         let request = Alamofire.upload(Data(), to: urlString, headers: headers)
@@ -123,7 +123,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/"
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = [.authorization("123456")]
         let imageStream = InputStream(url: imageURL)!
 
         // When

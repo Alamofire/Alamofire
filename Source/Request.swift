@@ -64,7 +64,7 @@ protocol TaskConvertible {
 }
 
 /// A dictionary of headers to apply to a `URLRequest`.
-public typealias HTTPHeaders = [String: String]
+//public typealias HTTPHeaders = [String: String]
 
 // MARK: -
 
@@ -302,11 +302,7 @@ extension Request: CustomDebugStringConvertible {
                 let cookies = cookieStorage.cookies(for: url), !cookies.isEmpty
             {
                 let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value);" }
-                #if swift(>=3.2)
                 components.append("-b \"\(string[..<string.index(before: string.endIndex)])\"")
-                #else
-                components.append("-b \"\(string.substring(to: string.characters.index(before: string.endIndex)))\"")
-                #endif
             }
         }
 

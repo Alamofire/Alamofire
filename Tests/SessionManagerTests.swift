@@ -216,7 +216,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testDefaultUserAgentHeader() {
         // Given, When
-        let userAgent = SessionManager.defaultHTTPHeaders["User-Agent"]
+        let userAgent: HTTPHeader.Value? = SessionManager.defaultHTTPHeaders[.userAgent]
 
         // Then
         let osNameVersion: String = {
@@ -231,7 +231,7 @@ class SessionManagerTestCase: BaseTestCase {
                 #elseif os(tvOS)
                     return "tvOS"
                 #elseif os(macOS)
-                    return "OS X"
+                    return "macOS"
                 #elseif os(Linux)
                     return "Linux"
                 #else
@@ -252,7 +252,7 @@ class SessionManagerTestCase: BaseTestCase {
         }()
 
         let expectedUserAgent = "Unknown/Unknown (Unknown; build:Unknown; \(osNameVersion)) \(alamofireVersion)"
-        XCTAssertEqual(userAgent, expectedUserAgent)
+        XCTAssertEqual(userAgent?.rawValue, expectedUserAgent)
     }
 
     // MARK: Tests - Start Requests Immediately
@@ -811,8 +811,8 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
                 }
 
                 var headers = SessionManager.defaultHTTPHeaders
-                headers["Authorization"] = "Bearer 123456"
-                configuration.httpAdditionalHeaders = headers
+                headers.add(.authorization("Bearer 123456"))
+                configuration.httpHeaders = headers
 
                 return configuration
             }()

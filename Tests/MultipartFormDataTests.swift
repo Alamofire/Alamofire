@@ -781,6 +781,8 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
             )
             expectedFileData.append(try! Data(contentsOf: rainbowImageURL))
             expectedFileData.append(BoundaryGenerator.boundaryData(boundaryType: .final, boundaryKey: boundary))
+            try! fileData.write(to: URL(string: "file:///Users/jshier/Desktop/fileData")!)
+            try! expectedFileData.write(to: URL(string: "file:///Users/jshier/Desktop/expectedFileData")!)
 
             XCTAssertEqual(fileData, expectedFileData, "file data should match expected file data")
         } else {
