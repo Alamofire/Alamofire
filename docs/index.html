@@ -109,7 +109,7 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Enums.html">Enums</a>
+            <a class="nav-group-name-link" href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError.html">AFError</a>
@@ -243,7 +243,7 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Structs.html">Structs</a>
+            <a class="nav-group-name-link" href="Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DataResponse.html">DataResponse</a>
@@ -281,7 +281,7 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Typealiases.html">Typealiases</a>
+            <a class="nav-group-name-link" href="Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Typealiases.html#/s:9Alamofire11HTTPHeadersa">HTTPHeaders</a>
@@ -370,8 +370,8 @@
 
 <ul>
 <li>iOS 8.0+ / macOS 10.10+ / tvOS 9.0+ / watchOS 2.0+</li>
-<li>Xcode 8.1, 8.2, 8.3, and 9.0</li>
-<li>Swift 3.0, 3.1, 3.2, and 4.0</li>
+<li>Xcode 8.3+</li>
+<li>Swift 3.1+</li>
 </ul>
 <h2 id='migration-guides' class='heading'>Migration Guides</h2>
 
@@ -397,7 +397,7 @@
 </code></pre>
 
 <blockquote>
-<p>CocoaPods 1.1.0+ is required to build Alamofire 4.0.0+.</p>
+<p>CocoaPods 1.1+ is required to build Alamofire 4.0+.</p>
 </blockquote>
 
 <p>To integrate Alamofire into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>:</p>
@@ -406,7 +406,7 @@
 <span class="n">use_frameworks!</span>
 
 <span class="n">target</span> <span class="s1">'&lt;Your Target Name&gt;'</span> <span class="k">do</span>
-    <span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 4.4'</span>
+    <span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 4.5'</span>
 <span class="k">end</span>
 </code></pre>
 
@@ -423,7 +423,7 @@
 </code></pre>
 
 <p>To integrate Alamofire into your Xcode project using Carthage, specify it in your <code>Cartfile</code>:</p>
-<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" ~&gt; 4.4
+<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" ~&gt; 4.5
 </code></pre>
 
 <p>Run <code>carthage update</code> to build the framework and drag the built <code>Alamofire.framework</code> into your Xcode project.</p>
@@ -489,7 +489,7 @@
 </code></pre>
 <h3 id='response-handling' class='heading'>Response Handling</h3>
 
-<p>Handling the <code>Response</code> of a <code>Request</code> made in Alamofire involves chaining a response handler onto the <code>Request</code>.</p>
+<p>Handling the <code>Response</code> of a <code><a href="Classes/Request.html">Request</a></code> made in Alamofire involves chaining a response handler onto the <code><a href="Classes/Request.html">Request</a></code>.</p>
 <pre class="highlight swift"><code><span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="s">"https://httpbin.org/get"</span><span class="p">)</span><span class="o">.</span><span class="n">responseJSON</span> <span class="p">{</span> <span class="n">response</span> <span class="k">in</span>
     <span class="nf">print</span><span class="p">(</span><span class="s">"Request: </span><span class="se">\(</span><span class="kt">String</span><span class="p">(</span><span class="nv">describing</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">request</span><span class="p">)</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>   <span class="c1">// original url request</span>
     <span class="nf">print</span><span class="p">(</span><span class="s">"Response: </span><span class="se">\(</span><span class="kt">String</span><span class="p">(</span><span class="nv">describing</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">response</span><span class="p">)</span><span class="se">)</span><span class="s">"</span><span class="p">)</span> <span class="c1">// http url response</span>
@@ -505,7 +505,7 @@
 <span class="p">}</span>
 </code></pre>
 
-<p>In the above example, the <code>responseJSON</code> handler is appended to the <code>Request</code> to be executed once the <code>Request</code> is complete. Rather than blocking execution to wait for a response from the server, a <a href="http://en.wikipedia.org/wiki/Callback_%28computer_programming%29">callback</a> in the form of a closure is specified to handle the response once it&rsquo;s received. The result of a request is only available inside the scope of a response closure. Any execution contingent on the response or data received from the server must be done within a response closure.</p>
+<p>In the above example, the <code>responseJSON</code> handler is appended to the <code><a href="Classes/Request.html">Request</a></code> to be executed once the <code><a href="Classes/Request.html">Request</a></code> is complete. Rather than blocking execution to wait for a response from the server, a <a href="http://en.wikipedia.org/wiki/Callback_%28computer_programming%29">callback</a> in the form of a closure is specified to handle the response once it&rsquo;s received. The result of a request is only available inside the scope of a response closure. Any execution contingent on the response or data received from the server must be done within a response closure.</p>
 
 <blockquote>
 <p>Networking in Alamofire is done <em>asynchronously</em>. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are <a href="https://developer.apple.com/library/ios/qa/qa1693/_index.html">very good reasons</a> for doing it this way.</p>
@@ -551,7 +551,7 @@
 </blockquote>
 <h4 id='response-handler' class='heading'>Response Handler</h4>
 
-<p>The <code>response</code> handler does NOT evaluate any of the response data. It merely forwards on all information directly from the URL session delegate. It is the Alamofire equivalent of using <code>cURL</code> to execute a <code>Request</code>.</p>
+<p>The <code>response</code> handler does NOT evaluate any of the response data. It merely forwards on all information directly from the URL session delegate. It is the Alamofire equivalent of using <code>cURL</code> to execute a <code><a href="Classes/Request.html">Request</a></code>.</p>
 <pre class="highlight swift"><code><span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="s">"https://httpbin.org/get"</span><span class="p">)</span><span class="o">.</span><span class="n">response</span> <span class="p">{</span> <span class="n">response</span> <span class="k">in</span>
     <span class="nf">print</span><span class="p">(</span><span class="s">"Request: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">request</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
     <span class="nf">print</span><span class="p">(</span><span class="s">"Response: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">response</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
@@ -564,11 +564,11 @@
 </code></pre>
 
 <blockquote>
-<p>We strongly encourage you to leverage the other response serializers taking advantage of <code>Response</code> and <code>Result</code> types.</p>
+<p>We strongly encourage you to leverage the other response serializers taking advantage of <code>Response</code> and <code><a href="Enums/Result.html">Result</a></code> types.</p>
 </blockquote>
 <h4 id='response-data-handler' class='heading'>Response Data Handler</h4>
 
-<p>The <code>responseData</code> handler uses the <code>responseDataSerializer</code> (the object that serializes the server data into some other type) to extract the <code>Data</code> returned by the server. If no errors occur and <code>Data</code> is returned, the response <code>Result</code> will be a <code>.success</code> and the <code>value</code> will be of type <code>Data</code>.</p>
+<p>The <code>responseData</code> handler uses the <code>responseDataSerializer</code> (the object that serializes the server data into some other type) to extract the <code>Data</code> returned by the server. If no errors occur and <code>Data</code> is returned, the response <code><a href="Enums/Result.html">Result</a></code> will be a <code>.success</code> and the <code>value</code> will be of type <code>Data</code>.</p>
 <pre class="highlight swift"><code><span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="s">"https://httpbin.org/get"</span><span class="p">)</span><span class="o">.</span><span class="n">responseData</span> <span class="p">{</span> <span class="n">response</span> <span class="k">in</span>
     <span class="nf">debugPrint</span><span class="p">(</span><span class="s">"All Response Info: </span><span class="se">\(</span><span class="n">response</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
 
@@ -579,7 +579,7 @@
 </code></pre>
 <h4 id='response-string-handler' class='heading'>Response String Handler</h4>
 
-<p>The <code>responseString</code> handler uses the <code>responseStringSerializer</code> to convert the <code>Data</code> returned by the server into a <code>String</code> with the specified encoding. If no errors occur and the server data is successfully serialized into a <code>String</code>, the response <code>Result</code> will be a <code>.success</code> and the <code>value</code> will be of type <code>String</code>.</p>
+<p>The <code>responseString</code> handler uses the <code>responseStringSerializer</code> to convert the <code>Data</code> returned by the server into a <code>String</code> with the specified encoding. If no errors occur and the server data is successfully serialized into a <code>String</code>, the response <code><a href="Enums/Result.html">Result</a></code> will be a <code>.success</code> and the <code>value</code> will be of type <code>String</code>.</p>
 <pre class="highlight swift"><code><span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="s">"https://httpbin.org/get"</span><span class="p">)</span><span class="o">.</span><span class="n">responseString</span> <span class="p">{</span> <span class="n">response</span> <span class="k">in</span>
     <span class="nf">print</span><span class="p">(</span><span class="s">"Success: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">isSuccess</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
     <span class="nf">print</span><span class="p">(</span><span class="s">"Response String: </span><span class="se">\(</span><span class="n">response</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
@@ -591,7 +591,7 @@
 </blockquote>
 <h4 id='response-json-handler' class='heading'>Response JSON Handler</h4>
 
-<p>The <code>responseJSON</code> handler uses the <code>responseJSONSerializer</code> to convert the <code>Data</code> returned by the server into an <code>Any</code> type using the specified <code>JSONSerialization.ReadingOptions</code>. If no errors occur and the server data is successfully serialized into a JSON object, the response <code>Result</code> will be a <code>.success</code> and the <code>value</code> will be of type <code>Any</code>.</p>
+<p>The <code>responseJSON</code> handler uses the <code>responseJSONSerializer</code> to convert the <code>Data</code> returned by the server into an <code>Any</code> type using the specified <code>JSONSerialization.ReadingOptions</code>. If no errors occur and the server data is successfully serialized into a JSON object, the response <code><a href="Enums/Result.html">Result</a></code> will be a <code>.success</code> and the <code>value</code> will be of type <code>Any</code>.</p>
 <pre class="highlight swift"><code><span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="s">"https://httpbin.org/get"</span><span class="p">)</span><span class="o">.</span><span class="n">responseJSON</span> <span class="p">{</span> <span class="n">response</span> <span class="k">in</span>
     <span class="nf">debugPrint</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
@@ -617,7 +617,7 @@
 </code></pre>
 
 <blockquote>
-<p>It is important to note that using multiple response handlers on the same <code>Request</code> requires the server data to be serialized multiple times. Once for each response handler.</p>
+<p>It is important to note that using multiple response handlers on the same <code><a href="Classes/Request.html">Request</a></code> requires the server data to be serialized multiple times. Once for each response handler.</p>
 </blockquote>
 <h4 id='response-handler-queue' class='heading'>Response Handler Queue</h4>
 
@@ -665,7 +665,7 @@
 </blockquote>
 <h3 id='http-methods' class='heading'>HTTP Methods</h3>
 
-<p>The <code>HTTPMethod</code> enumeration lists the HTTP methods defined in <a href="http://tools.ietf.org/html/rfc7231#section-4.3">RFC 7231 §4.3</a>:</p>
+<p>The <code><a href="Enums/HTTPMethod.html">HTTPMethod</a></code> enumeration lists the HTTP methods defined in <a href="http://tools.ietf.org/html/rfc7231#section-4.3">RFC 7231 §4.3</a>:</p>
 <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">HTTPMethod</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span>
     <span class="k">case</span> <span class="n">options</span> <span class="o">=</span> <span class="s">"OPTIONS"</span>
     <span class="k">case</span> <span class="k">get</span>     <span class="o">=</span> <span class="s">"GET"</span>
@@ -692,10 +692,10 @@
 </blockquote>
 <h3 id='parameter-encoding' class='heading'>Parameter Encoding</h3>
 
-<p>Alamofire supports three types of parameter encoding including: <code>URL</code>, <code>JSON</code> and <code>PropertyList</code>. It can also support any custom encoding that conforms to the <code>ParameterEncoding</code> protocol.</p>
+<p>Alamofire supports three types of parameter encoding including: <code>URL</code>, <code>JSON</code> and <code>PropertyList</code>. It can also support any custom encoding that conforms to the <code><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></code> protocol.</p>
 <h4 id='url-encoding' class='heading'>URL Encoding</h4>
 
-<p>The <code>URLEncoding</code> type creates a url-encoded query string to be set as or appended to any existing URL query string or set as the HTTP body of the URL request. Whether the query string is set or appended to any existing URL query string or set as the HTTP body depends on the <code>Destination</code> of the encoding. The <code>Destination</code> enumeration has three cases:</p>
+<p>The <code><a href="Structs/URLEncoding.html">URLEncoding</a></code> type creates a url-encoded query string to be set as or appended to any existing URL query string or set as the HTTP body of the URL request. Whether the query string is set or appended to any existing URL query string or set as the HTTP body depends on the <code>Destination</code> of the encoding. The <code>Destination</code> enumeration has three cases:</p>
 
 <ul>
 <li><code>.methodDependent</code> - Applies encoded query string result to existing query string for <code>GET</code>, <code>HEAD</code> and <code>DELETE</code> requests and sets as the HTTP body for requests with any other HTTP method.</li>
@@ -734,7 +734,7 @@
 </code></pre>
 <h4 id='json-encoding' class='heading'>JSON Encoding</h4>
 
-<p>The <code>JSONEncoding</code> type creates a JSON representation of the parameters object, which is set as the HTTP body of the request. The <code>Content-Type</code> HTTP header field of an encoded request is set to <code>application/json</code>.</p>
+<p>The <code><a href="Structs/JSONEncoding.html">JSONEncoding</a></code> type creates a JSON representation of the parameters object, which is set as the HTTP body of the request. The <code>Content-Type</code> HTTP header field of an encoded request is set to <code>application/json</code>.</p>
 <h5 id='post-request-with-json-encoded-parameters' class='heading'>POST Request with JSON-Encoded Parameters</h5>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">parameters</span><span class="p">:</span> <span class="kt">Parameters</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s">"foo"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span>
@@ -751,10 +751,10 @@
 </code></pre>
 <h4 id='property-list-encoding' class='heading'>Property List Encoding</h4>
 
-<p>The <code>PropertyListEncoding</code> uses <code>PropertyListSerialization</code> to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The <code>Content-Type</code> HTTP header field of an encoded request is set to <code>application/x-plist</code>.</p>
+<p>The <code><a href="Structs/PropertyListEncoding.html">PropertyListEncoding</a></code> uses <code>PropertyListSerialization</code> to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The <code>Content-Type</code> HTTP header field of an encoded request is set to <code>application/x-plist</code>.</p>
 <h4 id='custom-encoding' class='heading'>Custom Encoding</h4>
 
-<p>In the event that the provided <code>ParameterEncoding</code> types do not meet your needs, you can create your own custom encoding. Here&rsquo;s a quick example of how you could build a custom <code>JSONStringArrayEncoding</code> type to encode a JSON string array onto a <code>Request</code>.</p>
+<p>In the event that the provided <code><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></code> types do not meet your needs, you can create your own custom encoding. Here&rsquo;s a quick example of how you could build a custom <code>JSONStringArrayEncoding</code> type to encode a JSON string array onto a <code><a href="Classes/Request.html">Request</a></code>.</p>
 <pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">JSONStringArrayEncoding</span><span class="p">:</span> <span class="kt">ParameterEncoding</span> <span class="p">{</span>
     <span class="kd">private</span> <span class="k">let</span> <span class="nv">array</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">]</span>
 
@@ -779,7 +779,7 @@
 </code></pre>
 <h4 id='manual-parameter-encoding-of-a-urlrequest' class='heading'>Manual Parameter Encoding of a URLRequest</h4>
 
-<p>The <code>ParameterEncoding</code> APIs can be used outside of making network requests.</p>
+<p>The <code><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></code> APIs can be used outside of making network requests.</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"https://httpbin.org/get"</span><span class="p">)</span><span class="o">!</span>
 <span class="k">var</span> <span class="nv">urlRequest</span> <span class="o">=</span> <span class="kt">URLRequest</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span>
 
@@ -788,7 +788,7 @@
 </code></pre>
 <h3 id='http-headers' class='heading'>HTTP Headers</h3>
 
-<p>Adding a custom HTTP header to a <code>Request</code> is supported directly in the global <code>request</code> method. This makes it easy to attach HTTP headers to a <code>Request</code> that can be constantly changing.</p>
+<p>Adding a custom HTTP header to a <code><a href="Classes/Request.html">Request</a></code> is supported directly in the global <code>request</code> method. This makes it easy to attach HTTP headers to a <code><a href="Classes/Request.html">Request</a></code> that can be constantly changing.</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">headers</span><span class="p">:</span> <span class="kt">HTTPHeaders</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s">"Authorization"</span><span class="p">:</span> <span class="s">"Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="</span><span class="p">,</span>
     <span class="s">"Accept"</span><span class="p">:</span> <span class="s">"application/json"</span>
@@ -803,7 +803,7 @@
 <p>For HTTP headers that do not change, it is recommended to set them on the <code>URLSessionConfiguration</code> so they are automatically applied to any <code>URLSessionTask</code> created by the underlying <code>URLSession</code>. For more information, see the <a href="#session-manager">Session Manager Configurations</a> section.</p>
 </blockquote>
 
-<p>The default Alamofire <code>SessionManager</code> provides a default set of headers for every <code>Request</code>. These include:</p>
+<p>The default Alamofire <code><a href="Classes/SessionManager.html">SessionManager</a></code> provides a default set of headers for every <code><a href="Classes/Request.html">Request</a></code>. These include:</p>
 
 <ul>
 <li><code>Accept-Encoding</code>, which defaults to <code>gzip;q=1.0, compress;q=0.5</code>, per <a href="https://tools.ietf.org/html/rfc7230#section-4.2.3">RFC 7230 §4.2.3</a>.</li>
@@ -811,7 +811,7 @@
 <li><code>User-Agent</code>, which contains versioning information about the current app. For example: <code>iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0</code>, per <a href="https://tools.ietf.org/html/rfc7231#section-5.5.3">RFC 7231 §5.5.3</a>.</li>
 </ul>
 
-<p>If you need to customize these headers, a custom <code>URLSessionConfiguration</code> should be created, the <code>defaultHTTPHeaders</code> property updated and the configuration applied to a new <code>SessionManager</code> instance.</p>
+<p>If you need to customize these headers, a custom <code>URLSessionConfiguration</code> should be created, the <code>defaultHTTPHeaders</code> property updated and the configuration applied to a new <code><a href="Classes/SessionManager.html">SessionManager</a></code> instance.</p>
 <h3 id='authentication' class='heading'>Authentication</h3>
 
 <p>Authentication is handled on the system framework level by <a href="https://developer.apple.com/reference/foundation/nsurlcredential"><code>URLCredential</code></a> and <a href="https://developer.apple.com/reference/foundation/urlauthenticationchallenge"><code>URLAuthenticationChallenge</code></a>.</p>
@@ -826,7 +826,7 @@
 </ul>
 <h4 id='http-basic-authentication' class='heading'>HTTP Basic Authentication</h4>
 
-<p>The <code>authenticate</code> method on a <code>Request</code> will automatically provide a <code>URLCredential</code> to a <code>URLAuthenticationChallenge</code> when appropriate:</p>
+<p>The <code>authenticate</code> method on a <code><a href="Classes/Request.html">Request</a></code> will automatically provide a <code>URLCredential</code> to a <code>URLAuthenticationChallenge</code> when appropriate:</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="s">"user"</span>
 <span class="k">let</span> <span class="nv">password</span> <span class="o">=</span> <span class="s">"password"</span>
 
@@ -915,7 +915,7 @@
 </code></pre>
 <h4 id='download-progress' class='heading'>Download Progress</h4>
 
-<p>Many times it can be helpful to report download progress to the user. Any <code>DownloadRequest</code> can report download progress using the <code>downloadProgress</code> API.</p>
+<p>Many times it can be helpful to report download progress to the user. Any <code><a href="Classes/DownloadRequest.html">DownloadRequest</a></code> can report download progress using the <code>downloadProgress</code> API.</p>
 <pre class="highlight swift"><code><span class="kt">Alamofire</span><span class="o">.</span><span class="nf">download</span><span class="p">(</span><span class="s">"https://httpbin.org/image/png"</span><span class="p">)</span>
     <span class="o">.</span><span class="n">downloadProgress</span> <span class="p">{</span> <span class="n">progress</span> <span class="k">in</span>
         <span class="nf">print</span><span class="p">(</span><span class="s">"Download Progress: </span><span class="se">\(</span><span class="n">progress</span><span class="o">.</span><span class="n">fractionCompleted</span><span class="se">)</span><span class="s">"</span><span class="p">)</span>
@@ -942,7 +942,7 @@
 </code></pre>
 <h4 id='resuming-a-download' class='heading'>Resuming a Download</h4>
 
-<p>If a <code>DownloadRequest</code> is cancelled or interrupted, the underlying URL session may generate resume data for the active <code>DownloadRequest</code>. If this happens, the resume data can be re-used to restart the <code>DownloadRequest</code> where it left off. The resume data can be accessed through the download response, then reused when trying to restart the request.</p>
+<p>If a <code><a href="Classes/DownloadRequest.html">DownloadRequest</a></code> is cancelled or interrupted, the underlying URL session may generate resume data for the active <code><a href="Classes/DownloadRequest.html">DownloadRequest</a></code>. If this happens, the resume data can be re-used to restart the <code><a href="Classes/DownloadRequest.html">DownloadRequest</a></code> where it left off. The resume data can be accessed through the download response, then reused when trying to restart the request.</p>
 
 <blockquote>
 <p><strong>IMPORTANT:</strong> On the latest release of all the Apple platforms (iOS 10, macOS 10.12, tvOS 10, watchOS 3), <code>resumeData</code> is broken on background URL session configurations. There&rsquo;s an underlying bug in the <code>resumeData</code> generation logic where the data is written incorrectly and will always fail to resume the download. For more information about the bug and possible workarounds, please see this Stack Overflow <a href="http://stackoverflow.com/a/39347461/1342462">post</a>.</p>
@@ -1022,7 +1022,7 @@
 </code></pre>
 <h4 id='upload-progress' class='heading'>Upload Progress</h4>
 
-<p>While your user is waiting for their upload to complete, sometimes it can be handy to show the progress of the upload to the user. Any <code>UploadRequest</code> can report both upload progress and download progress of the response data using the <code>uploadProgress</code> and <code>downloadProgress</code> APIs.</p>
+<p>While your user is waiting for their upload to complete, sometimes it can be handy to show the progress of the upload to the user. Any <code><a href="Classes/UploadRequest.html">UploadRequest</a></code> can report both upload progress and download progress of the response data using the <code>uploadProgress</code> and <code>downloadProgress</code> APIs.</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">fileURL</span> <span class="o">=</span> <span class="kt">Bundle</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="nf">url</span><span class="p">(</span><span class="nv">forResource</span><span class="p">:</span> <span class="s">"video"</span><span class="p">,</span> <span class="nv">withExtension</span><span class="p">:</span> <span class="s">"mov"</span><span class="p">)</span>
 
 <span class="kt">Alamofire</span><span class="o">.</span><span class="nf">upload</span><span class="p">(</span><span class="n">fileURL</span><span class="p">,</span> <span class="nv">to</span><span class="p">:</span> <span class="s">"https://httpbin.org/post"</span><span class="p">)</span>
@@ -1039,13 +1039,13 @@
 <h3 id='statistical-metrics' class='heading'>Statistical Metrics</h3>
 <h4 id='timeline' class='heading'>Timeline</h4>
 
-<p>Alamofire collects timings throughout the lifecycle of a <code>Request</code> and creates a <code>Timeline</code> object exposed as a property on all response types.</p>
+<p>Alamofire collects timings throughout the lifecycle of a <code><a href="Classes/Request.html">Request</a></code> and creates a <code><a href="Structs/Timeline.html">Timeline</a></code> object exposed as a property on all response types.</p>
 <pre class="highlight swift"><code><span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="s">"https://httpbin.org/get"</span><span class="p">)</span><span class="o">.</span><span class="n">responseJSON</span> <span class="p">{</span> <span class="n">response</span> <span class="k">in</span>
     <span class="nf">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">timeline</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre>
 
-<p>The above reports the following <code>Timeline</code> info:</p>
+<p>The above reports the following <code><a href="Structs/Timeline.html">Timeline</a></code> info:</p>
 
 <ul>
 <li><code>Latency</code>: 0.428 seconds</li>
@@ -1055,7 +1055,7 @@
 </ul>
 <h4 id='url-session-task-metrics' class='heading'>URL Session Task Metrics</h4>
 
-<p>In iOS and tvOS 10 and macOS 10.12, Apple introduced the new <a href="https://developer.apple.com/reference/foundation/urlsessiontaskmetrics">URLSessionTaskMetrics</a> APIs. The task metrics encapsulate some fantastic statistical information about the request and response execution. The API is very similar to the <code>Timeline</code>, but provides many more statistics that Alamofire doesn&rsquo;t have access to compute. The metrics can be accessed through any response type.</p>
+<p>In iOS and tvOS 10 and macOS 10.12, Apple introduced the new <a href="https://developer.apple.com/reference/foundation/urlsessiontaskmetrics">URLSessionTaskMetrics</a> APIs. The task metrics encapsulate some fantastic statistical information about the request and response execution. The API is very similar to the <code><a href="Structs/Timeline.html">Timeline</a></code>, but provides many more statistics that Alamofire doesn&rsquo;t have access to compute. The metrics can be accessed through any response type.</p>
 <pre class="highlight swift"><code><span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="s">"https://httpbin.org/get"</span><span class="p">)</span><span class="o">.</span><span class="n">responseJSON</span> <span class="p">{</span> <span class="n">response</span> <span class="k">in</span>
     <span class="nf">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
 <span class="p">}</span>
@@ -1070,7 +1070,7 @@
 </code></pre>
 <h3 id='curl-command-output' class='heading'>cURL Command Output</h3>
 
-<p>Debugging platform issues can be frustrating. Thankfully, Alamofire <code>Request</code> objects conform to both the <code>CustomStringConvertible</code> and <code>CustomDebugStringConvertible</code> protocols to provide some VERY helpful debugging tools.</p>
+<p>Debugging platform issues can be frustrating. Thankfully, Alamofire <code><a href="Classes/Request.html">Request</a></code> objects conform to both the <code>CustomStringConvertible</code> and <code>CustomDebugStringConvertible</code> protocols to provide some VERY helpful debugging tools.</p>
 <h4 id='customstringconvertible' class='heading'>CustomStringConvertible</h4>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">request</span> <span class="o">=</span> <span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="s">"https://httpbin.org/ip"</span><span class="p">)</span>
 
@@ -1138,14 +1138,14 @@
 </code></pre>
 
 <blockquote>
-<p>This is <strong>not</strong> recommended for <code>Authorization</code> or <code>Content-Type</code> headers. Instead, use the <code>headers</code> parameter in the top-level <code>Alamofire.request</code> APIs, <code>URLRequestConvertible</code> and <code>ParameterEncoding</code>, respectively.</p>
+<p>This is <strong>not</strong> recommended for <code>Authorization</code> or <code>Content-Type</code> headers. Instead, use the <code>headers</code> parameter in the top-level <code>Alamofire.request</code> APIs, <code><a href="Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> and <code><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></code>, respectively.</p>
 </blockquote>
 <h3 id='session-delegate' class='heading'>Session Delegate</h3>
 
-<p>By default, an Alamofire <code>SessionManager</code> instance creates a <code>SessionDelegate</code> object to handle all the various types of delegate callbacks that are generated by the underlying <code>URLSession</code>. The implementations of each delegate method handle the most common use cases for these types of calls abstracting the complexity away from the top-level APIs. However, advanced users may find the need to override the default functionality for various reasons.</p>
+<p>By default, an Alamofire <code><a href="Classes/SessionManager.html">SessionManager</a></code> instance creates a <code><a href="Classes/SessionDelegate.html">SessionDelegate</a></code> object to handle all the various types of delegate callbacks that are generated by the underlying <code>URLSession</code>. The implementations of each delegate method handle the most common use cases for these types of calls abstracting the complexity away from the top-level APIs. However, advanced users may find the need to override the default functionality for various reasons.</p>
 <h4 id='override-closures' class='heading'>Override Closures</h4>
 
-<p>The first way to customize the <code>SessionDelegate</code> behavior is through the use of the override closures. Each closure gives you the ability to override the implementation of the matching <code>SessionDelegate</code> API, yet still use the default implementation for all other APIs. This makes it easy to customize subsets of the delegate functionality. Here are a few examples of some of the override closures available:</p>
+<p>The first way to customize the <code><a href="Classes/SessionDelegate.html">SessionDelegate</a></code> behavior is through the use of the override closures. Each closure gives you the ability to override the implementation of the matching <code><a href="Classes/SessionDelegate.html">SessionDelegate</a></code> API, yet still use the default implementation for all other APIs. This makes it easy to customize subsets of the delegate functionality. Here are a few examples of some of the override closures available:</p>
 <pre class="highlight swift"><code><span class="c1">/// Overrides default behavior for URLSessionDelegate method `urlSession(_:didReceive:completionHandler:)`.</span>
 <span class="n">open</span> <span class="k">var</span> <span class="nv">sessionDidReceiveChallenge</span><span class="p">:</span> <span class="p">((</span><span class="kt">URLSession</span><span class="p">,</span> <span class="kt">URLAuthenticationChallenge</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">URLSession</span><span class="o">.</span><span class="kt">AuthChallengeDisposition</span><span class="p">,</span> <span class="kt">URLCredential</span><span class="p">?))?</span>
 
@@ -1179,7 +1179,7 @@
 </code></pre>
 <h4 id='subclassing' class='heading'>Subclassing</h4>
 
-<p>Another way to override the default implementation of the <code>SessionDelegate</code> is to subclass it. Subclassing allows you completely customize the behavior of the API or to create a proxy for the API and still use the default implementation. Creating a proxy allows you to log events, emit notifications, provide pre and post hook implementations, etc. Here&rsquo;s a quick example of subclassing the <code>SessionDelegate</code> and logging a message when a redirect occurs.</p>
+<p>Another way to override the default implementation of the <code><a href="Classes/SessionDelegate.html">SessionDelegate</a></code> is to subclass it. Subclassing allows you completely customize the behavior of the API or to create a proxy for the API and still use the default implementation. Creating a proxy allows you to log events, emit notifications, provide pre and post hook implementations, etc. Here&rsquo;s a quick example of subclassing the <code><a href="Classes/SessionDelegate.html">SessionDelegate</a></code> and logging a message when a redirect occurs.</p>
 <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">LoggingSessionDelegate</span><span class="p">:</span> <span class="kt">SessionDelegate</span> <span class="p">{</span>
     <span class="k">override</span> <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span>
         <span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">,</span>
@@ -1208,7 +1208,7 @@
 </blockquote>
 <h3 id='request' class='heading'>Request</h3>
 
-<p>The result of a <code>request</code>, <code>download</code>, <code>upload</code> or <code>stream</code> methods are a <code>DataRequest</code>, <code>DownloadRequest</code>, <code>UploadRequest</code> and <code>StreamRequest</code> which all inherit from <code>Request</code>. All <code>Request</code> instances are always created by an owning session manager, and never initialized directly.</p>
+<p>The result of a <code>request</code>, <code>download</code>, <code>upload</code> or <code>stream</code> methods are a <code><a href="Classes/DataRequest.html">DataRequest</a></code>, <code><a href="Classes/DownloadRequest.html">DownloadRequest</a></code>, <code><a href="Classes/UploadRequest.html">UploadRequest</a></code> and <code><a href="Classes.html#/s:9Alamofire13StreamRequestC">StreamRequest</a></code> which all inherit from <code><a href="Classes/Request.html">Request</a></code>. All <code><a href="Classes/Request.html">Request</a></code> instances are always created by an owning session manager, and never initialized directly.</p>
 
 <p>Each subclass has specialized methods such as <code>authenticate</code>, <code>validate</code>, <code>responseJSON</code> and <code>uploadProgress</code> that each return the caller instance in order to facilitate method chaining.</p>
 
@@ -1221,10 +1221,10 @@
 </ul>
 <h3 id='routing-requests' class='heading'>Routing Requests</h3>
 
-<p>As apps grow in size, it&rsquo;s important to adopt common patterns as you build out your network stack. An important part of that design is how to route your requests. The Alamofire <code>URLConvertible</code> and <code>URLRequestConvertible</code> protocols along with the <code>Router</code> design pattern are here to help.</p>
+<p>As apps grow in size, it&rsquo;s important to adopt common patterns as you build out your network stack. An important part of that design is how to route your requests. The Alamofire <code><a href="Protocols/URLConvertible.html">URLConvertible</a></code> and <code><a href="Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> protocols along with the <code>Router</code> design pattern are here to help.</p>
 <h4 id='urlconvertible' class='heading'>URLConvertible</h4>
 
-<p>Types adopting the <code>URLConvertible</code> protocol can be used to construct URLs, which are then used to construct URL requests internally. <code>String</code>, <code>URL</code>, and <code>URLComponents</code> conform to <code>URLConvertible</code> by default, allowing any of them to be passed as <code>url</code> parameters to the <code>request</code>, <code>upload</code>, and <code>download</code> methods:</p>
+<p>Types adopting the <code><a href="Protocols/URLConvertible.html">URLConvertible</a></code> protocol can be used to construct URLs, which are then used to construct URL requests internally. <code>String</code>, <code>URL</code>, and <code>URLComponents</code> conform to <code><a href="Protocols/URLConvertible.html">URLConvertible</a></code> by default, allowing any of them to be passed as <code>url</code> parameters to the <code>request</code>, <code>upload</code>, and <code>download</code> methods:</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">urlString</span> <span class="o">=</span> <span class="s">"https://httpbin.org/post"</span>
 <span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="n">urlString</span><span class="p">,</span> <span class="nv">method</span><span class="p">:</span> <span class="o">.</span><span class="n">post</span><span class="p">)</span>
 
@@ -1235,7 +1235,7 @@
 <span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="n">urlComponents</span><span class="p">,</span> <span class="nv">method</span><span class="p">:</span> <span class="o">.</span><span class="n">post</span><span class="p">)</span>
 </code></pre>
 
-<p>Applications interacting with web applications in a significant manner are encouraged to have custom types conform to <code>URLConvertible</code> as a convenient way to map domain-specific models to server resources.</p>
+<p>Applications interacting with web applications in a significant manner are encouraged to have custom types conform to <code><a href="Protocols/URLConvertible.html">URLConvertible</a></code> as a convenient way to map domain-specific models to server resources.</p>
 <h5 id='type-safe-routing' class='heading'>Type-Safe Routing</h5>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">User</span><span class="p">:</span> <span class="kt">URLConvertible</span> <span class="p">{</span>
     <span class="kd">static</span> <span class="k">let</span> <span class="nv">baseURLString</span> <span class="o">=</span> <span class="s">"https://example.com"</span>
@@ -1251,7 +1251,7 @@
 </code></pre>
 <h4 id='urlrequestconvertible' class='heading'>URLRequestConvertible</h4>
 
-<p>Types adopting the <code>URLRequestConvertible</code> protocol can be used to construct URL requests. <code>URLRequest</code> conforms to <code>URLRequestConvertible</code> by default, allowing it to be passed into <code>request</code>, <code>upload</code>, and <code>download</code> methods directly (this is the recommended way to specify custom HTTP body for individual requests):</p>
+<p>Types adopting the <code><a href="Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> protocol can be used to construct URL requests. <code>URLRequest</code> conforms to <code><a href="Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> by default, allowing it to be passed into <code>request</code>, <code>upload</code>, and <code>download</code> methods directly (this is the recommended way to specify custom HTTP body for individual requests):</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"https://httpbin.org/post"</span><span class="p">)</span><span class="o">!</span>
 <span class="k">var</span> <span class="nv">urlRequest</span> <span class="o">=</span> <span class="kt">URLRequest</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span>
 <span class="n">urlRequest</span><span class="o">.</span><span class="n">httpMethod</span> <span class="o">=</span> <span class="s">"POST"</span>
@@ -1269,7 +1269,7 @@
 <span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="n">urlRequest</span><span class="p">)</span>
 </code></pre>
 
-<p>Applications interacting with web applications in a significant manner are encouraged to have custom types conform to <code>URLRequestConvertible</code> as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage authentication credentials and other state.</p>
+<p>Applications interacting with web applications in a significant manner are encouraged to have custom types conform to <code><a href="Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage authentication credentials and other state.</p>
 <h5 id='api-parameter-abstraction' class='heading'>API Parameter Abstraction</h5>
 <pre class="highlight swift"><code><span class="kd">enum</span> <span class="kt">Router</span><span class="p">:</span> <span class="kt">URLRequestConvertible</span> <span class="p">{</span>
     <span class="k">case</span> <span class="nf">search</span><span class="p">(</span><span class="nv">query</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">page</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span>
@@ -1362,10 +1362,10 @@
 
 <p>Most web services these days are behind some sort of authentication system. One of the more common ones today is OAuth. This generally involves generating an access token authorizing your application or user to call the various supported web services. While creating these initial access tokens can be laborsome, it can be even more complicated when your access token expires and you need to fetch a new one. There are many thread-safety issues that need to be considered.</p>
 
-<p>The <code>RequestAdapter</code> and <code>RequestRetrier</code> protocols were created to make it much easier to create a thread-safe authentication system for a specific set of web services.</p>
+<p>The <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> and <code><a href="Protocols/RequestRetrier.html">RequestRetrier</a></code> protocols were created to make it much easier to create a thread-safe authentication system for a specific set of web services.</p>
 <h4 id='requestadapter' class='heading'>RequestAdapter</h4>
 
-<p>The <code>RequestAdapter</code> protocol allows each <code>Request</code> made on a <code>SessionManager</code> to be inspected and adapted before being created. One very specific way to use an adapter is to append an <code>Authorization</code> header to requests behind a certain type of authentication.</p>
+<p>The <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> protocol allows each <code><a href="Classes/Request.html">Request</a></code> made on a <code><a href="Classes/SessionManager.html">SessionManager</a></code> to be inspected and adapted before being created. One very specific way to use an adapter is to append an <code>Authorization</code> header to requests behind a certain type of authentication.</p>
 <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">AccessTokenAdapter</span><span class="p">:</span> <span class="kt">RequestAdapter</span> <span class="p">{</span>
     <span class="kd">private</span> <span class="k">let</span> <span class="nv">accessToken</span><span class="p">:</span> <span class="kt">String</span>
 
@@ -1391,10 +1391,10 @@
 </code></pre>
 <h4 id='requestretrier' class='heading'>RequestRetrier</h4>
 
-<p>The <code>RequestRetrier</code> protocol allows a <code>Request</code> that encountered an <code>Error</code> while being executed to be retried. When using both the <code>RequestAdapter</code> and <code>RequestRetrier</code> protocols together, you can create credential refresh systems for OAuth1, OAuth2, Basic Auth and even exponential backoff retry policies. The possibilities are endless. Here&rsquo;s an example of how you could implement a refresh flow for OAuth2 access tokens.</p>
+<p>The <code><a href="Protocols/RequestRetrier.html">RequestRetrier</a></code> protocol allows a <code><a href="Classes/Request.html">Request</a></code> that encountered an <code>Error</code> while being executed to be retried. When using both the <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> and <code><a href="Protocols/RequestRetrier.html">RequestRetrier</a></code> protocols together, you can create credential refresh systems for OAuth1, OAuth2, Basic Auth and even exponential backoff retry policies. The possibilities are endless. Here&rsquo;s an example of how you could implement a refresh flow for OAuth2 access tokens.</p>
 
 <blockquote>
-<p><strong>DISCLAIMER:</strong> This is <strong>NOT</strong> a global <code>OAuth2</code> solution. It is merely an example demonstrating how one could use the <code>RequestAdapter</code> in conjunction with the <code>RequestRetrier</code> to create a thread-safe refresh system.</p>
+<p><strong>DISCLAIMER:</strong> This is <strong>NOT</strong> a global <code>OAuth2</code> solution. It is merely an example demonstrating how one could use the <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> in conjunction with the <code><a href="Protocols/RequestRetrier.html">RequestRetrier</a></code> to create a thread-safe refresh system.</p>
 
 <p>To reiterate, <strong>do NOT copy</strong> this sample code and drop it into a production application. This is merely an example. Each authentication system must be tailored to a particular platform and authentication type.</p>
 </blockquote>
@@ -1522,7 +1522,7 @@
 <span class="p">}</span>
 </code></pre>
 
-<p>Once the <code>OAuth2Handler</code> is applied as both the <code>adapter</code> and <code>retrier</code> for the <code>SessionManager</code>, it will handle an invalid access token error by automatically refreshing the access token and retrying all failed requests in the same order they failed.</p>
+<p>Once the <code>OAuth2Handler</code> is applied as both the <code>adapter</code> and <code>retrier</code> for the <code><a href="Classes/SessionManager.html">SessionManager</a></code>, it will handle an invalid access token error by automatically refreshing the access token and retrying all failed requests in the same order they failed.</p>
 
 <blockquote>
 <p>If you needed them to execute in the same order they were created, you could sort them by their task identifiers.</p>
@@ -1552,7 +1552,7 @@
 </ul>
 <h4 id='response-mapping' class='heading'>Response Mapping</h4>
 
-<p>Response mapping is the simplest way to produce customized responses. It transforms the value of a response, while preserving eventual errors and meta-data. For example, you can turn a json response <code>DataResponse&lt;Any&gt;</code> into a response that holds an application model, such as <code>DataResponse&lt;User&gt;</code>. You perform response mapping with the <code>DataResponse.map</code> method:</p>
+<p>Response mapping is the simplest way to produce customized responses. It transforms the value of a response, while preserving eventual errors and meta-data. For example, you can turn a json response <code><a href="Structs/DataResponse.html">DataResponse&lt;Any&gt;</a></code> into a response that holds an application model, such as <code><a href="Structs/DataResponse.html">DataResponse&lt;User&gt;</a></code>. You perform response mapping with the <code>DataResponse.map</code> method:</p>
 <pre class="highlight swift"><code><span class="kt">Alamofire</span><span class="o">.</span><span class="nf">request</span><span class="p">(</span><span class="s">"https://example.com/users/mattt"</span><span class="p">)</span><span class="o">.</span><span class="n">responseJSON</span> <span class="p">{</span> <span class="p">(</span><span class="nv">response</span><span class="p">:</span> <span class="kt">DataResponse</span><span class="o">&lt;</span><span class="kt">Any</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">in</span>
     <span class="k">let</span> <span class="nv">userResponse</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="n">json</span> <span class="k">in</span>
         <span class="c1">// We assume an existing User(json: Any) initializer</span>
@@ -1808,10 +1808,10 @@
 </code></pre>
 <h3 id='security' class='heading'>Security</h3>
 
-<p>Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire will evaluate the certificate chain provided by the server using Apple&rsquo;s built in validation provided by the Security framework. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by the <code>ServerTrustPolicy</code>.</p>
+<p>Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire will evaluate the certificate chain provided by the server using Apple&rsquo;s built in validation provided by the Security framework. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by the <code><a href="Enums/ServerTrustPolicy.html">ServerTrustPolicy</a></code>.</p>
 <h4 id='servertrustpolicy' class='heading'>ServerTrustPolicy</h4>
 
-<p>The <code>ServerTrustPolicy</code> enumeration evaluates the server trust generally provided by an <code>URLAuthenticationChallenge</code> when connecting to a server over a secure HTTPS connection.</p>
+<p>The <code><a href="Enums/ServerTrustPolicy.html">ServerTrustPolicy</a></code> enumeration evaluates the server trust generally provided by an <code>URLAuthenticationChallenge</code> when connecting to a server over a secure HTTPS connection.</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">serverTrustPolicy</span> <span class="o">=</span> <span class="kt">ServerTrustPolicy</span><span class="o">.</span><span class="nf">pinCertificates</span><span class="p">(</span>
     <span class="nv">certificates</span><span class="p">:</span> <span class="kt">ServerTrustPolicy</span><span class="o">.</span><span class="nf">certificates</span><span class="p">(),</span>
     <span class="nv">validateCertificateChain</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -1830,7 +1830,7 @@
 </ul>
 <h4 id='server-trust-policy-manager' class='heading'>Server Trust Policy Manager</h4>
 
-<p>The <code>ServerTrustPolicyManager</code> is responsible for storing an internal mapping of server trust policies to a particular host. This allows Alamofire to evaluate each host against a different server trust policy.</p>
+<p>The <code><a href="Classes/ServerTrustPolicyManager.html">ServerTrustPolicyManager</a></code> is responsible for storing an internal mapping of server trust policies to a particular host. This allows Alamofire to evaluate each host against a different server trust policy.</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">serverTrustPolicies</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">ServerTrustPolicy</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s">"test.example.com"</span><span class="p">:</span> <span class="o">.</span><span class="nf">pinCertificates</span><span class="p">(</span>
         <span class="nv">certificates</span><span class="p">:</span> <span class="kt">ServerTrustPolicy</span><span class="o">.</span><span class="nf">certificates</span><span class="p">(),</span>
@@ -1846,7 +1846,7 @@
 </code></pre>
 
 <blockquote>
-<p>Make sure to keep a reference to the new <code>SessionManager</code> instance, otherwise your requests will all get cancelled when your <code>sessionManager</code> is deallocated.</p>
+<p>Make sure to keep a reference to the new <code><a href="Classes/SessionManager.html">SessionManager</a></code> instance, otherwise your requests will all get cancelled when your <code>sessionManager</code> is deallocated.</p>
 </blockquote>
 
 <p>These server trust policies will result in the following behavior:</p>
@@ -1864,7 +1864,7 @@
 </ul>
 <h5 id='subclassing-server-trust-policy-manager' class='heading'>Subclassing Server Trust Policy Manager</h5>
 
-<p>If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcarded domains), then subclass the <code>ServerTrustPolicyManager</code> and override the <code>serverTrustPolicyForHost</code> method with your own custom implementation.</p>
+<p>If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcarded domains), then subclass the <code><a href="Classes/ServerTrustPolicyManager.html">ServerTrustPolicyManager</a></code> and override the <code>serverTrustPolicyForHost</code> method with your own custom implementation.</p>
 <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">CustomServerTrustPolicyManager</span><span class="p">:</span> <span class="kt">ServerTrustPolicyManager</span> <span class="p">{</span>
     <span class="k">override</span> <span class="kd">func</span> <span class="nf">serverTrustPolicy</span><span class="p">(</span><span class="n">forHost</span> <span class="nv">host</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">ServerTrustPolicy</span><span class="p">?</span> <span class="p">{</span>
         <span class="k">var</span> <span class="nv">policy</span><span class="p">:</span> <span class="kt">ServerTrustPolicy</span><span class="p">?</span>
@@ -1893,7 +1893,7 @@
 </blockquote>
 <h4 id='app-transport-security' class='heading'>App Transport Security</h4>
 
-<p>With the addition of App Transport Security (ATS) in iOS 9, it is possible that using a custom <code>ServerTrustPolicyManager</code> with several <code>ServerTrustPolicy</code> objects will have no effect. If you continuously see <code>CFNetwork SSLHandshake failed (-9806)</code> errors, you have probably run into this problem. Apple&rsquo;s ATS system overrides the entire challenge system unless you configure the ATS settings in your app&rsquo;s plist to disable enough of it to allow your app to evaluate the server trust.</p>
+<p>With the addition of App Transport Security (ATS) in iOS 9, it is possible that using a custom <code><a href="Classes/ServerTrustPolicyManager.html">ServerTrustPolicyManager</a></code> with several <code><a href="Enums/ServerTrustPolicy.html">ServerTrustPolicy</a></code> objects will have no effect. If you continuously see <code>CFNetwork SSLHandshake failed (-9806)</code> errors, you have probably run into this problem. Apple&rsquo;s ATS system overrides the entire challenge system unless you configure the ATS settings in your app&rsquo;s plist to disable enough of it to allow your app to evaluate the server trust.</p>
 
 <p>If you run into this problem (high probability with self-signed certificates), you can work around this issue by adding the following to your <code>Info.plist</code>.</p>
 <pre class="highlight xml"><code><span class="nt">&lt;dict&gt;</span>
@@ -1918,14 +1918,14 @@
 <span class="nt">&lt;/dict&gt;</span>
 </code></pre>
 
-<p>Whether you need to set the <code>NSExceptionRequiresForwardSecrecy</code> to <code>NO</code> depends on whether your TLS connection is using an allowed cipher suite. In certain cases, it will need to be set to <code>NO</code>. The <code>NSExceptionAllowsInsecureHTTPLoads</code> MUST be set to <code>YES</code> in order to allow the <code>SessionDelegate</code> to receive challenge callbacks. Once the challenge callbacks are being called, the <code>ServerTrustPolicyManager</code> will take over the server trust evaluation. You may also need to specify the <code>NSTemporaryExceptionMinimumTLSVersion</code> if you&rsquo;re trying to connect to a host that only supports TLS versions less than <code>1.2</code>.</p>
+<p>Whether you need to set the <code>NSExceptionRequiresForwardSecrecy</code> to <code>NO</code> depends on whether your TLS connection is using an allowed cipher suite. In certain cases, it will need to be set to <code>NO</code>. The <code>NSExceptionAllowsInsecureHTTPLoads</code> MUST be set to <code>YES</code> in order to allow the <code><a href="Classes/SessionDelegate.html">SessionDelegate</a></code> to receive challenge callbacks. Once the challenge callbacks are being called, the <code><a href="Classes/ServerTrustPolicyManager.html">ServerTrustPolicyManager</a></code> will take over the server trust evaluation. You may also need to specify the <code>NSTemporaryExceptionMinimumTLSVersion</code> if you&rsquo;re trying to connect to a host that only supports TLS versions less than <code>1.2</code>.</p>
 
 <blockquote>
 <p>It is recommended to always use valid certificates in production environments.</p>
 </blockquote>
 <h3 id='network-reachability' class='heading'>Network Reachability</h3>
 
-<p>The <code>NetworkReachabilityManager</code> listens for reachability changes of hosts and addresses for both WWAN and WiFi network interfaces.</p>
+<p>The <code><a href="Classes/NetworkReachabilityManager.html">NetworkReachabilityManager</a></code> listens for reachability changes of hosts and addresses for both WWAN and WiFi network interfaces.</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">manager</span> <span class="o">=</span> <span class="kt">NetworkReachabilityManager</span><span class="p">(</span><span class="nv">host</span><span class="p">:</span> <span class="s">"www.apple.com"</span><span class="p">)</span>
 
 <span class="n">manager</span><span class="p">?</span><span class="o">.</span><span class="n">listener</span> <span class="o">=</span> <span class="p">{</span> <span class="n">status</span> <span class="k">in</span>
@@ -1971,9 +1971,15 @@ Also, do not include the scheme in the <code>host</code> string or reachability 
 
 <ul>
 <li><a href="http://www.openradar.me/radar?id=5517037090635776"><code>rdar://21349340</code></a> - Compiler throwing warning due to toll-free bridging issue in test case</li>
-<li><a href="http://www.openradar.me/radar?id=5010235949318144"><code>rdar://26761490</code></a> - Swift string interpolation causing memory leak with common usage</li>
 <li><code>rdar://26870455</code> - Background URL Session Configurations do not work in the simulator</li>
 <li><code>rdar://26849668</code> - Some URLProtocol APIs do not properly handle <code>URLRequest</code></li>
+</ul>
+<h2 id='resolved-radars' class='heading'>Resolved Radars</h2>
+
+<p>The following radars have been resolved over time after being filed against the Alamofire project.</p>
+
+<ul>
+<li><a href="http://www.openradar.me/radar?id=5010235949318144"><code>rdar://26761490</code></a> - Swift string interpolation causing memory leak with common usage (Resolved on 9/1/17 in Xcode 9 beta 6).</li>
 </ul>
 <h2 id='faq' class='heading'>FAQ</h2>
 <h3 id='what-39-s-the-origin-of-the-name-alamofire' class='heading'>What&rsquo;s the origin of the name Alamofire?</h3>
@@ -1981,9 +1987,9 @@ Also, do not include the scheme in the <code>host</code> string or reachability 
 <p>Alamofire is named after the <a href="https://aggie-horticulture.tamu.edu/wildseed/alamofire.html">Alamo Fire flower</a>, a hybrid variant of the Bluebonnet, the official state flower of Texas.</p>
 <h3 id='what-logic-belongs-in-a-router-vs-a-request-adapter' class='heading'>What logic belongs in a Router vs. a Request Adapter?</h3>
 
-<p>Simple, static data such as paths, parameters and common headers belong in the <code>Router</code>. Dynamic data such as an <code>Authorization</code> header whose value can changed based on an authentication system belongs in a <code>RequestAdapter</code>.</p>
+<p>Simple, static data such as paths, parameters and common headers belong in the <code>Router</code>. Dynamic data such as an <code>Authorization</code> header whose value can changed based on an authentication system belongs in a <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code>.</p>
 
-<p>The reason the dynamic data MUST be placed into the <code>RequestAdapter</code> is to support retry operations. When a <code>Request</code> is retried, the original request is not rebuilt meaning the <code>Router</code> will not be called again. The <code>RequestAdapter</code> is called again allowing the dynamic data to be updated on the original request before retrying the <code>Request</code>.</p>
+<p>The reason the dynamic data MUST be placed into the <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> is to support retry operations. When a <code><a href="Classes/Request.html">Request</a></code> is retried, the original request is not rebuilt meaning the <code>Router</code> will not be called again. The <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> is called again allowing the dynamic data to be updated on the original request before retrying the <code><a href="Classes/Request.html">Request</a></code>.</p>
 
 <hr>
 <h2 id='credits' class='heading'>Credits</h2>
@@ -2018,8 +2024,8 @@ Also, do not include the scheme in the <code>host</code> string or reachability 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-08-25)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-09-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

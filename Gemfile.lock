@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     CFPropertyList (2.3.5)
-    activesupport (4.2.9)
+    activesupport (4.2.10)
       i18n (~> 0.7)
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
@@ -48,7 +48,7 @@ GEM
     fuzzy_match (2.0.4)
     gh_inspector (1.0.3)
     i18n (0.8.6)
-    jazzy (0.8.3)
+    jazzy (0.8.4)
       cocoapods (~> 1.0)
       mustache (~> 0.99)
       open4
@@ -82,7 +82,7 @@ GEM
       thread_safe (~> 0.1)
     xcinvoke (0.3.0)
       liferaft (~> 0.0.6)
-    xcodeproj (1.5.1)
+    xcodeproj (1.5.2)
       CFPropertyList (~> 2.3.3)
       claide (>= 1.0.2, < 2.0)
       colored2 (~> 3.1)
