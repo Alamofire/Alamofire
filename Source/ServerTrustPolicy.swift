@@ -27,7 +27,7 @@ import Foundation
 /// Responsible for managing the mapping of `ServerTrustPolicy` objects to a given host.
 open class ServerTrustPolicyManager {
     /// The dictionary of policies mapped to a particular host.
-    open let policies: [String: ServerTrustPolicy]
+    open let evaluators: [String: [ServerTrustEvaluator]]
 
     /// Initializes the `ServerTrustPolicyManager` instance with the given policies.
     ///
@@ -39,8 +39,8 @@ open class ServerTrustPolicyManager {
     /// - parameter policies: A dictionary of all policies mapped to a particular host.
     ///
     /// - returns: The new `ServerTrustPolicyManager` instance.
-    public init(policies: [String: ServerTrustPolicy]) {
-        self.policies = policies
+    public init(evaluators: [String: [ServerTrustEvaluator]]) {
+        self.evaluators = evaluators
     }
 
     /// Returns the `ServerTrustPolicy` for the given host if applicable.
@@ -51,9 +51,28 @@ open class ServerTrustPolicyManager {
     /// - parameter host: The host to use when searching for a matching policy.
     ///
     /// - returns: The server trust policy for the given host if found.
-    open func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
-        return policies[host]
+//    open func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
+//        return policies[host]
+//    }
+    
+    open func serverTrustEvaluators(forHost host: String) -> [ServerTrustEvaluator]? {
+        return evaluators[host]
     }
+
+}
+
+extension Array where Element == ServerTrustEvaluator {
+    #if os(Linux)
+    // Convenience method for Linux.
+    #else
+    func evaluate(_ trust: SecTrust, forHost host: String) -> Bool {
+        for evaluator in self {
+            guard evaluator.evaluate(trust, forHost: host) else { return false }
+        }
+        
+        return true
+    }
+    #endif
 }
 
 // MARK: -
@@ -73,9 +92,17 @@ extension URLSession {
     }
 }
 
+public protocol ServerTrustEvaluator {
+    #if os(Linux)
+    // Define a method to evaluate trust on Linux.
+    #else
+    func evaluate(_ trust: SecTrust, forHost: String) -> Bool
+    #endif
+}
+
 // MARK: - ServerTrustPolicy
 
-/// The `ServerTrustPolicy` evaluates the server trust generally provided by an `NSURLAuthenticationChallenge` when
+/// The `ServerTrustPolicy` evaluates the server trust generally provided by a `URLAuthenticationChallenge` when
 /// connecting to a server over a secure HTTPS connection. The policy configuration then evaluates the server trust
 /// with a given set of criteria to determine whether the server trust is valid and the connection should be made.
 ///
@@ -111,14 +138,12 @@ extension URLSession {
 ///
 /// - disableEvaluation:        Disables all evaluation which in turn will always consider any server trust as valid.
 ///
-/// - customEvaluation:         Uses the associated closure to evaluate the validity of the server trust.
-public enum ServerTrustPolicy {
+public enum ServerTrustPolicy: ServerTrustEvaluator {
     case performDefaultEvaluation(validateHost: Bool)
     case performRevokedEvaluation(validateHost: Bool, revocationFlags: CFOptionFlags)
     case pinCertificates(certificates: [SecCertificate], validateCertificateChain: Bool, validateHost: Bool)
     case pinPublicKeys(publicKeys: [SecKey], validateCertificateChain: Bool, validateHost: Bool)
     case disableEvaluation
-    case customEvaluation((_ serverTrust: SecTrust, _ host: String) -> Bool)
 
     // MARK: - Bundle Location
 
@@ -127,7 +152,7 @@ public enum ServerTrustPolicy {
     /// - parameter bundle: The bundle to search for all `.cer` files.
     ///
     /// - returns: All certificates within the given bundle.
-    public static func certificates(in bundle: Bundle = Bundle.main) -> [SecCertificate] {
+    public static func certificates(in bundle: Bundle = .main) -> [SecCertificate] {
         var certificates: [SecCertificate] = []
 
         let paths = Set([".cer", ".CER", ".crt", ".CRT", ".der", ".DER"].map { fileExtension in
@@ -151,7 +176,7 @@ public enum ServerTrustPolicy {
     /// - parameter bundle: The bundle to search for all `*.cer` files.
     ///
     /// - returns: All public keys within the given bundle.
-    public static func publicKeys(in bundle: Bundle = Bundle.main) -> [SecKey] {
+    public static func publicKeys(in bundle: Bundle = .main) -> [SecKey] {
         var publicKeys: [SecKey] = []
 
         for certificate in certificates(in: bundle) {
@@ -230,8 +255,6 @@ public enum ServerTrustPolicy {
             }
         case .disableEvaluation:
             serverTrustIsValid = true
-        case let .customEvaluation(closure):
-            serverTrustIsValid = closure(serverTrust, host)
         }
 
         return serverTrustIsValid
@@ -246,11 +269,7 @@ public enum ServerTrustPolicy {
         let status = SecTrustEvaluate(trust, &result)
 
         if status == errSecSuccess {
-            let unspecified = SecTrustResultType.unspecified
-            let proceed = SecTrustResultType.proceed
-
-
-            isValid = result == unspecified || result == proceed
+            isValid = result == .unspecified || result == .proceed
         }
 
         return isValid
@@ -292,16 +311,12 @@ public enum ServerTrustPolicy {
     }
 
     private static func publicKey(for certificate: SecCertificate) -> SecKey? {
-        var publicKey: SecKey?
-
         let policy = SecPolicyCreateBasicX509()
         var trust: SecTrust?
         let trustCreationStatus = SecTrustCreateWithCertificates(certificate, policy, &trust)
 
-        if let trust = trust, trustCreationStatus == errSecSuccess {
-            publicKey = SecTrustCopyPublicKey(trust)
-        }
+        guard let createdTrust = trust, trustCreationStatus == errSecSuccess else { return nil }
 
-        return publicKey
+        return SecTrustCopyPublicKey(createdTrust)
     }
 }

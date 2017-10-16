@@ -1557,37 +1557,37 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
 
 // MARK: -
 
-class ServerTrustPolicyCustomEvaluationTestCase: ServerTrustPolicyTestCase {
-    func testThatReturningTrueFromClosurePassesEvaluation() {
-        // Given
-        let host = "test.alamofire.org"
-        let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.customEvaluation { _, _ in
-            return true
-        }
-
-        // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
-
-        // Then
-        XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
-    }
-
-    func testThatReturningFalseFromClosurePassesEvaluation() {
-        // Given
-        let host = "test.alamofire.org"
-        let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.customEvaluation { _, _ in
-            return false
-        }
-
-        // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
-
-        // Then
-        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
-    }
-}
+//class ServerTrustPolicyCustomEvaluationTestCase: ServerTrustPolicyTestCase {
+//    func testThatReturningTrueFromClosurePassesEvaluation() {
+//        // Given
+//        let host = "test.alamofire.org"
+//        let serverTrust = TestTrusts.leafValidDNSName.trust
+//        let serverTrustPolicy = ServerTrustPolicy.customEvaluation { _, _ in
+//            return true
+//        }
+//
+//        // When
+//        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+//
+//        // Then
+//        XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
+//    }
+//
+//    func testThatReturningFalseFromClosurePassesEvaluation() {
+//        // Given
+//        let host = "test.alamofire.org"
+//        let serverTrust = TestTrusts.leafValidDNSName.trust
+//        let serverTrustPolicy = ServerTrustPolicy.customEvaluation { _, _ in
+//            return false
+//        }
+//
+//        // When
+//        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+//
+//        // Then
+//        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+//    }
+//}
 
 // MARK: -
 

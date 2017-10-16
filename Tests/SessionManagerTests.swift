@@ -125,7 +125,7 @@ class SessionManagerTestCase: BaseTestCase {
         // Given
         let configuration = URLSessionConfiguration.default
         let delegate = SessionDelegate()
-        let serverTrustPolicyManager = ServerTrustPolicyManager(policies: [:])
+        let serverTrustPolicyManager = ServerTrustPolicyManager(evaluators: [:])
 
         // When
         let manager = SessionManager(
@@ -168,7 +168,7 @@ class SessionManagerTestCase: BaseTestCase {
             return URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
         }()
 
-        let serverTrustPolicyManager = ServerTrustPolicyManager(policies: [:])
+        let serverTrustPolicyManager = ServerTrustPolicyManager(evaluators: [:])
 
         // When
         let manager = SessionManager(session: session, delegate: delegate, serverTrustPolicyManager: serverTrustPolicyManager)
