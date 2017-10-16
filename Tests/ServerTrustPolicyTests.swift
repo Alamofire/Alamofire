@@ -420,7 +420,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: false)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -437,7 +437,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
             TestCertificates.leafValidDNSName,
             TestCertificates.intermediateCA2
         ])
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: false)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: false)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -450,7 +450,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: false)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -464,7 +464,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: false)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -478,7 +478,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: false)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -494,7 +494,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: true)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -511,7 +511,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
             TestCertificates.leafValidDNSName,
             TestCertificates.intermediateCA2
         ])
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: true)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -524,7 +524,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: true)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -538,7 +538,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafWildcard.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: true)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -552,7 +552,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: true)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -566,7 +566,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: true)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -587,7 +587,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: false,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -607,7 +607,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
             TestCertificates.leafValidDNSName,
             TestCertificates.intermediateCA2
         ])
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: false,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -623,7 +623,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: false,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -640,7 +640,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: false,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -657,7 +657,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: false,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -676,7 +676,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: true,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -696,7 +696,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
             TestCertificates.leafValidDNSName,
             TestCertificates.intermediateCA2
         ])
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: true,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -712,7 +712,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: true,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -729,7 +729,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafWildcard.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: true,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -746,7 +746,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: true,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -763,7 +763,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
+        let serverTrustPolicy = ServerTrustPolicy.revocation(
             validateHost: true,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
@@ -1532,7 +1532,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = ServerTrustPolicy.disableEvaluation
+        let serverTrustPolicy = ServerTrustPolicy.disabled
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -1545,7 +1545,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = ServerTrustPolicy.disableEvaluation
+        let serverTrustPolicy = ServerTrustPolicy.disabled
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -1588,6 +1588,60 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
 //        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
 //    }
 //}
+
+// MARK: -
+
+class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
+    func testThatValidCertificateChainPassesDefaultAndRevocationCompositeChecks() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafValidDNSName.trust
+        let defaultPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: false)
+        let revocationPolicy = ServerTrustPolicy.revocation(validateHost: false, revocationFlags: kSecRevocationUseAnyAvailableMethod)
+        let compositePolicy = ServerTrustPolicy.composite(evaluators: [defaultPolicy, revocationPolicy])
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = compositePolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
+    }
+    
+    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.trustWithCertificates([
+            TestCertificates.leafValidDNSName,
+            TestCertificates.intermediateCA2
+            ])
+        let defaultPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: false)
+        let revocationPolicy = ServerTrustPolicy.revocation(validateHost: false, revocationFlags: kSecRevocationUseAnyAvailableMethod)
+        let compositePolicy = ServerTrustPolicy.composite(evaluators: [defaultPolicy, revocationPolicy])
+        
+        // When
+        let serverTrustIsValid = compositePolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+    
+    func testThatExpiredLeafCertificateFailsDefaultAndRevocationComposite() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafExpired.trust
+        let defaultPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: false)
+        let revocationPolicy = ServerTrustPolicy.revocation(validateHost: false, revocationFlags: kSecRevocationUseAnyAvailableMethod)
+        let compositePolicy = ServerTrustPolicy.composite(evaluators: [defaultPolicy, revocationPolicy])
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = compositePolicy.evaluate(serverTrust, forHost: host)
+        
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+}
 
 // MARK: -
 

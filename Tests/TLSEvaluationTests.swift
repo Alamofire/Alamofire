@@ -144,7 +144,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWithDefaultServerTrustPolicy() {
         // Given
-        let evaluators: [String: [ServerTrustEvaluator]] = [expiredHost: [ServerTrustPolicy.performDefaultEvaluation(validateHost: true)]]
+        let evaluators = [expiredHost: ServerTrustPolicy.defaultEvaluation(validateHost: true)]
         let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
@@ -177,8 +177,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // test is left for debugging purposes only. Should not be committed into the test suite while enabled.
 
         // Given
-        let defaultPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
-        let evaluators: [String: [ServerTrustEvaluator]] = [revokedHost: [defaultPolicy]]
+        let defaultPolicy = ServerTrustPolicy.defaultEvaluation(validateHost: true)
+        let evaluators = [revokedHost: defaultPolicy]
 
         let manager = SessionManager(
             configuration: configuration,
@@ -210,12 +210,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
-        let policy = ServerTrustPolicy.performRevokedEvaluation(
+        let policy = ServerTrustPolicy.revocation(
             validateHost: true,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
 
-        let evaluators: [String: [ServerTrustEvaluator]] = [expiredHost: [policy]]
+        let evaluators = [expiredHost: policy]
 
         let manager = SessionManager(
             configuration: configuration,
@@ -246,12 +246,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
-        let policy = ServerTrustPolicy.performRevokedEvaluation(
+        let policy = ServerTrustPolicy.revocation(
             validateHost: true,
             revocationFlags: kSecRevocationUseAnyAvailableMethod
         )
 
-        let evaluators: [String: [ServerTrustEvaluator]] = [revokedHost: [policy]]
+        let evaluators = [revokedHost: policy]
 
         let manager = SessionManager(
             configuration: configuration,
@@ -285,8 +285,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWhenPinningLeafCertificateWithCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.leaf]
-        let evaluators: [String: [ServerTrustEvaluator]] = [
-            expiredHost: [ServerTrustPolicy.pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)]
+        let evaluators = [
+            expiredHost: ServerTrustPolicy.pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -325,8 +325,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             TestCertificates.rootCA
         ]
 
-        let evaluators: [String: [ServerTrustEvaluator]] = [
-            expiredHost: [ServerTrustPolicy.pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)]
+        let evaluators = [
+            expiredHost: ServerTrustPolicy.pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -359,8 +359,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenPinningLeafCertificateWithoutCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.leaf]
-        let evaluators: [String: [ServerTrustEvaluator]] = [
-            expiredHost: [ServerTrustPolicy.pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)]
+        let evaluators = [
+            expiredHost: ServerTrustPolicy.pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -387,8 +387,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCACertificateWithoutCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.intermediateCA2]
-        let evaluators: [String: [ServerTrustEvaluator]] = [
-            expiredHost: [ServerTrustPolicy.pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)]
+        let evaluators = [
+            expiredHost: ServerTrustPolicy.pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -415,8 +415,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenPinningRootCACertificateWithoutCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.rootCA]
-        let evaluators: [String: [ServerTrustEvaluator]] = [
-            expiredHost: [ServerTrustPolicy.pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)]
+        let evaluators = [
+            expiredHost: ServerTrustPolicy.pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -449,8 +449,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWhenPinningLeafPublicKeyWithCertificateChainValidation() {
         // Given
         let publicKeys = [TestPublicKeys.leaf]
-        let evaluators: [String: [ServerTrustEvaluator]] = [
-            expiredHost: [ServerTrustPolicy.pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: true, validateHost: true)]
+        let evaluators = [
+            expiredHost: ServerTrustPolicy.pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: true, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -483,8 +483,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyWithoutCertificateChainValidation() {
         // Given
         let publicKeys = [TestPublicKeys.leaf]
-        let evaluators: [String: [ServerTrustEvaluator]] = [
-            expiredHost: [ServerTrustPolicy.pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)]
+        let evaluators = [
+            expiredHost: ServerTrustPolicy.pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -511,8 +511,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyWithoutCertificateChainValidation() {
         // Given
         let publicKeys = [TestPublicKeys.intermediateCA2]
-        let evaluators: [String: [ServerTrustEvaluator]] = [
-            expiredHost: [ServerTrustPolicy.pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)]
+        let evaluators = [
+            expiredHost: ServerTrustPolicy.pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -539,8 +539,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenPinningRootCAPublicKeyWithoutCertificateChainValidation() {
         // Given
         let publicKeys = [TestPublicKeys.rootCA]
-        let evaluators: [String: [ServerTrustEvaluator]] = [
-            expiredHost: [ServerTrustPolicy.pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)]
+        let evaluators = [
+            expiredHost: ServerTrustPolicy.pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
         ]
 
         let manager = SessionManager(
@@ -572,7 +572,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenDisablingEvaluation() {
         // Given
-        let evaluators: [String: [ServerTrustEvaluator]] = [expiredHost: [ServerTrustPolicy.disableEvaluation]]
+        let evaluators = [expiredHost: ServerTrustPolicy.disabled]
         let manager = SessionManager(
             configuration: configuration,
             serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)

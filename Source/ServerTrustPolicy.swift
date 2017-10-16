@@ -27,7 +27,7 @@ import Foundation
 /// Responsible for managing the mapping of `ServerTrustPolicy` objects to a given host.
 open class ServerTrustPolicyManager {
     /// The dictionary of policies mapped to a particular host.
-    open let evaluators: [String: [ServerTrustEvaluator]]
+    open let evaluators: [String: ServerTrustEvaluator]
 
     /// Initializes the `ServerTrustPolicyManager` instance with the given policies.
     ///
@@ -39,7 +39,7 @@ open class ServerTrustPolicyManager {
     /// - parameter policies: A dictionary of all policies mapped to a particular host.
     ///
     /// - returns: The new `ServerTrustPolicyManager` instance.
-    public init(evaluators: [String: [ServerTrustEvaluator]]) {
+    public init(evaluators: [String: ServerTrustEvaluator]) {
         self.evaluators = evaluators
     }
 
@@ -55,10 +55,18 @@ open class ServerTrustPolicyManager {
 //        return policies[host]
 //    }
     
-    open func serverTrustEvaluators(forHost host: String) -> [ServerTrustEvaluator]? {
+    open func serverTrustEvaluators(forHost host: String) -> ServerTrustEvaluator? {
         return evaluators[host]
     }
 
+}
+
+public protocol ServerTrustEvaluator {
+    #if os(Linux)
+    // Define a method to evaluate trust on Linux.
+    #else
+    func evaluate(_ trust: SecTrust, forHost: String) -> Bool
+    #endif
 }
 
 extension Array where Element == ServerTrustEvaluator {
@@ -92,13 +100,7 @@ extension URLSession {
     }
 }
 
-public protocol ServerTrustEvaluator {
-    #if os(Linux)
-    // Define a method to evaluate trust on Linux.
-    #else
-    func evaluate(_ trust: SecTrust, forHost: String) -> Bool
-    #endif
-}
+
 
 // MARK: - ServerTrustPolicy
 
@@ -110,40 +112,41 @@ public protocol ServerTrustEvaluator {
 /// vulnerabilities. Applications dealing with sensitive customer data or financial information are strongly encouraged
 /// to route all communication over an HTTPS connection with pinning enabled.
 ///
-/// - performDefaultEvaluation: Uses the default server trust evaluation while allowing you to control whether to
-///                             validate the host provided by the challenge. Applications are encouraged to always
-///                             validate the host in production environments to guarantee the validity of the server's
-///                             certificate chain.
+/// - `defaultEvaluation`: Uses the default server trust evaluation while allowing you to control whether to
+///                        validate the host provided by the challenge. Applications are encouraged to always
+///                        validate the host in production environments to guarantee the validity of the server's
+///                        certificate chain.
 ///
-/// - performRevokedEvaluation: Uses the default and revoked server trust evaluations allowing you to control whether to
-///                             validate the host provided by the challenge as well as specify the revocation flags for
-///                             testing for revoked certificates. Apple platforms did not start testing for revoked
-///                             certificates automatically until iOS 10.1, macOS 10.12 and tvOS 10.1 which is
-///                             demonstrated in our TLS tests. Applications are encouraged to always validate the host
-///                             in production environments to guarantee the validity of the server's certificate chain.
+/// - `revocation`:        Uses the default and revoked server trust evaluations allowing you to control whether to
+///                        validate the host provided by the challenge as well as specify the revocation flags for
+///                        testing for revoked certificates. Apple platforms did not start testing for revoked
+///                        certificates automatically until iOS 10.1, macOS 10.12 and tvOS 10.1 which is
+///                        demonstrated in our TLS tests. Applications are encouraged to always validate the host
+///                        in production environments to guarantee the validity of the server's certificate chain.
 ///
-/// - pinCertificates:          Uses the pinned certificates to validate the server trust. The server trust is
-///                             considered valid if one of the pinned certificates match one of the server certificates.
-///                             By validating both the certificate chain and host, certificate pinning provides a very
-///                             secure form of server trust validation mitigating most, if not all, MITM attacks.
-///                             Applications are encouraged to always validate the host and require a valid certificate
-///                             chain in production environments.
+/// - `pinCertificates`:   Uses the pinned certificates to validate the server trust. The server trust is
+///                        considered valid if one of the pinned certificates match one of the server certificates.
+///                        By validating both the certificate chain and host, certificate pinning provides a very
+///                        secure form of server trust validation mitigating most, if not all, MITM attacks.
+///                        Applications are encouraged to always validate the host and require a valid certificate
+///                        chain in production environments.
 ///
-/// - pinPublicKeys:            Uses the pinned public keys to validate the server trust. The server trust is considered
-///                             valid if one of the pinned public keys match one of the server certificate public keys.
-///                             By validating both the certificate chain and host, public key pinning provides a very
-///                             secure form of server trust validation mitigating most, if not all, MITM attacks.
-///                             Applications are encouraged to always validate the host and require a valid certificate
-///                             chain in production environments.
+/// - `pinPublicKeys`:     Uses the pinned public keys to validate the server trust. The server trust is considered
+///                        valid if one of the pinned public keys match one of the server certificate public keys.
+///                        By validating both the certificate chain and host, public key pinning provides a very
+///                        secure form of server trust validation mitigating most, if not all, MITM attacks.
+///                        Applications are encouraged to always validate the host and require a valid certificate
+///                        chain in production environments.
 ///
-/// - disableEvaluation:        Disables all evaluation which in turn will always consider any server trust as valid.
+/// - `disabled`:          Disables all evaluation which in turn will always consider any server trust as valid.
 ///
 public enum ServerTrustPolicy: ServerTrustEvaluator {
-    case performDefaultEvaluation(validateHost: Bool)
-    case performRevokedEvaluation(validateHost: Bool, revocationFlags: CFOptionFlags)
+    case defaultEvaluation(validateHost: Bool)
+    case revocation(validateHost: Bool, revocationFlags: CFOptionFlags)
     case pinCertificates(certificates: [SecCertificate], validateCertificateChain: Bool, validateHost: Bool)
     case pinPublicKeys(publicKeys: [SecKey], validateCertificateChain: Bool, validateHost: Bool)
-    case disableEvaluation
+    case composite(evaluators: [ServerTrustEvaluator])
+    case disabled
 
     // MARK: - Bundle Location
 
@@ -200,12 +203,12 @@ public enum ServerTrustPolicy: ServerTrustEvaluator {
         var serverTrustIsValid = false
 
         switch self {
-        case let .performDefaultEvaluation(validateHost):
+        case let .defaultEvaluation(validateHost):
             let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
             SecTrustSetPolicies(serverTrust, policy)
 
             serverTrustIsValid = trustIsValid(serverTrust)
-        case let .performRevokedEvaluation(validateHost, revocationFlags):
+        case let .revocation(validateHost, revocationFlags):
             let defaultPolicy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
             let revokedPolicy = SecPolicyCreateRevocation(revocationFlags)
             SecTrustSetPolicies(serverTrust, [defaultPolicy, revokedPolicy] as CFTypeRef)
@@ -253,7 +256,9 @@ public enum ServerTrustPolicy: ServerTrustEvaluator {
                     }
                 }
             }
-        case .disableEvaluation:
+        case .composite(let evaluators):
+            serverTrustIsValid = evaluators.evaluate(serverTrust, forHost: host)
+        case .disabled:
             serverTrustIsValid = true
         }
 
