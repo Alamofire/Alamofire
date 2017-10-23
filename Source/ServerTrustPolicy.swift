@@ -27,7 +27,7 @@ import Foundation
 /// Responsible for managing the mapping of `ServerTrustPolicy` objects to a given host.
 open class ServerTrustPolicyManager {
     /// The dictionary of policies mapped to a particular host.
-    open let evaluators: [String: ServerTrustEvaluator]
+    open let evaluators: [String: ServerTrustEvaluating]
 
     /// Initializes the `ServerTrustPolicyManager` instance with the given policies.
     ///
@@ -39,7 +39,7 @@ open class ServerTrustPolicyManager {
     /// - parameter policies: A dictionary of all policies mapped to a particular host.
     ///
     /// - returns: The new `ServerTrustPolicyManager` instance.
-    public init(evaluators: [String: ServerTrustEvaluator]) {
+    public init(evaluators: [String: ServerTrustEvaluating]) {
         self.evaluators = evaluators
     }
 
@@ -54,22 +54,22 @@ open class ServerTrustPolicyManager {
 //    open func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
 //        return policies[host]
 //    }
-    
-    open func serverTrustEvaluators(forHost host: String) -> ServerTrustEvaluator? {
+
+    open func serverTrustEvaluators(forHost host: String) -> ServerTrustEvaluating? {
         return evaluators[host]
     }
 
 }
 
-public protocol ServerTrustEvaluator {
+public protocol ServerTrustEvaluating {
     #if os(Linux)
     // Define a method to evaluate trust on Linux.
     #else
-    func evaluate(_ trust: SecTrust, forHost: String) -> Bool
+    func evaluate(_ trust: SecTrust, forHost host: String) -> Bool
     #endif
 }
 
-extension Array where Element == ServerTrustEvaluator {
+extension Array where Element == ServerTrustEvaluating {
     #if os(Linux)
     // Convenience method for Linux.
     #else
@@ -77,7 +77,7 @@ extension Array where Element == ServerTrustEvaluator {
         for evaluator in self {
             guard evaluator.evaluate(trust, forHost: host) else { return false }
         }
-        
+
         return true
     }
     #endif
@@ -140,173 +140,179 @@ extension URLSession {
 ///
 /// - `disabled`:          Disables all evaluation which in turn will always consider any server trust as valid.
 ///
-public enum ServerTrustPolicy: ServerTrustEvaluator {
-    case defaultEvaluation(validateHost: Bool)
-    case revocation(validateHost: Bool, revocationFlags: CFOptionFlags)
-    case pinCertificates(certificates: [SecCertificate], validateCertificateChain: Bool, validateHost: Bool)
-    case pinPublicKeys(publicKeys: [SecKey], validateCertificateChain: Bool, validateHost: Bool)
-    case composite(evaluators: [ServerTrustEvaluator])
-    case disabled
+public final class ValidCertificateEvaluator: ServerTrustEvaluating {
+    private let validateHost: Bool
 
-    // MARK: - Bundle Location
-
-    /// Returns all certificates within the given bundle with a `.cer` file extension.
-    ///
-    /// - parameter bundle: The bundle to search for all `.cer` files.
-    ///
-    /// - returns: All certificates within the given bundle.
-    public static func certificates(in bundle: Bundle = .main) -> [SecCertificate] {
-        var certificates: [SecCertificate] = []
-
-        let paths = Set([".cer", ".CER", ".crt", ".CRT", ".der", ".DER"].map { fileExtension in
-            bundle.paths(forResourcesOfType: fileExtension, inDirectory: nil)
-        }.joined())
-
-        for path in paths {
-            if
-                let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)) as CFData,
-                let certificate = SecCertificateCreateWithData(nil, certificateData)
-            {
-                certificates.append(certificate)
-            }
-        }
-
-        return certificates
+    public init(validateHost: Bool = true) {
+        self.validateHost = validateHost
     }
 
-    /// Returns all public keys within the given bundle with a `.cer` file extension.
-    ///
-    /// - parameter bundle: The bundle to search for all `*.cer` files.
-    ///
-    /// - returns: All public keys within the given bundle.
-    public static func publicKeys(in bundle: Bundle = .main) -> [SecKey] {
-        var publicKeys: [SecKey] = []
+    public func evaluate(_ trust: SecTrust, forHost host: String) -> Bool {
+        let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
+        SecTrustSetPolicies(trust, policy)
 
-        for certificate in certificates(in: bundle) {
-            if let publicKey = publicKey(for: certificate) {
-                publicKeys.append(publicKey)
-            }
+        return trust.isValid
+    }
+}
+
+public final class CertificateRevocationEvaluator: ServerTrustEvaluating {
+    public struct Options: OptionSet {
+        public let rawValue: CFOptionFlags
+
+        public init(rawValue: CFOptionFlags) {
+            self.rawValue = rawValue
         }
 
-        return publicKeys
+        public static let crl = Options(rawValue: kSecRevocationCRLMethod)
+        public static let networkAccessDisabled = Options(rawValue: kSecRevocationNetworkAccessDisabled)
+        public static let ocsp = Options(rawValue: kSecRevocationOCSPMethod)
+        public static let preferCRL = Options(rawValue: kSecRevocationPreferCRL)
+        public static let requirePositiveResponse = Options(rawValue: kSecRevocationRequirePositiveResponse)
+        public static let any = Options(rawValue: kSecRevocationUseAnyAvailableMethod)
     }
 
-    // MARK: - Evaluation
+    private let validateHost: Bool
+    private let options: Options
 
-    /// Evaluates whether the server trust is valid for the given host.
-    ///
-    /// - parameter serverTrust: The server trust to evaluate.
-    /// - parameter host:        The host of the challenge protection space.
-    ///
-    /// - returns: Whether the server trust is valid.
-    public func evaluate(_ serverTrust: SecTrust, forHost host: String) -> Bool {
-        var serverTrustIsValid = false
+    public init(validateHost: Bool = true, options: Options = .any) {
+        self.validateHost = validateHost
+        self.options = options
+    }
 
-        switch self {
-        case let .defaultEvaluation(validateHost):
+    public func evaluate(_ trust: SecTrust, forHost host: String) -> Bool {
+        let defaultPolicy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
+        let revokedPolicy = SecPolicyCreateRevocation(options.rawValue)
+        SecTrustSetPolicies(trust, [defaultPolicy, revokedPolicy] as CFTypeRef)
+
+        return trust.isValid
+    }
+}
+
+public final class PinnedCertificatesEvaluator: ServerTrustEvaluating {
+    private let certificates: [SecCertificate]
+    private let validateCertificateChain: Bool
+    private let validateHost: Bool
+
+    public init(certificates: [SecCertificate] = Bundle.main.certificates,
+                validateCertificateChain: Bool = true,
+                validateHost: Bool = true) {
+        self.certificates = certificates
+        self.validateCertificateChain = validateCertificateChain
+        self.validateHost = validateHost
+    }
+
+
+    public func evaluate(_ trust: SecTrust, forHost host: String) -> Bool {
+        if validateCertificateChain {
             let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
-            SecTrustSetPolicies(serverTrust, policy)
+            SecTrustSetPolicies(trust, policy)
 
-            serverTrustIsValid = trustIsValid(serverTrust)
-        case let .revocation(validateHost, revocationFlags):
-            let defaultPolicy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
-            let revokedPolicy = SecPolicyCreateRevocation(revocationFlags)
-            SecTrustSetPolicies(serverTrust, [defaultPolicy, revokedPolicy] as CFTypeRef)
+            SecTrustSetAnchorCertificates(trust, certificates as CFArray)
+            SecTrustSetAnchorCertificatesOnly(trust, true)
 
-            serverTrustIsValid = trustIsValid(serverTrust)
-        case let .pinCertificates(pinnedCertificates, validateCertificateChain, validateHost):
+            return trust.isValid
+        } else {
+            let serverCertificatesData = Set(trust.certificateData)
+            let pinnedCertificatesData = Set(certificates.data)
+
+            return !serverCertificatesData.isDisjoint(with: pinnedCertificatesData)
+        }
+    }
+}
+
+public final class PublicKeysEvaluator: ServerTrustEvaluating {
+    private let keys: [SecKey]
+    private let validateCertificateChain: Bool
+    private let validateHost: Bool
+
+    public init(keys: [SecKey] = Bundle.main.publicKeys,
+                validateCertificateChain: Bool = true,
+                validateHost: Bool = true) {
+        self.keys = keys
+        self.validateCertificateChain = validateCertificateChain
+        self.validateHost = validateHost
+    }
+
+    public func evaluate(_ trust: SecTrust, forHost host: String) -> Bool {
+        let certificateChainEvaluationPassed: Bool = {
             if validateCertificateChain {
                 let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
-                SecTrustSetPolicies(serverTrust, policy)
+                SecTrustSetPolicies(trust, policy)
 
-                SecTrustSetAnchorCertificates(serverTrust, pinnedCertificates as CFArray)
-                SecTrustSetAnchorCertificatesOnly(serverTrust, true)
-
-                serverTrustIsValid = trustIsValid(serverTrust)
+                return trust.isValid
             } else {
-                let serverCertificatesDataArray = certificateData(for: serverTrust)
-                let pinnedCertificatesDataArray = certificateData(for: pinnedCertificates)
+                return true
+            }
+        }()
 
-                outerLoop: for serverCertificateData in serverCertificatesDataArray {
-                    for pinnedCertificateData in pinnedCertificatesDataArray {
-                        if serverCertificateData == pinnedCertificateData {
-                            serverTrustIsValid = true
-                            break outerLoop
-                        }
-                    }
+        guard certificateChainEvaluationPassed else { return false }
+
+        outerLoop: for serverPublicKey in trust.publicKeys as [AnyObject] {
+            for pinnedPublicKey in keys as [AnyObject] {
+                if serverPublicKey.isEqual(pinnedPublicKey) {
+                    return true
                 }
             }
-        case let .pinPublicKeys(pinnedPublicKeys, validateCertificateChain, validateHost):
-            var certificateChainEvaluationPassed = true
-
-            if validateCertificateChain {
-                let policy = SecPolicyCreateSSL(true, validateHost ? host as CFString : nil)
-                SecTrustSetPolicies(serverTrust, policy)
-
-                certificateChainEvaluationPassed = trustIsValid(serverTrust)
-            }
-
-            if certificateChainEvaluationPassed {
-                outerLoop: for serverPublicKey in ServerTrustPolicy.publicKeys(for: serverTrust) as [AnyObject] {
-                    for pinnedPublicKey in pinnedPublicKeys as [AnyObject] {
-                        if serverPublicKey.isEqual(pinnedPublicKey) {
-                            serverTrustIsValid = true
-                            break outerLoop
-                        }
-                    }
-                }
-            }
-        case .composite(let evaluators):
-            serverTrustIsValid = evaluators.evaluate(serverTrust, forHost: host)
-        case .disabled:
-            serverTrustIsValid = true
         }
+        return false
+    }
+}
 
-        return serverTrustIsValid
+public final class CompositeEvaluator: ServerTrustEvaluating {
+    private let evaluators: [ServerTrustEvaluating]
+
+    public init(evaluators: [ServerTrustEvaluating]) {
+        self.evaluators = evaluators
     }
 
-    // MARK: - Private - Trust Validation
+    public func evaluate(_ trust: SecTrust, forHost host: String) -> Bool {
+        return evaluators.evaluate(trust, forHost: host)
+    }
+}
 
-    private func trustIsValid(_ trust: SecTrust) -> Bool {
-        var isValid = false
+public final class DisabledEvaluator: ServerTrustEvaluating {
+    public init() { }
 
+    public func evaluate(_ trust: SecTrust, forHost host: String) -> Bool {
+        return true
+    }
+}
+
+public extension Bundle {
+    var certificates: [SecCertificate] {
+        return paths(forResourcesOfTypes: [".cer", ".CER", ".crt", ".CRT", ".der", ".DER"]).flatMap { path in
+            guard
+                let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)) as CFData,
+                let certificate = SecCertificateCreateWithData(nil, certificateData) else { return nil }
+
+            return certificate
+        }
+    }
+
+    var publicKeys: [SecKey] {
+        return certificates.flatMap { $0.publicKey }
+    }
+
+    func paths(forResourcesOfTypes types: [String]) -> [String] {
+        return Array(Set(types.flatMap { paths(forResourcesOfType: $0, inDirectory: nil) }))
+    }
+}
+
+public extension SecTrust {
+    var isValid: Bool {
         var result = SecTrustResultType.invalid
-        let status = SecTrustEvaluate(trust, &result)
+        let status = SecTrustEvaluate(self, &result)
 
-        if status == errSecSuccess {
-            isValid = result == .unspecified || result == .proceed
-        }
-
-        return isValid
+        return (status == errSecSuccess) ? result == .unspecified || result == .proceed : false
     }
 
-    // MARK: - Private - Certificate Data
-
-    private func certificateData(for trust: SecTrust) -> [Data] {
-        var certificates: [SecCertificate] = []
-
-        for index in 0..<SecTrustGetCertificateCount(trust) {
-            if let certificate = SecTrustGetCertificateAtIndex(trust, index) {
-                certificates.append(certificate)
-            }
-        }
-
-        return certificateData(for: certificates)
-    }
-
-    private func certificateData(for certificates: [SecCertificate]) -> [Data] {
-        return certificates.map { SecCertificateCopyData($0) as Data }
-    }
-
-    // MARK: - Private - Public Key Extraction
-
-    private static func publicKeys(for trust: SecTrust) -> [SecKey] {
+    var publicKeys: [SecKey] {
         var publicKeys: [SecKey] = []
 
-        for index in 0..<SecTrustGetCertificateCount(trust) {
+        for index in 0..<SecTrustGetCertificateCount(self) {
             if
-                let certificate = SecTrustGetCertificateAtIndex(trust, index),
-                let publicKey = publicKey(for: certificate)
+                let certificate = SecTrustGetCertificateAtIndex(self, index),
+                let publicKey = certificate.publicKey
             {
                 publicKeys.append(publicKey)
             }
@@ -315,10 +321,30 @@ public enum ServerTrustPolicy: ServerTrustEvaluator {
         return publicKeys
     }
 
-    private static func publicKey(for certificate: SecCertificate) -> SecKey? {
+    var certificateData: [Data] {
+        var certificates: [SecCertificate] = []
+
+        for index in 0..<SecTrustGetCertificateCount(self) {
+            if let certificate = SecTrustGetCertificateAtIndex(self, index) {
+                certificates.append(certificate)
+            }
+        }
+
+        return certificates.data
+    }
+}
+
+public extension Array where Element == SecCertificate {
+    var data: [Data] {
+        return map { SecCertificateCopyData($0) as Data }
+    }
+}
+
+public extension SecCertificate {
+    var publicKey: SecKey? {
         let policy = SecPolicyCreateBasicX509()
         var trust: SecTrust?
-        let trustCreationStatus = SecTrustCreateWithCertificates(certificate, policy, &trust)
+        let trustCreationStatus = SecTrustCreateWithCertificates(self, policy, &trust)
 
         guard let createdTrust = trust, trustCreationStatus == errSecSuccess else { return nil }
 

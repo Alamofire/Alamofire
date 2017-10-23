@@ -89,16 +89,14 @@ extension Timeline: CustomStringConvertible {
         let serializationDuration = String(format: "%.3f", self.serializationDuration)
         let totalDuration = String(format: "%.3f", self.totalDuration)
 
-        // NOTE: Had to move to string concatenation due to memory leak filed as rdar://26761490. Once memory leak is
-        // fixed, we should move back to string interpolation by reverting commit 7d4a43b1.
-        let timings = [
-            "\"Latency\": " + latency + " secs",
-            "\"Request Duration\": " + requestDuration + " secs",
-            "\"Serialization Duration\": " + serializationDuration + " secs",
-            "\"Total Duration\": " + totalDuration + " secs"
-        ]
+        let timings = """
+        \"Latency\": \(latency) secs
+        \"Request Duration\": \(requestDuration) secs
+        \"Serialization Duration\": "\(serializationDuration) secs
+        \"Total Duration\": \(totalDuration) secs
+        """
 
-        return "Timeline: { " + timings.joined(separator: ", ") + " }"
+        return "Timeline: { \(timings) }"
     }
 }
 
@@ -118,19 +116,17 @@ extension Timeline: CustomDebugStringConvertible {
         let serializationDuration = String(format: "%.3f", self.serializationDuration)
         let totalDuration = String(format: "%.3f", self.totalDuration)
 
-        // NOTE: Had to move to string concatenation due to memory leak filed as rdar://26761490. Once memory leak is
-        // fixed, we should move back to string interpolation by reverting commit 7d4a43b1.
-        let timings = [
-            "\"Request Start Time\": " + requestStartTime,
-            "\"Initial Response Time\": " + initialResponseTime,
-            "\"Request Completed Time\": " + requestCompletedTime,
-            "\"Serialization Completed Time\": " + serializationCompletedTime,
-            "\"Latency\": " + latency + " secs",
-            "\"Request Duration\": " + requestDuration + " secs",
-            "\"Serialization Duration\": " + serializationDuration + " secs",
-            "\"Total Duration\": " + totalDuration + " secs"
-        ]
+        let timings = """
+        \"Request Start Time\": \(requestStartTime)
+        \"Initial Response Time\": \(initialResponseTime)
+        \"Request Completed Time\": \(requestCompletedTime)
+        \"Serialization Completed Time\": \(serializationCompletedTime)
+        \"Latency\": \(latency) secs
+        \"Request Duration\": \(requestDuration) secs
+        \"Serialization Duration\": \(serializationDuration) secs
+        \"Total Duration\": \(totalDuration) secs
+        """
 
-        return "Timeline: { " + timings.joined(separator: ", ") + " }"
+        return "Timeline: { \(timings) }"
     }
 }
