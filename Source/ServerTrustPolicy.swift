@@ -247,9 +247,9 @@ public final class PublicKeysEvaluator: ServerTrustEvaluating {
 
         guard certificateChainEvaluationPassed else { return false }
 
-        outerLoop: for serverPublicKey in trust.publicKeys as [AnyObject] {
-            for pinnedPublicKey in keys as [AnyObject] {
-                if serverPublicKey.isEqual(pinnedPublicKey) {
+        outerLoop: for serverPublicKey in trust.publicKeys as [AnyHashable] {
+            for pinnedPublicKey in keys as [AnyHashable] {
+                if serverPublicKey == pinnedPublicKey {
                     return true
                 }
             }
