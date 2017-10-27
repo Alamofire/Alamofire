@@ -53,37 +53,51 @@ class SessionManagerTestCase: BaseTestCase {
         var adaptedCount = 0
         var retryCount = 0
         var retryErrors: [Error] = []
-
+        var delay: TimeInterval = 0.0
+        
         var shouldApplyAuthorizationHeader = false
         var throwsErrorOnSecondAdapt = false
-
+        static let errorOnSecondAdapt = AFError.invalidURL(url: "")
+        
+        var didShouldRetry: ((Request, TimeInterval) -> Void)?
+        
+        static func isErrorOnSecondAdapt(_ error: Error) -> Bool {
+            switch (RequestHandler.errorOnSecondAdapt, error) {
+            case let (AFError.invalidURL(url1), AFError.invalidURL(url2)):
+                return (try? url1.asURL()) == (try? url2.asURL())
+            default:
+                preconditionFailure("not implemented")
+            }
+        }
+        
         func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
             if throwsErrorOnSecondAdapt && adaptedCount == 1 {
                 throwsErrorOnSecondAdapt = false
-                throw AFError.invalidURL(url: "")
+                throw RequestHandler.errorOnSecondAdapt
             }
-
+            
             var urlRequest = urlRequest
-
+            
             adaptedCount += 1
-
+            
             if shouldApplyAuthorizationHeader && adaptedCount > 1 {
                 if let header = Request.authorizationHeader(user: "user", password: "password") {
                     urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
                 }
             }
-
+            
             return urlRequest
         }
-
+        
         func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             retryCount += 1
             retryErrors.append(error)
-
+            
             if retryCount < 2 {
-                completion(true, 0.0)
+                didShouldRetry?(request, delay)
+                completion(true, delay)
             } else {
-                completion(false, 0.0)
+                completion(false, delay)
             }
         }
     }
@@ -768,6 +782,52 @@ class SessionManagerTestCase: BaseTestCase {
         } else {
             XCTFail("error should not be nil")
         }
+    }
+    
+    func testThatRetriedRequestIsCanceledWhileDelayWhenCancelIsInvoked() {
+        // Given
+        let cancelRequestExpectation = self.expectation(description: "Request.cancel() should be invoked ")
+        let throwsErrorOnSecondAdapt = false
+        
+        let handler = RequestHandler()
+        handler.throwsErrorOnSecondAdapt = throwsErrorOnSecondAdapt
+        handler.shouldApplyAuthorizationHeader = true
+        handler.delay = 6.0    // delay between request attempts
+        handler.didShouldRetry = { request, delay in
+            let time = DispatchTime.now() + delay / 2.0 // cancel request while the delay
+            DispatchQueue.main.asyncAfter(deadline: time) {
+                request.cancel()
+                cancelRequestExpectation.fulfill()
+            }
+        }
+        
+        let sessionManager = SessionManager()
+        sessionManager.adapter = handler
+        sessionManager.retrier = handler
+        
+        let requestExpectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+        
+        // When
+        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                requestExpectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout)
+        
+        // Then
+        if throwsErrorOnSecondAdapt, let error = response?.error, RequestHandler.isErrorOnSecondAdapt(error) {
+            XCTFail("Error on second adapt has been throwing")
+        } else {
+            XCTAssertEqual(response?.result.isSuccess, false, "Second adapt has been performed")
+        }
+        
+        XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(request.retryCount, 0)
     }
 }
 
