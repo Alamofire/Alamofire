@@ -129,9 +129,19 @@ The [Swift Package Manager](https://swift.org/package-manager/) is a tool for au
 
 Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift`.
 
+#### Swift 3
+
 ```swift
 dependencies: [
     .Package(url: "https://github.com/Alamofire/Alamofire.git", majorVersion: 4)
+]
+```
+
+#### Swift 4
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/Alamofire/Alamofire.git", from: "4.0.0")
 ]
 ```
 
