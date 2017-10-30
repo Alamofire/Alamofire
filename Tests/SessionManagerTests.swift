@@ -118,26 +118,26 @@ class SessionManagerTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(manager.session.delegate, "session delegate should not be nil")
         XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
-        XCTAssertNil(manager.session.serverTrustPolicyManager, "session server trust policy manager should be nil")
+        XCTAssertNil(manager.session.serverTrustManager, "session server trust policy manager should be nil")
     }
 
     func testInitializerWithSpecifiedArguments() {
         // Given
         let configuration = URLSessionConfiguration.default
         let delegate = SessionDelegate()
-        let serverTrustPolicyManager = ServerTrustPolicyManager(evaluators: [:])
+        let serverTrustManager = ServerTrustManager(evaluators: [:])
 
         // When
         let manager = SessionManager(
             configuration: configuration,
             delegate: delegate,
-            serverTrustPolicyManager: serverTrustPolicyManager
+            serverTrustManager: serverTrustManager
         )
 
         // Then
         XCTAssertNotNil(manager.session.delegate, "session delegate should not be nil")
         XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
-        XCTAssertNotNil(manager.session.serverTrustPolicyManager, "session server trust policy manager should not be nil")
+        XCTAssertNotNil(manager.session.serverTrustManager, "session server trust policy manager should not be nil")
     }
 
     func testThatFailableInitializerSucceedsWithDefaultArguments() {
@@ -154,7 +154,7 @@ class SessionManagerTestCase: BaseTestCase {
         // Then
         if let manager = manager {
             XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
-            XCTAssertNil(manager.session.serverTrustPolicyManager, "session server trust policy manager should be nil")
+            XCTAssertNil(manager.session.serverTrustManager, "session server trust policy manager should be nil")
         } else {
             XCTFail("manager should not be nil")
         }
@@ -168,15 +168,15 @@ class SessionManagerTestCase: BaseTestCase {
             return URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
         }()
 
-        let serverTrustPolicyManager = ServerTrustPolicyManager(evaluators: [:])
+        let serverTrustManager = ServerTrustManager(evaluators: [:])
 
         // When
-        let manager = SessionManager(session: session, delegate: delegate, serverTrustPolicyManager: serverTrustPolicyManager)
+        let manager = SessionManager(session: session, delegate: delegate, serverTrustManager: serverTrustManager)
 
         // Then
         if let manager = manager {
             XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
-            XCTAssertNotNil(manager.session.serverTrustPolicyManager, "session server trust policy manager should not be nil")
+            XCTAssertNotNil(manager.session.serverTrustManager, "session server trust policy manager should not be nil")
         } else {
             XCTFail("manager should not be nil")
         }

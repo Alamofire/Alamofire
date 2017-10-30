@@ -540,7 +540,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             let identifier = "org.alamofire.uploadtests.\(UUID().uuidString)"
             let configuration = URLSessionConfiguration.background(withIdentifier: identifier)
 
-            return SessionManager(configuration: configuration, serverTrustPolicyManager: nil)
+            return SessionManager(configuration: configuration, serverTrustManager: nil)
         }()
 
         let urlString = "https://httpbin.org/post"

@@ -153,50 +153,50 @@ open class SessionManager {
 
     // MARK: - Lifecycle
 
-    /// Creates an instance with the specified `configuration`, `delegate` and `serverTrustPolicyManager`.
+    /// Creates an instance with the specified `configuration`, `delegate` and `serverTrustManager`.
     ///
     /// - parameter configuration:            The configuration used to construct the managed session.
     ///                                       `URLSessionConfiguration.default` by default.
     /// - parameter delegate:                 The delegate used when initializing the session. `SessionDelegate()` by
     ///                                       default.
-    /// - parameter serverTrustPolicyManager: The server trust policy manager to use for evaluating all server trust
+    /// - parameter serverTrustManager: The server trust policy manager to use for evaluating all server trust
     ///                                       challenges. `nil` by default.
     ///
     /// - returns: The new `SessionManager` instance.
     public init(
         configuration: URLSessionConfiguration = URLSessionConfiguration.default,
         delegate: SessionDelegate = SessionDelegate(),
-        serverTrustPolicyManager: ServerTrustPolicyManager? = nil)
+        serverTrustManager: ServerTrustManager? = nil)
     {
         self.delegate = delegate
         self.session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
 
-        commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
+        commonInit(serverTrustManager: serverTrustManager)
     }
 
-    /// Creates an instance with the specified `session`, `delegate` and `serverTrustPolicyManager`.
+    /// Creates an instance with the specified `session`, `delegate` and `serverTrustManager`.
     ///
     /// - parameter session:                  The URL session.
     /// - parameter delegate:                 The delegate of the URL session. Must equal the URL session's delegate.
-    /// - parameter serverTrustPolicyManager: The server trust policy manager to use for evaluating all server trust
+    /// - parameter serverTrustManager: The server trust policy manager to use for evaluating all server trust
     ///                                       challenges. `nil` by default.
     ///
     /// - returns: The new `SessionManager` instance if the URL session's delegate matches; `nil` otherwise.
     public init?(
         session: URLSession,
         delegate: SessionDelegate,
-        serverTrustPolicyManager: ServerTrustPolicyManager? = nil)
+        serverTrustManager: ServerTrustManager? = nil)
     {
         guard delegate === session.delegate else { return nil }
 
         self.delegate = delegate
         self.session = session
 
-        commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
+        commonInit(serverTrustManager: serverTrustManager)
     }
 
-    private func commonInit(serverTrustPolicyManager: ServerTrustPolicyManager?) {
-        session.serverTrustPolicyManager = serverTrustPolicyManager
+    private func commonInit(serverTrustManager: ServerTrustManager?) {
+        session.serverTrustManager = serverTrustManager
 
         delegate.sessionManager = self
 

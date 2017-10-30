@@ -144,10 +144,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWithDefaultServerTrustPolicy() {
         // Given
-        let evaluators = [expiredHost: ValidCertificateEvaluator(validateHost: true)]
+        let evaluators = [expiredHost: DefaultTrustEvaluator(validateHost: true)]
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -177,12 +177,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // test is left for debugging purposes only. Should not be committed into the test suite while enabled.
 
         // Given
-        let defaultPolicy = ValidCertificateEvaluator()
+        let defaultPolicy = DefaultTrustEvaluator()
         let evaluators = [revokedHost: defaultPolicy]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(revokedURLString)")
@@ -210,13 +210,13 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
-        let policy = CertificateRevocationEvaluator()
+        let policy = RevocationTrustEvaluator()
 
         let evaluators = [expiredHost: policy]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -243,13 +243,13 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
-        let policy = CertificateRevocationEvaluator()
+        let policy = RevocationTrustEvaluator()
 
         let evaluators = [revokedHost: policy]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(revokedURLString)")
@@ -280,12 +280,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.leaf]
         let evaluators = [
-            expiredHost: PinnedCertificatesEvaluator(certificates: certificates)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates)
         ]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -320,12 +320,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         ]
 
         let evaluators = [
-            expiredHost: PinnedCertificatesEvaluator(certificates: certificates)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates)
         ]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -354,12 +354,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.leaf]
         let evaluators = [
-            expiredHost: PinnedCertificatesEvaluator(certificates: certificates, validateCertificateChain: false)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false)
         ]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -382,12 +382,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.intermediateCA2]
         let evaluators = [
-            expiredHost: PinnedCertificatesEvaluator(certificates: certificates, validateCertificateChain: false)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false)
         ]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -410,12 +410,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.rootCA]
         let evaluators = [
-            expiredHost: PinnedCertificatesEvaluator(certificates: certificates, validateCertificateChain: false)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false)
         ]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -444,12 +444,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.leaf]
         let evaluators = [
-            expiredHost: PublicKeysEvaluator(keys: publicKeys)
+            expiredHost: PublicKeysTrustEvaluator(keys: publicKeys)
         ]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -478,12 +478,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.leaf]
         let evaluators = [
-            expiredHost: PublicKeysEvaluator(keys: publicKeys, validateCertificateChain: false)
+            expiredHost: PublicKeysTrustEvaluator(keys: publicKeys, validateCertificateChain: false)
         ]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -506,12 +506,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.intermediateCA2]
         let evaluators = [
-            expiredHost: PublicKeysEvaluator(keys: publicKeys, validateCertificateChain: false)
+            expiredHost: PublicKeysTrustEvaluator(keys: publicKeys, validateCertificateChain: false)
         ]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -534,12 +534,12 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let publicKeys = [TestPublicKeys.rootCA]
         let evaluators = [
-            expiredHost: PublicKeysEvaluator(keys: publicKeys, validateCertificateChain: false)
+            expiredHost: PublicKeysTrustEvaluator(keys: publicKeys, validateCertificateChain: false)
         ]
 
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
@@ -569,7 +569,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         let evaluators = [expiredHost: DisabledEvaluator()]
         let manager = SessionManager(
             configuration: configuration,
-            serverTrustPolicyManager: ServerTrustPolicyManager(evaluators: evaluators)
+            serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
 
         let expectation = self.expectation(description: "\(expiredURLString)")

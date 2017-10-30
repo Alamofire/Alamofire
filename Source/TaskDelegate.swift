@@ -113,7 +113,7 @@ open class TaskDelegate: NSObject {
             let host = challenge.protectionSpace.host
 
             if
-                let serverTrustEvaluators = session.serverTrustPolicyManager?.serverTrustEvaluators(forHost: host),
+                let serverTrustEvaluators = session.serverTrustManager?.serverTrustEvaluators(forHost: host),
                 let serverTrust = challenge.protectionSpace.serverTrust
             {
                 if serverTrustEvaluators.evaluate(serverTrust, forHost: host) {
