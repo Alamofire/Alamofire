@@ -455,7 +455,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
             completeTask(session, task, error)
             return
         }
-
+        
         // Run all validations on the request before checking if an error occurred
         request.validations.forEach { $0() }
 
@@ -468,22 +468,33 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         /// If an error occurred and the retrier is set, asynchronously ask the retrier if the request
         /// should be retried. Otherwise, complete the task by notifying the task delegate.
-        if let retrier = retrier, let error = error {
+        if let retrier = retrier, let error = error, !(error as NSError).isCancelled {
+
             retrier.should(sessionManager, retry: request, with: error) { [weak self] shouldRetry, timeDelay in
                 guard shouldRetry else { completeTask(session, task, error) ; return }
-
-                DispatchQueue.utility.after(timeDelay) { [weak self] in
+                var retrySucceeded = false
+                let workItem = DispatchWorkItem(qos: DispatchQueue.utility.qos) {
                     guard let strongSelf = self else { return }
-
-                    let retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false
-
-                    if retrySucceeded, let task = request.task {
+                    
+                    retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false
+                }
+                
+                workItem.notify(queue: DispatchQueue.utility) {
+                    guard let strongSelf = self else { return }
+                    
+                    if workItem.isCancelled {
+                        request.delegate.error = request.request?.url.flatMap({NSError.makeCancelError(for: $0.absoluteURL)})
+                        
+                        completeTask(session, task, request.delegate.error)
+                    } else if retrySucceeded, let task = request.task {
                         strongSelf[task] = request
-                        return
                     } else {
-                        completeTask(session, task, error)
+                        completeTask(session, task, request.delegate.error)
                     }
                 }
+                request.sessionTaskOperator = CancelRetriedRequestStateDecorator(retryWorkItem: workItem, contract: request.sessionTaskOperator)
+                
+                DispatchQueue.utility.after(timeDelay, execute: workItem)
             }
         } else {
             completeTask(session, task, error)
