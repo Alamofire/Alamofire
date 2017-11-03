@@ -876,22 +876,26 @@ open class SessionManager {
                     return
                 }
 
-                var retrySucceeded = false
-                let workItem = DispatchWorkItem(qos: DispatchQueue.utility.qos) {
-                    guard let strongSelf = self else { return }
-                    
-                    retrySucceeded = strongSelf.retry(request)
-                }
+                /// enusre DispatchWorkItem perform empty block more times, then notify one time
+                
+                let workItem = DispatchWorkItem {}
                 
                 workItem.notify(queue: DispatchQueue.utility) {
                     guard let strongSelf = self else { return }
-                    
-                    if workItem.isCancelled, let task = request.task {
-                        strongSelf.delegate.urlSession(request.session, task: task, didCompleteWithError: request.request?.url.flatMap({NSError.makeCancelError(for: $0.absoluteURL)}))
-                    } else if retrySucceeded, let task = request.task {
-                        strongSelf.delegate[task] = request
+
+                    if workItem.isCancelled {
+                        if let task = request.task {
+                            strongSelf.delegate.urlSession(request.session, task: task, didCompleteWithError: request.request?.url.flatMap({NSError.makeCancelError(for: $0.absoluteURL)}))
+                        } else {
+                            if strongSelf.startRequestsImmediately { request.resume() }
+                        }
                     } else {
-                        if strongSelf.startRequestsImmediately { request.resume() }
+                        let retrySucceeded = strongSelf.retry(request)
+                        if retrySucceeded, let task = request.task {
+                            strongSelf.delegate[task] = request
+                        } else {
+                            if strongSelf.startRequestsImmediately { request.resume() }
+                        }
                     }
                 }
                 request.sessionTaskOperator = CancelRetriedRequestStateDecorator(retryWorkItem: workItem, contract: request.sessionTaskOperator)

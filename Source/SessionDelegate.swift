@@ -472,24 +472,24 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
             retrier.should(sessionManager, retry: request, with: error) { [weak self] shouldRetry, timeDelay in
                 guard shouldRetry else { completeTask(session, task, error) ; return }
-                var retrySucceeded = false
-                let workItem = DispatchWorkItem(qos: DispatchQueue.utility.qos) {
-                    guard let strongSelf = self else { return }
-                    
-                    retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false
-                }
+                
+                /// enusre DispatchWorkItem perform empty block more times, then notify one time
+                
+                let workItem = DispatchWorkItem {}
                 
                 workItem.notify(queue: DispatchQueue.utility) {
                     guard let strongSelf = self else { return }
-                    
+
                     if workItem.isCancelled {
                         request.delegate.error = request.request?.url.flatMap({NSError.makeCancelError(for: $0.absoluteURL)})
-                        
                         completeTask(session, task, request.delegate.error)
-                    } else if retrySucceeded, let task = request.task {
-                        strongSelf[task] = request
                     } else {
-                        completeTask(session, task, request.delegate.error)
+                        let retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false
+                        if retrySucceeded, let task = request.task {
+                            strongSelf[task] = request
+                        } else {
+                            completeTask(session, task, request.delegate.error)
+                        }
                     }
                 }
                 request.sessionTaskOperator = CancelRetriedRequestStateDecorator(retryWorkItem: workItem, contract: request.sessionTaskOperator)

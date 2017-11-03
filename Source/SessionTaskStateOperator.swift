@@ -139,8 +139,14 @@ final class CancelRetriedRequestStateDecorator: OperationQueueStateDecorator {
     }
     
     override func cancel() {
-       super.cancel()
+        super.cancel()
+        /// if workItem not perform, first cancel, then perform immediately, notify one time
+        
+        let isCancelled = retryWorkItem.isCancelled
         retryWorkItem.cancel()
+        if !isCancelled {
+            retryWorkItem.perform()
+        }
     }
     
 }
