@@ -55,7 +55,7 @@ class SessionManagerTestCase: BaseTestCase {
         var retryErrors: [Error] = []
         var timeDelay = 0.0
         var retryWork: ((_ request: Request, _ retryCount: Int)-> Void)? = nil
-
+        var maxRetryCount = 2
         var shouldApplyAuthorizationHeader = false
         var throwsErrorOnSecondAdapt = false
         var throwsAdaptError = false
@@ -83,7 +83,7 @@ class SessionManagerTestCase: BaseTestCase {
             retryCount += 1
             retryErrors.append(error)
 
-            if retryCount < 2 {
+            if retryCount < maxRetryCount {
                 completion(true, timeDelay)
             } else {
                 completion(false, timeDelay)
@@ -779,6 +779,7 @@ class SessionManagerTestCase: BaseTestCase {
         // Given
         let handler = RequestHandler()
         handler.timeDelay = 5
+        handler.maxRetryCount = 5
         handler.retryWork = { (request: Request, retryCount: Int)-> Void in
             if retryCount == 1 {
                 DispatchQueue.main.after(2, execute: {
@@ -822,6 +823,8 @@ class SessionManagerTestCase: BaseTestCase {
         // Given
         let handler = RequestHandler()
         handler.timeDelay = 5
+        handler.throwsAdaptError = true
+        handler.maxRetryCount = 5
         handler.retryWork = { (request: Request, retryCount: Int)-> Void in
             if retryCount == 1 {
                 DispatchQueue.main.after(2, execute: {
@@ -829,7 +832,6 @@ class SessionManagerTestCase: BaseTestCase {
                 })
             }
         }
-        handler.throwsAdaptError = true
         
         let sessionManager = SessionManager()
         sessionManager.adapter = handler
@@ -871,6 +873,7 @@ class SessionManagerTestCase: BaseTestCase {
         var response: DefaultDownloadResponse?
         let handler = RequestHandler()
         handler.timeDelay = 5
+        handler.maxRetryCount = 5
         handler.retryWork = { (request: Request, retryCount: Int)-> Void in
             if retryCount == 1 {
                 DispatchQueue.main.after(2, execute: {
