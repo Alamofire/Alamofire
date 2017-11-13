@@ -363,7 +363,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">bodyPartURLInvalid</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -394,7 +394,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">bodyPartFilenameInvalid</span><span class="p">(</span><span class="nv">in</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -425,7 +425,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">bodyPartFileNotReachable</span><span class="p">(</span><span class="nv">at</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -456,7 +456,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">bodyPartFileNotReachableWithError</span><span class="p">(</span><span class="nv">atURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -487,7 +487,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">bodyPartFileIsDirectory</span><span class="p">(</span><span class="nv">at</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -518,7 +518,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">bodyPartFileSizeNotAvailable</span><span class="p">(</span><span class="nv">at</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -549,7 +549,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">bodyPartFileSizeQueryFailedWithError</span><span class="p">(</span><span class="nv">forURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -580,7 +580,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">bodyPartInputStreamCreationFailed</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -611,7 +611,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">outputStreamCreationFailed</span><span class="p">(</span><span class="nv">for</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -642,7 +642,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">outputStreamFileAlreadyExists</span><span class="p">(</span><span class="nv">at</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -673,7 +673,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">outputStreamURLInvalid</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -704,7 +704,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">outputStreamWriteFailed</span><span class="p">(</span><span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -735,7 +735,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">inputStreamReadFailed</span><span class="p">(</span><span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -750,8 +750,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-09-29)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-11-12)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

@@ -557,10 +557,10 @@ managing its underlying <code>URLSessionTask</code>.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="n">open</span> <span class="kd">func</span> <span class="nf">authenticate</span><span class="p">(</span>
-        <span class="nv">user</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-        <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-        <span class="nv">persistence</span><span class="p">:</span> <span class="kt">URLCredential</span><span class="o">.</span><span class="kt">Persistence</span> <span class="o">=</span> <span class="o">.</span><span class="n">forSession</span><span class="p">)</span>
-        <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+    <span class="nv">user</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">persistence</span><span class="p">:</span> <span class="kt">URLCredential</span><span class="o">.</span><span class="kt">Persistence</span> <span class="o">=</span> <span class="o">.</span><span class="n">forSession</span><span class="p">)</span>
+    <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
 
                         </div>
                       </div>
@@ -984,11 +984,11 @@ well as the response status code if a response has been received.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">serializeResponseString</span><span class="p">(</span>
-        <span class="nv">encoding</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">Encoding</span><span class="p">?,</span>
-        <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">?,</span>
-        <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span>
-        <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span>
-        <span class="o">-&gt;</span> <span class="kt"><a href="../Enums/Result.html">Result</a></span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span></code></pre>
+    <span class="nv">encoding</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">Encoding</span><span class="p">?,</span>
+    <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">?,</span>
+    <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span>
+    <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span>
+    <span class="o">-&gt;</span> <span class="kt"><a href="../Enums/Result.html">Result</a></span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1081,11 +1081,11 @@ with the specified reading options.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">serializeResponseJSON</span><span class="p">(</span>
-        <span class="nv">options</span><span class="p">:</span> <span class="kt">JSONSerialization</span><span class="o">.</span><span class="kt">ReadingOptions</span><span class="p">,</span>
-        <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">?,</span>
-        <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span>
-        <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span>
-        <span class="o">-&gt;</span> <span class="kt"><a href="../Enums/Result.html">Result</a></span><span class="o">&lt;</span><span class="kt">Any</span><span class="o">&gt;</span></code></pre>
+    <span class="nv">options</span><span class="p">:</span> <span class="kt">JSONSerialization</span><span class="o">.</span><span class="kt">ReadingOptions</span><span class="p">,</span>
+    <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">?,</span>
+    <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span>
+    <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span>
+    <span class="o">-&gt;</span> <span class="kt"><a href="../Enums/Result.html">Result</a></span><span class="o">&lt;</span><span class="kt">Any</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1177,11 +1177,11 @@ with the specified reading options.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">serializeResponsePropertyList</span><span class="p">(</span>
-        <span class="nv">options</span><span class="p">:</span> <span class="kt">PropertyListSerialization</span><span class="o">.</span><span class="kt">ReadOptions</span><span class="p">,</span>
-        <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">?,</span>
-        <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span>
-        <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span>
-        <span class="o">-&gt;</span> <span class="kt"><a href="../Enums/Result.html">Result</a></span><span class="o">&lt;</span><span class="kt">Any</span><span class="o">&gt;</span></code></pre>
+    <span class="nv">options</span><span class="p">:</span> <span class="kt">PropertyListSerialization</span><span class="o">.</span><span class="kt">ReadOptions</span><span class="p">,</span>
+    <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">?,</span>
+    <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span>
+    <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span>
+    <span class="o">-&gt;</span> <span class="kt"><a href="../Enums/Result.html">Result</a></span><span class="o">&lt;</span><span class="kt">Any</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1299,8 +1299,8 @@ with the specified reading options.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-09-29)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.4</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-11-12)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
