@@ -127,7 +127,7 @@ public enum ServerTrustPolicy {
     /// - parameter bundle: The bundle to search for all `.cer` files.
     ///
     /// - returns: All certificates within the given bundle.
-    public static func certificates(in bundle: Bundle = Bundle.main, with fileManager: FileManager) -> [SecCertificate] {
+    public static func certificates(in bundle: Bundle = Bundle.main, with fileManager: FileManager = .default) -> [SecCertificate] {
         var certificates: [SecCertificate] = []
 
         let paths = Set([".cer", ".CER", ".crt", ".CRT", ".der", ".DER"].map { fileExtension in
