@@ -303,7 +303,7 @@ extension DownloadRequest {
     /// Creates a response serializer that returns the associated data as-is.
     ///
     /// - returns: A data response serializer.
-    public static func dataResponseSerializer(with fileManager: FileManager = .default) -> DownloadResponseSerializer<Data> {
+    public static func dataResponseSerializer() -> DownloadResponseSerializer<Data> {
         return DownloadResponseSerializer { _, response, fileURL, error in
             guard error == nil else { return .failure(error!) }
 
@@ -311,11 +311,10 @@ extension DownloadRequest {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
 
-            if fileManager.isReadableFile(atPath: fileURL.path),
-               let data = fileManager.contents(atPath: fileURL.path) {
-                
+            do {
+                let data = try Data(contentsOf: fileURL)
                 return Request.serializeResponseData(response: response, data: data, error: error)
-            } else {
+            } catch {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
             }
         }
@@ -334,7 +333,7 @@ extension DownloadRequest {
     {
         return response(
             queue: queue,
-            responseSerializer: DownloadRequest.dataResponseSerializer(with: self.fileManager),
+            responseSerializer: DownloadRequest.dataResponseSerializer(),
             completionHandler: completionHandler
         )
     }
@@ -431,8 +430,7 @@ extension DownloadRequest {
     ///
     /// - returns: A string response serializer.
     public static func stringResponseSerializer(
-        encoding: String.Encoding? = nil,
-        fileManager: FileManager = .default)
+        encoding: String.Encoding? = nil)
         -> DownloadResponseSerializer<String>
     {
         return DownloadResponseSerializer { _, response, fileURL, error in
@@ -442,12 +440,10 @@ extension DownloadRequest {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
 
-            if
-                fileManager.isReadableFile(atPath: fileURL.path),
-                let data = fileManager.contents(atPath: fileURL.path)
-            {
+            do {
+                let data = try Data(contentsOf: fileURL)
                 return Request.serializeResponseString(encoding: encoding, response: response, data: data, error: error)
-            } else {
+            } catch {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
             }
         }
@@ -557,8 +553,7 @@ extension DownloadRequest {
     ///
     /// - returns: A JSON object response serializer.
     public static func jsonResponseSerializer(
-        options: JSONSerialization.ReadingOptions = .allowFragments,
-        fileManager: FileManager = .default)
+        options: JSONSerialization.ReadingOptions = .allowFragments)
         -> DownloadResponseSerializer<Any>
     {
         return DownloadResponseSerializer { _, response, fileURL, error in
@@ -568,12 +563,10 @@ extension DownloadRequest {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
             
-            if
-                fileManager.isReadableFile(atPath: fileURL.path),
-                let data = fileManager.contents(atPath: fileURL.path)
-            {
+            do {
+                let data = try Data(contentsOf: fileURL)
                 return Request.serializeResponseJSON(options: options, response: response, data: data, error: error)
-            } else {
+            } catch {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
             }
         }
@@ -681,8 +674,7 @@ extension DownloadRequest {
     ///
     /// - returns: A property list object response serializer.
     public static func propertyListResponseSerializer(
-        options: PropertyListSerialization.ReadOptions = [],
-        fileManager: FileManager = .default)
+        options: PropertyListSerialization.ReadOptions = [])
         -> DownloadResponseSerializer<Any>
     {
         return DownloadResponseSerializer { _, response, fileURL, error in
@@ -692,12 +684,10 @@ extension DownloadRequest {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
             
-            if
-                fileManager.isReadableFile(atPath: fileURL.path),
-                let data = fileManager.contents(atPath: fileURL.path)
-            {
+            do {
+                let data = try Data(contentsOf: fileURL)
                 return Request.serializeResponsePropertyList(options: options, response: response, data: data, error: error)
-            } else {
+            } catch {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL)))
             }
         }
