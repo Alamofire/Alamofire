@@ -262,7 +262,7 @@ open class MultipartFormData {
         var isDirectory: ObjCBool = false
         let path = fileURL.path
 
-        guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory.boolValue else {
+        guard self.fileManager.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory.boolValue else {
             setBodyPartError(withReason: .bodyPartFileIsDirectory(at: fileURL))
             return
         }
@@ -274,7 +274,7 @@ open class MultipartFormData {
         let bodyContentLength: UInt64
 
         do {
-            guard let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber else {
+            guard let fileSize = try self.fileManager.attributesOfItem(atPath: path)[.size] as? NSNumber else {
                 setBodyPartError(withReason: .bodyPartFileSizeNotAvailable(at: fileURL))
                 return
             }
@@ -381,7 +381,7 @@ open class MultipartFormData {
             throw bodyPartError
         }
 
-        if FileManager.default.fileExists(atPath: fileURL.path) {
+        if self.fileManager.fileExists(atPath: fileURL.path) {
             throw AFError.multipartEncodingFailed(reason: .outputStreamFileAlreadyExists(at: fileURL))
         } else if !fileURL.isFileURL {
             throw AFError.multipartEncodingFailed(reason: .outputStreamURLInvalid(url: fileURL))
