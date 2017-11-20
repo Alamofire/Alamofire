@@ -183,8 +183,6 @@ If you prefer not to use any of the aforementioned dependency managers, you can 
 
   > The `Alamofire.framework` is automagically added as a target dependency, linked framework and embedded framework in a copy files build phase which is all you need to build on the simulator and a device.
 
----
-
 ## Open Radars
 
 The following radars have some effect on the current implementation of Alamofire.
