@@ -199,7 +199,7 @@ extension DataResponse {
 
         return response
     }
-    
+
     /// Evaluates the specified closure when the `DataResponse` is a failure, passing the unwrapped error as a parameter.
     ///
     /// Use the `mapError` function with a closure that does not throw. For example:
@@ -217,12 +217,12 @@ extension DataResponse {
             result: result.mapError(transform),
             timeline: timeline
         )
-        
+
         response._metrics = _metrics
-        
+
         return response
     }
-    
+
     /// Evaluates the specified closure when the `DataResponse` is a failure, passing the unwrapped error as a parameter.
     ///
     /// Use the `flatMapError` function with a closure that may throw an error. For example:
@@ -243,9 +243,9 @@ extension DataResponse {
             result: result.flatMapError(transform),
             timeline: timeline
         )
-        
+
         response._metrics = _metrics
-        
+
         return response
     }
 }
@@ -458,7 +458,7 @@ extension DownloadResponse {
 
         return response
     }
-    
+
     /// Evaluates the specified closure when the `DownloadResponse` is a failure, passing the unwrapped error as a parameter.
     ///
     /// Use the `mapError` function with a closure that does not throw. For example:
@@ -478,12 +478,12 @@ extension DownloadResponse {
             result: result.mapError(transform),
             timeline: timeline
         )
-        
+
         response._metrics = _metrics
-        
+
         return response
     }
-    
+
     /// Evaluates the specified closure when the `DownloadResponse` is a failure, passing the unwrapped error as a parameter.
     ///
     /// Use the `flatMapError` function with a closure that may throw an error. For example:
@@ -506,9 +506,9 @@ extension DownloadResponse {
             result: result.flatMapError(transform),
             timeline: timeline
         )
-        
+
         response._metrics = _metrics
-        
+
         return response
     }
 }
