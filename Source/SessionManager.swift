@@ -272,6 +272,8 @@ open class SessionManager {
     /// Creates a `DataRequest` to retrieve the contents of the specified `url`, `method`, `parameters`, `encoding`
     /// and `headers`.
     ///
+    /// **NOTE** Does not support `URLEncoding`
+    ///
     /// - parameter url:        The URL.
     /// - parameter method:     The HTTP method. `.get` by default.
     /// - parameter parameters: The parameters. `nil` by default.
