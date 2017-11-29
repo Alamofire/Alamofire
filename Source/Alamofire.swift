@@ -159,10 +159,10 @@ public func request(
 ///
 /// - returns: The created `DataRequest`.
 @discardableResult
-public func request(
+public func request<T: Encodable>(
     _ url: URLConvertible,
     method: HTTPMethod = .get,
-    parameters: Encodable? = nil,
+    parameters: T? = nil,
     encoding: ParameterEncoding = JSONEncoding.default,
     headers: HTTPHeaders? = nil)
     -> DataRequest
