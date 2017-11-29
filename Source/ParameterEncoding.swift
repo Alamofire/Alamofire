@@ -55,6 +55,7 @@ public protocol ParameterEncoding {
     ///
     /// - returns: The encoded request.
     func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest
+    func encode<T: Encodable>(_ urlRequest: URLRequestConvertible, with parameters: T?) throws -> URLRequest
 }
 
 // MARK: -
@@ -261,8 +262,16 @@ public struct URLEncoding: ParameterEncoding {
             return false
         }
     }
+
+    public func encode<T>(_ urlRequest: URLRequestConvertible, with parameters: T?) throws -> URLRequest where T : Encodable {
+        fatalError("Method unavailable in `URLEncoding`")
+    }
 }
 
+// MARK: -
+
+/// Uses `JSONSerialization` to create a JSON representation of the parameters object, which is set as the body of the
+/// request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
 // MARK: -
 
 /// Uses `JSONSerialization` to create a JSON representation of the parameters object, which is set as the body of the
@@ -272,21 +281,40 @@ public struct JSONEncoding: ParameterEncoding {
     // MARK: Properties
 
     /// Returns a `JSONEncoding` instance with default writing options.
-    public static var `default`: JSONEncoding { return JSONEncoding() }
+    public static var `default`: JSONEncoding { return JSONEncoding(format: []) }
 
     /// Returns a `JSONEncoding` instance with `.prettyPrinted` writing options.
-    public static var prettyPrinted: JSONEncoding { return JSONEncoding(options: .prettyPrinted) }
+    public static var prettyPrinted: JSONEncoding { return JSONEncoding(format: .prettyPrinted) }
+
+    private let encoder = JSONEncoder()
+
+    /// The output formatting for writing the parameters as JSON data.
+    public var format: JSONEncoder.OutputFormatting {
+        get { return encoder.outputFormatting }
+    }
 
     /// The options for writing the parameters as JSON data.
+    @available(*, deprecated, message: "Use init(outputFormatting:) instead")
     public let options: JSONSerialization.WritingOptions
 
     // MARK: Initialization
 
     /// Creates a `JSONEncoding` instance using the specified options.
     ///
+    /// - parameter outputFormatting: The output formatting for writing the parameters as JSON data.
+    ///
+    /// - returns: The new `JSONEncoding` instance.
+    public init(format: JSONEncoder.OutputFormatting = []) {
+        options = []
+        encoder.outputFormatting = format
+    }
+
+    /// Creates a `JSONEncoding` instance using the specified options.
+    ///
     /// - parameter options: The options for writing the parameters as JSON data.
     ///
     /// - returns: The new `JSONEncoding` instance.
+    @available(*, deprecated, message: "Use init(format:) instead")
     public init(options: JSONSerialization.WritingOptions = []) {
         self.options = options
     }
@@ -301,6 +329,35 @@ public struct JSONEncoding: ParameterEncoding {
     /// - throws: An `Error` if the encoding process encounters an error.
     ///
     /// - returns: The encoded request.
+    public func encode<T: Encodable>(_ urlRequest: URLRequestConvertible, with parameters: T?) throws -> URLRequest {
+        var urlRequest = try urlRequest.asURLRequest()
+
+        guard let parameters = parameters else { return urlRequest }
+
+        do {
+            let data = try encoder.encode(parameters)
+
+            if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
+                urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            }
+
+            urlRequest.httpBody = data
+        } catch {
+            throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
+        }
+
+        return urlRequest
+    }
+
+    /// Creates a URL request by encoding parameters and applying them onto an existing request.
+    ///
+    /// - parameter urlRequest: The request to have parameters applied.
+    /// - parameter parameters: The parameters to apply.
+    ///
+    /// - throws: An `Error` if the encoding process encounters an error.
+    ///
+    /// - returns: The encoded request.
+    @available(*, deprecated, message: "Use encode<T: Encodable>(_:with:) instead")
     public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
         var urlRequest = try urlRequest.asURLRequest()
 
@@ -329,6 +386,7 @@ public struct JSONEncoding: ParameterEncoding {
     /// - throws: An `Error` if the encoding process encounters an error.
     ///
     /// - returns: The encoded request.
+    @available(*, deprecated, message: "Use encode<T: Encodable>(_:with:) instead")
     public func encode(_ urlRequest: URLRequestConvertible, withJSONObject jsonObject: Any? = nil) throws -> URLRequest {
         var urlRequest = try urlRequest.asURLRequest()
 
@@ -368,13 +426,22 @@ public struct PropertyListEncoding: ParameterEncoding {
     /// Returns a `PropertyListEncoding` instance with binary formatting and default writing options.
     public static var binary: PropertyListEncoding { return PropertyListEncoding(format: .binary) }
 
+    private let encoder = PropertyListEncoder()
+
     /// The property list serialization format.
-    public let format: PropertyListSerialization.PropertyListFormat
+    public var format: PropertyListSerialization.PropertyListFormat {
+        return encoder.outputFormat
+    }
 
     /// The options for writing the parameters as plist data.
     public let options: PropertyListSerialization.WriteOptions
 
     // MARK: Initialization
+
+    public init(format: PropertyListSerialization.PropertyListFormat = .xml) {
+        options = 0
+        encoder.outputFormat = format
+    }
 
     /// Creates a `PropertyListEncoding` instance using the specified format and options.
     ///
@@ -382,11 +449,12 @@ public struct PropertyListEncoding: ParameterEncoding {
     /// - parameter options: The options for writing the parameters as plist data.
     ///
     /// - returns: The new `PropertyListEncoding` instance.
+    @available(*, deprecated, message: "Use init(format:) instead")
     public init(
         format: PropertyListSerialization.PropertyListFormat = .xml,
         options: PropertyListSerialization.WriteOptions = 0)
     {
-        self.format = format
+        encoder.outputFormat = format
         self.options = options
     }
 
@@ -400,6 +468,35 @@ public struct PropertyListEncoding: ParameterEncoding {
     /// - throws: An `Error` if the encoding process encounters an error.
     ///
     /// - returns: The encoded request.
+    public func encode<T: Encodable>(_ urlRequest: URLRequestConvertible, with parameters: T?) throws -> URLRequest {
+        var urlRequest = try urlRequest.asURLRequest()
+
+        guard let parameters = parameters else { return urlRequest }
+
+        do {
+            let data = try encoder.encode(parameters)
+
+            if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
+                urlRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
+            }
+
+            urlRequest.httpBody = data
+        } catch {
+            throw AFError.parameterEncodingFailed(reason: .propertyListEncodingFailed(error: error))
+        }
+
+        return urlRequest
+    }
+
+    /// Creates a URL request by encoding parameters and applying them onto an existing request.
+    ///
+    /// - parameter urlRequest: The request to have parameters applied.
+    /// - parameter parameters: The parameters to apply.
+    ///
+    /// - throws: An `Error` if the encoding process encounters an error.
+    ///
+    /// - returns: The encoded request.
+    @available(*, deprecated, message: "Use encode<T: Encodable>(_:with:) instead")
     public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
         var urlRequest = try urlRequest.asURLRequest()
 
