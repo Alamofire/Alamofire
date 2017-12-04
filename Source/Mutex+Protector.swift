@@ -24,7 +24,6 @@
 
 import Foundation
 
-
 /// A lock abstraction.
 private protocol Lock {
     func lock()
@@ -33,30 +32,7 @@ private protocol Lock {
     func around(_ closure: () -> Void)
 }
 
-/// A `pthread_mutex` wrapper, inspired by ProcedureKit.
-final class Mutex: Lock {
-    private var mutex = pthread_mutex_t()
-
-    public init() {
-        let result = pthread_mutex_init(&mutex, nil)
-        precondition(result == 0, "Failed to create pthread mutex")
-    }
-
-    deinit {
-        let result = pthread_mutex_destroy(&mutex)
-        assert(result == 0, "Failed to destroy mutex")
-    }
-
-    fileprivate func lock() {
-        let result = pthread_mutex_lock(&mutex)
-        assert(result == 0, "Failed to lock mutex")
-    }
-
-    fileprivate func unlock() {
-        let result = pthread_mutex_unlock(&mutex)
-        assert(result == 0, "Failed to unlock mutex")
-    }
-
+extension Lock {
     /// Execute a value producing closure while aquiring the mutex.
     ///
     /// - Parameter closure: The closure to run.
@@ -75,6 +51,35 @@ final class Mutex: Lock {
     }
 }
 
+// MARK: -
+
+/// A `pthread_mutex` wrapper, inspired by ProcedureKit.
+final class Mutex: Lock {
+    private var mutex = pthread_mutex_t()
+
+    init() {
+        let result = pthread_mutex_init(&mutex, nil)
+        precondition(result == 0, "Failed to create pthread mutex")
+    }
+
+    deinit {
+        let result = pthread_mutex_destroy(&mutex)
+        assert(result == 0, "Failed to destroy mutex")
+    }
+
+    fileprivate func lock() {
+        let result = pthread_mutex_lock(&mutex)
+        assert(result == 0, "Failed to lock mutex")
+    }
+
+    fileprivate func unlock() {
+        let result = pthread_mutex_unlock(&mutex)
+        assert(result == 0, "Failed to unlock mutex")
+    }
+}
+
+// MARK: -
+
 /// An `os_unfair_lock` wrapper.
 @available (iOS 10.0, macOS 10.12, tvOS 10.0, watchOS 3.0, *)
 final class UnfairLock: Lock {
@@ -89,24 +94,9 @@ final class UnfairLock: Lock {
     fileprivate func unlock() {
         os_unfair_lock_unlock(&unfairLock)
     }
-
-    /// Execute a value producing closure while aquiring the lock.
-    ///
-    /// - Parameter closure: The closure to run.
-    /// - Returns:           The value the closure generated.
-    func around<T>(_ closure: () -> T) -> T {
-        lock(); defer { unlock() }
-        return closure()
-    }
-
-    /// Execute a closure while aquiring the lock.
-    ///
-    /// - Parameter closure: The closure to run.
-    func around(_ closure: () -> Void) {
-        lock(); defer { unlock() }
-        return closure()
-    }
 }
+
+// MARK: -
 
 /// A thread-safe wrapper around a value.
 final class Protector<T> {
@@ -117,16 +107,17 @@ final class Protector<T> {
             return Mutex()
         }
     }()
-    private var ward: T
+    
+    private var value: T
 
-    init(_ ward: T) {
-        self.ward = ward
+    init(_ value: T) {
+        self.value = value
     }
 
     /// The contained value. Unsafe for anything more than direct read or write.
-    var unsafeValue: T {
-        get { return lock.around { ward } }
-        set { lock.around { ward = newValue } }
+    var directValue: T {
+        get { return lock.around { value } }
+        set { lock.around { value = newValue } }
     }
 
     /// Synchronously read or transform the contained value.
@@ -134,7 +125,7 @@ final class Protector<T> {
     /// - Parameter closure: The closure to execute.
     /// - Returns:           The return value of the closure passed.
     func read<U>(_ closure: (T) -> U) -> U {
-        return lock.around { closure(self.ward) }
+        return lock.around { closure(self.value) }
     }
 
     /// Synchronously modify the protected value.
@@ -143,7 +134,7 @@ final class Protector<T> {
     /// - Returns:           The modified value.
     @discardableResult
     func write<U>(_ closure: (inout T) -> U) -> U {
-        return lock.around { closure(&self.ward) }
+        return lock.around { closure(&self.value) }
     }
 }
 

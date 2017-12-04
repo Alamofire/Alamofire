@@ -41,10 +41,10 @@ open class TaskDelegate: NSObject {
 
     var task: URLSessionTask? {
         set {
-            protectedTask.unsafeValue = newValue
+            protectedTask.directValue = newValue
             reset()
         }
-        get { return protectedTask.unsafeValue }
+        get { return protectedTask.directValue }
     }
 
     var initialResponseTime: CFAbsoluteTime?
