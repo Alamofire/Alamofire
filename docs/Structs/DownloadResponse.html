@@ -870,6 +870,118 @@ instance&rsquo;s result is a failure, returns the same failure.</p>
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire16DownloadResponseV8mapErrorACyxGqd__s0E0_pcsAFRd__lF"></a>
+                    <a name="//apple_ref/swift/Method/mapError(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire16DownloadResponseV8mapErrorACyxGqd__s0E0_pcsAFRd__lF">mapError(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Evaluates the specified closure when the <code>DownloadResponse</code> is a failure, passing the unwrapped error as a parameter.</p>
+
+<p>Use the <code>mapError</code> function with a closure that does not throw. For example:</p>
+<pre class="highlight plaintext"><code>let possibleData: DownloadResponse&lt;Data&gt; = ...
+let withMyError = possibleData.mapError { MyError.error($0) }
+</code></pre>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">mapError</span><span class="o">&lt;</span><span class="kt">E</span><span class="p">:</span> <span class="kt">Error</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">transform</span><span class="p">:</span> <span class="p">(</span><span class="kt">Error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">DownloadResponse</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>transform</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure that takes the error of the instance.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A <code>DownloadResponse</code> instance containing the result of the transform.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire16DownloadResponseV12flatMapErrorACyxGqd__s0F0_pKcsAFRd__lF"></a>
+                    <a name="//apple_ref/swift/Method/flatMapError(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire16DownloadResponseV12flatMapErrorACyxGqd__s0F0_pKcsAFRd__lF">flatMapError(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Evaluates the specified closure when the <code>DownloadResponse</code> is a failure, passing the unwrapped error as a parameter.</p>
+
+<p>Use the <code>flatMapError</code> function with a closure that may throw an error. For example:</p>
+<pre class="highlight plaintext"><code>let possibleData: DownloadResponse&lt;Data&gt; = ...
+let possibleObject = possibleData.flatMapError {
+    try someFailableFunction(taking: $0)
+}
+</code></pre>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">flatMapError</span><span class="o">&lt;</span><span class="kt">E</span><span class="p">:</span> <span class="kt">Error</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">transform</span><span class="p">:</span> <span class="p">(</span><span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">DownloadResponse</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>transform</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A throwing closure that takes the error of the instance.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A <code>DownloadResponse</code> instance containing the result of the transform.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -909,7 +1021,7 @@ instance&rsquo;s result is a failure, returns the same failure.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-11-12)</p>
+      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-12-03)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
