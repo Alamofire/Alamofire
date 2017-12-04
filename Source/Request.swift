@@ -122,7 +122,11 @@ open class Request {
 
     private var taskDelegate: TaskDelegate
     private var taskDelegateLock = NSLock()
-
+    
+    lazy var sessionTaskOperator: SessionTaskStateContract = {
+        return self.generateSessionTaskStateOperator()
+    }()
+    
     // MARK: Lifecycle
 
     init(session: URLSession, requestTask: RequestTask, error: Error? = nil) {
@@ -142,7 +146,6 @@ open class Request {
             taskDelegate = TaskDelegate(task: task)
             self.originalTask = originalTask
         }
-
         delegate.error = error
         delegate.queue.addOperation { self.endTime = CFAbsoluteTimeGetCurrent() }
     }
@@ -196,43 +199,24 @@ open class Request {
 
     /// Resumes the request.
     open func resume() {
-        guard let task = task else { delegate.queue.isSuspended = false ; return }
-
-        if startTime == nil { startTime = CFAbsoluteTimeGetCurrent() }
-
-        task.resume()
-
-        NotificationCenter.default.post(
-            name: Notification.Name.Task.DidResume,
-            object: self,
-            userInfo: [Notification.Key.Task: task]
-        )
+        sessionTaskOperator.resume()
     }
 
     /// Suspends the request.
     open func suspend() {
-        guard let task = task else { return }
-
-        task.suspend()
-
-        NotificationCenter.default.post(
-            name: Notification.Name.Task.DidSuspend,
-            object: self,
-            userInfo: [Notification.Key.Task: task]
-        )
+        sessionTaskOperator.suspend()
     }
 
     /// Cancels the request.
     open func cancel() {
-        guard let task = task else { return }
-
-        task.cancel()
-
-        NotificationCenter.default.post(
-            name: Notification.Name.Task.DidCancel,
-            object: self,
-            userInfo: [Notification.Key.Task: task]
-        )
+        sessionTaskOperator.cancel()
+    }
+    
+    //MARK: SessionTaskStateOperator
+    
+    /// generate a sessionTaskStateOperator.
+    fileprivate func generateSessionTaskStateOperator() -> SessionTaskStateOperator {
+        return SessionTaskStateOperator(request: self)
     }
 }
 
@@ -489,7 +473,15 @@ open class DownloadRequest: Request {
 
         return nil
     }
-
+    override var sessionTaskOperator: SessionTaskStateContract {
+        set {
+            super.sessionTaskOperator = newValue
+        }
+        
+        get {
+            return super.sessionTaskOperator
+        }
+    }
     /// The resume data of the underlying download task if available after a failure.
     open var resumeData: Data? { return downloadDelegate.resumeData }
 
@@ -497,19 +489,6 @@ open class DownloadRequest: Request {
     open var progress: Progress { return downloadDelegate.progress }
 
     var downloadDelegate: DownloadTaskDelegate { return delegate as! DownloadTaskDelegate }
-
-    // MARK: State
-
-    /// Cancels the request.
-    open override func cancel() {
-        downloadDelegate.downloadTask.cancel { self.downloadDelegate.resumeData = $0 }
-
-        NotificationCenter.default.post(
-            name: Notification.Name.Task.DidCancel,
-            object: self,
-            userInfo: [Notification.Key.Task: task as Any]
-        )
-    }
 
     // MARK: Progress
 
@@ -548,6 +527,13 @@ open class DownloadRequest: Request {
 
             return (temporaryURL, [])
         }
+    }
+    
+    //MARK: SessionTaskStateOperator
+    
+    /// overide func generate a sessionTaskStateOperator.
+    override func generateSessionTaskStateOperator() -> SessionTaskStateOperator {
+        return SessionDownloadTaskStateOperator(downloadRequest: self)
     }
 }
 

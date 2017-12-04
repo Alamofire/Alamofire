@@ -1,5 +1,5 @@
 //
-//  DispatchQueue+Alamofire.swift
+//  NSError+Alamofire.swift
 //
 //  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -22,21 +22,21 @@
 //  THE SOFTWARE.
 //
 
-import Dispatch
 import Foundation
 
-extension DispatchQueue {
-    static var userInteractive: DispatchQueue { return DispatchQueue.global(qos: .userInteractive) }
-    static var userInitiated: DispatchQueue { return DispatchQueue.global(qos: .userInitiated) }
-    static var utility: DispatchQueue { return DispatchQueue.global(qos: .utility) }
-    static var background: DispatchQueue { return DispatchQueue.global(qos: .background) }
+extension NSError {
 
-    func after(_ delay: TimeInterval, execute closure: @escaping () -> Void) {
-        asyncAfter(deadline: .now() + delay, execute: closure)
+    var isCancelled: Bool {
+        return NSURLErrorDomain == domain && NSURLErrorCancelled == code
     }
     
-    func after(_ delay: TimeInterval, execute workItem: DispatchWorkItem) {
-        asyncAfter(deadline: .now() + delay, execute: workItem)
+    class func makeCancelError(`for` url: URL) -> NSError {
+        let UserInfo: [String: Any] = [
+            NSURLErrorFailingURLErrorKey: url,
+            NSLocalizedDescriptionKey: "cancelled",
+            NSURLErrorFailingURLStringErrorKey: url.absoluteString
+        ]
+        return NSError(domain: NSURLErrorDomain, code: NSURLErrorCancelled, userInfo:UserInfo)
     }
 
 }
