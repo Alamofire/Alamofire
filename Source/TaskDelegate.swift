@@ -1,7 +1,7 @@
 //
 //  TaskDelegate.swift
 //
-//  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -49,6 +49,7 @@ open class TaskDelegate: NSObject {
             return _task
         }
     }
+
     var initialResponseTime: CFAbsoluteTime?
     var credential: URLCredential?
     var metrics: AnyObject? // URLSessionTaskMetrics
@@ -56,6 +57,7 @@ open class TaskDelegate: NSObject {
     private var _task: URLSessionTask? {
         didSet { reset() }
     }
+
     private let taskLock = NSLock()
 
     // MARK: Lifecycle

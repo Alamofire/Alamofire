@@ -1,7 +1,7 @@
 //
 //  Request.swift
 //
-//  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -309,11 +309,12 @@ extension Request: CustomDebugStringConvertible {
                 let cookies = cookieStorage.cookies(for: url), !cookies.isEmpty
             {
                 let string = cookies.reduce("") { $0 + "\($1.name)=\($1.value);" }
-                #if swift(>=3.2)
+
+            #if swift(>=3.2)
                 components.append("-b \"\(string[..<string.index(before: string.endIndex)])\"")
-                #else
+            #else
                 components.append("-b \"\(string.substring(to: string.characters.index(before: string.endIndex)))\"")
-                #endif
+            #endif
             }
         }
 
