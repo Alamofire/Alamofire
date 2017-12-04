@@ -199,39 +199,7 @@ public struct URLEncoding: ParameterEncoding {
         var allowedCharacterSet = CharacterSet.urlQueryAllowed
         allowedCharacterSet.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
 
-        var escaped = ""
-
-        //==========================================================================================================
-        //
-        //  Batching is required for escaping due to an internal bug in iOS 8.1 and 8.2. Encoding more than a few
-        //  hundred Chinese characters causes various malloc error crashes. To avoid this issue until iOS 8 is no
-        //  longer supported, batching MUST be used for encoding. This introduces roughly a 20% overhead. For more
-        //  info, please refer to:
-        //
-        //      - https://github.com/Alamofire/Alamofire/issues/206
-        //
-        //==========================================================================================================
-
-        if #available(iOS 8.3, *) {
-            escaped = string.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? string
-        } else {
-            let batchSize = 50
-            var index = string.startIndex
-
-            while index != string.endIndex {
-                let startIndex = index
-                let endIndex = string.index(index, offsetBy: batchSize, limitedBy: string.endIndex) ?? string.endIndex
-                let range = startIndex..<endIndex
-
-                let substring = string[range]
-
-                escaped += substring.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? String(substring)
-
-                index = endIndex
-            }
-        }
-
-        return escaped
+        return string.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? string
     }
 
     private func query(_ parameters: [String: Any]) -> String {
