@@ -56,14 +56,14 @@ public extension DownloadResponseSerializerProtocol where Self: DataResponseSeri
         guard let fileURL = fileURL else {
             throw AFError.responseSerializationFailed(reason: .inputFileNil)
         }
-
+        
         let data: Data
         do {
             data = try Data(contentsOf: fileURL)
         } catch {
             throw AFError.responseSerializationFailed(reason: .inputFileReadFailed(at: fileURL))
         }
-
+        
         do {
             return try serialize(request: request, response: response, data: data, error: error)
         } catch {
@@ -392,7 +392,7 @@ public final class StringResponseSerializer: ResponseSerializer {
         }
 
         let actualEncoding = convertedEncoding ?? .isoLatin1
-
+        
         guard let string = String(data: validData, encoding: actualEncoding) else {
             throw AFError.responseSerializationFailed(reason: .stringSerializationFailed(encoding: actualEncoding))
         }
