@@ -1,7 +1,7 @@
 //
 //  Response.swift
 //
-//  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -192,6 +192,55 @@ extension DataResponse {
             response: self.response,
             data: data,
             result: result.flatMap(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+
+    /// Evaluates the specified closure when the `DataResponse` is a failure, passing the unwrapped error as a parameter.
+    ///
+    /// Use the `mapError` function with a closure that does not throw. For example:
+    ///
+    ///     let possibleData: DataResponse<Data> = ...
+    ///     let withMyError = possibleData.mapError { MyError.error($0) }
+    ///
+    /// - Parameter transform: A closure that takes the error of the instance.
+    /// - Returns: A `DataResponse` instance containing the result of the transform.
+    public func mapError<E: Error>(_ transform: (Error) -> E) -> DataResponse {
+        var response = DataResponse(
+            request: request,
+            response: self.response,
+            data: data,
+            result: result.mapError(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+
+    /// Evaluates the specified closure when the `DataResponse` is a failure, passing the unwrapped error as a parameter.
+    ///
+    /// Use the `flatMapError` function with a closure that may throw an error. For example:
+    ///
+    ///     let possibleData: DataResponse<Data> = ...
+    ///     let possibleObject = possibleData.flatMapError {
+    ///         try someFailableFunction(taking: $0)
+    ///     }
+    ///
+    /// - Parameter transform: A throwing closure that takes the error of the instance.
+    ///
+    /// - Returns: A `DataResponse` instance containing the result of the transform.
+    public func flatMapError<E: Error>(_ transform: (Error) throws -> E) -> DataResponse {
+        var response = DataResponse(
+            request: request,
+            response: self.response,
+            data: data,
+            result: result.flatMapError(transform),
             timeline: timeline
         )
 
@@ -402,6 +451,59 @@ extension DownloadResponse {
             destinationURL: destinationURL,
             resumeData: resumeData,
             result: result.flatMap(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+
+    /// Evaluates the specified closure when the `DownloadResponse` is a failure, passing the unwrapped error as a parameter.
+    ///
+    /// Use the `mapError` function with a closure that does not throw. For example:
+    ///
+    ///     let possibleData: DownloadResponse<Data> = ...
+    ///     let withMyError = possibleData.mapError { MyError.error($0) }
+    ///
+    /// - Parameter transform: A closure that takes the error of the instance.
+    /// - Returns: A `DownloadResponse` instance containing the result of the transform.
+    public func mapError<E: Error>(_ transform: (Error) -> E) -> DownloadResponse {
+        var response = DownloadResponse(
+            request: request,
+            response: self.response,
+            temporaryURL: temporaryURL,
+            destinationURL: destinationURL,
+            resumeData: resumeData,
+            result: result.mapError(transform),
+            timeline: timeline
+        )
+
+        response._metrics = _metrics
+
+        return response
+    }
+
+    /// Evaluates the specified closure when the `DownloadResponse` is a failure, passing the unwrapped error as a parameter.
+    ///
+    /// Use the `flatMapError` function with a closure that may throw an error. For example:
+    ///
+    ///     let possibleData: DownloadResponse<Data> = ...
+    ///     let possibleObject = possibleData.flatMapError {
+    ///         try someFailableFunction(taking: $0)
+    ///     }
+    ///
+    /// - Parameter transform: A throwing closure that takes the error of the instance.
+    ///
+    /// - Returns: A `DownloadResponse` instance containing the result of the transform.
+    public func flatMapError<E: Error>(_ transform: (Error) throws -> E) -> DownloadResponse {
+        var response = DownloadResponse(
+            request: request,
+            response: self.response,
+            temporaryURL: temporaryURL,
+            destinationURL: destinationURL,
+            resumeData: resumeData,
+            result: result.flatMapError(transform),
             timeline: timeline
         )
 

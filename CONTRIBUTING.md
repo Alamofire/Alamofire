@@ -34,7 +34,7 @@ to any affected parties.
 ## Reporting Other Issues
 
 A great way to contribute to the project
-is to send a detailed issue when you encounter an problem.
+is to send a detailed issue when you encounter a problem.
 We always appreciate a well-written, thorough bug report.
 
 Check that the project issues database
