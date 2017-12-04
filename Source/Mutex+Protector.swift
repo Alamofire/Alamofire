@@ -24,7 +24,6 @@
 
 import Foundation
 
-
 /// A lock abstraction.
 private protocol Lock {
     func lock()
@@ -77,8 +76,9 @@ final class Mutex: Lock {
         let result = pthread_mutex_unlock(&mutex)
         assert(result == 0, "Failed to unlock mutex")
     }
+}
 
-    /// Execute a value producing closure while aquiring the mutex.
+// MARK: -
     ///
     /// - Parameter closure: The closure to run.
     /// - Returns:           The value the closure generated.
@@ -109,9 +109,10 @@ final class UnfairLock: Lock {
 
     fileprivate func unlock() {
         os_unfair_lock_unlock(&unfairLock)
+}
     }
 
-    /// Execute a value producing closure while aquiring the lock.
+// MARK: -
     ///
     /// - Parameter closure: The closure to run.
     /// - Returns:           The value the closure generated.

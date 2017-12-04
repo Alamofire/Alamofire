@@ -433,7 +433,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
     }
 
     // MARK: JSONDecodableResponseSerializer
-    
+
     struct DecodableValue: Codable {
         let string: String
     }
