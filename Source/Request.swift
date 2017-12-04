@@ -88,14 +88,8 @@ open class Request {
 
     /// The delegate for the underlying task.
     open internal(set) var delegate: TaskDelegate {
-        get {
-            taskDelegateLock.lock() ; defer { taskDelegateLock.unlock() }
-            return taskDelegate
-        }
-        set {
-            taskDelegateLock.lock() ; defer { taskDelegateLock.unlock() }
-            taskDelegate = newValue
-        }
+        get { return protectedDelegate.directValue }
+        set { protectedDelegate.directValue = newValue }
     }
 
     /// The underlying task.
@@ -120,8 +114,7 @@ open class Request {
 
     var validations: [() -> Void] = []
 
-    private var taskDelegate: TaskDelegate
-    private var taskDelegateLock = NSLock()
+    private var protectedDelegate: Protector<TaskDelegate>
 
     // MARK: Lifecycle
 
@@ -130,16 +123,16 @@ open class Request {
 
         switch requestTask {
         case .data(let originalTask, let task):
-            taskDelegate = DataTaskDelegate(task: task)
+            protectedDelegate = Protector(DataTaskDelegate(task: task))
             self.originalTask = originalTask
         case .download(let originalTask, let task):
-            taskDelegate = DownloadTaskDelegate(task: task)
+            protectedDelegate = Protector(DownloadTaskDelegate(task: task))
             self.originalTask = originalTask
         case .upload(let originalTask, let task):
-            taskDelegate = UploadTaskDelegate(task: task)
+            protectedDelegate = Protector(UploadTaskDelegate(task: task))
             self.originalTask = originalTask
         case .stream(let originalTask, let task):
-            taskDelegate = TaskDelegate(task: task)
+            protectedDelegate = Protector(TaskDelegate(task: task))
             self.originalTask = originalTask
         }
 
