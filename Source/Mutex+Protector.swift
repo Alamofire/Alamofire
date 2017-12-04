@@ -107,7 +107,7 @@ final class Protector<T> {
             return Mutex()
         }
     }()
-    
+
     private var value: T
 
     init(_ value: T) {

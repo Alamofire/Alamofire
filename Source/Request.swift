@@ -450,7 +450,7 @@ open class DownloadRequest: Request {
     enum Downloadable: TaskConvertible {
         case request(URLRequest)
         case resumeData(Data)
-        // TODO: Ask about this use of queue. Perhaps just to protect session and adapter?
+
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
             do {
                 let task: URLSessionTask
