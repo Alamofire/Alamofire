@@ -1,7 +1,7 @@
 //
 //  Validation.swift
 //
-//  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -48,11 +48,13 @@ extension Request {
         init?(_ string: String) {
             let components: [String] = {
                 let stripped = string.trimmingCharacters(in: .whitespacesAndNewlines)
-                #if swift(>=3.2)
+
+            #if swift(>=3.2)
                 let split = stripped[..<(stripped.range(of: ";")?.lowerBound ?? stripped.endIndex)]
-                #else
+            #else
                 let split = stripped.substring(to: stripped.range(of: ";")?.lowerBound ?? stripped.endIndex)
-                #endif
+            #endif
+
                 return split.components(separatedBy: "/")
             }()
 

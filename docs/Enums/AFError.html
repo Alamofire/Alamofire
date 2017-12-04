@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>AFError Enumeration Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Enum/AFError" class="dashAnchor"></a>
+
+    <a title="AFError Enumeration Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          Alamofire Docs
+        </a>
+         (87% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/Alamofire/Alamofire">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="dash-feed://https%3A%2F%2Falamofire%2Egithub%2Eio%2FAlamofire%2Fdocsets%2FAlamofire%2Exml">
+            <img class="header-icon" src="../img/dash.png"/>
+            Install in Dash
+          </a>
+        </p>
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      AFError Enumeration Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataRequest.html">DataRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DownloadRequest.html">DownloadRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DownloadRequest/DownloadOptions.html">– DownloadOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/MultipartFormData.html">MultipartFormData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager.html">NetworkReachabilityManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/ConnectionType.html">– ConnectionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Request.html">Request</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Request/ValidationResult.html">– ValidationResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ServerTrustPolicyManager.html">ServerTrustPolicyManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SessionDelegate.html">SessionDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SessionManager.html">SessionManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SessionManager/MultipartFormDataEncodingResult.html">– MultipartFormDataEncodingResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes.html#/s:9Alamofire13StreamRequestC">StreamRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/TaskDelegate.html">TaskDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/UploadRequest.html">UploadRequest</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError.html">AFError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncodingFailureReason.html">– ParameterEncodingFailureReason</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError/ResponseValidationFailureReason.html">– ResponseValidationFailureReason</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError/ResponseSerializationFailureReason.html">– ResponseSerializationFailureReason</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/HTTPMethod.html">HTTPMethod</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/Result.html">Result</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/ServerTrustPolicy.html">ServerTrustPolicy</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Notification.html">Notification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Notification/Name.html">– Name</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Notification/Key.html">– Key</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/URL.html">URL</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/URLComponents.html">URLComponents</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/URLRequest.html">URLRequest</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire2eeoiSbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire8downloadAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodO6methods10DictionaryVySSypGSg10parametersAA17ParameterEncoding_p8encodingAJyS2SGSg7headers10Foundation3URLV011destinationO0_AD0C7OptionsV7optionstAU_So15HTTPURLResponseCtcSg2totF">download(_:method:parameters:encoding:headers:to:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire8downloadAA15DownloadRequestCAA21URLRequestConvertible_p_10Foundation3URLV011destinationH0_AD0C7OptionsV7optionstAH_So15HTTPURLResponseCtcSg2totF">download(_:to:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire8downloadAA15DownloadRequestC10Foundation4DataV12resumingWith_AE3URLV011destinationI0_AD0C7OptionsV7optionstAJ_So15HTTPURLResponseCtcSg2totF">download(resumingWith:to:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire7requestAA11DataRequestCAA21URLRequestConvertible_pF">request(_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire7requestAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodO6methods10DictionaryVySSypGSg10parametersAA17ParameterEncoding_p8encodingAJyS2SGSg7headerstF">request(_:method:parameters:encoding:headers:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire6streamAA13StreamRequestCSo10NetServiceC4with_tF">stream(with:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire6streamAA13StreamRequestCSS12withHostName_Si4porttF">stream(withHostName:port:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire6uploadAA13UploadRequestC10Foundation3URLV_AA14URLConvertible_p2toAA10HTTPMethodO6methods10DictionaryVyS2SGSg7headerstF">upload(_:to:method:headers:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire6uploadAA13UploadRequestC10Foundation4DataV_AA14URLConvertible_p2toAA10HTTPMethodO6methods10DictionaryVyS2SGSg7headerstF">upload(_:to:method:headers:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire6uploadAA13UploadRequestCSo11InputStreamC_AA14URLConvertible_p2toAA10HTTPMethodO6methods10DictionaryVyS2SGSg7headerstF">upload(_:to:method:headers:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire6uploadAA13UploadRequestC10Foundation3URLV_AA21URLRequestConvertible_p4withtF">upload(_:with:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire6uploadAA13UploadRequestC10Foundation4DataV_AA21URLRequestConvertible_p4withtF">upload(_:with:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire6uploadAA13UploadRequestCSo11InputStreamC_AA21URLRequestConvertible_p4withtF">upload(_:with:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire6uploadyyAA17MultipartFormDataCc09multipartdE0_s6UInt64V14usingThresholdAA14URLConvertible_p2toAA10HTTPMethodO6methods10DictionaryVyS2SGSg7headersyAA14SessionManagerC0cdE14EncodingResultOcSg18encodingCompletiontF">upload(multipartFormData:usingThreshold:to:method:headers:encodingCompletion:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire6uploadyyAA17MultipartFormDataCc09multipartdE0_s6UInt64V14usingThresholdAA21URLRequestConvertible_p4withyAA14SessionManagerC0cdE14EncodingResultOcSg18encodingCompletiontF">upload(multipartFormData:usingThreshold:with:encodingCompletion:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/DownloadResponseSerializerProtocol.html">DownloadResponseSerializerProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ParameterEncoding.html">ParameterEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/RequestAdapter.html">RequestAdapter</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/RequestRetrier.html">RequestRetrier</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/URLConvertible.html">URLConvertible</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataResponse.html">DataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataResponseSerializer.html">DataResponseSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DefaultDataResponse.html">DefaultDataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DefaultDownloadResponse.html">DefaultDownloadResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DownloadResponse.html">DownloadResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DownloadResponseSerializer.html">DownloadResponseSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/JSONEncoding.html">JSONEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PropertyListEncoding.html">PropertyListEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Timeline.html">Timeline</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/URLEncoding.html">URLEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/URLEncoding/Destination.html">– Destination</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire11HTTPHeadersa">HTTPHeaders</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire22RequestRetryCompletiona">RequestRetryCompletion</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content">
+            <h1>AFError</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">AFError</span><span class="p">:</span> <span class="kt">Error</span></code></pre>
+
+                </div>
+              </div>
+            <p><code>AFError</code> is the error type returned by Alamofire. It encompasses a few different types of errors, each with
+their own associated reasons.</p>
+
+<ul>
+<li>invalidURL:                  Returned when a <code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> type fails to create a valid <code>URL</code>.</li>
+<li>parameterEncodingFailed:     Returned when a parameter encoding object throws an error during the encoding process.</li>
+<li>multipartEncodingFailed:     Returned when some step in the multipart encoding process fails.</li>
+<li>responseValidationFailed:    Returned when a <code>validate()</code> call fails.</li>
+<li>responseSerializationFailed: Returned when a response serializer encounters an error in the serialization process.</li>
+</ul>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO30ParameterEncodingFailureReasonO"></a>
+                    <a name="//apple_ref/swift/Enum/ParameterEncodingFailureReason" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO30ParameterEncodingFailureReasonO">ParameterEncodingFailureReason</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The underlying reason the parameter encoding error occurred.</p>
+
+<ul>
+<li>missingURL:                 The URL request did not have a URL to encode.</li>
+<li>jsonEncodingFailed:         JSON serialization failed with an underlying system error during the
+                          encoding process.</li>
+<li>propertyListEncodingFailed: Property list serialization failed with an underlying system error during
+                          encoding process.</li>
+</ul>
+
+                        <a href="../Enums/AFError/ParameterEncodingFailureReason.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ParameterEncodingFailureReason</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO30MultipartEncodingFailureReasonO"></a>
+                    <a name="//apple_ref/swift/Enum/MultipartEncodingFailureReason" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO30MultipartEncodingFailureReasonO">MultipartEncodingFailureReason</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The underlying reason the multipart encoding error occurred.</p>
+
+<ul>
+<li>bodyPartURLInvalid:                   The <code>fileURL</code> provided for reading an encodable body part isn&rsquo;t a
+                                    file URL.</li>
+<li>bodyPartFilenameInvalid:              The filename of the <code>fileURL</code> provided has either an empty
+                                    <code>lastPathComponent</code> or `pathExtension.</li>
+<li>bodyPartFileNotReachable:             The file at the <code>fileURL</code> provided was not reachable.</li>
+<li>bodyPartFileNotReachableWithError:    Attempting to check the reachability of the <code>fileURL</code> provided threw
+                                    an error.</li>
+<li>bodyPartFileIsDirectory:              The file at the <code>fileURL</code> provided is actually a directory.</li>
+<li>bodyPartFileSizeNotAvailable:         The size of the file at the <code>fileURL</code> provided was not returned by
+                                    the system.</li>
+<li>bodyPartFileSizeQueryFailedWithError: The attempt to find the size of the file at the <code>fileURL</code> provided
+                                    threw an error.</li>
+<li>bodyPartInputStreamCreationFailed:    An <code>InputStream</code> could not be created for the provided <code>fileURL</code>.</li>
+<li>outputStreamCreationFailed:           An <code>OutputStream</code> could not be created when attempting to write the
+                                    encoded data to disk.</li>
+<li>outputStreamFileAlreadyExists:        The encoded body data could not be writtent disk because a file
+                                    already exists at the provided <code>fileURL</code>.</li>
+<li>outputStreamURLInvalid:               The <code>fileURL</code> provided for writing the encoded body data to disk is
+                                    not a file URL.</li>
+<li>outputStreamWriteFailed:              The attempt to write the encoded body data to disk failed with an
+                                    underlying error.</li>
+<li>inputStreamReadFailed:                The attempt to read an encoded body part <code>InputStream</code> failed with
+                                    underlying system error.</li>
+</ul>
+
+                        <a href="../Enums/AFError/MultipartEncodingFailureReason.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MultipartEncodingFailureReason</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO"></a>
+                    <a name="//apple_ref/swift/Enum/ResponseValidationFailureReason" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO31ResponseValidationFailureReasonO">ResponseValidationFailureReason</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The underlying reason the response validation error occurred.</p>
+
+<ul>
+<li>dataFileNil:             The data file containing the server response did not exist.</li>
+<li>dataFileReadFailed:      The data file containing the server response could not be read.</li>
+<li>missingContentType:      The response did not contain a <code>Content-Type</code> and the <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO22acceptableContentTypesSaySSGSgv">acceptableContentTypes</a></code>
+                       provided did not contain wildcard type.</li>
+<li>unacceptableContentType: The response <code>Content-Type</code> did not match any type in the provided
+                       <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO22acceptableContentTypesSaySSGSgv">acceptableContentTypes</a></code>.</li>
+<li>unacceptableStatusCode:  The response status code was not acceptable.</li>
+</ul>
+
+                        <a href="../Enums/AFError/ResponseValidationFailureReason.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ResponseValidationFailureReason</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO34ResponseSerializationFailureReasonO"></a>
+                    <a name="//apple_ref/swift/Enum/ResponseSerializationFailureReason" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO34ResponseSerializationFailureReasonO">ResponseSerializationFailureReason</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The underlying reason the response serialization error occurred.</p>
+
+<ul>
+<li>inputDataNil:                    The server response contained no data.</li>
+<li>inputDataNilOrZeroLength:        The server response contained no data or the data was zero length.</li>
+<li>inputFileNil:                    The file containing the server response did not exist.</li>
+<li>inputFileReadFailed:             The file containing the server response could not be read.</li>
+<li>stringSerializationFailed:       String serialization failed using the provided <code>String.Encoding</code>.</li>
+<li>jsonSerializationFailed:         JSON serialization failed with an underlying system error.</li>
+<li>propertyListSerializationFailed: Property list serialization failed with an underlying system error.</li>
+</ul>
+
+                        <a href="../Enums/AFError/ResponseSerializationFailureReason.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ResponseSerializationFailureReason</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO10invalidURLAcA14URLConvertible_p3url_tcACmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidURL" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO10invalidURLAcA14URLConvertible_p3url_tcACmF">invalidURL</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">invalidURL</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO23parameterEncodingFailedA2C09ParameterD13FailureReasonO6reason_tcACmF"></a>
+                    <a name="//apple_ref/swift/Element/parameterEncodingFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO23parameterEncodingFailedA2C09ParameterD13FailureReasonO6reason_tcACmF">parameterEncodingFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">parameterEncodingFailed</span><span class="p">(</span><span class="nv">reason</span><span class="p">:</span> <span class="kt"><a href="../Enums/AFError/ParameterEncodingFailureReason.html">ParameterEncodingFailureReason</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO23multipartEncodingFailedA2C09MultipartD13FailureReasonO6reason_tcACmF"></a>
+                    <a name="//apple_ref/swift/Element/multipartEncodingFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO23multipartEncodingFailedA2C09MultipartD13FailureReasonO6reason_tcACmF">multipartEncodingFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">multipartEncodingFailed</span><span class="p">(</span><span class="nv">reason</span><span class="p">:</span> <span class="kt"><a href="../Enums/AFError/MultipartEncodingFailureReason.html">MultipartEncodingFailureReason</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO24responseValidationFailedA2C08ResponseD13FailureReasonO6reason_tcACmF"></a>
+                    <a name="//apple_ref/swift/Element/responseValidationFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO24responseValidationFailedA2C08ResponseD13FailureReasonO6reason_tcACmF">responseValidationFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">responseValidationFailed</span><span class="p">(</span><span class="nv">reason</span><span class="p">:</span> <span class="kt"><a href="../Enums/AFError/ResponseValidationFailureReason.html">ResponseValidationFailureReason</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO27responseSerializationFailedA2C08ResponseD13FailureReasonO6reason_tcACmF"></a>
+                    <a name="//apple_ref/swift/Element/responseSerializationFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO27responseSerializationFailedA2C08ResponseD13FailureReasonO6reason_tcACmF">responseSerializationFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">responseSerializationFailed</span><span class="p">(</span><span class="nv">reason</span><span class="p">:</span> <span class="kt"><a href="../Enums/AFError/ResponseSerializationFailureReason.html">ResponseSerializationFailureReason</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO17isInvalidURLErrorSbv"></a>
+                    <a name="//apple_ref/swift/Property/isInvalidURLError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO17isInvalidURLErrorSbv">isInvalidURLError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns whether the AFError is an invalid URL error.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isInvalidURLError</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO24isParameterEncodingErrorSbv"></a>
+                    <a name="//apple_ref/swift/Property/isParameterEncodingError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO24isParameterEncodingErrorSbv">isParameterEncodingError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns whether the AFError is a parameter encoding error. When <code>true</code>, the <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO15underlyingErrors0D0_pSgv">underlyingError</a></code> property will
+contain the associated value.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isParameterEncodingError</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO24isMultipartEncodingErrorSbv"></a>
+                    <a name="//apple_ref/swift/Property/isMultipartEncodingError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO24isMultipartEncodingErrorSbv">isMultipartEncodingError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns whether the AFError is a multipart encoding error. When <code>true</code>, the <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO3url10Foundation3URLVSgv">url</a></code> and <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO15underlyingErrors0D0_pSgv">underlyingError</a></code> properties
+will contain the associated values.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isMultipartEncodingError</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO25isResponseValidationErrorSbv"></a>
+                    <a name="//apple_ref/swift/Property/isResponseValidationError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO25isResponseValidationErrorSbv">isResponseValidationError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns whether the <code>AFError</code> is a response validation error. When <code>true</code>, the <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO22acceptableContentTypesSaySSGSgv">acceptableContentTypes</a></code>,
+<code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO19responseContentTypeSSSgv">responseContentType</a></code>, and <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO12responseCodeSiSgv">responseCode</a></code> properties will contain the associated values.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isResponseValidationError</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO28isResponseSerializationErrorSbv"></a>
+                    <a name="//apple_ref/swift/Property/isResponseSerializationError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO28isResponseSerializationErrorSbv">isResponseSerializationError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns whether the <code>AFError</code> is a response serialization error. When <code>true</code>, the <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO20failedStringEncodingSS10FoundationE0E0VSgv">failedStringEncoding</a></code> and
+<code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO15underlyingErrors0D0_pSgv">underlyingError</a></code> properties will contain the associated values.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isResponseSerializationError</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO14urlConvertibleAA14URLConvertible_pSgv"></a>
+                    <a name="//apple_ref/swift/Property/urlConvertible" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO14urlConvertibleAA14URLConvertible_pSgv">urlConvertible</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> associated with the error.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">urlConvertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO3url10Foundation3URLVSgv"></a>
+                    <a name="//apple_ref/swift/Property/url" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO3url10Foundation3URLVSgv">url</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code>URL</code> associated with the error.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO15underlyingErrors0D0_pSgv"></a>
+                    <a name="//apple_ref/swift/Property/underlyingError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO15underlyingErrors0D0_pSgv">underlyingError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code>Error</code> returned by a system framework associated with a <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO23parameterEncodingFailedA2C09ParameterD13FailureReasonO6reason_tcACmF">.parameterEncodingFailed</a></code>,
+<code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO23multipartEncodingFailedA2C09MultipartD13FailureReasonO6reason_tcACmF">.multipartEncodingFailed</a></code> or <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO27responseSerializationFailedA2C08ResponseD13FailureReasonO6reason_tcACmF">.responseSerializationFailed</a></code> error.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">underlyingError</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO22acceptableContentTypesSaySSGSgv"></a>
+                    <a name="//apple_ref/swift/Property/acceptableContentTypes" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO22acceptableContentTypesSaySSGSgv">acceptableContentTypes</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The acceptable <code>Content-Type</code>s of a <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO24responseValidationFailedA2C08ResponseD13FailureReasonO6reason_tcACmF">.responseValidationFailed</a></code> error.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">acceptableContentTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">]?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO19responseContentTypeSSSgv"></a>
+                    <a name="//apple_ref/swift/Property/responseContentType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO19responseContentTypeSSSgv">responseContentType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The response <code>Content-Type</code> of a <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO24responseValidationFailedA2C08ResponseD13FailureReasonO6reason_tcACmF">.responseValidationFailed</a></code> error.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">responseContentType</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO12responseCodeSiSgv"></a>
+                    <a name="//apple_ref/swift/Property/responseCode" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO12responseCodeSiSgv">responseCode</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The response code of a <code><a href="../Enums/AFError.html#/s:9Alamofire7AFErrorO24responseValidationFailedA2C08ResponseD13FailureReasonO6reason_tcACmF">.responseValidationFailed</a></code> error.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">responseCode</span><span class="p">:</span> <span class="kt">Int</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7AFErrorO20failedStringEncodingSS10FoundationE0E0VSgv"></a>
+                    <a name="//apple_ref/swift/Property/failedStringEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7AFErrorO20failedStringEncodingSS10FoundationE0E0VSgv">failedStringEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code>String.Encoding</code> associated with a failed <code>.stringResponse()</code> call.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">failedStringEncoding</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">Encoding</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Foundation14LocalizedErrorP16errorDescriptionSSSgv"></a>
+                    <a name="//apple_ref/swift/Property/errorDescription" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Foundation14LocalizedErrorP16errorDescriptionSSSgv">errorDescription</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">errorDescription</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-12-03)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>
