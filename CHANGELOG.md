@@ -45,21 +45,21 @@ Released on 2017-12-3. All issues associated with this milestone can be found us
   
 #### Updated
 - Travis CI and Ruby dependencies.
-  - Added by [Jon Shier](https://github.com/jshier) in Pull Requests
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests
   [#2361](https://github.com/Alamofire/Alamofire/pull/2361), [#2302](https://github.com/Alamofire/Alamofire/pull/2302), [#2345](https://github.com/Alamofire/Alamofire/pull/2345).
 - Swift Package Manager instructions.
-  - Added by [Ryosuke Hayashi](https://github.com/hayashikun) in Pull Request
+  - Updated by [Ryosuke Hayashi](https://github.com/hayashikun) in Pull Request
   [#2341](https://github.com/Alamofire/Alamofire/pull/2341).
   
 #### Fixed
 - `#session-manager` link in Advanced Usage docs.
-  - Added by [Naeem Shaikh](https://github.com/naeemshaikh90) in Pull Request
+  - Fixed by [Naeem Shaikh](https://github.com/naeemshaikh90) in Pull Request
   [#2373](https://github.com/Alamofire/Alamofire/pull/2373).
 - Missing `@discardableResult`.
-  - Added by [Aron Cedercrantz](https://github.com/rastersize) in Pull Request
+  - Fixed by [Aron Cedercrantz](https://github.com/rastersize) in Pull Request
   [#2338](https://github.com/Alamofire/Alamofire/pull/2338).
 - Colon placement.
-  - Added by [Issarapong Poesua](https://github.com/Dekablade01) in Pull Request
+  - Fixed by [Issarapong Poesua](https://github.com/Dekablade01) in Pull Request
   [#2329](https://github.com/Alamofire/Alamofire/pull/2329).
 
 ## [4.5.1](https://github.com/Alamofire/Alamofire/releases/tag/4.5.1)
