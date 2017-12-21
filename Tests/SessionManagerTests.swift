@@ -53,21 +53,24 @@ class SessionManagerTestCase: BaseTestCase {
         var adaptedCount = 0
         var retryCount = 0
         var retryErrors: [Error] = []
-
+        var timeDelay = 0.0
+        var retryWork: ((_ request: Request, _ retryCount: Int)-> Void)? = nil
+        var maxRetryCount = 2
         var shouldApplyAuthorizationHeader = false
         var throwsErrorOnSecondAdapt = false
+        var throwsAdaptError = false
 
         func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
             if throwsErrorOnSecondAdapt && adaptedCount == 1 {
                 throwsErrorOnSecondAdapt = false
-                throw AFError.invalidURL(url: "")
+                throw throwsAdaptError ? AdaptError(error: AFError.invalidURL(url: "")) : AFError.invalidURL(url: "")
             }
 
             var urlRequest = urlRequest
 
             adaptedCount += 1
 
-            if shouldApplyAuthorizationHeader && adaptedCount > 1 {
+            if shouldApplyAuthorizationHeader {
                 if let header = Request.authorizationHeader(user: "user", password: "password") {
                     urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
                 }
@@ -80,11 +83,13 @@ class SessionManagerTestCase: BaseTestCase {
             retryCount += 1
             retryErrors.append(error)
 
-            if retryCount < 2 {
-                completion(true, 0.0)
+            if retryCount < maxRetryCount {
+                completion(true, timeDelay)
             } else {
-                completion(false, 0.0)
+                completion(false, timeDelay)
             }
+            
+            retryWork?(request, retryCount)
         }
     }
 
@@ -595,7 +600,6 @@ class SessionManagerTestCase: BaseTestCase {
                 response = jsonResponse
                 expectation.fulfill()
             }
-
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
@@ -769,6 +773,121 @@ class SessionManagerTestCase: BaseTestCase {
             XCTFail("error should not be nil")
         }
     }
+    
+    
+    func testThatDataRequestShouldBeCancelledAfterCancelRequestWhenRequestIsRetried() {
+        // Given
+        let expectation = self.expectation(description: "Request should be cancelled")
+
+        let handler = RequestHandler()
+        handler.timeDelay = 5
+        handler.maxRetryCount = 5
+        handler.retryWork = { (request: Request, retryCount: Int)-> Void in
+            if retryCount == 2 {
+                DispatchQueue.main.after(2, execute: {
+                    request.cancel()
+                    // this is make sure i cancel request for test
+                    DispatchQueue.main.after(self.timeout - 2.0, execute: {
+                         expectation.fulfill()
+                    })
+                })
+            }
+        }
+        
+        let sessionManager = SessionManager()
+        sessionManager.adapter = handler
+        sessionManager.retrier = handler
+        
+        // When
+        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
+            .validate()
+        
+        waitForExpectations(timeout: timeout * 3, handler: nil)
+        
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2, "Reqest count should be 2")
+        XCTAssertEqual(handler.retryCount, 2, "RequestRetrier response count should be 2")
+        XCTAssertEqual(request.retryCount, 1, "request retry count  should be 1")
+
+    }
+    
+    func testThatDataRequestShouldBeCancelledAfterCancelRequestWhenRequestIsRetriedAndAdaptError() {
+        // Given
+        let expectation = self.expectation(description: "Request should be cancelled with adapt error")
+
+        let handler = RequestHandler()
+        handler.timeDelay = 5
+        handler.throwsAdaptError = true
+        handler.maxRetryCount = 5
+        handler.retryWork = { (request: Request, retryCount: Int)-> Void in
+            if retryCount == 2 {
+                DispatchQueue.main.after(2, execute: {
+                    request.cancel()
+                    // this is make sure i cancel request for test
+                    DispatchQueue.main.after(self.timeout - 2.0, execute: {
+                        expectation.fulfill()
+                    })
+                })
+            }
+        }
+        
+        let sessionManager = SessionManager()
+        sessionManager.adapter = handler
+        sessionManager.retrier = handler
+        
+        // When
+        let request = sessionManager.request("https://httpbin.org/password")
+            .validate()
+        waitForExpectations(timeout: timeout * 3, handler: nil)
+        
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2, "Reqest count should be 2")
+        XCTAssertEqual(handler.retryCount, 2, "RequestRetrier response count should be 2")
+        XCTAssertEqual(request.retryCount, 1, "request retry count  should be 1")
+
+    }
+
+    func testThatDownloadShouldBeCancelledAfterCancelDownloadRequestWhenRequestIsRetried() {
+        // Given
+        
+        let urlString = "https://upload.wikimedia.org/wikipedia/commons/6/69/NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg"
+        let expectation = self.expectation(description: "Download should be cancelled ")
+        
+        let handler = RequestHandler()
+        handler.timeDelay = 5
+        handler.maxRetryCount = 5
+        handler.retryWork = { (request: Request, retryCount: Int)-> Void in
+            if retryCount == 2 {
+                DispatchQueue.main.after(2, execute: {
+                    request.cancel()
+                    // this is make sure i cancel request for test
+                    DispatchQueue.main.after(self.timeout - 2.0, execute: {
+                        expectation.fulfill()
+                    })
+                })
+            }
+        }
+        
+        let configuration = URLSessionConfiguration.default
+        configuration.timeoutIntervalForRequest = 0.1
+        configuration.timeoutIntervalForResource = 0.1
+        let sessionManager = SessionManager(configuration: configuration)
+        sessionManager.adapter = handler
+        sessionManager.retrier = handler
+
+        // When
+        let download = sessionManager.download(urlString)
+        download.validate()
+        
+        waitForExpectations(timeout: timeout * 3, handler: nil)
+        
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2, "Reqest count should be 2")
+        XCTAssertEqual(handler.retryCount, 2, "RequestRetrier response count should be 2")
+        XCTAssertEqual(download.retryCount, 1, "request retry count  should be 1")
+        
+    }
+
 }
 
 // MARK: -
