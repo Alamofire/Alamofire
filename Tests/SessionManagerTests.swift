@@ -82,6 +82,7 @@ class SessionManagerTestCase: BaseTestCase {
         func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             retryCount += 1
             retryErrors.append(error)
+            retryWork?(request, retryCount)
 
             if retryCount < maxRetryCount {
                 completion(true, timeDelay)
@@ -89,7 +90,6 @@ class SessionManagerTestCase: BaseTestCase {
                 completion(false, timeDelay)
             }
             
-            retryWork?(request, retryCount)
         }
     }
 
@@ -712,7 +712,10 @@ class SessionManagerTestCase: BaseTestCase {
     func testThatSessionManagerCallsAdapterWhenRequestIsRetried() {
         // Given
         let handler = RequestHandler()
-        handler.shouldApplyAuthorizationHeader = true
+        handler.shouldApplyAuthorizationHeader = false
+        handler.retryWork = { (request: Request, retryCount: Int)-> Void in
+            handler.shouldApplyAuthorizationHeader = true
+        }
 
         let sessionManager = SessionManager()
         sessionManager.adapter = handler
