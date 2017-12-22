@@ -32,6 +32,8 @@ In the above example, the `responseJSON` handler is appended to the `Request` to
 
 > Networking in Alamofire is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
 
+If you are testing  Alamofire as part of simple Command Line Application executed via the terminal, you need to make sure that the ```main``` application thread does not exit before the response callback is invoked by Alamofire. One approach to do so (for Swift version 3 and above) is to add the command ```RunLoop.main.run()``` at the end of your ```main.swift``` source file.
+
 Alamofire contains five different response handlers by default including:
 
 ```swift
