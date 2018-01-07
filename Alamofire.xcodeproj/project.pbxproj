@@ -285,6 +285,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		312D1E0B1FC2551400E51FF1 /* Usage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Usage.md; path = Documentation/Usage.md; sourceTree = "<group>"; };
+		312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = AdvancedUsage.md; path = Documentation/AdvancedUsage.md; sourceTree = "<group>"; };
 		316250E41F00ABE900E207A6 /* ISSUE_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ISSUE_TEMPLATE.md; sourceTree = "<group>"; };
 		316250E51F00ACD000E207A6 /* PULL_REQUEST_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PULL_REQUEST_TEMPLATE.md; sourceTree = "<group>"; };
 		31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AFError+AlamofireTests.swift"; sourceTree = "<group>"; };
@@ -628,11 +630,13 @@
 		4CE292301EF4A386008DA555 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
+				312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */,
 				4CE292321EF4A393008DA555 /* CHANGELOG.md */,
 				4CE292331EF4A393008DA555 /* CONTRIBUTING.md */,
 				316250E41F00ABE900E207A6 /* ISSUE_TEMPLATE.md */,
 				316250E51F00ACD000E207A6 /* PULL_REQUEST_TEMPLATE.md */,
 				4CE292311EF4A393008DA555 /* README.md */,
+				312D1E0B1FC2551400E51FF1 /* Usage.md */,
 				4C9E88361F5FB39F000BEC61 /* Migration Guides */,
 			);
 			name = Documentation;
@@ -946,7 +950,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
 					4CCB207C1D45563900C64D5B = {
@@ -1393,6 +1397,7 @@
 		4CF627001BA7CB3E0011A099 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1411,6 +1416,7 @@
 		4CF627011BA7CB3E0011A099 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1491,6 +1497,7 @@
 		E4202FDE1B667AA100C997FB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1509,6 +1516,7 @@
 		E4202FDF1B667AA100C997FB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1650,6 +1658,7 @@
 		F8111E4719A95C8B0040E7D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1667,6 +1676,7 @@
 		F8111E4819A95C8B0040E7D1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;

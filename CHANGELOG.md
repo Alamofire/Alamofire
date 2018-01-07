@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 4.x Releases
+- `4.6.x` Releases - [4.6.0](#460)
 - `4.5.x` Releases - [4.5.0](#450) | [4.5.1](#451)
 - `4.4.x` Releases - [4.4.0](#440)
 - `4.3.x` Releases - [4.3.0](#430)
@@ -31,6 +32,35 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+## [4.6.0](https://github.com/Alamofire/Alamofire/releases/tag/4.6.0)
+Released on 2017-12-3. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.6.0).
+
+#### Added
+- Error mapping functions to `Response` types.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request
+  [#2361](https://github.com/Alamofire/Alamofire/pull/2361).
+- Separation of Usage and Advanced Usage docs from README.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request 
+  [#2360](https://github.com/Alamofire/Alamofire/pull/2360).
+  
+#### Updated
+- Travis CI and Ruby dependencies.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Requests
+  [#2361](https://github.com/Alamofire/Alamofire/pull/2361), [#2302](https://github.com/Alamofire/Alamofire/pull/2302), [#2345](https://github.com/Alamofire/Alamofire/pull/2345).
+- Swift Package Manager instructions.
+  - Updated by [Ryosuke Hayashi](https://github.com/hayashikun) in Pull Request
+  [#2341](https://github.com/Alamofire/Alamofire/pull/2341).
+  
+#### Fixed
+- `#session-manager` link in Advanced Usage docs.
+  - Fixed by [Naeem Shaikh](https://github.com/naeemshaikh90) in Pull Request
+  [#2373](https://github.com/Alamofire/Alamofire/pull/2373).
+- Missing `@discardableResult`.
+  - Fixed by [Aron Cedercrantz](https://github.com/rastersize) in Pull Request
+  [#2338](https://github.com/Alamofire/Alamofire/pull/2338).
+- Colon placement.
+  - Fixed by [Issarapong Poesua](https://github.com/Dekablade01) in Pull Request
+  [#2329](https://github.com/Alamofire/Alamofire/pull/2329).
 
 ## [4.5.1](https://github.com/Alamofire/Alamofire/releases/tag/4.5.1)
 Released on 2017-09-06. All issues associated with this milestone can be found using this
