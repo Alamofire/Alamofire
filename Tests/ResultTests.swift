@@ -44,7 +44,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.failure(error)
 
         // Then
-        XCTAssertFalse(result.isSuccess, "result is success should be true for failure case")
+        XCTAssertFalse(result.isSuccess, "result is success should be false for failure case")
     }
 
     // MARK: - Is Failure Tests
@@ -90,7 +90,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.success("success")
 
         // Then
-        XCTAssertTrue(result.error == nil, "result error should be nil for success case")
+        XCTAssertNil(result.error, "result error should be nil for success case")
     }
 
     func testThatErrorPropertyReturnsErrorForFailureCase() {
@@ -98,7 +98,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.failure(error)
 
         // Then
-        XCTAssertTrue(result.error != nil, "result error should not be nil for failure case")
+        XCTAssertNotNil(result.error, "result error should not be nil for failure case")
     }
 
     // MARK: - Description Tests
@@ -213,7 +213,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.success("success value")
 
         // When
-        let mappedResult = result.map { $0.characters.count }
+        let mappedResult = result.map { $0.count }
 
         // Then
         XCTAssertEqual(mappedResult.value, 13)
@@ -225,7 +225,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.failure(ResultError())
 
         // When
-        let mappedResult = result.map { $0.characters.count }
+        let mappedResult = result.map { $0.count }
 
         // Then
         if let error = mappedResult.error {
@@ -242,7 +242,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.success("success value")
 
         // When
-        let mappedResult = result.flatMap { $0.characters.count }
+        let mappedResult = result.flatMap { $0.count }
 
         // Then
         XCTAssertEqual(mappedResult.value, 13)
