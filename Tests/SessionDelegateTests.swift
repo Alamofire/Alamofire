@@ -529,9 +529,11 @@ class SessionDelegateTestCase: BaseTestCase {
         let expectation = self.expectation(forNotification: Notification.Name.Task.DidComplete.rawValue, object: nil) { notif -> Bool in
 
             // check that we are handling notif for a dataTask
-            guard notif.userInfo?[Notification.Key.Task] is URLSessionDataTask else {
+            guard let task = notif.userInfo?[Notification.Key.Task] as? URLSessionDataTask else {
                 return false
             }
+
+            response = task.response as? HTTPURLResponse
 
             // check that responseData are set in userInfo-dict and it's not empty
             if let responseData = notif.userInfo?[Notification.Key.ResponseData] as? Data {
@@ -542,9 +544,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.request("https://httpbin.org/get").responseJSON { closureResponse in
-            response = closureResponse.response
-        }
+        manager.request("https://httpbin.org/get").responseJSON { resp in }
 
         wait(for: [expectation], timeout: timeout)
 
@@ -561,9 +561,11 @@ class SessionDelegateTestCase: BaseTestCase {
         let expectation = self.expectation(forNotification: Notification.Name.Task.DidComplete.rawValue, object: nil) { notif -> Bool in
 
             // check that we are handling notif for a downloadTask
-            guard notif.userInfo?[Notification.Key.Task] is URLSessionDownloadTask else {
+            guard let task = notif.userInfo?[Notification.Key.Task] as? URLSessionDownloadTask else {
                 return false
             }
+
+            response = task.response as? HTTPURLResponse
 
             // check that responseData are NOT set in userInfo-dict
             notificationCalledWithNilResponseData = notif.userInfo?[Notification.Key.ResponseData] == nil
@@ -571,9 +573,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.download("https://httpbin.org/get").response { resp in
-            response = resp.response
-        }
+        manager.download("https://httpbin.org/get").response {resp in }
 
         wait(for: [expectation], timeout: timeout)
 
