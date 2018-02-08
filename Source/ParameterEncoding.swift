@@ -64,9 +64,12 @@ public protocol ParameterEncoding {
 /// the HTTP body depends on the destination of the encoding.
 ///
 /// The `Content-Type` HTTP header field of an encoded request with HTTP body is set to
-/// `application/x-www-form-urlencoded; charset=utf-8`. Since there is no published specification for how to encode
-/// collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending
-/// the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
+/// `application/x-www-form-urlencoded; charset=utf-8`.
+///
+/// There is no published specification for how to encode collection types. By default the convention of appending
+/// `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for
+/// nested dictionary values (`foo[bar]=baz`) is used. Optionally, `ArrayEncoding` can be used to omit the
+/// square brackets appended to array keys.
 public struct URLEncoding: ParameterEncoding {
 
     // MARK: Helper Types
@@ -80,6 +83,15 @@ public struct URLEncoding: ParameterEncoding {
     /// - httpBody:        Sets encoded query string result as the HTTP body of the URL request.
     public enum Destination {
         case methodDependent, queryString, httpBody
+    }
+
+    /// Configures how array parameters are encoded.
+    ///
+    /// - brackets:        An empty set of square brackets is appended to the key for every value.
+    ///                    This is the default behavior.
+    /// - noBrackets:      No brackets are appended. The key is encoded as is.
+    public enum ArrayEncoding {
+        case brackets, noBrackets
     }
 
     // MARK: Properties
@@ -99,15 +111,20 @@ public struct URLEncoding: ParameterEncoding {
     /// The destination defining where the encoded query string is to be applied to the URL request.
     public let destination: Destination
 
+    /// The convention for encoding array parameters.
+    public let arrayEncoding: ArrayEncoding
+
     // MARK: Initialization
 
     /// Creates a `URLEncoding` instance using the specified destination.
     ///
     /// - parameter destination: The destination defining where the encoded query string is to be applied.
+    /// - parameter arrayEncoding: The convention to use for encoding array parameters.
     ///
     /// - returns: The new `URLEncoding` instance.
-    public init(destination: Destination = .methodDependent) {
+    public init(destination: Destination = .methodDependent, arrayEncoding: ArrayEncoding = .brackets) {
         self.destination = destination
+        self.arrayEncoding = arrayEncoding
     }
 
     // MARK: Encoding
@@ -160,8 +177,9 @@ public struct URLEncoding: ParameterEncoding {
                 components += queryComponents(fromKey: "\(key)[\(nestedKey)]", value: value)
             }
         } else if let array = value as? [Any] {
+            let arrayKey = (arrayEncoding == .brackets) ? "\(key)[]" : key
             for value in array {
-                components += queryComponents(fromKey: "\(key)[]", value: value)
+                components += queryComponents(fromKey: arrayKey, value: value)
             }
         } else if let value = value as? NSNumber {
             if value.isBool {
