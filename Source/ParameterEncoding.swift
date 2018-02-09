@@ -70,6 +70,9 @@ public protocol ParameterEncoding {
 /// `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for
 /// nested dictionary values (`foo[bar]=baz`) is used. Optionally, `ArrayEncoding` can be used to omit the
 /// square brackets appended to array keys.
+///
+/// `BoolEncoding` can be used to configure how boolean values are encoded. The default behavior is to encode
+/// `true` as 1 and `false` as 0.
 public struct URLEncoding: ParameterEncoding {
 
     // MARK: Helper Types
@@ -94,6 +97,14 @@ public struct URLEncoding: ParameterEncoding {
         case brackets, noBrackets
     }
 
+    /// Configures how boolean parameters are encoded.
+    ///
+    /// - numeric:         Encode `true` as 1 and `false` as 0. This is the default behavior.
+    /// - literal:         Encode `true` and `false` as string literals.
+    public enum BoolEncoding {
+        case numeric, literal
+    }
+
     // MARK: Properties
 
     /// Returns a default `URLEncoding` instance.
@@ -114,6 +125,9 @@ public struct URLEncoding: ParameterEncoding {
     /// The convention for encoding array parameters.
     public let arrayEncoding: ArrayEncoding
 
+    /// The convention for encoding boolean parameters.
+    public let boolEncoding: BoolEncoding
+
     // MARK: Initialization
 
     /// Creates a `URLEncoding` instance using the specified destination.
@@ -122,9 +136,10 @@ public struct URLEncoding: ParameterEncoding {
     /// - parameter arrayEncoding: The convention to use for encoding array parameters.
     ///
     /// - returns: The new `URLEncoding` instance.
-    public init(destination: Destination = .methodDependent, arrayEncoding: ArrayEncoding = .brackets) {
+    public init(destination: Destination = .methodDependent, arrayEncoding: ArrayEncoding = .brackets, boolEncoding: BoolEncoding = .numeric) {
         self.destination = destination
         self.arrayEncoding = arrayEncoding
+        self.boolEncoding = boolEncoding
     }
 
     // MARK: Encoding
@@ -177,18 +192,17 @@ public struct URLEncoding: ParameterEncoding {
                 components += queryComponents(fromKey: "\(key)[\(nestedKey)]", value: value)
             }
         } else if let array = value as? [Any] {
-            let arrayKey = (arrayEncoding == .brackets) ? "\(key)[]" : key
             for value in array {
-                components += queryComponents(fromKey: arrayKey, value: value)
+                components += queryComponents(fromKey: encodeArrayKey(key), value: value)
             }
         } else if let value = value as? NSNumber {
             if value.isBool {
-                components.append((escape(key), escape((value.boolValue ? "1" : "0"))))
+                components.append((escape(key), escape(encodeBoolValue(value.boolValue))))
             } else {
                 components.append((escape(key), escape("\(value)")))
             }
         } else if let bool = value as? Bool {
-            components.append((escape(key), escape((bool ? "1" : "0"))))
+            components.append((escape(key), escape(encodeBoolValue(bool))))
         } else {
             components.append((escape(key), escape("\(value)")))
         }
@@ -277,6 +291,24 @@ public struct URLEncoding: ParameterEncoding {
             return true
         default:
             return false
+        }
+    }
+
+    private func encodeArrayKey(_ key: String) -> String {
+        switch arrayEncoding {
+        case .brackets:
+            return "\(key)[]"
+        case .noBrackets:
+            return key
+        }
+    }
+
+    private func encodeBoolValue(_ value: Bool) -> String {
+        switch boolEncoding {
+        case .numeric:
+            return value ? "1" : "0"
+        case .literal:
+            return value ? "true" : "false"
         }
     }
 }
