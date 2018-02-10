@@ -470,7 +470,6 @@ public func upload(
         (_ url: URLConvertible,
          soapmethod : String,
          soapparameters: Parameters? = nil,
-         headers: [String:AnyObject]? = nil,
          namespace : String = "http://tempUri.org")
         -> DataRequest
     {
