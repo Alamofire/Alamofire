@@ -6,9 +6,8 @@
 //  Copyright © 2018 Alamofire. All rights reserved.
 //
 
-import UIKit
 
-class SoapRequestManager: NSObject {
+class SoapRequestManager {
     
     private var methodName  : String
     private var namespace : String
