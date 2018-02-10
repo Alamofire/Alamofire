@@ -98,18 +98,18 @@ extension URLRequest {
     /// - returns: The new `URLRequest` instance.
     public init(url: URLConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil) throws {
         let url = try url.asURL()
-
+        
         self.init(url: url)
-
+        
         httpMethod = method.rawValue
-
+        
         if let headers = headers {
             for (headerField, headerValue) in headers {
                 setValue(headerValue, forHTTPHeaderField: headerField)
             }
         }
     }
-
+    
     func adapt(using adapter: RequestAdapter?) throws -> URLRequest {
         guard let adapter = adapter else { return self }
         return try adapter.adapt(self)
@@ -145,6 +145,8 @@ public func request(
         headers: headers
     )
 }
+
+
 
 /// Creates a `DataRequest` using the default `SessionManager` to retrieve the contents of a URL based on the
 /// specified `urlRequest`.
@@ -427,39 +429,68 @@ public func upload(
 }
 
 #if !os(watchOS)
+    
+    // MARK: - Stream Request
+    
+    // MARK: Hostname and Port
+    
+    /// Creates a `StreamRequest` using the default `SessionManager` for bidirectional streaming with the `hostname`
+    /// and `port`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter hostName: The hostname of the server to connect to.
+    /// - parameter port:     The port of the server to connect to.
+    ///
+    /// - returns: The created `StreamRequest`.
+    @discardableResult
+    @available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
+    public func stream(withHostName hostName: String, port: Int) -> StreamRequest {
+        return SessionManager.default.stream(withHostName: hostName, port: port)
+    }
+    
+    // MARK: NetService
+    
+    /// Creates a `StreamRequest` using the default `SessionManager` for bidirectional streaming with the `netService`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter netService: The net service used to identify the endpoint.
+    ///
+    /// - returns: The created `StreamRequest`.
+    @discardableResult
+    @available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
+    public func stream(with netService: NetService) -> StreamRequest {
+        return SessionManager.default.stream(with: netService)
+    }
+    
+    //Soap API Request creation
+    @discardableResult
+    public func soapRequest
+        (_ url: URLConvertible,
+         soapmethod : String,
+         soapparameters: Parameters? = nil,
+         headers: [String:AnyObject]? = nil,
+         namespace : String = "http://tempUri.org")
+        -> DataRequest
+    {
+        let soapGenerator : SoapRequestManager!
+        if let parameter = soapparameters {
+            soapGenerator = SoapRequestManager(methodName: soapmethod, namespace: namespace, parameters: parameter)
+        }
+        else {
+            soapGenerator = SoapRequestManager(methodName: soapmethod, namespace: namespace)
+        }
+        soapGenerator.generateSoapRequestElements()
+        return SessionManager.default.request(url, method: .post, parameters: [:], encoding: soapGenerator.getBody(), headers: soapGenerator.getHeaders())
+    }
 
-// MARK: - Stream Request
-
-// MARK: Hostname and Port
-
-/// Creates a `StreamRequest` using the default `SessionManager` for bidirectional streaming with the `hostname`
-/// and `port`.
-///
-/// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
-///
-/// - parameter hostName: The hostname of the server to connect to.
-/// - parameter port:     The port of the server to connect to.
-///
-/// - returns: The created `StreamRequest`.
-@discardableResult
-@available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
-public func stream(withHostName hostName: String, port: Int) -> StreamRequest {
-    return SessionManager.default.stream(withHostName: hostName, port: port)
-}
-
-// MARK: NetService
-
-/// Creates a `StreamRequest` using the default `SessionManager` for bidirectional streaming with the `netService`.
-///
-/// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
-///
-/// - parameter netService: The net service used to identify the endpoint.
-///
-/// - returns: The created `StreamRequest`.
-@discardableResult
-@available(iOS 9.0, macOS 10.11, tvOS 9.0, *)
-public func stream(with netService: NetService) -> StreamRequest {
-    return SessionManager.default.stream(with: netService)
-}
-
+    extension String: ParameterEncoding {
+        public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
+            var request = try urlRequest.asURLRequest()
+            request.httpBody = data(using: .utf8, allowLossyConversion: false)
+            return request
+        }
+    }
+    
 #endif

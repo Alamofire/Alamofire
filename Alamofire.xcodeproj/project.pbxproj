@@ -258,6 +258,7 @@
 		F8AE910219D28DCC0078C7B2 /* ValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */; };
 		F8D1C6F519D52968002E74FE /* SessionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D1C6F419D52968002E74FE /* SessionManagerTests.swift */; };
 		F8E6024519CB46A800A3E7F1 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
+		FFC1E68B202EED91004561F8 /* SoapRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFC1E68A202EED91004561F8 /* SoapRequestManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -381,6 +382,7 @@
 		F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidationTests.swift; sourceTree = "<group>"; };
 		F8D1C6F419D52968002E74FE /* SessionManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagerTests.swift; sourceTree = "<group>"; };
 		F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationTests.swift; sourceTree = "<group>"; };
+		FFC1E68A202EED91004561F8 /* SoapRequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoapRequestManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -617,12 +619,13 @@
 		4CDE2C491AF8A14E00BABAE5 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */,
 				4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */,
 				4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */,
-				4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */,
 				4C811F8C1B51856D00E0F59A /* ServerTrustPolicy.swift */,
 				4C574E691C67D207000B3128 /* Timeline.swift */,
 				4CDE2C421AF89F0900BABAE5 /* Validation.swift */,
+				FFC1E68A202EED91004561F8 /* SoapRequestManager.swift */,
 			);
 			name = Features;
 			sourceTree = "<group>";
@@ -1285,6 +1288,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FFC1E68B202EED91004561F8 /* SoapRequestManager.swift in Sources */,
 				4C574E6A1C67D207000B3128 /* Timeline.swift in Sources */,
 				4CFCFE2E1D56D31700A76388 /* SessionDelegate.swift in Sources */,
 				4CE2724F1AF88FB500F1D59A /* ParameterEncoding.swift in Sources */,

@@ -36,10 +36,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?)
         -> Bool
     {
-        let splitViewController = window!.rootViewController as! UISplitViewController
-        let navigationController = splitViewController.viewControllers.last as! UINavigationController
-        navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
-        splitViewController.delegate = self
+//        let splitViewController = window!.rootViewController as! UISplitViewController
+//        let navigationController = splitViewController.viewControllers.last as! UINavigationController
+//        navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+//        splitViewController.delegate = self
 
         return true
     }
