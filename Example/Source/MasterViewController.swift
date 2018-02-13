@@ -79,6 +79,7 @@ class MasterViewController: UITableViewController {
                 case "SOAPREQUEST":
                     detailViewController.segueIdentifier = "SOAPREQUEST"
                     return Alamofire.soapRequest("http://www.webservicex.net/globalweather.asmx", soapmethod: "GetCitiesByCountry", soapparameters: ["CountryName":"India"], namespace: "http://www.webserviceX.NET")
+                    
                 case "DOWNLOAD":
                     detailViewController.segueIdentifier = "DOWNLOAD"
                     let destination = DownloadRequest.suggestedDownloadDestination(
