@@ -319,6 +319,7 @@ extension Request: CustomDebugStringConvertible {
         }
 
         var headers: [AnyHashable: Any] = [:]
+        var cookies: String?
 
         if let additionalHeaders = session.configuration.httpAdditionalHeaders {
             for (field, value) in additionalHeaders where field != AnyHashable("Cookie") {
@@ -327,13 +328,21 @@ extension Request: CustomDebugStringConvertible {
         }
 
         if let headerFields = request.allHTTPHeaderFields {
-            for (field, value) in headerFields where field != "Cookie" {
-                headers[field] = value
+            for (field, value) in headerFields {
+                if field != "Cookie" {
+                    headers[field] = value
+                } else {
+                    cookies = value
+                }
             }
         }
 
         for (field, value) in headers {
             components.append("-H \"\(field): \(value)\"")
+        }
+
+        if let c = cookies, !session.configuration.httpShouldSetCookies {
+            components.append("-b \"\(c)\"")
         }
 
         if let httpBodyData = request.httpBody, let httpBody = String(data: httpBodyData, encoding: .utf8) {
