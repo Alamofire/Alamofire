@@ -72,7 +72,7 @@ GEM
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     redcarpet (3.4.0)
-    rouge (3.1.1)
+    rouge (2.0.7)
     ruby-macho (1.1.0)
     sass (3.5.5)
       sass-listen (~> 4.0.0)
@@ -91,6 +91,8 @@ GEM
       claide (>= 1.0.2, < 2.0)
       colored2 (~> 3.1)
       nanaimo (~> 0.2.3)
+    xcpretty (0.2.8)
+      rouge (~> 2.0.7)
 
 PLATFORMS
   ruby
@@ -98,6 +100,7 @@ PLATFORMS
 DEPENDENCIES
   cocoapods
   jazzy
+  xcpretty
 
 BUNDLED WITH
    1.16.1
