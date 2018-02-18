@@ -55,7 +55,19 @@ open class SessionManager {
     /// Creates default values for the "Accept-Encoding", "Accept-Language" and "User-Agent" headers.
     open static let defaultHTTPHeaders: HTTPHeaders = {
         // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
-        let acceptEncoding: String = "gzip;q=1.0, compress;q=0.5"
+        let acceptEncoding: String = {
+            let encodings: [String]
+            if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
+                encodings = ["br", "gzip", "deflate"]
+            } else {
+                encodings = ["gzip", "deflate"]
+            }
+            
+            return encodings.enumerated().map { (index, encoding) in
+                let quality = 1.0 - (Double(index) * 0.1)
+                return "\(encoding);q=\(quality)"
+                }.joined(separator: ", ")
+        }()
 
         // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
         let acceptLanguage = Locale.preferredLanguages.prefix(6).enumerated().map { index, languageCode in

@@ -24,6 +24,7 @@
 
 import Foundation
 
+
 /// A lock abstraction.
 private protocol Lock {
     func lock()
@@ -78,7 +79,23 @@ final class Mutex: Lock {
     }
 }
 
-// MARK: -
+    /// Execute a value producing closure while aquiring the mutex.
+    ///
+    /// - Parameter closure: The closure to run.
+    /// - Returns:           The value the closure generated.
+    func around<T>(_ closure: () -> T) -> T {
+        lock(); defer { unlock() }
+        return closure()
+    }
+
+    /// Execute a closure while aquiring the mutex.
+    ///
+    /// - Parameter closure: The closure to run.
+    func around(_ closure: () -> Void) {
+        lock(); defer { unlock() }
+        return closure()
+    }
+}
 
 /// An `os_unfair_lock` wrapper.
 @available (iOS 10.0, macOS 10.12, tvOS 10.0, watchOS 3.0, *)
@@ -96,7 +113,23 @@ final class UnfairLock: Lock {
     }
 }
 
-// MARK: -
+    /// Execute a value producing closure while aquiring the lock.
+    ///
+    /// - Parameter closure: The closure to run.
+    /// - Returns:           The value the closure generated.
+    func around<T>(_ closure: () -> T) -> T {
+        lock(); defer { unlock() }
+        return closure()
+    }
+
+    /// Execute a closure while aquiring the lock.
+    ///
+    /// - Parameter closure: The closure to run.
+    func around(_ closure: () -> Void) {
+        lock(); defer { unlock() }
+        return closure()
+    }
+}
 
 /// A thread-safe wrapper around a value.
 final class Protector<T> {
