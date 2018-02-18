@@ -44,7 +44,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.failure(error)
 
         // Then
-        XCTAssertFalse(result.isSuccess, "result is success should be true for failure case")
+        XCTAssertFalse(result.isSuccess, "result is success should be false for failure case")
     }
 
     // MARK: - Is Failure Tests
@@ -90,7 +90,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.success("success")
 
         // Then
-        XCTAssertTrue(result.error == nil, "result error should be nil for success case")
+        XCTAssertNil(result.error, "result error should be nil for success case")
     }
 
     func testThatErrorPropertyReturnsErrorForFailureCase() {
@@ -98,7 +98,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.failure(error)
 
         // Then
-        XCTAssertTrue(result.error != nil, "result error should not be nil for failure case")
+        XCTAssertNotNil(result.error, "result error should not be nil for failure case")
     }
 
     // MARK: - Description Tests
