@@ -33,11 +33,32 @@ private protocol Lock {
     func around(_ closure: () -> Void)
 }
 
+extension Lock {
+    /// Execute a value producing closure while aquiring the mutex.
+    ///
+    /// - Parameter closure: The closure to run.
+    /// - Returns:           The value the closure generated.
+    func around<T>(_ closure: () -> T) -> T {
+        lock(); defer { unlock() }
+        return closure()
+    }
+
+    /// Execute a closure while aquiring the mutex.
+    ///
+    /// - Parameter closure: The closure to run.
+    func around(_ closure: () -> Void) {
+        lock(); defer { unlock() }
+        return closure()
+    }
+}
+
+// MARK: -
+
 /// A `pthread_mutex` wrapper, inspired by ProcedureKit.
 final class Mutex: Lock {
     private var mutex = pthread_mutex_t()
 
-    public init() {
+    init() {
         let result = pthread_mutex_init(&mutex, nil)
         precondition(result == 0, "Failed to create pthread mutex")
     }
@@ -56,6 +77,7 @@ final class Mutex: Lock {
         let result = pthread_mutex_unlock(&mutex)
         assert(result == 0, "Failed to unlock mutex")
     }
+}
 
     /// Execute a value producing closure while aquiring the mutex.
     ///
@@ -89,6 +111,7 @@ final class UnfairLock: Lock {
     fileprivate func unlock() {
         os_unfair_lock_unlock(&unfairLock)
     }
+}
 
     /// Execute a value producing closure while aquiring the lock.
     ///
@@ -117,16 +140,17 @@ final class Protector<T> {
             return Mutex()
         }
     }()
-    private var ward: T
 
-    init(_ ward: T) {
-        self.ward = ward
+    private var value: T
+
+    init(_ value: T) {
+        self.value = value
     }
 
     /// The contained value. Unsafe for anything more than direct read or write.
-    var unsafeValue: T {
-        get { return lock.around { ward } }
-        set { lock.around { ward = newValue } }
+    var directValue: T {
+        get { return lock.around { value } }
+        set { lock.around { value = newValue } }
     }
 
     /// Synchronously read or transform the contained value.
@@ -134,7 +158,7 @@ final class Protector<T> {
     /// - Parameter closure: The closure to execute.
     /// - Returns:           The return value of the closure passed.
     func read<U>(_ closure: (T) -> U) -> U {
-        return lock.around { closure(self.ward) }
+        return lock.around { closure(self.value) }
     }
 
     /// Synchronously modify the protected value.
@@ -143,7 +167,7 @@ final class Protector<T> {
     /// - Returns:           The modified value.
     @discardableResult
     func write<U>(_ closure: (inout T) -> U) -> U {
-        return lock.around { closure(&self.ward) }
+        return lock.around { closure(&self.value) }
     }
 }
 

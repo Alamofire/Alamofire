@@ -1,7 +1,7 @@
 //
 //  ResultTests.swift
 //
-//  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -213,7 +213,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.success("success value")
 
         // When
-        let mappedResult = result.map { $0.characters.count }
+        let mappedResult = result.map { $0.count }
 
         // Then
         XCTAssertEqual(mappedResult.value, 13)
@@ -225,7 +225,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.failure(ResultError())
 
         // When
-        let mappedResult = result.map { $0.characters.count }
+        let mappedResult = result.map { $0.count }
 
         // Then
         if let error = mappedResult.error {
@@ -242,7 +242,7 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.success("success value")
 
         // When
-        let mappedResult = result.flatMap { $0.characters.count }
+        let mappedResult = result.flatMap { $0.count }
 
         // Then
         XCTAssertEqual(mappedResult.value, 13)

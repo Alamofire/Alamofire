@@ -208,7 +208,6 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
     private let validateCertificateChain: Bool
     private let validateHost: Bool
 
-
     /// Creates a `PinnedCertificatesTrustEvaluator`.
     ///
     /// - Parameters:
@@ -259,7 +258,6 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
     private let keys: [SecKey]
     private let validateCertificateChain: Bool
     private let validateHost: Bool
-
 
     /// Creates a `PublicKeysTrustEvaluator`.
     ///
