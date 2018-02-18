@@ -213,7 +213,11 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.success("success value")
 
         // When
+        #if swift(>=3.2)
+        let mappedResult = result.map { $0.count }
+        #else
         let mappedResult = result.map { $0.characters.count }
+        #endif
 
         // Then
         XCTAssertEqual(mappedResult.value, 13)
@@ -225,7 +229,11 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.failure(ResultError())
 
         // When
+        #if swift(>=3.2)
+        let mappedResult = result.map { $0.count }
+        #else
         let mappedResult = result.map { $0.characters.count }
+        #endif
 
         // Then
         if let error = mappedResult.error {
@@ -242,7 +250,11 @@ class ResultTestCase: BaseTestCase {
         let result = Result<String>.success("success value")
 
         // When
-        let mappedResult = result.flatMap { $0.characters.count }
+        #if swift(>=3.2)
+        let mappedResult = result.map { $0.count }
+        #else
+        let mappedResult = result.map { $0.characters.count }
+        #endif
 
         // Then
         XCTAssertEqual(mappedResult.value, 13)

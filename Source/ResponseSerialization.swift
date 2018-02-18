@@ -368,13 +368,13 @@ extension Request {
 
         var convertedEncoding = encoding
 
-        if let encodingName = response?.textEncodingName as CFString!, convertedEncoding == nil {
+        if let encodingName = response?.textEncodingName as CFString?, convertedEncoding == nil {
             convertedEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(
                 CFStringConvertIANACharSetNameToEncoding(encodingName))
             )
         }
 
-        let actualEncoding = convertedEncoding ?? String.Encoding.isoLatin1
+        let actualEncoding = convertedEncoding ?? .isoLatin1
 
         if let string = String(data: validData, encoding: actualEncoding) {
             return .success(string)
