@@ -847,14 +847,15 @@ open class SessionManager {
 
         do {
             let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
-
+            let oldTask = request.delegate.task
             request.delegate.task = task // resets all task delegate data
 
             request.retryCount += 1
             request.startTime = CFAbsoluteTimeGetCurrent()
             request.endTime = nil
-
-            task.resume()
+            if URLSessionTask.State.suspended != oldTask?.state {
+                task.resume()
+            }
 
             return true
         } catch {
@@ -875,17 +876,23 @@ open class SessionManager {
                     return
                 }
 
-                DispatchQueue.utility.after(timeDelay) {
+                /// enusre DispatchWorkItem perform empty block more times, then notify one time
+                
+                let workItem = DispatchWorkItem {
                     guard let strongSelf = self else { return }
-
+                    
                     let retrySucceeded = strongSelf.retry(request)
-
                     if retrySucceeded, let task = request.task {
                         strongSelf.delegate[task] = request
                     } else {
                         if strongSelf.startRequestsImmediately { request.resume() }
                     }
+
                 }
+                
+                request.sessionTaskOperator = CancelRetriedRequestStateDecorator(retryWorkItem: workItem, contract: request.sessionTaskOperator)
+                
+                DispatchQueue.utility.after(timeDelay, execute: workItem)
             }
         }
     }
