@@ -427,6 +427,61 @@ public struct PropertyListEncoding: ParameterEncoding {
 
 // MARK: -
 
+/// Appends each parameter to the request URL as subcomponents. Parameters are inserted using the alphabetical orders
+/// of the keys.
+///
+/// Parameters should be provided with keys that define an order, such as:
+///
+///     ["1": value1, "2": value2]
+///
+/// The dictionary above is converted to:
+///
+///     baseUri/value1/value2
+///
+public struct PathComponents: ParameterEncoding {
+    
+    // MARK: Properties
+    
+    /// Returns a default `PathComponents` instance.
+    public static var `default`: PathComponents { return PathComponents() }
+    
+    // MARK: Encoding
+    
+    /// Creates a URL request by encoding parameters and applying them onto an existing request.
+    ///
+    /// - parameter urlRequest: The request to have parameters applied.
+    /// - parameter parameters: The parameters to apply.
+    ///
+    /// - throws: An `Error` if the encoding process encounters an error.
+    ///
+    /// - returns: The encoded request.
+    public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
+        var urlRequest = try urlRequest.asURLRequest()
+        
+        guard let parameters = parameters else { return urlRequest }
+        
+        guard let url = urlRequest.url else {
+            throw AFError.parameterEncodingFailed(reason: .missingURL)
+        }
+        
+        if let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), !parameters.isEmpty {
+            var finalUrl = urlComponents.url!
+            
+            /// Since Swift dictionaries are not sorted, we keep the desired sorting
+            /// using the specified keys, which are useless in this kind of encoding.
+            let keys = parameters.keys.sorted(by: { $0 < $1 })
+            
+            keys.forEach { finalUrl.appendPathComponent("\(parameters[$0]!)") }
+            urlRequest.url = finalUrl
+        }
+        
+        return urlRequest
+    }
+    
+}
+
+// MARK: -
+
 extension NSNumber {
     fileprivate var isBool: Bool { return CFBooleanGetTypeID() == CFGetTypeID(self) }
 }

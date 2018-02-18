@@ -824,3 +824,58 @@ class PropertyListParameterEncodingTestCase: ParameterEncodingTestCase {
         }
     }
 }
+
+// MARK: -
+
+class PathComponentsParameterEncodingTestCase: ParameterEncodingTestCase {
+    
+    // MARK: Properties
+    
+    let encoding = PathComponents.default
+    
+    // MARK: Tests
+    
+    func testPathComponentsParameterEncodeNilParameters() {
+        do {
+            // Given
+            let originalUrl = self.urlRequest.url
+            
+            // When
+            let urlRequest = try encoding.encode(self.urlRequest, with: nil)
+            
+            // Then
+            XCTAssertEqual(originalUrl, urlRequest.url)
+            XCTAssertNil(urlRequest.httpBody)
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
+        }
+    }
+    
+    func testPathComponentsParameterEncodeTwoParameters() {
+        do {
+            // Given
+            let value1 = "Something"
+            let value2 = "Else"
+            
+            let parameters: [String: Any] = [
+                "1": value1,
+                "2": value2
+            ]
+            
+            // When
+            let originalUrl = self.urlRequest.url
+            let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
+            
+            // Then
+            XCTAssertNotEqual(originalUrl, urlRequest.url)
+            
+            if let components = urlRequest.url?.pathComponents {
+                XCTAssertEqual(components.last, value2)
+                XCTAssertEqual(components[components.count - 2], value1)
+            }
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
+        }
+    }
+    
+}
