@@ -254,9 +254,9 @@ class SessionManagerTestCase: BaseTestCase {
         let expectedUserAgent = "Unknown/Unknown (Unknown; build:Unknown; \(osNameVersion)) \(alamofireVersion)"
         XCTAssertEqual(userAgent, expectedUserAgent)
     }
-    
+
     // MARK: Tests - Supported Accept-Encodings
-    
+
     func testDefaultAcceptEncodingSupportsAppropriateEncodingsOnAppropriateSystems() {
         // Given
         let brotliURL = URL(string: "https://httpbin.org/brotli")!
@@ -268,32 +268,32 @@ class SessionManagerTestCase: BaseTestCase {
         var brotliResponse: DataResponse<Any>?
         var gzipResponse: DataResponse<Any>?
         var deflateResponse: DataResponse<Any>?
-        
+
         // When
         Alamofire.request(brotliURL).responseJSON { (response) in
             brotliResponse = response
             brotliExpectation.fulfill()
         }
-        
+
         Alamofire.request(gzipURL).responseJSON { (response) in
             gzipResponse = response
             gzipExpectation.fulfill()
         }
-        
+
         Alamofire.request(deflateURL).responseJSON { (response) in
             deflateResponse = response
             deflateExpectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: 5, handler: nil)
-        
+
         // Then
         if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
             XCTAssertTrue(brotliResponse?.result.isSuccess == true)
         } else {
             XCTAssertFalse(brotliResponse?.result.isSuccess == true)
         }
-        
+
         XCTAssertTrue(gzipResponse?.result.isSuccess == true)
         XCTAssertTrue(deflateResponse?.result.isSuccess == true)
     }

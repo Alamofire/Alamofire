@@ -65,7 +65,6 @@ public extension DownloadResponseSerializerProtocol where Self: DataResponseSeri
         }
 
         do {
-            let data = try Data(contentsOf: fileURL)
             return try serialize(request: request, response: response, data: data, error: error)
         } catch {
             throw error
@@ -125,7 +124,6 @@ public final class AnyResponseSerializer<Value>: ResponseSerializer {
             }
 
             do {
-                let data = try Data(contentsOf: fileURL)
                 return try serialize(request: request, response: response, data: data, error: error)
             } catch {
                 throw error
@@ -602,69 +600,6 @@ extension DataRequest {
             responseSerializer: JSONDecodableResponseSerializer(decoder: decoder),
             completionHandler: completionHandler
         )
-    }
-}
-
-extension DownloadRequest {
-    /// Adds a handler to be called once the request has finished.
-    ///
-    /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                        the handler is called on `.main`.
-    ///   - options:           The property list reading options. Defaults to `[]`.
-    ///   - completionHandler: A closure to be executed once the request has finished.
-    /// - Returns:             The request.
-    @discardableResult
-    public func responsePropertyList(
-        queue: DispatchQueue? = nil,
-        options: PropertyListSerialization.ReadOptions = [],
-        completionHandler: @escaping (DownloadResponse<Any>) -> Void)
-        -> Self
-    {
-        return response(
-            queue: queue,
-            responseSerializer: PropertyListResponseSerializer(options: options),
-            completionHandler: completionHandler
-        )
-    }
-}
-
-// MARK: - PropertyList Decodable
-
-/// A `ResponseSerializer` that decodes the response data as a generic value using a `PropertyListDecoder`. By default,
-/// a request returning `nil` or no data is considered an error. However, if the response is has a status code valid for
-/// empty responses (`204`, `205`), then the `Empty.response` value is returned.
-public final class PropertyListDecodableResponseSerializer<T: Decodable>: ResponseSerializer {
-    let decoder: PropertyListDecoder
-
-
-    /// Creates an instance with the given `JSONDecoder` instance.
-    ///
-    /// - Parameter decoder: A decoder. Defaults to a `PropertyListDecoder` with default settings.
-    public init(decoder: PropertyListDecoder = PropertyListDecoder()) {
-        self.decoder = decoder
-    }
-
-    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) -> Result<T> {
-        guard error == nil else { return .failure(error!) }
-
-        guard let validData = data, validData.count > 0 else {
-            if let response = response, emptyDataStatusCodes.contains(response.statusCode) {
-                guard let emptyResponse = Empty.response as? T else {
-                    return .failure(AFError.responseSerializationFailed(reason: .invalidEmptyResponse(type: "\(T.self)")))
-                }
-
-                return .success(emptyResponse)
-            }
-
-            return .failure(AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength))
-        }
-
-        do {
-            return .success(try decoder.decode(T.self, from: validData))
-        } catch {
-            return .failure(error)
-        }
     }
 }
 

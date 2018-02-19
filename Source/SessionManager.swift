@@ -62,7 +62,7 @@ open class SessionManager {
             } else {
                 encodings = ["gzip", "deflate"]
             }
-            
+
             return encodings.enumerated().map { (index, encoding) in
                 let quality = 1.0 - (Double(index) * 0.1)
                 return "\(encoding);q=\(quality)"
