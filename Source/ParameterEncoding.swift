@@ -88,21 +88,39 @@ public struct URLEncoding: ParameterEncoding {
         case methodDependent, queryString, httpBody
     }
 
-    /// Configures how array parameters are encoded.
+    /// Configures how `Array` parameters are encoded.
     ///
     /// - brackets:        An empty set of square brackets is appended to the key for every value.
     ///                    This is the default behavior.
     /// - noBrackets:      No brackets are appended. The key is encoded as is.
     public enum ArrayEncoding {
         case brackets, noBrackets
+
+        func encode(key: String) -> String {
+            switch self {
+            case .brackets:
+                return "\(key)[]"
+            case .noBrackets:
+                return key
+            }
+        }
     }
 
-    /// Configures how boolean parameters are encoded.
+    /// Configures how `Bool` parameters are encoded.
     ///
-    /// - numeric:         Encode `true` as 1 and `false` as 0. This is the default behavior.
+    /// - numeric:         Encode `true` as `1` and `false` as `0`. This is the default behavior.
     /// - literal:         Encode `true` and `false` as string literals.
     public enum BoolEncoding {
         case numeric, literal
+
+        func encode(value: Bool) -> String {
+            switch self {
+            case .numeric:
+                return value ? "1" : "0"
+            case .literal:
+                return value ? "true" : "false"
+            }
+        }
     }
 
     // MARK: Properties
@@ -122,10 +140,10 @@ public struct URLEncoding: ParameterEncoding {
     /// The destination defining where the encoded query string is to be applied to the URL request.
     public let destination: Destination
 
-    /// The convention for encoding array parameters.
+    /// The encoding to use for `Array` parameters.
     public let arrayEncoding: ArrayEncoding
 
-    /// The convention for encoding boolean parameters.
+    /// The encoding to use for `Bool` parameters.
     public let boolEncoding: BoolEncoding
 
     // MARK: Initialization
@@ -133,7 +151,8 @@ public struct URLEncoding: ParameterEncoding {
     /// Creates a `URLEncoding` instance using the specified destination.
     ///
     /// - parameter destination: The destination defining where the encoded query string is to be applied.
-    /// - parameter arrayEncoding: The convention to use for encoding array parameters.
+    /// - parameter arrayEncoding: The encoding to use for `Array` parameters.
+    /// - parameter boolEncoding: The encoding to use for `Bool` parameters.
     ///
     /// - returns: The new `URLEncoding` instance.
     public init(destination: Destination = .methodDependent, arrayEncoding: ArrayEncoding = .brackets, boolEncoding: BoolEncoding = .numeric) {
@@ -193,16 +212,16 @@ public struct URLEncoding: ParameterEncoding {
             }
         } else if let array = value as? [Any] {
             for value in array {
-                components += queryComponents(fromKey: encodeArrayKey(key), value: value)
+                components += queryComponents(fromKey: arrayEncoding.encode(key: key), value: value)
             }
         } else if let value = value as? NSNumber {
             if value.isBool {
-                components.append((escape(key), escape(encodeBoolValue(value.boolValue))))
+                components.append((escape(key), escape(boolEncoding.encode(value: value.boolValue))))
             } else {
                 components.append((escape(key), escape("\(value)")))
             }
         } else if let bool = value as? Bool {
-            components.append((escape(key), escape(encodeBoolValue(bool))))
+            components.append((escape(key), escape(boolEncoding.encode(value: bool))))
         } else {
             components.append((escape(key), escape("\(value)")))
         }
@@ -291,24 +310,6 @@ public struct URLEncoding: ParameterEncoding {
             return true
         default:
             return false
-        }
-    }
-
-    private func encodeArrayKey(_ key: String) -> String {
-        switch arrayEncoding {
-        case .brackets:
-            return "\(key)[]"
-        case .noBrackets:
-            return key
-        }
-    }
-
-    private func encodeBoolValue(_ value: Bool) -> String {
-        switch boolEncoding {
-        case .numeric:
-            return value ? "1" : "0"
-        case .literal:
-            return value ? "true" : "false"
         }
     }
 }
