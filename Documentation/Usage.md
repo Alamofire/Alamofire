@@ -279,6 +279,38 @@ Alamofire.request("https://httpbin.org/post", method: .post, parameters: paramet
 // HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
 ```
 
+##### Configuring the Encoding of `Bool` Parameters
+
+The `URLEncoding.BoolEncoding` enumeration provides the following methods for encoding `Bool` parameters:
+
+- `.numeric` - Encode `true` as `1` and `false` as `0`.
+- `.literal` - Encode `true` and `false` as string literals.
+
+By default, Alamofire uses the `.numeric` encoding.
+
+You can create your own `URLEncoding` and specify the desired `Bool` encoding in the initializer:
+
+```swift
+let encoding = URLEncoding(boolEncoding: .literal)
+```
+
+##### Configuring the Encoding of `Array` Parameters
+
+The `URLEncoding.ArrayEncoding` enumeration provides the following methods for encoding `Array` parameters:
+
+- `.brackets` - An empty set of square brackets is appended to the key for every value.
+- `.noBrackets` - No brackets are appended. The key is encoded as is.
+
+By default, Alamofire uses the `.brackets` encoding, where `foo=[1,2]` is encoded as `foo[]=1&foo[]=2`.
+
+Using the `.noBrackets` encoding will encode `foo=[1,2]` as `foo=1&foo=2`.
+
+You can create your own `URLEncoding` and specify the desired `Array` encoding in the initializer:
+
+```swift
+let encoding = URLEncoding(arrayEncoding: .noBrackets)
+```
+
 #### JSON Encoding
 
 The `JSONEncoding` type creates a JSON representation of the parameters object, which is set as the HTTP body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
