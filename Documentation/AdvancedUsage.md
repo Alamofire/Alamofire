@@ -495,7 +495,7 @@ Alamofire provides built-in response serialization for data, strings, JSON, and 
 Alamofire.request(...).responseData { (resp: DataResponse<Data>) in ... }
 Alamofire.request(...).responseString { (resp: DataResponse<String>) in ... }
 Alamofire.request(...).responseJSON { (resp: DataResponse<Any>) in ... }
-Alamofire.request(...).responsePropertyList { resp: DataResponse<Any>) in ... }
+Alamofire.request(...).responsePropertyList { (resp: DataResponse<Any>) in ... }
 ```
 
 Those responses wrap deserialized *values* (Data, String, Any) or *errors* (network, validation errors), as well as *meta-data* (URL request, HTTP headers, status code, [metrics](#statistical-metrics), ...).
