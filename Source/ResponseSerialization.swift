@@ -429,7 +429,10 @@ extension DownloadRequest {
     ///                       response, falling back to the default HTTP default character set, ISO-8859-1.
     ///
     /// - returns: A string response serializer.
-    public static func stringResponseSerializer(encoding: String.Encoding? = nil) -> DownloadResponseSerializer<String> {
+    public static func stringResponseSerializer(
+        encoding: String.Encoding? = nil)
+        -> DownloadResponseSerializer<String>
+    {
         return DownloadResponseSerializer { _, response, fileURL, error in
             guard error == nil else { return .failure(error!) }
 
@@ -559,7 +562,7 @@ extension DownloadRequest {
             guard let fileURL = fileURL else {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
-
+            
             do {
                 let data = try Data(contentsOf: fileURL)
                 return Request.serializeResponseJSON(options: options, response: response, data: data, error: error)
@@ -680,7 +683,7 @@ extension DownloadRequest {
             guard let fileURL = fileURL else {
                 return .failure(AFError.responseSerializationFailed(reason: .inputFileNil))
             }
-
+            
             do {
                 let data = try Data(contentsOf: fileURL)
                 return Request.serializeResponsePropertyList(options: options, response: response, data: data, error: error)

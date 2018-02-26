@@ -162,6 +162,7 @@ open class SessionDelegate: NSObject {
 
     var retrier: RequestRetrier?
     weak var sessionManager: SessionManager?
+    var fileManager: FileManager
 
     private var requests: [Int: Request] = [:]
     private let lock = NSLock()
@@ -184,6 +185,7 @@ open class SessionDelegate: NSObject {
     ///
     /// - returns: The new `SessionDelegate` instance.
     public override init() {
+        self.fileManager = .default
         super.init()
     }
 
@@ -535,7 +537,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         if let dataTaskDidBecomeDownloadTask = dataTaskDidBecomeDownloadTask {
             dataTaskDidBecomeDownloadTask(session, dataTask, downloadTask)
         } else {
-            self[downloadTask]?.delegate = DownloadTaskDelegate(task: downloadTask)
+            self[downloadTask]?.delegate = DownloadTaskDelegate(task: downloadTask, fileManager: fileManager)
         }
     }
 

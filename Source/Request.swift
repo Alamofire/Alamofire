@@ -103,6 +103,9 @@ open class Request {
 
     /// The session belonging to the underlying task.
     open let session: URLSession
+    
+    /// The file manager handling file related operations.
+    open let fileManager: FileManager
 
     /// The request sent or to be sent to the server.
     open var request: URLRequest? { return task?.originalRequest }
@@ -125,15 +128,16 @@ open class Request {
 
     // MARK: Lifecycle
 
-    init(session: URLSession, requestTask: RequestTask, error: Error? = nil) {
+    init(session: URLSession, requestTask: RequestTask, error: Error? = nil, fileManager: FileManager) {
         self.session = session
+        self.fileManager = fileManager
 
         switch requestTask {
         case .data(let originalTask, let task):
             taskDelegate = DataTaskDelegate(task: task)
             self.originalTask = originalTask
         case .download(let originalTask, let task):
-            taskDelegate = DownloadTaskDelegate(task: task)
+            taskDelegate = DownloadTaskDelegate(task: task, fileManager: fileManager)
             self.originalTask = originalTask
         case .upload(let originalTask, let task):
             taskDelegate = UploadTaskDelegate(task: task)
@@ -536,11 +540,12 @@ open class DownloadRequest: Request {
     /// - returns: A download file destination closure.
     open class func suggestedDownloadDestination(
         for directory: FileManager.SearchPathDirectory = .documentDirectory,
-        in domain: FileManager.SearchPathDomainMask = .userDomainMask)
+        in domain: FileManager.SearchPathDomainMask = .userDomainMask,
+        with fileManager: FileManager = .default)
         -> DownloadFileDestination
     {
         return { temporaryURL, response in
-            let directoryURLs = FileManager.default.urls(for: directory, in: domain)
+            let directoryURLs = fileManager.urls(for: directory, in: domain)
 
             if !directoryURLs.isEmpty {
                 return (directoryURLs[0].appendingPathComponent(response.suggestedFilename!), [])
