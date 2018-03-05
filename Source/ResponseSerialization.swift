@@ -50,7 +50,7 @@ public typealias ResponseSerializer = DataResponseSerializerProtocol & DownloadR
 /// By default, any serializer declared to conform to both types will get file serialization for free, as it just feeds
 /// the data read from disk into the data response serializer.
 public extension DownloadResponseSerializerProtocol where Self: DataResponseSerializerProtocol {
-    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> SerializedObject {
+    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> Self.SerializedObject {
         guard error == nil else { throw error! }
 
         guard let fileURL = fileURL else {
@@ -385,7 +385,7 @@ public final class StringResponseSerializer: ResponseSerializer {
 
         var convertedEncoding = encoding
 
-        if let encodingName = response?.textEncodingName as CFString!, convertedEncoding == nil {
+        if let encodingName = response?.textEncodingName as CFString?, convertedEncoding == nil {
             let ianaCharSet = CFStringConvertIANACharSetNameToEncoding(encodingName)
             let nsStringEncoding = CFStringConvertEncodingToNSStringEncoding(ianaCharSet)
             convertedEncoding = String.Encoding(rawValue: nsStringEncoding)

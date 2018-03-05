@@ -76,7 +76,6 @@ final class Mutex: Lock {
         let result = pthread_mutex_unlock(&mutex)
         assert(result == 0, "Failed to unlock mutex")
     }
-}
 
 // MARK: -
     ///
@@ -109,7 +108,6 @@ final class UnfairLock: Lock {
 
     fileprivate func unlock() {
         os_unfair_lock_unlock(&unfairLock)
-}
     }
 
 // MARK: -

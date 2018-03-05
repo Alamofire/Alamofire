@@ -512,7 +512,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var notificationCalledWithResponseData = false
         var response: HTTPURLResponse?
 
-        let expectation = self.expectation(forNotification: Notification.Name.Task.DidComplete.rawValue, object: nil) { notif -> Bool in
+        let expectation = self.expectation(forNotification: Notification.Name.Task.DidComplete, object: nil) { notif -> Bool in
 
             // check that we are handling notif for a dataTask
             guard let task = notif.userInfo?[Notification.Key.Task] as? URLSessionDataTask else {
@@ -544,7 +544,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var notificationCalledWithNilResponseData = false
         var response: HTTPURLResponse?
 
-        let expectation = self.expectation(forNotification: Notification.Name.Task.DidComplete.rawValue, object: nil) { notif -> Bool in
+        let expectation = self.expectation(forNotification: Notification.Name.Task.DidComplete, object: nil) { notif -> Bool in
 
             // check that we are handling notif for a downloadTask
             guard let task = notif.userInfo?[Notification.Key.Task] as? URLSessionDownloadTask else {
