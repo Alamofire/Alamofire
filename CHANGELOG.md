@@ -54,7 +54,7 @@ Released on 2018-3-5. All issues associated with this milestone can be found usi
 
 #### Fixed
 - Typos in `ResultTests`.
- - Fixed by [Aleph Retamal](https://github.com/alaphao) in Pull Request [#2416](https://github.com/Alamofire/Alamofire/pull/2416)
+ - Fixed by [Aleph Retamal](https://github.com/alaphao) in Pull Request [#2416](https://github.com/Alamofire/Alamofire/pull/2416).
 
 ## [4.6.0](https://github.com/Alamofire/Alamofire/releases/tag/4.6.0)
 Released on 2017-12-3. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.6.0).
