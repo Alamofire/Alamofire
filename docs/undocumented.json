@@ -267,6 +267,20 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/NetworkReachabilityManager.swift",
+      "line": 84,
+      "symbol": "NetworkReachabilityManager.flags",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/NetworkReachabilityManager.swift",
+      "line": 95,
+      "symbol": "NetworkReachabilityManager.previousFlags",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
       "line": 31,
       "symbol": "HTTPMethod.options",
@@ -331,22 +345,50 @@
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
-      "line": 82,
+      "line": 88,
       "symbol": "URLEncoding.Destination.httpBody",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
-      "line": 82,
+      "line": 88,
       "symbol": "URLEncoding.Destination.methodDependent",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
-      "line": 82,
+      "line": 88,
       "symbol": "URLEncoding.Destination.queryString",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "line": 97,
+      "symbol": "URLEncoding.ArrayEncoding.brackets",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "line": 97,
+      "symbol": "URLEncoding.ArrayEncoding.noBrackets",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "line": 114,
+      "symbol": "URLEncoding.BoolEncoding.literal",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "line": 114,
+      "symbol": "URLEncoding.BoolEncoding.numeric",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },

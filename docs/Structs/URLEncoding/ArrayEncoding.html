@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Destination Enumeration Reference</title>
+    <title>ArrayEncoding Enumeration Reference</title>
     <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
     <meta charset="utf-8">
@@ -14,9 +14,9 @@
   </head>
   <body>
 
-    <a name="//apple_ref/swift/Enum/Destination" class="dashAnchor"></a>
+    <a name="//apple_ref/swift/Enum/ArrayEncoding" class="dashAnchor"></a>
 
-    <a title="Destination Enumeration Reference"></a>
+    <a title="ArrayEncoding Enumeration Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -50,7 +50,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../../index.html">Alamofire Reference</a>
       <img class="carat" src="../../img/carat.png" />
-      Destination Enumeration Reference
+      ArrayEncoding Enumeration Reference
     </p>
 
     <div class="content-wrapper">
@@ -307,21 +307,19 @@
 
         <section class="section">
           <div class="section-content">
-            <h1>Destination</h1>
+            <h1>ArrayEncoding</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Destination</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ArrayEncoding</span></code></pre>
 
                 </div>
               </div>
-            <p>Defines whether the url-encoded query string is applied to the existing query string or HTTP body of the
-resulting URL request.</p>
+            <p>Configures how <code>Array</code> parameters are encoded.</p>
 
 <ul>
-<li>methodDependent: Applies encoded query string result to existing query string for <code>GET</code>, <code>HEAD</code> and <code>DELETE</code>
-               requests and sets as the HTTP body for requests with any other HTTP method.</li>
-<li>queryString:     Sets or appends encoded query string result to existing query string.</li>
-<li>httpBody:        Sets encoded query string result as the HTTP body of the URL request.</li>
+<li>brackets:        An empty set of square brackets is appended to the key for every value.
+               This is the default behavior.</li>
+<li>noBrackets:      No brackets are appended. The key is encoded as is.</li>
 </ul>
 
           </div>
@@ -334,9 +332,9 @@ resulting URL request.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11URLEncodingV11DestinationO15methodDependentA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/methodDependent" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingV11DestinationO15methodDependentA2EmF">methodDependent</a>
+                    <a name="/s:9Alamofire11URLEncodingV13ArrayEncodingO8bracketsA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/brackets" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV13ArrayEncodingO8bracketsA2EmF">brackets</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -351,7 +349,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">methodDependent</span><span class="p">,</span> <span class="n"><a href="../../Structs/URLEncoding/Destination.html#/s:9Alamofire11URLEncodingV11DestinationO11queryStringA2EmF">queryString</a></span><span class="p">,</span> <span class="n"><a href="../../Structs/URLEncoding/Destination.html#/s:9Alamofire11URLEncodingV11DestinationO8httpBodyA2EmF">httpBody</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">brackets</span><span class="p">,</span> <span class="n"><a href="../../Structs/URLEncoding/ArrayEncoding.html#/s:9Alamofire11URLEncodingV13ArrayEncodingO10noBracketsA2EmF">noBrackets</a></span></code></pre>
 
                         </div>
                       </div>
@@ -361,9 +359,9 @@ resulting URL request.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11URLEncodingV11DestinationO11queryStringA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/queryString" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingV11DestinationO11queryStringA2EmF">queryString</a>
+                    <a name="/s:9Alamofire11URLEncodingV13ArrayEncodingO10noBracketsA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/noBrackets" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV13ArrayEncodingO10noBracketsA2EmF">noBrackets</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -378,34 +376,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n"><a href="../../Structs/URLEncoding/Destination.html#/s:9Alamofire11URLEncodingV11DestinationO15methodDependentA2EmF">methodDependent</a></span><span class="p">,</span> <span class="n">queryString</span><span class="p">,</span> <span class="n"><a href="../../Structs/URLEncoding/Destination.html#/s:9Alamofire11URLEncodingV11DestinationO8httpBodyA2EmF">httpBody</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11URLEncodingV11DestinationO8httpBodyA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/httpBody" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingV11DestinationO8httpBodyA2EmF">httpBody</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n"><a href="../../Structs/URLEncoding/Destination.html#/s:9Alamofire11URLEncodingV11DestinationO15methodDependentA2EmF">methodDependent</a></span><span class="p">,</span> <span class="n"><a href="../../Structs/URLEncoding/Destination.html#/s:9Alamofire11URLEncodingV11DestinationO11queryStringA2EmF">queryString</a></span><span class="p">,</span> <span class="n">httpBody</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n"><a href="../../Structs/URLEncoding/ArrayEncoding.html#/s:9Alamofire11URLEncodingV13ArrayEncodingO8bracketsA2EmF">brackets</a></span><span class="p">,</span> <span class="n">noBrackets</span></code></pre>
 
                         </div>
                       </div>
