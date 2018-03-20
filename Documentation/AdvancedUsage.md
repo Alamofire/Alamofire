@@ -910,6 +910,22 @@ Whether you need to set the `NSExceptionRequiresForwardSecrecy` to `NO` depends 
 
 > It is recommended to always use valid certificates in production environments.
 
+#### Using Self-Signed Certificates with Local Networking
+
+If you are attempting to connect to a server running on your localhost, and you are using self-signed certificates, you will need to add the following to your `Info.plist`.
+
+```xml
+<dict>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
+</dict>
+```
+
+According to [Apple documentation](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW35), setting `NSAllowsLocalNetworking` to `YES` allows loading of local resources without disabling ATS for the rest of your app.
+
 ### Network Reachability
 
 The `NetworkReachabilityManager` listens for reachability changes of hosts and addresses for both WWAN and WiFi network interfaces.
