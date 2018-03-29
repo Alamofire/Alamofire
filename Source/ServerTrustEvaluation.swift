@@ -347,7 +347,7 @@ public final class DisabledEvaluator: ServerTrustEvaluating {
 public extension Bundle {
     /// Returns all valid `cer`, `crt`, and `der` certificates in the bundle.
     var certificates: [SecCertificate] {
-        return paths(forResourcesOfTypes: [".cer", ".CER", ".crt", ".CRT", ".der", ".DER"]).flatMap { path in
+        return paths(forResourcesOfTypes: [".cer", ".CER", ".crt", ".CRT", ".der", ".DER"]).compactMap { path in
             guard
                 let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)) as CFData,
                 let certificate = SecCertificateCreateWithData(nil, certificateData) else { return nil }
@@ -358,7 +358,7 @@ public extension Bundle {
 
     /// Returns all public keys for the valid certificates in the bundle.
     var publicKeys: [SecKey] {
-        return certificates.flatMap { $0.publicKey }
+        return certificates.compactMap { $0.publicKey }
     }
 
     /// Returns all pathnames for the resources identified by the provided file extensions.
@@ -381,14 +381,14 @@ public extension SecTrust {
 
     /// The public keys contained in `self`.
     var publicKeys: [SecKey] {
-        return (0..<SecTrustGetCertificateCount(self)).flatMap { index in
+        return (0..<SecTrustGetCertificateCount(self)).compactMap { index in
             return SecTrustGetCertificateAtIndex(self, index)?.publicKey
         }
     }
 
     /// The `Data` values for all certificates contained in `self`.
     var certificateData: [Data] {
-        return (0..<SecTrustGetCertificateCount(self)).flatMap { index in
+        return (0..<SecTrustGetCertificateCount(self)).compactMap { index in
             SecTrustGetCertificateAtIndex(self, index)
         }.data
     }
