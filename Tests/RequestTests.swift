@@ -529,6 +529,18 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components.last, "\"\(urlString)\"")
     }
 
+    func testGETRequestWithJSONHeaderDebugDescription() {
+        // Given
+        let urlString = "https://httpbin.org/get"
+
+        // When
+        let headers: [String: String] = [ "X-Custom-Header": "{\"key\": \"value\"}" ]
+        let request = manager.request(urlString, headers: headers)
+
+        // Then
+        XCTAssertNotNil(request.debugDescription.range(of: "-H \"X-Custom-Header: {\\\"key\\\": \\\"value\\\"}\""))
+    }
+
     func testGETRequestWithDuplicateHeadersDebugDescription() {
         // Given
         let urlString = "https://httpbin.org/get"
