@@ -525,8 +525,12 @@ class SessionDelegateTestCase: BaseTestCase {
         // Given
         var notificationCalledWithResponseData = false
         var response: HTTPURLResponse?
-
-        let expectation = self.expectation(forNotification: Notification.Name.Task.DidComplete.rawValue, object: nil) { notif -> Bool in
+        #if swift(>=4.1)
+        let notification = Notification.Name.Task.DidComplete
+        #else
+        let notification = Notification.Name.Task.DidComplete.rawValue
+        #endif
+        let expectation = self.expectation(forNotification: notification, object: nil) { notif -> Bool in
 
             // check that we are handling notif for a dataTask
             guard let task = notif.userInfo?[Notification.Key.Task] as? URLSessionDataTask else {
@@ -557,8 +561,12 @@ class SessionDelegateTestCase: BaseTestCase {
         // Given
         var notificationCalledWithNilResponseData = false
         var response: HTTPURLResponse?
-
-        let expectation = self.expectation(forNotification: Notification.Name.Task.DidComplete.rawValue, object: nil) { notif -> Bool in
+        #if swift(>=4.1)
+        let notification = Notification.Name.Task.DidComplete
+        #else
+        let notification = Notification.Name.Task.DidComplete.rawValue
+        #endif
+        let expectation = self.expectation(forNotification: notification, object: nil) { notif -> Bool in
 
             // check that we are handling notif for a downloadTask
             guard let task = notif.userInfo?[Notification.Key.Task] as? URLSessionDownloadTask else {
@@ -573,7 +581,7 @@ class SessionDelegateTestCase: BaseTestCase {
         }
 
         // When
-        manager.download("https://httpbin.org/get").response {resp in }
+        manager.download("https://httpbin.org/get").response { resp in }
 
         wait(for: [expectation], timeout: timeout)
 
