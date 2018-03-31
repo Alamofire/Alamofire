@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](http://semver.org/).
 
 #### 4.x Releases
-- `4.7.x` Releases - [4.7.0](#470)
+- `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471)
 - `4.6.x` Releases - [4.6.0](#460)
 - `4.5.x` Releases - [4.5.0](#450) | [4.5.1](#451)
 - `4.4.x` Releases - [4.4.0](#440)
@@ -33,6 +33,17 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+## [4.7.1](https://github.com/Alamofire/Alamofire/releases/tag/4.7.1)
+Released on 2018-3-31. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.7.1).
+
+#### Updated
+- Project for Xcode 9.3 and Swift 4.1 release versions.
+ - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2473](https://github.com/Alamofire/Alamofire/pull/2473).
+
+#### Fixed
+- Quote escaping in cURL representation.
+ - Fixed by [Jonah](https://github.com/jonah-williams) in Pull Request [#2474](https://github.com/Alamofire/Alamofire/pull/2474).
+
 ## [4.7.0](https://github.com/Alamofire/Alamofire/releases/tag/4.7.0)
 Released on 2018-3-5. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.7.0).
 
