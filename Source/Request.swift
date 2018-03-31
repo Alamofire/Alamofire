@@ -333,7 +333,8 @@ extension Request: CustomDebugStringConvertible {
         }
 
         for (field, value) in headers {
-            components.append("-H \"\(field): \(value)\"")
+            let escapedValue = String(describing: value).replacingOccurrences(of: "\"", with: "\\\"")
+            components.append("-H \"\(field): \(escapedValue)\"")
         }
 
         if let httpBodyData = request.httpBody, let httpBody = String(data: httpBodyData, encoding: .utf8) {
