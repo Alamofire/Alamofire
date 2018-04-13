@@ -158,12 +158,12 @@ extension DataResponse {
     ///
     /// - returns: A `DataResponse` whose result wraps the value returned by the given closure. If this instance's
     ///            result is a failure, returns a response wrapping the same failure.
-    public func map<T>(_ transform: (Value) -> T) -> DataResponse<T> {
+    public func map<T>(_ transform: (Value) throws -> T) rethrows -> DataResponse<T> {
         var response = DataResponse<T>(
             request: request,
             response: self.response,
             data: data,
-            result: result.map(transform),
+            result: try result.map(transform),
             timeline: timeline
         )
 
@@ -209,12 +209,12 @@ extension DataResponse {
     ///
     /// - Parameter transform: A closure that takes the error of the instance.
     /// - Returns: A `DataResponse` instance containing the result of the transform.
-    public func mapError<E: Error>(_ transform: (Error) -> E) -> DataResponse {
+    public func mapError<E: Error>(_ transform: (Error) throws -> E) rethrows -> DataResponse {
         var response = DataResponse(
             request: request,
             response: self.response,
             data: data,
-            result: result.mapError(transform),
+            result: try result.mapError(transform),
             timeline: timeline
         )
 

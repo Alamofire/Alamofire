@@ -166,10 +166,10 @@ extension Result {
     ///
     /// - returns: A `Result` containing the result of the given closure. If this instance is a failure, returns the
     ///            same failure.
-    public func map<T>(_ transform: (Value) -> T) -> Result<T> {
+    public func map<T>(_ transform: (Value) throws -> T) rethrows -> Result<T> {
         switch self {
         case .success(let value):
-            return .success(transform(value))
+            return .success(try transform(value))
         case .failure(let error):
             return .failure(error)
         }
@@ -211,10 +211,10 @@ extension Result {
     /// - Parameter transform: A closure that takes the error of the instance.
     /// - Returns: A `Result` instance containing the result of the transform. If this instance is a success, returns
     ///            the same instance.
-    public func mapError<T: Error>(_ transform: (Error) -> T) -> Result {
+    public func mapError<T: Error>(_ transform: (Error) throws -> T) rethrows -> Result {
         switch self {
         case .failure(let error):
-            return .failure(transform(error))
+            return .failure(try transform(error))
         case .success:
             return self
         }
@@ -253,8 +253,8 @@ extension Result {
     /// - Parameter closure: A closure that takes the success value of this instance.
     /// - Returns: This `Result` instance, unmodified.
     @discardableResult
-    public func withValue(_ closure: (Value) -> Void) -> Result {
-        if case let .success(value) = self { closure(value) }
+    public func withValue(_ closure: (Value) throws -> Void) rethrows -> Result {
+        if case let .success(value) = self { try closure(value) }
 
         return self
     }
@@ -266,8 +266,8 @@ extension Result {
     /// - Parameter closure: A closure that takes the success value of this instance.
     /// - Returns: This `Result` instance, unmodified.
     @discardableResult
-    public func withError(_ closure: (Error) -> Void) -> Result {
-        if case let .failure(error) = self { closure(error) }
+    public func withError(_ closure: (Error) throws -> Void) rethrows -> Result {
+        if case let .failure(error) = self { try closure(error) }
 
         return self
     }
@@ -279,8 +279,8 @@ extension Result {
     /// - Parameter closure: A `Void` closure.
     /// - Returns: This `Result` instance, unmodified.
     @discardableResult
-    public func ifSuccess(_ closure: () -> Void) -> Result {
-        if isSuccess { closure() }
+    public func ifSuccess(_ closure: () throws -> Void) rethrows -> Result {
+        if isSuccess { try closure() }
 
         return self
     }
@@ -292,8 +292,8 @@ extension Result {
     /// - Parameter closure: A `Void` closure.
     /// - Returns: This `Result` instance, unmodified.
     @discardableResult
-    public func ifFailure(_ closure: () -> Void) -> Result {
-        if isFailure { closure() }
+    public func ifFailure(_ closure: () throws -> Void) rethrows -> Result {
+        if isFailure { try closure() }
 
         return self
     }
