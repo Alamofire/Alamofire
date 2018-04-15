@@ -1,7 +1,7 @@
 //
 //  SessionDelegateTests.swift
 //
-//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -504,6 +504,75 @@ class SessionDelegateTestCase: BaseTestCase {
 
         // Then
         XCTAssertTrue(overrideClosureCalled)
+        XCTAssertEqual(response?.statusCode, 200)
+    }
+
+    func testThatDidCompleteNotificationIsCalledWithResponseDataForDataTasks() {
+        // Given
+        var notificationCalledWithResponseData = false
+        var response: HTTPURLResponse?
+        #if swift(>=4.1)
+        let notification = Notification.Name.Task.DidComplete
+        #else
+        let notification = Notification.Name.Task.DidComplete.rawValue
+        #endif
+        let expectation = self.expectation(forNotification: notification, object: nil) { notif -> Bool in
+
+            // check that we are handling notif for a dataTask
+            guard let task = notif.userInfo?[Notification.Key.Task] as? URLSessionDataTask else {
+                return false
+            }
+
+            response = task.response as? HTTPURLResponse
+
+            // check that responseData are set in userInfo-dict and it's not empty
+            if let responseData = notif.userInfo?[Notification.Key.ResponseData] as? Data {
+                notificationCalledWithResponseData = responseData.count > 0
+            }
+
+            return notificationCalledWithResponseData
+        }
+
+        // When
+        manager.request("https://httpbin.org/get").responseJSON { resp in }
+
+        wait(for: [expectation], timeout: timeout)
+
+        // Then
+        XCTAssertTrue(notificationCalledWithResponseData)
+        XCTAssertEqual(response?.statusCode, 200)
+    }
+
+    func testThatDidCompleteNotificationIsntCalledForDownloadTasks() {
+        // Given
+        var notificationCalledWithNilResponseData = false
+        var response: HTTPURLResponse?
+        #if swift(>=4.1)
+        let notification = Notification.Name.Task.DidComplete
+        #else
+        let notification = Notification.Name.Task.DidComplete.rawValue
+        #endif
+        let expectation = self.expectation(forNotification: notification, object: nil) { notif -> Bool in
+
+            // check that we are handling notif for a downloadTask
+            guard let task = notif.userInfo?[Notification.Key.Task] as? URLSessionDownloadTask else {
+                return false
+            }
+
+            response = task.response as? HTTPURLResponse
+
+            // check that responseData are NOT set in userInfo-dict
+            notificationCalledWithNilResponseData = notif.userInfo?[Notification.Key.ResponseData] == nil
+            return notificationCalledWithNilResponseData
+        }
+
+        // When
+        manager.download("https://httpbin.org/get").response { resp in }
+
+        wait(for: [expectation], timeout: timeout)
+
+        // Then
+        XCTAssertTrue(notificationCalledWithNilResponseData)
         XCTAssertEqual(response?.statusCode, 200)
     }
 }

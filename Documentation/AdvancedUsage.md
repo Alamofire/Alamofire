@@ -495,7 +495,7 @@ Alamofire provides built-in response serialization for data, strings, JSON, and 
 Alamofire.request(...).responseData { (resp: DataResponse<Data>) in ... }
 Alamofire.request(...).responseString { (resp: DataResponse<String>) in ... }
 Alamofire.request(...).responseJSON { (resp: DataResponse<Any>) in ... }
-Alamofire.request(...).responsePropertyList { resp: DataResponse<Any>) in ... }
+Alamofire.request(...).responsePropertyList { (resp: DataResponse<Any>) in ... }
 ```
 
 Those responses wrap deserialized *values* (Data, String, Any) or *errors* (network, validation errors), as well as *meta-data* (URL request, HTTP headers, status code, [metrics](#statistical-metrics), ...).
@@ -909,6 +909,22 @@ If you run into this problem (high probability with self-signed certificates), y
 Whether you need to set the `NSExceptionRequiresForwardSecrecy` to `NO` depends on whether your TLS connection is using an allowed cipher suite. In certain cases, it will need to be set to `NO`. The `NSExceptionAllowsInsecureHTTPLoads` MUST be set to `YES` in order to allow the `SessionDelegate` to receive challenge callbacks. Once the challenge callbacks are being called, the `ServerTrustPolicyManager` will take over the server trust evaluation. You may also need to specify the `NSTemporaryExceptionMinimumTLSVersion` if you're trying to connect to a host that only supports TLS versions less than `1.2`.
 
 > It is recommended to always use valid certificates in production environments.
+
+#### Using Self-Signed Certificates with Local Networking
+
+If you are attempting to connect to a server running on your localhost, and you are using self-signed certificates, you will need to add the following to your `Info.plist`.
+
+```xml
+<dict>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
+</dict>
+```
+
+According to [Apple documentation](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW35), setting `NSAllowsLocalNetworking` to `YES` allows loading of local resources without disabling ATS for the rest of your app.
 
 ### Network Reachability
 

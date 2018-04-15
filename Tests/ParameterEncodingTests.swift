@@ -1,7 +1,7 @@
 //
 //  ParameterEncodingTests.swift
 //
-//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -207,6 +207,22 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         }
     }
 
+    func testURLParameterEncodeStringKeyArrayValueParameterWithoutBrackets() {
+        do {
+            // Given
+            let encoding = URLEncoding(arrayEncoding: .noBrackets)
+            let parameters = ["foo": ["a", 1, true]]
+
+            // When
+            let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
+
+            // Then
+            XCTAssertEqual(urlRequest.url?.query, "foo=a&foo=1&foo=1")
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
+        }
+    }
+
     func testURLParameterEncodeStringKeyDictionaryValueParameter() {
         do {
             // Given
@@ -248,6 +264,55 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
             // Then
             let expectedQuery = "foo%5Bbar%5D%5Bbaz%5D%5B%5D=a&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1&foo%5Bbar%5D%5Bbaz%5D%5B%5D=1"
             XCTAssertEqual(urlRequest.url?.query, expectedQuery)
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
+        }
+    }
+
+    func testURLParameterEncodeStringKeyNestedDictionaryArrayValueParameterWithoutBrackets() {
+        do {
+            // Given
+            let encoding = URLEncoding(arrayEncoding: .noBrackets)
+            let parameters = ["foo": ["bar": ["baz": ["a", 1, true]]]]
+
+            // When
+            let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
+
+            // Then
+            let expectedQuery = "foo%5Bbar%5D%5Bbaz%5D=a&foo%5Bbar%5D%5Bbaz%5D=1&foo%5Bbar%5D%5Bbaz%5D=1"
+            XCTAssertEqual(urlRequest.url?.query, expectedQuery)
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
+        }
+    }
+
+    func testURLParameterLiteralBoolEncodingWorksAndDoesNotAffectNumbers() {
+        do {
+            // Given
+            let encoding = URLEncoding(boolEncoding: .literal)
+            let parameters: [String: Any] = [
+                // Must still encode to numbers
+                "a": 1,
+                "b": 0,
+                "c": 1.0,
+                "d": 0.0,
+                "e": NSNumber(value: 1),
+                "f": NSNumber(value: 0),
+                "g": NSNumber(value: 1.0),
+                "h": NSNumber(value: 0.0),
+
+                // Must encode to literals
+                "i": true,
+                "j": false,
+                "k": NSNumber(value: true),
+                "l": NSNumber(value: false)
+            ]
+
+            // When
+            let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
+
+            // Then
+            XCTAssertEqual(urlRequest.url?.query, "a=1&b=0&c=1&d=0&e=1&f=0&g=1&h=0&i=true&j=false&k=true&l=false")
         } catch {
             XCTFail("Test encountered unexpected error: \(error)")
         }

@@ -279,6 +279,38 @@ Alamofire.request("https://httpbin.org/post", method: .post, parameters: paramet
 // HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
 ```
 
+##### Configuring the Encoding of `Bool` Parameters
+
+The `URLEncoding.BoolEncoding` enumeration provides the following methods for encoding `Bool` parameters:
+
+- `.numeric` - Encode `true` as `1` and `false` as `0`.
+- `.literal` - Encode `true` and `false` as string literals.
+
+By default, Alamofire uses the `.numeric` encoding.
+
+You can create your own `URLEncoding` and specify the desired `Bool` encoding in the initializer:
+
+```swift
+let encoding = URLEncoding(boolEncoding: .literal)
+```
+
+##### Configuring the Encoding of `Array` Parameters
+
+The `URLEncoding.ArrayEncoding` enumeration provides the following methods for encoding `Array` parameters:
+
+- `.brackets` - An empty set of square brackets is appended to the key for every value.
+- `.noBrackets` - No brackets are appended. The key is encoded as is.
+
+By default, Alamofire uses the `.brackets` encoding, where `foo=[1,2]` is encoded as `foo[]=1&foo[]=2`.
+
+Using the `.noBrackets` encoding will encode `foo=[1,2]` as `foo=1&foo=2`.
+
+You can create your own `URLEncoding` and specify the desired `Array` encoding in the initializer:
+
+```swift
+let encoding = URLEncoding(arrayEncoding: .noBrackets)
+```
+
 #### JSON Encoding
 
 The `JSONEncoding` type creates a JSON representation of the parameters object, which is set as the HTTP body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
@@ -513,7 +545,7 @@ Alamofire.download("https://httpbin.org/image/png")
 
 If a `DownloadRequest` is cancelled or interrupted, the underlying URL session may generate resume data for the active `DownloadRequest`. If this happens, the resume data can be re-used to restart the `DownloadRequest` where it left off. The resume data can be accessed through the download response, then reused when trying to restart the request.
 
-> **IMPORTANT:** On the latest release of all the Apple platforms (iOS 10, macOS 10.12, tvOS 10, watchOS 3), `resumeData` is broken on background URL session configurations. There's an underlying bug in the `resumeData` generation logic where the data is written incorrectly and will always fail to resume the download. For more information about the bug and possible workarounds, please see this Stack Overflow [post](http://stackoverflow.com/a/39347461/1342462).
+> **IMPORTANT:** On some versions of all Apple platforms (iOS 10 - 10.2, macOS 10.12 - 10.12.2, tvOS 10 - 10.1, watchOS 3 - 3.1.1), `resumeData` is broken on background URL session configurations. There's an underlying bug in the `resumeData` generation logic where the data is written incorrectly and will always fail to resume the download. For more information about the bug and possible workarounds, please see this [Stack Overflow post](http://stackoverflow.com/a/39347461/1342462).
 
 ```swift
 class ImageRequestor {

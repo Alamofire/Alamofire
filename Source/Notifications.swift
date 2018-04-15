@@ -1,7 +1,7 @@
 //
 //  Notifications.swift
 //
-//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -48,5 +48,8 @@ extension Notification {
     public struct Key {
         /// User info dictionary key representing the `URLSessionTask` associated with the notification.
         public static let Task = "org.alamofire.notification.key.task"
+
+        /// User info dictionary key representing the responseData associated with the notification.
+        public static let ResponseData = "org.alamofire.notification.key.responseData"
     }
 }

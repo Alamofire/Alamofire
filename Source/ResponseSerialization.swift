@@ -1,7 +1,7 @@
 //
 //  ResponseSerialization.swift
 //
-//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -385,10 +385,11 @@ public final class StringResponseSerializer: ResponseSerializer {
 
         var convertedEncoding = encoding
 
-        if let encodingName = response?.textEncodingName as CFString!, convertedEncoding == nil {
-            let ianaCharSet = CFStringConvertIANACharSetNameToEncoding(encodingName)
-            let nsStringEncoding = CFStringConvertEncodingToNSStringEncoding(ianaCharSet)
-            convertedEncoding = String.Encoding(rawValue: nsStringEncoding)
+        if let encodingName = response?.textEncodingName as CFString?, convertedEncoding == nil {
+            convertedEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(
+                CFStringConvertIANACharSetNameToEncoding(encodingName))
+            )
+
         }
 
         let actualEncoding = convertedEncoding ?? .isoLatin1

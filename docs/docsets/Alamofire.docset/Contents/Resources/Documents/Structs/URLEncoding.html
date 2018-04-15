@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (87% documented)
+         (86% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -279,6 +279,12 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/URLEncoding/Destination.html">– Destination</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/URLEncoding/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/URLEncoding/BoolEncoding.html">– BoolEncoding</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -304,7 +310,7 @@
             <h1>URLEncoding</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">URLEncoding</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">URLEncoding</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
 
                 </div>
               </div>
@@ -313,9 +319,15 @@ body of the URL request. Whether the query string is set or appended to any exis
 the HTTP body depends on the destination of the encoding.</p>
 
 <p>The <code>Content-Type</code> HTTP header field of an encoded request with HTTP body is set to
-<code>application/x-www-form-urlencoded; charset=utf-8</code>. Since there is no published specification for how to encode
-collection types, the convention of appending <code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending
-the key surrounded by square brackets for nested dictionary values (<code>foo[bar]=baz</code>).</p>
+<code>application/x-www-form-urlencoded; charset=utf-8</code>.</p>
+
+<p>There is no published specification for how to encode collection types. By default the convention of appending
+<code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending the key surrounded by square brackets for
+nested dictionary values (<code>foo[bar]=baz</code>) is used. Optionally, <code>ArrayEncoding</code> can be used to omit the
+square brackets appended to array keys.</p>
+
+<p><code>BoolEncoding</code> can be used to configure how boolean values are encoded. The default behavior is to encode
+<code>true</code> as 1 and <code>false</code> as 0.</p>
 
           </div>
         </section>
@@ -360,7 +372,74 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Destination</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Destination</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11URLEncodingV13ArrayEncodingO"></a>
+                    <a name="//apple_ref/swift/Enum/ArrayEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV13ArrayEncodingO">ArrayEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Configures how <code>Array</code> parameters are encoded.</p>
+
+<ul>
+<li>brackets:        An empty set of square brackets is appended to the key for every value.
+               This is the default behavior.</li>
+<li>noBrackets:      No brackets are appended. The key is encoded as is.</li>
+</ul>
+
+                        <a href="../Structs/URLEncoding/ArrayEncoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ArrayEncoding</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11URLEncodingV12BoolEncodingO"></a>
+                    <a name="//apple_ref/swift/Enum/BoolEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV12BoolEncodingO">BoolEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Configures how <code>Bool</code> parameters are encoded.</p>
+
+<ul>
+<li>numeric:         Encode <code>true</code> as <code>1</code> and <code>false</code> as <code>0</code>. This is the default behavior.</li>
+<li>literal:         Encode <code>true</code> and <code>false</code> as string literals.</li>
+</ul>
+
+                        <a href="../Structs/URLEncoding/BoolEncoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">BoolEncoding</span></code></pre>
 
                         </div>
                       </div>
@@ -381,9 +460,9 @@ resulting URL request.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11URLEncodingV7defaultACvZ"></a>
+                    <a name="/s:9Alamofire11URLEncodingV7defaultACvpZ"></a>
                     <a name="//apple_ref/swift/Variable/default" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingV7defaultACvZ">default</a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV7defaultACvpZ">default</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -398,7 +477,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">var</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">URLEncoding</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">var</span> <span class="p">`</span><span class="nv">default</span><span class="p">`:</span> <span class="kt">URLEncoding</span></code></pre>
 
                         </div>
                       </div>
@@ -408,9 +487,9 @@ resulting URL request.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11URLEncodingV15methodDependentACvZ"></a>
+                    <a name="/s:9Alamofire11URLEncodingV15methodDependentACvpZ"></a>
                     <a name="//apple_ref/swift/Variable/methodDependent" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingV15methodDependentACvZ">methodDependent</a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV15methodDependentACvpZ">methodDependent</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -425,7 +504,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">methodDependent</span><span class="p">:</span> <span class="kt">URLEncoding</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">methodDependent</span><span class="p">:</span> <span class="kt">URLEncoding</span></code></pre>
 
                         </div>
                       </div>
@@ -435,9 +514,9 @@ resulting URL request.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11URLEncodingV11queryStringACvZ"></a>
+                    <a name="/s:9Alamofire11URLEncodingV11queryStringACvpZ"></a>
                     <a name="//apple_ref/swift/Variable/queryString" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingV11queryStringACvZ">queryString</a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV11queryStringACvpZ">queryString</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -452,7 +531,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">queryString</span><span class="p">:</span> <span class="kt">URLEncoding</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">queryString</span><span class="p">:</span> <span class="kt">URLEncoding</span></code></pre>
 
                         </div>
                       </div>
@@ -462,9 +541,9 @@ resulting URL request.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11URLEncodingV8httpBodyACvZ"></a>
+                    <a name="/s:9Alamofire11URLEncodingV8httpBodyACvpZ"></a>
                     <a name="//apple_ref/swift/Variable/httpBody" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingV8httpBodyACvZ">httpBody</a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV8httpBodyACvpZ">httpBody</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -479,7 +558,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">httpBody</span><span class="p">:</span> <span class="kt">URLEncoding</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">httpBody</span><span class="p">:</span> <span class="kt">URLEncoding</span></code></pre>
 
                         </div>
                       </div>
@@ -489,9 +568,9 @@ resulting URL request.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11URLEncodingV11destinationAC11DestinationOv"></a>
+                    <a name="/s:9Alamofire11URLEncodingV11destinationAC11DestinationOvp"></a>
                     <a name="//apple_ref/swift/Property/destination" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingV11destinationAC11DestinationOv">destination</a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV11destinationAC11DestinationOvp">destination</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -506,7 +585,61 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/Destination.html">Destination</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/Destination.html">Destination</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11URLEncodingV13arrayEncodingAC05ArrayD0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/arrayEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV13arrayEncodingAC05ArrayD0Ovp">arrayEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The encoding to use for <code>Array</code> parameters.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">arrayEncoding</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/ArrayEncoding.html">ArrayEncoding</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire11URLEncodingV12boolEncodingAC04BoolD0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/boolEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingV12boolEncodingAC04BoolD0Ovp">boolEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The encoding to use for <code>Bool</code> parameters.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">boolEncoding</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/BoolEncoding.html">BoolEncoding</a></span></code></pre>
 
                         </div>
                       </div>
@@ -527,9 +660,9 @@ resulting URL request.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11URLEncodingVA2C11DestinationO11destination_tcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(destination:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingVA2C11DestinationO11destination_tcfc">init(destination:)</a>
+                    <a name="/s:9Alamofire11URLEncodingVA2C11DestinationO11destination_AC13ArrayEncodingO05arrayF0AC04BoolF0O04boolF0tcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(destination:arrayEncoding:boolEncoding:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11URLEncodingVA2C11DestinationO11destination_AC13ArrayEncodingO05arrayF0AC04BoolF0O04boolF0tcfc">init(destination:arrayEncoding:boolEncoding:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -544,7 +677,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/Destination.html">Destination</a></span> <span class="o">=</span> <span class="o">.</span><span class="n"><a href="../Structs/URLEncoding.html#/s:9Alamofire11URLEncodingV15methodDependentACvZ">methodDependent</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/Destination.html">Destination</a></span> <span class="o">=</span> <span class="o">.</span><span class="n"><a href="../Structs/URLEncoding.html#/s:9Alamofire11URLEncodingV15methodDependentACvpZ">methodDependent</a></span><span class="p">,</span> <span class="nv">arrayEncoding</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/ArrayEncoding.html">ArrayEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">brackets</span><span class="p">,</span> <span class="nv">boolEncoding</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/BoolEncoding.html">BoolEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">numeric</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -561,6 +694,30 @@ resulting URL request.</p>
                               <td>
                                 <div>
                                   <p>The destination defining where the encoded query string is to be applied.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>arrayEncoding</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The encoding to use for <code>Array</code> parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>boolEncoding</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The encoding to use for <code>Bool</code> parameters.</p>
                                 </div>
                               </td>
                             </tr>
@@ -610,7 +767,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">encode</span><span class="p">(</span><span class="n">_</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span> <span class="n">with</span> <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">URLRequest</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">encode</span><span class="p">(</span><span class="n">_</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span> <span class="n">with</span> <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">URLRequest</span></code></pre>
 
                         </div>
                       </div>
@@ -672,7 +829,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">queryComponents</span><span class="p">(</span><span class="n">fromKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="p">)]</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">queryComponents</span><span class="p">(</span><span class="n">fromKey</span> <span class="nv">key</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="p">)]</span></code></pre>
 
                         </div>
                       </div>
@@ -745,7 +902,7 @@ should be percent-escaped in the query string.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">escape</span><span class="p">(</span><span class="n">_</span> <span class="nv">string</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">escape</span><span class="p">(</span><span class="n">_</span> <span class="nv">string</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -783,8 +940,8 @@ should be percent-escaped in the query string.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-12-03)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2018 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2018-03-31)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

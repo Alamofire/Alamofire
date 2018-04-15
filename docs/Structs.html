@@ -22,7 +22,7 @@
         <a class="header-link" href="index.html">
           Alamofire Docs
         </a>
-         (87% documented)
+         (86% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -278,6 +278,12 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/URLEncoding/Destination.html">– Destination</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/URLEncoding/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/URLEncoding/BoolEncoding.html">– BoolEncoding</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -331,7 +337,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Timeline</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Timeline</span></code></pre>
 
                         </div>
                       </div>
@@ -360,9 +366,15 @@ body of the URL request. Whether the query string is set or appended to any exis
 the HTTP body depends on the destination of the encoding.</p>
 
 <p>The <code>Content-Type</code> HTTP header field of an encoded request with HTTP body is set to
-<code>application/x-www-form-urlencoded; charset=utf-8</code>. Since there is no published specification for how to encode
-collection types, the convention of appending <code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending
-the key surrounded by square brackets for nested dictionary values (<code>foo[bar]=baz</code>).</p>
+<code>application/x-www-form-urlencoded; charset=utf-8</code>.</p>
+
+<p>There is no published specification for how to encode collection types. By default the convention of appending
+<code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending the key surrounded by square brackets for
+nested dictionary values (<code>foo[bar]=baz</code>) is used. Optionally, <code>ArrayEncoding</code> can be used to omit the
+square brackets appended to array keys.</p>
+
+<p><code>BoolEncoding</code> can be used to configure how boolean values are encoded. The default behavior is to encode
+<code>true</code> as 1 and <code>false</code> as 0.</p>
 
                         <a href="Structs/URLEncoding.html" class="slightly-smaller">See more</a>
                       </div>
@@ -370,7 +382,7 @@ the key surrounded by square brackets for nested dictionary values (<code>foo[ba
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">URLEncoding</span><span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">URLEncoding</span><span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
 
                         </div>
                       </div>
@@ -403,7 +415,7 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">JSONEncoding</span><span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">JSONEncoding</span><span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
 
                         </div>
                       </div>
@@ -437,7 +449,7 @@ field of an encoded request is set to <code>application/x-plist</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PropertyListEncoding</span><span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PropertyListEncoding</span><span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoding.html">ParameterEncoding</a></span></code></pre>
 
                         </div>
                       </div>
@@ -469,7 +481,7 @@ field of an encoded request is set to <code>application/x-plist</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DataResponseSerializer</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">:</span> <span class="kt"><a href="Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DataResponseSerializer</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">:</span> <span class="kt"><a href="Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a></span></code></pre>
 
                         </div>
                       </div>
@@ -501,7 +513,7 @@ field of an encoded request is set to <code>application/x-plist</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DownloadResponseSerializer</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">:</span> <span class="kt"><a href="Protocols/DownloadResponseSerializerProtocol.html">DownloadResponseSerializerProtocol</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DownloadResponseSerializer</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">:</span> <span class="kt"><a href="Protocols/DownloadResponseSerializerProtocol.html">DownloadResponseSerializerProtocol</a></span></code></pre>
 
                         </div>
                       </div>
@@ -533,7 +545,7 @@ field of an encoded request is set to <code>application/x-plist</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DefaultDataResponse</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DefaultDataResponse</span></code></pre>
 
                         </div>
                       </div>
@@ -565,7 +577,7 @@ field of an encoded request is set to <code>application/x-plist</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DataResponse</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DataResponse</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -597,7 +609,7 @@ field of an encoded request is set to <code>application/x-plist</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DefaultDownloadResponse</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DefaultDownloadResponse</span></code></pre>
 
                         </div>
                       </div>
@@ -629,7 +641,7 @@ field of an encoded request is set to <code>application/x-plist</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -644,8 +656,8 @@ field of an encoded request is set to <code>application/x-plist</code>.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2017-12-03)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2018 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2018-03-31)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

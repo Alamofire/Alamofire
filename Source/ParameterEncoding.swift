@@ -1,7 +1,7 @@
 //
 //  ParameterEncoding.swift
 //
-//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -64,9 +64,15 @@ public protocol ParameterEncoding {
 /// the HTTP body depends on the destination of the encoding.
 ///
 /// The `Content-Type` HTTP header field of an encoded request with HTTP body is set to
-/// `application/x-www-form-urlencoded; charset=utf-8`. Since there is no published specification for how to encode
-/// collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending
-/// the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
+/// `application/x-www-form-urlencoded; charset=utf-8`.
+///
+/// There is no published specification for how to encode collection types. By default the convention of appending
+/// `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for
+/// nested dictionary values (`foo[bar]=baz`) is used. Optionally, `ArrayEncoding` can be used to omit the
+/// square brackets appended to array keys.
+///
+/// `BoolEncoding` can be used to configure how boolean values are encoded. The default behavior is to encode
+/// `true` as 1 and `false` as 0.
 public struct URLEncoding: ParameterEncoding {
 
     // MARK: Helper Types
@@ -80,6 +86,41 @@ public struct URLEncoding: ParameterEncoding {
     /// - httpBody:        Sets encoded query string result as the HTTP body of the URL request.
     public enum Destination {
         case methodDependent, queryString, httpBody
+    }
+
+    /// Configures how `Array` parameters are encoded.
+    ///
+    /// - brackets:        An empty set of square brackets is appended to the key for every value.
+    ///                    This is the default behavior.
+    /// - noBrackets:      No brackets are appended. The key is encoded as is.
+    public enum ArrayEncoding {
+        case brackets, noBrackets
+
+        func encode(key: String) -> String {
+            switch self {
+            case .brackets:
+                return "\(key)[]"
+            case .noBrackets:
+                return key
+            }
+        }
+    }
+
+    /// Configures how `Bool` parameters are encoded.
+    ///
+    /// - numeric:         Encode `true` as `1` and `false` as `0`. This is the default behavior.
+    /// - literal:         Encode `true` and `false` as string literals.
+    public enum BoolEncoding {
+        case numeric, literal
+
+        func encode(value: Bool) -> String {
+            switch self {
+            case .numeric:
+                return value ? "1" : "0"
+            case .literal:
+                return value ? "true" : "false"
+            }
+        }
     }
 
     // MARK: Properties
@@ -99,15 +140,25 @@ public struct URLEncoding: ParameterEncoding {
     /// The destination defining where the encoded query string is to be applied to the URL request.
     public let destination: Destination
 
+    /// The encoding to use for `Array` parameters.
+    public let arrayEncoding: ArrayEncoding
+
+    /// The encoding to use for `Bool` parameters.
+    public let boolEncoding: BoolEncoding
+
     // MARK: Initialization
 
     /// Creates a `URLEncoding` instance using the specified destination.
     ///
     /// - parameter destination: The destination defining where the encoded query string is to be applied.
+    /// - parameter arrayEncoding: The encoding to use for `Array` parameters.
+    /// - parameter boolEncoding: The encoding to use for `Bool` parameters.
     ///
     /// - returns: The new `URLEncoding` instance.
-    public init(destination: Destination = .methodDependent) {
+    public init(destination: Destination = .methodDependent, arrayEncoding: ArrayEncoding = .brackets, boolEncoding: BoolEncoding = .numeric) {
         self.destination = destination
+        self.arrayEncoding = arrayEncoding
+        self.boolEncoding = boolEncoding
     }
 
     // MARK: Encoding
@@ -161,16 +212,16 @@ public struct URLEncoding: ParameterEncoding {
             }
         } else if let array = value as? [Any] {
             for value in array {
-                components += queryComponents(fromKey: "\(key)[]", value: value)
+                components += queryComponents(fromKey: arrayEncoding.encode(key: key), value: value)
             }
         } else if let value = value as? NSNumber {
             if value.isBool {
-                components.append((escape(key), escape((value.boolValue ? "1" : "0"))))
+                components.append((escape(key), escape(boolEncoding.encode(value: value.boolValue))))
             } else {
                 components.append((escape(key), escape("\(value)")))
             }
         } else if let bool = value as? Bool {
-            components.append((escape(key), escape((bool ? "1" : "0"))))
+            components.append((escape(key), escape(boolEncoding.encode(value: bool))))
         } else {
             components.append((escape(key), escape("\(value)")))
         }
