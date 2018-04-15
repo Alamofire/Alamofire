@@ -848,6 +848,10 @@ open class SessionManager {
         do {
             let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
 
+            if let originalTask = request.task {
+                delegate[originalTask] = nil // removes the old request to avoid endless growth
+            }
+
             request.delegate.task = task // resets all task delegate data
 
             request.retryCount += 1
