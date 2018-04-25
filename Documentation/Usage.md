@@ -342,7 +342,7 @@ In the event that the provided `ParameterEncoding` types do not meet your needs,
 
 ```swift
 struct JSONStringArrayEncoding: ParameterEncoding {
-	private let array: [String]
+    private let array: [String]
 
     init(array: [String]) {
         self.array = array
