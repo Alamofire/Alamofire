@@ -646,7 +646,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 2)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
-        XCTAssertTrue(sessionManager.delegate.requests.isEmpty)
+        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
     }
 
     func testThatSessionManagerCallsRequestRetrierWhenRequestInitiallyEncountersAdaptError() {
@@ -677,7 +677,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(sessionManager.delegate.requests.isEmpty)
+        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
 
         handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
     }
@@ -715,7 +715,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(sessionManager.delegate.requests.isEmpty)
+        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
 
         handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
     }
@@ -747,7 +747,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(sessionManager.delegate.requests.isEmpty)
+        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
 
         handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
     }
@@ -779,7 +779,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(sessionManager.delegate.requests.isEmpty)
+        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
     }
 
     func testThatRequestAdapterErrorThrowsResponseHandlerErrorWhenRequestIsRetried() {
@@ -809,7 +809,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(request.retryCount, 0)
         XCTAssertEqual(response?.result.isSuccess, false)
-        XCTAssertTrue(sessionManager.delegate.requests.isEmpty)
+        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
 
         if let error = response?.result.error as? AFError {
             XCTAssertTrue(error.isInvalidURLError)

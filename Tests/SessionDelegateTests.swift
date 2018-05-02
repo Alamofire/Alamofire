@@ -511,12 +511,6 @@ class SessionDelegateTestCase: BaseTestCase {
         // Given
         var notificationCalledWithResponseData = false
         var response: HTTPURLResponse?
-        #if swift(>=4.1)
-        let notification = Notification.Name.Task.DidComplete
-        #else
-        let notification = Notification.Name.Task.DidComplete.rawValue
-        #endif
-        let expectation = self.expectation(forNotification: notification, object: nil) { notif -> Bool in
 
         let expectation = self.expectation(forNotification: Notification.Name.Task.DidComplete, object: nil) { notif -> Bool in
 
