@@ -1,7 +1,7 @@
 //
 //  RequestTests.swift
 //
-//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -527,6 +527,18 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertFalse(components.contains("-X"))
         XCTAssertEqual(components.last, "\"\(urlString)\"")
+    }
+
+    func testGETRequestWithJSONHeaderDebugDescription() {
+        // Given
+        let urlString = "https://httpbin.org/get"
+
+        // When
+        let headers: [String: String] = [ "X-Custom-Header": "{\"key\": \"value\"}" ]
+        let request = manager.request(urlString, headers: headers)
+
+        // Then
+        XCTAssertNotNil(request.debugDescription.range(of: "-H \"X-Custom-Header: {\\\"key\\\": \\\"value\\\"}\""))
     }
 
     func testGETRequestWithDuplicateHeadersDebugDescription() {
