@@ -1,5 +1,5 @@
 //
-//  BaseTestCase.swift
+//  OperationQueue.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -22,29 +22,19 @@
 //  THE SOFTWARE.
 //
 
-import Alamofire
 import Foundation
-import XCTest
 
-class BaseTestCase: XCTestCase {
-    let timeout: TimeInterval = 30.0
-
-    static var testDirectoryURL: URL { return FileManager.temporaryDirectoryURL.appendingPathComponent("org.alamofire.tests") }
-    var testDirectoryURL: URL { return BaseTestCase.testDirectoryURL }
-
-    override func setUp() {
-        super.setUp()
-
-        FileManager.removeAllItemsInsideDirectory(at: testDirectoryURL)
-        FileManager.createDirectory(at: testDirectoryURL)
-    }
-
-    func url(forResource fileName: String, withExtension ext: String) -> URL {
-        let bundle = Bundle(for: BaseTestCase.self)
-        return bundle.url(forResource: fileName, withExtension: ext)!
-    }
-    
-    func waitForExpectations() {
-        waitForExpectations(timeout: timeout, handler: nil)
+extension OperationQueue {
+    convenience init(qualityOfService: QualityOfService = .default,
+                     maxConcurrentOperationCount: Int = OperationQueue.defaultMaxConcurrentOperationCount,
+                     underlyingQueue: DispatchQueue? = nil,
+                     name: String? = nil,
+                     startSuspended: Bool = false) {
+        self.init()
+        self.qualityOfService = qualityOfService
+        self.maxConcurrentOperationCount = maxConcurrentOperationCount
+        self.underlyingQueue = underlyingQueue
+        self.name = name
+        self.isSuspended = startSuspended
     }
 }

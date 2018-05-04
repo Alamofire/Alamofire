@@ -27,11 +27,13 @@ import Foundation
 /// `AFError` is the error type returned by Alamofire. It encompasses a few different types of errors, each with
 /// their own associated reasons.
 ///
+/// - explicitlyCancelled:         Returned when a `Request` is explicitly cancelled.
 /// - invalidURL:                  Returned when a `URLConvertible` type fails to create a valid `URL`.
 /// - parameterEncodingFailed:     Returned when a parameter encoding object throws an error during the encoding process.
 /// - multipartEncodingFailed:     Returned when some step in the multipart encoding process fails.
 /// - responseValidationFailed:    Returned when a `validate()` call fails.
 /// - responseSerializationFailed: Returned when a response serializer encounters an error in the serialization process.
+/// - certificatePinningFailed:    Returned when a response fails certificate pinning.
 public enum AFError: Error {
     /// The underlying reason the parameter encoding error occurred.
     ///
@@ -126,12 +128,14 @@ public enum AFError: Error {
         case propertyListSerializationFailed(error: Error)
         case invalidEmptyResponse(type: String)
     }
-
+    
+    case explicitlyCancelled
     case invalidURL(url: URLConvertible)
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
     case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
     case responseValidationFailed(reason: ResponseValidationFailureReason)
     case responseSerializationFailed(reason: ResponseSerializationFailureReason)
+    case certificatePinningFailed
 }
 
 // MARK: - Adapt Error
@@ -147,6 +151,12 @@ extension Error {
 // MARK: - Error Booleans
 
 extension AFError {
+    /// Returns whether the `AFError` is an explicitly cancelled error.
+    public var isExplicitlyCancelledError: Bool {
+        if case .explicitlyCancelled = self { return true }
+        return false
+    }
+    
     /// Returns whether the AFError is an invalid URL error.
     public var isInvalidURLError: Bool {
         if case .invalidURL = self { return true }
@@ -178,6 +188,12 @@ extension AFError {
     /// `underlyingError` properties will contain the associated values.
     public var isResponseSerializationError: Bool {
         if case .responseSerializationFailed = self { return true }
+        return false
+    }
+    
+    /// Returns whether the `AFError` is a certificate pinning error.
+    public var isCertificatePinningError: Bool {
+        if case .certificatePinningFailed = self { return true }
         return false
     }
 }
@@ -361,6 +377,10 @@ extension AFError: LocalizedError {
             return reason.localizedDescription
         case .responseSerializationFailed(let reason):
             return reason.localizedDescription
+        case .explicitlyCancelled:
+            return "Request explicitly cancelled."
+        case .certificatePinningFailed:
+            return "Certificate pinning failed."
         }
     }
 }
