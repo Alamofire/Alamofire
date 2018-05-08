@@ -26,7 +26,7 @@ import Foundation
 
 open class SessionManager {
     static let `default` = SessionManager()
-    
+
     let configuration: URLSessionConfiguration
     let delegate: SessionDelegate
     let rootQueue: DispatchQueue
@@ -34,9 +34,9 @@ open class SessionManager {
     let adapter: RequestAdapter?
     let retrier: RequestRetrier?
     let trustManager: ServerTrustManager?
-    
+
     let session: URLSession
-    
+
     public init(configuration: URLSessionConfiguration = .default,
                 delegate: SessionDelegate = SessionDelegate(),
                 rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.sessionManager"),
@@ -54,22 +54,22 @@ open class SessionManager {
         session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
         delegate.didCreate(sessionManager: self)
     }
-    
+
     // MARK: - Request
-    
+
     struct DataConvertible<Convertible: URLConvertible>: URLRequestConvertible {
         let url: Convertible
         let method: HTTPMethod
         let parameters: Parameters?
         let parameterEncoding: ParameterEncoding
         let headers: HTTPHeaders?
-        
+
         func asURLRequest() throws -> URLRequest {
             let request = try URLRequest(url: url, method: method, headers: headers)
             return try parameterEncoding.encode(request, with: parameters)
         }
     }
-    
+
     open func request<Convertible: URLConvertible>(_ url: Convertible,
                                                    method: HTTPMethod = .get,
                                                    parameters: Parameters? = nil,
@@ -82,10 +82,10 @@ open class SessionManager {
                                           headers: headers)
         return request(convertible)
     }
-    
+
     open func request<Convertible: URLRequestConvertible>(_ convertible: Convertible) -> DataRequest {
         let request = DataRequest(underlyingQueue: rootQueue, delegate: delegate)
-        
+
         requestQueue.async {
             do {
                 let initialRequest = try convertible.asURLRequest()
@@ -97,12 +97,12 @@ open class SessionManager {
                 request.didFail(with: nil, error: error)
             }
         }
-        
+
         return request
     }
-    
+
     // MARK: - Download
-    
+
 //    func download<Convertible: URLRequestConvertible>(_ convertible: Convertible) -> DownloadRequest {
 //        let request = DownloadRequest(underlyingQueue: rootQueue, delegate: delegate)
 //
@@ -120,12 +120,12 @@ open class SessionManager {
 //
 //        return request
 //    }
-    
+
     // MARK: - Upload
-    
+
     func upload<Convertible: URLRequestConvertible>(data: Data, with convertible: Convertible) -> UploadRequest {
         let request = UploadRequest(underlyingQueue: rootQueue, delegate: delegate, uploadable: .data(data))
-        
+
         requestQueue.async {
             do {
                 let initialRequest = try convertible.asURLRequest()
@@ -137,13 +137,13 @@ open class SessionManager {
                 request.didFail(with: nil, error: error)
             }
         }
-        
+
         return request
     }
-    
+
     func upload<Convertible: URLRequestConvertible>(file fileURL: URL, with convertible: Convertible) -> UploadRequest {
         let request = UploadRequest(underlyingQueue: rootQueue, delegate: delegate, uploadable: .file(fileURL))
-        
+
         requestQueue.async {
             do {
                 let initialRequest = try convertible.asURLRequest()
@@ -155,13 +155,13 @@ open class SessionManager {
                 request.didFail(with: nil, error: error)
             }
         }
-        
+
         return request
     }
-    
+
     func upload<Convertible: URLRequestConvertible>(stream: InputStream, with convertible: Convertible) -> UploadRequest {
         let request = UploadRequest(underlyingQueue: rootQueue, delegate: delegate, uploadable: .stream(stream))
-        
+
         requestQueue.async {
             do {
                 let initialRequest = try convertible.asURLRequest()
@@ -173,7 +173,7 @@ open class SessionManager {
                 request.didFail(with: nil, error: error)
             }
         }
-        
+
         return request
     }
 }

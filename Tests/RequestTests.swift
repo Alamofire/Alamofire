@@ -33,7 +33,7 @@ import XCTest
 //        // Given
 //
 //    }
-//    
+//
 //    func testRequestClassMethodWithMethodAndURL() {
 //        // Given
 //        let urlString = "https://httpbin.org/get"
@@ -212,7 +212,7 @@ class RequestResponseTestCase: BaseTestCase {
 //        let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
 //
 //        var progressValues: [Double] = []
-//        var response: DefaultDataResponse?
+//        var response: DataResponse<Data?>?
 //
 //        // When
 //        Alamofire.request(urlString)
@@ -224,7 +224,7 @@ class RequestResponseTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations()
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -255,7 +255,7 @@ class RequestResponseTestCase: BaseTestCase {
 //
 //        var progressValues: [Double] = []
 //        var accumulatedData = [Data]()
-//        var response: DefaultDataResponse?
+//        var response: DataResponse<Data?>?
 //
 //        // When
 //        Alamofire.request(urlString)
@@ -270,7 +270,7 @@ class RequestResponseTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations()
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -314,7 +314,7 @@ class RequestResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -386,60 +386,61 @@ class RequestResponseTestCase: BaseTestCase {
 
 // MARK: -
 
-//extension Request {
-//    fileprivate func preValidate(operation: @escaping () -> Void) -> Self {
-//        delegate.queue.addOperation {
-//            operation()
-//        }
-//
-//        return self
-//    }
-//
-//    fileprivate func postValidate(operation: @escaping () -> Void) -> Self {
-//        delegate.queue.addOperation {
-//            operation()
-//        }
-//
-//        return self
-//    }
-//}
-//
-//// MARK: -
-//
-//class RequestExtensionTestCase: BaseTestCase {
-//    func testThatRequestExtensionHasAccessToTaskDelegateQueue() {
-//        // Given
-//        let urlString = "https://httpbin.org/get"
-//        let expectation = self.expectation(description: "GET request should succeed: \(urlString)")
-//
-//        var responses: [String] = []
-//
-//        // When
-//        Alamofire.request(urlString)
-//            .preValidate {
-//                responses.append("preValidate")
-//            }
-//            .validate()
-//            .postValidate {
-//                responses.append("postValidate")
-//            }
-//            .response { _ in
-//                responses.append("response")
-//                expectation.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        if responses.count == 3 {
-//            XCTAssertEqual(responses[0], "preValidate")
-//            XCTAssertEqual(responses[1], "postValidate")
-//            XCTAssertEqual(responses[2], "response")
-//        } else {
-//            XCTFail("responses count should be equal to 3")
-//        }
-//    }
-//}
+extension Request {
+    fileprivate func preValidate(operation: @escaping () -> Void) -> Self {
+        internalQueue.addOperation {
+            operation()
+        }
+
+        return self
+    }
+
+    fileprivate func postValidate(operation: @escaping () -> Void) -> Self {
+        internalQueue.addOperation {
+            operation()
+        }
+
+        return self
+    }
+}
+
+// MARK: -
+
+// TODO: Do we still want this API?
+class RequestExtensionTestCase: BaseTestCase {
+    func testThatRequestExtensionHasAccessToTaskDelegateQueue() {
+        // Given
+        let urlString = "https://httpbin.org/get"
+        let expectation = self.expectation(description: "GET request should succeed: \(urlString)")
+
+        var responses: [String] = []
+
+        // When
+        Alamofire.request(urlString)
+            .preValidate {
+                responses.append("preValidate")
+            }
+            .validate()
+            .postValidate {
+                responses.append("postValidate")
+            }
+            .response { _ in
+                responses.append("response")
+                expectation.fulfill()
+            }
+
+        waitForExpectations()
+
+        // Then
+        if responses.count == 3 {
+            XCTAssertEqual(responses[0], "preValidate")
+            XCTAssertEqual(responses[1], "postValidate")
+            XCTAssertEqual(responses[2], "response")
+        } else {
+            XCTFail("responses count should be equal to 3")
+        }
+    }
+}
 
 // MARK: -
 
@@ -463,7 +464,7 @@ class RequestResponseTestCase: BaseTestCase {
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations()
 //
 //        // Then
 //        XCTAssertEqual(initialRequestDescription, "GET https://httpbin.org/get")
@@ -683,7 +684,7 @@ class RequestResponseTestCase: BaseTestCase {
 //            }
 //        )
 //
-//        waitForExpectations(timeout: timeout, handler: nil)
+//        waitForExpectations()
 //
 //        debugPrint(request!)
 //

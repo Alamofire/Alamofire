@@ -26,6 +26,16 @@ import Foundation
 
 public typealias HTTPHeaders = [String: String]
 
+// TODO: Make HTTPHeaders a real type.
+extension Dictionary where Key == String, Value == String {
+    public static func authorization(withUsername username: String, password: String) -> HTTPHeaders {
+        let rawAuthorization = Data("\(username):\(password)".utf8)
+        let credential = rawAuthorization.base64EncodedString()
+
+        return ["Authorization": "Basic: \(credential)"]
+    }
+}
+
 extension SessionManager {
     /// Creates default values for the "Accept-Encoding", "Accept-Language" and "User-Agent" headers.
     open static let defaultHTTPHeaders: HTTPHeaders = {
@@ -37,19 +47,19 @@ extension SessionManager {
             } else {
                 encodings = ["gzip", "deflate"]
             }
-            
+
             return encodings.enumerated().map { (index, encoding) in
                 let quality = 1.0 - (Double(index) * 0.1)
                 return "\(encoding);q=\(quality)"
             }.joined(separator: ", ")
         }()
-        
+
         // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
         let acceptLanguage = Locale.preferredLanguages.prefix(6).enumerated().map { index, languageCode in
             let quality = 1.0 - (Double(index) * 0.1)
             return "\(languageCode);q=\(quality)"
         }.joined(separator: ", ")
-        
+
         // User-Agent Header; see https://tools.ietf.org/html/rfc7231#section-5.5.3
         // Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`
         let userAgent: String = {
@@ -58,11 +68,11 @@ extension SessionManager {
                 let bundle = info[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
                 let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
                 let appBuild = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
-                
+
                 let osNameVersion: String = {
                     let version = ProcessInfo.processInfo.operatingSystemVersion
                     let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-                    
+
                     let osName: String = {
                         #if os(iOS)
                         return "iOS"
@@ -78,25 +88,25 @@ extension SessionManager {
                         return "Unknown"
                         #endif
                     }()
-                    
+
                     return "\(osName) \(versionString)"
                 }()
-                
+
                 let alamofireVersion: String = {
                     guard
                         let afInfo = Bundle(for: SessionManager.self).infoDictionary,
                         let build = afInfo["CFBundleShortVersionString"]
                         else { return "Unknown" }
-                    
+
                     return "Alamofire/\(build)"
                 }()
-                
+
                 return "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
             }
-            
+
             return "Alamofire"
         }()
-        
+
         return [
             "Accept-Encoding": acceptEncoding,
             "Accept-Language": acceptLanguage,

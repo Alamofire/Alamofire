@@ -82,7 +82,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -120,7 +120,7 @@ class DownloadResponseTestCase: BaseTestCase {
             }
             .cancel()
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -150,7 +150,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -189,7 +189,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -229,7 +229,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -264,7 +264,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -295,7 +295,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -325,7 +325,7 @@ class DownloadResponseTestCase: BaseTestCase {
                     expectation.fulfill()
                 }
 
-            waitForExpectations(timeout: timeout, handler: nil)
+            waitForExpectations()
 
             // Then
             XCTAssertTrue(directoryCreated)
@@ -364,7 +364,7 @@ class DownloadResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertTrue(directoryCreated)
@@ -397,7 +397,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         download.cancel()
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -431,7 +431,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -467,7 +467,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -504,7 +504,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             expectation1.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         guard let resumeData = download.resumeData else {
             XCTFail("resumeData should not be nil")
@@ -525,7 +525,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response1?.request)
@@ -564,7 +564,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -575,9 +575,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
         XCTAssertEqual(response?.result.value, "bar")
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatMapPreservesFailureError() {
@@ -593,7 +591,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -604,9 +602,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.result.isFailure, true)
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 }
 
@@ -630,7 +626,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -641,9 +637,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
         XCTAssertEqual(response?.result.value, "bar")
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatFlatMapCatchesTransformationError() {
@@ -664,7 +658,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -696,7 +690,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -730,7 +724,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -760,7 +754,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -792,7 +786,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -821,7 +815,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -856,7 +850,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)

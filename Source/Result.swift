@@ -34,7 +34,7 @@ import Foundation
 public enum Result<Value> {
     case success(Value)
     case failure(Error)
-    
+
     /// Initializes a `Result` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
     ///
     /// - Parameters:

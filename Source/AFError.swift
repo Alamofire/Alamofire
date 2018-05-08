@@ -128,7 +128,7 @@ public enum AFError: Error {
         case propertyListSerializationFailed(error: Error)
         case invalidEmptyResponse(type: String)
     }
-    
+
     case explicitlyCancelled
     case invalidURL(url: URLConvertible)
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
@@ -156,7 +156,7 @@ extension AFError {
         if case .explicitlyCancelled = self { return true }
         return false
     }
-    
+
     /// Returns whether the AFError is an invalid URL error.
     public var isInvalidURLError: Bool {
         if case .invalidURL = self { return true }
@@ -190,7 +190,7 @@ extension AFError {
         if case .responseSerializationFailed = self { return true }
         return false
     }
-    
+
     /// Returns whether the `AFError` is a certificate pinning error.
     public var isCertificatePinningError: Bool {
         if case .certificatePinningFailed = self { return true }

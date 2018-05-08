@@ -32,7 +32,7 @@ class ResponseTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         Alamofire.request(urlString, parameters: ["foo": "bar"]).response { resp in
@@ -40,7 +40,7 @@ class ResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -58,7 +58,7 @@ class ResponseTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         Alamofire.request(urlString, parameters: ["foo": "bar"]).response { resp in
@@ -66,12 +66,12 @@ class ResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
 
         if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
@@ -96,7 +96,7 @@ class ResponseDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -123,12 +123,12 @@ class ResponseDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
         if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
@@ -153,7 +153,7 @@ class ResponseStringTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -180,12 +180,12 @@ class ResponseStringTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
         if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
@@ -210,7 +210,7 @@ class ResponseJSONTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -237,12 +237,12 @@ class ResponseJSONTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
         if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
@@ -263,7 +263,7 @@ class ResponseJSONTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -299,7 +299,7 @@ class ResponseJSONTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -343,7 +343,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -370,12 +370,12 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
         if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
@@ -404,7 +404,7 @@ class ResponseMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -431,12 +431,12 @@ class ResponseMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
         if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
@@ -465,7 +465,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -497,7 +497,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -529,12 +529,12 @@ class ResponseFlatMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
         if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
@@ -574,12 +574,12 @@ class ResponseMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
         guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
 
@@ -601,7 +601,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -631,7 +631,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -657,12 +657,12 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
         if let error = response?.result.error {
@@ -689,12 +689,12 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
         guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
 

@@ -38,7 +38,7 @@ Alamofire contains five different response handlers by default including:
 // Response Handler - Unserialized Response
 func response(
     queue: DispatchQueue?,
-    completionHandler: @escaping (DefaultDataResponse) -> Void)
+    completionHandler: @escaping (DataResponse<Data?>) -> Void)
     -> Self
 
 // Response Data Handler - Serialized into Data

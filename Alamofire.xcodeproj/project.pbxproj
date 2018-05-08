@@ -21,6 +21,18 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		3107EA3520A11AE100445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
+		3107EA3620A11AE100445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
+		3107EA3720A11AE200445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
+		3107EA3820A11F9600445260 /* ResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */; };
+		3107EA3920A11F9600445260 /* ResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */; };
+		3107EA3A20A11F9700445260 /* ResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */; };
+		3107EA3C20A124E900445260 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA028C41B7466C500C84163 /* ResultTests.swift */; };
+		3107EA3D20A124EA00445260 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA028C41B7466C500C84163 /* ResultTests.swift */; };
+		3107EA3E20A124EB00445260 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA028C41B7466C500C84163 /* ResultTests.swift */; };
+		3107EA3F20A1267C00445260 /* SessionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */; };
+		3107EA4020A1267C00445260 /* SessionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */; };
+		3107EA4120A1267D00445260 /* SessionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */; };
 		3191B5751F5F53A6003960A8 /* Mutex+Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */; };
 		3191B5761F5F53A6003960A8 /* Mutex+Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */; };
 		3191B5771F5F53A6003960A8 /* Mutex+Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Mutex+Protector.swift */; };
@@ -1201,9 +1213,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CF627181BA7CC240011A099 /* RequestTests.swift in Sources */,
+				3107EA3720A11AE200445260 /* AuthenticationTests.swift in Sources */,
 				31ED52EA1D73891C00199085 /* AFError+AlamofireTests.swift in Sources */,
+				3107EA3A20A11F9700445260 /* ResponseTests.swift in Sources */,
 				4CFB02921D7CF28F0056F249 /* FileManager+AlamofireTests.swift in Sources */,
 				4CF627141BA7CC240011A099 /* BaseTestCase.swift in Sources */,
+				3107EA4120A1267D00445260 /* SessionDelegateTests.swift in Sources */,
+				3107EA3E20A124EB00445260 /* ResultTests.swift in Sources */,
 				4CF627171BA7CC240011A099 /* ParameterEncodingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1300,9 +1316,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				31ED52E81D73891B00199085 /* AFError+AlamofireTests.swift in Sources */,
+				3107EA3520A11AE100445260 /* AuthenticationTests.swift in Sources */,
 				4CFB02901D7CF28F0056F249 /* FileManager+AlamofireTests.swift in Sources */,
+				3107EA3820A11F9600445260 /* ResponseTests.swift in Sources */,
 				F8858DDD19A96B4300F55F93 /* RequestTests.swift in Sources */,
 				4C256A531B096C770065714F /* BaseTestCase.swift in Sources */,
+				3107EA3F20A1267C00445260 /* SessionDelegateTests.swift in Sources */,
+				3107EA3C20A124E900445260 /* ResultTests.swift in Sources */,
 				F8111E6119A9674D0040E7D1 /* ParameterEncodingTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1312,9 +1332,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				31ED52E91D73891C00199085 /* AFError+AlamofireTests.swift in Sources */,
+				3107EA3620A11AE100445260 /* AuthenticationTests.swift in Sources */,
 				4CFB02911D7CF28F0056F249 /* FileManager+AlamofireTests.swift in Sources */,
+				3107EA3920A11F9600445260 /* ResponseTests.swift in Sources */,
 				F829C6BE1A7A950600A2CD59 /* ParameterEncodingTests.swift in Sources */,
 				F829C6BF1A7A950600A2CD59 /* RequestTests.swift in Sources */,
+				3107EA4020A1267C00445260 /* SessionDelegateTests.swift in Sources */,
+				3107EA3D20A124EA00445260 /* ResultTests.swift in Sources */,
 				4C256A541B096C770065714F /* BaseTestCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1370,6 +1394,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Debug;
 		};
@@ -1389,6 +1414,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
 		};
@@ -1470,6 +1496,7 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 			};
 			name = Debug;
 		};
@@ -1489,6 +1516,7 @@
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 			};
 			name = Release;
 		};
@@ -1543,8 +1571,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1603,8 +1631,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";

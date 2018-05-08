@@ -49,7 +49,7 @@ class SessionManagerTestCase: BaseTestCase {
         }
     }
 
-    private class RequestHandler: RequestAdapter, RequestRetrier {
+    private class RequestHandler: RequestAdapter, RequestRetrier {        
         var adaptedCount = 0
         var retryCount = 0
         var retryErrors: [Error] = []
@@ -68,9 +68,8 @@ class SessionManagerTestCase: BaseTestCase {
             adaptedCount += 1
 
             if shouldApplyAuthorizationHeader && adaptedCount > 1 {
-                if let header = Request.authorizationHeader(user: "user", password: "password") {
+                if let header = HTTPHeaders.authorization(withUsername: "user", password: "password").first {
                     urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
-                }
             }
 
             return urlRequest
@@ -320,7 +319,7 @@ class SessionManagerTestCase: BaseTestCase {
             }
             .resume()
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response, "response should not be nil")
@@ -372,7 +371,7 @@ class SessionManagerTestCase: BaseTestCase {
         let sessionManager = SessionManager()
         let expectation = self.expectation(description: "Request should fail with error")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         sessionManager.request("https://httpbin.org/get/äëïöü").response { resp in
@@ -380,7 +379,7 @@ class SessionManagerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNil(response?.request)
@@ -410,7 +409,7 @@ class SessionManagerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNil(response?.request)
@@ -433,7 +432,7 @@ class SessionManagerTestCase: BaseTestCase {
         let sessionManager = SessionManager()
         let expectation = self.expectation(description: "Upload should fail with error")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         sessionManager.upload(Data(), to: "https://httpbin.org/get/äëïöü").response { resp in
@@ -441,7 +440,7 @@ class SessionManagerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNil(response?.request)
@@ -463,7 +462,7 @@ class SessionManagerTestCase: BaseTestCase {
         let sessionManager = SessionManager()
         let expectation = self.expectation(description: "Upload should fail with error")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         sessionManager.upload(URL(fileURLWithPath: "/invalid"), to: "https://httpbin.org/get/äëïöü").response { resp in
@@ -471,7 +470,7 @@ class SessionManagerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNil(response?.request)
@@ -493,7 +492,7 @@ class SessionManagerTestCase: BaseTestCase {
         let sessionManager = SessionManager()
         let expectation = self.expectation(description: "Upload should fail with error")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         sessionManager.upload(InputStream(data: Data()), to: "https://httpbin.org/get/äëïöü").response { resp in
@@ -501,7 +500,7 @@ class SessionManagerTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNil(response?.request)
@@ -639,7 +638,7 @@ class SessionManagerTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertEqual(handler.adaptedCount, 2)
@@ -671,7 +670,7 @@ class SessionManagerTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertEqual(handler.adaptedCount, 2)
@@ -709,7 +708,7 @@ class SessionManagerTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertEqual(handler.adaptedCount, 2)
@@ -741,7 +740,7 @@ class SessionManagerTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertEqual(handler.adaptedCount, 2)
@@ -772,7 +771,7 @@ class SessionManagerTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertEqual(handler.adaptedCount, 2)
@@ -802,7 +801,7 @@ class SessionManagerTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertEqual(handler.adaptedCount, 1)
@@ -880,7 +879,7 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         if let response = response {

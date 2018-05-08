@@ -43,7 +43,7 @@ class BaseTestCase: XCTestCase {
         let bundle = Bundle(for: BaseTestCase.self)
         return bundle.url(forResource: fileName, withExtension: ext)!
     }
-    
+
     func waitForExpectations() {
         waitForExpectations(timeout: timeout, handler: nil)
     }

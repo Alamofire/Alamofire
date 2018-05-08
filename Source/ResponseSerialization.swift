@@ -167,6 +167,7 @@ extension DataRequest {
             let response = DataResponse(request: self.request,
                                         response: self.response,
                                         data: self.data,
+                                        metrics: self.metrics,
                                         result: result)
             (queue ?? .main).async { completionHandler(response) }
         }
@@ -198,6 +199,7 @@ extension DataRequest {
             let response = DataResponse(request: self.request,
                                         response: self.response,
                                         data: self.data,
+                                        metrics: self.metrics,
                                         result: result)
 
             (queue ?? .main).async { completionHandler(response) }

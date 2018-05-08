@@ -150,7 +150,7 @@ class UploadDataTestCase: BaseTestCase {
         let data = "Lorem ipsum dolor sit amet".data(using: .utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "Upload request should succeed: \(urlString)")
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         Alamofire.upload(data, to: urlString)
@@ -159,7 +159,7 @@ class UploadDataTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -184,7 +184,7 @@ class UploadDataTestCase: BaseTestCase {
         var uploadProgressValues: [Double] = []
         var downloadProgressValues: [Double] = []
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         Alamofire.upload(data, to: urlString)
@@ -199,7 +199,7 @@ class UploadDataTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -249,7 +249,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         Alamofire.upload(
@@ -271,7 +271,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -297,7 +297,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         Alamofire.upload(
@@ -319,7 +319,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -369,7 +369,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -413,7 +413,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -467,7 +467,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -513,7 +513,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -581,7 +581,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -624,7 +624,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var uploadProgressValues: [Double] = []
         var downloadProgressValues: [Double] = []
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         Alamofire.upload(
@@ -654,7 +654,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertNotNil(response?.request)

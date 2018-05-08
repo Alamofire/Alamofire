@@ -122,7 +122,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
 
         // When
         manager.startListening()
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertEqual(networkReachabilityStatus, .reachable(.ethernetOrWiFi))
@@ -142,7 +142,7 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
 
         // When
         manager?.startListening()
-        waitForExpectations(timeout: timeout, handler: nil)
+        waitForExpectations()
 
         // Then
         XCTAssertEqual(networkReachabilityStatus, .reachable(.ethernetOrWiFi))
