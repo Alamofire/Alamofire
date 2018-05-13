@@ -216,7 +216,7 @@ class CacheTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         verifyResponse(response, forCacheControl: cacheControl, isCachedResponse: shouldReturnCachedResponse)
@@ -319,7 +319,7 @@ class CacheTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(response, "response should be nil")

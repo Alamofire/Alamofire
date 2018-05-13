@@ -137,7 +137,7 @@ public func request<Convertible: URLConvertible>(_ url: Convertible,
     return SessionManager.default.request(url,
                                           method: method,
                                           parameters: parameters,
-                                          parameterEncoding: encoding,
+                                          encoding: encoding,
                                           headers: headers)
 }
 
@@ -170,25 +170,25 @@ public func request<Convertible: URLRequestConvertible>(_ urlRequest: Convertibl
 /// - parameter destination: The closure used to determine the destination of the downloaded file. `nil` by default.
 ///
 /// - returns: The created `DownloadRequest`.
-//@discardableResult
-//public func download(
-//    _ url: URLConvertible,
-//    method: HTTPMethod = .get,
-//    parameters: Parameters? = nil,
-//    encoding: ParameterEncoding = URLEncoding.default,
-//    headers: HTTPHeaders? = nil,
-//    to destination: DownloadRequest.Destination? = nil)
-//    -> DownloadRequest
-//{
-//    return SessionManager.default.download(
-//        url,
-//        method: method,
-//        parameters: parameters,
-//        encoding: encoding,
-//        headers: headers,
-//        to: destination
-//    )
-//}
+@discardableResult
+public func download<Convertible: URLConvertible>(
+    _ url: Convertible,
+    method: HTTPMethod = .get,
+    parameters: Parameters? = nil,
+    encoding: ParameterEncoding = URLEncoding.default,
+    headers: HTTPHeaders? = nil,
+    to destination: @escaping DownloadRequest.Destination = DownloadRequest.suggestedDownloadDestination())
+    -> DownloadRequest
+{
+    return SessionManager.default.download(
+        url,
+        method: method,
+        parameters: parameters,
+        encoding: encoding,
+        headers: headers,
+        to: destination
+    )
+}
 
 /// Creates a `DownloadRequest` using the default `SessionManager` to retrieve the contents of a URL based on the
 /// specified `urlRequest` and save them to the `destination`.
@@ -217,10 +217,10 @@ public func request<Convertible: URLRequestConvertible>(_ urlRequest: Convertibl
 /// If `destination` is not specified, the contents will remain in the temporary location determined by the
 /// underlying URL session.
 ///
-/// On the latest release of all the Apple platforms (iOS 10, macOS 10.12, tvOS 10, watchOS 3), `resumeData` is broken
-/// on background URL session configurations. There's an underlying bug in the `resumeData` generation logic where the
-/// data is written incorrectly and will always fail to resume the download. For more information about the bug and
-/// possible workarounds, please refer to the following Stack Overflow post:
+/// On some versions of all Apple platforms (iOS 10 - 10.2, macOS 10.12 - 10.12.2, tvOS 10 - 10.1, watchOS 3 - 3.1.1),
+/// `resumeData` is broken on background URL session configurations. There's an underlying bug in the `resumeData`
+/// generation logic where the data is written incorrectly and will always fail to resume the download. For more
+/// information about the bug and possible workarounds, please refer to the following Stack Overflow post:
 ///
 ///    - http://stackoverflow.com/a/39347461/1342462
 ///

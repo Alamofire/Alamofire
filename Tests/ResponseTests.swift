@@ -40,7 +40,7 @@ class ResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -66,7 +66,7 @@ class ResponseTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -96,7 +96,7 @@ class ResponseDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -123,7 +123,7 @@ class ResponseDataTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -153,7 +153,7 @@ class ResponseStringTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -180,7 +180,7 @@ class ResponseStringTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -210,7 +210,7 @@ class ResponseJSONTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -237,7 +237,7 @@ class ResponseJSONTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -263,7 +263,7 @@ class ResponseJSONTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -299,7 +299,7 @@ class ResponseJSONTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -343,7 +343,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -370,7 +370,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -404,7 +404,7 @@ class ResponseMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -431,7 +431,7 @@ class ResponseMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -465,7 +465,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -497,7 +497,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -529,7 +529,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -574,7 +574,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -601,7 +601,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -631,7 +631,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -657,7 +657,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -689,7 +689,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)

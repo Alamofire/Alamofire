@@ -154,7 +154,7 @@ class URLProtocolTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)

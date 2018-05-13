@@ -159,7 +159,7 @@ class UploadDataTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -199,7 +199,7 @@ class UploadDataTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -271,7 +271,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -319,7 +319,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -369,7 +369,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -413,7 +413,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -467,7 +467,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -513,7 +513,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(streamingFromDisk, "streaming from disk should not be nil")
@@ -581,7 +581,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(request, "request should not be nil")
@@ -654,7 +654,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             }
         )
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)

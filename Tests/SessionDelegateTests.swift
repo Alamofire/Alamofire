@@ -54,7 +54,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //
 //        // When
 //        manager.session.invalidateAndCancel()
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertTrue(overrideClosureCalled)
@@ -81,7 +81,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertTrue(overrideClosureCalled)
@@ -106,7 +106,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertTrue(overrideClosureCalled)
@@ -131,7 +131,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -159,7 +159,7 @@ class SessionDelegateTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -194,7 +194,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -229,7 +229,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -264,7 +264,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -299,7 +299,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -343,7 +343,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -389,7 +389,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -441,7 +441,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -475,7 +475,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertTrue(overrideClosureCalled)
@@ -500,7 +500,7 @@ class SessionDelegateTestCase: BaseTestCase {
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertTrue(overrideClosureCalled)

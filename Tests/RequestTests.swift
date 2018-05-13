@@ -195,7 +195,7 @@ class RequestResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -224,7 +224,7 @@ class RequestResponseTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -270,7 +270,7 @@ class RequestResponseTestCase: BaseTestCase {
 //                expectation.fulfill()
 //            }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertNotNil(response?.request)
@@ -314,7 +314,7 @@ class RequestResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -366,7 +366,7 @@ class RequestResponseTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(response?.request)
@@ -429,7 +429,7 @@ class RequestExtensionTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         if responses.count == 3 {
@@ -464,7 +464,7 @@ class RequestExtensionTestCase: BaseTestCase {
 //            expectation.fulfill()
 //        }
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        // Then
 //        XCTAssertEqual(initialRequestDescription, "GET https://httpbin.org/get")
@@ -684,7 +684,7 @@ class RequestExtensionTestCase: BaseTestCase {
 //            }
 //        )
 //
-//        waitForExpectations()
+//        waitForExpectations(timeout: timeout, handler: nil)
 //
 //        debugPrint(request!)
 //

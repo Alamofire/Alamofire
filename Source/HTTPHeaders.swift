@@ -29,8 +29,7 @@ public typealias HTTPHeaders = [String: String]
 // TODO: Make HTTPHeaders a real type.
 extension Dictionary where Key == String, Value == String {
     public static func authorization(withUsername username: String, password: String) -> HTTPHeaders {
-        let rawAuthorization = Data("\(username):\(password)".utf8)
-        let credential = rawAuthorization.base64EncodedString()
+        let credential = Data("\(username):\(password)".utf8).base64EncodedString()
 
         return ["Authorization": "Basic: \(credential)"]
     }
@@ -107,10 +106,8 @@ extension SessionManager {
             return "Alamofire"
         }()
 
-        return [
-            "Accept-Encoding": acceptEncoding,
-            "Accept-Language": acceptLanguage,
-            "User-Agent": userAgent
-        ]
+        return ["Accept-Encoding": acceptEncoding,
+                "Accept-Language": acceptLanguage,
+                "User-Agent": userAgent]
     }()
 }

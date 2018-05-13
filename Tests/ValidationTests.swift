@@ -52,7 +52,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(requestError)
@@ -84,7 +84,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(requestError)
@@ -125,7 +125,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(requestError)
@@ -174,7 +174,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(requestError)
@@ -210,7 +210,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(requestError)
@@ -242,7 +242,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(requestError)
@@ -284,7 +284,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(requestError)
@@ -326,7 +326,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(requestError)
@@ -443,7 +443,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(requestResponse?.response)
@@ -493,7 +493,7 @@ class MultipleValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(requestError)
@@ -527,7 +527,7 @@ class MultipleValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(requestError)
@@ -570,7 +570,7 @@ class MultipleValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(requestError)
@@ -614,7 +614,7 @@ class AutomaticValidationTestCase: BaseTestCase {
             expectation2.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(requestError)
@@ -646,7 +646,7 @@ class AutomaticValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(requestError)
@@ -685,7 +685,7 @@ class AutomaticValidationTestCase: BaseTestCase {
             expectation2.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(requestError)
@@ -717,7 +717,7 @@ class AutomaticValidationTestCase: BaseTestCase {
             expectation2.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(requestError)
@@ -747,7 +747,7 @@ class AutomaticValidationTestCase: BaseTestCase {
             expectation2.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNotNil(requestError)
@@ -845,7 +845,7 @@ class CustomValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(requestError)
@@ -879,7 +879,7 @@ class CustomValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertEqual(requestError as? ValidationError, ValidationError.missingData)
@@ -911,7 +911,7 @@ class CustomValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
         }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertNil(requestError)
@@ -945,7 +945,7 @@ class CustomValidationTestCase: BaseTestCase {
                 expectation2.fulfill()
             }
 
-        waitForExpectations()
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
         XCTAssertEqual(requestError as? ValidationError, ValidationError.missingData)
