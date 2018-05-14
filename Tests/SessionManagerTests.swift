@@ -332,7 +332,7 @@ class SessionManagerTestCase: BaseTestCase {
         let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
-        monitor.requestDidCreate = { _ in expectation.fulfill() }
+        monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
         var manager: SessionManager? = SessionManager(delegate: delegate, eventMonitors: [monitor])
 
         let url = URL(string: "https://httpbin.org/get")!
@@ -348,27 +348,35 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(request?.task?.state, .suspended)
         XCTAssertNil(manager, "manager should be nil")
     }
-
+    // TODO: Make this test wait less with proper internal async work.
     func testReleasingManagerWithPendingCanceledRequestDeinitializesSuccessfully() {
         // Given
         let delegate = SessionDelegate(startRequestsImmediately: false)
+        
         let monitor = ClosureEventMonitor()
-        let expectation = self.expectation(description: "Request created")
-        monitor.requestDidCreate = { _ in expectation.fulfill() }
+        let create = self.expectation(description: "Request task created")
+        monitor.requestDidCreateTask = { (_, _) in create.fulfill() }
+        let cancel = self.expectation(description: "Request cancelled")
+        monitor.requestDidCancel = { (_) in cancel.fulfill() }
+        
         var manager: SessionManager? = SessionManager(delegate: delegate, eventMonitors: [monitor])
 
         let url = URL(string: "https://httpbin.org/get")!
         let urlRequest = URLRequest(url: url)
 
         // When
-        let request = manager!.request(urlRequest)
-        request.cancel()
+        let request = manager?.request(urlRequest)
+        
+        wait(for: [create], timeout: timeout)
+        
+        request?.cancel()
+        
+        wait(for: [cancel], timeout: timeout)
+        
         manager = nil
 
-        waitForExpectations(timeout: timeout, handler: nil)
-
         // Then
-        let state = request.task?.state
+        let state = request?.task?.state
         XCTAssertTrue(state == .canceling || state == .completed, "state should be .canceling or .completed")
         XCTAssertNil(manager, "manager should be nil")
     }
@@ -530,7 +538,7 @@ class SessionManagerTestCase: BaseTestCase {
         let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
-        monitor.requestDidCreate = { _ in expectation.fulfill() }
+        monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
         let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
 
         // When
@@ -548,7 +556,7 @@ class SessionManagerTestCase: BaseTestCase {
         let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
-        monitor.requestDidCreate = { _ in expectation.fulfill() }
+        monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
         let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
 
         // When
@@ -567,7 +575,7 @@ class SessionManagerTestCase: BaseTestCase {
         let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
-        monitor.requestDidCreate = { _ in expectation.fulfill() }
+        monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
         let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
 
         // When
@@ -586,7 +594,7 @@ class SessionManagerTestCase: BaseTestCase {
         let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
-        monitor.requestDidCreate = { _ in expectation.fulfill() }
+        monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
         let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
 
         // When
@@ -606,7 +614,7 @@ class SessionManagerTestCase: BaseTestCase {
         let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
-        monitor.requestDidCreate = { _ in expectation.fulfill() }
+        monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
         let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
 
         // When
@@ -626,7 +634,7 @@ class SessionManagerTestCase: BaseTestCase {
         let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
-        monitor.requestDidFail = { _ in expectation.fulfill() }
+        monitor.requestDidFailToAdaptURLRequestWithError = { (_, _, _) in expectation.fulfill() }
         let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
 
         // When
@@ -667,43 +675,39 @@ class SessionManagerTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 2)
-        //XCTAssertEqual(request.retryCount, 1)
+        XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
     }
-//
-//    func testThatSessionManagerCallsRequestRetrierWhenRequestInitiallyEncountersAdaptError() {
-//        // Given
-//        let handler = RequestHandler()
-//        handler.adaptedCount = 1
-//        handler.throwsErrorOnSecondAdapt = true
-//        handler.shouldApplyAuthorizationHeader = true
-//
-//        let sessionManager = SessionManager()
-//        sessionManager.adapter = handler
-//        sessionManager.retrier = handler
-//
-//        let expectation = self.expectation(description: "request should eventually fail")
-//        var response: DataResponse<Any>?
-//
-//        // When
-//        sessionManager.request("https://httpbin.org/basic-auth/user/password")
-//            .validate()
-//            .responseJSON { jsonResponse in
-//                response = jsonResponse
-//                expectation.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        XCTAssertEqual(handler.adaptedCount, 2)
-//        XCTAssertEqual(handler.retryCount, 1)
-//        XCTAssertEqual(response?.result.isSuccess, true)
-//        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
-//
-//        handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
-//    }
+
+    func testThatSessionManagerCallsRequestRetrierWhenRequestInitiallyEncountersAdaptError() {
+        // Given
+        let handler = RequestHandler()
+        handler.adaptedCount = 1
+        handler.throwsErrorOnSecondAdapt = true
+        handler.shouldApplyAuthorizationHeader = true
+
+        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        // When
+        sessionManager.request("https://httpbin.org/basic-auth/user/password")
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+    }
 //
 //    func testThatSessionManagerCallsRequestRetrierWhenDownloadInitiallyEncountersAdaptError() {
 //        // Given
@@ -743,104 +747,96 @@ class SessionManagerTestCase: BaseTestCase {
 //        handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
 //    }
 //
-//    func testThatSessionManagerCallsRequestRetrierWhenUploadInitiallyEncountersAdaptError() {
-//        // Given
-//        let handler = UploadHandler()
-//
-//        let sessionManager = SessionManager()
-//        sessionManager.adapter = handler
-//        sessionManager.retrier = handler
-//
-//        let expectation = self.expectation(description: "request should eventually fail")
-//        var response: DataResponse<Any>?
-//
-//        let uploadData = "upload data".data(using: .utf8, allowLossyConversion: false)!
-//
-//        // When
-//        sessionManager.upload(uploadData, to: "https://httpbin.org/post")
-//            .validate()
-//            .responseJSON { jsonResponse in
-//                response = jsonResponse
-//                expectation.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        XCTAssertEqual(handler.adaptedCount, 2)
-//        XCTAssertEqual(handler.retryCount, 1)
-//        XCTAssertEqual(response?.result.isSuccess, true)
-//        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
-//
-//        handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
-//    }
-//
-//    func testThatSessionManagerCallsAdapterWhenRequestIsRetried() {
-//        // Given
-//        let handler = RequestHandler()
-//        handler.shouldApplyAuthorizationHeader = true
-//
-//        let sessionManager = SessionManager()
-//        sessionManager.adapter = handler
-//        sessionManager.retrier = handler
-//
-//        let expectation = self.expectation(description: "request should eventually fail")
-//        var response: DataResponse<Any>?
-//
-//        // When
-//        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
-//            .validate()
-//            .responseJSON { jsonResponse in
-//                response = jsonResponse
-//                expectation.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        XCTAssertEqual(handler.adaptedCount, 2)
-//        XCTAssertEqual(handler.retryCount, 1)
-//        XCTAssertEqual(request.retryCount, 1)
-//        XCTAssertEqual(response?.result.isSuccess, true)
-//        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
-//    }
-//
-//    func testThatRequestAdapterErrorThrowsResponseHandlerErrorWhenRequestIsRetried() {
-//        // Given
-//        let handler = RequestHandler()
-//        handler.throwsErrorOnSecondAdapt = true
-//
-//        let sessionManager = SessionManager()
-//        sessionManager.adapter = handler
-//        sessionManager.retrier = handler
-//
-//        let expectation = self.expectation(description: "request should eventually fail")
-//        var response: DataResponse<Any>?
-//
-//        // When
-//        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
-//            .validate()
-//            .responseJSON { jsonResponse in
-//                response = jsonResponse
-//                expectation.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        XCTAssertEqual(handler.adaptedCount, 1)
-//        XCTAssertEqual(handler.retryCount, 1)
-//        XCTAssertEqual(request.retryCount, 0)
-//        XCTAssertEqual(response?.result.isSuccess, false)
-//        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
-//
-//        if let error = response?.result.error as? AFError {
-//            XCTAssertTrue(error.isInvalidURLError)
-//            XCTAssertEqual(error.urlConvertible as? String, "")
-//        } else {
-//            XCTFail("error should not be nil")
-//        }
-//    }
+    func testThatSessionManagerCallsRequestRetrierWhenUploadInitiallyEncountersAdaptError() {
+        // Given
+        let handler = UploadHandler()
+
+        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        let uploadData = Data("upload data".utf8)
+
+        // When
+        sessionManager.upload(uploadData, to: "https://httpbin.org/post")
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+    }
+
+    func testThatSessionManagerCallsAdapterWhenRequestIsRetried() {
+        // Given
+        let handler = RequestHandler()
+        handler.shouldApplyAuthorizationHeader = true
+
+        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+
+        let expectation = self.expectation(description: "request should eventually succeed")
+        var response: DataResponse<Any>?
+
+        // When
+        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(request.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+    }
+
+    func testThatRequestAdapterErrorThrowsResponseHandlerErrorWhenRequestIsRetried() {
+        // Given
+        let handler = RequestHandler()
+        handler.throwsErrorOnSecondAdapt = true
+
+        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        // When
+        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(request.retryCount, 0)
+        XCTAssertEqual(response?.result.isSuccess, false)
+        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+
+        if let error = response?.result.error as? AFError {
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "")
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
 }
 
 // MARK: -

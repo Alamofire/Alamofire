@@ -56,7 +56,7 @@ open class SessionManager {
         let delegateQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: rootQueue, name: "org.alamofire.sessionManager.sessionDelegateQueue")
         session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
         eventMonitor = CompositeEventMonitor(monitors: defaultEventMonitors + eventMonitors)
-        delegate.didCreate(sessionManager: self, with: eventMonitor)
+        delegate.didCreateSessionManager(self, withEventMonitor: eventMonitor)
     }
 
     deinit {
@@ -65,8 +65,8 @@ open class SessionManager {
 
     // MARK: - Request
 
-    struct RequestConvertible<Convertible: URLConvertible>: URLRequestConvertible {
-        let url: Convertible
+    struct RequestConvertible: URLRequestConvertible {
+        let url: URLConvertible
         let method: HTTPMethod
         let parameters: Parameters?
         let encoding: ParameterEncoding
@@ -77,46 +77,40 @@ open class SessionManager {
             return try encoding.encode(request, with: parameters)
         }
     }
-
-    open func request<Convertible: URLConvertible>(_ url: Convertible,
-                                                   method: HTTPMethod = .get,
-                                                   parameters: Parameters? = nil,
-                                                   encoding: ParameterEncoding = URLEncoding.default,
-                                                   headers: HTTPHeaders? = nil) -> DataRequest {
+    
+    // TODO: Serialization Queue support?
+    open func request(_ url: URLConvertible,
+                      method: HTTPMethod = .get,
+                      parameters: Parameters? = nil,
+                      encoding: ParameterEncoding = URLEncoding.default,
+                      headers: HTTPHeaders? = nil) -> DataRequest {
         let convertible = RequestConvertible(url: url,
-                                          method: method,
+                                             method: method,
                                           parameters: parameters,
                                           encoding: encoding,
                                           headers: headers)
         return request(convertible)
     }
 
-    open func request<Convertible: URLRequestConvertible>(_ convertible: Convertible) -> DataRequest {
-        let request = DataRequest(underlyingQueue: rootQueue, delegate: delegate, eventMonitor: eventMonitor)
+    open func request(_ convertible: URLRequestConvertible) -> DataRequest {
+        let request = DataRequest(convertible: convertible,
+                                  underlyingQueue: rootQueue,
+                                  eventMonitor: eventMonitor,
+                                  delegate: delegate)
 
-        requestQueue.async {
-            do {
-                let initialRequest = try convertible.asURLRequest()
-                let adaptedRequest = try self.adapter?.adapt(initialRequest)
-                let urlRequest = adaptedRequest ?? initialRequest
-                let task = self.session.dataTask(with: urlRequest)
-                self.delegate.didCreate(urlRequest: urlRequest, for: request, and: task)
-            } catch {
-                request.didFail(with: nil, error: error)
-            }
-        }
+        perform(request)
 
         return request
     }
 
     // MARK: - Download
 
-    open func download<Convertible: URLConvertible>(_ convertible: Convertible,
-                                                    method: HTTPMethod = .get,
-                                                    parameters: Parameters? = nil,
-                                                    encoding: ParameterEncoding = URLEncoding.default,
-                                                    headers: HTTPHeaders? = nil,
-                                                    to destination: @escaping DownloadRequest.Destination = DownloadRequest.suggestedDownloadDestination()) -> DownloadRequest {
+    open func download(_ convertible: URLConvertible,
+                       method: HTTPMethod = .get,
+                       parameters: Parameters? = nil,
+                       encoding: ParameterEncoding = URLEncoding.default,
+                       headers: HTTPHeaders? = nil,
+                       to destination: @escaping DownloadRequest.Destination = DownloadRequest.suggestedDownloadDestination()) -> DownloadRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
                                              parameters: parameters,
@@ -126,32 +120,23 @@ open class SessionManager {
         return download(convertible, to: destination)
     }
 
-    func download<Convertible: URLRequestConvertible>(_ convertible: Convertible,
-                                                      to destination: @escaping DownloadRequest.Destination = DownloadRequest.suggestedDownloadDestination()) -> DownloadRequest {
-        let request = DownloadRequest(underlyingQueue: rootQueue,
-                                      delegate: delegate,
+    func download(_ convertible: URLRequestConvertible,
+                  to destination: @escaping DownloadRequest.Destination = DownloadRequest.suggestedDownloadDestination()) -> DownloadRequest {
+        let request = DownloadRequest(convertible: convertible,
+                                      underlyingQueue: rootQueue,
                                       eventMonitor: eventMonitor,
+                                      delegate: delegate,
                                       destination: destination)
 
-        requestQueue.async {
-            do {
-                let initialRequest = try convertible.asURLRequest()
-                let adaptedRequest = try self.adapter?.adapt(initialRequest)
-                let urlRequest = adaptedRequest ?? initialRequest
-                let task = self.session.downloadTask(with: urlRequest)
-                self.delegate.didCreate(urlRequest: urlRequest, for: request, and: task)
-            } catch {
-                request.didFail(with: nil, error: error)
-            }
-        }
+        perform(request)
 
         return request
     }
 
     // MARK: - Upload
 
-    struct UploadConvertible<Convertible: URLConvertible>: URLRequestConvertible {
-        let url: Convertible
+    struct UploadConvertible: URLRequestConvertible {
+        let url: URLConvertible
         let method: HTTPMethod
         let headers: HTTPHeaders?
 
@@ -160,93 +145,85 @@ open class SessionManager {
         }
     }
 
-    func upload<Convertible: URLConvertible>(_ data: Data,
-                                             to convertible: Convertible,
-                                             method: HTTPMethod = .post,
-                                             headers: HTTPHeaders? = nil) -> UploadRequest {
+    func upload(_ data: Data,
+                to convertible: URLConvertible,
+                method: HTTPMethod = .post,
+                headers: HTTPHeaders? = nil) -> UploadRequest {
         let convertible = UploadConvertible(url: convertible, method: method, headers: headers)
 
         return upload(data: data, to: convertible)
     }
 
-    func upload<Convertible: URLRequestConvertible>(data: Data, to convertible: Convertible) -> UploadRequest {
-        let request = UploadRequest(underlyingQueue: rootQueue,
-                                    delegate: delegate,
-                                    eventMonitor: eventMonitor,
-                                    uploadable: .data(data))
-
-        requestQueue.async {
-            do {
-                let initialRequest = try convertible.asURLRequest()
-                let adaptedRequest = try self.adapter?.adapt(initialRequest)
-                let urlRequest = adaptedRequest ?? initialRequest
-                let task = self.session.uploadTask(with: urlRequest, from: data)
-                self.delegate.didCreate(urlRequest: urlRequest, for: request, and: task)
-            } catch {
-                request.didFail(with: nil, error: error)
-            }
-        }
-
-        return request
+    func upload(data: Data, to convertible: URLRequestConvertible) -> UploadRequest {
+        return upload(.data(data), to: convertible)
     }
 
-    func upload<Convertible: URLConvertible>(_ fileURL: URL,
-                                             to convertible: Convertible,
-                                             method: HTTPMethod = .post,
-                                             headers: HTTPHeaders? = nil) -> UploadRequest {
+    func upload(_ fileURL: URL,
+                to convertible: URLConvertible,
+                method: HTTPMethod = .post,
+                headers: HTTPHeaders? = nil) -> UploadRequest {
         let convertible = UploadConvertible(url: convertible, method: method, headers: headers)
 
         return upload(fileURL, to: convertible)
     }
 
-    func upload<Convertible: URLRequestConvertible>(_ fileURL: URL, to convertible: Convertible) -> UploadRequest {
-        let request = UploadRequest(underlyingQueue: rootQueue,
-                                    delegate: delegate,
-                                    eventMonitor: eventMonitor,
-                                    uploadable: .file(fileURL))
-
-        requestQueue.async {
-            do {
-                let initialRequest = try convertible.asURLRequest()
-                let adaptedRequest = try self.adapter?.adapt(initialRequest)
-                let urlRequest = adaptedRequest ?? initialRequest
-                let task = self.session.uploadTask(with: urlRequest, fromFile: fileURL)
-                self.delegate.didCreate(urlRequest: urlRequest, for: request, and: task)
-            } catch {
-                request.didFail(with: nil, error: error)
-            }
-        }
-
-        return request
+    func upload(_ fileURL: URL, to convertible: URLRequestConvertible) -> UploadRequest {
+        return upload(.file(fileURL), to: convertible)
     }
 
-    func upload<Convertible: URLConvertible>(_ stream: InputStream,
-                                             to convertible: Convertible,
-                                             method: HTTPMethod = .post,
-                                             headers: HTTPHeaders? = nil) -> UploadRequest {
+    func upload(_ stream: InputStream,
+                to convertible: URLConvertible,
+                method: HTTPMethod = .post,
+                headers: HTTPHeaders? = nil) -> UploadRequest {
         let convertible = UploadConvertible(url: convertible, method: method, headers: headers)
 
         return upload(stream, to: convertible)
     }
 
-    func upload<Convertible: URLRequestConvertible>(_ stream: InputStream, to convertible: Convertible) -> UploadRequest {
-        let request = UploadRequest(underlyingQueue: rootQueue,
-                                    delegate: delegate,
+    func upload(_ stream: InputStream, to convertible: URLRequestConvertible) -> UploadRequest {
+        return upload(.stream(stream), to: convertible)
+    }
+    
+    // MARK: - Internal API
+    
+    // MARK: Uploadable
+    
+    func upload(_ uploadable: UploadRequest.Uploadable, to convertible: URLRequestConvertible) -> UploadRequest {
+        let request = UploadRequest(convertible: convertible,
+                                    underlyingQueue: rootQueue,
                                     eventMonitor: eventMonitor,
-                                    uploadable: .stream(stream))
-
-        requestQueue.async {
+                                    delegate: delegate,
+                                    uploadable: uploadable)
+        
+        perform(request)
+        
+        return request
+    }
+    
+    // MARK: Perform
+    
+    func perform(_ request: Request) {
+        // TODO: Threadsafe adapter access?
+        requestQueue.async { [adapter = adapter] in
             do {
-                let initialRequest = try convertible.asURLRequest()
-                let adaptedRequest = try self.adapter?.adapt(initialRequest)
-                let urlRequest = adaptedRequest ?? initialRequest
-                let task = self.session.uploadTask(withStreamedRequest: urlRequest)
-                self.delegate.didCreate(urlRequest: urlRequest, for: request, and: task)
+                let initialRequest = try request.convertible.asURLRequest()
+                self.rootQueue.async { request.didCreateURLRequest(initialRequest) }
+                if let adapter = adapter {
+                    do {
+                        let adaptedRequest = try adapter.adapt(initialRequest)
+                        self.rootQueue.async {
+                            request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
+                            self.delegate.didCreateURLRequest(adaptedRequest, for: request)
+                        }
+                    } catch {
+                        self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: error) }
+                    }
+                } else {
+                    self.rootQueue.async { self.delegate.didCreateURLRequest(initialRequest, for: request) }
+                }
             } catch {
-                request.didFail(with: nil, error: error)
+                self.rootQueue.async { request.didFailToCreateURLRequest(with: error) }
             }
         }
-
-        return request
     }
 }

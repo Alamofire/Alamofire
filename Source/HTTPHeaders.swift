@@ -31,7 +31,7 @@ extension Dictionary where Key == String, Value == String {
     public static func authorization(withUsername username: String, password: String) -> HTTPHeaders {
         let credential = Data("\(username):\(password)".utf8).base64EncodedString()
 
-        return ["Authorization": "Basic: \(credential)"]
+        return ["Authorization": "Basic \(credential)"]
     }
 }
 

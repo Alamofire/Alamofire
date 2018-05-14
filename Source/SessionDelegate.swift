@@ -28,52 +28,75 @@ open class SessionDelegate: NSObject {
     // TODO: Investigate queueing active tasks?
     private(set) var requestTaskMap = RequestTaskMap()
 
-    // TODO: Better way to connect delegate to manager, including queue.
+    // TODO: Better way to connect delegate to manager, including queue?
     private weak var manager: SessionManager?
     private var eventMonitor: EventMonitor?
-
+    private var queue: DispatchQueue? { return manager?.rootQueue }
+    
     let startRequestsImmediately: Bool
 
     public init(startRequestsImmediately: Bool = true) {
         self.startRequestsImmediately = startRequestsImmediately
     }
-
-    func didCreate(sessionManager: SessionManager, with eventMonitor: EventMonitor) {
-        manager = sessionManager
+    
+    func didCreateSessionManager(_ manager: SessionManager, withEventMonitor eventMonitor: EventMonitor) {
+        self.manager = manager
         self.eventMonitor = eventMonitor
     }
-
-    // TODO: Separate task and request creation.
-    func didCreate(urlRequest: URLRequest, for request: Request, and task: URLSessionTask) {
+    
+    func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
+        guard let manager = manager else { fatalError("Received didCreateURLRequest but there is no manager.") }
+        
+        let task = request.task(for: urlRequest, using: manager.session)
         requestTaskMap[request] = task
-
-        request.didCreate(request: urlRequest, for: task)
-
+        request.didCreateTask(task)
+        
         if startRequestsImmediately {
             task.resume()
-            request.didResume()
+            request.resume()
         }
     }
+    
+    
 }
 
-// All delegate methods come from a random queue and need to be enqueued onto the internal queue.
 extension SessionDelegate: RequestDelegate {
+    func isRetryingRequest(_ request: Request, ifNecessaryWithError error: Error) -> Bool {
+        // TODO: Cancellation while waiting?
+        guard let manager = manager, let retrier = manager.retrier else { return false }
+        
+        retrier.should(manager, retry: request, with: error) { (shouldRetry, retryInterval) in
+            self.queue?.async {
+                guard shouldRetry else {
+                    request.finish()
+                    return
+                }
+                
+                self.queue?.after(retryInterval) {
+                    self.manager?.perform(request)
+                }
+            }
+        }
+        
+        return true
+    }
+    
     func cancelRequest(_ request: Request) {
-        manager?.rootQueue.async {
+        queue?.async {
             self.requestTaskMap[request]?.cancel()
             request.didCancel()
         }
     }
 
     func suspendRequest(_ request: Request) {
-        manager?.rootQueue.async {
+        queue?.async {
             self.requestTaskMap[request]?.suspend()
             request.didSuspend()
         }
     }
 
     func resumeRequest(_ request: Request) {
-        manager?.rootQueue.async {
+        queue?.async {
             // TODO: If queue, move manually resumed requests to the top.
             self.requestTaskMap[request]?.resume()
             request.didResume()
@@ -104,7 +127,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         }
 
         if let error = evaluation.error {
-            requestTaskMap[task]?.didFail(with: task, error: error)
+            requestTaskMap[task]?.didFailTask(task, earlyWithError: error)
         }
 
         completionHandler(evaluation.disposition, evaluation.credential)
@@ -151,7 +174,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
                                  totalBytesSent: totalBytesSent,
                                  totalBytesExpectedToSend: totalBytesExpectedToSend)
 
-        if #available(iOS 11.0, macOS 10.13, *) {
+        if #available(iOS 11.0, macOS 10.13, watchOS 4.0, tvOS 11.0, *) {
             NSLog("URLSession: \(session), task: \(task), progress: \(task.progress)")
         }
     }
@@ -188,23 +211,9 @@ extension SessionDelegate: URLSessionTaskDelegate {
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)
 
-        // TODO: Need to differentiate between Request types?
-        if let error = error {
-            requestTaskMap[task]?.didFail(with: task, error: error)
-        } else {
-            requestTaskMap[task]?.didComplete(task: task)
-        }
+        requestTaskMap[task]?.didCompleteTask(task, with: error)
 
         requestTaskMap[task] = nil
-
-//        guard let retrier = manager?.retrier, let taskError = error, let manager = manager, let request = requests[task] else {
-//            complete(task: task, withData: responseDatas[task], error: error)
-//            return
-//        }
-//
-//        retrier.should(manager, retry: request, with: taskError) { (shouldRetry, interval) in
-//
-//        }
     }
 
     // Only used when background sessions are resuming a delayed task.
@@ -218,7 +227,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     //
     // This method is called, at most, once per task, and only if connectivity is initially unavailable. It is never
     // called for background sessions because waitsForConnectivity is ignored for those sessions.
-    @available(macOS 10.13, iOS 11.0, *)
+    @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     open func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
         eventMonitor?.urlSession(session, taskIsWaitingForConnectivity: task)
 

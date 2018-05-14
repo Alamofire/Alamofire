@@ -55,12 +55,21 @@ public extension URLSessionEventMonitor {
 public protocol RequestEventMonitor {
     var queue: DispatchQueue { get }
 
-    func requestDidCreate(_ request: Request)
+    func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest)
+    func request(_ request: Request, didFailToCreateURLRequestWithError error: Error)
+    func request(_ request: Request, didAdaptInitialRequest initialRequest: URLRequest, to adaptedRequest: URLRequest)
+    func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error)
+    func request(_ request: Request, didCreateTask task: URLSessionTask)
+    
     func requestDidResume(_ request: Request)
     func requestDidSuspend(_ request: Request)
     func requestDidCancel(_ request: Request)
-    func requestDidFail(_ request: Request)
-    func requestDidComplete(_ request: Request)
+    
+    func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics)
+    func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error)
+    func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?)
+    
+    func requestDidFinish(_ request: Request)
 }
 
 public extension RequestEventMonitor {
@@ -181,9 +190,41 @@ public final class CompositeEventMonitor: EventMonitor {
                     didFinishDownloadingTo location: URL) {
         performEvent { $0.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location) }
     }
-
-    public func requestDidCreate(_ request: Request) {
-        performEvent { $0.requestDidCreate(request) }
+    
+    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
+        performEvent { $0.request(request, didCreateURLRequest: urlRequest) }
+    }
+    
+    public func request(_ request: Request, didFailToCreateURLRequestWithError error: Error) {
+        performEvent { $0.request(request, didFailToCreateURLRequestWithError: error) }
+    }
+    
+    public func request(_ request: Request, didAdaptInitialRequest initialRequest: URLRequest, to adaptedRequest: URLRequest) {
+        performEvent { $0.request(request, didAdaptInitialRequest: initialRequest, to: adaptedRequest) }
+    }
+    
+    public func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error) {
+        performEvent { $0.request(request, didFailToAdaptURLRequest: initialRequest, withError: error) }
+    }
+    
+    public func request(_ request: Request, didCreateTask task: URLSessionTask) {
+        performEvent { $0.request(request, didCreateTask: task) }
+    }
+    
+    public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
+        performEvent { $0.request(request, didGatherMetrics: metrics) }
+    }
+    
+    public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error) {
+        performEvent { $0.request(request, didFailTask: task, earlyWithError: error) }
+    }
+    
+    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?) {
+        performEvent { $0.request(request, didCompleteTask: task, with: error) }
+    }
+    
+    public func requestDidFinish(_ request: Request) {
+        performEvent { $0.requestDidFinish(request) }
     }
 
     public func requestDidResume(_ request: Request) {
@@ -197,41 +238,57 @@ public final class CompositeEventMonitor: EventMonitor {
     public func requestDidCancel(_ request: Request) {
         performEvent { $0.requestDidCancel(request) }
     }
-
-    public func requestDidFail(_ request: Request) {
-        performEvent { $0.requestDidFail(request) }
-    }
-
-    public func requestDidComplete(_ request: Request) {
-        performEvent { $0.requestDidComplete(request) }
-    }
 }
 
 public final class NSLoggingEventMonitor: EventMonitor {
     public let queue = DispatchQueue(label: "org.alamofire.nsLoggingEventMonitorQueue", qos: .background)
 
-    public func requestDidCreate(_ request: Request) {
-        NSLog("Request did create.")
+    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
+        NSLog("Request: \(request) didCreateURLRequest: \(urlRequest)")
     }
-
+    
+    public func request(_ request: Request, didFailToCreateURLRequestWithError error: Error) {
+        NSLog("Request: \(request) didFailToCreateURLRequestWithError: \(error)")
+    }
+    
+    public func request(_ request: Request, didAdaptInitialRequest initialRequest: URLRequest, to adaptedRequest: URLRequest) {
+        NSLog("Request: \(request) didAdaptInitialRequest \(initialRequest) to \(adaptedRequest)")
+    }
+    
+    public func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error) {
+        NSLog("Request: \(request) didFailToAdaptURLRequest \(initialRequest) withError \(error)")
+    }
+    
+    public func request(_ request: Request, didCreateTask task: URLSessionTask) {
+        NSLog("Request: \(request) didCreateTask \(task)")
+    }
+    
+    public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
+        NSLog("Request: \(request) didGatherMetrics \(metrics)")
+    }
+    
+    public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error) {
+        NSLog("Request: \(request) didFailTask \(task) earlyWithError \(error)")
+    }
+    
+    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?) {
+        NSLog("Request: \(request) didCompleteTask \(task) withError: \(error?.localizedDescription ?? "None")")
+    }
+    
+    public func requestDidFinish(_ request: Request) {
+        NSLog("Request: \(request) didFinish")
+    }
+    
     public func requestDidResume(_ request: Request) {
-        NSLog("Request did resume.")
+        NSLog("Request: \(request) didResume")
     }
-
+    
     public func requestDidSuspend(_ request: Request) {
-        NSLog("Request did suspend.")
+        NSLog("Request: \(request) didSuspend")
     }
-
+    
     public func requestDidCancel(_ request: Request) {
-        NSLog("Request did cancel.")
-    }
-
-    public func requestDidFail(_ request: Request) {
-        NSLog("Request did fail.")
-    }
-
-    public func requestDidComplete(_ request: Request) {
-        NSLog("Request did complete.")
+        NSLog("Request: \(request) didCancel")
     }
 
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
@@ -346,35 +403,65 @@ public final class ClosureEventMonitor: EventMonitor {
     /// Overrides default behavior for URLSessionDownloadDelegate method `urlSession(_:downloadTask:didResumeAtOffset:expectedTotalBytes:)`.
     open var downloadTaskDidResumeAtOffset: ((URLSession, URLSessionDownloadTask, Int64, Int64) -> Void)?
 
-    open var requestDidCreate: ((Request) -> Void)?
+    open var requestDidCreateURLRequest: ((Request, URLRequest) -> Void)?
+    open var requestDidFailToCreateURLRequestWithError: ((Request, Error) -> Void)?
+    open var requestDidAdaptInitialRequestToAdaptedRequest: ((Request, URLRequest, URLRequest) -> Void)?
+    open var requestDidFailToAdaptURLRequestWithError: ((Request, URLRequest, Error) -> Void)?
+    open var requestDidCreateTask: ((Request, URLSessionTask) -> Void)?
+    open var requestDidGatherMetrics: ((Request, URLSessionTaskMetrics) -> Void)?
+    open var requestDidFailTaskEarlyWithError: ((Request, URLSessionTask, Error) -> Void)?
+    open var requestDidCompleteTaskWithError: ((Request, URLSessionTask, Error?) -> Void)?
     open var requestDidResume: ((Request) -> Void)?
     open var requestDidSuspend: ((Request) -> Void)?
     open var requestDidCancel: ((Request) -> Void)?
-    open var requestDidFail: ((Request) -> Void)?
-    open var requestDidComplete: ((Request) -> Void)?
+    open var requestDidFinish: ((Request) -> Void)?
 
-    public func requestDidCreate(_ request: Request) {
-        requestDidCreate?(request)
+    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
+        requestDidCreateURLRequest?(request, urlRequest)
     }
-
+    
+    public func request(_ request: Request, didFailToCreateURLRequestWithError error: Error) {
+        requestDidFailToCreateURLRequestWithError?(request, error)
+    }
+    
+    public func request(_ request: Request, didAdaptInitialRequest initialRequest: URLRequest, to adaptedRequest: URLRequest) {
+        requestDidAdaptInitialRequestToAdaptedRequest?(request, initialRequest, adaptedRequest)
+    }
+    
+    public func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error) {
+        requestDidFailToAdaptURLRequestWithError?(request, initialRequest, error)
+    }
+    
+    public func request(_ request: Request, didCreateTask task: URLSessionTask) {
+        requestDidCreateTask?(request, task)
+    }
+    
+    public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
+        requestDidGatherMetrics?(request, metrics)
+    }
+    
+    public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error) {
+        requestDidFailTaskEarlyWithError?(request, task, error)
+    }
+    
+    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?) {
+        requestDidCompleteTaskWithError?(request, task, error)
+    }
+    
+    public func requestDidFinish(_ request: Request) {
+        requestDidFinish?(request)
+    }
+    
     public func requestDidResume(_ request: Request) {
         requestDidResume?(request)
     }
-
+    
     public func requestDidSuspend(_ request: Request) {
         requestDidSuspend?(request)
     }
-
+    
     public func requestDidCancel(_ request: Request) {
         requestDidCancel?(request)
-    }
-
-    public func requestDidFail(_ request: Request) {
-        requestDidFail?(request)
-    }
-
-    public func requestDidComplete(_ request: Request) {
-        requestDidComplete?(request)
     }
 
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {

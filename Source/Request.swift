@@ -25,28 +25,31 @@
 import Foundation
 
 protocol RequestDelegate: AnyObject {
+    func isRetryingRequest(_ request: Request, ifNecessaryWithError error: Error) -> Bool
+    
     func cancelRequest(_ request: Request)
     func suspendRequest(_ request: Request)
     func resumeRequest(_ request: Request)
 }
 
 open class Request {
-    enum State {
-        case initialized, performing, suspended, validating, finished
-    }
-
-    private(set) var state: State = .initialized
-
     // TODO: Make publicly readable properties protected?
 
+    // MARK: - Initial State
+    
     let id: UUID
+    let convertible: URLRequestConvertible
     let underlyingQueue: DispatchQueue
     let serializationQueue: DispatchQueue
+    let eventMonitor: RequestEventMonitor?
+    weak var delegate: RequestDelegate?
+    
     // TODO: Do we still want to expose the queue(s?) as public API?
     open let internalQueue: OperationQueue
-    let eventMonitor: RequestEventMonitor?
-    private weak var delegate: RequestDelegate?
-
+    
+    // MARK: - Updated State
+    
+    public var retryCount: Int { return protectedTasks.read { max($0.count - 1, 0) } }
     private(set) var initialRequest: URLRequest?
     open var request: URLRequest? {
         return finalTask?.currentRequest
@@ -80,66 +83,119 @@ open class Request {
     fileprivate(set) var validators: [() -> Void] = []
 
     init(id: UUID = UUID(),
+         convertible: URLRequestConvertible,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue? = nil,
-         delegate: RequestDelegate,
-         eventMonitor: RequestEventMonitor?) {
+         eventMonitor: RequestEventMonitor?,
+         delegate: RequestDelegate) {
         self.id = id
+        self.convertible = convertible
         self.underlyingQueue = underlyingQueue
         self.serializationQueue = serializationQueue ?? underlyingQueue
-        internalQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: underlyingQueue, name: "org.alamofire.request-\(id)", startSuspended: true)
-        self.delegate = delegate
+        internalQueue = OperationQueue(maxConcurrentOperationCount: 1,
+                                       underlyingQueue: underlyingQueue,
+                                       name: "org.alamofire.request-\(id)",
+                                       startSuspended: true)
         self.eventMonitor = eventMonitor
-
-        internalQueue.addOperation {
-            self.validators.forEach { $0() }
-            self.state = .finished
-        }
+        self.delegate = delegate
     }
 
     // MARK: - Internal API
     // Called from internal queue.
-
-    func didCreate(request: URLRequest, for task: URLSessionTask) {
-        self.initialRequest = request
+    
+    func didCreateURLRequest(_ request: URLRequest) {
+        initialRequest = request
+        
+        eventMonitor?.request(self, didCreateURLRequest: request)
+    }
+    
+    func didFailToCreateURLRequest(with error: Error) {
+        self.error = error
+        
+        eventMonitor?.request(self, didFailToCreateURLRequestWithError: error)
+        
+        retryOrFinish(error: error)
+    }
+    
+    func didAdaptInitialRequest(_ initialRequest: URLRequest, to adaptedRequest: URLRequest) {
+        self.initialRequest = adaptedRequest
+        // Set initialRequest or something else?
+        eventMonitor?.request(self, didAdaptInitialRequest: initialRequest, to: adaptedRequest)
+    }
+    
+    func didFailToAdaptURLRequest(_ request: URLRequest, withError error: Error) {
+        self.error = error
+        
+        eventMonitor?.request(self, didFailToAdaptURLRequest: request, withError: error)
+        
+        retryOrFinish(error: error)
+    }
+    
+    func didCreateTask(_ task: URLSessionTask) {
         self.task = task
-        eventMonitor?.requestDidCreate(self)
+        // TODO: Reset behavior?
+        self.error = nil
+        
+        eventMonitor?.request(self, didCreateTask: task)
     }
 
     func didResume() {
-        state = .performing
         eventMonitor?.requestDidResume(self)
     }
 
     func didSuspend() {
-        state = .suspended
         eventMonitor?.requestDidSuspend(self)
     }
 
     func didCancel() {
         error = AFError.explicitlyCancelled
+        
         eventMonitor?.requestDidCancel(self)
     }
 
     func didGatherMetrics(_ metrics: URLSessionTaskMetrics) {
         self.metrics = metrics
+        
+        eventMonitor?.request(self, didGatherMetrics: metrics)
     }
-
-    func didFail(with task: URLSessionTask?, error: Error) {
-        // TODO: Investigate whether we want a different mechanism here.
+    
+    // Should only be triggered by internal AF code, never URLSession
+    func didFailTask(_ task: URLSessionTask, earlyWithError error: Error) {
+        self.error = error
+        // Task will still complete, so didCompleteTask(_:with:) will handle retry.
+        eventMonitor?.request(self, didFailTask: task, earlyWithError: error)
+    }
+    
+    // Completion point for all tasks.
+    func didCompleteTask(_ task: URLSessionTask, with error: Error?) {
         self.error = self.error ?? error
-        eventMonitor?.requestDidFail(self)
-        // Retry: Ask delegate if request will be retried, if yes, complete, if no, do nothing until this is hit again.
-        // Retry: For per request retry, include retrier in delegate method?
-        didComplete(task: task)
+        validators.forEach { $0() }
+        
+        eventMonitor?.request(self, didCompleteTask: task, with: error)
+        
+        retryOrFinish(error: self.error)
     }
-
-    func didComplete(task: URLSessionTask?) {
-        self.task = task
-        state = .validating
-        eventMonitor?.requestDidComplete(self)
-
+    
+    func retryOrFinish(error: Error?) {
+        if let error = error, delegate?.isRetryingRequest(self, ifNecessaryWithError: error) == true {
+            return
+        } else {
+            finish()
+        }
+    }
+    
+    func finish() {
+        // Start response handlers
         internalQueue.isSuspended = false
+        
+        eventMonitor?.requestDidFinish(self)
+    }
+    
+    // MARK: Task Creation
+    
+    // Subclasses wanting something other than URLSessionDataTask should override.
+    func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
+        return session.dataTask(with: request)
     }
 
     // MARK: - Public API
@@ -227,6 +283,13 @@ open class DataRequest: Request {
 }
 
 open class DownloadRequest: Request {
+    
+    /// A `DownloadOptions` flag that creates intermediate directories for the destination URL if specified.
+    public static let createIntermediateDirectories = Options(rawValue: 1 << 0)
+    
+    /// A `DownloadOptions` flag that removes a previous file from the destination URL if specified.
+    public static let removePreviousFile = Options(rawValue: 1 << 1)
+    
     /// A collection of options to be executed prior to moving a downloaded file from the temporary URL to the
     /// destination URL.
     public struct Options: OptionSet {
@@ -241,12 +304,6 @@ open class DownloadRequest: Request {
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
-
-        /// A `DownloadOptions` flag that creates intermediate directories for the destination URL if specified.
-        public static let createIntermediateDirectories = Options(rawValue: 1 << 0)
-
-        /// A `DownloadOptions` flag that removes a previous file from the destination URL if specified.
-        public static let removePreviousFile = Options(rawValue: 1 << 1)
     }
 
     /// A closure executed once a download request has successfully completed in order to determine where to move the
@@ -274,20 +331,41 @@ open class DownloadRequest: Request {
             return (url, [])
         }
     }
-
+    
+    // MARK: Initial State
+    
     private let destination: Destination
+    
+    // MARK: Updated State
+    
     private(set) var temporaryURL: URL?
+    
+    // MARK: Init
 
-    init(id: UUID = UUID(), underlyingQueue: DispatchQueue, serializationQueue: DispatchQueue? = nil, delegate: RequestDelegate, eventMonitor: RequestEventMonitor?, destination: @escaping Destination) {
+    init(id: UUID = UUID(),
+         convertible: URLRequestConvertible,
+         underlyingQueue: DispatchQueue,
+         serializationQueue: DispatchQueue? = nil,
+         eventMonitor: RequestEventMonitor?,
+         delegate: RequestDelegate,
+         destination: @escaping Destination) {
         self.destination = destination
 
-        super.init(id: id, underlyingQueue: underlyingQueue, serializationQueue: serializationQueue, delegate: delegate, eventMonitor: eventMonitor)
+        super.init(id: id,
+                   convertible: convertible,
+                   underlyingQueue: underlyingQueue,
+                   serializationQueue: serializationQueue,
+                   eventMonitor: eventMonitor,
+                   delegate: delegate)
     }
 
     func didComplete(task: URLSessionTask, with url: URL) {
         temporaryURL = url
-
-        didComplete(task: task)
+    }
+    
+    override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
+        // TODO: Need resume data.
+        return session.downloadTask(with: request)
     }
 
     /// Validates the request, using the specified closure.
@@ -330,10 +408,29 @@ open class UploadRequest: DataRequest {
 
     let uploadable: Uploadable
 
-    init(id: UUID = UUID(), underlyingQueue: DispatchQueue, delegate: RequestDelegate, eventMonitor: EventMonitor?, uploadable: Uploadable) {
+    init(id: UUID = UUID(),
+         convertible: URLRequestConvertible,
+         underlyingQueue: DispatchQueue,
+         serializationQueue: DispatchQueue? = nil,
+         eventMonitor: RequestEventMonitor?,
+         delegate: RequestDelegate,
+         uploadable: Uploadable) {
         self.uploadable = uploadable
 
-        super.init(id: id, underlyingQueue: underlyingQueue, delegate: delegate, eventMonitor: eventMonitor)
+        super.init(id: id,
+                   convertible: convertible,
+                   underlyingQueue: underlyingQueue,
+                   serializationQueue: serializationQueue,
+                   eventMonitor: eventMonitor,
+                   delegate: delegate)
+    }
+    
+    override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
+        switch uploadable {
+        case let .data(data): return session.uploadTask(with: request, from: data)
+        case let .file(url): return session.uploadTask(with: request, fromFile: url)
+        case .stream: return session.uploadTask(withStreamedRequest: request)
+        }
     }
 
     func inputStream() -> InputStream {
