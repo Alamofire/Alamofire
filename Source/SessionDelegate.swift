@@ -32,74 +32,93 @@ open class SessionDelegate: NSObject {
     private weak var manager: SessionManager?
     private var eventMonitor: EventMonitor?
     private var queue: DispatchQueue? { return manager?.rootQueue }
-    
+
     let startRequestsImmediately: Bool
 
     public init(startRequestsImmediately: Bool = true) {
         self.startRequestsImmediately = startRequestsImmediately
     }
-    
+
     func didCreateSessionManager(_ manager: SessionManager, withEventMonitor eventMonitor: EventMonitor) {
         self.manager = manager
         self.eventMonitor = eventMonitor
     }
-    
+
     func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
         guard let manager = manager else { fatalError("Received didCreateURLRequest but there is no manager.") }
-        
+
+        guard !request.isCancelled else { return }
+
         let task = request.task(for: urlRequest, using: manager.session)
         requestTaskMap[request] = task
         request.didCreateTask(task)
-        
-        if startRequestsImmediately {
+
+        if startRequestsImmediately || request.isResumed {
             task.resume()
-            request.resume()
+            request.didResume()
+        }
+
+        if request.isSuspended {
+            task.suspend()
+            request.didSuspend()
         }
     }
-    
-    
 }
 
 extension SessionDelegate: RequestDelegate {
     func isRetryingRequest(_ request: Request, ifNecessaryWithError error: Error) -> Bool {
-        // TODO: Cancellation while waiting?
         guard let manager = manager, let retrier = manager.retrier else { return false }
-        
+
         retrier.should(manager, retry: request, with: error) { (shouldRetry, retryInterval) in
+            guard !request.isCancelled else { return }
+
             self.queue?.async {
                 guard shouldRetry else {
                     request.finish()
                     return
                 }
-                
+
                 self.queue?.after(retryInterval) {
+                    guard !request.isCancelled else { return }
+
                     self.manager?.perform(request)
                 }
             }
         }
-        
+
         return true
     }
-    
+
     func cancelRequest(_ request: Request) {
         queue?.async {
-            self.requestTaskMap[request]?.cancel()
-            request.didCancel()
+            defer { request.didCancel() }
+            
+            guard let task = self.requestTaskMap[request] else {
+                request.finish()
+                return
+            }
+
+            task.cancel()
         }
     }
 
     func suspendRequest(_ request: Request) {
         queue?.async {
-            self.requestTaskMap[request]?.suspend()
-            request.didSuspend()
+            defer { request.didSuspend() }
+            
+            guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
+
+            task.suspend()
         }
     }
 
     func resumeRequest(_ request: Request) {
         queue?.async {
-            // TODO: If queue, move manually resumed requests to the top.
-            self.requestTaskMap[request]?.resume()
-            request.didResume()
+            defer { request.didResume() }
+            
+            guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
+
+            task.resume()
         }
     }
 }

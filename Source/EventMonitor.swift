@@ -60,15 +60,15 @@ public protocol RequestEventMonitor {
     func request(_ request: Request, didAdaptInitialRequest initialRequest: URLRequest, to adaptedRequest: URLRequest)
     func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error)
     func request(_ request: Request, didCreateTask task: URLSessionTask)
-    
+
     func requestDidResume(_ request: Request)
     func requestDidSuspend(_ request: Request)
     func requestDidCancel(_ request: Request)
-    
+
     func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics)
     func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error)
     func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?)
-    
+
     func requestDidFinish(_ request: Request)
 }
 
@@ -190,39 +190,39 @@ public final class CompositeEventMonitor: EventMonitor {
                     didFinishDownloadingTo location: URL) {
         performEvent { $0.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location) }
     }
-    
+
     public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
         performEvent { $0.request(request, didCreateURLRequest: urlRequest) }
     }
-    
+
     public func request(_ request: Request, didFailToCreateURLRequestWithError error: Error) {
         performEvent { $0.request(request, didFailToCreateURLRequestWithError: error) }
     }
-    
+
     public func request(_ request: Request, didAdaptInitialRequest initialRequest: URLRequest, to adaptedRequest: URLRequest) {
         performEvent { $0.request(request, didAdaptInitialRequest: initialRequest, to: adaptedRequest) }
     }
-    
+
     public func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error) {
         performEvent { $0.request(request, didFailToAdaptURLRequest: initialRequest, withError: error) }
     }
-    
+
     public func request(_ request: Request, didCreateTask task: URLSessionTask) {
         performEvent { $0.request(request, didCreateTask: task) }
     }
-    
+
     public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
         performEvent { $0.request(request, didGatherMetrics: metrics) }
     }
-    
+
     public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error) {
         performEvent { $0.request(request, didFailTask: task, earlyWithError: error) }
     }
-    
+
     public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?) {
         performEvent { $0.request(request, didCompleteTask: task, with: error) }
     }
-    
+
     public func requestDidFinish(_ request: Request) {
         performEvent { $0.requestDidFinish(request) }
     }
@@ -246,47 +246,47 @@ public final class NSLoggingEventMonitor: EventMonitor {
     public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
         NSLog("Request: \(request) didCreateURLRequest: \(urlRequest)")
     }
-    
+
     public func request(_ request: Request, didFailToCreateURLRequestWithError error: Error) {
         NSLog("Request: \(request) didFailToCreateURLRequestWithError: \(error)")
     }
-    
+
     public func request(_ request: Request, didAdaptInitialRequest initialRequest: URLRequest, to adaptedRequest: URLRequest) {
         NSLog("Request: \(request) didAdaptInitialRequest \(initialRequest) to \(adaptedRequest)")
     }
-    
+
     public func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error) {
         NSLog("Request: \(request) didFailToAdaptURLRequest \(initialRequest) withError \(error)")
     }
-    
+
     public func request(_ request: Request, didCreateTask task: URLSessionTask) {
         NSLog("Request: \(request) didCreateTask \(task)")
     }
-    
+
     public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
         NSLog("Request: \(request) didGatherMetrics \(metrics)")
     }
-    
+
     public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error) {
         NSLog("Request: \(request) didFailTask \(task) earlyWithError \(error)")
     }
-    
+
     public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?) {
         NSLog("Request: \(request) didCompleteTask \(task) withError: \(error?.localizedDescription ?? "None")")
     }
-    
+
     public func requestDidFinish(_ request: Request) {
         NSLog("Request: \(request) didFinish")
     }
-    
+
     public func requestDidResume(_ request: Request) {
         NSLog("Request: \(request) didResume")
     }
-    
+
     public func requestDidSuspend(_ request: Request) {
         NSLog("Request: \(request) didSuspend")
     }
-    
+
     public func requestDidCancel(_ request: Request) {
         NSLog("Request: \(request) didCancel")
     }
@@ -419,47 +419,47 @@ public final class ClosureEventMonitor: EventMonitor {
     public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
         requestDidCreateURLRequest?(request, urlRequest)
     }
-    
+
     public func request(_ request: Request, didFailToCreateURLRequestWithError error: Error) {
         requestDidFailToCreateURLRequestWithError?(request, error)
     }
-    
+
     public func request(_ request: Request, didAdaptInitialRequest initialRequest: URLRequest, to adaptedRequest: URLRequest) {
         requestDidAdaptInitialRequestToAdaptedRequest?(request, initialRequest, adaptedRequest)
     }
-    
+
     public func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error) {
         requestDidFailToAdaptURLRequestWithError?(request, initialRequest, error)
     }
-    
+
     public func request(_ request: Request, didCreateTask task: URLSessionTask) {
         requestDidCreateTask?(request, task)
     }
-    
+
     public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
         requestDidGatherMetrics?(request, metrics)
     }
-    
+
     public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error) {
         requestDidFailTaskEarlyWithError?(request, task, error)
     }
-    
+
     public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?) {
         requestDidCompleteTaskWithError?(request, task, error)
     }
-    
+
     public func requestDidFinish(_ request: Request) {
         requestDidFinish?(request)
     }
-    
+
     public func requestDidResume(_ request: Request) {
         requestDidResume?(request)
     }
-    
+
     public func requestDidSuspend(_ request: Request) {
         requestDidSuspend?(request)
     }
-    
+
     public func requestDidCancel(_ request: Request) {
         requestDidCancel?(request)
     }

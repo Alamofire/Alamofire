@@ -77,7 +77,7 @@ open class SessionManager {
             return try encoding.encode(request, with: parameters)
         }
     }
-    
+
     // TODO: Serialization Queue support?
     open func request(_ url: URLConvertible,
                       method: HTTPMethod = .get,
@@ -183,31 +183,36 @@ open class SessionManager {
     func upload(_ stream: InputStream, to convertible: URLRequestConvertible) -> UploadRequest {
         return upload(.stream(stream), to: convertible)
     }
-    
+
     // MARK: - Internal API
-    
+
     // MARK: Uploadable
-    
+
     func upload(_ uploadable: UploadRequest.Uploadable, to convertible: URLRequestConvertible) -> UploadRequest {
         let request = UploadRequest(convertible: convertible,
                                     underlyingQueue: rootQueue,
                                     eventMonitor: eventMonitor,
                                     delegate: delegate,
                                     uploadable: uploadable)
-        
+
         perform(request)
-        
+
         return request
     }
-    
+
     // MARK: Perform
-    
+
     func perform(_ request: Request) {
         // TODO: Threadsafe adapter access?
         requestQueue.async { [adapter = adapter] in
+            guard !request.isCancelled else { return }
+
             do {
                 let initialRequest = try request.convertible.asURLRequest()
                 self.rootQueue.async { request.didCreateURLRequest(initialRequest) }
+
+                guard !request.isCancelled else { return }
+
                 if let adapter = adapter {
                     do {
                         let adaptedRequest = try adapter.adapt(initialRequest)
