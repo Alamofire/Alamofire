@@ -70,8 +70,8 @@ open class MultipartFormData {
             case .final:
                 boundaryText = "\(EncodingCharacters.crlf)--\(boundary)--\(EncodingCharacters.crlf)"
             }
-
-            return boundaryText.data(using: String.Encoding.utf8, allowLossyConversion: false)!
+            
+            return Data(boundaryText.utf8)
         }
     }
 
