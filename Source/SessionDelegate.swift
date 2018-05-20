@@ -92,7 +92,7 @@ extension SessionDelegate: RequestDelegate {
     func cancelRequest(_ request: Request) {
         queue?.async {
             defer { request.didCancel() }
-            
+
             guard let task = self.requestTaskMap[request] else {
                 request.finish()
                 return
@@ -105,7 +105,7 @@ extension SessionDelegate: RequestDelegate {
     func suspendRequest(_ request: Request) {
         queue?.async {
             defer { request.didSuspend() }
-            
+
             guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
 
             task.suspend()
@@ -115,7 +115,7 @@ extension SessionDelegate: RequestDelegate {
     func resumeRequest(_ request: Request) {
         queue?.async {
             defer { request.didResume() }
-            
+
             guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
 
             task.resume()

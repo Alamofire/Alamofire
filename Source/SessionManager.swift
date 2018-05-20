@@ -86,9 +86,9 @@ open class SessionManager {
                       headers: HTTPHeaders? = nil) -> DataRequest {
         let convertible = RequestConvertible(url: url,
                                              method: method,
-                                          parameters: parameters,
-                                          encoding: encoding,
-                                          headers: headers)
+                                             parameters: parameters,
+                                             encoding: encoding,
+                                             headers: headers)
         return request(convertible)
     }
 
@@ -120,7 +120,7 @@ open class SessionManager {
         return download(convertible, to: destination)
     }
 
-    func download(_ convertible: URLRequestConvertible,
+    open func download(_ convertible: URLRequestConvertible,
                   to destination: @escaping DownloadRequest.Destination = DownloadRequest.suggestedDownloadDestination()) -> DownloadRequest {
         let request = DownloadRequest(convertible: convertible,
                                       underlyingQueue: rootQueue,
@@ -135,7 +135,7 @@ open class SessionManager {
 
     // MARK: - Upload
 
-    struct UploadConvertible: URLRequestConvertible {
+    struct ParameterlessRequestConvertible: URLRequestConvertible {
         let url: URLConvertible
         let method: HTTPMethod
         let headers: HTTPHeaders?
@@ -145,55 +145,93 @@ open class SessionManager {
         }
     }
 
-    func upload(_ data: Data,
+    struct Upload: UploadConvertible {
+        let request: URLRequestConvertible
+        let uploadable: UploadableConvertible
+
+        func createUploadable() throws -> UploadRequest.Uploadable {
+            return try uploadable.createUploadable()
+        }
+
+        func asURLRequest() throws -> URLRequest {
+            return try request.asURLRequest()
+        }
+    }
+
+    open func upload(_ data: Data,
                 to convertible: URLConvertible,
                 method: HTTPMethod = .post,
                 headers: HTTPHeaders? = nil) -> UploadRequest {
-        let convertible = UploadConvertible(url: convertible, method: method, headers: headers)
+        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
 
-        return upload(data: data, to: convertible)
+        return upload(data, with: convertible)
     }
 
-    func upload(data: Data, to convertible: URLRequestConvertible) -> UploadRequest {
-        return upload(.data(data), to: convertible)
+    open func upload(_ data: Data, with convertible: URLRequestConvertible) -> UploadRequest {
+        return upload(.data(data), with: convertible)
     }
 
-    func upload(_ fileURL: URL,
+    open func upload(_ fileURL: URL,
                 to convertible: URLConvertible,
                 method: HTTPMethod = .post,
                 headers: HTTPHeaders? = nil) -> UploadRequest {
-        let convertible = UploadConvertible(url: convertible, method: method, headers: headers)
+        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
 
-        return upload(fileURL, to: convertible)
+        return upload(fileURL, with: convertible)
     }
 
-    func upload(_ fileURL: URL, to convertible: URLRequestConvertible) -> UploadRequest {
-        return upload(.file(fileURL), to: convertible)
+    open func upload(_ fileURL: URL, with convertible: URLRequestConvertible) -> UploadRequest {
+        return upload(.file(fileURL, shouldRemove: false), with: convertible)
     }
 
-    func upload(_ stream: InputStream,
+    open func upload(_ stream: InputStream,
                 to convertible: URLConvertible,
                 method: HTTPMethod = .post,
                 headers: HTTPHeaders? = nil) -> UploadRequest {
-        let convertible = UploadConvertible(url: convertible, method: method, headers: headers)
+        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
 
-        return upload(stream, to: convertible)
+        return upload(stream, with: convertible)
     }
 
-    func upload(_ stream: InputStream, to convertible: URLRequestConvertible) -> UploadRequest {
-        return upload(.stream(stream), to: convertible)
+    open func upload(_ stream: InputStream, with convertible: URLRequestConvertible) -> UploadRequest {
+        return upload(.stream(stream), with: convertible)
+    }
+
+    open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
+                usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.multipartFormDataEncodingMemoryThreshold,
+                to url: URLConvertible,
+                method: HTTPMethod = .post,
+                headers: HTTPHeaders? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
+
+        return upload(multipartFormData: multipartFormData, usingThreshold: encodingMemoryThreshold, with: convertible)
+    }
+
+    open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
+                usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.multipartFormDataEncodingMemoryThreshold,
+                with request: URLRequestConvertible) -> UploadRequest {
+        let multipartUpload = MultipartUpload(encodingMemoryThreshold: encodingMemoryThreshold,
+                                              request: request,
+                                              multipartBuilder: multipartFormData)
+
+        return upload(multipartUpload)
     }
 
     // MARK: - Internal API
 
     // MARK: Uploadable
 
-    func upload(_ uploadable: UploadRequest.Uploadable, to convertible: URLRequestConvertible) -> UploadRequest {
-        let request = UploadRequest(convertible: convertible,
+    func upload(_ uploadable: UploadRequest.Uploadable, with convertible: URLRequestConvertible) -> UploadRequest {
+        let uploadable = Upload(request: convertible, uploadable: uploadable)
+
+        return upload(uploadable)
+    }
+
+    func upload(_ upload: UploadConvertible) -> UploadRequest {
+        let request = UploadRequest(convertible: upload,
                                     underlyingQueue: rootQueue,
                                     eventMonitor: eventMonitor,
-                                    delegate: delegate,
-                                    uploadable: uploadable)
+                                    delegate: delegate)
 
         perform(request)
 
@@ -203,32 +241,50 @@ open class SessionManager {
     // MARK: Perform
 
     func perform(_ request: Request) {
-        // TODO: Threadsafe adapter access?
-        requestQueue.async { [adapter = adapter] in
+        requestQueue.async {
+            guard !request.isCancelled else { return }
+
+            self.performSetupOperations(for: request)
+        }
+    }
+
+    func perform(_ request: UploadRequest) {
+        requestQueue.async {
             guard !request.isCancelled else { return }
 
             do {
-                let initialRequest = try request.convertible.asURLRequest()
-                self.rootQueue.async { request.didCreateURLRequest(initialRequest) }
+                let uploadable = try request.upload.createUploadable()
+                self.rootQueue.async { request.didCreateUploadable(uploadable) }
 
-                guard !request.isCancelled else { return }
-
-                if let adapter = adapter {
-                    do {
-                        let adaptedRequest = try adapter.adapt(initialRequest)
-                        self.rootQueue.async {
-                            request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
-                            self.delegate.didCreateURLRequest(adaptedRequest, for: request)
-                        }
-                    } catch {
-                        self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: error) }
-                    }
-                } else {
-                    self.rootQueue.async { self.delegate.didCreateURLRequest(initialRequest, for: request) }
-                }
+                self.performSetupOperations(for: request)
             } catch {
-                self.rootQueue.async { request.didFailToCreateURLRequest(with: error) }
+                self.rootQueue.async { request.didFailToCreateUploadable(with: error) }
             }
+        }
+    }
+
+    func performSetupOperations(for request: Request) {
+        do {
+            let initialRequest = try request.convertible.asURLRequest()
+            self.rootQueue.async { request.didCreateURLRequest(initialRequest) }
+
+            guard !request.isCancelled else { return }
+
+            if let adapter = adapter {
+                do {
+                    let adaptedRequest = try adapter.adapt(initialRequest)
+                    self.rootQueue.async {
+                        request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
+                        self.delegate.didCreateURLRequest(adaptedRequest, for: request)
+                    }
+                } catch {
+                    self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: error) }
+                }
+            } else {
+                self.rootQueue.async { self.delegate.didCreateURLRequest(initialRequest, for: request) }
+            }
+        } catch {
+            self.rootQueue.async { request.didFailToCreateURLRequest(with: error) }
         }
     }
 }

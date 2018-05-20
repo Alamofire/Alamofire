@@ -324,19 +324,19 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(response?.statusCode == 200, "response status code should be 200")
     }
-    
+
     func testSetStartRequestsImmediatelyToFalseAndCancelledCallsResponseHandlers() {
         // Given
         let delegate = SessionDelegate(startRequestsImmediately: false)
         let manager = SessionManager(delegate: delegate)
-        
+
         let url = URL(string: "https://httpbin.org/get")!
         let urlRequest = URLRequest(url: url)
-        
+
         let expectation = self.expectation(description: "\(url)")
-        
+
         var response: DataResponse<Data?>?
-        
+
         // When
         let request = manager.request(urlRequest)
             .cancel()
@@ -344,28 +344,28 @@ class SessionManagerTestCase: BaseTestCase {
                 response = resp
                 expectation.fulfill()
             }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         // Then
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
         XCTAssertNil(request.task)
         guard let error = request.error as? AFError, case .explicitlyCancelled = error else { XCTFail(); return }
     }
-    
+
     func testSetStartRequestsImmediatelyToFalseAndResumeThenCancelRequestHasCorrectOutput() {
         // Given
         let delegate = SessionDelegate(startRequestsImmediately: false)
         let manager = SessionManager(delegate: delegate)
-        
+
         let url = URL(string: "https://httpbin.org/get")!
         let urlRequest = URLRequest(url: url)
-        
+
         let expectation = self.expectation(description: "\(url)")
-        
+
         var response: DataResponse<Data?>?
-        
+
         // When
         let request = manager.request(urlRequest)
             .resume()
@@ -374,29 +374,29 @@ class SessionManagerTestCase: BaseTestCase {
                 response = resp
                 expectation.fulfill()
             }
-        
-        
+
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         // Then
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
         XCTAssertNil(request.task)
         guard let error = request.error as? AFError, case .explicitlyCancelled = error else { XCTFail(); return }
     }
-    
+
     func testSetStartRequestsImmediatelyToFalseAndCancelThenResumeRequestDoesntCreateTaskAndStaysCancelled() {
         // Given
         let delegate = SessionDelegate(startRequestsImmediately: false)
         let manager = SessionManager(delegate: delegate)
-        
+
         let url = URL(string: "https://httpbin.org/get")!
         let urlRequest = URLRequest(url: url)
-        
+
         let expectation = self.expectation(description: "\(url)")
-        
+
         var response: DataResponse<Data?>?
-        
+
         // When
         let request = manager.request(urlRequest)
             .cancel()
@@ -405,10 +405,10 @@ class SessionManagerTestCase: BaseTestCase {
                 response = resp
                 expectation.fulfill()
             }
-        
-        
+
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         // Then
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)

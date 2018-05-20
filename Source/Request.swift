@@ -37,15 +37,14 @@ open class Request {
 
     public enum State {
         case initialized, resumed, suspended, cancelled
-        
+
         func canTransitionTo(_ state: State) -> Bool {
             switch (self, state) {
             case (.initialized, _): return true
-            case (_, .initialized): return false
+            case (_, .initialized), (.cancelled, _): return false
             case (.resumed, .cancelled), (.suspended, .cancelled),
                  (.resumed, .suspended), (.suspended, .resumed): return true
             case (.suspended, .suspended), (.resumed, .resumed): return false
-            case (.cancelled, _): return false
             }
         }
     }
@@ -231,33 +230,33 @@ open class Request {
     @discardableResult
     public func cancel() -> Self {
         guard state.canTransitionTo(.cancelled) else { return self }
-        
+
         state = .cancelled
 
         delegate?.cancelRequest(self)
-        
+
         return self
     }
 
     @discardableResult
     public func suspend() -> Self {
         guard state.canTransitionTo(.suspended) else { return self }
-        
+
         state = .suspended
 
         delegate?.suspendRequest(self)
-        
+
         return self
     }
 
     @discardableResult
     public func resume() -> Self {
         guard state.canTransitionTo(.resumed) else { return self }
-        
+
         state = .resumed
 
         delegate?.resumeRequest(self)
-        
+
         return self
     }
 
@@ -447,22 +446,27 @@ open class DownloadRequest: Request {
 }
 
 open class UploadRequest: DataRequest {
-    enum Uploadable {
+    public enum Uploadable {
         case data(Data)
-        case file(URL)
+        case file(URL, shouldRemove: Bool)
         case stream(InputStream)
     }
 
-    let uploadable: Uploadable
+    // MARK: - Initial State
+
+    let upload: UploadableConvertible
+
+    // MARK: - Updated State
+
+    public var uploadable: Uploadable?
 
     init(id: UUID = UUID(),
-         convertible: URLRequestConvertible,
+         convertible: UploadConvertible,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue? = nil,
          eventMonitor: RequestEventMonitor?,
-         delegate: RequestDelegate,
-         uploadable: Uploadable) {
-        self.uploadable = uploadable
+         delegate: RequestDelegate) {
+        self.upload = convertible
 
         super.init(id: id,
                    convertible: convertible,
@@ -470,20 +474,66 @@ open class UploadRequest: DataRequest {
                    serializationQueue: serializationQueue,
                    eventMonitor: eventMonitor,
                    delegate: delegate)
+        
+        // Automatically remove temporary upload files (e.g. multipart form data)
+        internalQueue.addOperation {
+            guard
+                let uploadable = self.uploadable,
+                case let .file(url, shouldRemove) = uploadable,
+                shouldRemove else { return }
+            
+            // TODO: Abstract file manager
+            try? FileManager.default.removeItem(at: url)
+        }
+    }
+
+    func didCreateUploadable(_ uploadable: Uploadable) {
+        // TODO: Event Monitor here.
+
+        self.uploadable = uploadable
+    }
+
+    func didFailToCreateUploadable(with error: Error) {
+        // TODO: Event monitor
+        self.error = error
+
+        retryOrFinish(error: error)
     }
 
     override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
+        guard let uploadable = uploadable else {
+            fatalError("Attempting to create a URLSessionUploadTask when Uploadable value doesn't exist.")
+        }
+
         switch uploadable {
         case let .data(data): return session.uploadTask(with: request, from: data)
-        case let .file(url): return session.uploadTask(with: request, fromFile: url)
+        case let .file(url, _): return session.uploadTask(with: request, fromFile: url)
         case .stream: return session.uploadTask(withStreamedRequest: request)
         }
     }
 
     func inputStream() -> InputStream {
-        switch uploadable {
-        case .stream(let stream): return stream
-        default: fatalError("Attempted to access the stream of an UploadRequest that wasn't created with one.")
+        guard let uploadable = uploadable else {
+            fatalError("Attempting to access the input stream but the uploadable doesn't exist.")
         }
+
+        guard case let .stream(stream) = uploadable else {
+            fatalError("Attempted to access the stream of an UploadRequest that wasn't created with one.")
+        }
+
+        return stream
     }
 }
+
+protocol UploadableConvertible {
+    func createUploadable() throws -> UploadRequest.Uploadable
+}
+
+extension UploadRequest.Uploadable: UploadableConvertible {
+    func createUploadable() throws -> UploadRequest.Uploadable {
+        return self
+    }
+}
+
+protocol UploadConvertible: UploadableConvertible & URLRequestConvertible { }
+
