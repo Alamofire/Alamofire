@@ -17,6 +17,14 @@ Alamofire.request("https://httpbin.org/get").responseJSON { response in
     print("Request: \(String(describing: response.request))")   // original url request
     print("Response: \(String(describing: response.response))") // http url response
     print("Result: \(response.result)")                         // response serialization result
+    
+    if let httpStatusCode = response.response?.statusCode {
+        print("http status code: \(httpStatusCode)") // http status code
+    }
+
+    if let httpStatusCode = response.response?.statusCode {
+        print("http status code: \(httpStatusCode)") // http status code
+    }
 
     if let json = response.result.value {
         print("JSON: \(json)") // serialized json response
@@ -38,7 +46,7 @@ Alamofire contains five different response handlers by default including:
 // Response Handler - Unserialized Response
 func response(
     queue: DispatchQueue?,
-    completionHandler: @escaping (DefaultDataResponse) -> Void)
+    completionHandler: @escaping (DataResponse<Data?>) -> Void)
     -> Self
 
 // Response Data Handler - Serialized into Data

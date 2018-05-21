@@ -145,7 +145,7 @@ class URLProtocolTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "GET request should succeed")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         manager.request(urlRequest)
@@ -164,13 +164,7 @@ class URLProtocolTestCase: BaseTestCase {
 
         if let headers = response?.response?.allHeaderFields as? [String: String] {
             XCTAssertEqual(headers["Request-Header"], "foobar")
-
-            // Configuration headers are only passed in on iOS 9.0+
-            if #available(iOS 9.0, *) {
-                XCTAssertEqual(headers["Session-Configuration-Header"], "foo")
-            } else {
-                XCTAssertNil(headers["Session-Configuration-Header"])
-            }
+            XCTAssertEqual(headers["Session-Configuration-Header"], "foo")
         } else {
             XCTFail("headers should not be nil")
         }

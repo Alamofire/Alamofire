@@ -425,7 +425,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let expectation1 = self.expectation(description: "request should be stubbed and return 204 status code")
         let expectation2 = self.expectation(description: "download should be stubbed and return 204 status code")
 
-        var requestResponse: DefaultDataResponse?
+        var requestResponse: DataResponse<Data?>?
         var downloadResponse: DefaultDownloadResponse?
 
         // When
