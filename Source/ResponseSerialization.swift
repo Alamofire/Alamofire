@@ -30,7 +30,7 @@ import Foundation
 public protocol DataResponseSerializerProtocol {
     /// The type of serialized object to be created by this serializer.
     associatedtype SerializedObject
-    
+
 //    /// The HTTP response codes used to indicate empty responses. Defaults to `[204, 205]`.
 //    var emptyDataResponseCodes: Set<Int> { get }
 //
@@ -50,7 +50,7 @@ public protocol DataResponseSerializerProtocol {
 public protocol DownloadResponseSerializerProtocol {
     /// The type of serialized object to be created by this `DownloadResponseSerializerType`.
     associatedtype SerializedObject
-    
+
 //    /// The HTTP response codes used to indicate empty responses. Defaults to `[204, 205]`.
 //    var emptyResponseCodes: Set<Int> { get }
 //
@@ -259,10 +259,10 @@ extension DownloadRequest {
                                             resumeData: self.resumeData,
                                             metrics: self.metrics,
                                             result: result)
-            
+
             (queue ?? .main).async { completionHandler(response) }
         }
-        
+
         return self
     }
 
@@ -295,7 +295,7 @@ extension DownloadRequest {
                                             resumeData: self.resumeData,
                                             metrics: self.metrics,
                                             result: result)
-            
+
             (queue ?? .main).async { completionHandler(response) }
         }
 

@@ -132,7 +132,7 @@ open class SessionManager {
 
         return request
     }
-    
+
     open func download(resumingWith data: Data,
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let request = DownloadRequest(downloadable: .resumeData(data),
@@ -140,9 +140,9 @@ open class SessionManager {
                                       eventMonitor: eventMonitor,
                                       delegate: delegate,
                                       destination: destination)
-        
+
         perform(request)
-        
+
         return request
     }
 
@@ -251,13 +251,13 @@ open class SessionManager {
 
         return request
     }
-    
+
     // MARK: Downloadable
-    
+
 //    func download
 
     // MARK: Perform
-    
+
     func perform(_ request: Request) {
         switch request {
         case let r as DataRequest: perform(r)
@@ -300,14 +300,14 @@ open class SessionManager {
             }
         }
     }
-    
+
     func performSetupOperations(for request: Request, convertible: URLRequestConvertible) {
         do {
             let initialRequest = try convertible.asURLRequest()
             self.rootQueue.async { request.didCreateURLRequest(initialRequest) }
-            
+
             guard !request.isCancelled else { return }
-            
+
             if let adapter = adapter {
                 do {
                     let adaptedRequest = try adapter.adapt(initialRequest)

@@ -129,11 +129,11 @@ extension URLRequest {
 ///
 /// - returns: The created `DataRequest`.
 @discardableResult
-public func request<Convertible: URLConvertible>(_ url: Convertible,
-                                                 method: HTTPMethod = .get,
-                                                 parameters: Parameters? = nil,
-                                                 encoding: ParameterEncoding = URLEncoding.default,
-                                                 headers: HTTPHeaders? = nil) -> DataRequest {
+public func request(_ url: URLConvertible,
+                    method: HTTPMethod = .get,
+                    parameters: Parameters? = nil,
+                    encoding: ParameterEncoding = URLEncoding.default,
+                    headers: HTTPHeaders? = nil) -> DataRequest {
     return SessionManager.default.request(url,
                                           method: method,
                                           parameters: parameters,
@@ -171,8 +171,8 @@ public func request<Convertible: URLRequestConvertible>(_ urlRequest: Convertibl
 ///
 /// - returns: The created `DownloadRequest`.
 @discardableResult
-public func download<Convertible: URLConvertible>(
-    _ url: Convertible,
+public func download(
+    _ url: URLConvertible,
     method: HTTPMethod = .get,
     parameters: Parameters? = nil,
     encoding: ParameterEncoding = URLEncoding.default,

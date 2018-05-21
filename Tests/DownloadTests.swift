@@ -31,12 +31,12 @@ class DownloadInitializationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "download should complete")
-        
+
         // When
         let request = Alamofire.download(urlString).response { (resp) in
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
@@ -56,7 +56,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         let request = Alamofire.download(urlString, headers: headers).response { (resp) in
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then

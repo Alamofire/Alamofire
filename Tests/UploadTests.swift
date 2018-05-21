@@ -37,7 +37,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
         let request = Alamofire.upload(imageURL, to: urlString).response { _ in
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
@@ -58,7 +58,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
         let request = Alamofire.upload(imageURL, to: urlString, method: .post, headers: headers).response { _ in
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
@@ -85,7 +85,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
         let request = Alamofire.upload(Data(), to: urlString).response { _ in
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
@@ -105,7 +105,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
         let request = Alamofire.upload(Data(), to: urlString, headers: headers).response { _ in
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
@@ -115,7 +115,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
 
         let authorizationHeader = request.request?.value(forHTTPHeaderField: "Authorization") ?? ""
         XCTAssertEqual(authorizationHeader, "123456", "Authorization header is incorrect")
-        
+
         XCTAssertNotNil(request.response, "response should not be nil")
     }
 }
@@ -134,7 +134,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         let request = Alamofire.upload(imageStream, to: urlString).response { _ in
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
@@ -156,7 +156,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         let request = Alamofire.upload(imageStream, to: urlString, headers: headers).response { _ in
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
@@ -311,7 +311,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
         let frenchData = Data("français".utf8)
         let japaneseData = Data("日本語".utf8)
-        
+
         let expectation = self.expectation(description: "multipart form data upload should succeed")
         var response: DataResponse<Data?>?
 
@@ -352,7 +352,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
         var response: DataResponse<Data?>?
-        
+
         // When
         let request = Alamofire.upload(
                         multipartFormData: { multipartFormData in
@@ -372,7 +372,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTFail("Uploadable is not .data")
             return
         }
-        
+
         XCTAssertTrue(response?.result.isSuccess ==  true)
     }
 
@@ -445,7 +445,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTFail("Uploadable is not .file")
             return
         }
-        
+
         XCTAssertTrue(response?.result.isSuccess == true)
         XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
     }
@@ -478,7 +478,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             XCTFail("Uploadable is not .file")
             return
         }
-        
+
         XCTAssertTrue(response?.result.isSuccess == true)
 
         if
@@ -525,7 +525,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 response = defaultResponse.response
                 data = defaultResponse.data
                 error = defaultResponse.error
-                
+
                 expectation.fulfill()
             }
 

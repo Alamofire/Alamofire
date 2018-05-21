@@ -36,7 +36,7 @@ protocol RequestDelegate: AnyObject {
 open class Request {
     /// A closure executed when monitoring upload or download progress of a request.
     public typealias ProgressHandler = (Progress) -> Void
-    
+
     // TODO: Make publicly readable properties protected?
     public enum State {
         case initialized, resumed, suspended, cancelled
@@ -64,7 +64,7 @@ open class Request {
     open let internalQueue: OperationQueue
 
     // MARK: - Updated State
-    
+
     let uploadProgress = Progress()
     let downloadProgress = Progress()
     var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
@@ -99,7 +99,7 @@ open class Request {
     public var initialTask: URLSessionTask? { return tasks.first }
     public var finalTask: URLSessionTask? { return tasks.last }
     public var task: URLSessionTask? { return finalTask }
-    
+
     fileprivate(set) public var error: Error?
     private(set) var credential: URLCredential?
     fileprivate(set) var validators: [() -> Void] = []
@@ -158,18 +158,18 @@ open class Request {
 
         eventMonitor?.request(self, didCreateTask: task)
     }
-    
+
     func updateUploadProgress(totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         uploadProgress.totalUnitCount = totalBytesExpectedToSend
         uploadProgress.completedUnitCount = totalBytesSent
-        
+
         uploadProgressHandler?.queue.async { self.uploadProgressHandler?.handler(self.uploadProgress) }
     }
-    
+
     // Resets task related state
     func reset() {
         error = nil
-        
+
         uploadProgress.totalUnitCount = 0
         uploadProgress.completedUnitCount = 0
         downloadProgress.totalUnitCount = 0
@@ -288,7 +288,7 @@ open class Request {
 
         return self
     }
-    
+
     /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
     ///
     /// - parameter queue:   The dispatch queue to execute the closure on.
@@ -298,12 +298,12 @@ open class Request {
     @discardableResult
     open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping ProgressHandler) -> Self {
         underlyingQueue.async { self.downloadProgressHandler = (closure, queue) }
-        
+
         return self
     }
-    
+
     // MARK: Upload Progress
-    
+
     /// Sets a closure to be called periodically during the lifecycle of the `UploadRequest` as data is sent to
     /// the server.
     ///
@@ -317,7 +317,7 @@ open class Request {
     @discardableResult
     open func uploadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping ProgressHandler) -> Self {
         underlyingQueue.async { self.uploadProgressHandler = (closure, queue) }
-        
+
         return self
     }
 }
@@ -336,9 +336,9 @@ extension Request: Hashable {
 
 open class DataRequest: Request {
     let convertible: URLRequestConvertible
-    
+
     private(set) var data: Data?
-    
+
     init(id: UUID = UUID(),
          convertible: URLRequestConvertible,
          underlyingQueue: DispatchQueue,
@@ -346,7 +346,7 @@ open class DataRequest: Request {
          eventMonitor: RequestEventMonitor?,
          delegate: RequestDelegate) {
         self.convertible = convertible
-        
+
         super.init(id: id,
                    underlyingQueue: underlyingQueue,
                    serializationQueue: serializationQueue,
@@ -356,27 +356,27 @@ open class DataRequest: Request {
 
     override func reset() {
         super.reset()
-        
+
         data = nil
     }
-    
+
     func didRecieve(data: Data) {
         if self.data == nil {
             self.data = data
         } else {
             self.data?.append(data)
         }
-        
+
         updateDownloadProgress()
     }
-    
+
     func updateDownloadProgress() {
         let totalBytesRecieved = Int64(self.data?.count ?? 0)
         let totalBytesExpected = task?.response?.expectedContentLength ?? NSURLSessionTransferSizeUnknown
-        
+
         downloadProgress.totalUnitCount = totalBytesExpected
         downloadProgress.completedUnitCount = totalBytesRecieved
-        
+
         downloadProgressHandler?.queue.async { self.downloadProgressHandler?.handler(self.downloadProgress) }
     }
 
@@ -413,10 +413,10 @@ open class DownloadRequest: Request {
     public struct Options: OptionSet {
         /// A `DownloadOptions` flag that creates intermediate directories for the destination URL if specified.
         public static let createIntermediateDirectories = Options(rawValue: 1 << 0)
-        
+
         /// A `DownloadOptions` flag that removes a previous file from the destination URL if specified.
         public static let removePreviousFile = Options(rawValue: 1 << 1)
-        
+
         /// Returns the raw bitmask value of the option and satisfies the `RawRepresentable` protocol.
         public let rawValue: Int
 
@@ -456,7 +456,7 @@ open class DownloadRequest: Request {
             return (url, options)
         }
     }
-    
+
     public enum Downloadable {
         case request(URLRequestConvertible)
         case resumeData(Data)
@@ -493,10 +493,10 @@ open class DownloadRequest: Request {
                    eventMonitor: eventMonitor,
                    delegate: delegate)
     }
-    
+
     override func reset() {
         super.reset()
-        
+
         temporaryURL = nil
         destinationURL = nil
         resumeData = nil
@@ -504,9 +504,9 @@ open class DownloadRequest: Request {
 
     func didComplete(task: URLSessionTask, with url: URL) {
         temporaryURL = url
-        
+
         guard let destination = destination, let response = response else { return }
-        
+
         let (destinationURL, options) = destination(url, response)
         self.destinationURL = destinationURL
         // TODO: Inject FileManager?
@@ -514,45 +514,45 @@ open class DownloadRequest: Request {
             if options.contains(.removePreviousFile), FileManager.default.fileExists(atPath: destinationURL.path) {
                 try FileManager.default.removeItem(at: destinationURL)
             }
-            
+
             if options.contains(.createIntermediateDirectories) {
                 let directory = destinationURL.deletingLastPathComponent()
                 try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             }
-            
+
             try FileManager.default.moveItem(at: url, to: destinationURL)
         } catch {
             self.error = error
         }
     }
-    
+
     func updateDownloadProgress(bytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         downloadProgress.totalUnitCount = totalBytesExpectedToWrite
         downloadProgress.completedUnitCount += bytesWritten
-        
+
         downloadProgressHandler?.queue.async { self.downloadProgressHandler?.handler(self.downloadProgress) }
     }
-    
+
     override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
         return session.downloadTask(with: request)
     }
-    
+
     open func task(forResumeData data: Data, using session: URLSession) -> URLSessionTask {
         return session.downloadTask(withResumeData: data)
     }
-    
+
     @discardableResult
     public override func cancel() -> Self {
         // TODO: EventMonitor?
         guard state.canTransitionTo(.cancelled) else { return self }
-        
+
         state = .cancelled
-        
+
         delegate?.cancelDownloadRequest(self) { self.resumeData = $0 }
-        
+
         return self
     }
-    
+
     /// Validates the request, using the specified closure.
     ///
     /// If validation fails, subsequent calls to response handlers will have an associated error.
@@ -613,14 +613,14 @@ open class UploadRequest: DataRequest {
                    serializationQueue: serializationQueue,
                    eventMonitor: eventMonitor,
                    delegate: delegate)
-        
+
         // Automatically remove temporary upload files (e.g. multipart form data)
         internalQueue.addOperation {
             guard
                 let uploadable = self.uploadable,
                 case let .file(url, shouldRemove) = uploadable,
                 shouldRemove else { return }
-            
+
             // TODO: Abstract file manager
             try? FileManager.default.removeItem(at: url)
         }

@@ -55,25 +55,25 @@ open class SessionDelegate: NSObject {
 
         resumeOrSuspendTask(task, ifNecessaryForRequest: request)
     }
-    
+
     func didReceiveResumeData(_ data: Data, for request: DownloadRequest) {
         guard let manager = manager else { fatalError("Received didReceiveResumeData but there is no manager.") }
-        
+
         guard !request.isCancelled else { return }
-        
+
         let task = request.task(forResumeData: data, using: manager.session)
         requestTaskMap[request] = task
         request.didCreateTask(task)
-        
+
         resumeOrSuspendTask(task, ifNecessaryForRequest: request)
     }
-    
+
     func resumeOrSuspendTask(_ task: URLSessionTask, ifNecessaryForRequest request: Request) {
         if startRequestsImmediately || request.isResumed {
             task.resume()
             request.didResume()
         }
-        
+
         if request.isSuspended {
             task.suspend()
             request.didSuspend()
@@ -118,7 +118,7 @@ extension SessionDelegate: RequestDelegate {
             task.cancel()
         }
     }
-    
+
     func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
         queue?.async {
             guard let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask else {
@@ -126,7 +126,7 @@ extension SessionDelegate: RequestDelegate {
                 request.finish()
                 return
             }
-            
+
             downloadTask.cancel { (data) in
                 self.queue?.async {
                     byProducingResumeData(data)
@@ -228,7 +228,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
                                  didSendBodyData: bytesSent,
                                  totalBytesSent: totalBytesSent,
                                  totalBytesExpectedToSend: totalBytesExpectedToSend)
-        
+
         requestTaskMap[task]?.updateUploadProgress(totalBytesSent: totalBytesSent,
                                                    totalBytesExpectedToSend: totalBytesExpectedToSend)
 
@@ -360,11 +360,11 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                  downloadTask: downloadTask,
                                  didResumeAtOffset: fileOffset,
                                  expectedTotalBytes: expectedTotalBytes)
-        
+
         guard let downloadRequest = requestTaskMap[downloadTask] as? DownloadRequest else {
             fatalError("No DownloadRequest found for downloadTask: \(downloadTask)")
         }
-        
+
         downloadRequest.updateDownloadProgress(bytesWritten: fileOffset,
                                                totalBytesExpectedToWrite: expectedTotalBytes)
     }
@@ -376,11 +376,11 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                  didWriteData: bytesWritten,
                                  totalBytesWritten: totalBytesWritten,
                                  totalBytesExpectedToWrite: totalBytesExpectedToWrite)
-        
+
         guard let downloadRequest = requestTaskMap[downloadTask] as? DownloadRequest else {
             fatalError("No DownloadRequest found for downloadTask: \(downloadTask)")
         }
-        
+
         downloadRequest.updateDownloadProgress(bytesWritten: bytesWritten,
                                                totalBytesExpectedToWrite: totalBytesExpectedToWrite)
     }
