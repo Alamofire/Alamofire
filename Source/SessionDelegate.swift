@@ -53,11 +53,27 @@ open class SessionDelegate: NSObject {
         requestTaskMap[request] = task
         request.didCreateTask(task)
 
+        resumeOrSuspendTask(task, ifNecessaryForRequest: request)
+    }
+    
+    func didReceiveResumeData(_ data: Data, for request: DownloadRequest) {
+        guard let manager = manager else { fatalError("Received didReceiveResumeData but there is no manager.") }
+        
+        guard !request.isCancelled else { return }
+        
+        let task = request.task(forResumeData: data, using: manager.session)
+        requestTaskMap[request] = task
+        request.didCreateTask(task)
+        
+        resumeOrSuspendTask(task, ifNecessaryForRequest: request)
+    }
+    
+    func resumeOrSuspendTask(_ task: URLSessionTask, ifNecessaryForRequest request: Request) {
         if startRequestsImmediately || request.isResumed {
             task.resume()
             request.didResume()
         }
-
+        
         if request.isSuspended {
             task.suspend()
             request.didSuspend()
@@ -91,14 +107,32 @@ extension SessionDelegate: RequestDelegate {
 
     func cancelRequest(_ request: Request) {
         queue?.async {
-            defer { request.didCancel() }
 
             guard let task = self.requestTaskMap[request] else {
+                request.didCancel()
                 request.finish()
                 return
             }
 
+            request.didCancel()
             task.cancel()
+        }
+    }
+    
+    func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
+        queue?.async {
+            guard let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask else {
+                request.didCancel()
+                request.finish()
+                return
+            }
+            
+            downloadTask.cancel { (data) in
+                self.queue?.async {
+                    byProducingResumeData(data)
+                    request.didCancel()
+                }
+            }
         }
     }
 
@@ -141,6 +175,8 @@ extension SessionDelegate: URLSessionTaskDelegate {
             evaluation = attemptServerTrustAuthentication(with: challenge)
         case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest:
             evaluation = attemptHTTPAuthentication(for: challenge, belongingTo: task)
+            // TODO: Error explaining AF doesn't support client certificates?
+        // case NSURLAuthenticationMethodClientCertificate:
         default:
             evaluation = (.performDefaultHandling, nil, nil)
         }
@@ -156,7 +192,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         let host = challenge.protectionSpace.host
 
         guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
-            let evaluator = manager?.trustManager?.serverTrustEvaluators(forHost: host),
+            let evaluator = manager?.serverTrustManager?.serverTrustEvaluators(forHost: host),
             let serverTrust = challenge.protectionSpace.serverTrust
             else {
                 return (.performDefaultHandling, nil, nil)
@@ -192,10 +228,13 @@ extension SessionDelegate: URLSessionTaskDelegate {
                                  didSendBodyData: bytesSent,
                                  totalBytesSent: totalBytesSent,
                                  totalBytesExpectedToSend: totalBytesExpectedToSend)
+        
+        requestTaskMap[task]?.updateUploadProgress(totalBytesSent: totalBytesSent,
+                                                   totalBytesExpectedToSend: totalBytesExpectedToSend)
 
-        if #available(iOS 11.0, macOS 10.13, watchOS 4.0, tvOS 11.0, *) {
-            NSLog("URLSession: \(session), task: \(task), progress: \(task.progress)")
-        }
+//        if #available(iOS 11.0, macOS 10.13, watchOS 4.0, tvOS 11.0, *) {
+//            NSLog("URLSession: \(session), task: \(task), progress: \(task.progress)")
+//        }
     }
 
     // This delegate method is called under two circumstances:
@@ -321,6 +360,13 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                  downloadTask: downloadTask,
                                  didResumeAtOffset: fileOffset,
                                  expectedTotalBytes: expectedTotalBytes)
+        
+        guard let downloadRequest = requestTaskMap[downloadTask] as? DownloadRequest else {
+            fatalError("No DownloadRequest found for downloadTask: \(downloadTask)")
+        }
+        
+        downloadRequest.updateDownloadProgress(bytesWritten: fileOffset,
+                                               totalBytesExpectedToWrite: expectedTotalBytes)
     }
 
     // Download progress, as provided by the `Content-Length` header. `totalBytesExpectedToWrite` will be `NSURLSessionTransferSizeUnknown` when there's no header.
@@ -330,6 +376,13 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                  didWriteData: bytesWritten,
                                  totalBytesWritten: totalBytesWritten,
                                  totalBytesExpectedToWrite: totalBytesExpectedToWrite)
+        
+        guard let downloadRequest = requestTaskMap[downloadTask] as? DownloadRequest else {
+            fatalError("No DownloadRequest found for downloadTask: \(downloadTask)")
+        }
+        
+        downloadRequest.updateDownloadProgress(bytesWritten: bytesWritten,
+                                               totalBytesExpectedToWrite: totalBytesExpectedToWrite)
     }
 
     // When finished, open for reading or move the file.

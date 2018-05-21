@@ -118,7 +118,7 @@ class SessionManagerTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(manager.session.delegate, "session delegate should not be nil")
         XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
-        XCTAssertNil(manager.trustManager, "session server trust policy manager should be nil")
+        XCTAssertNil(manager.serverTrustManager, "session server trust policy manager should be nil")
     }
 
     func testInitializerWithSpecifiedArguments() {
@@ -130,12 +130,12 @@ class SessionManagerTestCase: BaseTestCase {
         // When
         let manager = SessionManager(configuration: configuration,
                                      delegate: delegate,
-                                     trustManager: serverTrustManager)
+                                     serverTrustManager: serverTrustManager)
 
         // Then
         XCTAssertNotNil(manager.session.delegate, "session delegate should not be nil")
         XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
-        XCTAssertNotNil(manager.trustManager, "session server trust policy manager should not be nil")
+        XCTAssertNotNil(manager.serverTrustManager, "session server trust policy manager should not be nil")
     }
     // TODO: If we allow intialization with a URLSession, we can't control the queues, so do we want this API?
 //    func testThatFailableInitializerSucceedsWithDefaultArguments() {
@@ -496,7 +496,7 @@ class SessionManagerTestCase: BaseTestCase {
 //        let sessionManager = SessionManager()
 //        let expectation = self.expectation(description: "Download should fail with error")
 //
-//        var response: DefaultDownloadResponse?
+//        var response: DownloadResponse<URL?>?
 //
 //        // When
 //        sessionManager.download("https://httpbin.org/get/äëïöü").response { resp in
@@ -658,7 +658,7 @@ class SessionManagerTestCase: BaseTestCase {
         let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
 
         // When
-        let request = sessionManager.upload("data".data(using: .utf8)!, to: "https://httpbin.org/post")
+        let request = sessionManager.upload(Data("data".utf8), to: "https://httpbin.org/post")
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -697,7 +697,7 @@ class SessionManagerTestCase: BaseTestCase {
         let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
 
         // When
-        let inputStream = InputStream(data: "data".data(using: .utf8)!)
+        let inputStream = InputStream(data: Data("data".utf8))
         let request = sessionManager.upload(inputStream, to: "https://httpbin.org/post")
 
         waitForExpectations(timeout: timeout, handler: nil)
@@ -787,45 +787,41 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
     }
-//
-//    func testThatSessionManagerCallsRequestRetrierWhenDownloadInitiallyEncountersAdaptError() {
-//        // Given
-//        let handler = RequestHandler()
-//        handler.adaptedCount = 1
-//        handler.throwsErrorOnSecondAdapt = true
-//        handler.shouldApplyAuthorizationHeader = true
-//
-//        let sessionManager = SessionManager()
-//        sessionManager.adapter = handler
-//        sessionManager.retrier = handler
-//
-//        let expectation = self.expectation(description: "request should eventually fail")
-//        var response: DownloadResponse<Any>?
-//
-//        let destination: DownloadRequest.DownloadFileDestination = { _, _ in
-//            let fileURL = self.testDirectoryURL.appendingPathComponent("test-output.json")
-//            return (fileURL, [.removePreviousFile])
-//        }
-//
-//        // When
-//        sessionManager.download("https://httpbin.org/basic-auth/user/password", to: destination)
-//            .validate()
-//            .responseJSON { jsonResponse in
-//                response = jsonResponse
-//                expectation.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        XCTAssertEqual(handler.adaptedCount, 2)
-//        XCTAssertEqual(handler.retryCount, 1)
-//        XCTAssertEqual(response?.result.isSuccess, true)
-//        XCTAssertTrue(sessionManager.delegate.protectedRequests.directValue.isEmpty)
-//
-//        handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
-//    }
-//
+
+    func testThatSessionManagerCallsRequestRetrierWhenDownloadInitiallyEncountersAdaptError() {
+        // Given
+        let handler = RequestHandler()
+        handler.adaptedCount = 1
+        handler.throwsErrorOnSecondAdapt = true
+        handler.shouldApplyAuthorizationHeader = true
+
+        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DownloadResponse<Any>?
+
+        let destination: DownloadRequest.Destination = { _, _ in
+            let fileURL = self.testDirectoryURL.appendingPathComponent("test-output.json")
+            return (fileURL, [.removePreviousFile])
+        }
+
+        // When
+        sessionManager.download("https://httpbin.org/basic-auth/user/password", to: destination)
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+    }
+
     func testThatSessionManagerCallsRequestRetrierWhenUploadInitiallyEncountersAdaptError() {
         // Given
         let handler = UploadHandler()
@@ -881,7 +877,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
     }
-
+    // TODO: Confirm retry logic.
 //    func testThatRequestAdapterErrorThrowsResponseHandlerErrorWhenRequestIsRetried() {
 //        // Given
 //        let handler = RequestHandler()

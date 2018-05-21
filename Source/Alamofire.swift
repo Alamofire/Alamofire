@@ -177,7 +177,7 @@ public func download<Convertible: URLConvertible>(
     parameters: Parameters? = nil,
     encoding: ParameterEncoding = URLEncoding.default,
     headers: HTTPHeaders? = nil,
-    to destination: @escaping DownloadRequest.Destination = DownloadRequest.suggestedDownloadDestination())
+    to destination: DownloadRequest.Destination? =  nil)
     -> DownloadRequest
 {
     return SessionManager.default.download(
@@ -200,14 +200,14 @@ public func download<Convertible: URLConvertible>(
 /// - parameter destination: The closure used to determine the destination of the downloaded file. `nil` by default.
 ///
 /// - returns: The created `DownloadRequest`.
-//@discardableResult
-//public func download(
-//    _ urlRequest: URLRequestConvertible,
-//    to destination: DownloadRequest.DownloadFileDestination? = nil)
-//    -> DownloadRequest
-//{
-//    return SessionManager.default.download(urlRequest, to: destination)
-//}
+@discardableResult
+public func download(
+    _ urlRequest: URLRequestConvertible,
+    to destination: DownloadRequest.Destination? = nil)
+    -> DownloadRequest
+{
+    return SessionManager.default.download(urlRequest, to: destination)
+}
 
 // MARK: Resume Data
 
@@ -230,14 +230,14 @@ public func download<Convertible: URLConvertible>(
 /// - parameter destination: The closure used to determine the destination of the downloaded file. `nil` by default.
 ///
 /// - returns: The created `DownloadRequest`.
-//@discardableResult
-//public func download(
-//    resumingWith resumeData: Data,
-//    to destination: DownloadRequest.DownloadFileDestination? = nil)
-//    -> DownloadRequest
-//{
-//    return SessionManager.default.download(resumingWith: resumeData, to: destination)
-//}
+@discardableResult
+public func download(
+    resumingWith resumeData: Data,
+    to destination: DownloadRequest.Destination? = nil)
+    -> DownloadRequest
+{
+    return SessionManager.default.download(resumingWith: resumeData, to: destination)
+}
 
 // MARK: - Upload Request
 

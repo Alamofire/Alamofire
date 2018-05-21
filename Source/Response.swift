@@ -152,3 +152,70 @@ extension DataResponse {
                             result: result.flatMapError(transform))
     }
 }
+
+// MARK: -
+
+/// Used to store all data associated with a serialized response of a download request.
+public struct DownloadResponse<Value> {
+    /// The URL request sent to the server.
+    public let request: URLRequest?
+    
+    /// The server's response to the URL request.
+    public let response: HTTPURLResponse?
+    
+    /// The temporary destination URL of the data returned from the server.
+    public let temporaryURL: URL?
+    
+    /// The final destination URL of the data returned from the server if it was moved.
+    public let destinationURL: URL?
+    
+    /// The resume data generated if the request was cancelled.
+    public let resumeData: Data?
+    
+    /// The result of response serialization.
+    public let result: Result<Value>
+    
+    /// The timeline of the complete lifecycle of the request.
+//    public let timeline: Timeline
+    
+    public let metrics: URLSessionTaskMetrics?
+    
+    /// Returns the associated value of the result if it is a success, `nil` otherwise.
+    public var value: Value? { return result.value }
+    
+    /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
+    public var error: Error? { return result.error }
+    
+//    var _metrics: AnyObject?
+    
+    /// Creates a `DownloadResponse` instance with the specified parameters derived from response serialization.
+    ///
+    /// - parameter request:        The URL request sent to the server.
+    /// - parameter response:       The server's response to the URL request.
+    /// - parameter temporaryURL:   The temporary destination URL of the data returned from the server.
+    /// - parameter destinationURL: The final destination URL of the data returned from the server if it was moved.
+    /// - parameter resumeData:     The resume data generated if the request was cancelled.
+    /// - parameter result:         The result of response serialization.
+    /// - parameter timeline:       The timeline of the complete lifecycle of the `Request`. Defaults to `Timeline()`.
+    ///
+    /// - returns: The new `DownloadResponse` instance.
+    public init(
+        request: URLRequest?,
+        response: HTTPURLResponse?,
+        temporaryURL: URL?,
+        destinationURL: URL?,
+        resumeData: Data?,
+        metrics: URLSessionTaskMetrics?,
+        result: Result<Value>)
+    {
+        self.request = request
+        self.response = response
+        self.temporaryURL = temporaryURL
+        self.destinationURL = destinationURL
+        self.resumeData = resumeData
+        self.metrics = metrics
+        self.result = result
+        
+//        self.timeline = timeline
+    }
+}

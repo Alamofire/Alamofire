@@ -109,31 +109,31 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
     }
-    // TODO: How did this test work, this returns an initial 404?
-//    func testHiddenHTTPBasicAuthentication() {
-//        // Given
-//        let urlString = "http://httpbin.org/hidden-basic-auth/\(user)/\(password)"
-//        let expectation = self.expectation(description: "\(urlString) 200")
-//        let headers = HTTPHeaders.authorization(withUsername: user, password: password)
-//
-//        var response: DataResponse<Data?>?
-//
-//        // When
-//        manager.request(urlString, headers: headers)
-//            .response { resp in
-//                response = resp
-//                expectation.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        XCTAssertNotNil(response?.request)
-//        XCTAssertNotNil(response?.response)
-//        XCTAssertEqual(response?.response?.statusCode, 200)
-//        XCTAssertNotNil(response?.data)
-//        XCTAssertNil(response?.error)
-//    }
+
+    func testHiddenHTTPBasicAuthentication() {
+        // Given
+        let urlString = "http://httpbin.org/hidden-basic-auth/\(user)/\(password)"
+        let expectation = self.expectation(description: "\(urlString) 200")
+        let headers = HTTPHeaders.authorization(withUsername: user, password: password)
+
+        var response: DataResponse<Data?>?
+
+        // When
+        manager.request(urlString, headers: headers)
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertEqual(response?.response?.statusCode, 200)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
+    }
 }
 
 // MARK: -

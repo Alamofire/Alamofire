@@ -37,7 +37,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNotNil() {
         // Given
         let serializer = DataResponseSerializer()
-        let data = "data".data(using: .utf8)!
+        let data = Data("data".utf8)
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
@@ -160,7 +160,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
     func testThatStringResponseSerializerSucceedsWithUTF8DataAndNoProvidedEncoding() {
         let serializer = StringResponseSerializer()
-        let data = "data".data(using: .utf8)!
+        let data = Data("data".utf8)
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
@@ -173,7 +173,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
     func testThatStringResponseSerializerSucceedsWithUTF8DataAndUTF8ProvidedEncoding() {
         let serializer = StringResponseSerializer(encoding: .utf8)
-        let data = "data".data(using: .utf8)!
+        let data = Data("data".utf8)
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
@@ -186,7 +186,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
     func testThatStringResponseSerializerSucceedsWithUTF8DataUsingResponseTextEncodingName() {
         let serializer = StringResponseSerializer()
-        let data = "data".data(using: .utf8)!
+        let data = Data("data".utf8)
         let response = HTTPURLResponse(statusCode: 200, headers: ["Content-Type": "image/jpeg; charset=utf-8"])
 
         // When
@@ -341,7 +341,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
     func testThatJSONResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
         let serializer = JSONResponseSerializer()
-        let data = "{\"json\": true}".data(using: .utf8)!
+        let data = Data("{\"json\": true}".utf8)
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
@@ -355,7 +355,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
     func testThatJSONResponseSerializerFailsWhenDataIsInvalidJSON() {
         // Given
         let serializer = JSONResponseSerializer()
-        let data = "definitely not valid json".data(using: .utf8)!
+        let data = Data("definitely not valid json".utf8)
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
@@ -478,8 +478,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONDecodableResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
-        let json = "{\"string\":\"string\"}"
-        let data = json.data(using: .utf8)!
+        let data = Data("{\"string\":\"string\"}".utf8)
         let serializer = JSONDecodableResponseSerializer<DecodableValue>()
 
         // When
@@ -495,7 +494,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
     func testThatJSONDecodableResponseSerializerFailsWhenDataIsInvalidJSON() {
         // Given
         let serializer = JSONDecodableResponseSerializer<DecodableValue>()
-        let data = "definitely not valid json".data(using: .utf8)!
+        let data = Data("definitely not valid json".utf8)
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }

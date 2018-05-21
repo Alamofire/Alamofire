@@ -28,15 +28,18 @@ open class MultipartUpload {
 
     lazy var result = Result { try build() }
 
+    let isInBackgroundSession: Bool
     let multipartBuilder: (MultipartFormData) -> Void
     let encodingMemoryThreshold: UInt64
     let request: URLRequestConvertible
     let fileManager: FileManager
 
-    init(encodingMemoryThreshold: UInt64 = MultipartUpload.multipartFormDataEncodingMemoryThreshold,
+    init(isInBackgroundSession: Bool,
+         encodingMemoryThreshold: UInt64 = MultipartUpload.multipartFormDataEncodingMemoryThreshold,
          request: URLRequestConvertible,
          fileManager: FileManager = .default,
          multipartBuilder: @escaping (MultipartFormData) -> Void) {
+        self.isInBackgroundSession = isInBackgroundSession
         self.encodingMemoryThreshold = encodingMemoryThreshold
         self.request = request
         self.fileManager =  fileManager
@@ -51,7 +54,7 @@ open class MultipartUpload {
         urlRequest.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
 
         let uploadable: UploadRequest.Uploadable
-        if formData.contentLength < encodingMemoryThreshold {
+        if formData.contentLength < encodingMemoryThreshold && !isInBackgroundSession {
             let data = try formData.encode()
             uploadable = .data(data)
         } else {

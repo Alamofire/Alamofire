@@ -107,7 +107,7 @@ import XCTest
 //
 //    func testDataRequestHasURLRequest() {
 //        // Given
-//        let urlString = "https://httpbin.org/"
+//        let urlString = "https://httpbin.org/get"
 //
 //        // When
 //        let request = sessionManager.request(urlString)
@@ -121,7 +121,7 @@ import XCTest
 //
 //    func testDownloadRequestHasURLRequest() {
 //        // Given
-//        let urlString = "https://httpbin.org/"
+//        let urlString = "https://httpbin.org/get"
 //
 //        // When
 //        let request = sessionManager.download(urlString)
@@ -135,7 +135,7 @@ import XCTest
 //
 //    func testUploadDataRequestHasURLRequest() {
 //        // Given
-//        let urlString = "https://httpbin.org/"
+//        let urlString = "https://httpbin.org/post"
 //
 //        // When
 //        let request = sessionManager.upload(Data(), to: urlString)
@@ -149,7 +149,7 @@ import XCTest
 //
 //    func testUploadFileRequestHasURLRequest() {
 //        // Given
-//        let urlString = "https://httpbin.org/"
+//        let urlString = "https://httpbin.org/post"
 //        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
 //
 //        // When
@@ -164,7 +164,7 @@ import XCTest
 //
 //    func testUploadStreamRequestHasURLRequest() {
 //        // Given
-//        let urlString = "https://httpbin.org/"
+//        let urlString = "https://httpbin.org/post"
 //        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
 //        let imageStream = InputStream(url: imageURL)!
 //
@@ -204,48 +204,48 @@ class RequestResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
-//    func testRequestResponseWithProgress() {
-//        // Given
-//        let randomBytes = 4 * 1024 * 1024
-//        let urlString = "https://httpbin.org/bytes/\(randomBytes)"
-//
-//        let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
-//
-//        var progressValues: [Double] = []
-//        var response: DataResponse<Data?>?
-//
-//        // When
-//        Alamofire.request(urlString)
-//            .downloadProgress { progress in
-//                progressValues.append(progress.fractionCompleted)
-//            }
-//            .response { resp in
-//                response = resp
-//                expectation.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        XCTAssertNotNil(response?.request)
-//        XCTAssertNotNil(response?.response)
-//        XCTAssertNotNil(response?.data)
-//        XCTAssertNil(response?.error)
-//
-//        var previousProgress: Double = progressValues.first ?? 0.0
-//
-//        for progress in progressValues {
-//            XCTAssertGreaterThanOrEqual(progress, previousProgress)
-//            previousProgress = progress
-//        }
-//
-//        if let lastProgressValue = progressValues.last {
-//            XCTAssertEqual(lastProgressValue, 1.0)
-//        } else {
-//            XCTFail("last item in progressValues should not be nil")
-//        }
-//    }
-//
+    func testRequestResponseWithProgress() {
+        // Given
+        let randomBytes = 1 * 1024 * 1024
+        let urlString = "https://httpbin.org/bytes/\(randomBytes)"
+
+        let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
+
+        var progressValues: [Double] = []
+        var response: DataResponse<Data?>?
+
+        // When
+        Alamofire.request(urlString)
+            .downloadProgress { progress in
+                progressValues.append(progress.fractionCompleted)
+            }
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.error)
+
+        var previousProgress: Double = progressValues.first ?? 0.0
+
+        for progress in progressValues {
+            XCTAssertGreaterThanOrEqual(progress, previousProgress)
+            previousProgress = progress
+        }
+
+        if let lastProgressValue = progressValues.last {
+            XCTAssertEqual(lastProgressValue, 1.0)
+        } else {
+            XCTFail("last item in progressValues should not be nil")
+        }
+    }
+
 //    func testRequestResponseWithStream() {
 //        // Given
 //        let randomBytes = 4 * 1024 * 1024
@@ -659,7 +659,7 @@ class RequestExtensionTestCase: BaseTestCase {
 //    func testMultipartFormDataRequestWithDuplicateHeadersDebugDescription() {
 //        // Given
 //        let urlString = "https://httpbin.org/post"
-//        let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
+//        let japaneseData = Data("日本語".utf8)
 //        let expectation = self.expectation(description: "multipart form data encoding should succeed")
 //
 //        var request: Request?

@@ -33,7 +33,7 @@ open class SessionManager {
     let requestQueue: DispatchQueue
     open let adapter: RequestAdapter?
     open let retrier: RequestRetrier?
-    open let trustManager: ServerTrustManager?
+    open let serverTrustManager: ServerTrustManager?
 
     let session: URLSession
     let eventMonitor: CompositeEventMonitor
@@ -43,7 +43,7 @@ open class SessionManager {
                 delegate: SessionDelegate = SessionDelegate(),
                 rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.sessionManager.rootQueue"),
                 adapter: RequestAdapter? = nil,
-                trustManager: ServerTrustManager? = nil,
+                serverTrustManager: ServerTrustManager? = nil,
                 retrier: RequestRetrier? = nil,
                 eventMonitors: [EventMonitor] = []) {
         self.configuration = configuration
@@ -51,7 +51,7 @@ open class SessionManager {
         self.rootQueue = rootQueue
         self.adapter = adapter
         self.retrier = retrier
-        self.trustManager = trustManager
+        self.serverTrustManager = serverTrustManager
         requestQueue = DispatchQueue(label: "\(rootQueue.label).requestQueue", target: rootQueue)
         let delegateQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: rootQueue, name: "org.alamofire.sessionManager.sessionDelegateQueue")
         session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
@@ -110,7 +110,7 @@ open class SessionManager {
                        parameters: Parameters? = nil,
                        encoding: ParameterEncoding = URLEncoding.default,
                        headers: HTTPHeaders? = nil,
-                       to destination: @escaping DownloadRequest.Destination = DownloadRequest.suggestedDownloadDestination()) -> DownloadRequest {
+                       to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
                                              parameters: parameters,
@@ -121,8 +121,8 @@ open class SessionManager {
     }
 
     open func download(_ convertible: URLRequestConvertible,
-                  to destination: @escaping DownloadRequest.Destination = DownloadRequest.suggestedDownloadDestination()) -> DownloadRequest {
-        let request = DownloadRequest(convertible: convertible,
+                       to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
+        let request = DownloadRequest(downloadable: .request(convertible),
                                       underlyingQueue: rootQueue,
                                       eventMonitor: eventMonitor,
                                       delegate: delegate,
@@ -130,6 +130,19 @@ open class SessionManager {
 
         perform(request)
 
+        return request
+    }
+    
+    open func download(resumingWith data: Data,
+                       to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
+        let request = DownloadRequest(downloadable: .resumeData(data),
+                                      underlyingQueue: rootQueue,
+                                      eventMonitor: eventMonitor,
+                                      delegate: delegate,
+                                      destination: destination)
+        
+        perform(request)
+        
         return request
     }
 
@@ -210,7 +223,8 @@ open class SessionManager {
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
                 usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.multipartFormDataEncodingMemoryThreshold,
                 with request: URLRequestConvertible) -> UploadRequest {
-        let multipartUpload = MultipartUpload(encodingMemoryThreshold: encodingMemoryThreshold,
+        let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
+                                              encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: request,
                                               multipartBuilder: multipartFormData)
 
@@ -237,14 +251,27 @@ open class SessionManager {
 
         return request
     }
+    
+    // MARK: Downloadable
+    
+//    func download
 
     // MARK: Perform
-
+    
     func perform(_ request: Request) {
+        switch request {
+        case let r as DataRequest: perform(r)
+        case let r as UploadRequest: perform(r)
+        case let r as DownloadRequest: perform(r)
+        default: fatalError("Attempted to perform nsupported Request subclass: \(type(of: request))")
+        }
+    }
+
+    func perform(_ request: DataRequest) {
         requestQueue.async {
             guard !request.isCancelled else { return }
 
-            self.performSetupOperations(for: request)
+            self.performSetupOperations(for: request, convertible: request.convertible)
         }
     }
 
@@ -256,20 +283,31 @@ open class SessionManager {
                 let uploadable = try request.upload.createUploadable()
                 self.rootQueue.async { request.didCreateUploadable(uploadable) }
 
-                self.performSetupOperations(for: request)
+                self.performSetupOperations(for: request, convertible: request.convertible)
             } catch {
                 self.rootQueue.async { request.didFailToCreateUploadable(with: error) }
             }
         }
     }
 
-    func performSetupOperations(for request: Request) {
+    func perform(_ request: DownloadRequest) {
+        requestQueue.async {
+            switch request.downloadable {
+            case let .request(convertible):
+                self.performSetupOperations(for: request, convertible: convertible)
+            case let .resumeData(resumeData):
+                self.rootQueue.async { self.delegate.didReceiveResumeData(resumeData, for: request) }
+            }
+        }
+    }
+    
+    func performSetupOperations(for request: Request, convertible: URLRequestConvertible) {
         do {
-            let initialRequest = try request.convertible.asURLRequest()
+            let initialRequest = try convertible.asURLRequest()
             self.rootQueue.async { request.didCreateURLRequest(initialRequest) }
-
+            
             guard !request.isCancelled else { return }
-
+            
             if let adapter = adapter {
                 do {
                     let adaptedRequest = try adapter.adapt(initialRequest)

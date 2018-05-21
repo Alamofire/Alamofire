@@ -138,16 +138,6 @@ public enum AFError: Error {
     case certificatePinningFailed
 }
 
-// MARK: - Adapt Error
-
-struct AdaptError: Error {
-    let error: Error
-}
-
-extension Error {
-    var underlyingAdaptError: Error? { return (self as? AdaptError)?.error }
-}
-
 // MARK: - Error Booleans
 
 extension AFError {

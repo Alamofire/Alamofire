@@ -78,8 +78,8 @@ class MultipartFormDataPropertiesTestCase: BaseTestCase {
     func testThatContentLengthMatchesTotalBodyPartSize() {
         // Given
         let multipartFormData = MultipartFormData()
-        let data1 = "Lorem ipsum dolor sit amet.".data(using: .utf8, allowLossyConversion: false)!
-        let data2 = "Vim at integre alterum.".data(using: .utf8, allowLossyConversion: false)!
+        let data1 = Data("Lorem ipsum dolor sit amet.".utf8)
+        let data2 = Data("Vim at integre alterum.".utf8)
 
         // When
         multipartFormData.append(data1, withName: "data1")
@@ -100,7 +100,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // Given
         let multipartFormData = MultipartFormData()
 
-        let data = "Lorem ipsum dolor sit amet.".data(using: .utf8, allowLossyConversion: false)!
+        let data = Data("Lorem ipsum dolor sit amet.".utf8)
         multipartFormData.append(data, withName: "data")
 
         var encodedData: Data?
@@ -133,9 +133,9 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // Given
         let multipartFormData = MultipartFormData()
 
-        let frenchData = "français".data(using: .utf8, allowLossyConversion: false)!
-        let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
-        let emojiData = "😃👍🏻🍻🎉".data(using: .utf8, allowLossyConversion: false)!
+        let frenchData = Data("français".utf8)
+        let japaneseData = Data("日本語".utf8)
+        let emojiData = Data("😃👍🏻🍻🎉".utf8)
 
         multipartFormData.append(frenchData, withName: "french")
         multipartFormData.append(japaneseData, withName: "japanese", mimeType: "text/plain")
@@ -369,7 +369,7 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
         // Given
         let multipartFormData = MultipartFormData()
 
-        let loremData = "Lorem ipsum.".data(using: .utf8, allowLossyConversion: false)!
+        let loremData = Data("Lorem ipsum.".utf8)
 
         let unicornImageURL = url(forResource: "unicorn", withExtension: "png")
 
@@ -440,7 +440,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         let fileURL = temporaryFileURL()
         let multipartFormData = MultipartFormData()
 
-        let data = "Lorem ipsum dolor sit amet.".data(using: .utf8, allowLossyConversion: false)!
+        let data = Data("Lorem ipsum dolor sit amet.".utf8)
         multipartFormData.append(data, withName: "data")
 
         var encodingError: Error?
@@ -476,9 +476,9 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         let fileURL = temporaryFileURL()
         let multipartFormData = MultipartFormData()
 
-        let frenchData = "français".data(using: .utf8, allowLossyConversion: false)!
-        let japaneseData = "日本語".data(using: .utf8, allowLossyConversion: false)!
-        let emojiData = "😃👍🏻🍻🎉".data(using: .utf8, allowLossyConversion: false)!
+        let frenchData = Data("français".utf8)
+        let japaneseData = Data("日本語".utf8)
+        let emojiData = Data("😃👍🏻🍻🎉".utf8)
 
         multipartFormData.append(frenchData, withName: "french")
         multipartFormData.append(japaneseData, withName: "japanese")
@@ -726,7 +726,7 @@ class MultipartFormDataWriteEncodedDataToDiskTestCase: BaseTestCase {
         let fileURL = temporaryFileURL()
         let multipartFormData = MultipartFormData()
 
-        let loremData = "Lorem ipsum.".data(using: .utf8, allowLossyConversion: false)!
+        let loremData = Data("Lorem ipsum.".utf8)
 
         let unicornImageURL = url(forResource: "unicorn", withExtension: "png")
 
@@ -915,7 +915,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         }
 
         let multipartFormData = MultipartFormData()
-        let data = "Lorem ipsum dolor sit amet.".data(using: .utf8, allowLossyConversion: false)!
+        let data = Data("Lorem ipsum dolor sit amet.".utf8)
         multipartFormData.append(data, withName: "data")
 
         var encodingError: Error?
@@ -941,7 +941,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         let fileURL = URL(string: "/this/is/not/a/valid/url")!
 
         let multipartFormData = MultipartFormData()
-        let data = "Lorem ipsum dolor sit amet.".data(using: .utf8, allowLossyConversion: false)!
+        let data = Data("Lorem ipsum dolor sit amet.".utf8)
         multipartFormData.append(data, withName: "data")
 
         var encodingError: Error?
