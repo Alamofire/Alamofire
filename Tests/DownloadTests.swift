@@ -575,9 +575,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
         XCTAssertEqual(response?.result.value, "bar")
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatMapPreservesFailureError() {
@@ -604,9 +602,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.result.isFailure, true)
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 }
 
@@ -641,9 +637,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
         XCTAssertEqual(response?.result.value, "bar")
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatFlatMapCatchesTransformationError() {

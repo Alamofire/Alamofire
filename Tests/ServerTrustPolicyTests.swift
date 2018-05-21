@@ -420,7 +420,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: false)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -437,7 +437,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
             TestCertificates.leafValidDNSName,
             TestCertificates.intermediateCA2
         ])
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: false)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: false)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -450,7 +450,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: false)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -464,7 +464,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: false)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -478,7 +478,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: false)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -494,7 +494,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: true)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -511,7 +511,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
             TestCertificates.leafValidDNSName,
             TestCertificates.intermediateCA2
         ])
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: true)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -524,7 +524,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: true)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -538,7 +538,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafWildcard.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: true)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -552,7 +552,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: true)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -566,7 +566,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: true)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -587,10 +587,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: false,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -607,10 +604,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
             TestCertificates.leafValidDNSName,
             TestCertificates.intermediateCA2
         ])
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: false,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator(validateHost: false)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -623,10 +617,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: false,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -640,10 +631,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: false,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -657,10 +645,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: false,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -676,10 +661,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: true,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator()
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -696,10 +678,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
             TestCertificates.leafValidDNSName,
             TestCertificates.intermediateCA2
         ])
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: true,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator()
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -712,10 +691,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: true,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator()
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -729,10 +705,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafWildcard.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: true,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator()
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -746,10 +719,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: true,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator()
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -763,10 +733,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = ServerTrustPolicy.performRevokedEvaluation(
-            validateHost: true,
-            revocationFlags: kSecRevocationUseAnyAvailableMethod
-        )
+        let serverTrustPolicy = RevocationTrustEvaluator()
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -788,11 +755,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.leafValidDNSName]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -806,11 +769,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.intermediateCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -824,11 +783,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.rootCA]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -842,7 +797,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.leafSignedByCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: true,
             validateHost: false
@@ -860,11 +815,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.intermediateCA1]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -878,11 +829,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let certificates = [TestCertificates.leafExpired]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -896,11 +843,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let certificates = [TestCertificates.intermediateCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -916,11 +859,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.leafValidDNSName]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -934,11 +873,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.intermediateCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -952,11 +887,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.rootCA]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -970,7 +901,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.leafSignedByCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: true,
             validateHost: true
@@ -988,11 +919,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.intermediateCA1]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -1006,11 +933,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let certificates = [TestCertificates.leafExpired]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -1024,11 +947,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let certificates = [TestCertificates.intermediateCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-            certificates: certificates,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -1044,7 +963,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.leafValidDNSName]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: false,
             validateHost: false
@@ -1062,7 +981,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.intermediateCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: false,
             validateHost: false
@@ -1080,7 +999,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.rootCA]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: false,
             validateHost: false
@@ -1098,7 +1017,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.leafSignedByCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: false,
             validateHost: false
@@ -1116,7 +1035,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let certificates = [TestCertificates.intermediateCA1]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: false,
             validateHost: false
@@ -1134,7 +1053,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let certificates = [TestCertificates.leafExpired]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: false,
             validateHost: false
@@ -1152,7 +1071,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let certificates = [TestCertificates.intermediateCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: false,
             validateHost: false
@@ -1170,7 +1089,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let certificates = [TestCertificates.rootCA]
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: false,
             validateHost: false
@@ -1196,7 +1115,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
             TestCertificates.leafDNSNameAndURI,    // not in certificate chain
         ]
 
-        let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+        let serverTrustPolicy = PinnedCertificatesTrustEvaluator(
             certificates: certificates,
             validateCertificateChain: false,
             validateHost: false
@@ -1221,11 +1140,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let publicKeys = [TestPublicKeys.leafValidDNSName]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PublicKeysTrustEvaluator(keys: publicKeys, validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -1240,11 +1155,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let publicKeys = [TestPublicKeys.intermediateCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PublicKeysTrustEvaluator(keys: publicKeys, validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -1259,11 +1170,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let publicKeys = [TestPublicKeys.rootCA]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PublicKeysTrustEvaluator(keys: publicKeys, validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -1278,11 +1185,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let publicKeys = [TestPublicKeys.leafSignedByCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PublicKeysTrustEvaluator(keys: publicKeys, validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -1297,11 +1200,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let publicKeys = [TestPublicKeys.leafSignedByCA1, TestPublicKeys.intermediateCA1, TestPublicKeys.leafValidDNSName]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
-            validateCertificateChain: true,
-            validateHost: false
-        )
+        let serverTrustPolicy = PublicKeysTrustEvaluator(keys: publicKeys, validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -1318,11 +1217,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let publicKeys = [TestPublicKeys.leafValidDNSName]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PublicKeysTrustEvaluator(keys: publicKeys)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -1337,11 +1232,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let publicKeys = [TestPublicKeys.intermediateCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PublicKeysTrustEvaluator(keys: publicKeys)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -1356,11 +1247,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let publicKeys = [TestPublicKeys.rootCA]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PublicKeysTrustEvaluator(keys: publicKeys)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -1375,11 +1262,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let publicKeys = [TestPublicKeys.leafSignedByCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PublicKeysTrustEvaluator(keys: publicKeys)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -1394,11 +1277,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
         let publicKeys = [TestPublicKeys.leafSignedByCA1, TestPublicKeys.intermediateCA1, TestPublicKeys.leafValidDNSName]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
-            validateCertificateChain: true,
-            validateHost: true
-        )
+        let serverTrustPolicy = PublicKeysTrustEvaluator(keys: publicKeys)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
@@ -1415,8 +1294,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
         let publicKeys = [TestPublicKeys.leafValidDNSName]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
+        let serverTrustPolicy = PublicKeysTrustEvaluator(
+            keys: publicKeys,
             validateCertificateChain: false,
             validateHost: false
         )
@@ -1434,8 +1313,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
         let publicKeys = [TestPublicKeys.rootCA]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
+        let serverTrustPolicy = PublicKeysTrustEvaluator(
+            keys: publicKeys,
             validateCertificateChain: false,
             validateHost: false
         )
@@ -1453,8 +1332,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameWithIncorrectIntermediate.trust
         let publicKeys = [TestPublicKeys.leafValidDNSName]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
+        let serverTrustPolicy = PublicKeysTrustEvaluator(
+            keys: publicKeys,
             validateCertificateChain: false,
             validateHost: false
         )
@@ -1472,8 +1351,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let publicKeys = [TestPublicKeys.leafExpired]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
+        let serverTrustPolicy = PublicKeysTrustEvaluator(
+            keys: publicKeys,
             validateCertificateChain: false,
             validateHost: false
         )
@@ -1491,8 +1370,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let publicKeys = [TestPublicKeys.intermediateCA2]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
+        let serverTrustPolicy = PublicKeysTrustEvaluator(
+            keys: publicKeys,
             validateCertificateChain: false,
             validateHost: false
         )
@@ -1510,8 +1389,8 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let publicKeys = [TestPublicKeys.rootCA]
-        let serverTrustPolicy = ServerTrustPolicy.pinPublicKeys(
-            publicKeys: publicKeys,
+        let serverTrustPolicy = PublicKeysTrustEvaluator(
+            keys: publicKeys,
             validateCertificateChain: false,
             validateHost: false
         )
@@ -1532,7 +1411,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = ServerTrustPolicy.disableEvaluation
+        let serverTrustPolicy = DisabledEvaluator()
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -1545,7 +1424,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let serverTrustPolicy = ServerTrustPolicy.disableEvaluation
+        let serverTrustPolicy = DisabledEvaluator()
 
         // When
         let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
@@ -1557,32 +1436,52 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
 
 // MARK: -
 
-class ServerTrustPolicyCustomEvaluationTestCase: ServerTrustPolicyTestCase {
-    func testThatReturningTrueFromClosurePassesEvaluation() {
+class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
+    func testThatValidCertificateChainPassesDefaultAndRevocationCompositeChecks() {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.customEvaluation { _, _ in
-            return true
-        }
+        let defaultPolicy = DefaultTrustEvaluator(validateHost: false)
+        let revocationPolicy = RevocationTrustEvaluator(validateHost: false)
+        let compositePolicy = CompositeTrustEvaluator(evaluators: [defaultPolicy, revocationPolicy])
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = compositePolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatReturningFalseFromClosurePassesEvaluation() {
+    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() {
         // Given
         let host = "test.alamofire.org"
-        let serverTrust = TestTrusts.leafValidDNSName.trust
-        let serverTrustPolicy = ServerTrustPolicy.customEvaluation { _, _ in
-            return false
-        }
+        let serverTrust = TestTrusts.trustWithCertificates([
+            TestCertificates.leafValidDNSName,
+            TestCertificates.intermediateCA2
+            ])
+        let defaultPolicy = DefaultTrustEvaluator(validateHost: false)
+        let revocationPolicy = RevocationTrustEvaluator(validateHost: false)
+        let compositePolicy = CompositeTrustEvaluator(evaluators: [defaultPolicy, revocationPolicy])
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = compositePolicy.evaluate(serverTrust, forHost: host)
+
+        // Then
+        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+    }
+
+    func testThatExpiredLeafCertificateFailsDefaultAndRevocationComposite() {
+        // Given
+        let host = "test.alamofire.org"
+        let serverTrust = TestTrusts.leafExpired.trust
+        let defaultPolicy = DefaultTrustEvaluator(validateHost: false)
+        let revocationPolicy = RevocationTrustEvaluator(validateHost: false)
+        let compositePolicy = CompositeTrustEvaluator(evaluators: [defaultPolicy, revocationPolicy])
+
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let serverTrustIsValid = compositePolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
@@ -1603,9 +1502,7 @@ class ServerTrustPolicyCertificatesInBundleTestCase: ServerTrustPolicyTestCase {
         // keyDER.der: DER-encoded key, not a certificate, should fail
 
         // When
-        let certificates = ServerTrustPolicy.certificates(
-            in: Bundle(for: ServerTrustPolicyCertificatesInBundleTestCase.self)
-        )
+        let certificates = Bundle(for: ServerTrustPolicyCertificatesInBundleTestCase.self).certificates
 
         // Then
         // Expectation: 19 well-formed certificates in the test bundle plus 4 invalid certificates.
