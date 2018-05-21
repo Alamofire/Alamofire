@@ -145,7 +145,7 @@ class URLProtocolTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "GET request should succeed")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         manager.request(urlRequest)

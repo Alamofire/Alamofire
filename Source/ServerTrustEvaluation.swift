@@ -89,23 +89,6 @@ extension Array where Element == ServerTrustEvaluating {
     #endif
 }
 
-// MARK: -
-
-extension URLSession {
-    private struct AssociatedKeys {
-        static var managerKey = "URLSession.ServerTrustManager"
-    }
-
-    var serverTrustManager: ServerTrustManager? {
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.managerKey) as? ServerTrustManager
-        }
-        set (manager) {
-            objc_setAssociatedObject(self, &AssociatedKeys.managerKey, manager, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-}
-
 // MARK: - Server Trust Evaluators
 
 /// An evaluator which uses the default server trust evaluation while allowing you to control whether to validate the
