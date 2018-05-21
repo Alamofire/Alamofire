@@ -148,7 +148,7 @@ public func request(_ url: URLConvertible,
 ///
 /// - returns: The created `DataRequest`.
 @discardableResult
-public func request<Convertible: URLRequestConvertible>(_ urlRequest: Convertible) -> DataRequest {
+public func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
     return SessionManager.default.request(urlRequest)
 }
 
