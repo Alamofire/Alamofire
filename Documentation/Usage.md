@@ -18,6 +18,10 @@ Alamofire.request("https://httpbin.org/get").responseJSON { response in
     print("Response: \(String(describing: response.response))") // http url response
     print("Result: \(response.result)")                         // response serialization result
 
+    if let httpStatusCode = response.response?.statusCode {
+        print("http status code: \(httpStatusCode)") // http status code
+    }
+
     if let json = response.result.value {
         print("JSON: \(json)") // serialized json response
     }
