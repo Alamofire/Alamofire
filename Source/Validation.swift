@@ -48,12 +48,7 @@ extension Request {
         init?(_ string: String) {
             let components: [String] = {
                 let stripped = string.trimmingCharacters(in: .whitespacesAndNewlines)
-
-            #if swift(>=3.2)
                 let split = stripped[..<(stripped.range(of: ";")?.lowerBound ?? stripped.endIndex)]
-            #else
-                let split = stripped.substring(to: stripped.range(of: ";")?.lowerBound ?? stripped.endIndex)
-            #endif
 
                 return split.components(separatedBy: "/")
             }()
@@ -159,30 +154,6 @@ extension DataRequest {
     /// request was valid.
     public typealias Validation = (URLRequest?, HTTPURLResponse, Data?) -> ValidationResult
 
-    /// Validates the request, using the specified closure.
-    ///
-    /// If validation fails, subsequent calls to response handlers will have an associated error.
-    ///
-    /// - parameter validation: A closure to validate the request.
-    ///
-    /// - returns: The request.
-    @discardableResult
-    public func validate(_ validation: @escaping Validation) -> Self {
-        let validationExecution: () -> Void = { [unowned self] in
-            if
-                let response = self.response,
-                self.delegate.error == nil,
-                case let .failure(error) = validation(self.request, response, self.delegate.data)
-            {
-                self.delegate.error = error
-            }
-        }
-
-        validations.append(validationExecution)
-
-        return self
-    }
-
     /// Validates that the response has a status code in the specified sequence.
     ///
     /// If validation fails, subsequent calls to response handlers will have an associated error.
@@ -235,34 +206,6 @@ extension DownloadRequest {
         _ destinationURL: URL?)
         -> ValidationResult
 
-    /// Validates the request, using the specified closure.
-    ///
-    /// If validation fails, subsequent calls to response handlers will have an associated error.
-    ///
-    /// - parameter validation: A closure to validate the request.
-    ///
-    /// - returns: The request.
-    @discardableResult
-    public func validate(_ validation: @escaping Validation) -> Self {
-        let validationExecution: () -> Void = { [unowned self] in
-            let request = self.request
-            let temporaryURL = self.downloadDelegate.temporaryURL
-            let destinationURL = self.downloadDelegate.destinationURL
-
-            if
-                let response = self.response,
-                self.delegate.error == nil,
-                case let .failure(error) = validation(request, response, temporaryURL, destinationURL)
-            {
-                self.delegate.error = error
-            }
-        }
-
-        validations.append(validationExecution)
-
-        return self
-    }
-
     /// Validates that the response has a status code in the specified sequence.
     ///
     /// If validation fails, subsequent calls to response handlers will have an associated error.
@@ -284,23 +227,23 @@ extension DownloadRequest {
     /// - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
     ///
     /// - returns: The request.
-    @discardableResult
-    public func validate<S: Sequence>(contentType acceptableContentTypes: S) -> Self where S.Iterator.Element == String {
-        return validate { [unowned self] _, response, _, _ in
-            let fileURL = self.downloadDelegate.fileURL
-
-            guard let validFileURL = fileURL else {
-                return .failure(AFError.responseValidationFailed(reason: .dataFileNil))
-            }
-
-            do {
-                let data = try Data(contentsOf: validFileURL)
-                return self.validate(contentType: acceptableContentTypes, response: response, data: data)
-            } catch {
-                return .failure(AFError.responseValidationFailed(reason: .dataFileReadFailed(at: validFileURL)))
-            }
-        }
-    }
+//    @discardableResult
+//    public func validate<S: Sequence>(contentType acceptableContentTypes: S) -> Self where S.Iterator.Element == String {
+//        return validate { [unowned self] _, response, _, _ in
+//            let fileURL = self.downloadDelegate.fileURL
+//
+//            guard let validFileURL = fileURL else {
+//                return .failure(AFError.responseValidationFailed(reason: .dataFileNil))
+//            }
+//
+//            do {
+//                let data = try Data(contentsOf: validFileURL)
+//                return self.validate(contentType: acceptableContentTypes, response: response, data: data)
+//            } catch {
+//                return .failure(AFError.responseValidationFailed(reason: .dataFileReadFailed(at: validFileURL)))
+//            }
+//        }
+//    }
 
     /// Validates that the response has a status code in the default acceptable range of 200...299, and that the content
     /// type matches any specified in the Accept HTTP header field.
@@ -308,8 +251,8 @@ extension DownloadRequest {
     /// If validation fails, subsequent calls to response handlers will have an associated error.
     ///
     /// - returns: The request.
-    @discardableResult
-    public func validate() -> Self {
-        return validate(statusCode: self.acceptableStatusCodes).validate(contentType: self.acceptableContentTypes)
-    }
+//    @discardableResult
+//    public func validate() -> Self {
+//        return validate(statusCode: self.acceptableStatusCodes).validate(contentType: self.acceptableContentTypes)
+//    }
 }
