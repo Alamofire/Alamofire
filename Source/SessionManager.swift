@@ -27,7 +27,6 @@ import Foundation
 open class SessionManager {
     open static let `default` = SessionManager()
 
-    let configuration: URLSessionConfiguration
     let delegate: SessionDelegate
     let rootQueue: DispatchQueue
     let requestQueue: DispatchQueue
@@ -39,24 +38,48 @@ open class SessionManager {
     let eventMonitor: CompositeEventMonitor
     let defaultEventMonitors: [EventMonitor] = [] // TODO: Create notification event monitor, make default
 
-    public init(configuration: URLSessionConfiguration = .default,
-                delegate: SessionDelegate = SessionDelegate(),
-                rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.sessionManager.rootQueue"),
-                adapter: RequestAdapter? = nil,
-                serverTrustManager: ServerTrustManager? = nil,
-                retrier: RequestRetrier? = nil,
-                eventMonitors: [EventMonitor] = []) {
-        self.configuration = configuration
+    init(session: URLSession,
+         delegate: SessionDelegate,
+         rootQueue: DispatchQueue,
+         requestQueue: DispatchQueue? = nil,
+         adapter: RequestAdapter? = nil,
+         serverTrustManager: ServerTrustManager? = nil,
+         retrier: RequestRetrier? = nil,
+         eventMonitors: [EventMonitor] = []) {
+        precondition(session.delegate === delegate,
+                     "URLSession SessionManager initializer must pass the SessionDelegate that has been assigned to the URLSession as its delegate.")
+        precondition(session.delegateQueue.underlyingQueue === rootQueue,
+                     "URLSession SessionManager intializer must pass the DispatchQueue used as the delegateQueue's underlyingQueue as the rootQueue.")
+
+        self.session = session
         self.delegate = delegate
         self.rootQueue = rootQueue
+        self.requestQueue = requestQueue ?? DispatchQueue(label: "\(rootQueue.label).requestQueue", target: rootQueue)
         self.adapter = adapter
         self.retrier = retrier
         self.serverTrustManager = serverTrustManager
-        requestQueue = DispatchQueue(label: "\(rootQueue.label).requestQueue", target: rootQueue)
-        let delegateQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: rootQueue, name: "org.alamofire.sessionManager.sessionDelegateQueue")
-        session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
         eventMonitor = CompositeEventMonitor(monitors: defaultEventMonitors + eventMonitors)
         delegate.didCreateSessionManager(self, withEventMonitor: eventMonitor)
+    }
+
+    public convenience init(configuration: URLSessionConfiguration = .default,
+                            delegate: SessionDelegate = SessionDelegate(),
+                            rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.sessionManager.rootQueue"),
+                            requestQueue: DispatchQueue? = nil,
+                            adapter: RequestAdapter? = nil,
+                            serverTrustManager: ServerTrustManager? = nil,
+                            retrier: RequestRetrier? = nil,
+                            eventMonitors: [EventMonitor] = []) {
+        let delegateQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: rootQueue, name: "org.alamofire.sessionManager.sessionDelegateQueue")
+        let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
+        self.init(session: session,
+                  delegate: delegate,
+                  rootQueue: rootQueue,
+                  requestQueue: requestQueue,
+                  adapter: adapter,
+                  serverTrustManager: serverTrustManager,
+                  retrier: retrier,
+                  eventMonitors: eventMonitors)
     }
 
     deinit {

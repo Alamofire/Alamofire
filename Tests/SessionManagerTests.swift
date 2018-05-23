@@ -214,7 +214,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testDefaultUserAgentHeader() {
         // Given, When
-        let userAgent = SessionManager.defaultHTTPHeaders["User-Agent"]
+        let userAgent = HTTPHeaders.defaultHTTPHeaders["User-Agent"]
 
         // Then
         let osNameVersion: String = {
@@ -953,7 +953,7 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
                     configuration = .background(withIdentifier: identifier)
                 }
 
-                var headers = SessionManager.defaultHTTPHeaders
+                var headers = HTTPHeaders.defaultHTTPHeaders
                 headers["Authorization"] = "Bearer 123456"
                 configuration.httpAdditionalHeaders = headers
 

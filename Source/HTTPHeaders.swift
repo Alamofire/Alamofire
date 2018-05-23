@@ -33,11 +33,9 @@ extension Dictionary where Key == String, Value == String {
 
         return ["Authorization": "Basic \(credential)"]
     }
-}
 
-extension SessionManager {
     /// Creates default values for the "Accept-Encoding", "Accept-Language" and "User-Agent" headers.
-    open static let defaultHTTPHeaders: HTTPHeaders = {
+    public static let defaultHTTPHeaders: HTTPHeaders = {
         // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
         let acceptEncoding: String = {
             let encodings: [String]
