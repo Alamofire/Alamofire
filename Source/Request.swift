@@ -57,7 +57,7 @@ open class Request {
     let id: UUID
     let underlyingQueue: DispatchQueue
     let serializationQueue: DispatchQueue
-    let eventMonitor: RequestEventMonitor?
+    let eventMonitor: EventMonitor?
     weak var delegate: RequestDelegate?
 
     // TODO: Do we still want to expose the queue(s?) as public API?
@@ -107,7 +107,7 @@ open class Request {
     init(id: UUID = UUID(),
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue? = nil,
-         eventMonitor: RequestEventMonitor?,
+         eventMonitor: EventMonitor?,
          delegate: RequestDelegate) {
         self.id = id
         self.underlyingQueue = underlyingQueue
@@ -343,7 +343,7 @@ open class DataRequest: Request {
          convertible: URLRequestConvertible,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue? = nil,
-         eventMonitor: RequestEventMonitor?,
+         eventMonitor: EventMonitor?,
          delegate: RequestDelegate) {
         self.convertible = convertible
 
@@ -391,13 +391,17 @@ open class DataRequest: Request {
     public func validate(_ validation: @escaping Validation) -> Self {
         underlyingQueue.async {
             let validationExecution: () -> Void = { [unowned self] in
-                if
-                    let response = self.response,
-                    self.error == nil,
-                    case let .failure(error) = validation(self.request, response, self.data)
-                {
-                    self.error = error
-                }
+                guard self.error == nil, let response = self.response else { return }
+
+                let result = validation(self.request, response, self.data)
+
+                result.withError { self.error = $0 }
+
+                self.eventMonitor?.request(self,
+                                      didValidateRequest: self.request,
+                                      response: response,
+                                      data: self.data,
+                                      withResult: result)
             }
 
             self.validators.append(validationExecution)
@@ -481,7 +485,7 @@ open class DownloadRequest: Request {
          downloadable: Downloadable,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue? = nil,
-         eventMonitor: RequestEventMonitor?,
+         eventMonitor: EventMonitor?,
          delegate: RequestDelegate,
          destination: Destination? = nil) {
         self.downloadable = downloadable
@@ -504,6 +508,8 @@ open class DownloadRequest: Request {
 
     func didComplete(task: URLSessionTask, with url: URL) {
         temporaryURL = url
+
+        eventMonitor?.request(self, didCompleteTask: task, with: url)
 
         guard let destination = destination, let response = response else { return }
 
@@ -550,6 +556,8 @@ open class DownloadRequest: Request {
 
         delegate?.cancelDownloadRequest(self) { self.resumeData = $0 }
 
+        eventMonitor?.requestDidCancel(self)
+
         return self
     }
 
@@ -564,17 +572,18 @@ open class DownloadRequest: Request {
     public func validate(_ validation: @escaping Validation) -> Self {
         underlyingQueue.async {
             let validationExecution: () -> Void = { [unowned self] in
-                let request = self.request
-                let temporaryURL = self.temporaryURL
-                let destinationURL = self.temporaryURL
+                guard self.error == nil, let response = self.response else { return }
 
-                if
-                    let response = self.response,
-                    self.error == nil,
-                    case let .failure(error) = validation(request, response, temporaryURL, destinationURL)
-                {
-                    self.error = error
-                }
+                let result = validation(self.request, response, self.temporaryURL, self.destinationURL)
+
+                result.withError { self.error = $0 }
+
+                self.eventMonitor?.request(self,
+                                           didValidateRequest: self.request,
+                                           response: response,
+                                           temporaryURL: self.temporaryURL,
+                                           destinationURL: self.destinationURL,
+                                           withResult: result)
             }
 
             self.validators.append(validationExecution)
@@ -603,7 +612,7 @@ open class UploadRequest: DataRequest {
          convertible: UploadConvertible,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue? = nil,
-         eventMonitor: RequestEventMonitor?,
+         eventMonitor: EventMonitor?,
          delegate: RequestDelegate) {
         self.upload = convertible
 
@@ -627,14 +636,15 @@ open class UploadRequest: DataRequest {
     }
 
     func didCreateUploadable(_ uploadable: Uploadable) {
-        // TODO: Event Monitor here.
-
         self.uploadable = uploadable
+
+        eventMonitor?.request(self, didCreateUploadable: uploadable)
     }
 
     func didFailToCreateUploadable(with error: Error) {
-        // TODO: Event monitor
         self.error = error
+
+        eventMonitor?.request(self, didFailToCreateUploadableWithError: error)
 
         retryOrFinish(error: error)
     }
@@ -659,6 +669,8 @@ open class UploadRequest: DataRequest {
         guard case let .stream(stream) = uploadable else {
             fatalError("Attempted to access the stream of an UploadRequest that wasn't created with one.")
         }
+
+        eventMonitor?.request(self, didProvideInputStream: stream)
 
         return stream
     }

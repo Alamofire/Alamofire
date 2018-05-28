@@ -30,14 +30,8 @@ extension Request {
 
     fileprivate typealias ErrorReason = AFError.ResponseValidationFailureReason
 
-    /// Used to represent whether validation was successful or encountered an error resulting in a failure.
-    ///
-    /// - success: The validation was successful.
-    /// - failure: The validation failed encountering the provided error.
-    public enum ValidationResult {
-        case success
-        case failure(Error)
-    }
+    /// Used to represent whether a validation succeeded or failed.
+    public typealias ValidationResult = Result<Void>
 
     fileprivate struct MIMEType {
         let type: String
@@ -92,7 +86,7 @@ extension Request {
         where S.Iterator.Element == Int
     {
         if acceptableStatusCodes.contains(response.statusCode) {
-            return .success
+            return .success(Void())
         } else {
             let reason: ErrorReason = .unacceptableStatusCode(code: response.statusCode)
             return .failure(AFError.responseValidationFailed(reason: reason))
@@ -108,7 +102,7 @@ extension Request {
         -> ValidationResult
         where S.Iterator.Element == String
     {
-        guard let data = data, data.count > 0 else { return .success }
+        guard let data = data, data.count > 0 else { return .success(Void()) }
 
         guard
             let responseContentType = response.mimeType,
@@ -116,7 +110,7 @@ extension Request {
         else {
             for contentType in acceptableContentTypes {
                 if let mimeType = MIMEType(contentType), mimeType.isWildcard {
-                    return .success
+                    return .success(Void())
                 }
             }
 
@@ -130,7 +124,7 @@ extension Request {
 
         for contentType in acceptableContentTypes {
             if let acceptableMIMEType = MIMEType(contentType), acceptableMIMEType.matches(responseMIMEType) {
-                return .success
+                return .success(Void())
             }
         }
 

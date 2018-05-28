@@ -246,53 +246,6 @@ class RequestResponseTestCase: BaseTestCase {
         }
     }
 
-//    func testRequestResponseWithStream() {
-//        // Given
-//        let randomBytes = 4 * 1024 * 1024
-//        let urlString = "https://httpbin.org/bytes/\(randomBytes)"
-//
-//        let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
-//
-//        var progressValues: [Double] = []
-//        var accumulatedData = [Data]()
-//        var response: DataResponse<Data?>?
-//
-//        // When
-//        Alamofire.request(urlString)
-//            .downloadProgress { progress in
-//                progressValues.append(progress.fractionCompleted)
-//            }
-//            .stream { data in
-//                accumulatedData.append(data)
-//            }
-//            .response { resp in
-//                response = resp
-//                expectation.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        XCTAssertNotNil(response?.request)
-//        XCTAssertNotNil(response?.response)
-//        XCTAssertNil(response?.data)
-//        XCTAssertNil(response?.error)
-//        XCTAssertGreaterThanOrEqual(accumulatedData.count, 1)
-//
-//        var previousProgress: Double = progressValues.first ?? 0.0
-//
-//        for progress in progressValues {
-//            XCTAssertGreaterThanOrEqual(progress, previousProgress)
-//            previousProgress = progress
-//        }
-//
-//        if let lastProgress = progressValues.last {
-//            XCTAssertEqual(lastProgress, 1.0)
-//        } else {
-//            XCTFail("last item in progressValues should not be nil")
-//        }
-//    }
-//
     func testPOSTRequestWithUnicodeParameters() {
         // Given
         let urlString = "https://httpbin.org/post"

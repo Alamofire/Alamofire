@@ -196,6 +196,9 @@ extension DataRequest {
                                         data: self.data,
                                         metrics: self.metrics,
                                         result: result)
+
+            self.eventMonitor?.request(self, didParseResponse: response)
+
             (queue ?? .main).async { completionHandler(response) }
         }
 
@@ -228,6 +231,8 @@ extension DataRequest {
                                         data: self.data,
                                         metrics: self.metrics,
                                         result: result)
+
+            self.eventMonitor?.request(self, didParseResponse: response)
 
             (queue ?? .main).async { completionHandler(response) }
         }

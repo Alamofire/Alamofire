@@ -137,78 +137,47 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
         XCTAssertNotNil(manager.serverTrustManager, "session server trust policy manager should not be nil")
     }
-    // TODO: If we allow intialization with a URLSession, we can't control the queues, so do we want this API?
-//    func testThatFailableInitializerSucceedsWithDefaultArguments() {
-//        // Given
-//        let delegate = SessionDelegate()
-//        let session: URLSession = {
-//            let configuration = URLSessionConfiguration.default
-//            return URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
-//        }()
-//
-//        // When
-//        let manager = SessionManager(session: session, delegate: delegate)
-//
-//        // Then
-//        if let manager = manager {
-//            XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
-//            XCTAssertNil(manager.session.serverTrustManager, "session server trust policy manager should be nil")
-//        } else {
-//            XCTFail("manager should not be nil")
-//        }
-//    }
-//
-//    func testThatFailableInitializerSucceedsWithSpecifiedArguments() {
-//        // Given
-//        let delegate = SessionDelegate()
-//        let session: URLSession = {
-//            let configuration = URLSessionConfiguration.default
-//            return URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
-//        }()
-//
-//        let serverTrustManager = ServerTrustManager(evaluators: [:])
-//
-//        // When
-//        let manager = SessionManager(session: session, delegate: delegate, serverTrustManager: serverTrustManager)
-//
-//        // Then
-//        if let manager = manager {
-//            XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
-//            XCTAssertNotNil(manager.session.serverTrustManager, "session server trust policy manager should not be nil")
-//        } else {
-//            XCTFail("manager should not be nil")
-//        }
-//    }
-//
-//    func testThatFailableInitializerFailsWithWhenDelegateDoesNotEqualSessionDelegate() {
-//        // Given
-//        let delegate = SessionDelegate()
-//        let session: URLSession = {
-//            let configuration = URLSessionConfiguration.default
-//            return URLSession(configuration: configuration, delegate: SessionDelegate(), delegateQueue: nil)
-//        }()
-//
-//        // When
-//        let manager = SessionManager(session: session, delegate: delegate)
-//
-//        // Then
-//        XCTAssertNil(manager, "manager should be nil")
-//    }
-//
-//    func testThatFailableInitializerFailsWhenSessionDelegateIsNil() {
-//        // Given
-//        let delegate = SessionDelegate()
-//        let session: URLSession = {
-//            let configuration = URLSessionConfiguration.default
-//            return URLSession(configuration: configuration, delegate: nil, delegateQueue: nil)
-//        }()
-//
-//        // When
-//        let manager = SessionManager(session: session, delegate: delegate)
-//
-//        // Then
-//        XCTAssertNil(manager, "manager should be nil")
-//    }
+
+    func testThatSessionInitializerSucceedsWithDefaultArguments() {
+        // Given
+        let delegate = SessionDelegate()
+        let underlyingQueue = DispatchQueue(label: "underlyingQueue")
+        let session: URLSession = {
+            let configuration = URLSessionConfiguration.default
+            let queue = OperationQueue(underlyingQueue: underlyingQueue, name: "delegateQueue")
+            return URLSession(configuration: configuration, delegate: delegate, delegateQueue: queue)
+        }()
+
+        // When
+        let manager = SessionManager(session: session, delegate: delegate, rootQueue: underlyingQueue)
+
+        // Then
+        XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
+        XCTAssertNil(manager.serverTrustManager, "session server trust policy manager should be nil")
+    }
+
+    func testThatSessionInitializerSucceedsWithSpecifiedArguments() {
+        // Given
+        let delegate = SessionDelegate()
+        let underlyingQueue = DispatchQueue(label: "underlyingQueue")
+        let session: URLSession = {
+            let configuration = URLSessionConfiguration.default
+            let queue = OperationQueue(underlyingQueue: underlyingQueue, name: "delegateQueue")
+            return URLSession(configuration: configuration, delegate: delegate, delegateQueue: queue)
+        }()
+
+        let serverTrustManager = ServerTrustManager(evaluators: [:])
+
+        // When
+        let manager = SessionManager(session: session,
+                                     delegate: delegate,
+                                     rootQueue: underlyingQueue,
+                                     serverTrustManager: serverTrustManager)
+
+        // Then
+        XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
+        XCTAssertNotNil(manager.serverTrustManager, "session server trust policy manager should not be nil")
+    }
 
     // MARK: Tests - Default HTTP Headers
 
@@ -491,37 +460,37 @@ class SessionManagerTestCase: BaseTestCase {
         }
     }
 
-//    func testThatDownloadRequestWithInvalidURLStringThrowsResponseHandlerError() {
-//        // Given
-//        let sessionManager = SessionManager()
-//        let expectation = self.expectation(description: "Download should fail with error")
-//
-//        var response: DownloadResponse<URL?>?
-//
-//        // When
-//        sessionManager.download("https://httpbin.org/get/äëïöü").response { resp in
-//            response = resp
-//            expectation.fulfill()
-//        }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        XCTAssertNil(response?.request)
-//        XCTAssertNil(response?.response)
-//        XCTAssertNil(response?.temporaryURL)
-//        XCTAssertNil(response?.destinationURL)
-//        XCTAssertNil(response?.resumeData)
-//        XCTAssertNotNil(response?.error)
-//
-//        if let error = response?.error as? AFError {
-//            XCTAssertTrue(error.isInvalidURLError)
-//            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
-//        } else {
-//            XCTFail("error should not be nil")
-//        }
-//    }
-//
+    func testThatDownloadRequestWithInvalidURLStringThrowsResponseHandlerError() {
+        // Given
+        let sessionManager = SessionManager()
+        let expectation = self.expectation(description: "Download should fail with error")
+
+        var response: DownloadResponse<URL?>?
+
+        // When
+        sessionManager.download("https://httpbin.org/get/äëïöü").response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNil(response?.request)
+        XCTAssertNil(response?.response)
+        XCTAssertNil(response?.temporaryURL)
+        XCTAssertNil(response?.destinationURL)
+        XCTAssertNil(response?.resumeData)
+        XCTAssertNotNil(response?.error)
+
+        if let error = response?.error as? AFError {
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
+
     func testThatUploadDataRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let sessionManager = SessionManager()

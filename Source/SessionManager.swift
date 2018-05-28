@@ -38,14 +38,14 @@ open class SessionManager {
     let eventMonitor: CompositeEventMonitor
     let defaultEventMonitors: [EventMonitor] = [] // TODO: Create notification event monitor, make default
 
-    init(session: URLSession,
-         delegate: SessionDelegate,
-         rootQueue: DispatchQueue,
-         requestQueue: DispatchQueue? = nil,
-         adapter: RequestAdapter? = nil,
-         serverTrustManager: ServerTrustManager? = nil,
-         retrier: RequestRetrier? = nil,
-         eventMonitors: [EventMonitor] = []) {
+    public init(session: URLSession,
+                delegate: SessionDelegate,
+                rootQueue: DispatchQueue,
+                requestQueue: DispatchQueue? = nil,
+                adapter: RequestAdapter? = nil,
+                serverTrustManager: ServerTrustManager? = nil,
+                retrier: RequestRetrier? = nil,
+                eventMonitors: [EventMonitor] = []) {
         precondition(session.delegate === delegate,
                      "URLSession SessionManager initializer must pass the SessionDelegate that has been assigned to the URLSession as its delegate.")
         precondition(session.delegateQueue.underlyingQueue === rootQueue,

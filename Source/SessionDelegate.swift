@@ -25,7 +25,6 @@
 import Foundation
 
 open class SessionDelegate: NSObject {
-    // TODO: Investigate queueing active tasks?
     private(set) var requestTaskMap = RequestTaskMap()
 
     // TODO: Better way to connect delegate to manager, including queue?
@@ -96,6 +95,8 @@ extension SessionDelegate: RequestDelegate {
 
                 self.queue?.after(retryInterval) {
                     guard !request.isCancelled else { return }
+
+                    self.eventMonitor?.requestIsRetrying(request)
 
                     self.manager?.perform(request)
                 }
@@ -208,20 +209,18 @@ extension SessionDelegate: URLSessionTaskDelegate {
     }
 
     func attemptHTTPAuthentication(for challenge: URLAuthenticationChallenge, belongingTo task: URLSessionTask) -> ChallengeEvaluation {
-        // TODO: Consider custom error, depending on error we get from session.
         guard challenge.previousFailureCount == 0 else {
             return (.rejectProtectionSpace, nil, nil)
         }
 
-        // TODO: Get credential from session's configuration's defaultCredential too.
-        guard let credential = requestTaskMap[task]?.credential else {
+        guard let credential = requestTaskMap[task]?.credential ??
+            manager?.session.configuration.urlCredentialStorage?.defaultCredential(for: challenge.protectionSpace) else {
             return (.performDefaultHandling, nil, nil)
         }
 
         return (.useCredential, credential, nil)
     }
 
-    // Progress of sending the body data.
     open func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         eventMonitor?.urlSession(session,
                                  task: task,
@@ -231,17 +230,8 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         requestTaskMap[task]?.updateUploadProgress(totalBytesSent: totalBytesSent,
                                                    totalBytesExpectedToSend: totalBytesExpectedToSend)
-
-//        if #available(iOS 11.0, macOS 10.13, watchOS 4.0, tvOS 11.0, *) {
-//            NSLog("URLSession: \(session), task: \(task), progress: \(task.progress)")
-//        }
     }
 
-    // This delegate method is called under two circumstances:
-    // To provide the initial request body stream if the task was created with uploadTaskWithStreamedRequest:
-    //To provide a replacement request body stream if the task needs to resend a request that has a body stream because of an authentication challenge or other recoverable server error.
-    // You do not need to implement this if your code provides the request body using a file URL or an NSData object.
-    // Don't enable if streamed bodies aren't supported.
     open func urlSession(_ session: URLSession, task: URLSessionTask, needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
         eventMonitor?.urlSession(session, taskNeedsNewBodyStream: task)
 
@@ -252,10 +242,9 @@ extension SessionDelegate: URLSessionTaskDelegate {
         completionHandler(request.inputStream())
     }
 
-    // This method is called only for tasks in default and ephemeral sessions. Tasks in background sessions automatically follow redirects.
-    // Only code should be customization closure?
     open func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
         eventMonitor?.urlSession(session, task: task, willPerformHTTPRedirection: response, newRequest: request)
+
         completionHandler(request)
     }
 
@@ -296,27 +285,6 @@ extension SessionDelegate: URLSessionTaskDelegate {
 }
 
 extension SessionDelegate: URLSessionDataDelegate {
-    // This method is optional unless you need to support the (relatively obscure) multipart/x-mixed-replace content type.
-    // With that content type, the server sends a series of parts, each of which is intended to replace the previous part.
-    // The session calls this method at the beginning of each part, and you should then display, discard, or otherwise process the previous part, as appropriate.
-    // Don't support?
-//    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-//        NSLog("URLSession: \(session), dataTask: \(dataTask), didReceive: \(response)")
-//
-//        completionHandler(.allow)
-//    }
-
-    // Only called if didReceiveResponse is called.
-//    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didBecome downloadTask: URLSessionDownloadTask) {
-//        NSLog("URLSession: \(session), dataTask: \(dataTask), didBecomeDownloadTask")
-//    }
-
-    // Only called if didReceiveResponse is called.
-//    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didBecome streamTask: URLSessionStreamTask) {
-//        NSLog("URLSession: \(session), dataTask: \(dataTask), didBecomeStreamTask: \(streamTask)")
-//    }
-
-    // Called, possibly more than once, to accumulate the data for a response.
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
         // TODO: UploadRequest will need this too, only works now because it's a subclass.
@@ -325,27 +293,8 @@ extension SessionDelegate: URLSessionDataDelegate {
         }
 
         request.didRecieve(data: data)
-        // Update Request progress?
     }
 
-    //    The session calls this delegate method after the task finishes receiving all of the expected data. If you do not implement this method, the default behavior is to use the caching policy specified in the session’s configuration object. The primary purpose of this method is to prevent caching of specific URLs or to modify the userInfo dictionary associated with the URL response.
-    //
-    //    This method is called only if the NSURLProtocol handling the request decides to cache the response. As a rule, responses are cached only when all of the following are true:
-    //
-    //    The request is for an HTTP or HTTPS URL (or your own custom networking protocol that supports caching).
-    //
-    //    The request was successful (with a status code in the 200–299 range).
-    //
-    //    The provided response came from the server, rather than out of the cache.
-    //
-    //    The session configuration’s cache policy allows caching.
-    //
-    //    The provided NSURLRequest object's cache policy (if applicable) allows caching.
-    //
-    //    The cache-related headers in the server’s response (if present) allow caching.
-    //
-    //    The response size is small enough to reasonably fit within the cache. (For example, if you provide a disk cache, the response must be no larger than about 5% of the disk cache size.)
-    // Only for customization of caching?
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, willCacheResponse proposedResponse: CachedURLResponse, completionHandler: @escaping (CachedURLResponse?) -> Void) {
         eventMonitor?.urlSession(session, dataTask: dataTask, willCacheResponse: proposedResponse)
 
@@ -354,7 +303,6 @@ extension SessionDelegate: URLSessionDataDelegate {
 }
 
 extension SessionDelegate: URLSessionDownloadDelegate {
-    // Indicates resume data was used to start a download task. Use for ?
     open func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
         eventMonitor?.urlSession(session,
                                  downloadTask: downloadTask,
@@ -369,7 +317,6 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                                totalBytesExpectedToWrite: expectedTotalBytes)
     }
 
-    // Download progress, as provided by the `Content-Length` header. `totalBytesExpectedToWrite` will be `NSURLSessionTransferSizeUnknown` when there's no header.
     open func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         eventMonitor?.urlSession(session,
                                  downloadTask: downloadTask,
@@ -385,13 +332,6 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                                totalBytesExpectedToWrite: totalBytesExpectedToWrite)
     }
 
-    // When finished, open for reading or move the file.
-    // A file URL for the temporary file. Because the file is temporary, you must either open the file for reading or
-    // move it to a permanent location in your app’s sandbox container directory before returning from this delegate
-    // method.
-    //
-    // If you choose to open the file for reading, you should do the actual reading in another thread to avoid blocking
-    // the delegate queue.
     open func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         eventMonitor?.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location)
 

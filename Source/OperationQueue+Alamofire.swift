@@ -1,5 +1,5 @@
 //
-//  DispatchQueue+Alamofire.swift
+//  OperationQueue+Alamofire.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -22,11 +22,19 @@
 //  THE SOFTWARE.
 //
 
-import Dispatch
 import Foundation
 
-extension DispatchQueue {
-    func after(_ delay: TimeInterval, execute closure: @escaping () -> Void) {
-        asyncAfter(deadline: .now() + delay, execute: closure)
+extension OperationQueue {
+    convenience init(qualityOfService: QualityOfService = .default,
+                     maxConcurrentOperationCount: Int = OperationQueue.defaultMaxConcurrentOperationCount,
+                     underlyingQueue: DispatchQueue? = nil,
+                     name: String? = nil,
+                     startSuspended: Bool = false) {
+        self.init()
+        self.qualityOfService = qualityOfService
+        self.maxConcurrentOperationCount = maxConcurrentOperationCount
+        self.underlyingQueue = underlyingQueue
+        self.name = name
+        self.isSuspended = startSuspended
     }
 }

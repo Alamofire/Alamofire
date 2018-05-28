@@ -1,5 +1,5 @@
 //
-//  OperationQueue.swift
+//  URLSessionConfiguration+Alamofire.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -24,17 +24,11 @@
 
 import Foundation
 
-extension OperationQueue {
-    convenience init(qualityOfService: QualityOfService = .default,
-                     maxConcurrentOperationCount: Int = OperationQueue.defaultMaxConcurrentOperationCount,
-                     underlyingQueue: DispatchQueue? = nil,
-                     name: String? = nil,
-                     startSuspended: Bool = false) {
-        self.init()
-        self.qualityOfService = qualityOfService
-        self.maxConcurrentOperationCount = maxConcurrentOperationCount
-        self.underlyingQueue = underlyingQueue
-        self.name = name
-        self.isSuspended = startSuspended
+extension URLSessionConfiguration {
+    public static var alamofireDefault: URLSessionConfiguration {
+        let configuration = URLSessionConfiguration.default
+        configuration.httpAdditionalHeaders = HTTPHeaders.defaultHTTPHeaders
+
+        return configuration
     }
 }
