@@ -40,7 +40,7 @@ public struct DataResponse<Value> {
 
     /// The final metrics of the response.
     public let metrics: URLSessionTaskMetrics?
-    
+
     /// The time taken to serialize the response.
     public let serializationDuration: TimeInterval
 
@@ -82,7 +82,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
         return result.debugDescription
     }
-    
+
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
     /// response, the server data, the response serialization result and the timeline.
     public var debugDescription: String {
@@ -91,21 +91,21 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
             let headers = response.allHeaderFields as! HTTPHeaders
             let keys = headers.keys.sorted(by: >)
             let sortedHeaders = keys.map { "\($0): \(headers[$0]!)" }.joined(separator: "\n")
-            
+
             return """
             Status Code: \(response.statusCode)
-                Headers: \(sortedHeaders)
+                        Headers: \(sortedHeaders)
             """
         } ?? "nil"
         let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
-        
+
         return """
         [Request]: \(requestDescription)
         [Response]: \(responseDescription)
         [Data]: \(data?.description ?? "None")
-        [Result]: \(result.debugDescription)
         [Network Duration]: \(metricsDescription)
         [Serialization Duration]: \(serializationDuration)s
+        [Result]: \(result.debugDescription)
         """
     }
 }
@@ -221,7 +221,7 @@ public struct DownloadResponse<Value> {
 
     /// The final metrics of the response.
     public let metrics: URLSessionTaskMetrics?
-    
+
     /// The time taken to serialize the response.
     public let serializationDuration: TimeInterval
 
@@ -230,7 +230,7 @@ public struct DownloadResponse<Value> {
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
     public var error: Error? { return result.error }
-    
+
     /// Creates a `DownloadResponse` instance with the specified parameters derived from response serialization.
     ///
     /// - Parameters:
@@ -271,7 +271,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     public var description: String {
         return result.debugDescription
     }
-    
+
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
     /// response, the temporary and destination URLs, the resume data, the response serialization result and the
     /// timeline.
@@ -281,24 +281,24 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
             let headers = response.allHeaderFields as! HTTPHeaders
             let keys = headers.keys.sorted(by: >)
             let sortedHeaders = keys.map { "\($0): \(headers[$0]!)" }.joined(separator: "\n")
-            
+
             return """
             Status Code: \(response.statusCode)
             Headers: \(sortedHeaders)
             """
-            } ?? "nil"
+        } ?? "nil"
         let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
         let resumeDataDescription = resumeData.map { "\($0)" } ?? "None"
-        
+
         return """
         [Request]: \(requestDescription)
         [Response]: \(responseDescription)
         [TemporaryURL]: \(temporaryURL?.path ?? "nil")
         [DestinationURL]: \(destinationURL?.path ?? "nil")
-        [Result]: \(result.debugDescription)
         [ResumeData]: \(resumeDataDescription)
         [Network Duration]: \(metricsDescription)
         [Serialization Duration]: \(serializationDuration)s
+        [Result]: \(result.debugDescription)
         """
     }
 }
@@ -330,7 +330,7 @@ extension DownloadResponse {
             result: result.map(transform)
         )
     }
-    
+
     /// Evaluates the given closure when the result of this `DownloadResponse` is a success, passing the unwrapped
     /// result value as a parameter.
     ///
@@ -357,7 +357,7 @@ extension DownloadResponse {
             result: result.flatMap(transform)
         )
     }
-    
+
     /// Evaluates the specified closure when the `DownloadResponse` is a failure, passing the unwrapped error as a parameter.
     ///
     /// Use the `mapError` function with a closure that does not throw. For example:
@@ -379,7 +379,7 @@ extension DownloadResponse {
             result: result.mapError(transform)
         )
     }
-    
+
     /// Evaluates the specified closure when the `DownloadResponse` is a failure, passing the unwrapped error as a parameter.
     ///
     /// Use the `flatMapError` function with a closure that may throw an error. For example:

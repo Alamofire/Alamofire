@@ -229,7 +229,7 @@ extension DataRequest {
                                                                    data: self.data,
                                                                    error: self.error) }
             let end = CFAbsoluteTimeGetCurrent()
-            
+
             let response = DataResponse(request: self.request,
                                         response: self.response,
                                         data: self.data,
@@ -301,7 +301,7 @@ extension DownloadRequest {
                                                                            fileURL: self.fileURL,
                                                                            error: self.error) }
             let end = CFAbsoluteTimeGetCurrent()
-            
+
             let response = DownloadResponse(request: self.request,
                                             response: self.response,
                                             temporaryURL: self.temporaryURL,

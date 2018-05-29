@@ -740,7 +740,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.result.isFailure, true)
-        
+
         guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
 
         XCTAssertNotNil(response?.metrics)

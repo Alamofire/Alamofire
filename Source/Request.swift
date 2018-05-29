@@ -88,9 +88,9 @@ open class Request {
     open var response: HTTPURLResponse? {
         return finalTask?.response as? HTTPURLResponse
     }
-    
+
     // Metrics
-    
+
     private var protectedMetrics = Protector<[URLSessionTaskMetrics]>([])
     public var allMetrics: [URLSessionTaskMetrics] {
         return protectedMetrics.directValue
@@ -98,9 +98,9 @@ open class Request {
     public var firstMetrics: URLSessionTaskMetrics? { return allMetrics.first }
     public var lastMetrics: URLSessionTaskMetrics? { return allMetrics.last }
     public var metrics: URLSessionTaskMetrics? { return lastMetrics }
-    
+
     // Tasks
-    
+
     private var protectedTasks = Protector<[URLSessionTask]>([])
     public var tasks: [URLSessionTask] {
         return protectedTasks.directValue
