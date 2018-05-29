@@ -195,6 +195,7 @@ extension DataRequest {
                                         response: self.response,
                                         data: self.data,
                                         metrics: self.metrics,
+                                        serializationDuration: 0,
                                         result: result)
 
             self.eventMonitor?.request(self, didParseResponse: response)
@@ -222,14 +223,18 @@ extension DataRequest {
     {
         internalQueue.addOperation {
             // TODO: Use internal serialization queue?
+            let start = CFAbsoluteTimeGetCurrent()
             let result = Result { try responseSerializer.serialize(request: self.request,
                                                                    response: self.response,
                                                                    data: self.data,
                                                                    error: self.error) }
+            let end = CFAbsoluteTimeGetCurrent()
+            
             let response = DataResponse(request: self.request,
                                         response: self.response,
                                         data: self.data,
                                         metrics: self.metrics,
+                                        serializationDuration: (end - start),
                                         result: result)
 
             self.eventMonitor?.request(self, didParseResponse: response)
@@ -263,6 +268,7 @@ extension DownloadRequest {
                                             destinationURL: self.destinationURL,
                                             resumeData: self.resumeData,
                                             metrics: self.metrics,
+                                            serializationDuration: 0,
                                             result: result)
 
             (queue ?? .main).async { completionHandler(response) }
@@ -289,16 +295,20 @@ extension DownloadRequest {
     {
         internalQueue.addOperation {
             // TODO: Use internal serialization queue?
+            let start = CFAbsoluteTimeGetCurrent()
             let result = Result { try responseSerializer.serializeDownload(request: self.request,
                                                                            response: self.response,
                                                                            fileURL: self.fileURL,
                                                                            error: self.error) }
+            let end = CFAbsoluteTimeGetCurrent()
+            
             let response = DownloadResponse(request: self.request,
                                             response: self.response,
                                             temporaryURL: self.temporaryURL,
                                             destinationURL: self.destinationURL,
                                             resumeData: self.resumeData,
                                             metrics: self.metrics,
+                                            serializationDuration: (end - start),
                                             result: result)
 
             (queue ?? .main).async { completionHandler(response) }

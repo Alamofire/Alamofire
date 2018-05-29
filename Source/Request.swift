@@ -88,13 +88,22 @@ open class Request {
     open var response: HTTPURLResponse? {
         return finalTask?.response as? HTTPURLResponse
     }
-
-    private(set) var metrics: URLSessionTaskMetrics?
-    // TODO: How to expose task progress on iOS 11?
-
+    
+    // Metrics
+    
+    private var protectedMetrics = Protector<[URLSessionTaskMetrics]>([])
+    public var allMetrics: [URLSessionTaskMetrics] {
+        return protectedMetrics.directValue
+    }
+    public var firstMetrics: URLSessionTaskMetrics? { return allMetrics.first }
+    public var lastMetrics: URLSessionTaskMetrics? { return allMetrics.last }
+    public var metrics: URLSessionTaskMetrics? { return lastMetrics }
+    
+    // Tasks
+    
     private var protectedTasks = Protector<[URLSessionTask]>([])
     public var tasks: [URLSessionTask] {
-        get { return protectedTasks.directValue }
+        return protectedTasks.directValue
     }
     public var initialTask: URLSessionTask? { return tasks.first }
     public var finalTask: URLSessionTask? { return tasks.last }
@@ -191,7 +200,7 @@ open class Request {
     }
 
     func didGatherMetrics(_ metrics: URLSessionTaskMetrics) {
-        self.metrics = metrics
+        protectedMetrics.append(metrics)
 
         eventMonitor?.request(self, didGatherMetrics: metrics)
     }
