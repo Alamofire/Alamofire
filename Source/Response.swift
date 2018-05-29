@@ -87,7 +87,16 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     /// response, the server data, the response serialization result and the timeline.
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
-        let responseDescription = response.map { "\($0)" } ?? "nil"
+        let responseDescription = response.map { (response) in
+            let headers = response.allHeaderFields as! HTTPHeaders
+            let keys = headers.keys.sorted(by: >)
+            let sortedHeaders = keys.map { "\($0): \(headers[$0]!)" }.joined(separator: "\n")
+            
+            return """
+            Status Code: \(response.statusCode)
+                Headers: \(sortedHeaders)
+            """
+        } ?? "nil"
         let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
         
         return """
@@ -268,9 +277,18 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     /// timeline.
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
-        let responseDescription = response.map { "\($0)" } ?? "nil"
-        let resumeDataDescription = resumeData.map { "\($0)" } ?? "None"
+        let responseDescription = response.map { (response) in
+            let headers = response.allHeaderFields as! HTTPHeaders
+            let keys = headers.keys.sorted(by: >)
+            let sortedHeaders = keys.map { "\($0): \(headers[$0]!)" }.joined(separator: "\n")
+            
+            return """
+            Status Code: \(response.statusCode)
+            Headers: \(sortedHeaders)
+            """
+            } ?? "nil"
         let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
+        let resumeDataDescription = resumeData.map { "\($0)" } ?? "None"
         
         return """
         [Request]: \(requestDescription)
