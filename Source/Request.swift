@@ -24,7 +24,9 @@
 
 import Foundation
 
-protocol RequestDelegate: AnyObject {
+public protocol RequestDelegate: AnyObject {
+    var sessionConfiguration: URLSessionConfiguration { get }
+    
     func isRetryingRequest(_ request: Request, ifNecessaryWithError error: Error) -> Bool
 
     func cancelRequest(_ request: Request)
@@ -54,21 +56,15 @@ open class Request {
 
     // MARK: - Initial State
 
-    let id: UUID
-    let underlyingQueue: DispatchQueue
-    let serializationQueue: DispatchQueue
-    let eventMonitor: EventMonitor?
-    weak var delegate: RequestDelegate?
+    public let id: UUID
+    public let underlyingQueue: DispatchQueue
+    public let serializationQueue: DispatchQueue
+    public let eventMonitor: EventMonitor?
+    public weak var delegate: RequestDelegate?
 
-    // TODO: Do we still want to expose the queue(s?) as public API?
-    open let internalQueue: OperationQueue
+    let internalQueue: OperationQueue
 
     // MARK: - Updated State
-
-    let uploadProgress = Progress()
-    let downloadProgress = Progress()
-    var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
-    var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
 
     private var protectedState: Protector<State> = Protector(.initialized)
     public fileprivate(set) var state: State {
@@ -80,21 +76,25 @@ open class Request {
     public var isSuspended: Bool { return state == .suspended }
     public var isInitialized: Bool { return state == .initialized }
 
-    public var retryCount: Int { return protectedTasks.read { max($0.count - 1, 0) } }
-    private(set) var initialRequest: URLRequest?
-    open var request: URLRequest? {
-        return finalTask?.currentRequest
-    }
-    open var response: HTTPURLResponse? {
-        return finalTask?.response as? HTTPURLResponse
-    }
+    // Progress
+
+    public let uploadProgress = Progress()
+    public let downloadProgress = Progress()
+    fileprivate var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
+    fileprivate var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
+
+    // Requests
+
+    private var protectedRequests = Protector<[URLRequest]>([])
+    public var allRequests: [URLRequest] { return protectedRequests.directValue }
+    public var firstRequest: URLRequest? { return allRequests.first }
+    public var lastRequest: URLRequest? { return allRequests.last }
+    public var request: URLRequest? { return lastRequest }
 
     // Metrics
 
     private var protectedMetrics = Protector<[URLSessionTaskMetrics]>([])
-    public var allMetrics: [URLSessionTaskMetrics] {
-        return protectedMetrics.directValue
-    }
+    public var allMetrics: [URLSessionTaskMetrics] { return protectedMetrics.directValue }
     public var firstMetrics: URLSessionTaskMetrics? { return allMetrics.first }
     public var lastMetrics: URLSessionTaskMetrics? { return allMetrics.last }
     public var metrics: URLSessionTaskMetrics? { return lastMetrics }
@@ -102,22 +102,28 @@ open class Request {
     // Tasks
 
     private var protectedTasks = Protector<[URLSessionTask]>([])
-    public var tasks: [URLSessionTask] {
-        return protectedTasks.directValue
-    }
+    public var tasks: [URLSessionTask] { return protectedTasks.directValue }
     public var initialTask: URLSessionTask? { return tasks.first }
     public var finalTask: URLSessionTask? { return tasks.last }
     public var task: URLSessionTask? { return finalTask }
+
+    public var performedRequests: [URLRequest] { return protectedTasks.read { $0.compactMap { $0.currentRequest } } }
+
+    public var retryCount: Int { return protectedTasks.read { max($0.count - 1, 0) } }
+
+    open var response: HTTPURLResponse? {
+        return finalTask?.response as? HTTPURLResponse
+    }
 
     fileprivate(set) public var error: Error?
     private(set) var credential: URLCredential?
     fileprivate(set) var validators: [() -> Void] = []
 
-    init(id: UUID = UUID(),
-         underlyingQueue: DispatchQueue,
-         serializationQueue: DispatchQueue? = nil,
-         eventMonitor: EventMonitor?,
-         delegate: RequestDelegate) {
+    public init(id: UUID = UUID(),
+              underlyingQueue: DispatchQueue,
+              serializationQueue: DispatchQueue? = nil,
+              eventMonitor: EventMonitor?,
+              delegate: RequestDelegate) {
         self.id = id
         self.underlyingQueue = underlyingQueue
         self.serializationQueue = serializationQueue ?? underlyingQueue
@@ -133,7 +139,7 @@ open class Request {
     // Called from internal queue.
 
     func didCreateURLRequest(_ request: URLRequest) {
-        initialRequest = request
+        protectedRequests.append(request)
 
         eventMonitor?.request(self, didCreateURLRequest: request)
     }
@@ -147,8 +153,8 @@ open class Request {
     }
 
     func didAdaptInitialRequest(_ initialRequest: URLRequest, to adaptedRequest: URLRequest) {
-        self.initialRequest = adaptedRequest
-        // Set initialRequest or something else?
+        protectedRequests.append(adaptedRequest)
+
         eventMonitor?.request(self, didAdaptInitialRequest: initialRequest, to: adaptedRequest)
     }
 
@@ -162,7 +168,7 @@ open class Request {
 
     func didCreateTask(_ task: URLSessionTask) {
         protectedTasks.append(task)
-        // TODO: Reset behavior?
+
         reset()
 
         eventMonitor?.request(self, didCreateTask: task)
@@ -340,6 +346,98 @@ extension Request: Equatable {
 extension Request: Hashable {
     public var hashValue: Int {
         return id.hashValue
+    }
+}
+
+extension Request: CustomStringConvertible {
+    public var description: String {
+        guard let request = performedRequests.last ?? lastRequest,
+            let url = request.url,
+            let method = request.httpMethod else { return "No request created yet." }
+
+        let requestDescription = "\(method) \(url.absoluteString)"
+
+        return response.map { "\(requestDescription) (\($0.statusCode))" } ?? requestDescription
+    }
+}
+
+extension Request: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        return cURLRepresentation()
+    }
+    
+    func cURLRepresentation() -> String {
+        guard
+            let request = lastRequest,
+            let url = request.url,
+            let host = url.host,
+            let method = request.httpMethod else { return "$ curl command could not be created" }
+        
+        var components = ["$ curl -v"]
+        
+        components.append("-X \(method)")
+        
+        if let credentialStorage = delegate?.sessionConfiguration.urlCredentialStorage {
+            let protectionSpace = URLProtectionSpace(
+                host: host,
+                port: url.port ?? 0,
+                protocol: url.scheme,
+                realm: host,
+                authenticationMethod: NSURLAuthenticationMethodHTTPBasic
+            )
+            
+            if let credentials = credentialStorage.credentials(for: protectionSpace)?.values {
+                for credential in credentials {
+                    guard let user = credential.user, let password = credential.password else { continue }
+                    components.append("-u \(user):\(password)")
+                }
+            } else {
+                if let credential = credential, let user = credential.user, let password = credential.password {
+                    components.append("-u \(user):\(password)")
+                }
+            }
+        }
+        
+        if let configuration = delegate?.sessionConfiguration, configuration.httpShouldSetCookies {
+            if
+                let cookieStorage = configuration.httpCookieStorage,
+                let cookies = cookieStorage.cookies(for: url), !cookies.isEmpty
+            {
+                let allCookies = cookies.map { "\($0.name)=\($0.value)" }.joined(separator: ";")
+                
+                components.append("-b \"\(allCookies)\"")
+            }
+        }
+        
+        var headers: [String: String] = [:]
+        
+        if let additionalHeaders = delegate?.sessionConfiguration.httpAdditionalHeaders as? [String: String] {
+            for (field, value) in additionalHeaders where field != "Cookie" {
+                headers[field] = value
+            }
+        }
+        
+        if let headerFields = request.allHTTPHeaderFields {
+            for (field, value) in headerFields where field != "Cookie" {
+                headers[field] = value
+            }
+        }
+        
+        for (field, value) in headers {
+            let escapedValue = value.replacingOccurrences(of: "\"", with: "\\\"")
+            components.append("-H \"\(field): \(escapedValue)\"")
+        }
+        
+        if let httpBodyData = request.httpBody, let httpBody = String(data: httpBodyData, encoding: .utf8) {
+            var escapedBody = httpBody.replacingOccurrences(of: "\\\"", with: "\\\\\"")
+            escapedBody = escapedBody.replacingOccurrences(of: "\"", with: "\\\"")
+            
+            components.append("-d \"\(escapedBody)\"")
+        }
+        
+        components.append("\"\(url.absoluteString)\"")
+        
+        return components.joined(separator: " \\\n\t")
     }
 }
 

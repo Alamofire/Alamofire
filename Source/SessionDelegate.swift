@@ -81,7 +81,13 @@ open class SessionDelegate: NSObject {
 }
 
 extension SessionDelegate: RequestDelegate {
-    func isRetryingRequest(_ request: Request, ifNecessaryWithError error: Error) -> Bool {
+    public var sessionConfiguration: URLSessionConfiguration {
+        guard let manager = manager else { fatalError("Attempted to access sessionConfiguration without a manager.") }
+        
+        return manager.session.configuration
+    }
+    
+    public func isRetryingRequest(_ request: Request, ifNecessaryWithError error: Error) -> Bool {
         guard let manager = manager, let retrier = manager.retrier else { return false }
 
         retrier.should(manager, retry: request, with: error) { (shouldRetry, retryInterval) in
@@ -106,7 +112,7 @@ extension SessionDelegate: RequestDelegate {
         return true
     }
 
-    func cancelRequest(_ request: Request) {
+    public func cancelRequest(_ request: Request) {
         queue?.async {
 
             guard let task = self.requestTaskMap[request] else {
@@ -120,7 +126,7 @@ extension SessionDelegate: RequestDelegate {
         }
     }
 
-    func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
+    public func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
         queue?.async {
             guard let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask else {
                 request.didCancel()
@@ -137,7 +143,7 @@ extension SessionDelegate: RequestDelegate {
         }
     }
 
-    func suspendRequest(_ request: Request) {
+    public func suspendRequest(_ request: Request) {
         queue?.async {
             defer { request.didSuspend() }
 
@@ -147,7 +153,7 @@ extension SessionDelegate: RequestDelegate {
         }
     }
 
-    func resumeRequest(_ request: Request) {
+    public func resumeRequest(_ request: Request) {
         queue?.async {
             defer { request.didResume() }
 

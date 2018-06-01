@@ -34,9 +34,9 @@ open class SessionManager {
     open let retrier: RequestRetrier?
     open let serverTrustManager: ServerTrustManager?
 
-    let session: URLSession
-    let eventMonitor: CompositeEventMonitor
-    let defaultEventMonitors: [EventMonitor] = [] // TODO: Create notification event monitor, make default
+    open let session: URLSession
+    open let eventMonitor: CompositeEventMonitor
+    open let defaultEventMonitors: [EventMonitor] = [] // TODO: Create notification event monitor, make default
 
     public init(session: URLSession,
                 delegate: SessionDelegate,
@@ -286,7 +286,7 @@ open class SessionManager {
         case let r as DataRequest: perform(r)
         case let r as UploadRequest: perform(r)
         case let r as DownloadRequest: perform(r)
-        default: fatalError("Attempted to perform nsupported Request subclass: \(type(of: request))")
+        default: fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
         }
     }
 
