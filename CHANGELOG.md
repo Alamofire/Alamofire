@@ -333,7 +333,7 @@ Released on 2016-11-20. All issues associated with this milestone can be found u
 - Request property overrides to fallback on original task if available.
   - Added by [Aron Cedercrantz](https://github.com/rastersize) in Pull Request
   [#1792](https://github.com/Alamofire/Alamofire/pull/1792).
-- `Timeline` generation to `DataResponse<Data?>` and `DefaultDownloadResponse`.
+- `Timeline` generation to `DefaultDataResponse` and `DefaultDownloadResponse`.
   - Added by [Christian Noon](https://github.com/cnoon).
 - JSON encoding `encode` method that takes a JSON object along with unit tests.
   - Added by [Christian Noon](https://github.com/cnoon).
