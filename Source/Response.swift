@@ -35,14 +35,14 @@ public struct DataResponse<Value> {
     /// The data returned by the server.
     public let data: Data?
 
-    /// The result of response serialization.
-    public let result: Result<Value>
-
     /// The final metrics of the response.
     public let metrics: URLSessionTaskMetrics?
 
     /// The time taken to serialize the response.
     public let serializationDuration: TimeInterval
+
+    /// The result of response serialization.
+    public let result: Result<Value>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
     public var value: Value? { return result.value }
@@ -84,7 +84,8 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     }
 
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
-    /// response, the server data, the response serialization result and the timeline.
+    /// response, the server data, the duration of the network and serializatino actions, and the response serialization
+    /// result.
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
         let responseDescription = response.map { (response) in
@@ -216,14 +217,14 @@ public struct DownloadResponse<Value> {
     /// The resume data generated if the request was cancelled.
     public let resumeData: Data?
 
-    /// The result of response serialization.
-    public let result: Result<Value>
-
     /// The final metrics of the response.
     public let metrics: URLSessionTaskMetrics?
 
     /// The time taken to serialize the response.
     public let serializationDuration: TimeInterval
+
+    /// The result of response serialization.
+    public let result: Result<Value>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
     public var value: Value? { return result.value }
@@ -273,8 +274,8 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     }
 
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
-    /// response, the temporary and destination URLs, the resume data, the response serialization result and the
-    /// timeline.
+    /// response, the temporary and destination URLs, the resume data, the durations of the network and serialization
+    /// actions, and the response serialization result.
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
         let responseDescription = response.map { (response) in

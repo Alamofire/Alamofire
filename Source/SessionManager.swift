@@ -36,7 +36,7 @@ open class SessionManager {
 
     open let session: URLSession
     open let eventMonitor: CompositeEventMonitor
-    open let defaultEventMonitors: [EventMonitor] = [] // TODO: Create notification event monitor, make default
+    open let defaultEventMonitors: [EventMonitor] = [AlamofireNotifications()]
 
     public init(session: URLSession,
                 delegate: SessionDelegate,

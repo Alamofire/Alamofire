@@ -93,4 +93,40 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.url?.absoluteString, redirectURLString)
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
+
+    func testThatAppropriateNotificationsAreCalledWithRequestForDataRequest() {
+        // Given
+        var request: Request?
+        _ = expectation(forNotification: .afDidResume, object: nil, handler: nil)
+        _ = expectation(forNotification: .afDidComplete, object: nil) { (notification) in
+            request = notification.afRequest
+            return (request != nil)
+        }
+
+        // When
+        manager.request("https://httpbin.org/get").response { _ in }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(request?.response?.statusCode, 200)
+    }
+
+    func testThatDidCompleteNotificationIsCalledWithRequestForDownloadRequests() {
+        // Given
+        var request: Request?
+        _ = expectation(forNotification: .afDidResume, object: nil, handler: nil)
+        _ = expectation(forNotification: .afDidComplete, object: nil) { (notification) in
+            request = notification.afRequest
+            return (request != nil)
+        }
+
+        // When
+        manager.download("https://httpbin.org/get").response { _ in }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(request?.response?.statusCode, 200)
+    }
 }

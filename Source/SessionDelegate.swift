@@ -83,10 +83,10 @@ open class SessionDelegate: NSObject {
 extension SessionDelegate: RequestDelegate {
     public var sessionConfiguration: URLSessionConfiguration {
         guard let manager = manager else { fatalError("Attempted to access sessionConfiguration without a manager.") }
-        
+
         return manager.session.configuration
     }
-    
+
     public func isRetryingRequest(_ request: Request, ifNecessaryWithError error: Error) -> Bool {
         guard let manager = manager, let retrier = manager.retrier else { return false }
 
@@ -145,21 +145,19 @@ extension SessionDelegate: RequestDelegate {
 
     public func suspendRequest(_ request: Request) {
         queue?.async {
-            defer { request.didSuspend() }
-
             guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
 
             task.suspend()
+            request.didSuspend()
         }
     }
 
     public func resumeRequest(_ request: Request) {
         queue?.async {
-            defer { request.didResume() }
-
             guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
 
             task.resume()
+            request.didResume()
         }
     }
 }

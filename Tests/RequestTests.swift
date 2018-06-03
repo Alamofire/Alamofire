@@ -360,7 +360,7 @@ class RequestDescriptionTestCase: BaseTestCase {
         }.resume()
 
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         let finalRequestDescription = request.description
 
         // Then
@@ -386,7 +386,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
         let configuration = URLSessionConfiguration.alamofireDefault
         configuration.httpAdditionalHeaders = headers
-        
+
         let manager = SessionManager(configuration: configuration)
 
         return manager
@@ -395,19 +395,19 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     let managerWithContentTypeHeader: SessionManager = {
         var headers = HTTPHeaders.defaultHTTPHeaders
         headers["Content-Type"] = "application/json"
-        
+
         let configuration = URLSessionConfiguration.alamofireDefault
         configuration.httpAdditionalHeaders = headers
-        
+
         let manager = SessionManager(configuration: configuration)
 
         return manager
     }()
-    
+
     func managerWithCookie(_ cookie: HTTPCookie) -> SessionManager {
         let configuration = URLSessionConfiguration.alamofireDefault
         configuration.httpCookieStorage?.setCookie(cookie)
-        
+
         return SessionManager(configuration: configuration)
     }
 
@@ -429,9 +429,9 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
         // When
         let request = manager.request(urlString).response { _ in expectation.fulfill() }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -448,7 +448,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         // When
         let headers: [String: String] = [ "X-Custom-Header": "{\"key\": \"value\"}" ]
         let request = manager.request(urlString, headers: headers).response { _ in expectation.fulfill() }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
@@ -463,9 +463,9 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         // When
         let headers = [ "Accept-Language": "en-GB" ]
         let request = managerWithAcceptLanguageHeader.request(urlString, headers: headers).response { _ in expectation.fulfill() }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -487,9 +487,9 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
         // When
         let request = manager.request(urlString, method: .post).response { _ in expectation.fulfill() }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -513,9 +513,9 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let request = manager.request(urlString, method: .post, parameters: parameters, encoding: JSONEncoding.default).response {
             _ in expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -549,9 +549,9 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
         // When
         let request = cookieManager.request(urlString, method: .post).response { _ in expectation.fulfill() }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         let components = cURLCommandComponents(for: request)
 
         // Then
@@ -601,7 +601,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         let components = cURLCommandComponents(for: request)
-        
+
         // Then
         XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components.contains("-X"))
@@ -617,12 +617,12 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         // Given
         let urlString = "invalid_url"
         let expectation = self.expectation(description: "request should complete")
-        
+
         // When
         let request = manager.request(urlString).response { _ in expectation.fulfill() }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         let debugDescription = request.debugDescription
 
         // Then
