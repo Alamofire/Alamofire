@@ -31,48 +31,21 @@ public protocol DataResponseSerializerProtocol {
     /// The type of serialized object to be created by this serializer.
     associatedtype SerializedObject
 
-//    /// The HTTP response codes used to indicate empty responses. Defaults to `[204, 205]`.
-//    var emptyDataResponseCodes: Set<Int> { get }
-//
-//    /// The HTTP methods used to indicate emptry responses. Defaults to `[.head]`.
-//    var emptyDataRequestMethods: Set<HTTPMethod> { get }
-
     /// The function used to serialize the response data in response handlers.
     func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> SerializedObject
 }
-
-//extension DataResponseSerializerProtocol {
-//    public var emptyDataResponseCodes: Set<Int> { return [204, 205] }
-//    public var emptyDataRequestMethods: Set<HTTPMethod> { return [.head] }
-//}
 
 /// The type to which all download response serializers must conform in order to serialize a response.
 public protocol DownloadResponseSerializerProtocol {
     /// The type of serialized object to be created by this `DownloadResponseSerializerType`.
     associatedtype SerializedObject
 
-//    /// The HTTP response codes used to indicate empty responses. Defaults to `[204, 205]`.
-//    var emptyResponseCodes: Set<Int> { get }
-//
-//    /// The HTTP methods used to indicate emptry responses. Defaults to `[.head]`.
-//    var emptyRequestMethods: Set<HTTPMethod> { get }
-
     /// The function used to serialize the downloaded data in response handlers.
     func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> SerializedObject
 }
 
-extension DownloadResponseSerializerProtocol {
-    public var emptyDataResponseCodes: Set<Int> { return [204, 205] }
-    public var emptyDataRequestMethods: Set<HTTPMethod> { return [.head] }
-}
-
 /// A serializer that can handle both data and download responses.
 public protocol ResponseSerializer: DataResponseSerializerProtocol & DownloadResponseSerializerProtocol { }
-
-//extension ResponseSerializer {
-//    public var emptyDataResponseCodes: Set<Int> { return [204, 205] }
-//    public var emptyDataRequestMethods: Set<HTTPMethod> { return [.head] }
-//}
 
 /// By default, any serializer declared to conform to both types will get file serialization for free, as it just feeds
 /// the data read from disk into the data response serializer.
@@ -158,23 +131,6 @@ public final class AnyResponseSerializer<Value>: ResponseSerializer {
         }(request, response, fileURL, error)
     }
 }
-
-// MARK: - Timeline
-
-//extension Request {
-//    var timeline: Timeline {
-//        let requestStartTime = self.startTime ?? CFAbsoluteTimeGetCurrent()
-//        let requestCompletedTime = self.endTime ?? CFAbsoluteTimeGetCurrent()
-//        let initialResponseTime = self.delegate.initialResponseTime ?? requestCompletedTime
-//
-//        return Timeline(
-//            requestStartTime: requestStartTime,
-//            initialResponseTime: initialResponseTime,
-//            requestCompletedTime: requestCompletedTime,
-//            serializationCompletedTime: CFAbsoluteTimeGetCurrent()
-//        )
-//    }
-//}
 
 // MARK: - Default
 
