@@ -31,6 +31,13 @@ class MasterViewController: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
     var objects = NSMutableArray()
+    let sessionManager: SessionManager = {
+        if #available(iOS 12.0, *) {
+            return SessionManager(eventMonitors: [AlamofireSignposts()])
+        } else {
+            return SessionManager()
+        }
+    }()
 
     // MARK: - View Lifecycle
 
@@ -66,23 +73,23 @@ class MasterViewController: UITableViewController {
                 switch segue.identifier! {
                 case "GET":
                     detailViewController.segueIdentifier = "GET"
-                    return Alamofire.request("https://httpbin.org/get")
+                    return sessionManager.request("https://httpbin.org/get")
                 case "POST":
                     detailViewController.segueIdentifier = "POST"
-                    return Alamofire.request("https://httpbin.org/post", method: .post)
+                    return sessionManager.request("https://httpbin.org/post", method: .post)
                 case "PUT":
                     detailViewController.segueIdentifier = "PUT"
-                    return Alamofire.request("https://httpbin.org/put", method: .put)
+                    return sessionManager.request("https://httpbin.org/put", method: .put)
                 case "DELETE":
                     detailViewController.segueIdentifier = "DELETE"
-                    return Alamofire.request("https://httpbin.org/delete", method: .delete)
+                    return sessionManager.request("https://httpbin.org/delete", method: .delete)
                 case "DOWNLOAD":
                     detailViewController.segueIdentifier = "DOWNLOAD"
                     let destination = DownloadRequest.suggestedDownloadDestination(
                         for: .cachesDirectory,
                         in: .userDomainMask
                     )
-                    return Alamofire.download("https://httpbin.org/stream/1", to: destination)
+                    return sessionManager.download("https://httpbin.org/stream/1", to: destination)
                 default:
                     return nil
                 }
