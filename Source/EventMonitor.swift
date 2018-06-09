@@ -614,7 +614,7 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `request(_:didParseResponse:)` event, casting the generic serialized object to `Any`.
     open var requestDidParseAnyDownloadResponse: ((DownloadRequest, DownloadResponse<Any>) -> Void)?
 
-    open let queue: DispatchQueue
+    public let queue: DispatchQueue
 
     public init(queue: DispatchQueue = .main) {
         self.queue = queue
@@ -797,5 +797,31 @@ open class ClosureEventMonitor: EventMonitor {
 
     open func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value>) {
         requestDidParseAnyDownloadResponse?(request, response as! DownloadResponse<Any>)
+    }
+}
+
+import os.log
+import os.signpost
+
+@available(iOS 12.0, macOS 10.14, *)
+public final class AlamofireSignposts: EventMonitor {
+    let log = OSLog(subsystem: "org.alamofire", category: "Alamofire")
+    
+    public init() { }
+    
+    public func requestDidResume(_ request: Request) {
+        let id = OSSignpostID(log: log, object: request)
+        os_log("Resume", log: log, type: .default)
+        os_log("Other resume.")
+        os_signpost(type: .begin, log: log, name: "Alamofire", signpostID: id)
+//        os_signpost(.begin, log: log, name: "Alamofire Request", signpostID: id, "Request")
+    }
+    
+    public func requestDidFinish(_ request: Request) {
+        let id = OSSignpostID(log: log, object: request)
+        os_log("Finish", log: log, type: .default)
+        os_log("Other finish.")
+        os_signpost(type: .end, log: log, name: "Alamofire", signpostID: id)
+//        os_signpost(.end, log: log, name: "Alamofire Request", signpostID: id, "Request")
     }
 }
