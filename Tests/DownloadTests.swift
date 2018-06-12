@@ -370,7 +370,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile])})
+        Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile, .createIntermediateDirectories])})
             .response { resp in
                 response = resp
                 expectation.fulfill()

@@ -116,8 +116,8 @@ open class Request {
     }
 
     fileprivate(set) public var error: Error?
-    private(set) var credential: URLCredential?
-    fileprivate(set) var validators: [() -> Void] = []
+    private(set) var credential: URLCredential? // TODO: Make Protected
+    fileprivate var protectedValidators: Protector<[() -> Void]> = Protector([])
 
     public init(id: UUID = UUID(),
               underlyingQueue: DispatchQueue,
@@ -221,7 +221,7 @@ open class Request {
     // Completion point for all tasks.
     func didCompleteTask(_ task: URLSessionTask, with error: Error?) {
         self.error = self.error ?? error
-        validators.forEach { $0() }
+        protectedValidators.directValue.forEach { $0() }
 
         eventMonitor?.request(self, didCompleteTask: task, with: error)
 
@@ -229,6 +229,7 @@ open class Request {
     }
 
     func retryOrFinish(error: Error?) {
+        // TODO: Separate retry into two methods
         if let error = error, delegate?.isRetryingRequest(self, ifNecessaryWithError: error) == true {
             return
         } else {
@@ -312,6 +313,7 @@ open class Request {
     /// - returns: The request.
     @discardableResult
     open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping ProgressHandler) -> Self {
+        // TODO: Make protected, perhaps move properties to single struct
         underlyingQueue.async { self.downloadProgressHandler = (closure, queue) }
 
         return self
@@ -467,7 +469,7 @@ open class DataRequest: Request {
         data = nil
     }
 
-    func didRecieve(data: Data) {
+    func didReceive(data: Data) {
         if self.data == nil {
             self.data = data
         } else {
@@ -478,7 +480,7 @@ open class DataRequest: Request {
     }
 
     func updateDownloadProgress() {
-        let totalBytesRecieved = Int64(self.data?.count ?? 0)
+        let totalBytesRecieved = Int64(data?.count ?? 0)
         let totalBytesExpected = task?.response?.expectedContentLength ?? NSURLSessionTransferSizeUnknown
 
         downloadProgress.totalUnitCount = totalBytesExpected
@@ -496,22 +498,20 @@ open class DataRequest: Request {
     /// - returns: The request.
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
-        underlyingQueue.async {
-            let validationExecution: () -> Void = { [unowned self] in
+        protectedValidators.append {
+            let _: () -> Void = { [unowned self] in
                 guard self.error == nil, let response = self.response else { return }
-
+                
                 let result = validation(self.request, response, self.data)
-
+                
                 result.withError { self.error = $0 }
-
+                
                 self.eventMonitor?.request(self,
-                                      didValidateRequest: self.request,
-                                      response: response,
-                                      data: self.data,
-                                      withResult: result)
+                                           didValidateRequest: self.request,
+                                           response: response,
+                                           data: self.data,
+                                           withResult: result)
             }
-
-            self.validators.append(validationExecution)
         }
 
         return self
@@ -656,7 +656,6 @@ open class DownloadRequest: Request {
 
     @discardableResult
     public override func cancel() -> Self {
-        // TODO: EventMonitor?
         guard state.canTransitionTo(.cancelled) else { return self }
 
         state = .cancelled
@@ -677,14 +676,14 @@ open class DownloadRequest: Request {
     /// - returns: The request.
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
-        underlyingQueue.async {
-            let validationExecution: () -> Void = { [unowned self] in
+        protectedValidators.append {
+            let _: () -> Void = { [unowned self] in
                 guard self.error == nil, let response = self.response else { return }
-
+                
                 let result = validation(self.request, response, self.temporaryURL, self.destinationURL)
-
+                
                 result.withError { self.error = $0 }
-
+                
                 self.eventMonitor?.request(self,
                                            didValidateRequest: self.request,
                                            response: response,
@@ -692,8 +691,6 @@ open class DownloadRequest: Request {
                                            destinationURL: self.destinationURL,
                                            withResult: result)
             }
-
-            self.validators.append(validationExecution)
         }
 
         return self

@@ -93,18 +93,18 @@ extension SessionDelegate: RequestDelegate {
         retrier.should(manager, retry: request, with: error) { (shouldRetry, retryInterval) in
             guard !request.isCancelled else { return }
 
-            self.queue?.async {
+            manager.rootQueue.async {
                 guard shouldRetry else {
                     request.finish()
                     return
                 }
 
-                self.queue?.after(retryInterval) {
+                manager.rootQueue.after(retryInterval) {
                     guard !request.isCancelled else { return }
 
-                    self.eventMonitor?.requestIsRetrying(request)
-
-                    self.manager?.perform(request)
+                    manager.eventMonitor.requestIsRetrying(request)
+                    // TODO: Iterate retryCount
+                    manager.perform(request)
                 }
             }
         }
@@ -114,7 +114,6 @@ extension SessionDelegate: RequestDelegate {
 
     public func cancelRequest(_ request: Request) {
         queue?.async {
-
             guard let task = self.requestTaskMap[request] else {
                 request.didCancel()
                 request.finish()
@@ -258,7 +257,6 @@ extension SessionDelegate: URLSessionTaskDelegate {
         requestTaskMap[task]?.didGatherMetrics(metrics)
     }
 
-    // Task finished transferring data or had a client error.
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)
 
@@ -267,36 +265,21 @@ extension SessionDelegate: URLSessionTaskDelegate {
         requestTaskMap[task] = nil
     }
 
-    // Only used when background sessions are resuming a delayed task.
-    //    func urlSession(_ session: URLSession, task: URLSessionTask, willBeginDelayedRequest request: URLRequest, completionHandler: @escaping (URLSession.DelayedRequestDisposition, URLRequest?) -> Void) {
-    //
-    //    }
-
-    // This method is called if the waitsForConnectivity property of URLSessionConfiguration is true, and sufficient
-    // connectivity is unavailable. The delegate can use this opportunity to update the user interface; for example, by
-    // presenting an offline mode or a cellular-only mode.
-    //
-    // This method is called, at most, once per task, and only if connectivity is initially unavailable. It is never
-    // called for background sessions because waitsForConnectivity is ignored for those sessions.
     @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     open func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
         eventMonitor?.urlSession(session, taskIsWaitingForConnectivity: task)
-
-        // Post Notification?
-        // Update Request state?
-        // Only once? How to know when it's done waiting and resumes the task?
     }
 }
 
 extension SessionDelegate: URLSessionDataDelegate {
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
-        // TODO: UploadRequest will need this too, only works now because it's a subclass.
+        
         guard let request = requestTaskMap[dataTask] as? DataRequest else {
             fatalError("dataTask received data for incorrect Request subclass: \(String(describing: requestTaskMap[dataTask]))")
         }
 
-        request.didRecieve(data: data)
+        request.didReceive(data: data)
     }
 
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, willCacheResponse proposedResponse: CachedURLResponse, completionHandler: @escaping (CachedURLResponse?) -> Void) {
@@ -342,7 +325,8 @@ extension SessionDelegate: URLSessionDownloadDelegate {
         guard let request = requestTaskMap[downloadTask] as? DownloadRequest else {
             fatalError("download finished but either no request found or request wasn't DownloadRequest")
         }
-
+        
+        // TODO: Rename this callback.
         request.didComplete(task: downloadTask, with: location)
     }
 }

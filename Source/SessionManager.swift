@@ -25,18 +25,18 @@
 import Foundation
 
 open class SessionManager {
-    open static let `default` = SessionManager()
+    public static let `default` = SessionManager()
 
     let delegate: SessionDelegate
     let rootQueue: DispatchQueue
     let requestQueue: DispatchQueue
-    open let adapter: RequestAdapter?
-    open let retrier: RequestRetrier?
-    open let serverTrustManager: ServerTrustManager?
+    public let adapter: RequestAdapter?
+    public let retrier: RequestRetrier?
+    public let serverTrustManager: ServerTrustManager?
 
-    open let session: URLSession
-    open let eventMonitor: CompositeEventMonitor
-    open let defaultEventMonitors: [EventMonitor] = [AlamofireNotifications()]
+    public let session: URLSession
+    public let eventMonitor: CompositeEventMonitor
+    public let defaultEventMonitors: [EventMonitor] = [AlamofireNotifications()]
 
     public init(session: URLSession,
                 delegate: SessionDelegate,
@@ -62,7 +62,7 @@ open class SessionManager {
         delegate.didCreateSessionManager(self, withEventMonitor: eventMonitor)
     }
 
-    public convenience init(configuration: URLSessionConfiguration = .default,
+    public convenience init(configuration: URLSessionConfiguration = .alamofireDefault,
                             delegate: SessionDelegate = SessionDelegate(),
                             rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.sessionManager.rootQueue"),
                             requestQueue: DispatchQueue? = nil,

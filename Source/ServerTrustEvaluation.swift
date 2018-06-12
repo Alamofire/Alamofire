@@ -27,7 +27,7 @@ import Foundation
 /// Responsible for managing the mapping of `ServerTrustEvaluating` values to given hosts.
 open class ServerTrustManager {
     /// The dictionary of policies mapped to a particular host.
-    open let evaluators: [String: ServerTrustEvaluating]
+    public let evaluators: [String: ServerTrustEvaluating]
 
     /// Initializes the `ServerTrustManager` instance with the given evaluators.
     ///

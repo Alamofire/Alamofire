@@ -24,7 +24,7 @@
 
 import Foundation
 
-/// A type that maintains a two way, one to on map of `URLSessionTask`s to `Request`s.
+/// A type that maintains a two way, one to one map of `URLSessionTask`s to `Request`s.
 struct RequestTaskMap {
     private var requests: [URLSessionTask: Request]
     private var tasks: [Request: URLSessionTask]
