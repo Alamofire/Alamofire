@@ -65,11 +65,25 @@ open class Request {
     let internalQueue: OperationQueue
 
     // MARK: - Updated State
+    
+    struct MutableState {
+        var state: State = .initialized
+        var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
+        var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
+        var credential: URLCredential?
+        var validators: [() -> Void] = []
+        var requests: [URLRequest] = []
+        var tasks: [URLSessionTask] = []
+        var metrics: [URLSessionTaskMetrics] = []
+        var retryCount = 0
+        var error: Error?
+    }
+    
+    private var protectedMutableState: Protector<MutableState> = Protector(MutableState())
 
-    private var protectedState: Protector<State> = Protector(.initialized)
     public fileprivate(set) var state: State {
-        get { return protectedState.directValue }
-        set { protectedState.directValue = newValue }
+        get { return protectedMutableState.directValue.state }
+        set { protectedMutableState.write { $0.state = newValue } }
     }
     public var isCancelled: Bool { return state == .cancelled }
     public var isResumed: Bool { return state == .resumed }
@@ -80,43 +94,52 @@ open class Request {
 
     public let uploadProgress = Progress()
     public let downloadProgress = Progress()
-    fileprivate var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
-    fileprivate var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
+    fileprivate var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
+        get { return protectedMutableState.directValue.uploadProgressHandler }
+        set { protectedMutableState.write { $0.uploadProgressHandler = newValue } }
+    }
+    fileprivate var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
+        get { return protectedMutableState.directValue.downloadProgressHandler }
+        set { protectedMutableState.write { $0.downloadProgressHandler = newValue } }
+    }
 
     // Requests
-
-    private var protectedRequests = Protector<[URLRequest]>([])
-    public var allRequests: [URLRequest] { return protectedRequests.directValue }
-    public var firstRequest: URLRequest? { return allRequests.first }
-    public var lastRequest: URLRequest? { return allRequests.last }
+    
+    public var requests: [URLRequest] { return protectedMutableState.directValue.requests }
+    public var firstRequest: URLRequest? { return requests.first }
+    public var lastRequest: URLRequest? { return requests.last }
     public var request: URLRequest? { return lastRequest }
 
     // Metrics
 
-    private var protectedMetrics = Protector<[URLSessionTaskMetrics]>([])
-    public var allMetrics: [URLSessionTaskMetrics] { return protectedMetrics.directValue }
+    public var allMetrics: [URLSessionTaskMetrics] { return protectedMutableState.directValue.metrics }
     public var firstMetrics: URLSessionTaskMetrics? { return allMetrics.first }
     public var lastMetrics: URLSessionTaskMetrics? { return allMetrics.last }
     public var metrics: URLSessionTaskMetrics? { return lastMetrics }
 
     // Tasks
 
-    private var protectedTasks = Protector<[URLSessionTask]>([])
-    public var tasks: [URLSessionTask] { return protectedTasks.directValue }
+    public var tasks: [URLSessionTask] { return protectedMutableState.directValue.tasks }
     public var initialTask: URLSessionTask? { return tasks.first }
     public var finalTask: URLSessionTask? { return tasks.last }
     public var task: URLSessionTask? { return finalTask }
 
-    public var performedRequests: [URLRequest] { return protectedTasks.read { $0.compactMap { $0.currentRequest } } }
-
-    public var retryCount: Int { return protectedTasks.read { max($0.count - 1, 0) } }
-
-    open var response: HTTPURLResponse? {
-        return finalTask?.response as? HTTPURLResponse
+    public var performedRequests: [URLRequest] {
+        return protectedMutableState.read { $0.tasks.compactMap { $0.currentRequest } }
     }
 
-    fileprivate(set) public var error: Error?
-    private(set) var credential: URLCredential? // TODO: Make Protected
+    public var retryCount: Int { return protectedMutableState.read { max($0.tasks.count - 1, 0) } }
+
+    public var response: HTTPURLResponse? { return finalTask?.response as? HTTPURLResponse }
+
+    fileprivate(set) public var error: Error? {
+        get { return protectedMutableState.directValue.error }
+        set { protectedMutableState.write { $0.error = newValue } }
+    }
+    private(set) var credential: URLCredential? {
+        get { return protectedMutableState.directValue.credential }
+        set { protectedMutableState.write { $0.credential = newValue } }
+    }
     fileprivate var protectedValidators: Protector<[() -> Void]> = Protector([])
 
     public init(id: UUID = UUID(),
@@ -139,7 +162,7 @@ open class Request {
     // Called from internal queue.
 
     func didCreateURLRequest(_ request: URLRequest) {
-        protectedRequests.append(request)
+        protectedMutableState.write { $0.requests.append(request) }
 
         eventMonitor?.request(self, didCreateURLRequest: request)
     }
@@ -153,7 +176,7 @@ open class Request {
     }
 
     func didAdaptInitialRequest(_ initialRequest: URLRequest, to adaptedRequest: URLRequest) {
-        protectedRequests.append(adaptedRequest)
+        protectedMutableState.write { $0.requests.append(adaptedRequest) }
 
         eventMonitor?.request(self, didAdaptInitialRequest: initialRequest, to: adaptedRequest)
     }
@@ -167,7 +190,7 @@ open class Request {
     }
 
     func didCreateTask(_ task: URLSessionTask) {
-        protectedTasks.append(task)
+        protectedMutableState.write { $0.tasks.append(task) }
 
         reset()
 
@@ -206,8 +229,8 @@ open class Request {
     }
 
     func didGatherMetrics(_ metrics: URLSessionTaskMetrics) {
-        protectedMetrics.append(metrics)
-
+        protectedMutableState.write { $0.metrics.append(metrics) }
+        
         eventMonitor?.request(self, didGatherMetrics: metrics)
     }
 
@@ -498,21 +521,21 @@ open class DataRequest: Request {
     /// - returns: The request.
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
-        protectedValidators.append {
-            let _: () -> Void = { [unowned self] in
-                guard self.error == nil, let response = self.response else { return }
-                
-                let result = validation(self.request, response, self.data)
-                
-                result.withError { self.error = $0 }
-                
-                self.eventMonitor?.request(self,
-                                           didValidateRequest: self.request,
-                                           response: response,
-                                           data: self.data,
-                                           withResult: result)
-            }
+        let validator: () -> Void = { [unowned self] in
+            guard self.error == nil, let response = self.response else { return }
+            
+            let result = validation(self.request, response, self.data)
+            
+            result.withError { self.error = $0 }
+            
+            self.eventMonitor?.request(self,
+                                       didValidateRequest: self.request,
+                                       response: response,
+                                       data: self.data,
+                                       withResult: result)
         }
+        
+        protectedValidators.append(validator)
 
         return self
     }
@@ -676,22 +699,22 @@ open class DownloadRequest: Request {
     /// - returns: The request.
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
-        protectedValidators.append {
-            let _: () -> Void = { [unowned self] in
-                guard self.error == nil, let response = self.response else { return }
-                
-                let result = validation(self.request, response, self.temporaryURL, self.destinationURL)
-                
-                result.withError { self.error = $0 }
-                
-                self.eventMonitor?.request(self,
-                                           didValidateRequest: self.request,
-                                           response: response,
-                                           temporaryURL: self.temporaryURL,
-                                           destinationURL: self.destinationURL,
-                                           withResult: result)
-            }
+        let validator: () -> Void = { [unowned self] in
+            guard self.error == nil, let response = self.response else { return }
+            
+            let result = validation(self.request, response, self.temporaryURL, self.destinationURL)
+            
+            result.withError { self.error = $0 }
+            
+            self.eventMonitor?.request(self,
+                                       didValidateRequest: self.request,
+                                       response: response,
+                                       temporaryURL: self.temporaryURL,
+                                       destinationURL: self.destinationURL,
+                                       withResult: result)
         }
+        
+        protectedValidators.append(validator)
 
         return self
     }
