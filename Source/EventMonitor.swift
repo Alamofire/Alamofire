@@ -614,7 +614,7 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `request(_:didParseResponse:)` event, casting the generic serialized object to `Any`.
     open var requestDidParseAnyDownloadResponse: ((DownloadRequest, DownloadResponse<Any>) -> Void)?
 
-    open let queue: DispatchQueue
+    public let queue: DispatchQueue
 
     public init(queue: DispatchQueue = .main) {
         self.queue = queue
