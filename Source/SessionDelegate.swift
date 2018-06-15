@@ -274,7 +274,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
 extension SessionDelegate: URLSessionDataDelegate {
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
-        
+
         guard let request = requestTaskMap[dataTask] as? DataRequest else {
             fatalError("dataTask received data for incorrect Request subclass: \(String(describing: requestTaskMap[dataTask]))")
         }
@@ -325,7 +325,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
         guard let request = requestTaskMap[downloadTask] as? DownloadRequest else {
             fatalError("download finished but either no request found or request wasn't DownloadRequest")
         }
-        
+
         // TODO: Rename this callback.
         request.didComplete(task: downloadTask, with: location)
     }

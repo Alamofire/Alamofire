@@ -65,7 +65,7 @@ open class Request {
     let internalQueue: OperationQueue
 
     // MARK: - Updated State
-    
+
     struct MutableState {
         var state: State = .initialized
         var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
@@ -78,7 +78,7 @@ open class Request {
         var retryCount = 0
         var error: Error?
     }
-    
+
     private var protectedMutableState: Protector<MutableState> = Protector(MutableState())
 
     public fileprivate(set) var state: State {
@@ -104,7 +104,7 @@ open class Request {
     }
 
     // Requests
-    
+
     public var requests: [URLRequest] { return protectedMutableState.directValue.requests }
     public var firstRequest: URLRequest? { return requests.first }
     public var lastRequest: URLRequest? { return requests.last }
@@ -230,7 +230,7 @@ open class Request {
 
     func didGatherMetrics(_ metrics: URLSessionTaskMetrics) {
         protectedMutableState.write { $0.metrics.append(metrics) }
-        
+
         eventMonitor?.request(self, didGatherMetrics: metrics)
     }
 
@@ -523,18 +523,18 @@ open class DataRequest: Request {
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
             guard self.error == nil, let response = self.response else { return }
-            
+
             let result = validation(self.request, response, self.data)
-            
+
             result.withError { self.error = $0 }
-            
+
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,
                                        response: response,
                                        data: self.data,
                                        withResult: result)
         }
-        
+
         protectedValidators.append(validator)
 
         return self
@@ -701,11 +701,11 @@ open class DownloadRequest: Request {
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
             guard self.error == nil, let response = self.response else { return }
-            
+
             let result = validation(self.request, response, self.temporaryURL, self.destinationURL)
-            
+
             result.withError { self.error = $0 }
-            
+
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,
                                        response: response,
@@ -713,7 +713,7 @@ open class DownloadRequest: Request {
                                        destinationURL: self.destinationURL,
                                        withResult: result)
         }
-        
+
         protectedValidators.append(validator)
 
         return self
