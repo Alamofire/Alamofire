@@ -388,7 +388,7 @@ class ResultTestCase: BaseTestCase {
         result.withError { string = "\(type(of: $0))" }
 
         // Then
-        XCTAssertEqual(string, "ResultError #1")
+        XCTAssertEqual(string, "ResultError")
     }
 
     func testWithErrorDoesNotExecuteWhenSuccess() {

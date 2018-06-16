@@ -87,29 +87,27 @@ extension SessionDelegate: RequestDelegate {
         return manager.session.configuration
     }
 
-    public func isRetryingRequest(_ request: Request, ifNecessaryWithError error: Error) -> Bool {
-        guard let manager = manager, let retrier = manager.retrier else { return false }
+    public func willRetryRequest(_ request: Request) -> Bool {
+        return (manager?.retrier != nil)
+    }
+
+    public func retryRequest(_ request: Request, ifNecessaryWithError error: Error) {
+        guard let manager = manager, let retrier = manager.retrier else { return }
 
         retrier.should(manager, retry: request, with: error) { (shouldRetry, retryInterval) in
             guard !request.isCancelled else { return }
 
             manager.rootQueue.async {
-                guard shouldRetry else {
-                    request.finish()
-                    return
-                }
+                guard shouldRetry else { request.finish(); return }
 
                 manager.rootQueue.after(retryInterval) {
                     guard !request.isCancelled else { return }
 
-                    manager.eventMonitor.requestIsRetrying(request)
-                    // TODO: Iterate retryCount
+                    request.requestIsRetrying()
                     manager.perform(request)
                 }
             }
         }
-
-        return true
     }
 
     public func cancelRequest(_ request: Request) {

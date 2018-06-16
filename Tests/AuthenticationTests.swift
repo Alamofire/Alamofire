@@ -69,7 +69,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
         // When
         manager.request(urlString)
-            .authenticate(withUsername: "invalid", password: "credentials")
+            .authenticate(username: "invalid", password: "credentials")
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -94,7 +94,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
 
         // When
         manager.request(urlString)
-            .authenticate(withUsername: user, password: password)
+            .authenticate(username: user, password: password)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -154,7 +154,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
         // When
         manager.request(urlString)
-            .authenticate(withUsername: "invalid", password: "credentials")
+            .authenticate(username: "invalid", password: "credentials")
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -179,7 +179,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
 
         // When
         manager.request(urlString)
-            .authenticate(withUsername: user, password: password)
+            .authenticate(username: user, password: password)
             .response { resp in
                 response = resp
                 expectation.fulfill()

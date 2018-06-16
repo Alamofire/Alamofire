@@ -115,3 +115,11 @@ extension Protector where T: Strideable {
         }
     }
 }
+
+extension Protector where T == Data? {
+    func append(_ other: Data) {
+        write { (ward: inout T) in
+            ward?.append(other)
+        }
+    }
+}

@@ -23,8 +23,8 @@
 //
 
 open class MultipartUpload {
-    /// Default memory threshold used when encoding `MultipartFormData` in bytes.
-    public static let multipartFormDataEncodingMemoryThreshold: UInt64 = 10_000_000
+    /// Default memory threshold used when encoding `MultipartFormData`, in bytes.
+    public static let encodingMemoryThreshold: UInt64 = 10_000_000
 
     lazy var result = Result { try build() }
 
@@ -35,7 +35,7 @@ open class MultipartUpload {
     let fileManager: FileManager
 
     init(isInBackgroundSession: Bool,
-         encodingMemoryThreshold: UInt64 = MultipartUpload.multipartFormDataEncodingMemoryThreshold,
+         encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
          request: URLRequestConvertible,
          fileManager: FileManager = .default,
          multipartBuilder: @escaping (MultipartFormData) -> Void) {
@@ -56,6 +56,7 @@ open class MultipartUpload {
         let uploadable: UploadRequest.Uploadable
         if formData.contentLength < encodingMemoryThreshold && !isInBackgroundSession {
             let data = try formData.encode()
+
             uploadable = .data(data)
         } else {
             let tempDirectoryURL = fileManager.temporaryDirectory
@@ -64,13 +65,14 @@ open class MultipartUpload {
             let fileURL = directoryURL.appendingPathComponent(fileName)
 
             try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+
             do {
                 try formData.writeEncodedData(to: fileURL)
             } catch {
                 // Cleanup after attempted write if it fails.
-                // TODO: Cleanup after request is complete?
                 try? fileManager.removeItem(at: fileURL)
             }
+
             uploadable = .file(fileURL, shouldRemove: true)
         }
 
@@ -83,7 +85,7 @@ extension MultipartUpload: UploadConvertible {
         return try result.unwrap().request
     }
 
-    func createUploadable() throws -> UploadRequest.Uploadable {
+    public func createUploadable() throws -> UploadRequest.Uploadable {
         return try result.unwrap().uploadable
     }
 }

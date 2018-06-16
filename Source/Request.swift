@@ -27,7 +27,8 @@ import Foundation
 public protocol RequestDelegate: AnyObject {
     var sessionConfiguration: URLSessionConfiguration { get }
 
-    func isRetryingRequest(_ request: Request, ifNecessaryWithError error: Error) -> Bool
+    func willRetryRequest(_ request: Request) -> Bool
+    func retryRequest(_ request: Request, ifNecessaryWithError error: Error)
 
     func cancelRequest(_ request: Request)
     func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void)
@@ -66,7 +67,7 @@ open class Request {
 
     // MARK: - Updated State
 
-    struct MutableState {
+    private struct MutableState {
         var state: State = .initialized
         var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
         var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
@@ -79,7 +80,7 @@ open class Request {
         var error: Error?
     }
 
-    private var protectedMutableState: Protector<MutableState> = Protector(MutableState())
+    private let protectedMutableState: Protector<MutableState> = Protector(MutableState())
 
     public fileprivate(set) var state: State {
         get { return protectedMutableState.directValue.state }
@@ -92,8 +93,8 @@ open class Request {
 
     // Progress
 
-    public let uploadProgress = Progress()
-    public let downloadProgress = Progress()
+    public let uploadProgress = Progress(totalUnitCount: 0)
+    public let downloadProgress = Progress(totalUnitCount: 0)
     fileprivate var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
         get { return protectedMutableState.directValue.uploadProgressHandler }
         set { protectedMutableState.write { $0.uploadProgressHandler = newValue } }
@@ -110,12 +111,13 @@ open class Request {
     public var lastRequest: URLRequest? { return requests.last }
     public var request: URLRequest? { return lastRequest }
 
-    // Metrics
+    public var performedRequests: [URLRequest] {
+        return protectedMutableState.read { $0.tasks.compactMap { $0.currentRequest } }
+    }
 
-    public var allMetrics: [URLSessionTaskMetrics] { return protectedMutableState.directValue.metrics }
-    public var firstMetrics: URLSessionTaskMetrics? { return allMetrics.first }
-    public var lastMetrics: URLSessionTaskMetrics? { return allMetrics.last }
-    public var metrics: URLSessionTaskMetrics? { return lastMetrics }
+    // Response
+
+    public var response: HTTPURLResponse? { return finalTask?.response as? HTTPURLResponse }
 
     // Tasks
 
@@ -124,13 +126,14 @@ open class Request {
     public var finalTask: URLSessionTask? { return tasks.last }
     public var task: URLSessionTask? { return finalTask }
 
-    public var performedRequests: [URLRequest] {
-        return protectedMutableState.read { $0.tasks.compactMap { $0.currentRequest } }
-    }
+    // Metrics
 
-    public var retryCount: Int { return protectedMutableState.read { max($0.tasks.count - 1, 0) } }
+    public var allMetrics: [URLSessionTaskMetrics] { return protectedMutableState.directValue.metrics }
+    public var firstMetrics: URLSessionTaskMetrics? { return allMetrics.first }
+    public var lastMetrics: URLSessionTaskMetrics? { return allMetrics.last }
+    public var metrics: URLSessionTaskMetrics? { return lastMetrics }
 
-    public var response: HTTPURLResponse? { return finalTask?.response as? HTTPURLResponse }
+    public var retryCount: Int { return protectedMutableState.directValue.retryCount }
 
     fileprivate(set) public var error: Error? {
         get { return protectedMutableState.directValue.error }
@@ -251,9 +254,16 @@ open class Request {
         retryOrFinish(error: self.error)
     }
 
+    func requestIsRetrying() {
+        protectedMutableState.write { $0.retryCount += 1 }
+
+        eventMonitor?.requestIsRetrying(self)
+    }
+
     func retryOrFinish(error: Error?) {
         // TODO: Separate retry into two methods
-        if let error = error, delegate?.isRetryingRequest(self, ifNecessaryWithError: error) == true {
+        if let error = error, delegate?.willRetryRequest(self) == true {
+            delegate?.retryRequest(self, ifNecessaryWithError: error)
             return
         } else {
             finish()
@@ -314,16 +324,15 @@ open class Request {
     // MARK: - Closure API
 
     // Callable from any queue
-    // TODO: Handle race from internal queue?
     @discardableResult
-    open func authenticate(withUsername username: String, password: String, persistence: URLCredential.Persistence = .forSession) -> Self {
+    open func authenticate(username: String, password: String, persistence: URLCredential.Persistence = .forSession) -> Self {
         let credential = URLCredential(user: username, password: password, persistence: persistence)
         return authenticate(with: credential)
     }
 
     @discardableResult
     open func authenticate(with credential: URLCredential) -> Self {
-        self.credential = credential
+        protectedMutableState.write { $0.credential = credential }
 
         return self
     }
@@ -336,8 +345,7 @@ open class Request {
     /// - returns: The request.
     @discardableResult
     open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping ProgressHandler) -> Self {
-        // TODO: Make protected, perhaps move properties to single struct
-        underlyingQueue.async { self.downloadProgressHandler = (closure, queue) }
+        protectedMutableState.write { $0.downloadProgressHandler = (handler: closure, queue: queue) }
 
         return self
     }
@@ -356,7 +364,7 @@ open class Request {
     /// - returns: The request.
     @discardableResult
     open func uploadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping ProgressHandler) -> Self {
-        underlyingQueue.async { self.uploadProgressHandler = (closure, queue) }
+        protectedMutableState.write { $0.uploadProgressHandler = (handler: closure, queue: queue) }
 
         return self
     }
@@ -467,9 +475,10 @@ extension Request: CustomDebugStringConvertible {
 }
 
 open class DataRequest: Request {
-    let convertible: URLRequestConvertible
+    public let convertible: URLRequestConvertible
 
-    private(set) var data: Data?
+    private var protectedData: Protector<Data?> = Protector(nil)
+    public var data: Data? { return protectedData.directValue }
 
     init(id: UUID = UUID(),
          convertible: URLRequestConvertible,
@@ -489,14 +498,14 @@ open class DataRequest: Request {
     override func reset() {
         super.reset()
 
-        data = nil
+        protectedData.directValue = nil
     }
 
     func didReceive(data: Data) {
         if self.data == nil {
-            self.data = data
+            protectedData.directValue = data
         } else {
-            self.data?.append(data)
+            protectedData.append(data)
         }
 
         updateDownloadProgress()
@@ -597,17 +606,23 @@ open class DownloadRequest: Request {
     }
 
     // MARK: Initial State
-    let downloadable: Downloadable
+    public let downloadable: Downloadable
     private let destination: Destination?
 
     // MARK: Updated State
 
-    open internal(set) var resumeData: Data?
-    open internal(set) var temporaryURL: URL?
-    open internal(set) var destinationURL: URL?
-    open var fileURL: URL? {
-        return destinationURL ?? temporaryURL
+    private struct MutableState {
+        var resumeData: Data?
+        var temporaryURL: URL?
+        var destinationURL: URL?
     }
+
+    private let protectedMutableState: Protector<MutableState> = Protector(MutableState())
+
+    public var resumeData: Data? { return protectedMutableState.directValue.resumeData }
+    public var temporaryURL: URL? { return protectedMutableState.directValue.temporaryURL }
+    public var destinationURL: URL? { return protectedMutableState.directValue.destinationURL }
+    public var fileURL: URL? { return destinationURL ?? temporaryURL }
 
     // MARK: Init
 
@@ -631,20 +646,20 @@ open class DownloadRequest: Request {
     override func reset() {
         super.reset()
 
-        temporaryURL = nil
-        destinationURL = nil
-        resumeData = nil
+        protectedMutableState.write { $0.resumeData = nil }
+        protectedMutableState.write { $0.temporaryURL = nil }
+        protectedMutableState.write { $0.destinationURL = nil }
     }
 
     func didComplete(task: URLSessionTask, with url: URL) {
-        temporaryURL = url
+        protectedMutableState.write { $0.temporaryURL = url }
 
         eventMonitor?.request(self, didCompleteTask: task, with: url)
 
         guard let destination = destination, let response = response else { return }
 
         let (destinationURL, options) = destination(url, response)
-        self.destinationURL = destinationURL
+        protectedMutableState.write { $0.destinationURL = destinationURL }
         // TODO: Inject FileManager?
         do {
             if options.contains(.removePreviousFile), FileManager.default.fileExists(atPath: destinationURL.path) {
@@ -683,7 +698,9 @@ open class DownloadRequest: Request {
 
         state = .cancelled
 
-        delegate?.cancelDownloadRequest(self) { self.resumeData = $0 }
+        delegate?.cancelDownloadRequest(self) { (resumeData) in
+            self.protectedMutableState.write { $0.resumeData = resumeData }
+        }
 
         eventMonitor?.requestDidCancel(self)
 
@@ -729,7 +746,7 @@ open class UploadRequest: DataRequest {
 
     // MARK: - Initial State
 
-    let upload: UploadableConvertible
+    public let upload: UploadableConvertible
 
     // MARK: - Updated State
 
@@ -803,15 +820,15 @@ open class UploadRequest: DataRequest {
     }
 }
 
-protocol UploadableConvertible {
+public protocol UploadableConvertible {
     func createUploadable() throws -> UploadRequest.Uploadable
 }
 
 extension UploadRequest.Uploadable: UploadableConvertible {
-    func createUploadable() throws -> UploadRequest.Uploadable {
+    public func createUploadable() throws -> UploadRequest.Uploadable {
         return self
     }
 }
 
-protocol UploadConvertible: UploadableConvertible & URLRequestConvertible { }
+public protocol UploadConvertible: UploadableConvertible & URLRequestConvertible { }
 
