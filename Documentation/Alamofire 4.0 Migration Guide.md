@@ -823,10 +823,10 @@ As you can see, there were some very strong limitations to this system in Alamof
 
 #### Default Data Response
 
-The `DataResponse<Data?>` represents an unserialized server response. There's no Alamofire processing that happens, it just collects all the response information from the `SessionDelegate` APIs and returns it in a simple struct.
+The `DefaultDataResponse` represents an unserialized server response. There's no Alamofire processing that happens, it just collects all the response information from the `SessionDelegate` APIs and returns it in a simple struct.
 
 ```swift
-public struct DataResponse<Data?> {
+public struct DefaultDataResponse {
     public let request: URLRequest?
     public let response: HTTPURLResponse?
     public let data: Data?
