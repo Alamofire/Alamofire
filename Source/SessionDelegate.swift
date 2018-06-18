@@ -166,9 +166,13 @@ extension SessionDelegate: URLSessionDelegate {
 }
 
 extension SessionDelegate: URLSessionTaskDelegate {
-    // Auth challenge, will be received always since the URLSessionDelegate method isn't implemented.
+    /// Result of a `URLAuthenticationChallenge` evaluation.
     typealias ChallengeEvaluation = (disposition: URLSession.AuthChallengeDisposition, credential: URLCredential?, error: Error?)
-    open func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+
+    open func urlSession(_ session: URLSession,
+                         task: URLSessionTask,
+                         didReceive challenge: URLAuthenticationChallenge,
+                         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         eventMonitor?.urlSession(session, task: task, didReceive: challenge)
 
         let evaluation: ChallengeEvaluation
@@ -177,7 +181,6 @@ extension SessionDelegate: URLSessionTaskDelegate {
             evaluation = attemptServerTrustAuthentication(with: challenge)
         case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest:
             evaluation = attemptHTTPAuthentication(for: challenge, belongingTo: task)
-            // TODO: Error explaining AF doesn't support client certificates?
         // case NSURLAuthenticationMethodClientCertificate:
         default:
             evaluation = (.performDefaultHandling, nil, nil)
@@ -209,7 +212,8 @@ extension SessionDelegate: URLSessionTaskDelegate {
         return (.useCredential, URLCredential(trust: serverTrust), nil)
     }
 
-    func attemptHTTPAuthentication(for challenge: URLAuthenticationChallenge, belongingTo task: URLSessionTask) -> ChallengeEvaluation {
+    func attemptHTTPAuthentication(for challenge: URLAuthenticationChallenge,
+                                   belongingTo task: URLSessionTask) -> ChallengeEvaluation {
         guard challenge.previousFailureCount == 0 else {
             return (.rejectProtectionSpace, nil, nil)
         }
@@ -222,7 +226,11 @@ extension SessionDelegate: URLSessionTaskDelegate {
         return (.useCredential, credential, nil)
     }
 
-    open func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+    open func urlSession(_ session: URLSession,
+                         task: URLSessionTask,
+                         didSendBodyData bytesSent: Int64,
+                         totalBytesSent: Int64,
+                         totalBytesExpectedToSend: Int64) {
         eventMonitor?.urlSession(session,
                                  task: task,
                                  didSendBodyData: bytesSent,
@@ -233,7 +241,9 @@ extension SessionDelegate: URLSessionTaskDelegate {
                                                    totalBytesExpectedToSend: totalBytesExpectedToSend)
     }
 
-    open func urlSession(_ session: URLSession, task: URLSessionTask, needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
+    open func urlSession(_ session: URLSession,
+                         task: URLSessionTask,
+                         needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
         eventMonitor?.urlSession(session, taskNeedsNewBodyStream: task)
 
         guard let request = requestTaskMap[task] as? UploadRequest else {
@@ -243,7 +253,11 @@ extension SessionDelegate: URLSessionTaskDelegate {
         completionHandler(request.inputStream())
     }
 
-    open func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+    open func urlSession(_ session: URLSession,
+                         task: URLSessionTask,
+                         willPerformHTTPRedirection response: HTTPURLResponse,
+                         newRequest request: URLRequest,
+                         completionHandler: @escaping (URLRequest?) -> Void) {
         eventMonitor?.urlSession(session, task: task, willPerformHTTPRedirection: response, newRequest: request)
 
         completionHandler(request)
@@ -280,7 +294,10 @@ extension SessionDelegate: URLSessionDataDelegate {
         request.didReceive(data: data)
     }
 
-    open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, willCacheResponse proposedResponse: CachedURLResponse, completionHandler: @escaping (CachedURLResponse?) -> Void) {
+    open func urlSession(_ session: URLSession,
+                         dataTask: URLSessionDataTask,
+                         willCacheResponse proposedResponse: CachedURLResponse,
+                         completionHandler: @escaping (CachedURLResponse?) -> Void) {
         eventMonitor?.urlSession(session, dataTask: dataTask, willCacheResponse: proposedResponse)
 
         completionHandler(proposedResponse)
@@ -288,7 +305,10 @@ extension SessionDelegate: URLSessionDataDelegate {
 }
 
 extension SessionDelegate: URLSessionDownloadDelegate {
-    open func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
+    open func urlSession(_ session: URLSession,
+                         downloadTask: URLSessionDownloadTask,
+                         didResumeAtOffset fileOffset: Int64,
+                         expectedTotalBytes: Int64) {
         eventMonitor?.urlSession(session,
                                  downloadTask: downloadTask,
                                  didResumeAtOffset: fileOffset,
@@ -302,7 +322,11 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                                totalBytesExpectedToWrite: expectedTotalBytes)
     }
 
-    open func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+    open func urlSession(_ session: URLSession,
+                         downloadTask: URLSessionDownloadTask,
+                         didWriteData bytesWritten: Int64,
+                         totalBytesWritten: Int64,
+                         totalBytesExpectedToWrite: Int64) {
         eventMonitor?.urlSession(session,
                                  downloadTask: downloadTask,
                                  didWriteData: bytesWritten,

@@ -81,7 +81,6 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertEqual(response?.response?.statusCode, 401)
-        // TODO: What data was there before?
         XCTAssertNil(response?.data)
         XCTAssertNil(response?.error)
     }
@@ -166,7 +165,6 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertEqual(response?.response?.statusCode, 401)
-        // TODO: What data was there before, failing auth should return an empty body?
         XCTAssertNil(response?.data)
         XCTAssertNil(response?.error)
     }

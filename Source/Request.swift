@@ -24,26 +24,24 @@
 
 import Foundation
 
-public protocol RequestDelegate: AnyObject {
-    var sessionConfiguration: URLSessionConfiguration { get }
-
-    func willRetryRequest(_ request: Request) -> Bool
-    func retryRequest(_ request: Request, ifNecessaryWithError error: Error)
-
-    func cancelRequest(_ request: Request)
-    func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void)
-    func suspendRequest(_ request: Request)
-    func resumeRequest(_ request: Request)
-}
-
+/// `Request` is the common superclass of all Alamofire request types and provides common state, delegate, and callback
+/// handling.
 open class Request {
-    /// A closure executed when monitoring upload or download progress of a request.
-    public typealias ProgressHandler = (Progress) -> Void
-
-    // TODO: Make publicly readable properties protected?
+    /// State of the `Request`, with managed transitions between states set when calling `resume()`, `suspend()`, or
+    /// `cancel()` on the `Request`.
+    ///
+    /// - initialized: Initial state of the `Request`.
+    /// - resumed:   Set when `resume()` is called. Any tasks created for the `Request` will have `resume()` called on
+    ///              them in this state.
+    /// - suspended: Set when `suspend()` is called. Any tasks created for the `Request` will have `suspend()` called on
+    ///              them in this state.
+    /// - cancelled: Set when `cancel()` is called. Any tasks created for the `Request` will have `cancel()` called on
+    ///              them. Unlike `resumed` or `suspended`, once in the `cancelled` state, the `Request` can no longer
+    ///              transition to any other state.
     public enum State {
         case initialized, resumed, suspended, cancelled
 
+        /// Determines whether `self` can be transitioned to `state`.
         func canTransitionTo(_ state: State) -> Bool {
             switch (self, state) {
             case (.initialized, _): return true
@@ -57,102 +55,167 @@ open class Request {
 
     // MARK: - Initial State
 
+    /// `UUID` prividing a unique identifier for the `Request`, used in the `Hashable` and `Equatable` conformances.
     public let id: UUID
+    /// The serial queue for all internal async actions.
     public let underlyingQueue: DispatchQueue
+    /// The queue used for all serialization actions. By default it's a serial queue that targets `underlyingQueue`.
     public let serializationQueue: DispatchQueue
+    /// `EventMonitor` used for event callbacks.
     public let eventMonitor: EventMonitor?
+    /// The `Request`'s delegate.
     public weak var delegate: RequestDelegate?
 
+    /// `OperationQueue` used internally to enqueue response callbacks. Starts suspended but is activated when the
+    /// `Request` is finished.
     let internalQueue: OperationQueue
 
     // MARK: - Updated State
 
+    /// Type encapsulating all mutable state that may need to be accessed from anything other than the `underlyingQueue`.
     private struct MutableState {
+        /// State of the `Request`.
         var state: State = .initialized
+        /// `ProgressHandler` and `DispatchQueue` provided for upload progress callbacks.
         var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
+        /// `ProgressHandler` and `DispatchQueue` provided for download progress callbacks.
         var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
+        /// `URLCredential` used for authentication challenges.
         var credential: URLCredential?
-        var validators: [() -> Void] = []
+        /// All `URLRequest`s created by Alamofire on behalf of the `Request`.
         var requests: [URLRequest] = []
+        /// All `URLSessionTask`s created by Alamofire on behalf of the `Request`.
         var tasks: [URLSessionTask] = []
+        /// All `URLSessionTaskMetrics` values gathered by Alamofire on behalf of the `Request`. Should correspond
+        /// exactly the the `tasks` created.
         var metrics: [URLSessionTaskMetrics] = []
+        /// Number of times any retriers provided retried the `Request`.
         var retryCount = 0
+        /// Final `Error` for the `Request`, whether from various internal Alamofire calls or as a result of a `task`.
         var error: Error?
     }
 
+    /// Protected `MutableState` value that provides threadsafe access to state values.
     private let protectedMutableState: Protector<MutableState> = Protector(MutableState())
 
+    /// `State` of the `Request`.
     public fileprivate(set) var state: State {
         get { return protectedMutableState.directValue.state }
         set { protectedMutableState.write { $0.state = newValue } }
     }
+    /// Returns whether `state` is `.cancelled`.
     public var isCancelled: Bool { return state == .cancelled }
+    /// Returns whether `state is `.resumed`.
     public var isResumed: Bool { return state == .resumed }
+    /// Returns whether `state` is `.suspended`.
     public var isSuspended: Bool { return state == .suspended }
+    /// Returns whether `state` is `.initialized`.
     public var isInitialized: Bool { return state == .initialized }
 
     // Progress
 
+    /// Closure type executed when monitoring the upload or download progress of a request.
+    public typealias ProgressHandler = (Progress) -> Void
+
+    /// `Progress` of the upload of the body of the executed `URLRequest`. Reset to `0` if the `Request` is retried.
     public let uploadProgress = Progress(totalUnitCount: 0)
+    /// `Progress` of the download of any response data. Reset to `0` if the `Request` is retried.
     public let downloadProgress = Progress(totalUnitCount: 0)
+    /// `ProgressHandler` called when `uploadProgress` is updated, on the provided `DispatchQueue`.
     fileprivate var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
         get { return protectedMutableState.directValue.uploadProgressHandler }
         set { protectedMutableState.write { $0.uploadProgressHandler = newValue } }
     }
+    /// `ProgressHandler` called when `downloadProgress` is updated, on the provided `DispatchQueue`.
     fileprivate var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
         get { return protectedMutableState.directValue.downloadProgressHandler }
         set { protectedMutableState.write { $0.downloadProgressHandler = newValue } }
     }
 
+    // Credential
+
+    /// `URLCredential` used for authentication challenges. Created by calling one of the `authenticate` methods.
+    public private(set) var credential: URLCredential? {
+        get { return protectedMutableState.directValue.credential }
+        set { protectedMutableState.write { $0.credential = newValue } }
+    }
+
+    // Validators
+
+    /// `Validator` callback closures that store the validation calls enqueued.
+    fileprivate var protectedValidators: Protector<[() -> Void]> = Protector([])
+
     // Requests
 
+    /// All `URLRequests` created on behalf of the `Request`, including original and adapted requests.
     public var requests: [URLRequest] { return protectedMutableState.directValue.requests }
+    /// First `URLRequest` created on behalf of the `Request`. May not be the first one actually executed.
     public var firstRequest: URLRequest? { return requests.first }
+    /// Last `URLRequest` created on behalf of the `Request`.
     public var lastRequest: URLRequest? { return requests.last }
+    /// Current `URLRequest` created on behalf of the `Request`.
     public var request: URLRequest? { return lastRequest }
 
+    /// `URLRequest`s from all of the `URLSessionTask`s executed on behalf of the `Request`.
     public var performedRequests: [URLRequest] {
         return protectedMutableState.read { $0.tasks.compactMap { $0.currentRequest } }
     }
 
     // Response
 
-    public var response: HTTPURLResponse? { return finalTask?.response as? HTTPURLResponse }
+    /// `HTTPURLResponse` received from the server, if any. If the `Request` was retried, this is the response of the
+    /// last `URLSessionTask`.
+    public var response: HTTPURLResponse? { return lastTask?.response as? HTTPURLResponse }
 
     // Tasks
 
+    /// All `URLSessionTask`s created on behalf of the `Request`.
     public var tasks: [URLSessionTask] { return protectedMutableState.directValue.tasks }
-    public var initialTask: URLSessionTask? { return tasks.first }
-    public var finalTask: URLSessionTask? { return tasks.last }
-    public var task: URLSessionTask? { return finalTask }
+    /// First `URLSessionTask` created on behalf of the `Request`.
+    public var firstTask: URLSessionTask? { return tasks.first }
+    /// Last `URLSessionTask` crated on behalf of the `Request`.
+    public var lastTask: URLSessionTask? { return tasks.last }
+    /// Current `URLSessionTask` created on behalf of the `Request`.
+    public var task: URLSessionTask? { return lastTask }
 
     // Metrics
 
+    /// All `URLSessionTaskMetrics` gathered on behalf of the `Request`. Should correspond to the `tasks` created.
     public var allMetrics: [URLSessionTaskMetrics] { return protectedMutableState.directValue.metrics }
+    /// First `URLSessionTaskMetrics` gathered on behalf of the `Request`.
     public var firstMetrics: URLSessionTaskMetrics? { return allMetrics.first }
+    /// Last `URLSessionTaskMetrics` gathered on behalf of the `Request`.
     public var lastMetrics: URLSessionTaskMetrics? { return allMetrics.last }
+    /// Current `URLSessionTaskMetrics` gathered on behalf of the `Request`.
     public var metrics: URLSessionTaskMetrics? { return lastMetrics }
 
+    /// Number of times the `Request` has been retried.
     public var retryCount: Int { return protectedMutableState.directValue.retryCount }
 
+    /// `Error` returned from Alamofire internally, from the network request directly, or any validators executed.
     fileprivate(set) public var error: Error? {
         get { return protectedMutableState.directValue.error }
         set { protectedMutableState.write { $0.error = newValue } }
     }
-    private(set) var credential: URLCredential? {
-        get { return protectedMutableState.directValue.credential }
-        set { protectedMutableState.write { $0.credential = newValue } }
-    }
-    fileprivate var protectedValidators: Protector<[() -> Void]> = Protector([])
 
+
+    /// Default initializer for the `Request` superclass.
+    ///
+    /// - Parameters:
+    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. Defaults to a random `UUID`.
+    ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
+    ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. Targets the
+    ///                         `underlyingQueue` when created by a `SessionManager`.
+    ///   - eventMonitor:       `EventMonitor` used for event callbacks from internal `Request` actions.
+    ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
     public init(id: UUID = UUID(),
-              underlyingQueue: DispatchQueue,
-              serializationQueue: DispatchQueue? = nil,
-              eventMonitor: EventMonitor?,
-              delegate: RequestDelegate) {
+                underlyingQueue: DispatchQueue,
+                serializationQueue: DispatchQueue,
+                eventMonitor: EventMonitor?,
+                delegate: RequestDelegate) {
         self.id = id
         self.underlyingQueue = underlyingQueue
-        self.serializationQueue = serializationQueue ?? underlyingQueue
+        self.serializationQueue = serializationQueue
         internalQueue = OperationQueue(maxConcurrentOperationCount: 1,
                                        underlyingQueue: underlyingQueue,
                                        name: "org.alamofire.request-\(id)",
@@ -162,14 +225,20 @@ open class Request {
     }
 
     // MARK: - Internal API
-    // Called from internal queue.
+    // Called from underlyingQueue.
 
+    /// Called when a `URLRequest` has been created on behalf of the `Request`.
+    ///
+    /// - Parameter request: `URLRequest` created.
     func didCreateURLRequest(_ request: URLRequest) {
         protectedMutableState.write { $0.requests.append(request) }
 
         eventMonitor?.request(self, didCreateURLRequest: request)
     }
 
+    /// Called when initial `URLRequest` creation has failed, typically through a `URLRequestConvertible`. Triggers retry.
+    ///
+    /// - Parameter error: `Error` thrown from the failed creation.
     func didFailToCreateURLRequest(with error: Error) {
         self.error = error
 
@@ -178,12 +247,22 @@ open class Request {
         retryOrFinish(error: error)
     }
 
+    /// Called when a `RequestAdapter` has successfully adapted a `URLRequest`.
+    ///
+    /// - Parameters:
+    ///   - initialRequest: The `URLRequest` that was adapted.
+    ///   - adaptedRequest: The `URLRequest` returned by the `RequestAdapter`.
     func didAdaptInitialRequest(_ initialRequest: URLRequest, to adaptedRequest: URLRequest) {
         protectedMutableState.write { $0.requests.append(adaptedRequest) }
 
         eventMonitor?.request(self, didAdaptInitialRequest: initialRequest, to: adaptedRequest)
     }
 
+    /// Called when a `RequestAdapter` fails to adapt a `URLRequest`. Triggers retry.
+    ///
+    /// - Parameters:
+    ///   - request: The `URLRequest` the adapter was called with.
+    ///   - error:   The `Error` returned by the `RequestAdapter`.
     func didFailToAdaptURLRequest(_ request: URLRequest, withError error: Error) {
         self.error = error
 
@@ -192,6 +271,9 @@ open class Request {
         retryOrFinish(error: error)
     }
 
+    /// Called when a `URLSessionTask` is created on behalf of the `Request`. Calls `reset()`.
+    ///
+    /// - Parameter task: The `URLSessionTask` created.
     func didCreateTask(_ task: URLSessionTask) {
         protectedMutableState.write { $0.tasks.append(task) }
 
@@ -200,46 +282,34 @@ open class Request {
         eventMonitor?.request(self, didCreateTask: task)
     }
 
-    func updateUploadProgress(totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-        uploadProgress.totalUnitCount = totalBytesExpectedToSend
-        uploadProgress.completedUnitCount = totalBytesSent
-
-        uploadProgressHandler?.queue.async { self.uploadProgressHandler?.handler(self.uploadProgress) }
-    }
-
-    // Resets task related state
-    func reset() {
-        error = nil
-
-        uploadProgress.totalUnitCount = 0
-        uploadProgress.completedUnitCount = 0
-        downloadProgress.totalUnitCount = 0
-        downloadProgress.completedUnitCount = 0
-    }
-
+    /// Called when resumption is completed.
     func didResume() {
         eventMonitor?.requestDidResume(self)
     }
 
+    /// Called when suspension is completed.
     func didSuspend() {
         eventMonitor?.requestDidSuspend(self)
     }
 
+    /// Called when cancellation is completed, sets `error` to `AFError.explicitlyCancelled`.
     func didCancel() {
         error = AFError.explicitlyCancelled
 
         eventMonitor?.requestDidCancel(self)
     }
 
+    /// Called when a `URLSessionTaskMetrics` value is gathered on behalf of the `Request`.
     func didGatherMetrics(_ metrics: URLSessionTaskMetrics) {
         protectedMutableState.write { $0.metrics.append(metrics) }
 
         eventMonitor?.request(self, didGatherMetrics: metrics)
     }
 
-    // Should only be triggered by internal AF code, never URLSession
+    /// Called when a `URLSessionTask` fails before it is finished, typically during certificate pinning.
     func didFailTask(_ task: URLSessionTask, earlyWithError error: Error) {
         self.error = error
+
         // Task will still complete, so didCompleteTask(_:with:) will handle retry.
         eventMonitor?.request(self, didFailTask: task, earlyWithError: error)
     }
@@ -261,7 +331,6 @@ open class Request {
     }
 
     func retryOrFinish(error: Error?) {
-        // TODO: Separate retry into two methods
         if let error = error, delegate?.willRetryRequest(self) == true {
             delegate?.retryRequest(self, ifNecessaryWithError: error)
             return
@@ -277,11 +346,28 @@ open class Request {
         eventMonitor?.requestDidFinish(self)
     }
 
+    // Resets task related state
+    func reset() {
+        error = nil
+
+        uploadProgress.totalUnitCount = 0
+        uploadProgress.completedUnitCount = 0
+        downloadProgress.totalUnitCount = 0
+        downloadProgress.completedUnitCount = 0
+    }
+
+    func updateUploadProgress(totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        uploadProgress.totalUnitCount = totalBytesExpectedToSend
+        uploadProgress.completedUnitCount = totalBytesSent
+
+        uploadProgressHandler?.queue.async { self.uploadProgressHandler?.handler(self.uploadProgress) }
+    }
+
     // MARK: Task Creation
 
     // Subclasses wanting something other than URLSessionDataTask should override.
     func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
-        return session.dataTask(with: request)
+        fatalError("Subclasses must override.")
     }
 
     // MARK: - Public API
@@ -474,6 +560,23 @@ extension Request: CustomDebugStringConvertible {
     }
 }
 
+/// Protocol abstraction for `Request`'s communication back to the `SessionDelegate`.
+public protocol RequestDelegate: AnyObject {
+    var sessionConfiguration: URLSessionConfiguration { get }
+
+    func willRetryRequest(_ request: Request) -> Bool
+    func retryRequest(_ request: Request, ifNecessaryWithError error: Error)
+
+    func cancelRequest(_ request: Request)
+    func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void)
+    func suspendRequest(_ request: Request)
+    func resumeRequest(_ request: Request)
+}
+
+// MARK: - Subclasses
+
+// MARK: DataRequest
+
 open class DataRequest: Request {
     public let convertible: URLRequestConvertible
 
@@ -483,7 +586,7 @@ open class DataRequest: Request {
     init(id: UUID = UUID(),
          convertible: URLRequestConvertible,
          underlyingQueue: DispatchQueue,
-         serializationQueue: DispatchQueue? = nil,
+         serializationQueue: DispatchQueue,
          eventMonitor: EventMonitor?,
          delegate: RequestDelegate) {
         self.convertible = convertible
@@ -509,6 +612,10 @@ open class DataRequest: Request {
         }
 
         updateDownloadProgress()
+    }
+
+    override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
+        return session.dataTask(with: request)
     }
 
     func updateDownloadProgress() {
@@ -629,7 +736,7 @@ open class DownloadRequest: Request {
     init(id: UUID = UUID(),
          downloadable: Downloadable,
          underlyingQueue: DispatchQueue,
-         serializationQueue: DispatchQueue? = nil,
+         serializationQueue: DispatchQueue,
          eventMonitor: EventMonitor?,
          delegate: RequestDelegate,
          destination: Destination? = nil) {
@@ -755,7 +862,7 @@ open class UploadRequest: DataRequest {
     init(id: UUID = UUID(),
          convertible: UploadConvertible,
          underlyingQueue: DispatchQueue,
-         serializationQueue: DispatchQueue? = nil,
+         serializationQueue: DispatchQueue,
          eventMonitor: EventMonitor?,
          delegate: RequestDelegate) {
         self.upload = convertible

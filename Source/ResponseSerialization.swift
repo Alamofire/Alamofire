@@ -145,18 +145,19 @@ extension DataRequest {
     @discardableResult
     public func response(queue: DispatchQueue? = nil, completionHandler: @escaping (DataResponse<Data?>) -> Void) -> Self {
         internalQueue.addOperation {
-            // TODO: Use internal serialization queue?
-            let result = Result(value: self.data, error: self.error)
-            let response = DataResponse(request: self.request,
-                                        response: self.response,
-                                        data: self.data,
-                                        metrics: self.metrics,
-                                        serializationDuration: 0,
-                                        result: result)
+            self.serializationQueue.async {
+                let result = Result(value: self.data, error: self.error)
+                let response = DataResponse(request: self.request,
+                                            response: self.response,
+                                            data: self.data,
+                                            metrics: self.metrics,
+                                            serializationDuration: 0,
+                                            result: result)
 
-            self.eventMonitor?.request(self, didParseResponse: response)
+                self.eventMonitor?.request(self, didParseResponse: response)
 
-            (queue ?? .main).async { completionHandler(response) }
+                (queue ?? .main).async { completionHandler(response) }
+            }
         }
 
         return self
@@ -178,24 +179,25 @@ extension DataRequest {
         -> Self
     {
         internalQueue.addOperation {
-            // TODO: Use internal serialization queue?
-            let start = CFAbsoluteTimeGetCurrent()
-            let result = Result { try responseSerializer.serialize(request: self.request,
-                                                                   response: self.response,
-                                                                   data: self.data,
-                                                                   error: self.error) }
-            let end = CFAbsoluteTimeGetCurrent()
+            self.serializationQueue.async {
+                let start = CFAbsoluteTimeGetCurrent()
+                let result = Result { try responseSerializer.serialize(request: self.request,
+                                                                       response: self.response,
+                                                                       data: self.data,
+                                                                       error: self.error) }
+                let end = CFAbsoluteTimeGetCurrent()
 
-            let response = DataResponse(request: self.request,
-                                        response: self.response,
-                                        data: self.data,
-                                        metrics: self.metrics,
-                                        serializationDuration: (end - start),
-                                        result: result)
+                let response = DataResponse(request: self.request,
+                                            response: self.response,
+                                            data: self.data,
+                                            metrics: self.metrics,
+                                            serializationDuration: (end - start),
+                                            result: result)
 
-            self.eventMonitor?.request(self, didParseResponse: response)
+                self.eventMonitor?.request(self, didParseResponse: response)
 
-            (queue ?? .main).async { completionHandler(response) }
+                (queue ?? .main).async { completionHandler(response) }
+            }
         }
 
         return self
@@ -217,17 +219,19 @@ extension DownloadRequest {
         -> Self
     {
         internalQueue.addOperation {
-            let result = Result(value: self.temporaryURL ?? self.destinationURL , error: self.error)
-            let response = DownloadResponse(request: self.request,
-                                            response: self.response,
-                                            temporaryURL: self.temporaryURL,
-                                            destinationURL: self.destinationURL,
-                                            resumeData: self.resumeData,
-                                            metrics: self.metrics,
-                                            serializationDuration: 0,
-                                            result: result)
+            self.serializationQueue.async {
+                let result = Result(value: self.temporaryURL ?? self.destinationURL , error: self.error)
+                let response = DownloadResponse(request: self.request,
+                                                response: self.response,
+                                                temporaryURL: self.temporaryURL,
+                                                destinationURL: self.destinationURL,
+                                                resumeData: self.resumeData,
+                                                metrics: self.metrics,
+                                                serializationDuration: 0,
+                                                result: result)
 
-            (queue ?? .main).async { completionHandler(response) }
+                (queue ?? .main).async { completionHandler(response) }
+            }
         }
 
         return self
@@ -250,24 +254,25 @@ extension DownloadRequest {
         -> Self
     {
         internalQueue.addOperation {
-            // TODO: Use internal serialization queue?
-            let start = CFAbsoluteTimeGetCurrent()
-            let result = Result { try responseSerializer.serializeDownload(request: self.request,
-                                                                           response: self.response,
-                                                                           fileURL: self.fileURL,
-                                                                           error: self.error) }
-            let end = CFAbsoluteTimeGetCurrent()
+            self.serializationQueue.async {
+                let start = CFAbsoluteTimeGetCurrent()
+                let result = Result { try responseSerializer.serializeDownload(request: self.request,
+                                                                               response: self.response,
+                                                                               fileURL: self.fileURL,
+                                                                               error: self.error) }
+                let end = CFAbsoluteTimeGetCurrent()
 
-            let response = DownloadResponse(request: self.request,
-                                            response: self.response,
-                                            temporaryURL: self.temporaryURL,
-                                            destinationURL: self.destinationURL,
-                                            resumeData: self.resumeData,
-                                            metrics: self.metrics,
-                                            serializationDuration: (end - start),
-                                            result: result)
+                let response = DownloadResponse(request: self.request,
+                                                response: self.response,
+                                                temporaryURL: self.temporaryURL,
+                                                destinationURL: self.destinationURL,
+                                                resumeData: self.resumeData,
+                                                metrics: self.metrics,
+                                                serializationDuration: (end - start),
+                                                result: result)
 
-            (queue ?? .main).async { completionHandler(response) }
+                (queue ?? .main).async { completionHandler(response) }
+            }
         }
 
         return self

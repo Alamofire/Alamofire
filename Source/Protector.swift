@@ -38,6 +38,7 @@ final class UnfairLock {
         os_unfair_lock_unlock(&unfairLock)
     }
 
+    /// Executes a closure returning a value while acquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
     /// - Returns:           The value the closure generated.

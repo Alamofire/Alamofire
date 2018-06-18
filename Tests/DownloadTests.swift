@@ -133,8 +133,7 @@ class DownloadResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        // TODO: This is now racy, issue?
-//        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.destinationURL)
         XCTAssertNil(response?.resumeData)
@@ -412,8 +411,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        // TODO: Having a request is racy, issue?
-//        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.destinationURL)
         XCTAssertNil(response?.resumeData)

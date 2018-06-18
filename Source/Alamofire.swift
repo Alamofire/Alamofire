@@ -34,7 +34,7 @@ public enum Alamofire {
     /// - Parameters:
     ///   - url:        The `URLConvertible` value.
     ///   - method:     The `HTTPMethod`, `.get` by default.
-    ///   - parameters: The `HTTPParameters`, `nil` by default.
+    ///   - parameters: The `Parameters`, `nil` by default.
     ///   - encoding:   The `ParameterEncoding`, `URLEncoding.default` by default.
     ///   - headers:    The `HTTPHeaders`, `nil` by default.
     /// - Returns:      The created `DataRequest`.
@@ -75,7 +75,7 @@ public enum Alamofire {
     /// - Parameters:
     ///   - url:         The `URLConvertible` value.
     ///   - method:      The `HTTPMethod`, `.get` by default.
-    ///   - parameters:  The `HTTPParameters`, `nil` by default.
+    ///   - parameters:  The `Parameters`, `nil` by default.
     ///   - encoding:    The `ParameterEncoding`, `URLEncoding.default` by default.
     ///   - headers:     The `HTTPHeaders`, `nil` by default.
     ///   - destination: The `DownloadRequest.Destination` closure used the determine the destination of the downloaded

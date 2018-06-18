@@ -408,8 +408,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(request?.task?.state, .suspended)
         XCTAssertNil(manager, "manager should be nil")
     }
-    // TODO: Make this test wait less with proper internal async work.
-    // TODO: Reevaluate this test with new async structure vs. deinit
+
     func testReleasingManagerWithPendingCanceledRequestDeinitializesSuccessfully() {
         // Given
         let delegate = SessionDelegate(startRequestsImmediately: false)
@@ -425,7 +424,7 @@ class SessionManagerTestCase: BaseTestCase {
 
         // Then
         let state = request?.state
-        XCTAssertTrue(state == .cancelled, "state should be .canceling or .completed")
+        XCTAssertTrue(state == .cancelled, "state should be .cancelled")
         XCTAssertNil(manager, "manager should be nil")
     }
 
@@ -847,40 +846,40 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
     }
     // TODO: Confirm retry logic.
-//    func testThatRequestAdapterErrorThrowsResponseHandlerErrorWhenRequestIsRetried() {
-//        // Given
-//        let handler = RequestHandler()
-//        handler.throwsErrorOnSecondAdapt = true
-//
-//        let sessionManager = SessionManager(adapter: handler, retrier: handler)
-//
-//        let expectation = self.expectation(description: "request should eventually fail")
-//        var response: DataResponse<Any>?
-//
-//        // When
-//        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
-//            .validate()
-//            .responseJSON { jsonResponse in
-//                response = jsonResponse
-//                expectation.fulfill()
-//            }
-//
-//        waitForExpectations(timeout: timeout, handler: nil)
-//
-//        // Then
-//        XCTAssertEqual(handler.adaptedCount, 1)
-//        XCTAssertEqual(handler.retryCount, 1)
-//        XCTAssertEqual(request.retryCount, 0)
-//        XCTAssertEqual(response?.result.isSuccess, false)
-//        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
-//
-//        if let error = response?.result.error as? AFError {
-//            XCTAssertTrue(error.isInvalidURLError)
-//            XCTAssertEqual(error.urlConvertible as? String, "")
-//        } else {
-//            XCTFail("error should not be nil")
-//        }
-//    }
+    func testThatRequestAdapterErrorThrowsResponseHandlerErrorWhenRequestIsRetried() {
+        // Given
+        let handler = RequestHandler()
+        handler.throwsErrorOnSecondAdapt = true
+
+        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        // When
+        let request = sessionManager.request("https://httpbin.org/basic-auth/user/password")
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(request.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, false)
+        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+
+        if let error = response?.result.error as? AFError {
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "")
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
 }
 
 // MARK: -

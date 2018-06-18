@@ -27,9 +27,10 @@ import Foundation
 open class SessionManager {
     public static let `default` = SessionManager()
 
-    let delegate: SessionDelegate
-    let rootQueue: DispatchQueue
-    let requestQueue: DispatchQueue
+    public let delegate: SessionDelegate
+    public let rootQueue: DispatchQueue
+    public let requestQueue: DispatchQueue
+    public let serializationQueue: DispatchQueue
     public let adapter: RequestAdapter?
     public let retrier: RequestRetrier?
     public let serverTrustManager: ServerTrustManager?
@@ -42,6 +43,7 @@ open class SessionManager {
                 delegate: SessionDelegate,
                 rootQueue: DispatchQueue,
                 requestQueue: DispatchQueue? = nil,
+                serializationQueue: DispatchQueue? = nil,
                 adapter: RequestAdapter? = nil,
                 serverTrustManager: ServerTrustManager? = nil,
                 retrier: RequestRetrier? = nil,
@@ -55,6 +57,7 @@ open class SessionManager {
         self.delegate = delegate
         self.rootQueue = rootQueue
         self.requestQueue = requestQueue ?? DispatchQueue(label: "\(rootQueue.label).requestQueue", target: rootQueue)
+        self.serializationQueue = serializationQueue ?? DispatchQueue(label: "\(rootQueue.label).serializationQueue", target: rootQueue)
         self.adapter = adapter
         self.retrier = retrier
         self.serverTrustManager = serverTrustManager
@@ -66,6 +69,7 @@ open class SessionManager {
                             delegate: SessionDelegate = SessionDelegate(),
                             rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.sessionManager.rootQueue"),
                             requestQueue: DispatchQueue? = nil,
+                            serializationQueue: DispatchQueue? = nil,
                             adapter: RequestAdapter? = nil,
                             serverTrustManager: ServerTrustManager? = nil,
                             retrier: RequestRetrier? = nil,
@@ -76,6 +80,7 @@ open class SessionManager {
                   delegate: delegate,
                   rootQueue: rootQueue,
                   requestQueue: requestQueue,
+                  serializationQueue: serializationQueue,
                   adapter: adapter,
                   serverTrustManager: serverTrustManager,
                   retrier: retrier,
@@ -101,7 +106,6 @@ open class SessionManager {
         }
     }
 
-    // TODO: Serialization Queue support?
     open func request(_ url: URLConvertible,
                       method: HTTPMethod = .get,
                       parameters: Parameters? = nil,
@@ -118,6 +122,7 @@ open class SessionManager {
     open func request(_ convertible: URLRequestConvertible) -> DataRequest {
         let request = DataRequest(convertible: convertible,
                                   underlyingQueue: rootQueue,
+                                  serializationQueue: serializationQueue,
                                   eventMonitor: eventMonitor,
                                   delegate: delegate)
 
@@ -147,6 +152,7 @@ open class SessionManager {
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let request = DownloadRequest(downloadable: .request(convertible),
                                       underlyingQueue: rootQueue,
+                                      serializationQueue: serializationQueue,
                                       eventMonitor: eventMonitor,
                                       delegate: delegate,
                                       destination: destination)
@@ -160,6 +166,7 @@ open class SessionManager {
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let request = DownloadRequest(downloadable: .resumeData(data),
                                       underlyingQueue: rootQueue,
+                                      serializationQueue: serializationQueue,
                                       eventMonitor: eventMonitor,
                                       delegate: delegate,
                                       destination: destination)
@@ -267,6 +274,7 @@ open class SessionManager {
     func upload(_ upload: UploadConvertible) -> UploadRequest {
         let request = UploadRequest(convertible: upload,
                                     underlyingQueue: rootQueue,
+                                    serializationQueue: serializationQueue,
                                     eventMonitor: eventMonitor,
                                     delegate: delegate)
 
@@ -274,10 +282,6 @@ open class SessionManager {
 
         return request
     }
-
-    // MARK: Downloadable
-
-//    func download
 
     // MARK: Perform
 

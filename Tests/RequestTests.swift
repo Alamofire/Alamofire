@@ -26,159 +26,6 @@ import Alamofire
 import Foundation
 import XCTest
 
-// TODO: Evaulate need for request creation hooks?
-// TODO: Are init tests useful? If so, make them real init tests.
-//class RequestInitializationTestCase: BaseTestCase {
-//    func testDataRequestInitializer() {
-//        // Given
-//
-//    }
-//
-//    func testRequestClassMethodWithMethodAndURL() {
-//        // Given
-//        let urlString = "https://httpbin.org/get"
-//
-//        // When
-//        let request = Alamofire.request(urlString)
-//
-//        // Then
-//        XCTAssertNotNil(request.request)
-//        XCTAssertEqual(request.request?.httpMethod, "GET")
-//        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
-//        XCTAssertNil(request.response)
-//    }
-//
-//    func testRequestClassMethodWithMethodAndURLAndParameters() {
-//        // Given
-//        let urlString = "https://httpbin.org/get"
-//
-//        // When
-//        let request = Alamofire.request(urlString, parameters: ["foo": "bar"])
-//
-//        // Then
-//        XCTAssertNotNil(request.request)
-//        XCTAssertEqual(request.request?.httpMethod, "GET")
-//        XCTAssertNotEqual(request.request?.url?.absoluteString, urlString)
-//        XCTAssertEqual(request.request?.url?.query, "foo=bar")
-//        XCTAssertNil(request.response)
-//    }
-//
-//    func testRequestClassMethodWithMethodURLParametersAndHeaders() {
-//        // Given
-//        let urlString = "https://httpbin.org/get"
-//        let headers = ["Authorization": "123456"]
-//
-//        // When
-//        let request = Alamofire.request(urlString, parameters: ["foo": "bar"], headers: headers)
-//
-//        // Then
-//        XCTAssertNotNil(request.request)
-//        XCTAssertEqual(request.request?.httpMethod, "GET")
-//        XCTAssertNotEqual(request.request?.url?.absoluteString, urlString)
-//        XCTAssertEqual(request.request?.url?.query, "foo=bar")
-//        XCTAssertEqual(request.request?.value(forHTTPHeaderField: "Authorization"), "123456")
-//        XCTAssertNil(request.response)
-//    }
-//}
-
-// MARK: -
-
-//class RequestSubclassRequestPropertyTestCase: BaseTestCase {
-//    private enum AuthenticationError: Error {
-//        case expiredAccessToken
-//    }
-//
-//    private class AuthenticationAdapter: RequestAdapter {
-//        func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-//            throw AuthenticationError.expiredAccessToken
-//        }
-//    }
-//
-//    private var sessionManager: SessionManager!
-//
-//    override func setUp() {
-//        super.setUp()
-//
-//        sessionManager = SessionManager()
-//        sessionManager.startRequestsImmediately = false
-//
-//        sessionManager.adapter = AuthenticationAdapter()
-//    }
-//
-//    func testDataRequestHasURLRequest() {
-//        // Given
-//        let urlString = "https://httpbin.org/get"
-//
-//        // When
-//        let request = sessionManager.request(urlString)
-//
-//        // Then
-//        XCTAssertNotNil(request.request)
-//        XCTAssertEqual(request.request?.httpMethod, "GET")
-//        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
-//        XCTAssertNil(request.response)
-//    }
-//
-//    func testDownloadRequestHasURLRequest() {
-//        // Given
-//        let urlString = "https://httpbin.org/get"
-//
-//        // When
-//        let request = sessionManager.download(urlString)
-//
-//        // Then
-//        XCTAssertNotNil(request.request)
-//        XCTAssertEqual(request.request?.httpMethod, "GET")
-//        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
-//        XCTAssertNil(request.response)
-//    }
-//
-//    func testUploadDataRequestHasURLRequest() {
-//        // Given
-//        let urlString = "https://httpbin.org/post"
-//
-//        // When
-//        let request = sessionManager.upload(Data(), to: urlString)
-//
-//        // Then
-//        XCTAssertNotNil(request.request)
-//        XCTAssertEqual(request.request?.httpMethod, "POST")
-//        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
-//        XCTAssertNil(request.response)
-//    }
-//
-//    func testUploadFileRequestHasURLRequest() {
-//        // Given
-//        let urlString = "https://httpbin.org/post"
-//        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
-//
-//        // When
-//        let request = sessionManager.upload(imageURL, to: urlString)
-//
-//        // Then
-//        XCTAssertNotNil(request.request)
-//        XCTAssertEqual(request.request?.httpMethod, "POST")
-//        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
-//        XCTAssertNil(request.response)
-//    }
-//
-//    func testUploadStreamRequestHasURLRequest() {
-//        // Given
-//        let urlString = "https://httpbin.org/post"
-//        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
-//        let imageStream = InputStream(url: imageURL)!
-//
-//        // When
-//        let request = sessionManager.upload(imageStream, to: urlString)
-//
-//        // Then
-//        XCTAssertNotNil(request.request)
-//        XCTAssertEqual(request.request?.httpMethod, "POST")
-//        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
-//        XCTAssertNil(request.response)
-//    }
-//}
-
 // MARK: -
 
 class RequestResponseTestCase: BaseTestCase {
@@ -334,6 +181,27 @@ class RequestResponseTestCase: BaseTestCase {
         } else {
             XCTFail("form parameter in JSON should not be nil")
         }
+    }
+
+    // MARK: Serialization Queue
+
+    func testThatResponseSerializationWorksWithSerializationQueue() {
+        // Given
+        let queue = DispatchQueue(label: "org.alamofire.serializationQueue")
+        let manager = SessionManager(serializationQueue: queue)
+        let expectation = self.expectation(description: "request should complete")
+        var response: DataResponse<Any>?
+
+        // When
+        manager.request("https://httpbin.org/get").responseJSON { (resp) in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(response?.result.isSuccess, true)
     }
 }
 

@@ -34,7 +34,6 @@ struct RequestTaskMap {
         self.tasks = tasks
     }
 
-    // TODO: Investigate whether we could make stronger guarantees. Would likely need to abandon subscripts.
     subscript(_ request: Request) -> URLSessionTask? {
         get { return tasks[request] }
         set {
