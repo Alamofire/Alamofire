@@ -68,7 +68,7 @@ class SessionManagerTestCase: BaseTestCase {
             adaptedCount += 1
 
             if shouldApplyAuthorizationHeader && adaptedCount > 1 {
-                if let header = HTTPHeaders.authorization(withUsername: "user", password: "password").first {
+                if let header = HTTPHeaders.authorization(username: "user", password: "password").first {
                     urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
                 }
             }

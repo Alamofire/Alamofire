@@ -314,7 +314,7 @@ open class Request {
         eventMonitor?.request(self, didFailTask: task, earlyWithError: error)
     }
 
-    // Completion point for all tasks.
+    /// Called when a `URLSessionTask` completes. All tasks will eventually call this method.
     func didCompleteTask(_ task: URLSessionTask, with error: Error?) {
         self.error = self.error ?? error
         protectedValidators.directValue.forEach { $0() }
