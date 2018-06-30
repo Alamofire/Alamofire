@@ -1,6 +1,6 @@
 # Change Log
 All notable changes to this project will be documented in this file.
-`Alamofire` adheres to [Semantic Versioning](http://semver.org/).
+`Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 4.x Releases
 - `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471) | [4.7.2](#472)
@@ -965,7 +965,7 @@ Released on 2016-03-23. All issues associated with this milestone can be found u
 #### Upgrade Notes
 This release requires Xcode 7.3+ otherwise the Swift 2.2 changes will **NOT COMPILE**. There are several reasons why this was deployed as a MINOR and not MAJOR release. First off, the public API changes of this release are fully backwards compatible. There are no breaking API changes in the public APIs. Strictly following semver dictates that this is a MINOR, not MAJOR release.
 
-> See [semver](http://semver.org/#semantic-versioning-specification-semver) for more info.
+> See [semver](https://semver.org/#semantic-versioning-specification-semver) for more info.
 
 We also realize that this can be frustrating for those out there not ready to upgrade to Xcode 7.3. Please know that we consider each release version carefully before deploying. Our decision to bump the MINOR version was not only due to strictly following semver, but also because it's difficult and undesirable for all OSS libraries to bump MAJOR versions each time the Swift APIs are incremented. Alamofire would have had to go through 6 additional MAJOR versions if this was the policy. That would mean we'd already be running on Alamofire 10.x. Incrementing MAJOR versions this quickly is disruptive to the community and would cause even more confusion. Instead, we try to carefully plan our MAJOR version releases and accompany them with detailed Migration Guides to help make the transition as smooth as possible.
 
