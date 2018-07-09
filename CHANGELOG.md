@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 4.x Releases
-- `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471) | [4.7.2](#472)
+- `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471) | [4.7.2](#472) | [4.7.3](#473)
 - `4.6.x` Releases - [4.6.0](#460)
 - `4.5.x` Releases - [4.5.0](#450) | [4.5.1](#451)
 - `4.4.x` Releases - [4.4.0](#440)
@@ -33,6 +33,16 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+## [4.7.3](https://github.com/Alamofire/Alamofire/releases/tag/4.7.2)
+Released on 2018-7-8. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.7.3).
+
+#### Updated
+- Project for Xcode 10 and Swift 4.2 beta versions.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2552](https://github.com/Alamofire/Alamofire/pull/2552).
+- Documentation styling and content.
+  - Updated by [Constantin Lungu](https://github.com/nemesis) in Pull Request [#2505](https://github.com/Alamofire/Alamofire/pull/2505), [Xing He](https://github.com/kukushi) in Pull Request [#2484](https://github.com/Alamofire/Alamofire/pull/2484), and [Karim](https://github.com/karimhm) in Pull Request [#2550](https://github.com/Alamofire/Alamofire/pull/2550).
+
+
 ## [4.7.2](https://github.com/Alamofire/Alamofire/releases/tag/4.7.2)
 Released on 2018-4-15. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.7.2).
 
