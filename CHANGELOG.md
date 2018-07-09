@@ -33,7 +33,7 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
-## [4.7.3](https://github.com/Alamofire/Alamofire/releases/tag/4.7.2)
+## [4.7.3](https://github.com/Alamofire/Alamofire/releases/tag/4.7.3)
 Released on 2018-7-8. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.7.3).
 
 #### Updated
