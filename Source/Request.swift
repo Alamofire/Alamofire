@@ -324,12 +324,14 @@ open class Request {
         retryOrFinish(error: self.error)
     }
 
+    /// Called when the `RequestDelegate` is retrying this `Request`.
     func requestIsRetrying() {
         protectedMutableState.write { $0.retryCount += 1 }
 
         eventMonitor?.requestIsRetrying(self)
     }
 
+    /// Called to trigger retry or finish this `Request`.
     func retryOrFinish(error: Error?) {
         if let error = error, delegate?.willRetryRequest(self) == true {
             delegate?.retryRequest(self, ifNecessaryWithError: error)
@@ -339,6 +341,7 @@ open class Request {
         }
     }
 
+    /// Finishes this `Request` and starts the response serializers.
     func finish() {
         // Start response handlers
         internalQueue.isSuspended = false
@@ -346,7 +349,7 @@ open class Request {
         eventMonitor?.requestDidFinish(self)
     }
 
-    // Resets task related state
+    /// Resets all task related state for retry.
     func reset() {
         error = nil
 
@@ -356,6 +359,7 @@ open class Request {
         downloadProgress.completedUnitCount = 0
     }
 
+    /// Called when updating the upload progress.
     func updateUploadProgress(totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         uploadProgress.totalUnitCount = totalBytesExpectedToSend
         uploadProgress.completedUnitCount = totalBytesSent
@@ -365,17 +369,22 @@ open class Request {
 
     // MARK: Task Creation
 
-    // Subclasses wanting something other than URLSessionDataTask should override.
+    /// Called when creating a `URLSessionTask` for this `Request`. Subclasses must override.
     func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
         fatalError("Subclasses must override.")
     }
 
     // MARK: - Public API
 
-    // Callable from any queue.
+    // These APIs are callable from any queue.
 
+    // MARK: - State
+
+    /// Cancels the `Request`. Once cancelled, a `Request` can no longer be resumed or suspended.
+    ///
+    /// - Returns: The `Request`.
     @discardableResult
-    public func cancel() -> Self {
+    open func cancel() -> Self {
         guard state.canTransitionTo(.cancelled) else { return self }
 
         state = .cancelled
@@ -385,8 +394,11 @@ open class Request {
         return self
     }
 
+    /// Suspends the `Request`.
+    ///
+    /// - Returns: The `Request`.
     @discardableResult
-    public func suspend() -> Self {
+    open func suspend() -> Self {
         guard state.canTransitionTo(.suspended) else { return self }
 
         state = .suspended
@@ -396,8 +408,12 @@ open class Request {
         return self
     }
 
+
+    /// Resumes the `Request`.
+    ///
+    /// - Returns: The `Request`.
     @discardableResult
-    public func resume() -> Self {
+    open func resume() -> Self {
         guard state.canTransitionTo(.resumed) else { return self }
 
         state = .resumed
@@ -409,13 +425,24 @@ open class Request {
 
     // MARK: - Closure API
 
-    // Callable from any queue
+    /// Associates a credential using the provided values with the `Request`.
+    ///
+    /// - Parameters:
+    ///   - username:    The username.
+    ///   - password:    The password.
+    ///   - persistence: The `URLCredential.Persistence` for the created `URLCredential`.
+    /// - Returns:       The `Request`.
     @discardableResult
     open func authenticate(username: String, password: String, persistence: URLCredential.Persistence = .forSession) -> Self {
         let credential = URLCredential(user: username, password: password, persistence: persistence)
+
         return authenticate(with: credential)
     }
 
+    /// Associates the provided credential with the `Request`.
+    ///
+    /// - Parameter credential: The `URLCredential`.
+    /// - Returns:              The `Request`.
     @discardableResult
     open func authenticate(with credential: URLCredential) -> Self {
         protectedMutableState.write { $0.credential = credential }
@@ -429,32 +456,39 @@ open class Request {
     /// - parameter closure: The code to be executed periodically as data is read from the server.
     ///
     /// - returns: The request.
+    
+    /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
+    ///
+    /// Only the last closure provided is used.
+    ///
+    /// - Parameters:
+    ///   - queue:   The `DispatchQueue` to execute the closure on. Defaults to `.main`.
+    ///   - closure: The code to be executed periodically as data is read from the server.
+    /// - Returns:   The `Request`.
     @discardableResult
-    open func downloadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping ProgressHandler) -> Self {
+    open func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         protectedMutableState.write { $0.downloadProgressHandler = (handler: closure, queue: queue) }
 
         return self
     }
-
-    // MARK: Upload Progress
-
-    /// Sets a closure to be called periodically during the lifecycle of the `UploadRequest` as data is sent to
-    /// the server.
+    
+    /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is sent to the server.
     ///
-    /// After the data is sent to the server, the `progress(queue:closure:)` APIs can be used to monitor the progress
-    /// of data being read from the server.
+    /// Only the last closure provided is used.
     ///
-    /// - parameter queue:   The dispatch queue to execute the closure on.
-    /// - parameter closure: The code to be executed periodically as data is sent to the server.
-    ///
-    /// - returns: The request.
+    /// - Parameters:
+    ///   - queue:   The `DispatchQueue` to execute the closure on. Defaults to `.main`.
+    ///   - closure: The closure to be executed periodically as data is sent to the server.
+    /// - Returns:   The `Request`.
     @discardableResult
-    open func uploadProgress(queue: DispatchQueue = DispatchQueue.main, closure: @escaping ProgressHandler) -> Self {
+    open func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         protectedMutableState.write { $0.uploadProgressHandler = (handler: closure, queue: queue) }
 
         return self
     }
 }
+
+// MARK: - Protocol Conformances
 
 extension Request: Equatable {
     public static func == (lhs: Request, rhs: Request) -> Bool {
@@ -469,6 +503,8 @@ extension Request: Hashable {
 }
 
 extension Request: CustomStringConvertible {
+    /// A textual representation of this instance, including the `HTTPMethod` and `URL` if the `URLRequest` has been
+    /// created, as well as the response status code, if a response has been received.
     public var description: String {
         guard let request = performedRequests.last ?? lastRequest,
             let url = request.url,
@@ -481,6 +517,7 @@ extension Request: CustomStringConvertible {
 }
 
 extension Request: CustomDebugStringConvertible {
+    /// A textual representation of this instance in the form of a cURL command.
     public var debugDescription: String {
         return cURLRepresentation()
     }
@@ -800,7 +837,7 @@ open class DownloadRequest: Request {
     }
 
     @discardableResult
-    public override func cancel() -> Self {
+    open override func cancel() -> Self {
         guard state.canTransitionTo(.cancelled) else { return self }
 
         state = .cancelled

@@ -90,37 +90,41 @@ final class Protector<T> {
 }
 
 extension Protector where T: RangeReplaceableCollection {
-    func append(_ newElement: T.Iterator.Element) {
+    /// Adds a new element to the end of this protected collection.
+    ///
+    /// - Parameter newElement: The `Element` to append.
+    func append(_ newElement: T.Element) {
         write { (ward: inout T) in
             ward.append(newElement)
         }
     }
 
-    func append<S: Sequence>(contentsOf newElements: S) where S.Iterator.Element == T.Iterator.Element {
+    /// Adds the elements of a sequence to the end of this protected collection.
+    ///
+    /// - Parameter newElements: The `Sequence` to append.
+    func append<S: Sequence>(contentsOf newElements: S) where S.Element == T.Element {
         write { (ward: inout T) in
             ward.append(contentsOf: newElements)
         }
     }
 
-    func append<C: Collection>(contentsOf newElements: C) where C.Iterator.Element == T.Iterator.Element {
+    /// Add the elements of a collection to the end of the protected collection.
+    ///
+    /// - Parameter newElements: The `Collection` to append.
+    func append<C: Collection>(contentsOf newElements: C) where C.Element == T.Element {
         write { (ward: inout T) in
             ward.append(contentsOf: newElements)
-        }
-    }
-}
-
-extension Protector where T: Strideable {
-    func advance(by stride: T.Stride) {
-        write { (ward: inout T) in
-            ward = ward.advanced(by: stride)
         }
     }
 }
 
 extension Protector where T == Data? {
-    func append(_ other: Data) {
+    /// Adds the contents of a `Data` value to the end of the protected `Data`.
+    ///
+    /// - Parameter data: The `Data` to be appended.
+    func append(_ data: Data) {
         write { (ward: inout T) in
-            ward?.append(other)
+            ward?.append(data)
         }
     }
 }
