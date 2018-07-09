@@ -310,7 +310,7 @@
             <h1>SessionDelegate</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">SessionDelegate</span><span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">SessionDelegate</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
 
                 </div>
               </div>
@@ -966,7 +966,8 @@ requires caller to call the <code>completionHandler</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">streamTaskReadClosed</span><span class="p">:</span> <span class="p">((</span><span class="kt">URLSession</span><span class="p">,</span> <span class="kt">URLSessionStreamTask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS 9.0, OSX 10.11, tvOS 9.0, *)</span>
+<span class="kd">open</span> <span class="k">var</span> <span class="nv">streamTaskReadClosed</span><span class="p">:</span> <span class="p">((</span><span class="kt">URLSession</span><span class="p">,</span> <span class="kt">URLSessionStreamTask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -993,7 +994,8 @@ requires caller to call the <code>completionHandler</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">streamTaskWriteClosed</span><span class="p">:</span> <span class="p">((</span><span class="kt">URLSession</span><span class="p">,</span> <span class="kt">URLSessionStreamTask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS 9.0, OSX 10.11, tvOS 9.0, *)</span>
+<span class="kd">open</span> <span class="k">var</span> <span class="nv">streamTaskWriteClosed</span><span class="p">:</span> <span class="p">((</span><span class="kt">URLSession</span><span class="p">,</span> <span class="kt">URLSessionStreamTask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1020,7 +1022,8 @@ requires caller to call the <code>completionHandler</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">streamTaskBetterRouteDiscovered</span><span class="p">:</span> <span class="p">((</span><span class="kt">URLSession</span><span class="p">,</span> <span class="kt">URLSessionStreamTask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS 9.0, OSX 10.11, tvOS 9.0, *)</span>
+<span class="kd">open</span> <span class="k">var</span> <span class="nv">streamTaskBetterRouteDiscovered</span><span class="p">:</span> <span class="p">((</span><span class="kt">URLSession</span><span class="p">,</span> <span class="kt">URLSessionStreamTask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1047,7 +1050,8 @@ requires caller to call the <code>completionHandler</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">streamTaskDidBecomeInputAndOutputStreams</span><span class="p">:</span> <span class="p">((</span><span class="kt">URLSession</span><span class="p">,</span> <span class="kt">URLSessionStreamTask</span><span class="p">,</span> <span class="kt">InputStream</span><span class="p">,</span> <span class="kt">OutputStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS 9.0, OSX 10.11, tvOS 9.0, *)</span>
+<span class="kd">open</span> <span class="k">var</span> <span class="nv">streamTaskDidBecomeInputAndOutputStreams</span><span class="p">:</span> <span class="p">((</span><span class="kt">URLSession</span><span class="p">,</span> <span class="kt">URLSessionStreamTask</span><span class="p">,</span> <span class="kt">InputStream</span><span class="p">,</span> <span class="kt">OutputStream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1085,7 +1089,7 @@ requires caller to call the <code>completionHandler</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="nf">subscript</span><span class="p">(</span><span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="nf">subscript</span><span class="p">(</span><span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1199,6 +1203,13 @@ to a specified message.</p>
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/URLSessionDelegate"></a>
+                <a name="//apple_ref/swift/Section/URLSessionDelegate" class="dashAnchor"></a>
+                <a href="#/URLSessionDelegate">
+                  <h3 class="section-name">URLSessionDelegate</h3>
+                </a>
+              </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
@@ -1382,6 +1393,13 @@ remote server.</p>
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/URLSessionTaskDelegate"></a>
+                <a name="//apple_ref/swift/Section/URLSessionTaskDelegate" class="dashAnchor"></a>
+                <a href="#/URLSessionTaskDelegate">
+                  <h3 class="section-name">URLSessionTaskDelegate</h3>
+                </a>
+              </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
@@ -1763,7 +1781,9 @@ remote server.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">,</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">,</span> <span class="n">didFinishCollecting</span> <span class="nv">metrics</span><span class="p">:</span> <span class="kt">URLSessionTaskMetrics</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS 10.0, OSX 10.12, tvOS 10.0, *)</span>
+<span class="kd">@objc(URLSession:task:didFinishCollectingMetrics:)</span>
+<span class="kd">open</span> <span class="kd">func</span> <span class="nf">urlSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">,</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">,</span> <span class="n">didFinishCollecting</span> <span class="nv">metrics</span><span class="p">:</span> <span class="kt">URLSessionTaskMetrics</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1886,6 +1906,13 @@ remote server.</p>
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/URLSessionDataDelegate"></a>
+                <a name="//apple_ref/swift/Section/URLSessionDataDelegate" class="dashAnchor"></a>
+                <a href="#/URLSessionDataDelegate">
+                  <h3 class="section-name">URLSessionDataDelegate</h3>
+                </a>
+              </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
@@ -2212,6 +2239,13 @@ remote server.</p>
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/URLSessionDownloadDelegate"></a>
+                <a name="//apple_ref/swift/Section/URLSessionDownloadDelegate" class="dashAnchor"></a>
+                <a href="#/URLSessionDownloadDelegate">
+                  <h3 class="section-name">URLSessionDownloadDelegate</h3>
+                </a>
+              </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
@@ -2483,6 +2517,13 @@ remote server.</p>
               </ul>
             </div>
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/URLSessionStreamDelegate"></a>
+                <a name="//apple_ref/swift/Section/URLSessionStreamDelegate" class="dashAnchor"></a>
+                <a href="#/URLSessionStreamDelegate">
+                  <h3 class="section-name">URLSessionStreamDelegate</h3>
+                </a>
+              </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
@@ -2752,8 +2793,8 @@ remote server.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2018 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2018-04-15)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.1</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2018 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2018-07-08)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
