@@ -428,7 +428,7 @@ open class MultipartFormData {
         }
         headerText += EncodingCharacters.crlf
 
-        return headerText.data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        return Data(headerText.utf8)
     }
 
     private func encodeBodyStream(for bodyPart: BodyPart) throws -> Data {
