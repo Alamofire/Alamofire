@@ -855,8 +855,7 @@ open class DownloadRequest: Request {
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,
                                        response: response,
-                                       temporaryURL: self.fileURL,
-                                       destinationURL: self.fileURL,
+                                       fileURL: self.fileURL,
                                        withResult: result)
         }
 

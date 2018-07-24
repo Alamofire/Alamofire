@@ -176,8 +176,7 @@ public protocol EventMonitor {
     func request(_ request: DownloadRequest,
                  didValidateRequest urlRequest: URLRequest?,
                  response: HTTPURLResponse,
-                 temporaryURL: URL?,
-                 destinationURL: URL?,
+                 fileURL: URL?,
                  withResult result: Request.ValidationResult)
 
     /// Event called when a `DownloadRequest` creates a `DownloadResponse<URL?>` without calling a `ResponseSerializer`.
@@ -260,8 +259,7 @@ extension EventMonitor {
     public func request(_ request: DownloadRequest,
                         didValidateRequest urlRequest: URLRequest?,
                         response: HTTPURLResponse,
-                        temporaryURL: URL?,
-                        destinationURL: URL?,
+                        fileURL: URL?,
                         withResult result: Request.ValidationResult) { }
     public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?>) { }
     public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value>) { }
@@ -478,14 +476,12 @@ public final class CompositeEventMonitor: EventMonitor {
     public func request(_ request: DownloadRequest,
                         didValidateRequest urlRequest: URLRequest?,
                         response: HTTPURLResponse,
-                        temporaryURL: URL?,
-                        destinationURL: URL?,
+                        fileURL: URL?,
                         withResult result: Request.ValidationResult) {
         performEvent { $0.request(request,
                                   didValidateRequest: urlRequest,
                                   response: response,
-                                  temporaryURL: temporaryURL,
-                                  destinationURL: destinationURL,
+                                  fileURL: fileURL,
                                   withResult: result) }
     }
 
@@ -606,7 +602,7 @@ open class ClosureEventMonitor: EventMonitor {
     open var requestDidCreateDestinationURL: ((DownloadRequest, URL) -> Void)?
 
     /// Closure called on the `request(_:didValidateRequest:response:temporaryURL:destinationURL:withResult:)` event.
-    open var requestDidValidateRequestResponseTemporaryURLDestinationURLWithResult: ((DownloadRequest, URLRequest?, HTTPURLResponse, URL?, URL?, Request.ValidationResult) -> Void)?
+    open var requestDidValidateRequestResponseFileURLWithResult: ((DownloadRequest, URLRequest?, HTTPURLResponse, URL?, Request.ValidationResult) -> Void)?
 
     /// Closure called on the `request(_:didParseResponse:)` event.
     open var requestDidParseDownloadResponse: ((DownloadRequest, DownloadResponse<URL?>) -> Void)?
@@ -780,15 +776,13 @@ open class ClosureEventMonitor: EventMonitor {
     open func request(_ request: DownloadRequest,
                       didValidateRequest urlRequest: URLRequest?,
                       response: HTTPURLResponse,
-                      temporaryURL: URL?,
-                      destinationURL: URL?,
+                      fileURL: URL?,
                       withResult result: Request.ValidationResult) {
-        requestDidValidateRequestResponseTemporaryURLDestinationURLWithResult?(request,
-                                                                               urlRequest,
-                                                                               response,
-                                                                               temporaryURL,
-                                                                               destinationURL,
-                                                                               result)
+        requestDidValidateRequestResponseFileURLWithResult?(request,
+                                                            urlRequest,
+                                                            response,
+                                                            fileURL,
+                                                            result)
     }
 
     open func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?>) {
