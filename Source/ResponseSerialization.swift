@@ -220,11 +220,10 @@ extension DownloadRequest {
     {
         internalQueue.addOperation {
             self.serializationQueue.async {
-                let result = Result(value: self.temporaryURL ?? self.destinationURL , error: self.error)
+                let result = Result(value: self.fileURL , error: self.error)
                 let response = DownloadResponse(request: self.request,
                                                 response: self.response,
-                                                temporaryURL: self.temporaryURL,
-                                                destinationURL: self.destinationURL,
+                                                fileURL: self.fileURL,
                                                 resumeData: self.resumeData,
                                                 metrics: self.metrics,
                                                 serializationDuration: 0,
@@ -264,8 +263,7 @@ extension DownloadRequest {
 
                 let response = DownloadResponse(request: self.request,
                                                 response: self.response,
-                                                temporaryURL: self.temporaryURL,
-                                                destinationURL: self.destinationURL,
+                                                fileURL: self.fileURL,
                                                 resumeData: self.resumeData,
                                                 metrics: self.metrics,
                                                 serializationDuration: (end - start),

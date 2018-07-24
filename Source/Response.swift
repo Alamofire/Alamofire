@@ -208,11 +208,8 @@ public struct DownloadResponse<Value> {
     /// The server's response to the URL request.
     public let response: HTTPURLResponse?
 
-    /// The temporary destination URL of the data returned from the server.
-    public let temporaryURL: URL?
-
-    /// The final destination URL of the data returned from the server if it was moved.
-    public let destinationURL: URL?
+    /// The final destination URL of the data returned from the server after it is moved.
+    public let fileURL: URL?
 
     /// The resume data generated if the request was cancelled.
     public let resumeData: Data?
@@ -246,8 +243,7 @@ public struct DownloadResponse<Value> {
     public init(
         request: URLRequest?,
         response: HTTPURLResponse?,
-        temporaryURL: URL?,
-        destinationURL: URL?,
+        fileURL: URL?,
         resumeData: Data?,
         metrics: URLSessionTaskMetrics?,
         serializationDuration: TimeInterval,
@@ -255,8 +251,7 @@ public struct DownloadResponse<Value> {
     {
         self.request = request
         self.response = response
-        self.temporaryURL = temporaryURL
-        self.destinationURL = destinationURL
+        self.fileURL = fileURL
         self.resumeData = resumeData
         self.metrics = metrics
         self.serializationDuration = serializationDuration
@@ -294,8 +289,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
         return """
         [Request]: \(requestDescription)
         [Response]: \(responseDescription)
-        [TemporaryURL]: \(temporaryURL?.path ?? "nil")
-        [DestinationURL]: \(destinationURL?.path ?? "nil")
+        [File URL]: \(fileURL?.path ?? "nil")
         [ResumeData]: \(resumeDataDescription)
         [Network Duration]: \(metricsDescription)
         [Serialization Duration]: \(serializationDuration)s
@@ -322,9 +316,8 @@ extension DownloadResponse {
     public func map<T>(_ transform: (Value) -> T) -> DownloadResponse<T> {
         return DownloadResponse<T>(
             request: request,
-            response: self.response,
-            temporaryURL: temporaryURL,
-            destinationURL: destinationURL,
+            response: response,
+            fileURL: fileURL,
             resumeData: resumeData,
             metrics: metrics,
             serializationDuration: serializationDuration,
@@ -349,9 +342,8 @@ extension DownloadResponse {
     public func flatMap<T>(_ transform: (Value) throws -> T) -> DownloadResponse<T> {
         return DownloadResponse<T>(
             request: request,
-            response: self.response,
-            temporaryURL: temporaryURL,
-            destinationURL: destinationURL,
+            response: response,
+            fileURL: fileURL,
             resumeData: resumeData,
             metrics: metrics,
             serializationDuration: serializationDuration,
@@ -371,9 +363,8 @@ extension DownloadResponse {
     public func mapError<E: Error>(_ transform: (Error) -> E) -> DownloadResponse {
         return DownloadResponse(
             request: request,
-            response: self.response,
-            temporaryURL: temporaryURL,
-            destinationURL: destinationURL,
+            response: response,
+            fileURL: fileURL,
             resumeData: resumeData,
             metrics: metrics,
             serializationDuration: serializationDuration,
@@ -396,9 +387,8 @@ extension DownloadResponse {
     public func flatMapError<E: Error>(_ transform: (Error) throws -> E) -> DownloadResponse {
         return DownloadResponse(
             request: request,
-            response: self.response,
-            temporaryURL: temporaryURL,
-            destinationURL: destinationURL,
+            response: response,
+            fileURL: fileURL,
             resumeData: resumeData,
             metrics: metrics,
             serializationDuration: serializationDuration,

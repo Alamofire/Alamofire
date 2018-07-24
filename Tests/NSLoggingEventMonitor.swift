@@ -184,8 +184,8 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("Request: \(request), didProvideInputStream: \(stream)")
     }
 
-    public func request(_ request: DownloadRequest, didCompleteTask task: URLSessionTask, with url: URL) {
-        NSLog("Request: \(request), didCompleteTask: \(task), withURL: \(url)")
+    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL>) {
+        NSLog("Request: \(request), didFinishDownloadingUsing: \(task), withResult: \(result)")
     }
 
     public func request(_ request: DownloadRequest, didCreateDestinationURL url: URL) {

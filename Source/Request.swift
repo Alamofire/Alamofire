@@ -456,7 +456,7 @@ open class Request {
     /// - parameter closure: The code to be executed periodically as data is read from the server.
     ///
     /// - returns: The request.
-    
+
     /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
     ///
     /// Only the last closure provided is used.
@@ -471,7 +471,7 @@ open class Request {
 
         return self
     }
-    
+
     /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is sent to the server.
     ///
     /// Only the last closure provided is used.
@@ -652,7 +652,8 @@ open class DataRequest: Request {
     }
 
     override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
-        return session.dataTask(with: request)
+        let copiedRequest = request
+        return session.dataTask(with: copiedRequest)
     }
 
     func updateDownloadProgress() {
@@ -744,6 +745,13 @@ open class DownloadRequest: Request {
         }
     }
 
+    static let defaultDestination: Destination = { (url, _) in
+        let filename = "Alamofire_\(url.lastPathComponent)"
+        let destination = url.deletingLastPathComponent().appendingPathComponent(filename)
+
+        return (destination, [])
+    }
+
     public enum Downloadable {
         case request(URLRequestConvertible)
         case resumeData(Data)
@@ -751,22 +759,19 @@ open class DownloadRequest: Request {
 
     // MARK: Initial State
     public let downloadable: Downloadable
-    private let destination: Destination?
+    let destination: Destination?
 
     // MARK: Updated State
 
     private struct MutableState {
         var resumeData: Data?
-        var temporaryURL: URL?
-        var destinationURL: URL?
+        var fileURL: URL?
     }
 
     private let protectedMutableState: Protector<MutableState> = Protector(MutableState())
 
     public var resumeData: Data? { return protectedMutableState.directValue.resumeData }
-    public var temporaryURL: URL? { return protectedMutableState.directValue.temporaryURL }
-    public var destinationURL: URL? { return protectedMutableState.directValue.destinationURL }
-    public var fileURL: URL? { return destinationURL ?? temporaryURL }
+    public var fileURL: URL? { return protectedMutableState.directValue.fileURL }
 
     // MARK: Init
 
@@ -791,34 +796,14 @@ open class DownloadRequest: Request {
         super.reset()
 
         protectedMutableState.write { $0.resumeData = nil }
-        protectedMutableState.write { $0.temporaryURL = nil }
-        protectedMutableState.write { $0.destinationURL = nil }
+        protectedMutableState.write { $0.fileURL = nil }
     }
 
-    func didComplete(task: URLSessionTask, with url: URL) {
-        protectedMutableState.write { $0.temporaryURL = url }
+    func didFinishDownloading(using task: URLSessionTask, with result: Result<URL>) {
+        eventMonitor?.request(self, didFinishDownloadingUsing: task, with: result)
 
-        eventMonitor?.request(self, didCompleteTask: task, with: url)
-
-        guard let destination = destination, let response = response else { return }
-
-        let (destinationURL, options) = destination(url, response)
-        protectedMutableState.write { $0.destinationURL = destinationURL }
-        // TODO: Inject FileManager?
-        do {
-            if options.contains(.removePreviousFile), FileManager.default.fileExists(atPath: destinationURL.path) {
-                try FileManager.default.removeItem(at: destinationURL)
-            }
-
-            if options.contains(.createIntermediateDirectories) {
-                let directory = destinationURL.deletingLastPathComponent()
-                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            }
-
-            try FileManager.default.moveItem(at: url, to: destinationURL)
-        } catch {
-            self.error = error
-        }
+        result.withValue { url in protectedMutableState.write { $0.fileURL = url } }
+              .withError { self.error = $0 }
     }
 
     func updateDownloadProgress(bytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
@@ -863,15 +848,15 @@ open class DownloadRequest: Request {
         let validator: () -> Void = { [unowned self] in
             guard self.error == nil, let response = self.response else { return }
 
-            let result = validation(self.request, response, self.temporaryURL, self.destinationURL)
+            let result = validation(self.request, response, self.fileURL)
 
             result.withError { self.error = $0 }
 
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,
                                        response: response,
-                                       temporaryURL: self.temporaryURL,
-                                       destinationURL: self.destinationURL,
+                                       temporaryURL: self.fileURL,
+                                       destinationURL: self.fileURL,
                                        withResult: result)
         }
 

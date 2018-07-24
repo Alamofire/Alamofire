@@ -477,8 +477,7 @@ class SessionManagerTestCase: BaseTestCase {
         // Then
         XCTAssertNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNil(response?.temporaryURL)
-        XCTAssertNil(response?.destinationURL)
+        XCTAssertNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
 

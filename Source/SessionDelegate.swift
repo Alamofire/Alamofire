@@ -345,10 +345,32 @@ extension SessionDelegate: URLSessionDownloadDelegate {
         eventMonitor?.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location)
 
         guard let request = requestTaskMap[downloadTask] as? DownloadRequest else {
-            fatalError("download finished but either no request found or request wasn't DownloadRequest")
+            fatalError("Download finished but either no request found or request wasn't DownloadRequest")
         }
 
-        // TODO: Rename this callback.
-        request.didComplete(task: downloadTask, with: location)
+        guard let response = request.response else {
+            fatalError("URLSessionDownloadTask finished downloading with no response.")
+        }
+
+        let (destination, options) = (request.destination ?? DownloadRequest.defaultDestination)(location, response)
+
+        eventMonitor?.request(request, didCreateDestinationURL: destination)
+
+        do {
+            if options.contains(.removePreviousFile), FileManager.default.fileExists(atPath: destination.path) {
+                try FileManager.default.removeItem(at: destination)
+            }
+
+            if options.contains(.createIntermediateDirectories) {
+                let directory = destination.deletingLastPathComponent()
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            }
+
+            try FileManager.default.moveItem(at: location, to: destination)
+
+            request.didFinishDownloading(using: downloadTask, with: .success(destination))
+        } catch {
+            request.didFinishDownloading(using: downloadTask, with: .failure(error))
+        }
     }
 }
