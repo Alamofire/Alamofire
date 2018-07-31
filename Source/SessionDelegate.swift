@@ -260,7 +260,11 @@ extension SessionDelegate: URLSessionTaskDelegate {
                          completionHandler: @escaping (URLRequest?) -> Void) {
         eventMonitor?.urlSession(session, task: task, willPerformHTTPRedirection: response, newRequest: request)
 
-        completionHandler(request)
+        if let afRequest = requestTaskMap[task] {
+            afRequest.performRedirection(for: response, newRequest: request, completionHandler: completionHandler)
+        } else {
+            completionHandler(request)
+        }
     }
 
     open func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {

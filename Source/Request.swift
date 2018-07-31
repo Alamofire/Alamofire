@@ -80,6 +80,8 @@ open class Request {
         var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
         /// `ProgressHandler` and `DispatchQueue` provided for download progress callbacks.
         var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
+        /// `RedirectHandler` provided to handle per-request directs.
+        var redirectHandler: RedirectHandler?
         /// `URLCredential` used for authentication challenges.
         var credential: URLCredential?
         /// All `URLRequest`s created by Alamofire on behalf of the `Request`.
@@ -131,6 +133,11 @@ open class Request {
         get { return protectedMutableState.directValue.downloadProgressHandler }
         set { protectedMutableState.write { $0.downloadProgressHandler = newValue } }
     }
+
+    // Redirects
+
+    /// Closure type executed when determining whether to allow a request to be redirected.
+    public typealias RedirectHandler = (_ response: HTTPURLResponse, _ newRequest: URLRequest) -> URLRequest?
 
     // Credential
 
@@ -324,6 +331,22 @@ open class Request {
         retryOrFinish(error: self.error)
     }
 
+    /// Called when the `URLSessionTaskDelegate` is called to redirect the request.
+    func performRedirection(
+        for response: HTTPURLResponse,
+        newRequest request: URLRequest,
+        completionHandler: @escaping (URLRequest?) -> Void)
+    {
+        guard let redirectHandler = protectedMutableState.directValue.redirectHandler else {
+            completionHandler(request)
+            return
+        }
+
+        let redirectedRequest = redirectHandler(response, request)
+
+        completionHandler(redirectedRequest)
+    }
+
     /// Called when the `RequestDelegate` is retrying this `Request`.
     func requestIsRetrying() {
         protectedMutableState.write { $0.retryCount += 1 }
@@ -420,6 +443,20 @@ open class Request {
 
         delegate?.resumeRequest(self)
 
+        return self
+    }
+
+    /// Redirects the `Request` to the `URLRequest?` returned in the handler.
+    ///
+    /// The return result of the `RedirectHandler` should be the `newRequest` if you wish to allow the redirect,
+    /// a modified `URLRequest` if you wish to change it, and `nil` if you wish to deny the redirect request and
+    /// return the body of the redirect response.
+    ///
+    /// - Parameter handler: The redirect handler.
+    /// - Returns: The `Request`.
+    @discardableResult
+    open func redirect(_ handler: @escaping RedirectHandler) -> Self {
+        protectedMutableState.write { $0.redirectHandler = handler }
         return self
     }
 
