@@ -67,11 +67,11 @@ In order to keep Alamofire focused specifically on core networking implementatio
 - [Alamofire 2.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%202.0%20Migration%20Guide.md)
 
 ## Communication
-
-- If you **need help**, use [Stack Overflow](https://stackoverflow.com/questions/tagged/alamofire). (Tag 'alamofire')
-- If you'd like to **ask a general question**, use [Stack Overflow](https://stackoverflow.com/questions/tagged/alamofire).
-- If you **found a bug**, open an issue.
-- If you **have a feature request**, open an issue.
+- If you need to **find or understand an API**, check [our documentation](http://alamofire.github.io/Alamofire/) or [Apple's documentation for `URLSession`](https://developer.apple.com/documentation/foundation/url_loading_system), on top of which Alamofire is built.
+- If you need **help with an Alamofire feature**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire).
+- If you'd like to **discuss Alamofire best practices**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire).
+- If you'd like to **discuss a feature request**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire). 
+- If you **found a bug**, open an issue and follow the guide. The more detail the better!
 - If you **want to contribute**, submit a pull request.
 
 ## Installation
