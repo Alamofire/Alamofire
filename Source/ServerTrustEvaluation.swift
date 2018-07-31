@@ -27,7 +27,7 @@ import Foundation
 /// Responsible for managing the mapping of `ServerTrustEvaluating` values to given hosts.
 open class ServerTrustManager {
     /// The dictionary of policies mapped to a particular host.
-    open let evaluators: [String: ServerTrustEvaluating]
+    public let evaluators: [String: ServerTrustEvaluating]
 
     /// Initializes the `ServerTrustManager` instance with the given evaluators.
     ///
@@ -87,23 +87,6 @@ extension Array where Element == ServerTrustEvaluating {
         return true
     }
     #endif
-}
-
-// MARK: -
-
-extension URLSession {
-    private struct AssociatedKeys {
-        static var managerKey = "URLSession.ServerTrustManager"
-    }
-
-    var serverTrustManager: ServerTrustManager? {
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.managerKey) as? ServerTrustManager
-        }
-        set (manager) {
-            objc_setAssociatedObject(self, &AssociatedKeys.managerKey, manager, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
 }
 
 // MARK: - Server Trust Evaluators

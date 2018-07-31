@@ -37,7 +37,7 @@ class ProxyURLProtocol: URLProtocol {
     lazy var session: URLSession = {
         let configuration: URLSessionConfiguration = {
             let configuration = URLSessionConfiguration.ephemeral
-            configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+            configuration.httpAdditionalHeaders = HTTPHeaders.defaultHTTPHeaders
 
             return configuration
         }()
@@ -145,7 +145,7 @@ class URLProtocolTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "GET request should succeed")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         manager.request(urlRequest)
@@ -163,8 +163,8 @@ class URLProtocolTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
 
         if let headers = response?.response?.allHeaderFields as? [String: String] {
-            XCTAssertEqual(headers["Request-Header"], "foobar")
-            XCTAssertEqual(headers["Session-Configuration-Header"], "foo")
+            XCTAssertEqual(headers["Request-Header"] ?? headers["request-header"], "foobar")
+            XCTAssertEqual(headers["Session-Configuration-Header"] ?? headers["session-configuration-header"], "foo")
         } else {
             XCTFail("headers should not be nil")
         }

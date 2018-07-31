@@ -24,655 +24,353 @@
 
 import Foundation
 
-/// Responsible for handling all delegate callbacks for the underlying session.
 open class SessionDelegate: NSObject {
+    private(set) var requestTaskMap = RequestTaskMap()
 
-    // MARK: URLSessionDelegate Overrides
+    // TODO: Better way to connect delegate to manager, including queue?
+    private weak var manager: SessionManager?
+    private var eventMonitor: EventMonitor?
+    private var queue: DispatchQueue? { return manager?.rootQueue }
 
-    /// Overrides default behavior for URLSessionDelegate method `urlSession(_:didBecomeInvalidWithError:)`.
-    open var sessionDidBecomeInvalidWithError: ((URLSession, Error?) -> Void)?
+    let startRequestsImmediately: Bool
 
-    /// Overrides default behavior for URLSessionDelegate method `urlSession(_:didReceive:completionHandler:)`.
-    open var sessionDidReceiveChallenge: ((URLSession, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))?
-
-    /// Overrides all behavior for URLSessionDelegate method `urlSession(_:didReceive:completionHandler:)` and requires the caller to call the `completionHandler`.
-    open var sessionDidReceiveChallengeWithCompletion: ((URLSession, URLAuthenticationChallenge, @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) -> Void)?
-
-    /// Overrides default behavior for URLSessionDelegate method `urlSessionDidFinishEvents(forBackgroundURLSession:)`.
-    open var sessionDidFinishEventsForBackgroundURLSession: ((URLSession) -> Void)?
-
-    // MARK: URLSessionTaskDelegate Overrides
-
-    /// Overrides default behavior for URLSessionTaskDelegate method `urlSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)`.
-    open var taskWillPerformHTTPRedirection: ((URLSession, URLSessionTask, HTTPURLResponse, URLRequest) -> URLRequest?)?
-
-    /// Overrides all behavior for URLSessionTaskDelegate method `urlSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)` and
-    /// requires the caller to call the `completionHandler`.
-    open var taskWillPerformHTTPRedirectionWithCompletion: ((URLSession, URLSessionTask, HTTPURLResponse, URLRequest, @escaping (URLRequest?) -> Void) -> Void)?
-
-    /// Overrides default behavior for URLSessionTaskDelegate method `urlSession(_:task:didReceive:completionHandler:)`.
-    open var taskDidReceiveChallenge: ((URLSession, URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))?
-
-    /// Overrides all behavior for URLSessionTaskDelegate method `urlSession(_:task:didReceive:completionHandler:)` and
-    /// requires the caller to call the `completionHandler`.
-    open var taskDidReceiveChallengeWithCompletion: ((URLSession, URLSessionTask, URLAuthenticationChallenge, @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) -> Void)?
-
-    /// Overrides default behavior for URLSessionTaskDelegate method `urlSession(_:task:needNewBodyStream:)`.
-    open var taskNeedNewBodyStream: ((URLSession, URLSessionTask) -> InputStream?)?
-
-    /// Overrides all behavior for URLSessionTaskDelegate method `urlSession(_:task:needNewBodyStream:)` and
-    /// requires the caller to call the `completionHandler`.
-    open var taskNeedNewBodyStreamWithCompletion: ((URLSession, URLSessionTask, @escaping (InputStream?) -> Void) -> Void)?
-
-    /// Overrides default behavior for URLSessionTaskDelegate method `urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)`.
-    open var taskDidSendBodyData: ((URLSession, URLSessionTask, Int64, Int64, Int64) -> Void)?
-
-    /// Overrides default behavior for URLSessionTaskDelegate method `urlSession(_:task:didCompleteWithError:)`.
-    open var taskDidComplete: ((URLSession, URLSessionTask, Error?) -> Void)?
-
-    // MARK: URLSessionDataDelegate Overrides
-
-    /// Overrides default behavior for URLSessionDataDelegate method `urlSession(_:dataTask:didReceive:completionHandler:)`.
-    open var dataTaskDidReceiveResponse: ((URLSession, URLSessionDataTask, URLResponse) -> URLSession.ResponseDisposition)?
-
-    /// Overrides all behavior for URLSessionDataDelegate method `urlSession(_:dataTask:didReceive:completionHandler:)` and
-    /// requires caller to call the `completionHandler`.
-    open var dataTaskDidReceiveResponseWithCompletion: ((URLSession, URLSessionDataTask, URLResponse, @escaping (URLSession.ResponseDisposition) -> Void) -> Void)?
-
-    /// Overrides default behavior for URLSessionDataDelegate method `urlSession(_:dataTask:didBecome:)`.
-    open var dataTaskDidBecomeDownloadTask: ((URLSession, URLSessionDataTask, URLSessionDownloadTask) -> Void)?
-
-    /// Overrides default behavior for URLSessionDataDelegate method `urlSession(_:dataTask:didReceive:)`.
-    open var dataTaskDidReceiveData: ((URLSession, URLSessionDataTask, Data) -> Void)?
-
-    /// Overrides default behavior for URLSessionDataDelegate method `urlSession(_:dataTask:willCacheResponse:completionHandler:)`.
-    open var dataTaskWillCacheResponse: ((URLSession, URLSessionDataTask, CachedURLResponse) -> CachedURLResponse?)?
-
-    /// Overrides all behavior for URLSessionDataDelegate method `urlSession(_:dataTask:willCacheResponse:completionHandler:)` and
-    /// requires caller to call the `completionHandler`.
-    open var dataTaskWillCacheResponseWithCompletion: ((URLSession, URLSessionDataTask, CachedURLResponse, @escaping (CachedURLResponse?) -> Void) -> Void)?
-
-    // MARK: URLSessionDownloadDelegate Overrides
-
-    /// Overrides default behavior for URLSessionDownloadDelegate method `urlSession(_:downloadTask:didFinishDownloadingTo:)`.
-    open var downloadTaskDidFinishDownloadingToURL: ((URLSession, URLSessionDownloadTask, URL) -> Void)?
-
-    /// Overrides default behavior for URLSessionDownloadDelegate method `urlSession(_:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:)`.
-    open var downloadTaskDidWriteData: ((URLSession, URLSessionDownloadTask, Int64, Int64, Int64) -> Void)?
-
-    /// Overrides default behavior for URLSessionDownloadDelegate method `urlSession(_:downloadTask:didResumeAtOffset:expectedTotalBytes:)`.
-    open var downloadTaskDidResumeAtOffset: ((URLSession, URLSessionDownloadTask, Int64, Int64) -> Void)?
-
-    // MARK: URLSessionStreamDelegate Overrides
-
-#if !os(watchOS)
-
-    /// Overrides default behavior for URLSessionStreamDelegate method `urlSession(_:readClosedFor:)`.
-    open var streamTaskReadClosed: ((URLSession, URLSessionStreamTask) -> Void)?
-
-    /// Overrides default behavior for URLSessionStreamDelegate method `urlSession(_:writeClosedFor:)`.
-    open var streamTaskWriteClosed: ((URLSession, URLSessionStreamTask) -> Void)?
-
-    /// Overrides default behavior for URLSessionStreamDelegate method `urlSession(_:betterRouteDiscoveredFor:)`.
-    open var streamTaskBetterRouteDiscovered: ((URLSession, URLSessionStreamTask) -> Void)?
-
-    /// Overrides default behavior for URLSessionStreamDelegate method `urlSession(_:streamTask:didBecome:outputStream:)`.
-    open var streamTaskDidBecomeInputAndOutputStreams: ((URLSession, URLSessionStreamTask, InputStream, OutputStream) -> Void)?
-
-#endif
-
-    // MARK: Properties
-
-    var retrier: RequestRetrier?
-    weak var sessionManager: SessionManager?
-
-   var protectedRequests = Protector<[Int: Request]>([:])
-
-    /// Access the task delegate for the specified task in a thread-safe manner.
-    open subscript(task: URLSessionTask) -> Request? {
-        get { return protectedRequests.read { $0[task.taskIdentifier] } }
-        set { protectedRequests.write { $0[task.taskIdentifier] = newValue } }
+    public init(startRequestsImmediately: Bool = true) {
+        self.startRequestsImmediately = startRequestsImmediately
     }
 
-    // MARK: Lifecycle
-
-    /// Initializes the `SessionDelegate` instance.
-    ///
-    /// - returns: The new `SessionDelegate` instance.
-    public override init() {
-        super.init()
+    func didCreateSessionManager(_ manager: SessionManager, withEventMonitor eventMonitor: EventMonitor) {
+        self.manager = manager
+        self.eventMonitor = eventMonitor
     }
 
-    // MARK: NSObject Overrides
+    func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
+        guard let manager = manager else { fatalError("Received didCreateURLRequest but there is no manager.") }
 
-    /// Returns a `Bool` indicating whether the `SessionDelegate` implements or inherits a method that can respond
-    /// to a specified message.
-    ///
-    /// - parameter selector: A selector that identifies a message.
-    ///
-    /// - returns: `true` if the receiver implements or inherits a method that can respond to selector, otherwise `false`.
-    open override func responds(to selector: Selector) -> Bool {
-        #if !os(macOS)
-            if selector == #selector(URLSessionDelegate.urlSessionDidFinishEvents(forBackgroundURLSession:)) {
-                return sessionDidFinishEventsForBackgroundURLSession != nil
-            }
-        #endif
+        guard !request.isCancelled else { return }
 
-        #if !os(watchOS)
-            switch selector {
-            case #selector(URLSessionStreamDelegate.urlSession(_:readClosedFor:)):
-                return streamTaskReadClosed != nil
-            case #selector(URLSessionStreamDelegate.urlSession(_:writeClosedFor:)):
-                return streamTaskWriteClosed != nil
-            case #selector(URLSessionStreamDelegate.urlSession(_:betterRouteDiscoveredFor:)):
-                return streamTaskBetterRouteDiscovered != nil
-            case #selector(URLSessionStreamDelegate.urlSession(_:streamTask:didBecome:outputStream:)):
-                return streamTaskDidBecomeInputAndOutputStreams != nil
-            default:
-                break
-            }
-        #endif
+        let task = request.task(for: urlRequest, using: manager.session)
+        requestTaskMap[request] = task
+        request.didCreateTask(task)
 
-        switch selector {
-        case #selector(URLSessionDelegate.urlSession(_:didBecomeInvalidWithError:)):
-            return sessionDidBecomeInvalidWithError != nil
-        case #selector(URLSessionDelegate.urlSession(_:didReceive:completionHandler:)):
-            return (sessionDidReceiveChallenge != nil  || sessionDidReceiveChallengeWithCompletion != nil)
-        case #selector(URLSessionTaskDelegate.urlSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)):
-            return (taskWillPerformHTTPRedirection != nil || taskWillPerformHTTPRedirectionWithCompletion != nil)
-        case #selector(URLSessionDataDelegate.urlSession(_:dataTask:didReceive:completionHandler:)):
-            return (dataTaskDidReceiveResponse != nil || dataTaskDidReceiveResponseWithCompletion != nil)
-        default:
-            return type(of: self).instancesRespond(to: selector)
+        resumeOrSuspendTask(task, ifNecessaryForRequest: request)
+    }
+
+    func didReceiveResumeData(_ data: Data, for request: DownloadRequest) {
+        guard let manager = manager else { fatalError("Received didReceiveResumeData but there is no manager.") }
+
+        guard !request.isCancelled else { return }
+
+        let task = request.task(forResumeData: data, using: manager.session)
+        requestTaskMap[request] = task
+        request.didCreateTask(task)
+
+        resumeOrSuspendTask(task, ifNecessaryForRequest: request)
+    }
+
+    func resumeOrSuspendTask(_ task: URLSessionTask, ifNecessaryForRequest request: Request) {
+        if startRequestsImmediately || request.isResumed {
+            task.resume()
+            request.didResume()
+        }
+
+        if request.isSuspended {
+            task.suspend()
+            request.didSuspend()
         }
     }
 }
 
-// MARK: - URLSessionDelegate
+extension SessionDelegate: RequestDelegate {
+    public var sessionConfiguration: URLSessionConfiguration {
+        guard let manager = manager else { fatalError("Attempted to access sessionConfiguration without a manager.") }
+
+        return manager.session.configuration
+    }
+
+    public func willRetryRequest(_ request: Request) -> Bool {
+        return (manager?.retrier != nil)
+    }
+
+    public func retryRequest(_ request: Request, ifNecessaryWithError error: Error) {
+        guard let manager = manager, let retrier = manager.retrier else { return }
+
+        retrier.should(manager, retry: request, with: error) { (shouldRetry, retryInterval) in
+            guard !request.isCancelled else { return }
+
+            manager.rootQueue.async {
+                guard shouldRetry else { request.finish(); return }
+
+                manager.rootQueue.after(retryInterval) {
+                    guard !request.isCancelled else { return }
+
+                    request.requestIsRetrying()
+                    manager.perform(request)
+                }
+            }
+        }
+    }
+
+    public func cancelRequest(_ request: Request) {
+        queue?.async {
+            guard let task = self.requestTaskMap[request] else {
+                request.didCancel()
+                request.finish()
+                return
+            }
+
+            request.didCancel()
+            task.cancel()
+        }
+    }
+
+    public func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
+        queue?.async {
+            guard let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask else {
+                request.didCancel()
+                request.finish()
+                return
+            }
+
+            downloadTask.cancel { (data) in
+                self.queue?.async {
+                    byProducingResumeData(data)
+                    request.didCancel()
+                }
+            }
+        }
+    }
+
+    public func suspendRequest(_ request: Request) {
+        queue?.async {
+            guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
+
+            task.suspend()
+            request.didSuspend()
+        }
+    }
+
+    public func resumeRequest(_ request: Request) {
+        queue?.async {
+            guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
+
+            task.resume()
+            request.didResume()
+        }
+    }
+}
 
 extension SessionDelegate: URLSessionDelegate {
-    /// Tells the delegate that the session has been invalidated.
-    ///
-    /// - parameter session: The session object that was invalidated.
-    /// - parameter error:   The error that caused invalidation, or nil if the invalidation was explicit.
     open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        sessionDidBecomeInvalidWithError?(session, error)
+        eventMonitor?.urlSession(session, didBecomeInvalidWithError: error)
     }
-
-    /// Requests credentials from the delegate in response to a session-level authentication request from the
-    /// remote server.
-    ///
-    /// - parameter session:           The session containing the task that requested authentication.
-    /// - parameter challenge:         An object that contains the request for authentication.
-    /// - parameter completionHandler: A handler that your delegate method must call providing the disposition
-    ///                                and credential.
-    open func urlSession(
-        _ session: URLSession,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
-    {
-        guard sessionDidReceiveChallengeWithCompletion == nil else {
-            sessionDidReceiveChallengeWithCompletion?(session, challenge, completionHandler)
-            return
-        }
-
-        var disposition: URLSession.AuthChallengeDisposition = .performDefaultHandling
-        var credential: URLCredential?
-
-        if let sessionDidReceiveChallenge = sessionDidReceiveChallenge {
-            (disposition, credential) = sessionDidReceiveChallenge(session, challenge)
-        } else if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            let host = challenge.protectionSpace.host
-
-            if
-                let serverTrustEvaluators = session.serverTrustManager?.serverTrustEvaluators(forHost: host),
-                let serverTrust = challenge.protectionSpace.serverTrust
-            {
-                if serverTrustEvaluators.evaluate(serverTrust, forHost: host) {
-                    disposition = .useCredential
-                    credential = URLCredential(trust: serverTrust)
-                } else {
-                    disposition = .cancelAuthenticationChallenge
-                }
-            }
-        }
-
-        completionHandler(disposition, credential)
-    }
-
-#if !os(macOS)
-
-    /// Tells the delegate that all messages enqueued for a session have been delivered.
-    ///
-    /// - parameter session: The session that no longer has any outstanding requests.
-    open func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        sessionDidFinishEventsForBackgroundURLSession?(session)
-    }
-
-#endif
 }
-
-// MARK: - URLSessionTaskDelegate
 
 extension SessionDelegate: URLSessionTaskDelegate {
-    /// Tells the delegate that the remote server requested an HTTP redirect.
-    ///
-    /// - parameter session:           The session containing the task whose request resulted in a redirect.
-    /// - parameter task:              The task whose request resulted in a redirect.
-    /// - parameter response:          An object containing the server’s response to the original request.
-    /// - parameter request:           A URL request object filled out with the new location.
-    /// - parameter completionHandler: A closure that your handler should call with either the value of the request
-    ///                                parameter, a modified URL request object, or NULL to refuse the redirect and
-    ///                                return the body of the redirect response.
-    open func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        willPerformHTTPRedirection response: HTTPURLResponse,
-        newRequest request: URLRequest,
-        completionHandler: @escaping (URLRequest?) -> Void)
-    {
-        guard taskWillPerformHTTPRedirectionWithCompletion == nil else {
-            taskWillPerformHTTPRedirectionWithCompletion?(session, task, response, request, completionHandler)
-            return
+    /// Result of a `URLAuthenticationChallenge` evaluation.
+    typealias ChallengeEvaluation = (disposition: URLSession.AuthChallengeDisposition, credential: URLCredential?, error: Error?)
+
+    open func urlSession(_ session: URLSession,
+                         task: URLSessionTask,
+                         didReceive challenge: URLAuthenticationChallenge,
+                         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        eventMonitor?.urlSession(session, task: task, didReceive: challenge)
+
+        let evaluation: ChallengeEvaluation
+        switch challenge.protectionSpace.authenticationMethod {
+        case NSURLAuthenticationMethodServerTrust:
+            evaluation = attemptServerTrustAuthentication(with: challenge)
+        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest:
+            evaluation = attemptHTTPAuthentication(for: challenge, belongingTo: task)
+        // case NSURLAuthenticationMethodClientCertificate:
+        default:
+            evaluation = (.performDefaultHandling, nil, nil)
         }
 
-        var redirectRequest: URLRequest? = request
-
-        if let taskWillPerformHTTPRedirection = taskWillPerformHTTPRedirection {
-            redirectRequest = taskWillPerformHTTPRedirection(session, task, response, request)
+        if let error = evaluation.error {
+            requestTaskMap[task]?.didFailTask(task, earlyWithError: error)
         }
 
-        completionHandler(redirectRequest)
+        completionHandler(evaluation.disposition, evaluation.credential)
     }
 
-    /// Requests credentials from the delegate in response to an authentication request from the remote server.
-    ///
-    /// - parameter session:           The session containing the task whose request requires authentication.
-    /// - parameter task:              The task whose request requires authentication.
-    /// - parameter challenge:         An object that contains the request for authentication.
-    /// - parameter completionHandler: A handler that your delegate method must call providing the disposition
-    ///                                and credential.
-    open func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
-    {
-        guard taskDidReceiveChallengeWithCompletion == nil else {
-            taskDidReceiveChallengeWithCompletion?(session, task, challenge, completionHandler)
-            return
+    func attemptServerTrustAuthentication(with challenge: URLAuthenticationChallenge) -> ChallengeEvaluation {
+        let host = challenge.protectionSpace.host
+
+        guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
+            let evaluator = manager?.serverTrustManager?.serverTrustEvaluators(forHost: host),
+            let serverTrust = challenge.protectionSpace.serverTrust
+            else {
+                return (.performDefaultHandling, nil, nil)
         }
 
-        if let taskDidReceiveChallenge = taskDidReceiveChallenge {
-            let result = taskDidReceiveChallenge(session, task, challenge)
-            completionHandler(result.0, result.1)
-        } else if let delegate = self[task]?.delegate {
-            delegate.urlSession(
-                session,
-                task: task,
-                didReceive: challenge,
-                completionHandler: completionHandler
-            )
-        } else {
-            urlSession(session, didReceive: challenge, completionHandler: completionHandler)
+        guard evaluator.evaluate(serverTrust, forHost: host) else {
+            let error = AFError.certificatePinningFailed
+
+            return (.cancelAuthenticationChallenge, nil, error)
         }
+
+        return (.useCredential, URLCredential(trust: serverTrust), nil)
     }
 
-    /// Tells the delegate when a task requires a new request body stream to send to the remote server.
-    ///
-    /// - parameter session:           The session containing the task that needs a new body stream.
-    /// - parameter task:              The task that needs a new body stream.
-    /// - parameter completionHandler: A completion handler that your delegate method should call with the new body stream.
-    open func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        needNewBodyStream completionHandler: @escaping (InputStream?) -> Void)
-    {
-        guard taskNeedNewBodyStreamWithCompletion == nil else {
-            taskNeedNewBodyStreamWithCompletion?(session, task, completionHandler)
-            return
+    func attemptHTTPAuthentication(for challenge: URLAuthenticationChallenge,
+                                   belongingTo task: URLSessionTask) -> ChallengeEvaluation {
+        guard challenge.previousFailureCount == 0 else {
+            return (.rejectProtectionSpace, nil, nil)
         }
 
-        if let taskNeedNewBodyStream = taskNeedNewBodyStream {
-            completionHandler(taskNeedNewBodyStream(session, task))
-        } else if let delegate = self[task]?.delegate {
-            delegate.urlSession(session, task: task, needNewBodyStream: completionHandler)
+        guard let credential = requestTaskMap[task]?.credential ??
+            manager?.session.configuration.urlCredentialStorage?.defaultCredential(for: challenge.protectionSpace) else {
+            return (.performDefaultHandling, nil, nil)
         }
+
+        return (.useCredential, credential, nil)
     }
 
-    /// Periodically informs the delegate of the progress of sending body content to the server.
-    ///
-    /// - parameter session:                  The session containing the data task.
-    /// - parameter task:                     The data task.
-    /// - parameter bytesSent:                The number of bytes sent since the last time this delegate method was called.
-    /// - parameter totalBytesSent:           The total number of bytes sent so far.
-    /// - parameter totalBytesExpectedToSend: The expected length of the body data.
-    open func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didSendBodyData bytesSent: Int64,
-        totalBytesSent: Int64,
-        totalBytesExpectedToSend: Int64)
-    {
-        if let taskDidSendBodyData = taskDidSendBodyData {
-            taskDidSendBodyData(session, task, bytesSent, totalBytesSent, totalBytesExpectedToSend)
-        } else if let delegate = self[task]?.delegate as? UploadTaskDelegate {
-            delegate.URLSession(
-                session,
-                task: task,
-                didSendBodyData: bytesSent,
-                totalBytesSent: totalBytesSent,
-                totalBytesExpectedToSend: totalBytesExpectedToSend
-            )
-        }
+    open func urlSession(_ session: URLSession,
+                         task: URLSessionTask,
+                         didSendBodyData bytesSent: Int64,
+                         totalBytesSent: Int64,
+                         totalBytesExpectedToSend: Int64) {
+        eventMonitor?.urlSession(session,
+                                 task: task,
+                                 didSendBodyData: bytesSent,
+                                 totalBytesSent: totalBytesSent,
+                                 totalBytesExpectedToSend: totalBytesExpectedToSend)
+
+        requestTaskMap[task]?.updateUploadProgress(totalBytesSent: totalBytesSent,
+                                                   totalBytesExpectedToSend: totalBytesExpectedToSend)
     }
 
-#if !os(watchOS)
+    open func urlSession(_ session: URLSession,
+                         task: URLSessionTask,
+                         needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
+        eventMonitor?.urlSession(session, taskNeedsNewBodyStream: task)
 
-    /// Tells the delegate that the session finished collecting metrics for the task.
-    ///
-    /// - parameter session: The session collecting the metrics.
-    /// - parameter task:    The task whose metrics have been collected.
-    /// - parameter metrics: The collected metrics.
-    @available(iOS 10.0, macOS 10.12, tvOS 10.0, *)
-    @objc(URLSession:task:didFinishCollectingMetrics:)
+        guard let request = requestTaskMap[task] as? UploadRequest else {
+            fatalError("needNewBodyStream for request that isn't UploadRequest.")
+        }
+
+        completionHandler(request.inputStream())
+    }
+
+    open func urlSession(_ session: URLSession,
+                         task: URLSessionTask,
+                         willPerformHTTPRedirection response: HTTPURLResponse,
+                         newRequest request: URLRequest,
+                         completionHandler: @escaping (URLRequest?) -> Void) {
+        eventMonitor?.urlSession(session, task: task, willPerformHTTPRedirection: response, newRequest: request)
+
+        completionHandler(request)
+    }
+
     open func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
-        self[task]?.delegate.metrics = metrics
+        eventMonitor?.urlSession(session, task: task, didFinishCollecting: metrics)
+
+        requestTaskMap[task]?.didGatherMetrics(metrics)
     }
 
-#endif
-
-    /// Tells the delegate that the task finished transferring data.
-    ///
-    /// - parameter session: The session containing the task whose request finished transferring data.
-    /// - parameter task:    The task whose request finished transferring data.
-    /// - parameter error:   If an error occurred, an error object indicating how the transfer failed, otherwise nil.
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        /// Executed after it is determined that the request is not going to be retried
-        let completeTask: (URLSession, URLSessionTask, Error?) -> Void = { [weak self] session, task, error in
-            guard let strongSelf = self else { return }
+        eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)
 
-            strongSelf.taskDidComplete?(session, task, error)
+        requestTaskMap[task]?.didCompleteTask(task, with: error)
 
-            strongSelf[task]?.delegate.urlSession(session, task: task, didCompleteWithError: error)
+        requestTaskMap[task] = nil
+    }
 
-            var userInfo: [String: Any] = [Notification.Key.Task: task]
-
-            if let data = (strongSelf[task]?.delegate as? DataTaskDelegate)?.data {
-                userInfo[Notification.Key.ResponseData] = data
-            }
-
-            NotificationCenter.default.post(
-                name: Notification.Name.Task.DidComplete,
-                object: strongSelf,
-                userInfo: userInfo
-            )
-
-            strongSelf[task] = nil
-        }
-
-        guard let request = self[task], let sessionManager = sessionManager else {
-            completeTask(session, task, error)
-            return
-        }
-
-        // Run all validations on the request before checking if an error occurred
-        request.validations.forEach { $0() }
-
-        // Determine whether an error has occurred
-        var error: Error? = error
-
-        if request.delegate.error != nil {
-            error = request.delegate.error
-        }
-
-        /// If an error occurred and the retrier is set, asynchronously ask the retrier if the request
-        /// should be retried. Otherwise, complete the task by notifying the task delegate.
-        if let retrier = retrier, let error = error {
-            retrier.should(sessionManager, retry: request, with: error) { [weak self] shouldRetry, timeDelay in
-                guard shouldRetry else { completeTask(session, task, error) ; return }
-
-                DispatchQueue.utility.after(timeDelay) { [weak self] in
-                    guard let strongSelf = self else { return }
-
-                    let retrySucceeded = strongSelf.sessionManager?.retry(request) ?? false
-
-                    if retrySucceeded, let task = request.task {
-                        strongSelf[task] = request
-                        return
-                    } else {
-                        completeTask(session, task, error)
-                    }
-                }
-            }
-        } else {
-            completeTask(session, task, error)
-        }
+    @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
+    open func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
+        eventMonitor?.urlSession(session, taskIsWaitingForConnectivity: task)
     }
 }
-
-// MARK: - URLSessionDataDelegate
 
 extension SessionDelegate: URLSessionDataDelegate {
-    /// Tells the delegate that the data task received the initial reply (headers) from the server.
-    ///
-    /// - parameter session:           The session containing the data task that received an initial reply.
-    /// - parameter dataTask:          The data task that received an initial reply.
-    /// - parameter response:          A URL response object populated with headers.
-    /// - parameter completionHandler: A completion handler that your code calls to continue the transfer, passing a
-    ///                                constant to indicate whether the transfer should continue as a data task or
-    ///                                should become a download task.
-    open func urlSession(
-        _ session: URLSession,
-        dataTask: URLSessionDataTask,
-        didReceive response: URLResponse,
-        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void)
-    {
-        guard dataTaskDidReceiveResponseWithCompletion == nil else {
-            dataTaskDidReceiveResponseWithCompletion?(session, dataTask, response, completionHandler)
-            return
-        }
-
-        var disposition: URLSession.ResponseDisposition = .allow
-
-        if let dataTaskDidReceiveResponse = dataTaskDidReceiveResponse {
-            disposition = dataTaskDidReceiveResponse(session, dataTask, response)
-        }
-
-        completionHandler(disposition)
-    }
-
-    /// Tells the delegate that the data task was changed to a download task.
-    ///
-    /// - parameter session:      The session containing the task that was replaced by a download task.
-    /// - parameter dataTask:     The data task that was replaced by a download task.
-    /// - parameter downloadTask: The new download task that replaced the data task.
-    open func urlSession(
-        _ session: URLSession,
-        dataTask: URLSessionDataTask,
-        didBecome downloadTask: URLSessionDownloadTask)
-    {
-        if let dataTaskDidBecomeDownloadTask = dataTaskDidBecomeDownloadTask {
-            dataTaskDidBecomeDownloadTask(session, dataTask, downloadTask)
-        } else {
-            self[downloadTask]?.delegate = DownloadTaskDelegate(task: downloadTask)
-        }
-    }
-
-    /// Tells the delegate that the data task has received some of the expected data.
-    ///
-    /// - parameter session:  The session containing the data task that provided data.
-    /// - parameter dataTask: The data task that provided data.
-    /// - parameter data:     A data object containing the transferred data.
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        if let dataTaskDidReceiveData = dataTaskDidReceiveData {
-            dataTaskDidReceiveData(session, dataTask, data)
-        } else if let delegate = self[dataTask]?.delegate as? DataTaskDelegate {
-            delegate.urlSession(session, dataTask: dataTask, didReceive: data)
+        eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
+
+        guard let request = requestTaskMap[dataTask] as? DataRequest else {
+            fatalError("dataTask received data for incorrect Request subclass: \(String(describing: requestTaskMap[dataTask]))")
         }
+
+        request.didReceive(data: data)
     }
 
-    /// Asks the delegate whether the data (or upload) task should store the response in the cache.
-    ///
-    /// - parameter session:           The session containing the data (or upload) task.
-    /// - parameter dataTask:          The data (or upload) task.
-    /// - parameter proposedResponse:  The default caching behavior. This behavior is determined based on the current
-    ///                                caching policy and the values of certain received headers, such as the Pragma
-    ///                                and Cache-Control headers.
-    /// - parameter completionHandler: A block that your handler must call, providing either the original proposed
-    ///                                response, a modified version of that response, or NULL to prevent caching the
-    ///                                response. If your delegate implements this method, it must call this completion
-    ///                                handler; otherwise, your app leaks memory.
-    open func urlSession(
-        _ session: URLSession,
-        dataTask: URLSessionDataTask,
-        willCacheResponse proposedResponse: CachedURLResponse,
-        completionHandler: @escaping (CachedURLResponse?) -> Void)
-    {
-        guard dataTaskWillCacheResponseWithCompletion == nil else {
-            dataTaskWillCacheResponseWithCompletion?(session, dataTask, proposedResponse, completionHandler)
-            return
-        }
+    open func urlSession(_ session: URLSession,
+                         dataTask: URLSessionDataTask,
+                         willCacheResponse proposedResponse: CachedURLResponse,
+                         completionHandler: @escaping (CachedURLResponse?) -> Void) {
+        eventMonitor?.urlSession(session, dataTask: dataTask, willCacheResponse: proposedResponse)
 
-        if let dataTaskWillCacheResponse = dataTaskWillCacheResponse {
-            completionHandler(dataTaskWillCacheResponse(session, dataTask, proposedResponse))
-        } else if let delegate = self[dataTask]?.delegate as? DataTaskDelegate {
-            delegate.urlSession(
-                session,
-                dataTask: dataTask,
-                willCacheResponse: proposedResponse,
-                completionHandler: completionHandler
-            )
-        } else {
-            completionHandler(proposedResponse)
-        }
+        completionHandler(proposedResponse)
     }
 }
-
-// MARK: - URLSessionDownloadDelegate
 
 extension SessionDelegate: URLSessionDownloadDelegate {
-    /// Tells the delegate that a download task has finished downloading.
-    ///
-    /// - parameter session:      The session containing the download task that finished.
-    /// - parameter downloadTask: The download task that finished.
-    /// - parameter location:     A file URL for the temporary file. Because the file is temporary, you must either
-    ///                           open the file for reading or move it to a permanent location in your app’s sandbox
-    ///                           container directory before returning from this delegate method.
-    open func urlSession(
-        _ session: URLSession,
-        downloadTask: URLSessionDownloadTask,
-        didFinishDownloadingTo location: URL)
-    {
-        if let downloadTaskDidFinishDownloadingToURL = downloadTaskDidFinishDownloadingToURL {
-            downloadTaskDidFinishDownloadingToURL(session, downloadTask, location)
-        } else if let delegate = self[downloadTask]?.delegate as? DownloadTaskDelegate {
-            delegate.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location)
+    open func urlSession(_ session: URLSession,
+                         downloadTask: URLSessionDownloadTask,
+                         didResumeAtOffset fileOffset: Int64,
+                         expectedTotalBytes: Int64) {
+        eventMonitor?.urlSession(session,
+                                 downloadTask: downloadTask,
+                                 didResumeAtOffset: fileOffset,
+                                 expectedTotalBytes: expectedTotalBytes)
+
+        guard let downloadRequest = requestTaskMap[downloadTask] as? DownloadRequest else {
+            fatalError("No DownloadRequest found for downloadTask: \(downloadTask)")
         }
+
+        downloadRequest.updateDownloadProgress(bytesWritten: fileOffset,
+                                               totalBytesExpectedToWrite: expectedTotalBytes)
     }
 
-    /// Periodically informs the delegate about the download’s progress.
-    ///
-    /// - parameter session:                   The session containing the download task.
-    /// - parameter downloadTask:              The download task.
-    /// - parameter bytesWritten:              The number of bytes transferred since the last time this delegate
-    ///                                        method was called.
-    /// - parameter totalBytesWritten:         The total number of bytes transferred so far.
-    /// - parameter totalBytesExpectedToWrite: The expected length of the file, as provided by the Content-Length
-    ///                                        header. If this header was not provided, the value is
-    ///                                        `NSURLSessionTransferSizeUnknown`.
-    open func urlSession(
-        _ session: URLSession,
-        downloadTask: URLSessionDownloadTask,
-        didWriteData bytesWritten: Int64,
-        totalBytesWritten: Int64,
-        totalBytesExpectedToWrite: Int64)
-    {
-        if let downloadTaskDidWriteData = downloadTaskDidWriteData {
-            downloadTaskDidWriteData(session, downloadTask, bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
-        } else if let delegate = self[downloadTask]?.delegate as? DownloadTaskDelegate {
-            delegate.urlSession(
-                session,
-                downloadTask: downloadTask,
-                didWriteData: bytesWritten,
-                totalBytesWritten: totalBytesWritten,
-                totalBytesExpectedToWrite: totalBytesExpectedToWrite
-            )
+    open func urlSession(_ session: URLSession,
+                         downloadTask: URLSessionDownloadTask,
+                         didWriteData bytesWritten: Int64,
+                         totalBytesWritten: Int64,
+                         totalBytesExpectedToWrite: Int64) {
+        eventMonitor?.urlSession(session,
+                                 downloadTask: downloadTask,
+                                 didWriteData: bytesWritten,
+                                 totalBytesWritten: totalBytesWritten,
+                                 totalBytesExpectedToWrite: totalBytesExpectedToWrite)
+
+        guard let downloadRequest = requestTaskMap[downloadTask] as? DownloadRequest else {
+            fatalError("No DownloadRequest found for downloadTask: \(downloadTask)")
         }
+
+        downloadRequest.updateDownloadProgress(bytesWritten: bytesWritten,
+                                               totalBytesExpectedToWrite: totalBytesExpectedToWrite)
     }
 
-    /// Tells the delegate that the download task has resumed downloading.
-    ///
-    /// - parameter session:            The session containing the download task that finished.
-    /// - parameter downloadTask:       The download task that resumed. See explanation in the discussion.
-    /// - parameter fileOffset:         If the file's cache policy or last modified date prevents reuse of the
-    ///                                 existing content, then this value is zero. Otherwise, this value is an
-    ///                                 integer representing the number of bytes on disk that do not need to be
-    ///                                 retrieved again.
-    /// - parameter expectedTotalBytes: The expected length of the file, as provided by the Content-Length header.
-    ///                                 If this header was not provided, the value is NSURLSessionTransferSizeUnknown.
-    open func urlSession(
-        _ session: URLSession,
-        downloadTask: URLSessionDownloadTask,
-        didResumeAtOffset fileOffset: Int64,
-        expectedTotalBytes: Int64)
-    {
-        if let downloadTaskDidResumeAtOffset = downloadTaskDidResumeAtOffset {
-            downloadTaskDidResumeAtOffset(session, downloadTask, fileOffset, expectedTotalBytes)
-        } else if let delegate = self[downloadTask]?.delegate as? DownloadTaskDelegate {
-            delegate.urlSession(
-                session,
-                downloadTask: downloadTask,
-                didResumeAtOffset: fileOffset,
-                expectedTotalBytes: expectedTotalBytes
-            )
+    open func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        eventMonitor?.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location)
+
+        guard let request = requestTaskMap[downloadTask] as? DownloadRequest else {
+            fatalError("Download finished but either no request found or request wasn't DownloadRequest")
+        }
+
+        guard let response = request.response else {
+            fatalError("URLSessionDownloadTask finished downloading with no response.")
+        }
+
+        let (destination, options) = (request.destination ?? DownloadRequest.defaultDestination)(location, response)
+
+        eventMonitor?.request(request, didCreateDestinationURL: destination)
+
+        do {
+            if options.contains(.removePreviousFile), FileManager.default.fileExists(atPath: destination.path) {
+                try FileManager.default.removeItem(at: destination)
+            }
+
+            if options.contains(.createIntermediateDirectories) {
+                let directory = destination.deletingLastPathComponent()
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            }
+
+            try FileManager.default.moveItem(at: location, to: destination)
+
+            request.didFinishDownloading(using: downloadTask, with: .success(destination))
+        } catch {
+            request.didFinishDownloading(using: downloadTask, with: .failure(error))
         }
     }
 }
-
-// MARK: - URLSessionStreamDelegate
-
-#if !os(watchOS)
-
-extension SessionDelegate: URLSessionStreamDelegate {
-    /// Tells the delegate that the read side of the connection has been closed.
-    ///
-    /// - parameter session:    The session.
-    /// - parameter streamTask: The stream task.
-    open func urlSession(_ session: URLSession, readClosedFor streamTask: URLSessionStreamTask) {
-        streamTaskReadClosed?(session, streamTask)
-    }
-
-    /// Tells the delegate that the write side of the connection has been closed.
-    ///
-    /// - parameter session:    The session.
-    /// - parameter streamTask: The stream task.
-    open func urlSession(_ session: URLSession, writeClosedFor streamTask: URLSessionStreamTask) {
-        streamTaskWriteClosed?(session, streamTask)
-    }
-
-    /// Tells the delegate that the system has determined that a better route to the host is available.
-    ///
-    /// - parameter session:    The session.
-    /// - parameter streamTask: The stream task.
-    open func urlSession(_ session: URLSession, betterRouteDiscoveredFor streamTask: URLSessionStreamTask) {
-        streamTaskBetterRouteDiscovered?(session, streamTask)
-    }
-
-    /// Tells the delegate that the stream task has been completed and provides the unopened stream objects.
-    ///
-    /// - parameter session:      The session.
-    /// - parameter streamTask:   The stream task.
-    /// - parameter inputStream:  The new input stream.
-    /// - parameter outputStream: The new output stream.
-    open func urlSession(
-        _ session: URLSession,
-        streamTask: URLSessionStreamTask,
-        didBecome inputStream: InputStream,
-        outputStream: OutputStream)
-    {
-        streamTaskDidBecomeInputAndOutputStreams?(session, streamTask, inputStream, outputStream)
-    }
-}
-
-#endif

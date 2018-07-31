@@ -165,10 +165,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? URLError {
-            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
+        if let error = error as? AFError {
+            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
         } else {
-            XCTFail("error should be an URLError")
+            XCTFail("error should be an AFError")
         }
     }
 
@@ -234,10 +234,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? URLError {
-            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
+        if let error = error as? AFError {
+            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
         } else {
-            XCTFail("error should be an URLError")
+            XCTFail("error should be an AFError")
         }
     }
 
@@ -267,10 +267,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? URLError {
-            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
+        if let error = error as? AFError {
+            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
         } else {
-            XCTFail("error should be an URLError")
+            XCTFail("error should be an AFError")
         }
     }
 
@@ -303,10 +303,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? URLError {
-            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
+        if let error = error as? AFError {
+            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
         } else {
-            XCTFail("error should be an URLError")
+            XCTFail("error should be an AFError")
         }
     }
 
@@ -343,10 +343,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? URLError {
-            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
+        if let error = error as? AFError {
+            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
         } else {
-            XCTFail("error should be an URLError")
+            XCTFail("error should be an AFError")
         }
     }
 
@@ -467,10 +467,10 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? URLError {
-            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
+        if let error = error as? AFError {
+            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
         } else {
-            XCTFail("error should be an URLError")
+            XCTFail("error should be an AFError")
         }
     }
 

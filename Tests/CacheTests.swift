@@ -94,7 +94,7 @@ class CacheTestCase: BaseTestCase {
         manager = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.default
-                configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+                configuration.httpAdditionalHeaders = HTTPHeaders.defaultHTTPHeaders
                 configuration.requestCachePolicy = .useProtocolCachePolicy
                 configuration.urlCache = urlCache
 
@@ -182,7 +182,7 @@ class CacheTestCase: BaseTestCase {
     func startRequest(
         cacheControl: String,
         cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
-        queue: DispatchQueue = DispatchQueue.main,
+        queue: DispatchQueue = .main,
         completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
         -> URLRequest
     {

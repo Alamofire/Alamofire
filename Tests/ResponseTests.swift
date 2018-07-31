@@ -32,7 +32,7 @@ class ResponseTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         Alamofire.request(urlString, parameters: ["foo": "bar"]).response { resp in
@@ -47,10 +47,7 @@ class ResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatResponseReturnsFailureResultWithOptionalDataAndError() {
@@ -58,7 +55,7 @@ class ResponseTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         Alamofire.request(urlString, parameters: ["foo": "bar"]).response { resp in
@@ -71,12 +68,9 @@ class ResponseTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 }
 
@@ -104,10 +98,7 @@ class ResponseDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatResponseDataReturnsFailureResultWithOptionalDataAndError() {
@@ -128,12 +119,9 @@ class ResponseDataTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 }
 
@@ -161,10 +149,7 @@ class ResponseStringTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
@@ -185,12 +170,9 @@ class ResponseStringTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 }
 
@@ -218,10 +200,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
@@ -242,12 +221,9 @@ class ResponseJSONTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatResponseJSONReturnsSuccessResultForGETRequest() {
@@ -271,10 +247,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, watchOS 3.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
 
         if
             let responseDictionary = response?.result.value as? [String: Any],
@@ -307,10 +280,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
 
         if
             let responseDictionary = response?.result.value as? [String: Any],
@@ -351,10 +321,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertEqual(response?.result.value?.url, "https://httpbin.org/get")
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
@@ -375,12 +342,9 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 }
 
@@ -412,10 +376,7 @@ class ResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertEqual(response?.result.value, "bar")
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatMapPreservesFailureError() {
@@ -436,12 +397,9 @@ class ResponseMapTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 }
 
@@ -473,10 +431,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertEqual(response?.result.value, "bar")
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatFlatMapCatchesTransformationError() {
@@ -511,9 +466,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
             XCTFail("flatMap should catch the transformation error")
         }
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatFlatMapPreservesFailureError() {
@@ -534,12 +487,9 @@ class ResponseFlatMapTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 }
 
@@ -579,13 +529,11 @@ class ResponseMapErrorTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
         guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatMapErrorPreservesSuccessValue() {
@@ -608,10 +556,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 }
 
@@ -638,10 +583,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatFlatMapErrorCatchesTransformationError() {
@@ -662,7 +604,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
         if let error = response?.result.error {
@@ -671,9 +613,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
             XCTFail("flatMapError should catch the transformation error")
         }
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 
     func testThatFlatMapErrorTransformsError() {
@@ -694,12 +634,11 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
+
         guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
 
-        if #available(iOS 10.0, macOS 10.12, tvOS 10.0, *) {
-            XCTAssertNotNil(response?.metrics)
-        }
+        XCTAssertNotNil(response?.metrics)
     }
 }

@@ -191,7 +191,7 @@ public struct URLEncoding: ParameterEncoding {
                 urlRequest.setValue("application/x-www-form-urlencoded; charset=utf-8", forHTTPHeaderField: "Content-Type")
             }
 
-            urlRequest.httpBody = query(parameters).data(using: .utf8, allowLossyConversion: false)
+            urlRequest.httpBody = Data(query(parameters).utf8)
         }
 
         return urlRequest

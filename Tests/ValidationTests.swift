@@ -336,50 +336,32 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
         class MockManager: SessionManager {
-            override func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
-                do {
-                    let originalRequest = try urlRequest.asURLRequest()
-                    let originalTask = DataRequest.Requestable(urlRequest: originalRequest)
+            override func request(_ convertible: URLRequestConvertible) -> DataRequest {
+                let request = MockDataRequest(convertible: convertible,
+                                              underlyingQueue: rootQueue,
+                                              serializationQueue: serializationQueue,
+                                              eventMonitor: eventMonitor,
+                                              delegate: delegate)
 
-                    let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
-                    let request = MockDataRequest(session: session, requestTask: .data(originalTask, task))
+                perform(request)
 
-                    delegate[task] = request
-
-                    if startRequestsImmediately { request.resume() }
-
-                    return request
-                } catch {
-                    let request = DataRequest(session: session, requestTask: .data(nil, nil), error: error)
-                    if startRequestsImmediately { request.resume() }
-                    return request
-                }
+                return request
             }
 
             override func download(
-                _ urlRequest: URLRequestConvertible,
-                to destination: DownloadRequest.DownloadFileDestination? = nil)
+                _ convertible: URLRequestConvertible,
+                to destination: DownloadRequest.Destination? = nil)
                 -> DownloadRequest
             {
-                do {
-                    let originalRequest = try urlRequest.asURLRequest()
-                    let originalTask = DownloadRequest.Downloadable.request(originalRequest)
+                let request = MockDownloadRequest.init(downloadable: .request(convertible),
+                                                       underlyingQueue: rootQueue,
+                                                       serializationQueue: serializationQueue,
+                                                       eventMonitor: eventMonitor,
+                                                       delegate: delegate)
 
-                    let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
-                    let request = MockDownloadRequest(session: session, requestTask: .download(originalTask, task))
+                perform(request)
 
-                    request.downloadDelegate.destination = destination
-
-                    delegate[task] = request
-
-                    if startRequestsImmediately { request.resume() }
-
-                    return request
-                } catch {
-                    let download = DownloadRequest(session: session, requestTask: .download(nil, nil), error: error)
-                    if startRequestsImmediately { download.resume() }
-                    return download
-                }
+                return request
             }
         }
 
@@ -412,7 +394,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let manager: SessionManager = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.ephemeral
-                configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+                configuration.httpAdditionalHeaders = HTTPHeaders.defaultHTTPHeaders
 
                 return configuration
             }()
@@ -422,11 +404,11 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
         let urlString = "https://httpbin.org/delete"
 
-        let expectation1 = self.expectation(description: "request should be stubbed and return 204 status code")
-        let expectation2 = self.expectation(description: "download should be stubbed and return 204 status code")
+        let expectation1 = expectation(description: "request should be stubbed and return 204 status code")
+        let expectation2 = expectation(description: "download should be stubbed and return 204 status code")
 
-        var requestResponse: DefaultDataResponse?
-        var downloadResponse: DefaultDownloadResponse?
+        var requestResponse: DataResponse<Data?>?
+        var downloadResponse: DownloadResponse<URL?>?
 
         // When
         manager.request(urlString, method: .delete)
@@ -454,8 +436,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNil(requestResponse?.response?.mimeType)
 
         XCTAssertNotNil(downloadResponse?.response)
-        XCTAssertNotNil(downloadResponse?.temporaryURL)
-        XCTAssertNil(downloadResponse?.destinationURL)
+        XCTAssertNotNil(downloadResponse?.fileURL)
         XCTAssertNil(downloadResponse?.error)
 
         XCTAssertEqual(downloadResponse?.response?.statusCode, 204)
@@ -730,8 +711,8 @@ class AutomaticValidationTestCase: BaseTestCase {
         var urlRequest = URLRequest(url: url)
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let expectation1 = self.expectation(description: "request should succeed and return xml")
-        let expectation2 = self.expectation(description: "download should succeed and return xml")
+        let expectation1 = expectation(description: "request should succeed and return xml")
+        let expectation2 = expectation(description: "download should succeed and return xml")
 
         var requestError: Error?
         var downloadError: Error?
@@ -775,7 +756,7 @@ extension DataRequest {
     func validateDataExists() -> Self {
         return validate { request, response, data in
             guard data != nil else { return .failure(ValidationError.missingData) }
-            return .success
+            return .success(Void())
         }
     }
 
@@ -786,14 +767,14 @@ extension DataRequest {
 
 extension DownloadRequest {
     func validateDataExists() -> Self {
-        return validate { request, response, _, _ in
-            let fileURL = self.downloadDelegate.fileURL
+        return validate { (request, response, _) in
+            let fileURL = self.fileURL
 
             guard let validFileURL = fileURL else { return .failure(ValidationError.missingFile) }
 
             do {
                 let _ = try Data(contentsOf: validFileURL)
-                return .success
+                return .success(Void())
             } catch {
                 return .failure(ValidationError.fileReadFailed)
             }
@@ -801,7 +782,7 @@ extension DownloadRequest {
     }
 
     func validate(with error: Error) -> Self {
-        return validate { _, _, _, _ in .failure(error) }
+        return validate { (_, _, _) in .failure(error) }
     }
 }
 
@@ -822,7 +803,7 @@ class CustomValidationTestCase: BaseTestCase {
         Alamofire.request(urlString)
             .validate { request, response, data in
                 guard data != nil else { return .failure(ValidationError.missingData) }
-                return .success
+                return .success(Void())
             }
             .response { resp in
                 requestError = resp.error
@@ -830,12 +811,12 @@ class CustomValidationTestCase: BaseTestCase {
             }
 
         Alamofire.download(urlString)
-            .validate { request, response, temporaryURL, destinationURL in
-                guard let fileURL = temporaryURL else { return .failure(ValidationError.missingFile) }
+            .validate { (request, response, fileURL) in
+                guard let fileURL = fileURL else { return .failure(ValidationError.missingFile) }
 
                 do {
-                    let _ = try Data(contentsOf: fileURL)
-                    return .success
+                    _ = try Data(contentsOf: fileURL)
+                    return .success(Void())
                 } catch {
                     return .failure(ValidationError.fileReadFailed)
                 }
@@ -872,8 +853,8 @@ class CustomValidationTestCase: BaseTestCase {
             }
 
         Alamofire.download(urlString)
-            .validate { _, _, _, _ in .failure(ValidationError.missingFile) }
-            .validate { _, _, _, _ in .failure(ValidationError.fileReadFailed) } // should be ignored
+            .validate { (_, _, _) in .failure(ValidationError.missingFile) }
+            .validate { (_, _, _) in .failure(ValidationError.fileReadFailed) } // should be ignored
             .response { resp in
                 downloadError = resp.error
                 expectation2.fulfill()
