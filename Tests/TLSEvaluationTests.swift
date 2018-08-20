@@ -165,8 +165,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
@@ -234,8 +234,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
@@ -267,8 +267,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
@@ -303,8 +303,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
@@ -343,8 +343,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
@@ -467,8 +467,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }

@@ -91,7 +91,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError, let statusCode = error.responseCode {
+            if let error = error?.asAFError, let statusCode = error.responseCode {
                 XCTAssertTrue(error.isUnacceptableStatusCode)
                 XCTAssertEqual(statusCode, 404)
             } else {
@@ -132,7 +132,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError, let statusCode = error.responseCode {
+            if let error = error?.asAFError, let statusCode = error.responseCode {
                 XCTAssertTrue(error.isUnacceptableStatusCode)
                 XCTAssertEqual(statusCode, 201)
             } else {
@@ -249,7 +249,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError {
+            if let error = error?.asAFError {
                 XCTAssertTrue(error.isUnacceptableContentType)
                 XCTAssertEqual(error.responseContentType, "application/xml")
                 XCTAssertEqual(error.acceptableContentTypes?.first, "application/octet-stream")
@@ -291,7 +291,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError {
+            if let error = error?.asAFError {
                 XCTAssertTrue(error.isUnacceptableContentType)
                 XCTAssertEqual(error.responseContentType, "application/xml")
                 XCTAssertTrue(error.acceptableContentTypes?.isEmpty ?? false)
@@ -515,7 +515,7 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError {
+            if let error = error?.asAFError {
                 XCTAssertTrue(error.isUnacceptableStatusCode)
                 XCTAssertEqual(error.responseCode, 200)
             } else {
@@ -558,7 +558,7 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError {
+            if let error = error?.asAFError {
                 XCTAssertTrue(error.isUnacceptableContentType)
                 XCTAssertEqual(error.responseContentType, "application/xml")
                 XCTAssertEqual(error.acceptableContentTypes?.first, "application/octet-stream")
@@ -634,7 +634,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError, let statusCode = error.responseCode {
+            if let error = error?.asAFError, let statusCode = error.responseCode {
                 XCTAssertTrue(error.isUnacceptableStatusCode)
                 XCTAssertEqual(statusCode, 404)
             } else {
@@ -735,7 +735,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError {
+            if let error = error?.asAFError {
                 XCTAssertTrue(error.isUnacceptableContentType)
                 XCTAssertEqual(error.responseContentType, "application/xml")
                 XCTAssertEqual(error.acceptableContentTypes?.first, "application/json")

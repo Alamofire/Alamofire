@@ -320,7 +320,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
         XCTAssertNil(request.task)
-        guard let error = request.error as? AFError, case .explicitlyCancelled = error else { XCTFail(); return }
+        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else { XCTFail(); return }
     }
 
     func testSetStartRequestsImmediatelyToFalseAndResumeThenCancelRequestHasCorrectOutput() {
@@ -351,7 +351,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
         XCTAssertNil(request.task)
-        guard let error = request.error as? AFError, case .explicitlyCancelled = error else { XCTFail(); return }
+        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else { XCTFail(); return }
     }
 
     func testSetStartRequestsImmediatelyToFalseAndCancelThenResumeRequestDoesntCreateTaskAndStaysCancelled() {
@@ -382,7 +382,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
         XCTAssertNil(request.task)
-        guard let error = request.error as? AFError, case .explicitlyCancelled = error else { XCTFail(); return }
+        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else { XCTFail(); return }
     }
 
     // MARK: Tests - Deinitialization
@@ -451,7 +451,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error as? AFError {
+        if let error = response?.error?.asAFError {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
@@ -481,7 +481,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error as? AFError {
+        if let error = response?.error?.asAFError {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
@@ -510,7 +510,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error as? AFError {
+        if let error = response?.error?.asAFError {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
@@ -539,7 +539,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error as? AFError {
+        if let error = response?.error?.asAFError {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
@@ -568,7 +568,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error as? AFError {
+        if let error = response?.error?.asAFError {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
@@ -689,7 +689,7 @@ class SessionManagerTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        if let error = request.error as? AFError {
+        if let error = request.error?.asAFError {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "")
         } else {
@@ -872,7 +872,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
 
-        if let error = response?.result.error as? AFError {
+        if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "")
         } else {

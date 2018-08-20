@@ -810,7 +810,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = encodingError as? AFError {
+        if let error = encodingError?.asAFError {
             XCTAssertTrue(error.isBodyPartFilenameInvalid)
 
             let expectedFailureReason = "The URL provided does not have a valid filename: \(fileURL)"
@@ -838,7 +838,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = encodingError as? AFError {
+        if let error = encodingError?.asAFError {
             XCTAssertTrue(error.isBodyPartURLInvalid)
 
             let expectedFailureReason = "The URL provided is not a file URL: \(fileURL)"
@@ -867,7 +867,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = encodingError as? AFError {
+        if let error = encodingError?.asAFError {
             XCTAssertTrue(error.isBodyPartFileNotReachableWithError)
         } else {
             XCTFail("Error should be AFError.")
@@ -892,7 +892,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = encodingError as? AFError {
+        if let error = encodingError?.asAFError {
             XCTAssertTrue(error.isBodyPartFileIsDirectory)
 
             let expectedFailureReason = "The URL provided is a directory: \(directoryURL)"
@@ -931,7 +931,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         XCTAssertNil(writerError, "writer error should be nil")
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let encodingError = encodingError as? AFError {
+        if let encodingError = encodingError?.asAFError {
             XCTAssertTrue(encodingError.isOutputStreamFileAlreadyExists)
         }
     }
@@ -956,7 +956,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let encodingError = encodingError as? AFError {
+        if let encodingError = encodingError?.asAFError {
             XCTAssertTrue(encodingError.isOutputStreamURLInvalid)
         }
     }

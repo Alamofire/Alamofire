@@ -416,7 +416,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
     // MARK: Do NOT Validate Host
 
-    func testThatValidCertificateChainPassesEvaluationWithoutHostValidation() {
+    func testThatValidCertificateChainPassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -424,13 +424,13 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() {
+    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.trustWithCertificates([
@@ -440,13 +440,13 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let serverTrustPolicy = DefaultTrustEvaluator(validateHost: false)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatMissingDNSNameLeafCertificatePassesEvaluationWithoutHostValidation() {
+    func testThatMissingDNSNameLeafCertificatePassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
@@ -454,13 +454,13 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatExpiredCertificateChainFailsEvaluationWithoutHostValidation() {
+    func testThatExpiredCertificateChainFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -468,13 +468,13 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatMissingIntermediateCertificateInChainFailsEvaluationWithoutHostValidation() {
+    func testThatMissingIntermediateCertificateInChainFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
@@ -482,7 +482,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
@@ -490,7 +490,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
     // MARK: Validate Host
 
-    func testThatValidCertificateChainPassesEvaluationWithHostValidation() {
+    func testThatValidCertificateChainPassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -498,13 +498,13 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithHostValidation() {
+    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.trustWithCertificates([
@@ -514,13 +514,13 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let serverTrustPolicy = DefaultTrustEvaluator(validateHost: true)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatMissingDNSNameLeafCertificateFailsEvaluationWithHostValidation() {
+    func testThatMissingDNSNameLeafCertificateFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
@@ -528,13 +528,13 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatWildcardedLeafCertificateChainPassesEvaluationWithHostValidation() {
+    func testThatWildcardedLeafCertificateChainPassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafWildcard.trust
@@ -542,13 +542,13 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatExpiredCertificateChainFailsEvaluationWithHostValidation() {
+    func testThatExpiredCertificateChainFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -556,24 +556,27 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatMissingIntermediateCertificateInChainFailsEvaluationWithHostValidation() {
+    func testThatMissingIntermediateCertificateInChainFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: true)
+        let serverTrustPolicy = DefaultTrustEvaluator(validateHost: false)
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        AssertErrorIsAFError(result.error) { (error) in
+            XCTAssertTrue(error.isServerTrustEvaluationError)
+        }
     }
 }
 
@@ -583,7 +586,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
     // MARK: Do NOT Validate Host
 
-    func testThatValidCertificateChainPassesEvaluationWithoutHostValidation() {
+    func testThatValidCertificateChainPassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -591,13 +594,13 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() {
+    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.trustWithCertificates([
@@ -607,13 +610,13 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let serverTrustPolicy = RevocationTrustEvaluator(validateHost: false)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatMissingDNSNameLeafCertificatePassesEvaluationWithoutHostValidation() {
+    func testThatMissingDNSNameLeafCertificatePassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
@@ -621,13 +624,13 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatExpiredCertificateChainFailsEvaluationWithoutHostValidation() {
+    func testThatExpiredCertificateChainFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -635,13 +638,13 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatMissingIntermediateCertificateInChainFailsEvaluationWithoutHostValidation() {
+    func testThatMissingIntermediateCertificateInChainFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
@@ -649,7 +652,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
@@ -657,7 +660,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
     // MARK: Validate Host
 
-    func testThatValidCertificateChainPassesEvaluationWithHostValidation() {
+    func testThatValidCertificateChainPassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -665,13 +668,13 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithHostValidation() {
+    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.trustWithCertificates([
@@ -681,13 +684,13 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let serverTrustPolicy = RevocationTrustEvaluator()
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatMissingDNSNameLeafCertificateFailsEvaluationWithHostValidation() {
+    func testThatMissingDNSNameLeafCertificateFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafMissingDNSNameAndURI.trust
@@ -695,13 +698,13 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatWildcardedLeafCertificateChainPassesEvaluationWithHostValidation() {
+    func testThatWildcardedLeafCertificateChainPassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafWildcard.trust
@@ -709,13 +712,13 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatExpiredCertificateChainFailsEvaluationWithHostValidation() {
+    func testThatExpiredCertificateChainFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -723,13 +726,13 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatMissingIntermediateCertificateInChainFailsEvaluationWithHostValidation() {
+    func testThatMissingIntermediateCertificateInChainFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
@@ -737,7 +740,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
@@ -750,7 +753,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
 
     // MARK: Validate Certificate Chain Without Validating Host
 
-    func testThatPinnedLeafCertificatePassesEvaluationWithoutHostValidation() {
+    func testThatPinnedLeafCertificatePassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -758,13 +761,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinnedIntermediateCertificatePassesEvaluationWithoutHostValidation() {
+    func testThatPinnedIntermediateCertificatePassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -772,13 +775,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinnedRootCertificatePassesEvaluationWithoutHostValidation() {
+    func testThatPinnedRootCertificatePassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -786,13 +789,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningLeafCertificateNotInCertificateChainFailsEvaluationWithoutHostValidation() {
+    func testThatPinningLeafCertificateNotInCertificateChainFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -804,13 +807,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningIntermediateCertificateNotInCertificateChainFailsEvaluationWithoutHostValidation() {
+    func testThatPinningIntermediateCertificateNotInCertificateChainFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -818,13 +821,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningExpiredLeafCertificateFailsEvaluationWithoutHostValidation() {
+    func testThatPinningExpiredLeafCertificateFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -832,13 +835,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningIntermediateCertificateWithExpiredLeafCertificateFailsEvaluationWithoutHostValidation() {
+    func testThatPinningIntermediateCertificateWithExpiredLeafCertificateFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -846,7 +849,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
@@ -854,7 +857,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
 
     // MARK: Validate Certificate Chain and Host
 
-    func testThatPinnedLeafCertificatePassesEvaluationWithHostValidation() {
+    func testThatPinnedLeafCertificatePassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -862,13 +865,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinnedIntermediateCertificatePassesEvaluationWithHostValidation() {
+    func testThatPinnedIntermediateCertificatePassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -876,13 +879,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinnedRootCertificatePassesEvaluationWithHostValidation() {
+    func testThatPinnedRootCertificatePassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -890,13 +893,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningLeafCertificateNotInCertificateChainFailsEvaluationWithHostValidation() {
+    func testThatPinningLeafCertificateNotInCertificateChainFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -908,13 +911,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningIntermediateCertificateNotInCertificateChainFailsEvaluationWithHostValidation() {
+    func testThatPinningIntermediateCertificateNotInCertificateChainFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -922,13 +925,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningExpiredLeafCertificateFailsEvaluationWithHostValidation() {
+    func testThatPinningExpiredLeafCertificateFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -936,13 +939,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningIntermediateCertificateWithExpiredLeafCertificateFailsEvaluationWithHostValidation() {
+    func testThatPinningIntermediateCertificateWithExpiredLeafCertificateFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -950,7 +953,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
@@ -958,7 +961,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
 
     // MARK: Do NOT Validate Certificate Chain or Host
 
-    func testThatPinnedLeafCertificateWithoutCertificateChainValidationPassesEvaluation() {
+    func testThatPinnedLeafCertificateWithoutCertificateChainValidationPassesEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -970,13 +973,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinnedIntermediateCertificateWithoutCertificateChainValidationPassesEvaluation() {
+    func testThatPinnedIntermediateCertificateWithoutCertificateChainValidationPassesEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -988,13 +991,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinnedRootCertificateWithoutCertificateChainValidationPassesEvaluation() {
+    func testThatPinnedRootCertificateWithoutCertificateChainValidationPassesEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1006,13 +1009,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningLeafCertificateNotInCertificateChainWithoutCertificateChainValidationFailsEvaluation() {
+    func testThatPinningLeafCertificateNotInCertificateChainWithoutCertificateChainValidationFailsEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1024,13 +1027,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningIntermediateCertificateNotInCertificateChainWithoutCertificateChainValidationFailsEvaluation() {
+    func testThatPinningIntermediateCertificateNotInCertificateChainWithoutCertificateChainValidationFailsEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1042,13 +1045,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningExpiredLeafCertificateWithoutCertificateChainValidationPassesEvaluation() {
+    func testThatPinningExpiredLeafCertificateWithoutCertificateChainValidationPassesEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -1060,13 +1063,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningIntermediateCertificateWithExpiredLeafCertificateWithoutCertificateChainValidationPassesEvaluation() {
+    func testThatPinningIntermediateCertificateWithExpiredLeafCertificateWithoutCertificateChainValidationPassesEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -1078,13 +1081,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningRootCertificateWithExpiredLeafCertificateWithoutCertificateChainValidationPassesEvaluation() {
+    func testThatPinningRootCertificateWithExpiredLeafCertificateWithoutCertificateChainValidationPassesEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -1096,13 +1099,13 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningMultipleCertificatesWithoutCertificateChainValidationPassesEvaluation() {
+    func testThatPinningMultipleCertificatesWithoutCertificateChainValidationPassesEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -1122,7 +1125,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
@@ -1135,7 +1138,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
     // MARK: Validate Certificate Chain Without Validating Host
 
-    func testThatPinningLeafKeyPassesEvaluationWithoutHostValidation() {
+    func testThatPinningLeafKeyPassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1144,13 +1147,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningIntermediateKeyPassesEvaluationWithoutHostValidation() {
+    func testThatPinningIntermediateKeyPassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1159,13 +1162,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningRootKeyPassesEvaluationWithoutHostValidation() {
+    func testThatPinningRootKeyPassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1174,13 +1177,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningKeyNotInCertificateChainFailsEvaluationWithoutHostValidation() {
+    func testThatPinningKeyNotInCertificateChainFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1189,13 +1192,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningBackupKeyPassesEvaluationWithoutHostValidation() {
+    func testThatPinningBackupKeyPassesEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1204,7 +1207,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
@@ -1212,7 +1215,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
     // MARK: Validate Certificate Chain and Host
 
-    func testThatPinningLeafKeyPassesEvaluationWithHostValidation() {
+    func testThatPinningLeafKeyPassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1221,13 +1224,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningIntermediateKeyPassesEvaluationWithHostValidation() {
+    func testThatPinningIntermediateKeyPassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1236,13 +1239,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningRootKeyPassesEvaluationWithHostValidation() {
+    func testThatPinningRootKeyPassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1251,13 +1254,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningKeyNotInCertificateChainFailsEvaluationWithHostValidation() {
+    func testThatPinningKeyNotInCertificateChainFailsEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1266,13 +1269,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningBackupKeyPassesEvaluationWithHostValidation() {
+    func testThatPinningBackupKeyPassesEvaluationWithHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1281,7 +1284,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
@@ -1289,7 +1292,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
     // MARK: Do NOT Validate Certificate Chain or Host
 
-    func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithMissingIntermediateCertificate() {
+    func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithMissingIntermediateCertificate() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
@@ -1302,13 +1305,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningRootKeyWithoutCertificateChainValidationFailsEvaluationWithMissingIntermediateCertificate() {
+    func testThatPinningRootKeyWithoutCertificateChainValidationFailsEvaluationWithMissingIntermediateCertificate() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
@@ -1321,13 +1324,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithIncorrectIntermediateCertificate() {
+    func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithIncorrectIntermediateCertificate() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameWithIncorrectIntermediate.trust
@@ -1340,13 +1343,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() {
+    func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -1359,13 +1362,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningIntermediateKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() {
+    func testThatPinningIntermediateKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -1378,13 +1381,13 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatPinningRootKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() {
+    func testThatPinningRootKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -1397,7 +1400,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
@@ -1407,27 +1410,27 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 // MARK: -
 
 class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
-    func testThatCertificateChainMissingIntermediateCertificatePassesEvaluation() {
+    func testThatCertificateChainMissingIntermediateCertificatePassesEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
         let serverTrustPolicy = DisabledEvaluator()
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatExpiredLeafCertificatePassesEvaluation() {
+    func testThatExpiredLeafCertificatePassesEvaluation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
         let serverTrustPolicy = DisabledEvaluator()
 
         // When
-        let serverTrustIsValid = serverTrustPolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try serverTrustPolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
@@ -1437,7 +1440,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
 // MARK: -
 
 class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
-    func testThatValidCertificateChainPassesDefaultAndRevocationCompositeChecks() {
+    func testThatValidCertificateChainPassesDefaultAndRevocationCompositeChecks() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
@@ -1447,13 +1450,13 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = compositePolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try compositePolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
     }
 
-    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() {
+    func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.trustWithCertificates([
@@ -1465,13 +1468,17 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
         let compositePolicy = CompositeTrustEvaluator(evaluators: [defaultPolicy, revocationPolicy])
 
         // When
-        let serverTrustIsValid = compositePolicy.evaluate(serverTrust, forHost: host)
-
-        // Then
-        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
+        XCTAssertThrowsError(try compositePolicy.evaluate(serverTrust, forHost: host),
+                             "server trust should not pass evaluation") { (error) in
+            XCTAssertEqual((error.asAFError)?.isServerTrustEvaluationError, true)
+        }
+//        let serverTrustIsValid = try compositePolicy.evaluate(serverTrust, forHost: host)
+//
+//        // Then
+//        XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
     }
 
-    func testThatExpiredLeafCertificateFailsDefaultAndRevocationComposite() {
+    func testThatExpiredLeafCertificateFailsDefaultAndRevocationComposite() throws {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
@@ -1481,7 +1488,7 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = compositePolicy.evaluate(serverTrust, forHost: host)
+        let serverTrustIsValid = try compositePolicy.evaluate(serverTrust, forHost: host)
 
         // Then
         XCTAssertFalse(serverTrustIsValid, "server trust should not pass evaluation")
