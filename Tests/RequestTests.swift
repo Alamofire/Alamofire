@@ -211,8 +211,7 @@ class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
         let urlString = "https://httpbin.org/get"
-        let delegate = SessionDelegate(startRequestsImmediately: false)
-        let manager = SessionManager(delegate: delegate)
+        let manager = SessionManager(startRequestsImmediately: false)
         let request = manager.request(urlString)
         let initialRequestDescription = request.description
 

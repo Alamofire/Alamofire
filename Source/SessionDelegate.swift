@@ -24,139 +24,18 @@
 
 import Foundation
 
-open class SessionDelegate: NSObject {
-    private(set) var requestTaskMap = RequestTaskMap()
-
-    // TODO: Better way to connect delegate to manager, including queue?
-    private weak var manager: SessionManager?
-    private var eventMonitor: EventMonitor?
-    private var queue: DispatchQueue? { return manager?.rootQueue }
-
-    let startRequestsImmediately: Bool
-
-    public init(startRequestsImmediately: Bool = true) {
-        self.startRequestsImmediately = startRequestsImmediately
-    }
-
-    func didCreateSessionManager(_ manager: SessionManager, withEventMonitor eventMonitor: EventMonitor) {
-        self.manager = manager
-        self.eventMonitor = eventMonitor
-    }
-
-    func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
-        guard let manager = manager else { fatalError("Received didCreateURLRequest but there is no manager.") }
-
-        guard !request.isCancelled else { return }
-
-        let task = request.task(for: urlRequest, using: manager.session)
-        requestTaskMap[request] = task
-        request.didCreateTask(task)
-
-        resumeOrSuspendTask(task, ifNecessaryForRequest: request)
-    }
-
-    func didReceiveResumeData(_ data: Data, for request: DownloadRequest) {
-        guard let manager = manager else { fatalError("Received didReceiveResumeData but there is no manager.") }
-
-        guard !request.isCancelled else { return }
-
-        let task = request.task(forResumeData: data, using: manager.session)
-        requestTaskMap[request] = task
-        request.didCreateTask(task)
-
-        resumeOrSuspendTask(task, ifNecessaryForRequest: request)
-    }
-
-    func resumeOrSuspendTask(_ task: URLSessionTask, ifNecessaryForRequest request: Request) {
-        if startRequestsImmediately || request.isResumed {
-            task.resume()
-            request.didResume()
-        }
-
-        if request.isSuspended {
-            task.suspend()
-            request.didSuspend()
-        }
-    }
+public protocol SessionDelegateDelegate: AnyObject {
+    func request(for task: URLSessionTask) -> Request?
+    func didCompleteTask(_ task: URLSessionTask)
+    var serverTrustManager: ServerTrustManager? { get }
+    func credential(for task: URLSessionTask, protectionSpace: URLProtectionSpace) -> URLCredential?
 }
 
-extension SessionDelegate: RequestDelegate {
-    public var sessionConfiguration: URLSessionConfiguration {
-        guard let manager = manager else { fatalError("Attempted to access sessionConfiguration without a manager.") }
-
-        return manager.session.configuration
-    }
-
-    public func willRetryRequest(_ request: Request) -> Bool {
-        return (manager?.retrier != nil)
-    }
-
-    public func retryRequest(_ request: Request, ifNecessaryWithError error: Error) {
-        guard let manager = manager, let retrier = manager.retrier else { return }
-
-        retrier.should(manager, retry: request, with: error) { (shouldRetry, retryInterval) in
-            guard !request.isCancelled else { return }
-
-            manager.rootQueue.async {
-                guard shouldRetry else { request.finish(); return }
-
-                manager.rootQueue.after(retryInterval) {
-                    guard !request.isCancelled else { return }
-
-                    request.requestIsRetrying()
-                    manager.perform(request)
-                }
-            }
-        }
-    }
-
-    public func cancelRequest(_ request: Request) {
-        queue?.async {
-            guard let task = self.requestTaskMap[request] else {
-                request.didCancel()
-                request.finish()
-                return
-            }
-
-            request.didCancel()
-            task.cancel()
-        }
-    }
-
-    public func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
-        queue?.async {
-            guard let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask else {
-                request.didCancel()
-                request.finish()
-                return
-            }
-
-            downloadTask.cancel { (data) in
-                self.queue?.async {
-                    byProducingResumeData(data)
-                    request.didCancel()
-                }
-            }
-        }
-    }
-
-    public func suspendRequest(_ request: Request) {
-        queue?.async {
-            guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
-
-            task.suspend()
-            request.didSuspend()
-        }
-    }
-
-    public func resumeRequest(_ request: Request) {
-        queue?.async {
-            guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
-
-            task.resume()
-            request.didResume()
-        }
-    }
+open class SessionDelegate: NSObject {
+    weak var delegate: SessionDelegateDelegate?
+    var eventMonitor: EventMonitor?
+    
+    public override init() { }
 }
 
 extension SessionDelegate: URLSessionDelegate {
@@ -187,7 +66,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         }
 
         if let error = evaluation.error {
-            requestTaskMap[task]?.didFailTask(task, earlyWithError: error)
+            delegate?.request(for: task)?.didFailTask(task, earlyWithError: error)
         }
 
         completionHandler(evaluation.disposition, evaluation.credential)
@@ -197,7 +76,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         let host = challenge.protectionSpace.host
 
         guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
-            let evaluator = manager?.serverTrustManager?.serverTrustEvaluators(forHost: host),
+            let evaluator = delegate?.serverTrustManager?.serverTrustEvaluators(forHost: host),
             let serverTrust = challenge.protectionSpace.serverTrust
             else {
                 return (.performDefaultHandling, nil, nil)
@@ -217,9 +96,8 @@ extension SessionDelegate: URLSessionTaskDelegate {
         guard challenge.previousFailureCount == 0 else {
             return (.rejectProtectionSpace, nil, nil)
         }
-
-        guard let credential = requestTaskMap[task]?.credential ??
-            manager?.session.configuration.urlCredentialStorage?.defaultCredential(for: challenge.protectionSpace) else {
+        
+        guard let credential = delegate?.credential(for: task, protectionSpace: challenge.protectionSpace) else {
             return (.performDefaultHandling, nil, nil)
         }
 
@@ -237,7 +115,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
                                  totalBytesSent: totalBytesSent,
                                  totalBytesExpectedToSend: totalBytesExpectedToSend)
 
-        requestTaskMap[task]?.updateUploadProgress(totalBytesSent: totalBytesSent,
+        delegate?.request(for: task)?.updateUploadProgress(totalBytesSent: totalBytesSent,
                                                    totalBytesExpectedToSend: totalBytesExpectedToSend)
     }
 
@@ -246,7 +124,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
                          needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
         eventMonitor?.urlSession(session, taskNeedsNewBodyStream: task)
 
-        guard let request = requestTaskMap[task] as? UploadRequest else {
+        guard let request = delegate?.request(for: task) as? UploadRequest else {
             fatalError("needNewBodyStream for request that isn't UploadRequest.")
         }
 
@@ -266,15 +144,15 @@ extension SessionDelegate: URLSessionTaskDelegate {
     open func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
         eventMonitor?.urlSession(session, task: task, didFinishCollecting: metrics)
 
-        requestTaskMap[task]?.didGatherMetrics(metrics)
+        delegate?.request(for: task)?.didGatherMetrics(metrics)
     }
 
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)
 
-        requestTaskMap[task]?.didCompleteTask(task, with: error)
+        delegate?.request(for: task)?.didCompleteTask(task, with: error)
 
-        requestTaskMap[task] = nil
+        delegate?.didCompleteTask(task)
     }
 
     @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
@@ -287,8 +165,8 @@ extension SessionDelegate: URLSessionDataDelegate {
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
 
-        guard let request = requestTaskMap[dataTask] as? DataRequest else {
-            fatalError("dataTask received data for incorrect Request subclass: \(String(describing: requestTaskMap[dataTask]))")
+        guard let request = delegate?.request(for: dataTask) as? DataRequest else {
+            fatalError("dataTask received data for incorrect Request subclass: \(String(describing: delegate?.request(for: dataTask)))")
         }
 
         request.didReceive(data: data)
@@ -314,7 +192,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                  didResumeAtOffset: fileOffset,
                                  expectedTotalBytes: expectedTotalBytes)
 
-        guard let downloadRequest = requestTaskMap[downloadTask] as? DownloadRequest else {
+        guard let downloadRequest = delegate?.request(for: downloadTask) as? DownloadRequest else {
             fatalError("No DownloadRequest found for downloadTask: \(downloadTask)")
         }
 
@@ -333,7 +211,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                  totalBytesWritten: totalBytesWritten,
                                  totalBytesExpectedToWrite: totalBytesExpectedToWrite)
 
-        guard let downloadRequest = requestTaskMap[downloadTask] as? DownloadRequest else {
+        guard let downloadRequest = delegate?.request(for: downloadTask) as? DownloadRequest else {
             fatalError("No DownloadRequest found for downloadTask: \(downloadTask)")
         }
 
@@ -344,7 +222,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
     open func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         eventMonitor?.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location)
 
-        guard let request = requestTaskMap[downloadTask] as? DownloadRequest else {
+        guard let request = delegate?.request(for: downloadTask) as? DownloadRequest else {
             fatalError("Download finished but either no request found or request wasn't DownloadRequest")
         }
 

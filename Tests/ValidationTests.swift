@@ -341,7 +341,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                                               underlyingQueue: rootQueue,
                                               serializationQueue: serializationQueue,
                                               eventMonitor: eventMonitor,
-                                              delegate: delegate)
+                                              delegate: self)
 
                 perform(request)
 
@@ -353,11 +353,12 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 to destination: DownloadRequest.Destination? = nil)
                 -> DownloadRequest
             {
-                let request = MockDownloadRequest.init(downloadable: .request(convertible),
-                                                       underlyingQueue: rootQueue,
-                                                       serializationQueue: serializationQueue,
-                                                       eventMonitor: eventMonitor,
-                                                       delegate: delegate)
+                let request = MockDownloadRequest(downloadable: .request(convertible),
+                                                  underlyingQueue: rootQueue,
+                                                  serializationQueue: serializationQueue,
+                                                  eventMonitor: eventMonitor,
+                                                  delegate: self
+                )
 
                 perform(request)
 
