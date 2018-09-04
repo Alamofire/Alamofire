@@ -160,12 +160,12 @@ class MultipartFormDataEncodingTestCase: BaseTestCase {
                 "Content-Disposition: form-data; name=\"french\"\(crlf)\(crlf)" +
                 "français" +
                 BoundaryGenerator.boundary(forBoundaryType: .encapsulated, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"japanese\"\(crlf)" +
-                "Content-Type: text/plain\(crlf)\(crlf)" +
+                "Content-Type: text/plain\(crlf)" +
+                "Content-Disposition: form-data; name=\"japanese\"\(crlf)\(crlf)" +
                 "日本語" +
                 BoundaryGenerator.boundary(forBoundaryType: .encapsulated, boundaryKey: boundary) +
-                "Content-Disposition: form-data; name=\"emoji\"\(crlf)" +
-                "Content-Type: text/plain\(crlf)\(crlf)" +
+                "Content-Type: text/plain\(crlf)" +
+                "Content-Disposition: form-data; name=\"emoji\"\(crlf)\(crlf)" +
                 "😃👍🏻🍻🎉" +
                 BoundaryGenerator.boundary(forBoundaryType: .final, boundaryKey: boundary)
             )

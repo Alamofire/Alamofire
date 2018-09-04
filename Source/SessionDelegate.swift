@@ -32,10 +32,14 @@ public protocol SessionDelegateDelegate: AnyObject {
 }
 
 open class SessionDelegate: NSObject {
+    private let fileManager: FileManager
+
     weak var delegate: SessionDelegateDelegate?
     var eventMonitor: EventMonitor?
-    
-    public override init() { }
+
+    public init(fileManager: FileManager = .default) {
+        self.fileManager = fileManager
+    }
 }
 
 extension SessionDelegate: URLSessionDelegate {
@@ -96,7 +100,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         guard challenge.previousFailureCount == 0 else {
             return (.rejectProtectionSpace, nil, nil)
         }
-        
+
         guard let credential = delegate?.credential(for: task, protectionSpace: challenge.protectionSpace) else {
             return (.performDefaultHandling, nil, nil)
         }
@@ -235,16 +239,16 @@ extension SessionDelegate: URLSessionDownloadDelegate {
         eventMonitor?.request(request, didCreateDestinationURL: destination)
 
         do {
-            if options.contains(.removePreviousFile), FileManager.default.fileExists(atPath: destination.path) {
-                try FileManager.default.removeItem(at: destination)
+            if options.contains(.removePreviousFile), fileManager.fileExists(atPath: destination.path) {
+                try fileManager.removeItem(at: destination)
             }
 
             if options.contains(.createIntermediateDirectories) {
                 let directory = destination.deletingLastPathComponent()
-                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
             }
 
-            try FileManager.default.moveItem(at: location, to: destination)
+            try fileManager.moveItem(at: location, to: destination)
 
             request.didFinishDownloading(using: downloadTask, with: .success(destination))
         } catch {

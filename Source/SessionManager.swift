@@ -38,7 +38,7 @@ open class SessionManager {
     public let session: URLSession
     public let eventMonitor: CompositeEventMonitor
     public let defaultEventMonitors: [EventMonitor] = [AlamofireNotifications()]
-    
+
     var requestTaskMap = RequestTaskMap()
     private let startRequestsImmediately: Bool
 
@@ -360,35 +360,35 @@ open class SessionManager {
             rootQueue.async { request.didFailToCreateURLRequest(with: error) }
         }
     }
-    
+
     // MARK: - Task Handling
-    
+
     func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
         guard !request.isCancelled else { return }
-        
+
         let task = request.task(for: urlRequest, using: session)
         requestTaskMap[request] = task
         request.didCreateTask(task)
-        
+
         resumeOrSuspendTask(task, ifNecessaryForRequest: request)
     }
-    
+
     func didReceiveResumeData(_ data: Data, for request: DownloadRequest) {
         guard !request.isCancelled else { return }
-        
+
         let task = request.task(forResumeData: data, using: session)
         requestTaskMap[request] = task
         request.didCreateTask(task)
-        
+
         resumeOrSuspendTask(task, ifNecessaryForRequest: request)
     }
-    
+
     func resumeOrSuspendTask(_ task: URLSessionTask, ifNecessaryForRequest request: Request) {
         if startRequestsImmediately || request.isResumed {
             task.resume()
             request.didResume()
         }
-        
+
         if request.isSuspended {
             task.suspend()
             request.didSuspend()
@@ -396,34 +396,38 @@ open class SessionManager {
     }
 }
 
+// MARK: - RequestDelegate
+
 extension SessionManager: RequestDelegate {
     public var sessionConfiguration: URLSessionConfiguration {
         return session.configuration
     }
-    
+
     public func willRetryRequest(_ request: Request) -> Bool {
         return (retrier != nil)
     }
-    
+
     public func retryRequest(_ request: Request, ifNecessaryWithError error: Error) {
         guard let retrier = retrier else { return }
-        
+
         retrier.should(self, retry: request, with: error) { (shouldRetry, retryInterval) in
             guard !request.isCancelled else { return }
-            
+
             self.rootQueue.async {
+                guard !request.isCancelled else { return }
+
                 guard shouldRetry else { request.finish(); return }
-                
+
                 self.rootQueue.after(retryInterval) {
                     guard !request.isCancelled else { return }
-                    
+
                     request.requestIsRetrying()
                     self.perform(request)
                 }
             }
         }
     }
-    
+
     public func cancelRequest(_ request: Request) {
         rootQueue.async {
             guard let task = self.requestTaskMap[request] else {
@@ -431,12 +435,12 @@ extension SessionManager: RequestDelegate {
                 request.finish()
                 return
             }
-            
+
             request.didCancel()
             task.cancel()
         }
     }
-    
+
     public func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
         rootQueue.async {
             guard let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask else {
@@ -444,7 +448,7 @@ extension SessionManager: RequestDelegate {
                 request.finish()
                 return
             }
-            
+
             downloadTask.cancel { (data) in
                 self.rootQueue.async {
                     byProducingResumeData(data)
@@ -453,35 +457,37 @@ extension SessionManager: RequestDelegate {
             }
         }
     }
-    
+
     public func suspendRequest(_ request: Request) {
         rootQueue.async {
             guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
-            
+
             task.suspend()
             request.didSuspend()
         }
     }
-    
+
     public func resumeRequest(_ request: Request) {
         rootQueue.async {
             guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
-            
+
             task.resume()
             request.didResume()
         }
     }
 }
 
+// MARK: - SessionDelegateDelegate
+
 extension SessionManager: SessionDelegateDelegate {
     public func request(for task: URLSessionTask) -> Request? {
         return requestTaskMap[task]
     }
-    
+
     public func didCompleteTask(_ task: URLSessionTask) {
         requestTaskMap[task] = nil
     }
-    
+
     public func credential(for task: URLSessionTask, protectionSpace: URLProtectionSpace) -> URLCredential? {
         return requestTaskMap[task]?.credential ?? session.configuration.urlCredentialStorage?.defaultCredential(for: protectionSpace)
     }
