@@ -25,7 +25,7 @@
 import Foundation
 
 /// Global namespace containing API for the `default` `SessionManager` instance.
-public enum Alamofire {
+public enum AF {
     // MARK: - Data Request
 
     /// Creates a `DataRequest` using `SessionManager.default` to retrive the contents of the specified `url`
