@@ -24,8 +24,8 @@
 
 import Foundation
 
-open class SessionManager {
-    public static let `default` = SessionManager()
+open class Session {
+    public static let `default` = Session()
 
     public let delegate: SessionDelegate
     public let rootQueue: DispatchQueue
@@ -40,7 +40,7 @@ open class SessionManager {
     public let defaultEventMonitors: [EventMonitor] = [AlamofireNotifications()]
 
     var requestTaskMap = RequestTaskMap()
-    private let startRequestsImmediately: Bool
+    public let startRequestsImmediately: Bool
 
     public init(startRequestsImmediately: Bool = true,
                 session: URLSession,
@@ -53,9 +53,9 @@ open class SessionManager {
                 retrier: RequestRetrier? = nil,
                 eventMonitors: [EventMonitor] = []) {
         precondition(session.delegate === delegate,
-                     "SessionManager(session:) initializer must pass the delegate that has been assigned to the URLSession as the SessionDelegate.")
+                     "SessionManager(session:) initializer must be passed the delegate that has been assigned to the URLSession as the SessionDataProvider.")
         precondition(session.delegateQueue.underlyingQueue === rootQueue,
-                     "SessionManager(session:) intializer must pass the DispatchQueue used as the delegateQueue's underlyingQueue as the rootQueue.")
+                     "SessionManager(session:) intializer must be passed the DispatchQueue used as the delegateQueue's underlyingQueue as rootQueue.")
 
         self.startRequestsImmediately = startRequestsImmediately
         self.session = session
@@ -68,7 +68,7 @@ open class SessionManager {
         self.serverTrustManager = serverTrustManager
         eventMonitor = CompositeEventMonitor(monitors: defaultEventMonitors + eventMonitors)
         delegate.eventMonitor = eventMonitor
-        delegate.delegate = self
+        delegate.stateProvider = self
     }
 
     public convenience init(startRequestsImmediately: Bool = true,
@@ -250,6 +250,7 @@ open class SessionManager {
 
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
                 usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
+                fileManager: FileManager = .default,
                 to url: URLConvertible,
                 method: HTTPMethod = .post,
                 headers: HTTPHeaders? = nil) -> UploadRequest {
@@ -260,10 +261,12 @@ open class SessionManager {
 
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
                 usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
+                fileManager: FileManager = .default,
                 with request: URLRequestConvertible) -> UploadRequest {
         let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
                                               encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: request,
+                                              fileManager: fileManager,
                                               multipartBuilder: multipartFormData)
 
         return upload(multipartUpload)
@@ -398,7 +401,7 @@ open class SessionManager {
 
 // MARK: - RequestDelegate
 
-extension SessionManager: RequestDelegate {
+extension Session: RequestDelegate {
     public var sessionConfiguration: URLSessionConfiguration {
         return session.configuration
     }
@@ -479,7 +482,7 @@ extension SessionManager: RequestDelegate {
 
 // MARK: - SessionDelegateDelegate
 
-extension SessionManager: SessionDelegateDelegate {
+extension Session: SessionStateProvider {
     public func request(for task: URLSessionTask) -> Request? {
         return requestTaskMap[task]
     }

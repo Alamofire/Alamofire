@@ -44,7 +44,7 @@ public enum Alamofire {
                                parameters: Parameters? = nil,
                                encoding: ParameterEncoding = URLEncoding.default,
                                headers: HTTPHeaders? = nil) -> DataRequest {
-        return SessionManager.default.request(url,
+        return Session.default.request(url,
                                               method: method,
                                               parameters: parameters,
                                               encoding: encoding,
@@ -57,7 +57,7 @@ public enum Alamofire {
     /// - Returns: The created `DataRequest`.
     @discardableResult
     public static func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
-        return SessionManager.default.request(urlRequest)
+        return Session.default.request(urlRequest)
     }
 
     // MARK: - Download Request
@@ -88,7 +88,7 @@ public enum Alamofire {
                                 encoding: ParameterEncoding = URLEncoding.default,
                                 headers: HTTPHeaders? = nil,
                                 to destination: DownloadRequest.Destination? =  nil) -> DownloadRequest {
-        return SessionManager.default.download(url,
+        return Session.default.download(url,
                                                method: method,
                                                parameters: parameters,
                                                encoding: encoding,
@@ -109,7 +109,7 @@ public enum Alamofire {
     @discardableResult
     public static func download(_ urlRequest: URLRequestConvertible,
                                 to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        return SessionManager.default.download(urlRequest, to: destination)
+        return Session.default.download(urlRequest, to: destination)
     }
 
     // MARK: Resume Data
@@ -135,7 +135,7 @@ public enum Alamofire {
     @discardableResult
     public static func download(resumingWith resumeData: Data,
                                 to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        return SessionManager.default.download(resumingWith: resumeData, to: destination)
+        return Session.default.download(resumingWith: resumeData, to: destination)
     }
 
     // MARK: - Upload Request
@@ -156,7 +156,7 @@ public enum Alamofire {
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil) -> UploadRequest {
-        return SessionManager.default.upload(fileURL, to: url, method: method, headers: headers)
+        return Session.default.upload(fileURL, to: url, method: method, headers: headers)
     }
 
     /// Creates an `UploadRequest` using the `SessionManager.default` to upload the contents of the `fileURL` specificed
@@ -168,7 +168,7 @@ public enum Alamofire {
     /// - Returns:      The created `UploadRequest`.
     @discardableResult
     public static func upload(_ fileURL: URL, with urlRequest: URLRequestConvertible) -> UploadRequest {
-        return SessionManager.default.upload(fileURL, with: urlRequest)
+        return Session.default.upload(fileURL, with: urlRequest)
     }
 
     // MARK: Data
@@ -187,7 +187,7 @@ public enum Alamofire {
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil) -> UploadRequest {
-        return SessionManager.default.upload(data, to: url, method: method, headers: headers)
+        return Session.default.upload(data, to: url, method: method, headers: headers)
     }
 
     /// Creates an `UploadRequest` using `SessionManager.default` to upload the contents of the `data` specified using
@@ -199,7 +199,7 @@ public enum Alamofire {
     /// - Returns:      The created `UploadRequest`.
     @discardableResult
     public static func upload(_ data: Data, with urlRequest: URLRequestConvertible) -> UploadRequest {
-        return SessionManager.default.upload(data, with: urlRequest)
+        return Session.default.upload(data, with: urlRequest)
     }
 
     // MARK: InputStream
@@ -218,7 +218,7 @@ public enum Alamofire {
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil) -> UploadRequest {
-        return SessionManager.default.upload(stream, to: url, method: method, headers: headers)
+        return Session.default.upload(stream, to: url, method: method, headers: headers)
     }
 
     /// Creates an `UploadRequest` using `SessionManager.default` to upload the content provided by the `stream`
@@ -230,7 +230,7 @@ public enum Alamofire {
     /// - Returns:      The created `UploadRequest`.
     @discardableResult
     public static func upload(_ stream: InputStream, with urlRequest: URLRequestConvertible) -> UploadRequest {
-        return SessionManager.default.upload(stream, with: urlRequest)
+        return Session.default.upload(stream, with: urlRequest)
     }
 
     // MARK: MultipartFormData
@@ -264,7 +264,7 @@ public enum Alamofire {
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil) -> UploadRequest {
-        return SessionManager.default.upload(multipartFormData: multipartFormData,
+        return Session.default.upload(multipartFormData: multipartFormData,
                                              usingThreshold: encodingMemoryThreshold,
                                              to: url,
                                              method: method,
@@ -296,7 +296,7 @@ public enum Alamofire {
     public static func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
                               usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
                               with urlRequest: URLRequestConvertible) -> UploadRequest {
-        return SessionManager.default.upload(multipartFormData: multipartFormData,
+        return Session.default.upload(multipartFormData: multipartFormData,
                                              usingThreshold: encodingMemoryThreshold,
                                              with: urlRequest)
     }
