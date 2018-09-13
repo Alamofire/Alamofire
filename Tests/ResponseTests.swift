@@ -35,7 +35,7 @@ class ResponseTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).response { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -58,7 +58,7 @@ class ResponseTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).response { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).response { resp in
             response = resp
             expectation.fulfill()
         }
@@ -85,7 +85,7 @@ class ResponseDataTestCase: BaseTestCase {
         var response: DataResponse<Data>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
             response = resp
             expectation.fulfill()
         }
@@ -109,7 +109,7 @@ class ResponseDataTestCase: BaseTestCase {
         var response: DataResponse<Data>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
             response = resp
             expectation.fulfill()
         }
@@ -136,7 +136,7 @@ class ResponseStringTestCase: BaseTestCase {
         var response: DataResponse<String>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseString { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseString { resp in
             response = resp
             expectation.fulfill()
         }
@@ -160,7 +160,7 @@ class ResponseStringTestCase: BaseTestCase {
         var response: DataResponse<String>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseString { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseString { resp in
             response = resp
             expectation.fulfill()
         }
@@ -187,7 +187,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -211,7 +211,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -234,7 +234,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -267,7 +267,7 @@ class ResponseJSONTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        Alamofire.request(urlString, method: .post, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(urlString, method: .post, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp
             expectation.fulfill()
         }
@@ -308,7 +308,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         var response: DataResponse<HTTPBinResponse>?
 
         // When
-        Alamofire.request(urlString, parameters: [:]).responseJSONDecodable { (resp: DataResponse<HTTPBinResponse>) in
+        AF.request(urlString, parameters: [:]).responseJSONDecodable { (resp: DataResponse<HTTPBinResponse>) in
             response = resp
             expectation.fulfill()
         }
@@ -332,7 +332,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         var response: DataResponse<HTTPBinResponse>?
 
         // When
-        Alamofire.request(urlString, parameters: [:]).responseJSONDecodable { (resp: DataResponse<HTTPBinResponse>) in
+        AF.request(urlString, parameters: [:]).responseJSONDecodable { (resp: DataResponse<HTTPBinResponse>) in
             response = resp
             expectation.fulfill()
         }
@@ -359,7 +359,7 @@ class ResponseMapTestCase: BaseTestCase {
         var response: DataResponse<String>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.map { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the map function
                 return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
@@ -387,7 +387,7 @@ class ResponseMapTestCase: BaseTestCase {
         var response: DataResponse<String>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
             response = resp.map { _ in "ignored" }
             expectation.fulfill()
         }
@@ -414,7 +414,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
         var response: DataResponse<String>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.flatMap { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the flatMap function
                 return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
@@ -444,7 +444,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
         var response: DataResponse<String>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
             response = resp.flatMap { json in
                 throw TransformError()
             }
@@ -477,7 +477,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
         var response: DataResponse<String>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
+        AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
             response = resp.flatMap { _ in "ignored" }
             expectation.fulfill()
         }
@@ -516,7 +516,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        Alamofire.request(urlString).responseJSON { resp in
+        AF.request(urlString).responseJSON { resp in
             response = resp.mapError { error in
                 return TestError.error(error: error)
             }
@@ -544,7 +544,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
         var response: DataResponse<Data>?
 
         // When
-        Alamofire.request(urlString).responseData { resp in
+        AF.request(urlString).responseData { resp in
             response = resp.mapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
@@ -571,7 +571,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         var response: DataResponse<Data>?
 
         // When
-        Alamofire.request(urlString).responseData { resp in
+        AF.request(urlString).responseData { resp in
             response = resp.flatMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
@@ -594,7 +594,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         var response: DataResponse<Data>?
 
         // When
-        Alamofire.request(urlString).responseData { resp in
+        AF.request(urlString).responseData { resp in
             response = resp.flatMapError { _ in try TransformationError.error.alwaysFails() }
             expectation.fulfill()
         }
@@ -624,7 +624,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         var response: DataResponse<Data>?
 
         // When
-        Alamofire.request(urlString).responseData { resp in
+        AF.request(urlString).responseData { resp in
             response = resp.flatMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }

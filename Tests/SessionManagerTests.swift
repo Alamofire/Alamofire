@@ -237,17 +237,17 @@ class SessionManagerTestCase: BaseTestCase {
         var deflateResponse: DataResponse<Any>?
 
         // When
-        Alamofire.request(brotliURL).responseJSON { (response) in
+        AF.request(brotliURL).responseJSON { (response) in
             brotliResponse = response
             brotliExpectation.fulfill()
         }
 
-        Alamofire.request(gzipURL).responseJSON { (response) in
+        AF.request(gzipURL).responseJSON { (response) in
             gzipResponse = response
             gzipExpectation.fulfill()
         }
 
-        Alamofire.request(deflateURL).responseJSON { (response) in
+        AF.request(deflateURL).responseJSON { (response) in
             deflateResponse = response
             deflateExpectation.fulfill()
         }
