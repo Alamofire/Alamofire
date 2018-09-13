@@ -656,8 +656,8 @@
 				319917A4209CDAC400103A19 /* RequestTaskMap.swift */,
 				31991791209CDA7F00103A19 /* Response.swift */,
 				4C0E5BF71B673D3400816CCC /* Result.swift */,
-				31991793209CDA7F00103A19 /* SessionStateProvider.swift */,
 				31991792209CDA7F00103A19 /* Session.swift */,
+				31991793209CDA7F00103A19 /* SessionStateProvider.swift */,
 				31D83FCD20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift */,
 			);
 			name = Core;
