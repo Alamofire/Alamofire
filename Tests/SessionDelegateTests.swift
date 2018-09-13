@@ -27,13 +27,13 @@ import Foundation
 import XCTest
 
 class SessionDelegateTestCase: BaseTestCase {
-    var manager: SessionManager!
+    var manager: Session!
 
     // MARK: - Setup and Teardown
 
     override func setUp() {
         super.setUp()
-        manager = SessionManager(configuration: .ephemeral)
+        manager = Session(configuration: .ephemeral)
     }
 
     // MARK: - Tests - Redirects

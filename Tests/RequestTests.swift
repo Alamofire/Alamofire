@@ -188,7 +188,7 @@ class RequestResponseTestCase: BaseTestCase {
     func testThatResponseSerializationWorksWithSerializationQueue() {
         // Given
         let queue = DispatchQueue(label: "org.alamofire.serializationQueue")
-        let manager = SessionManager(serializationQueue: queue)
+        let manager = Session(serializationQueue: queue)
         let expectation = self.expectation(description: "request should complete")
         var response: DataResponse<Any>?
 
@@ -211,8 +211,7 @@ class RequestDescriptionTestCase: BaseTestCase {
     func testRequestDescription() {
         // Given
         let urlString = "https://httpbin.org/get"
-        let delegate = SessionDelegate(startRequestsImmediately: false)
-        let manager = SessionManager(delegate: delegate)
+        let manager = Session(startRequestsImmediately: false)
         let request = manager.request(urlString)
         let initialRequestDescription = request.description
 
@@ -242,48 +241,48 @@ class RequestDescriptionTestCase: BaseTestCase {
 class RequestDebugDescriptionTestCase: BaseTestCase {
     // MARK: Properties
 
-    let manager: SessionManager = {
-        let manager = SessionManager()
+    let manager: Session = {
+        let manager = Session()
 
         return manager
     }()
 
-    let managerWithAcceptLanguageHeader: SessionManager = {
+    let managerWithAcceptLanguageHeader: Session = {
         var headers = HTTPHeaders.defaultHTTPHeaders
         headers["Accept-Language"] = "en-US"
 
         let configuration = URLSessionConfiguration.alamofireDefault
         configuration.httpAdditionalHeaders = headers
 
-        let manager = SessionManager(configuration: configuration)
+        let manager = Session(configuration: configuration)
 
         return manager
     }()
 
-    let managerWithContentTypeHeader: SessionManager = {
+    let managerWithContentTypeHeader: Session = {
         var headers = HTTPHeaders.defaultHTTPHeaders
         headers["Content-Type"] = "application/json"
 
         let configuration = URLSessionConfiguration.alamofireDefault
         configuration.httpAdditionalHeaders = headers
 
-        let manager = SessionManager(configuration: configuration)
+        let manager = Session(configuration: configuration)
 
         return manager
     }()
 
-    func managerWithCookie(_ cookie: HTTPCookie) -> SessionManager {
+    func managerWithCookie(_ cookie: HTTPCookie) -> Session {
         let configuration = URLSessionConfiguration.alamofireDefault
         configuration.httpCookieStorage?.setCookie(cookie)
 
-        return SessionManager(configuration: configuration)
+        return Session(configuration: configuration)
     }
 
-    let managerDisallowingCookies: SessionManager = {
+    let managerDisallowingCookies: Session = {
         let configuration = URLSessionConfiguration.alamofireDefault
         configuration.httpShouldSetCookies = false
 
-        let manager = SessionManager(configuration: configuration)
+        let manager = Session(configuration: configuration)
 
         return manager
     }()

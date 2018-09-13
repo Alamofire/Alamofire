@@ -112,7 +112,7 @@ extension ProxyURLProtocol: URLSessionDataDelegate {
 // MARK: -
 
 class URLProtocolTestCase: BaseTestCase {
-    var manager: SessionManager!
+    var manager: Session!
 
     // MARK: Setup and Teardown
 
@@ -128,7 +128,7 @@ class URLProtocolTestCase: BaseTestCase {
                 return configuration
             }()
 
-            return SessionManager(configuration: configuration)
+            return Session(configuration: configuration)
         }()
     }
 

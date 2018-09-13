@@ -76,7 +76,7 @@ class SessionManagerTestCase: BaseTestCase {
             return urlRequest
         }
 
-        func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
+        func should(_ manager: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             retryCount += 1
             retryErrors.append(error)
 
@@ -101,7 +101,7 @@ class SessionManagerTestCase: BaseTestCase {
             return urlRequest
         }
 
-        func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
+        func should(_ manager: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             retryCount += 1
             retryErrors.append(error)
 
@@ -113,7 +113,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testInitializerWithDefaultArguments() {
         // Given, When
-        let manager = SessionManager()
+        let manager = Session()
 
         // Then
         XCTAssertNotNil(manager.session.delegate, "session delegate should not be nil")
@@ -128,7 +128,7 @@ class SessionManagerTestCase: BaseTestCase {
         let serverTrustManager = ServerTrustManager(evaluators: [:])
 
         // When
-        let manager = SessionManager(configuration: configuration,
+        let manager = Session(configuration: configuration,
                                      delegate: delegate,
                                      serverTrustManager: serverTrustManager)
 
@@ -149,7 +149,7 @@ class SessionManagerTestCase: BaseTestCase {
         }()
 
         // When
-        let manager = SessionManager(session: session, delegate: delegate, rootQueue: underlyingQueue)
+        let manager = Session(session: session, delegate: delegate, rootQueue: underlyingQueue)
 
         // Then
         XCTAssertTrue(manager.delegate === manager.session.delegate, "manager delegate should equal session delegate")
@@ -169,7 +169,7 @@ class SessionManagerTestCase: BaseTestCase {
         let serverTrustManager = ServerTrustManager(evaluators: [:])
 
         // When
-        let manager = SessionManager(session: session,
+        let manager = Session(session: session,
                                      delegate: delegate,
                                      rootQueue: underlyingQueue,
                                      serverTrustManager: serverTrustManager)
@@ -211,7 +211,7 @@ class SessionManagerTestCase: BaseTestCase {
 
         let alamofireVersion: String = {
             guard
-                let afInfo = Bundle(for: SessionManager.self).infoDictionary,
+                let afInfo = Bundle(for: Session.self).infoDictionary,
                 let build = afInfo["CFBundleShortVersionString"]
             else { return "Unknown" }
 
@@ -269,8 +269,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testSetStartRequestsImmediatelyToFalseAndResumeRequest() {
         // Given
-        let delegate = SessionDelegate(startRequestsImmediately: false)
-        let manager = SessionManager(delegate: delegate)
+        let manager = Session(startRequestsImmediately: false)
 
         let url = URL(string: "https://httpbin.org/get")!
         let urlRequest = URLRequest(url: url)
@@ -296,8 +295,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testSetStartRequestsImmediatelyToFalseAndCancelledCallsResponseHandlers() {
         // Given
-        let delegate = SessionDelegate(startRequestsImmediately: false)
-        let manager = SessionManager(delegate: delegate)
+        let manager = Session(startRequestsImmediately: false)
 
         let url = URL(string: "https://httpbin.org/get")!
         let urlRequest = URLRequest(url: url)
@@ -325,8 +323,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testSetStartRequestsImmediatelyToFalseAndResumeThenCancelRequestHasCorrectOutput() {
         // Given
-        let delegate = SessionDelegate(startRequestsImmediately: false)
-        let manager = SessionManager(delegate: delegate)
+        let manager = Session(startRequestsImmediately: false)
 
         let url = URL(string: "https://httpbin.org/get")!
         let urlRequest = URLRequest(url: url)
@@ -356,8 +353,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testSetStartRequestsImmediatelyToFalseAndCancelThenResumeRequestDoesntCreateTaskAndStaysCancelled() {
         // Given
-        let delegate = SessionDelegate(startRequestsImmediately: false)
-        let manager = SessionManager(delegate: delegate)
+        let manager = Session(startRequestsImmediately: false)
 
         let url = URL(string: "https://httpbin.org/get")!
         let urlRequest = URLRequest(url: url)
@@ -389,11 +385,10 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testReleasingManagerWithPendingRequestDeinitializesSuccessfully() {
         // Given
-        let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
         monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
-        var manager: SessionManager? = SessionManager(delegate: delegate, eventMonitors: [monitor])
+        var manager: Session? = Session(startRequestsImmediately: false, eventMonitors: [monitor])
 
         let url = URL(string: "https://httpbin.org/get")!
         let urlRequest = URLRequest(url: url)
@@ -411,8 +406,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testReleasingManagerWithPendingCanceledRequestDeinitializesSuccessfully() {
         // Given
-        let delegate = SessionDelegate(startRequestsImmediately: false)
-        var manager: SessionManager? = SessionManager(delegate: delegate)
+        var manager: Session? = Session(startRequestsImmediately: false)
 
         let url = URL(string: "https://httpbin.org/get")!
         let urlRequest = URLRequest(url: url)
@@ -432,7 +426,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testThatDataRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
-        let sessionManager = SessionManager()
+        let sessionManager = Session()
         let expectation = self.expectation(description: "Request should fail with error")
 
         var response: DataResponse<Data?>?
@@ -461,7 +455,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testThatDownloadRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
-        let sessionManager = SessionManager()
+        let sessionManager = Session()
         let expectation = self.expectation(description: "Download should fail with error")
 
         var response: DownloadResponse<URL?>?
@@ -491,7 +485,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testThatUploadDataRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
-        let sessionManager = SessionManager()
+        let sessionManager = Session()
         let expectation = self.expectation(description: "Upload should fail with error")
 
         var response: DataResponse<Data?>?
@@ -520,7 +514,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testThatUploadFileRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
-        let sessionManager = SessionManager()
+        let sessionManager = Session()
         let expectation = self.expectation(description: "Upload should fail with error")
 
         var response: DataResponse<Data?>?
@@ -549,7 +543,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testThatUploadStreamRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
-        let sessionManager = SessionManager()
+        let sessionManager = Session()
         let expectation = self.expectation(description: "Upload should fail with error")
 
         var response: DataResponse<Data?>?
@@ -581,11 +575,10 @@ class SessionManagerTestCase: BaseTestCase {
     func testThatSessionManagerCallsRequestAdapterWhenCreatingDataRequest() {
         // Given
         let adapter = HTTPMethodAdapter(method: .post)
-        let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
         monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
-        let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
+        let sessionManager = Session(startRequestsImmediately: false, adapter: adapter, eventMonitors: [monitor])
 
         // When
         let request = sessionManager.request("https://httpbin.org/get")
@@ -599,11 +592,10 @@ class SessionManagerTestCase: BaseTestCase {
     func testThatSessionManagerCallsRequestAdapterWhenCreatingDownloadRequest() {
         // Given
         let adapter = HTTPMethodAdapter(method: .post)
-        let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
         monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
-        let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
+        let sessionManager = Session(startRequestsImmediately: false, adapter: adapter, eventMonitors: [monitor])
 
         // When
         let request = sessionManager.download("https://httpbin.org/get")
@@ -618,11 +610,10 @@ class SessionManagerTestCase: BaseTestCase {
         // Given
         let adapter = HTTPMethodAdapter(method: .get)
 
-        let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
         monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
-        let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
+        let sessionManager = Session(startRequestsImmediately: false, adapter: adapter, eventMonitors: [monitor])
 
         // When
         let request = sessionManager.upload(Data("data".utf8), to: "https://httpbin.org/post")
@@ -637,11 +628,10 @@ class SessionManagerTestCase: BaseTestCase {
         // Given
         let adapter = HTTPMethodAdapter(method: .get)
 
-        let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
         monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
-        let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
+        let sessionManager = Session(startRequestsImmediately: false, adapter: adapter, eventMonitors: [monitor])
 
         // When
         let fileURL = URL(fileURLWithPath: "/path/to/some/file.txt")
@@ -657,11 +647,10 @@ class SessionManagerTestCase: BaseTestCase {
         // Given
         let adapter = HTTPMethodAdapter(method: .get)
 
-        let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
         monitor.requestDidCreateTask = { (_, _) in expectation.fulfill() }
-        let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
+        let sessionManager = Session(startRequestsImmediately: false, adapter: adapter, eventMonitors: [monitor])
 
         // When
         let inputStream = InputStream(data: Data("data".utf8))
@@ -677,11 +666,10 @@ class SessionManagerTestCase: BaseTestCase {
         // Given
         let adapter = HTTPMethodAdapter(method: .post, throwsError: true)
 
-        let delegate = SessionDelegate(startRequestsImmediately: false)
         let monitor = ClosureEventMonitor()
         let expectation = self.expectation(description: "Request created")
         monitor.requestDidFailToAdaptURLRequestWithError = { (_, _, _) in expectation.fulfill() }
-        let sessionManager = SessionManager(delegate: delegate, adapter: adapter, eventMonitors: [monitor])
+        let sessionManager = Session(startRequestsImmediately: false, adapter: adapter, eventMonitors: [monitor])
 
         // When
         let request = sessionManager.request("https://httpbin.org/get")
@@ -703,7 +691,7 @@ class SessionManagerTestCase: BaseTestCase {
         // Given
         let handler = RequestHandler()
 
-        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+        let sessionManager = Session(adapter: handler, retrier: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
         var response: DataResponse<Any>?
@@ -723,7 +711,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 2)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
-        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+        XCTAssertTrue(sessionManager.requestTaskMap.isEmpty)
     }
 
     func testThatSessionManagerCallsRequestRetrierWhenRequestInitiallyEncountersAdaptError() {
@@ -733,7 +721,7 @@ class SessionManagerTestCase: BaseTestCase {
         handler.throwsErrorOnSecondAdapt = true
         handler.shouldApplyAuthorizationHeader = true
 
-        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+        let sessionManager = Session(adapter: handler, retrier: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
         var response: DataResponse<Any>?
@@ -752,7 +740,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+        XCTAssertTrue(sessionManager.requestTaskMap.isEmpty)
     }
 
     func testThatSessionManagerCallsRequestRetrierWhenDownloadInitiallyEncountersAdaptError() {
@@ -762,7 +750,7 @@ class SessionManagerTestCase: BaseTestCase {
         handler.throwsErrorOnSecondAdapt = true
         handler.shouldApplyAuthorizationHeader = true
 
-        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+        let sessionManager = Session(adapter: handler, retrier: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
         var response: DownloadResponse<Any>?
@@ -786,14 +774,14 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+        XCTAssertTrue(sessionManager.requestTaskMap.isEmpty)
     }
 
     func testThatSessionManagerCallsRequestRetrierWhenUploadInitiallyEncountersAdaptError() {
         // Given
         let handler = UploadHandler()
 
-        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+        let sessionManager = Session(adapter: handler, retrier: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
         var response: DataResponse<Any>?
@@ -814,7 +802,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+        XCTAssertTrue(sessionManager.requestTaskMap.isEmpty)
     }
 
     func testThatSessionManagerCallsAdapterWhenRequestIsRetried() {
@@ -822,7 +810,7 @@ class SessionManagerTestCase: BaseTestCase {
         let handler = RequestHandler()
         handler.shouldApplyAuthorizationHeader = true
 
-        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+        let sessionManager = Session(adapter: handler, retrier: handler)
 
         let expectation = self.expectation(description: "request should eventually succeed")
         var response: DataResponse<Any>?
@@ -842,7 +830,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+        XCTAssertTrue(sessionManager.requestTaskMap.isEmpty)
     }
     // TODO: Confirm retry logic.
     func testThatRequestAdapterErrorThrowsResponseHandlerErrorWhenRequestIsRetried() {
@@ -850,7 +838,7 @@ class SessionManagerTestCase: BaseTestCase {
         let handler = RequestHandler()
         handler.throwsErrorOnSecondAdapt = true
 
-        let sessionManager = SessionManager(adapter: handler, retrier: handler)
+        let sessionManager = Session(adapter: handler, retrier: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
         var response: DataResponse<Any>?
@@ -870,7 +858,7 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 2)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
-        XCTAssertTrue(sessionManager.delegate.requestTaskMap.isEmpty)
+        XCTAssertTrue(sessionManager.requestTaskMap.isEmpty)
 
         if let error = response?.result.error as? AFError {
             XCTAssertTrue(error.isInvalidURLError)
@@ -906,7 +894,7 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
 
     private func executeAuthorizationHeaderTest(for type: ConfigurationType) {
         // Given
-        let manager: SessionManager = {
+        let manager: Session = {
             let configuration: URLSessionConfiguration = {
                 let configuration: URLSessionConfiguration
 
@@ -927,7 +915,7 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
                 return configuration
             }()
 
-            return SessionManager(configuration: configuration)
+            return Session(configuration: configuration)
         }()
 
         let expectation = self.expectation(description: "request should complete successfully")

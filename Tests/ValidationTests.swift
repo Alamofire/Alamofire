@@ -335,13 +335,13 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
-        class MockManager: SessionManager {
+        class MockManager: Session {
             override func request(_ convertible: URLRequestConvertible) -> DataRequest {
                 let request = MockDataRequest(convertible: convertible,
                                               underlyingQueue: rootQueue,
                                               serializationQueue: serializationQueue,
                                               eventMonitor: eventMonitor,
-                                              delegate: delegate)
+                                              delegate: self)
 
                 perform(request)
 
@@ -353,11 +353,12 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 to destination: DownloadRequest.Destination? = nil)
                 -> DownloadRequest
             {
-                let request = MockDownloadRequest.init(downloadable: .request(convertible),
-                                                       underlyingQueue: rootQueue,
-                                                       serializationQueue: serializationQueue,
-                                                       eventMonitor: eventMonitor,
-                                                       delegate: delegate)
+                let request = MockDownloadRequest(downloadable: .request(convertible),
+                                                  underlyingQueue: rootQueue,
+                                                  serializationQueue: serializationQueue,
+                                                  eventMonitor: eventMonitor,
+                                                  delegate: self
+                )
 
                 perform(request)
 
@@ -391,7 +392,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
             override var mimeType: String? { return nil }
         }
 
-        let manager: SessionManager = {
+        let manager: Session = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.ephemeral
                 configuration.httpAdditionalHeaders = HTTPHeaders.defaultHTTPHeaders

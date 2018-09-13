@@ -87,7 +87,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWithNoServerTrustPolicy() {
         // Given
         let expectation = self.expectation(description: "\(expiredURLString)")
-        let manager = SessionManager(configuration: configuration)
+        let manager = Session(configuration: configuration)
         var error: Error?
 
         // When
@@ -118,7 +118,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Given
         let expectation = self.expectation(description: "\(revokedURLString)")
-        let manager = SessionManager(configuration: configuration)
+        let manager = Session(configuration: configuration)
 
         var error: Error?
 
@@ -145,7 +145,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWithDefaultServerTrustPolicy() {
         // Given
         let evaluators = [expiredHost: DefaultTrustEvaluator(validateHost: true)]
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -180,7 +180,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         let defaultPolicy = DefaultTrustEvaluator()
         let evaluators = [revokedHost: defaultPolicy]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -214,7 +214,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         let evaluators = [expiredHost: policy]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -247,7 +247,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         let evaluators = [revokedHost: policy]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -283,7 +283,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates)
         ]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -323,7 +323,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates)
         ]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -357,7 +357,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false)
         ]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -385,7 +385,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false)
         ]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -413,7 +413,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false)
         ]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -447,7 +447,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             expiredHost: PublicKeysTrustEvaluator(keys: publicKeys)
         ]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -481,7 +481,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             expiredHost: PublicKeysTrustEvaluator(keys: publicKeys, validateCertificateChain: false)
         ]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -509,7 +509,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             expiredHost: PublicKeysTrustEvaluator(keys: publicKeys, validateCertificateChain: false)
         ]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -537,7 +537,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
             expiredHost: PublicKeysTrustEvaluator(keys: publicKeys, validateCertificateChain: false)
         ]
 
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )
@@ -567,7 +567,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenDisablingEvaluation() {
         // Given
         let evaluators = [expiredHost: DisabledEvaluator()]
-        let manager = SessionManager(
+        let manager = Session(
             configuration: configuration,
             serverTrustManager: ServerTrustManager(evaluators: evaluators)
         )

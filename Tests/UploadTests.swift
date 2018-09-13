@@ -495,11 +495,11 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
 #if os(macOS)
     func testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
-        let manager: SessionManager = {
+        let manager: Session = {
             let identifier = "org.alamofire.uploadtests.\(UUID().uuidString)"
             let configuration = URLSessionConfiguration.background(withIdentifier: identifier)
 
-            return SessionManager(configuration: configuration)
+            return Session(configuration: configuration)
         }()
 
         let urlString = "https://httpbin.org/post"

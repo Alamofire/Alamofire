@@ -90,7 +90,7 @@ extension Dictionary where Key == String, Value == String {
 
                 let alamofireVersion: String = {
                     guard
-                        let afInfo = Bundle(for: SessionManager.self).infoDictionary,
+                        let afInfo = Bundle(for: Session.self).infoDictionary,
                         let build = afInfo["CFBundleShortVersionString"]
                         else { return "Unknown" }
 
