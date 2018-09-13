@@ -130,7 +130,7 @@ public enum AFError: Error {
             public let trust: SecTrust
             public let status: OSStatus
             public let result: SecTrustResultType
-            
+
             init(_ host: String, _ trust: SecTrust, _ status: OSStatus, _ result: SecTrustResultType) {
                 self.host = host
                 self.trust = trust

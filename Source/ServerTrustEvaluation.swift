@@ -28,7 +28,7 @@ import Foundation
 open class ServerTrustManager {
     /// Determines whether all hosts for this `ServerTrustManager` must be evaluated. Defaults to `true`.
     public let allHostsMustBeEvaluated: Bool
-    
+
     /// The dictionary of policies mapped to a particular host.
     public let evaluators: [String: ServerTrustEvaluating]
 
@@ -47,7 +47,7 @@ open class ServerTrustManager {
         self.allHostsMustBeEvaluated = allHostsMustBeEvaluated
         self.evaluators = evaluators
     }
-    
+
     /// Returns the `ServerTrustEvaluating` value for the given host, if one is set.
     ///
     /// By default, this method will return the policy that perfectly matches the given host. Subclasses could override
@@ -62,10 +62,10 @@ open class ServerTrustManager {
             if allHostsMustBeEvaluated {
                 throw AFError.serverTrustEvaluationFailed(reason: .noRequiredEvaluator(host: host))
             }
-            
+
             return nil
         }
-        
+
         return evaluator
     }
 }
@@ -132,13 +132,13 @@ public final class DefaultTrustEvaluator: ServerTrustEvaluating {
         try trust.validate(policy: .default) { (status, result) in
             AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, trust, status, result)))
         }
-        
+
         if validateHost {
             try trust.validate(policy: .hostname(host)) { (status, result) in
                 AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, trust, status, result)))
             }
         }
-        
+
         return true
     }
 }
@@ -166,7 +166,7 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
         /// Perform either OCSP or CRL checking. The checking is performed according to the method(s) specified in the
         /// certificate and the value of `preferCRL`.
         public static let any = Options(rawValue: kSecRevocationUseAnyAvailableMethod)
-        
+
         /// The raw value of the option.
         public let rawValue: CFOptionFlags
 
@@ -195,14 +195,14 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
         try trust.validate(policy: .default) { (status, result) in
             AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, trust, status, result)))
         }
-        
-        
+
+
         if validateHost {
             try trust.validate(policy: .hostname(host)) { (status, result) in
                 AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, trust, status, result)))
             }
         }
-        
+
         try trust.validate(policy: .revocation(options: options)) { (status, result) in
             AFError.serverTrustEvaluationFailed(reason: .revocationCheckFailed(output: .init(host, trust, status, result), options: options))
         }
@@ -246,13 +246,13 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
     /// - Returns: Whether or not the evaluator considers the `SecTrust` value valid for `host`.
     public func evaluate(_ trust: SecTrust, forHost host: String) throws -> Bool {
         // TODO: Throw error for empty certificates array.
-        
+
         if validateHost {
             try trust.validate(policy: .hostname(host)) { (status, result) in
                 AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, trust, status, result)))
             }
         }
-        
+
         if validateCertificateChain {
             try trust.setAnchorCertificates(certificates)
             return try trust.isValid { (status, result) in
@@ -265,7 +265,7 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
             if !certificatesPinned {
                 throw AFError.serverTrustEvaluationFailed(reason: .certificatePinningFailed(host: host, trust: trust, pinnedCertificates: certificates, serverCertificates: trust.certificates))
             }
-            
+
             return certificatesPinned
         }
     }
@@ -309,7 +309,7 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
                 AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, trust, status, result)))
             }
         }
-        
+
         if validateCertificateChain {
             // TODO: Real certificate chain evaluation.
 //            try trust.setAnchorCertificates(certificates)
@@ -317,7 +317,7 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
 //                AFError.serverTrustEvaluationFailed(reason: .certificateChainValidationFailed(output: .init(host, trust, status, result)))
 //            }
         }
-        
+
         let keysPinned: Bool = {
             for serverPublicKey in trust.publicKeys as [AnyHashable] {
                 for pinnedPublicKey in keys as [AnyHashable] {
@@ -328,11 +328,11 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
             }
             return false
         }()
-        
+
         if !keysPinned {
             throw AFError.serverTrustEvaluationFailed(reason: .publicKeyPinningFailed(host: host, trust: trust, pinnedKeys: keys, serverKeys: trust.publicKeys))
         }
-        
+
         return keysPinned
     }
 }
@@ -409,40 +409,40 @@ public extension SecTrust {
 
         return (status.isSuccess) ? (result == .unspecified || result == .proceed) : false
     }
-    
+
     @discardableResult
     func validate(policy: SecPolicy, errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> Error) throws -> Bool {
         return try apply(policy: policy).isValid(errorProducer: errorProducer)
     }
-    
+
     @discardableResult
     func isValid(errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> Error) throws -> Bool {
         var result = SecTrustResultType.invalid
         let status = SecTrustEvaluate(self, &result)
-        
+
         guard status == errSecSuccess && (result == .unspecified || result == .proceed) else {
             throw errorProducer(status, result)
         }
-        
+
         return true
     }
-    
+
     func apply(policy: SecPolicy) throws -> SecTrust {
         let status = SecTrustSetPolicies(self, policy)
-        
+
         guard status.isSuccess else {
             throw AFError.serverTrustEvaluationFailed(reason: .policyApplicationFailed(trust: self, policy: policy))
         }
-        
+
         return self
     }
-    
+
     func setAnchorCertificates(_ certificates: [SecCertificate]) throws {
         guard SecTrustSetAnchorCertificates(self, certificates as CFArray).isSuccess else {
             // TODO: Throw error.
             return
         }
-        
+
         guard SecTrustSetAnchorCertificatesOnly(self, true).isSuccess else {
             return
         }
@@ -459,7 +459,7 @@ public extension SecTrust {
     var certificateData: [Data] {
         return certificates.data
     }
-    
+
     var certificates: [SecCertificate] {
         return (0..<SecTrustGetCertificateCount(self)).compactMap { index in
             SecTrustGetCertificateAtIndex(self, index)
@@ -476,7 +476,7 @@ extension SecPolicy {
         guard let policy = SecPolicyCreateRevocation(options.rawValue) else {
             throw AFError.serverTrustEvaluationFailed(reason: .revocationPolicyCreationFailed)
         }
-        
+
         return policy
     }
 }

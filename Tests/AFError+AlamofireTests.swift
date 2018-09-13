@@ -318,57 +318,57 @@ extension AFError.ServerTrustFailureReason {
         if case .unknown = self { return true }
         return false
     }
-    
+
     var isNoRequiredEvaluator: Bool {
         if case .noRequiredEvaluator = self { return true }
         return false
     }
-    
+
     var isNoCertificatesFound: Bool {
         if case .noCertificatesFound = self { return true }
         return false
     }
-    
+
     var isNoPublicKeysFound: Bool {
         if case .noPublicKeysFound = self { return true }
         return false
     }
-    
+
     var isPolicyApplicationFailed: Bool {
         if case .policyApplicationFailed = self { return true }
         return false
     }
-    
+
     var isRevocationPolicyCreationFailed: Bool {
         if case .revocationPolicyCreationFailed = self { return true }
         return false
     }
-    
+
     var isDefaultEvaluationFailed: Bool {
         if case .defaultEvaluationFailed = self { return true }
         return false
     }
-    
+
     var isHostValidationFailed: Bool {
         if case .hostValidationFailed = self { return true }
         return false
     }
-    
+
     var isCertificateChainValidationFailed: Bool {
         if case .certificateChainValidationFailed = self { return true }
         return false
     }
-    
+
     var isRevocationCheckFailed: Bool {
         if case .revocationCheckFailed = self { return true }
         return false
     }
-    
+
     var isCertificatePinningFailed: Bool {
         if case .certificatePinningFailed = self { return true }
         return false
     }
-    
+
     var isPublicKeyPinningFailed: Bool {
         if case .publicKeyPinningFailed = self { return true }
         return false

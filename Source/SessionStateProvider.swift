@@ -78,24 +78,24 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
     func attemptServerTrustAuthentication(with challenge: URLAuthenticationChallenge) -> ChallengeEvaluation {
         let host = challenge.protectionSpace.host
-        
+
         guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
             let trust = challenge.protectionSpace.serverTrust
             else {
                 return (.performDefaultHandling, nil, nil)
         }
-        
+
         do {
             guard let evaluator = try stateProvider?.serverTrustManager?.serverTrustEvaluator(forHost: host) else {
                 return (.performDefaultHandling, nil, nil)
             }
-            
+
             guard try evaluator.evaluate(trust, forHost: host) else {
                 let error = AFError.serverTrustEvaluationFailed(reason: .unknown(host: host))
-                
+
                 return (.cancelAuthenticationChallenge, nil, error)
             }
-            
+
             return (.useCredential, URLCredential(trust: trust), nil)
         } catch {
             return (.cancelAuthenticationChallenge, nil, error)

@@ -43,13 +43,13 @@ class BaseTestCase: XCTestCase {
         let bundle = Bundle(for: BaseTestCase.self)
         return bundle.url(forResource: fileName, withExtension: ext)!
     }
-    
+
     func AssertErrorIsAFError(_ error: Error?, file: StaticString = #file, line: UInt = #line, evaluation: (AFError) -> Void) {
         guard let error = error?.asAFError else {
             XCTFail("error is not an AFError", file: file, line: line)
             return
         }
-        
+
         evaluation(error)
     }
 }
