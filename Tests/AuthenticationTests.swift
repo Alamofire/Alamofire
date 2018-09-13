@@ -31,12 +31,12 @@ class AuthenticationTestCase: BaseTestCase {
     let password = "password"
     var urlString = ""
 
-    var manager: SessionManager!
+    var manager: Session!
 
     override func setUp() {
         super.setUp()
 
-        manager = SessionManager(configuration: .default)
+        manager = Session(configuration: .default)
 
         // Clear out credentials
         let credentialStorage = URLCredentialStorage.shared
