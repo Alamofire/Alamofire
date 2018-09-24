@@ -142,7 +142,8 @@ public enum AFError: Error {
         case noRequiredEvaluator(host: String)
         case noCertificatesFound
         case noPublicKeysFound
-        case policyApplicationFailed(trust: SecTrust, policy: SecPolicy)
+        case policyApplicationFailed(trust: SecTrust, policy: SecPolicy, status: OSStatus)
+        case settingAnchorCertificatesFailed(status: OSStatus, certificates: [SecCertificate])
         case revocationPolicyCreationFailed
         case defaultEvaluationFailed(output: Output)
         case hostValidationFailed(output: Output)
