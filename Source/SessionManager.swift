@@ -621,6 +621,7 @@ open class SessionManager {
                 multipartFormData: multipartFormData,
                 usingThreshold: encodingMemoryThreshold,
                 with: urlRequest,
+                queue: queue,
                 encodingCompletion: encodingCompletion
             )
         } catch {
