@@ -354,11 +354,6 @@ extension AFError.ServerTrustFailureReason {
         return false
     }
 
-    var isCertificateChainValidationFailed: Bool {
-        if case .certificateChainValidationFailed = self { return true }
-        return false
-    }
-
     var isRevocationCheckFailed: Bool {
         if case .revocationCheckFailed = self { return true }
         return false

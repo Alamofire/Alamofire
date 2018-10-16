@@ -147,7 +147,6 @@ public enum AFError: Error {
         case revocationPolicyCreationFailed
         case defaultEvaluationFailed(output: Output)
         case hostValidationFailed(output: Output)
-        case certificateChainValidationFailed(output: Output)
         case revocationCheckFailed(output: Output, options: RevocationTrustEvaluator.Options)
         case certificatePinningFailed(host: String, trust: SecTrust, pinnedCertificates: [SecCertificate], serverCertificates: [SecCertificate])
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
@@ -382,6 +381,18 @@ extension AFError.ResponseSerializationFailureReason {
     }
 }
 
+extension AFError.ServerTrustFailureReason {
+    var output: AFError.ServerTrustFailureReason.Output? {
+        switch self {
+        case let .defaultEvaluationFailed(output),
+             let .hostValidationFailed(output),
+             let .revocationCheckFailed(output, _):
+            return output
+        default: return nil
+        }
+    }
+}
+
 // MARK: - Error Descriptions
 
 extension AFError: LocalizedError {
@@ -501,6 +512,31 @@ extension AFError.ResponseValidationFailureReason {
 
 extension AFError.ServerTrustFailureReason {
     var localizedDescription: String {
-        return "desc"
+        switch self {
+        case .unknown:
+            return "Server trust evaluation failed but no specific error was thrown."
+        case let .noRequiredEvaluator(host):
+            return "A ServerTrustEvaluating value is required for host \(host) but none was found."
+        case .noCertificatesFound:
+            return "No certificates were found or provided for evaluation."
+        case .noPublicKeysFound:
+            return "No public keys were found or provided for evaluation."
+        case .policyApplicationFailed:
+            return "Attempting to set a SecPolicy failed."
+        case .settingAnchorCertificatesFailed:
+            return "Attempting to set the provided certificates as anchor certificates failed."
+        case .revocationPolicyCreationFailed:
+            return "Attempting to create a revocation policy failed."
+        case let .defaultEvaluationFailed(output):
+            return "Default evaluation failed for host \(output.host)."
+        case let .hostValidationFailed(output):
+            return "Host validation failed for host \(output.host)."
+        case let .revocationCheckFailed(output, _):
+            return "Revocation check failed for host \(output.host)."
+        case let .certificatePinningFailed(host, _, _, _):
+            return "Certificate pinning failed for host \(host)."
+        case let .publicKeyPinningFailed(host, _, _, _):
+            return "Public key pinning failed for host \(host)."
+        }
     }
 }

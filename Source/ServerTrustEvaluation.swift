@@ -171,24 +171,35 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
         }
     }
 
+    private let performDefaultValidation: Bool
     private let validateHost: Bool
     private let options: Options
 
-    /// Creates a `RevocationTrustEvaluator`
+    /// Creates a `RevocationTrustEvaluator`.
+    ///
+    /// - Note: Default and host validation will fail when using this evaluator with self-signed certificates. Use
+    ///         `PinnedCertificatesTrustEvaluator` if you need to use self-signed certificates.
     ///
     /// - Parameters:
+    ///   - performDefaultValidation:     Determines whether default validation should be performed in addition to
+    ///                                   evaluating the pinned certificates. Defaults to `true`.
+    ///   - validateHost:                 Determines whether or not the evaluator should validate the host, in addition
+    ///                                   to performing the default evaluation, even if `performDefaultValidation` is
+    ///                                   `false`. Defaults to `true`.
     ///   - options:      The `Options` to use to check the revocation status of the certificate. Defaults to `.any`.
-    ///   - validateHost: Determines whether or not the evaluator should validate the host. Defaults to `true`.
-    public init(options: Options = .any, validateHost: Bool = true) {
+    public init(performDefaultValidation: Bool = true, validateHost: Bool = true, options: Options = .any) {
+        self.performDefaultValidation = performDefaultValidation
         self.validateHost = validateHost
         self.options = options
     }
 
     public func evaluate(_ trust: SecTrust, forHost host: String) throws -> Bool {
-        try trust.validate(policy: .default) { (status, result) in
-            AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, trust, status, result)))
+        if performDefaultValidation {
+            try trust.validate(policy: .default) { (status, result) in
+                AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, trust, status, result)))
+            }
         }
-
+        
         if validateHost {
             try trust.validate(policy: .hostname(host)) { (status, result) in
                 AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, trust, status, result)))
@@ -210,23 +221,30 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
 /// environments.
 public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
     private let certificates: [SecCertificate]
-    private let validateCertificateChain: Bool
+    private let acceptSelfSignedCertificates: Bool
+    private let performDefaultValidation: Bool
     private let validateHost: Bool
 
     /// Creates a `PinnedCertificatesTrustEvaluator`.
     ///
     /// - Parameters:
-    ///   - certificates:             The certificates to use to evalute the trust. Defaults to all `cer`, `crt`, and
-    ///                               `der` certificates in `Bundle.main`.
-    ///   - validateCertificateChain: Determines whether the certificate chain should be evaluated or just the given
-    ///                               certificate.
-    ///   - validateHost:             Determines whether or not the evaluator should validate the host. Defaults to
-    ///                               `true`.
+    ///   - certificates:                 The certificates to use to evalute the trust. Defaults to all `cer`, `crt`,
+    ///                                   `der` certificates in `Bundle.main`.
+    ///   - acceptSelfSignedCertificates: Adds the provided certificates as anchors for the trust evaulation, allowing
+    ///                                   self-signed certificates to pass. Defaults to `false`. THIS SETTING SHOULD BE
+    ///                                   FALSE IN PRODUCTION!
+    ///   - performDefaultValidation:     Determines whether default validation should be performed in addition to
+    ///                                   evaluating the pinned certificates. Defaults to `true`.
+    ///   - validateHost:                 Determines whether or not the evaluator should validate the host, in addition
+    ///                                   to performing the default evaluation, even if `performDefaultValidation` is
+    ///                                   `false`. Defaults to `true`.
     public init(certificates: [SecCertificate] = Bundle.main.certificates,
-                validateCertificateChain: Bool = true,
+                acceptSelfSignedCertificates: Bool = false,
+                performDefaultValidation: Bool = true,
                 validateHost: Bool = true) {
         self.certificates = certificates
-        self.validateCertificateChain = validateCertificateChain
+        self.acceptSelfSignedCertificates = acceptSelfSignedCertificates
+        self.performDefaultValidation = performDefaultValidation
         self.validateHost = validateHost
     }
 
@@ -235,30 +253,33 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
             throw AFError.serverTrustEvaluationFailed(reason: .noCertificatesFound)
         }
         
+        if acceptSelfSignedCertificates {
+            try trust.setAnchorCertificates(certificates)
+        }
+        
+        if performDefaultValidation {
+            try trust.validate(policy: .default) { (status, result) in
+                AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, trust, status, result)))
+            }
+        }
+        
         if validateHost {
             try trust.validate(policy: .hostname(host)) { (status, result) in
                 AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, trust, status, result)))
             }
         }
-
-        if validateCertificateChain {
-            try trust.setAnchorCertificates(certificates)
-            return try trust.isValid { (status, result) in
-                AFError.serverTrustEvaluationFailed(reason: .certificateChainValidationFailed(output: .init(host, trust, status, result)))
-            }
-        } else {
-            let serverCertificatesData = Set(trust.certificateData)
-            let pinnedCertificatesData = Set(certificates.data)
-            let certificatesPinned = !serverCertificatesData.isDisjoint(with: pinnedCertificatesData)
-            if !certificatesPinned {
-                throw AFError.serverTrustEvaluationFailed(reason: .certificatePinningFailed(host: host,
-                                                                                            trust: trust,
-                                                                                            pinnedCertificates: certificates,
-                                                                                            serverCertificates: trust.certificates))
-            }
-
-            return certificatesPinned
+        
+        let serverCertificatesData = Set(trust.certificateData)
+        let pinnedCertificatesData = Set(certificates.data)
+        let certificatesPinned = !serverCertificatesData.isDisjoint(with: pinnedCertificatesData)
+        if !certificatesPinned {
+            throw AFError.serverTrustEvaluationFailed(reason: .certificatePinningFailed(host: host,
+                                                                                        trust: trust,
+                                                                                        pinnedCertificates: certificates,
+                                                                                        serverCertificates: trust.certificates))
         }
+
+        return certificatesPinned
     }
 }
 
@@ -268,39 +289,45 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
 /// Applications are encouraged to always validate the host and require a valid certificate chain in production
 /// environments.
 public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
-    private let certificates: [SecCertificate]
-    private let validateCertificateChain: Bool
-    private let validateHost: Bool
     private let keys: [SecKey]
+    private let performDefaultValidation: Bool
+    private let validateHost: Bool
 
     /// Creates a `PublicKeysTrustEvaluator`.
     ///
+    /// - Note: Default and host validation will fail when using this evaluator with self-signed certificates. Use
+    ///         `PinnedCertificatesTrustEvaluator` if you need to use self-signed certificates.
+    ///
     /// - Parameters:
-    ///   - certificates:             The certificates from which to extract public keys. Defaults to all `cer`, `crt`,
-    ///                               and `der` certificates in `Bundle.main`.
-    ///   - validateCertificateChain: Determines whether the certificate chain should be evaluated.
-    ///   - validateHost:             Determines whether or not the evaluator should validate the host. Defaults to
-    ///                               `true`.
-    public init(certificates: [SecCertificate] = Bundle.main.certificates,
-                validateCertificateChain: Bool = true,
+    ///   - keys:                     The `SecKey`s to use to validate public keys. Defaults to the public keys of all
+    ///                               certificates included in the main bundle.
+    ///   - performDefaultValidation: Determines whether default validation should be performed in addition to
+    ///                               evaluating the pinned certificates. Defaults to `true`.
+    ///   - validateHost:             Determines whether or not the evaluator should validate the host, in addition to
+    ///                               performing the default evaluation, even if `performDefaultValidation` is `false`.
+    ///                               Defaults to `true`.
+    public init(keys: [SecKey] = Bundle.main.publicKeys,
+                performDefaultValidation: Bool = true,
                 validateHost: Bool = true) {
-        self.certificates = certificates
-        self.validateCertificateChain = validateCertificateChain
+        self.keys = keys
+        self.performDefaultValidation = performDefaultValidation
         self.validateHost = validateHost
-        keys = certificates.publicKeys
     }
     
     public func evaluate(_ trust: SecTrust, forHost host: String) throws -> Bool {
+        guard !keys.isEmpty else {
+            throw AFError.serverTrustEvaluationFailed(reason: .noPublicKeysFound)
+        }
+
+        if performDefaultValidation {
+            try trust.validate(policy: .default) { (status, result) in
+                AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, trust, status, result)))
+            }
+        }
+        
         if validateHost {
             try trust.validate(policy: .hostname(host)) { (status, result) in
                 AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, trust, status, result)))
-            }
-        }
-
-        if validateCertificateChain {
-            try trust.setAnchorCertificates(certificates)
-            return try trust.isValid { (status, result) in
-                AFError.serverTrustEvaluationFailed(reason: .certificateChainValidationFailed(output: .init(host, trust, status, result)))
             }
         }
 
@@ -367,7 +394,7 @@ extension Bundle {
     }
 
     /// Returns all public keys for the valid certificates in the bundle.
-    var publicKeys: [SecKey] {
+    public var publicKeys: [SecKey] {
         return certificates.publicKeys
     }
 
@@ -474,7 +501,7 @@ extension Array where Element == SecCertificate {
     }
     
     /// All public `SecKey` values for the contained `SecCertificate`s.
-    var publicKeys: [SecKey] {
+    public var publicKeys: [SecKey] {
         return compactMap { $0.publicKey }
     }
 }

@@ -335,7 +335,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.leaf]
         let evaluators = [
-            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false, validateHost: false)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false, validateHost: false)
         ]
 
         let manager = Session(
@@ -363,7 +363,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.intermediateCA2]
         let evaluators = [
-            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false, validateHost: false)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false, validateHost: false)
         ]
 
         let manager = Session(
@@ -391,7 +391,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.rootCA]
         let evaluators = [
-            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false)
         ]
 
         let manager = Session(
@@ -423,9 +423,9 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWhenPinningLeafPublicKeyWithCertificateChainValidation() {
         // Given
-        let certificates = [TestCertificates.leaf]
+        let keys = [TestCertificates.leaf].publicKeys
         let evaluators = [
-            expiredHost: PublicKeysTrustEvaluator(certificates: certificates)
+            expiredHost: PublicKeysTrustEvaluator(keys: keys)
         ]
 
         let manager = Session(
@@ -457,9 +457,9 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyWithoutCertificateChainOrHostValidation() {
         // Given
-        let certificates = [TestCertificates.leaf]
+        let keys = [TestCertificates.leaf].publicKeys
         let evaluators = [
-            expiredHost: PublicKeysTrustEvaluator(certificates: certificates, validateCertificateChain: false, validateHost: false)
+            expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)
         ]
 
         let manager = Session(
@@ -485,9 +485,9 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyWithoutCertificateChainOrHostValidation() {
         // Given
-        let certificates = [TestCertificates.intermediateCA2]
+        let keys = [TestCertificates.intermediateCA2].publicKeys
         let evaluators = [
-            expiredHost: PublicKeysTrustEvaluator(certificates: certificates, validateCertificateChain: false, validateHost: false)
+            expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)
         ]
 
         let manager = Session(
@@ -513,9 +513,9 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningRootCAPublicKeyWithoutCertificateChainValidation() {
         // Given
-        let certificates = [TestCertificates.rootCA]
+        let keys = [TestCertificates.rootCA].publicKeys
         let evaluators = [
-            expiredHost: PublicKeysTrustEvaluator(certificates: certificates, validateCertificateChain: false)
+            expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)
         ]
 
         let manager = Session(
