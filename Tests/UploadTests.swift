@@ -50,7 +50,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLHeadersAndFile() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = ["Authorization": "123456"]
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
         let expectation = self.expectation(description: "upload should complete")
 
@@ -98,7 +98,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLHeadersAndData() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = ["Authorization": "123456"]
         let expectation = self.expectation(description: "upload should complete")
 
         // When
@@ -148,7 +148,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/post"
         let imageURL = url(forResource: "rainbow", withExtension: "jpg")
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = ["Authorization": "123456"]
         let imageStream = InputStream(url: imageURL)!
         let expectation = self.expectation(description: "upload should complete")
 

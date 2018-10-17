@@ -24,51 +24,215 @@
 
 import Foundation
 
-public typealias HTTPHeaders = [String: String]
+public struct HTTPHeaders {
+    private var headers = [HTTPHeader]()
+    
+    public init() { }
+    
+    public init(_ headers: [HTTPHeader]) {
+        self.headers = headers
+    }
+    
+    public init(_ dictionary: [String: String]) {
+        self.init()
+        
+        headers = dictionary.map { HTTPHeader(name: $0.key, value: $0.value) }
+    }
+    
+    public mutating func update(name: String, value: String) {
+        guard let index = headers.index(of: name) else {
+            headers.append(HTTPHeader(name: name, value: value))
+            return
+        }
+        
+        headers.replaceSubrange(index...index, with: [HTTPHeader(name: name, value: value)])
+    }
+    
+    public mutating func update(_ header: HTTPHeader) {
+        update(name: header.name, value: header.value)
+    }
+    
+    public mutating func remove(name: String) {
+        guard let index = headers.index(of: name) else { return }
+        
+        headers.remove(at: index)
+    }
+    
+    mutating func sort() {
+        return headers.sort()
+    }
+    
+    func sorted() -> HTTPHeaders {
+        return HTTPHeaders(headers.sorted())
+    }
+    
+    func value(for name: String) -> String? {
+        guard let index = headers.index(of: name) else { return nil }
+        
+        return headers[index].value
+    }
+    
+    public subscript(_ name: String) -> String? {
+        get { return value(for: name) }
+        set {
+            if let value = newValue {
+                update(name: name, value: value)
+            } else {
+                remove(name: name)
+            }
+        }
+    }
+}
 
-extension Dictionary where Key == String, Value == String {
+extension HTTPHeaders: ExpressibleByDictionaryLiteral {
+    public init(dictionaryLiteral elements: (String, String)...) {
+        self.init()
+        
+        elements.forEach { update(name: $0.0, value: $0.1) }
+    }
+    
+    public var dictionary: [String: String] {
+        let namesAndValues = headers.map { ($0.name, $0.value) }
+        
+        return Dictionary(namesAndValues, uniquingKeysWith: { (_, last) in last })
+    }
+}
+
+extension HTTPHeaders: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: HTTPHeader...) {
+        self.init()
+        
+        elements.forEach { update(name: $0.name, value: $0.value) }
+    }
+}
+
+extension HTTPHeaders: Sequence {
+    public func makeIterator() -> IndexingIterator<Array<HTTPHeader>> {
+        return headers.makeIterator()
+    }
+}
+
+extension HTTPHeaders: Collection {
+    public var startIndex: Int {
+        return headers.startIndex
+    }
+    
+    public var endIndex: Int {
+        return headers.endIndex
+    }
+    
+    public subscript(position: Int) -> HTTPHeader {
+        return headers[position]
+    }
+    
+    public func index(after i: Int) -> Int {
+        return headers.index(after: i)
+    }
+}
+
+extension HTTPHeaders: CustomStringConvertible {
+    public var description: String {
+        return headers.sorted().map { $0.description }.joined(separator: "\n")
+    }
+}
+
+// MARK: - HTTPHeader
+
+public struct HTTPHeader: Hashable {
+    public let name: String
+    public let value: String
+}
+
+extension HTTPHeader: CustomStringConvertible {
+    public var description: String {
+        return "\(name): \(value)"
+    }
+}
+
+extension HTTPHeader: Comparable {
+    public static func <(lhs: HTTPHeader, rhs: HTTPHeader) -> Bool {
+        return lhs.name < rhs.name
+    }
+}
+
+extension HTTPHeader {
+    public static func acceptLanguage(_ value: String) -> HTTPHeader {
+        return HTTPHeader(name: "Accept-Language", value: value)
+    }
+    
+    public static func acceptEncoding(_ value: String) -> HTTPHeader {
+        return HTTPHeader(name: "Accept-Encoding", value: value)
+    }
+    
+    public static func authorization(_ value: String) -> HTTPHeader {
+        return HTTPHeader(name: "Authorization", value: value)
+    }
+    
+    public static func contentDisposition(_ value: String) -> HTTPHeader {
+        return HTTPHeader(name: "Content-Disposition", value: value)
+    }
+    
+    public static func contentType(_ value: String) -> HTTPHeader {
+        return HTTPHeader(name: "Content-Type", value: value)
+    }
+    
+    public static func userAgent(_ value: String) -> HTTPHeader {
+        return HTTPHeader(name: "User-Agent", value: value)
+    }
+}
+
+extension Array where Element == HTTPHeader {
+    func index(of name: String) -> Int? {
+        return firstIndex { $0.name.lowercased() == name.lowercased() }
+    }
+}
+
+// MARK: - Defaults
+
+extension HTTPHeaders {
+    public static let `default`: HTTPHeaders = [.defaultAcceptEncoding,
+                                                .defaultAcceptLanguage,
+                                                .defaultUserAgent]
+    
     public static func authorization(username: String, password: String) -> HTTPHeaders {
         let credential = Data("\(username):\(password)".utf8).base64EncodedString()
-
-        return ["Authorization": "Basic \(credential)"]
+        
+        return [.authorization("Basic \(credential)")]
     }
+}
 
-    /// Creates default values for the "Accept-Encoding", "Accept-Language" and "User-Agent" headers.
-    public static let defaultHTTPHeaders: HTTPHeaders = {
+extension HTTPHeader {
+    public static let defaultAcceptEncoding: HTTPHeader = {
         // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
-        let acceptEncoding: String = {
-            let encodings: [String]
-            if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
-                encodings = ["br", "gzip", "deflate"]
-            } else {
-                encodings = ["gzip", "deflate"]
-            }
+        let encodings: [String]
+        if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
+            encodings = ["br", "gzip", "deflate"]
+        } else {
+            encodings = ["gzip", "deflate"]
+        }
 
-            return encodings.enumerated().map { (index, encoding) in
-                let quality = 1.0 - (Double(index) * 0.1)
-                return "\(encoding);q=\(quality)"
-            }.joined(separator: ", ")
-        }()
-
+        return .acceptEncoding(encodings.qualityEncoded)
+    }()
+    
+    public static let defaultAcceptLanguage: HTTPHeader = {
         // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
-        let acceptLanguage = Locale.preferredLanguages.prefix(6).enumerated().map { (index, languageCode) in
-            let quality = 1.0 - (Double(index) * 0.1)
-            return "\(languageCode);q=\(quality)"
-        }.joined(separator: ", ")
-
+        .acceptLanguage(Locale.preferredLanguages.prefix(6).qualityEncoded)
+    }()
+    
+    public static let defaultUserAgent: HTTPHeader = {
         // User-Agent Header; see https://tools.ietf.org/html/rfc7231#section-5.5.3
-        // Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`
+        // Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 12.0.0) Alamofire/5.0.0`
         let userAgent: String = {
             if let info = Bundle.main.infoDictionary {
                 let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
                 let bundle = info[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
                 let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
                 let appBuild = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
-
+                
                 let osNameVersion: String = {
                     let version = ProcessInfo.processInfo.operatingSystemVersion
                     let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-
+                    
                     let osName: String = {
                         #if os(iOS)
                         return "iOS"
@@ -84,27 +248,56 @@ extension Dictionary where Key == String, Value == String {
                         return "Unknown"
                         #endif
                     }()
-
+                    
                     return "\(osName) \(versionString)"
                 }()
-
+                
                 let alamofireVersion: String = {
                     guard
                         let afInfo = Bundle(for: Session.self).infoDictionary,
                         let build = afInfo["CFBundleShortVersionString"]
                         else { return "Unknown" }
-
+                    
                     return "Alamofire/\(build)"
                 }()
-
+                
                 return "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
             }
-
+            
             return "Alamofire"
         }()
-
-        return ["Accept-Encoding": acceptEncoding,
-                "Accept-Language": acceptLanguage,
-                "User-Agent": userAgent]
+        
+        return .userAgent(userAgent)
     }()
+}
+
+extension Collection where Element == String {
+    var qualityEncoded: String {
+        return enumerated().map { (index, encoding) in
+            let quality = 1.0 - (Double(index) * 0.1)
+            return "\(encoding);q=\(quality)"
+        }.joined(separator: ", ")
+    }
+}
+
+// MARK: - System Type Extensions
+
+extension URLRequest {
+    public var httpHeaders: HTTPHeaders {
+        get { return allHTTPHeaderFields.map(HTTPHeaders.init) ?? HTTPHeaders() }
+        set { allHTTPHeaderFields = newValue.dictionary }
+    }
+}
+
+extension HTTPURLResponse {
+    public var httpHeaders: HTTPHeaders {
+        return (allHeaderFields as? [String: String]).map(HTTPHeaders.init) ?? HTTPHeaders()
+    }
+}
+
+extension URLSessionConfiguration {
+    public var httpHeaders: HTTPHeaders {
+        get { return (httpAdditionalHeaders as? [String: String]).map(HTTPHeaders.init) ?? HTTPHeaders() }
+        set { httpAdditionalHeaders = newValue.dictionary }
+    }
 }

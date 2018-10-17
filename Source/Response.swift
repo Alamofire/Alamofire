@@ -89,14 +89,13 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
         let responseDescription = response.map { (response) in
-            let headers = response.allHeaderFields as! HTTPHeaders
-            let keys = headers.keys.sorted(by: >)
-            let sortedHeaders = keys.map { "\($0): \(headers[$0]!)" }.joined(separator: "\n")
+            let sortedHeaders = response.httpHeaders.sorted().dictionary
 
             return """
-            Status Code: \(response.statusCode)
-                        Headers: \(sortedHeaders)
-            """
+                   Status Code: \(response.statusCode)
+                   Headers:
+                   \(sortedHeaders)
+                   """
         } ?? "nil"
         let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
 
@@ -274,14 +273,13 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
         let responseDescription = response.map { (response) in
-            let headers = response.allHeaderFields as! HTTPHeaders
-            let keys = headers.keys.sorted(by: >)
-            let sortedHeaders = keys.map { "\($0): \(headers[$0]!)" }.joined(separator: "\n")
-
+            let sortedHeaders = response.httpHeaders.sorted().dictionary
+            
             return """
-            Status Code: \(response.statusCode)
-            Headers: \(sortedHeaders)
-            """
+                   Status Code: \(response.statusCode)
+                   Headers:
+                   \(sortedHeaders)
+                   """
         } ?? "nil"
         let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
         let resumeDataDescription = resumeData.map { "\($0)" } ?? "None"

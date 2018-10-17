@@ -74,7 +74,7 @@ class SessionManagerTestCase: BaseTestCase {
                 
                 if shouldApplyAuthorizationHeader && adaptedCount > 1 {
                     if let header = HTTPHeaders.authorization(username: "user", password: "password").first {
-                        urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
+                        urlRequest.setValue(header.value, forHTTPHeaderField: header.name)
                     }
                 }
                 
@@ -195,7 +195,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testDefaultUserAgentHeader() {
         // Given, When
-        let userAgent = HTTPHeaders.defaultHTTPHeaders["User-Agent"]
+        let userAgent = HTTPHeaders.default["User-Agent"]
 
         // Then
         let osNameVersion: String = {
@@ -920,9 +920,9 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
                     configuration = .background(withIdentifier: identifier)
                 }
 
-                var headers = HTTPHeaders.defaultHTTPHeaders
+                var headers = HTTPHeaders.default
                 headers["Authorization"] = "Bearer 123456"
-                configuration.httpAdditionalHeaders = headers
+                configuration.httpHeaders = headers
 
                 return configuration
             }()

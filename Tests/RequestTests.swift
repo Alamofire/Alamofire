@@ -248,11 +248,11 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     }()
 
     let managerWithAcceptLanguageHeader: Session = {
-        var headers = HTTPHeaders.defaultHTTPHeaders
+        var headers = HTTPHeaders.default
         headers["Accept-Language"] = "en-US"
 
         let configuration = URLSessionConfiguration.alamofireDefault
-        configuration.httpAdditionalHeaders = headers
+        configuration.httpHeaders = headers
 
         let manager = Session(configuration: configuration)
 
@@ -260,11 +260,11 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     }()
 
     let managerWithContentTypeHeader: Session = {
-        var headers = HTTPHeaders.defaultHTTPHeaders
+        var headers = HTTPHeaders.default
         headers["Content-Type"] = "application/json"
 
         let configuration = URLSessionConfiguration.alamofireDefault
-        configuration.httpAdditionalHeaders = headers
+        configuration.httpHeaders = headers
 
         let manager = Session(configuration: configuration)
 
@@ -313,7 +313,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let expectation = self.expectation(description: "request should complete")
 
         // When
-        let headers: [String: String] = [ "X-Custom-Header": "{\"key\": \"value\"}" ]
+        let headers: HTTPHeaders = [ "X-Custom-Header": "{\"key\": \"value\"}" ]
         let request = manager.request(urlString, headers: headers).response { _ in expectation.fulfill() }
 
         waitForExpectations(timeout: timeout, handler: nil)
@@ -328,7 +328,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let expectation = self.expectation(description: "request should complete")
 
         // When
-        let headers = [ "Accept-Language": "en-GB" ]
+        let headers: HTTPHeaders = [ "Accept-Language": "en-GB" ]
         let request = managerWithAcceptLanguageHeader.request(urlString, headers: headers).response { _ in expectation.fulfill() }
 
         waitForExpectations(timeout: timeout, handler: nil)
