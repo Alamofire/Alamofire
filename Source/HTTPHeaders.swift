@@ -30,7 +30,9 @@ public struct HTTPHeaders {
     public init() { }
     
     public init(_ headers: [HTTPHeader]) {
-        self.headers = headers
+        self.init()
+        
+        headers.forEach { update($0) }
     }
     
     public init(_ dictionary: [String: String]) {
@@ -40,16 +42,16 @@ public struct HTTPHeaders {
     }
     
     public mutating func update(name: String, value: String) {
-        guard let index = headers.index(of: name) else {
-            headers.append(HTTPHeader(name: name, value: value))
-            return
-        }
-        
-        headers.replaceSubrange(index...index, with: [HTTPHeader(name: name, value: value)])
+        update(HTTPHeader(name: name, value: value))
     }
     
     public mutating func update(_ header: HTTPHeader) {
-        update(name: header.name, value: header.value)
+        guard let index = headers.index(of: header.name) else {
+            headers.append(header)
+            return
+        }
+        
+        headers.replaceSubrange(index...index, with: [header])
     }
     
     public mutating func remove(name: String) {
@@ -59,11 +61,11 @@ public struct HTTPHeaders {
     }
     
     mutating func sort() {
-        return headers.sort()
+        return headers.sort { $0.name < $1.name }
     }
     
     func sorted() -> HTTPHeaders {
-        return HTTPHeaders(headers.sorted())
+        return HTTPHeaders(headers.sorted { $0.name < $1.name })
     }
     
     func value(for name: String) -> String? {
@@ -100,9 +102,7 @@ extension HTTPHeaders: ExpressibleByDictionaryLiteral {
 
 extension HTTPHeaders: ExpressibleByArrayLiteral {
     public init(arrayLiteral elements: HTTPHeader...) {
-        self.init()
-        
-        elements.forEach { update(name: $0.name, value: $0.value) }
+        self.init(elements)
     }
 }
 
@@ -132,7 +132,9 @@ extension HTTPHeaders: Collection {
 
 extension HTTPHeaders: CustomStringConvertible {
     public var description: String {
-        return headers.sorted().map { $0.description }.joined(separator: "\n")
+        return headers.sorted { $0.name < $1.name }
+                      .map { $0.description }
+                      .joined(separator: "\n")
     }
 }
 
@@ -149,12 +151,6 @@ extension HTTPHeader: CustomStringConvertible {
     }
 }
 
-extension HTTPHeader: Comparable {
-    public static func <(lhs: HTTPHeader, rhs: HTTPHeader) -> Bool {
-        return lhs.name < rhs.name
-    }
-}
-
 extension HTTPHeader {
     public static func acceptLanguage(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Language", value: value)
@@ -162,6 +158,12 @@ extension HTTPHeader {
     
     public static func acceptEncoding(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Encoding", value: value)
+    }
+    
+    public static func authorization(username: String, password: String) -> HTTPHeader {
+        let credential = Data("\(username):\(password)".utf8).base64EncodedString()
+        
+        return authorization("Basic \(credential)")
     }
     
     public static func authorization(_ value: String) -> HTTPHeader {
@@ -183,7 +185,8 @@ extension HTTPHeader {
 
 extension Array where Element == HTTPHeader {
     func index(of name: String) -> Int? {
-        return firstIndex { $0.name.lowercased() == name.lowercased() }
+        let lowercasedName = name.lowercased()
+        return firstIndex { $0.name.lowercased() == lowercasedName }
     }
 }
 
@@ -193,12 +196,6 @@ extension HTTPHeaders {
     public static let `default`: HTTPHeaders = [.defaultAcceptEncoding,
                                                 .defaultAcceptLanguage,
                                                 .defaultUserAgent]
-    
-    public static func authorization(username: String, password: String) -> HTTPHeaders {
-        let credential = Data("\(username):\(password)".utf8).base64EncodedString()
-        
-        return [.authorization("Basic \(credential)")]
-    }
 }
 
 extension HTTPHeader {
