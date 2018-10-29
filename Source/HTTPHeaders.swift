@@ -26,54 +26,54 @@ import Foundation
 
 public struct HTTPHeaders {
     private var headers = [HTTPHeader]()
-    
+
     public init() { }
-    
+
     public init(_ headers: [HTTPHeader]) {
         self.init()
-        
+
         headers.forEach { update($0) }
     }
-    
+
     public init(_ dictionary: [String: String]) {
         self.init()
-        
+
         headers = dictionary.map { HTTPHeader(name: $0.key, value: $0.value) }
     }
-    
+
     public mutating func update(name: String, value: String) {
         update(HTTPHeader(name: name, value: value))
     }
-    
+
     public mutating func update(_ header: HTTPHeader) {
         guard let index = headers.index(of: header.name) else {
             headers.append(header)
             return
         }
-        
+
         headers.replaceSubrange(index...index, with: [header])
     }
-    
+
     public mutating func remove(name: String) {
         guard let index = headers.index(of: name) else { return }
-        
+
         headers.remove(at: index)
     }
-    
-    mutating func sort() {
+
+    mutating public func sort() {
         return headers.sort { $0.name < $1.name }
     }
-    
-    func sorted() -> HTTPHeaders {
+
+    public func sorted() -> HTTPHeaders {
         return HTTPHeaders(headers.sorted { $0.name < $1.name })
     }
-    
+
     func value(for name: String) -> String? {
         guard let index = headers.index(of: name) else { return nil }
-        
+
         return headers[index].value
     }
-    
+
     public subscript(_ name: String) -> String? {
         get { return value(for: name) }
         set {
@@ -89,13 +89,13 @@ public struct HTTPHeaders {
 extension HTTPHeaders: ExpressibleByDictionaryLiteral {
     public init(dictionaryLiteral elements: (String, String)...) {
         self.init()
-        
+
         elements.forEach { update(name: $0.0, value: $0.1) }
     }
-    
+
     public var dictionary: [String: String] {
         let namesAndValues = headers.map { ($0.name, $0.value) }
-        
+
         return Dictionary(namesAndValues, uniquingKeysWith: { (_, last) in last })
     }
 }
@@ -116,15 +116,15 @@ extension HTTPHeaders: Collection {
     public var startIndex: Int {
         return headers.startIndex
     }
-    
+
     public var endIndex: Int {
         return headers.endIndex
     }
-    
+
     public subscript(position: Int) -> HTTPHeader {
         return headers[position]
     }
-    
+
     public func index(after i: Int) -> Int {
         return headers.index(after: i)
     }
@@ -132,8 +132,7 @@ extension HTTPHeaders: Collection {
 
 extension HTTPHeaders: CustomStringConvertible {
     public var description: String {
-        return headers.sorted { $0.name < $1.name }
-                      .map { $0.description }
+        return headers.map { $0.description }
                       .joined(separator: "\n")
     }
 }
@@ -143,6 +142,11 @@ extension HTTPHeaders: CustomStringConvertible {
 public struct HTTPHeader: Hashable {
     public let name: String
     public let value: String
+
+    public init(name: String, value: String) {
+        self.name = name
+        self.value = value
+    }
 }
 
 extension HTTPHeader: CustomStringConvertible {
@@ -155,29 +159,29 @@ extension HTTPHeader {
     public static func acceptLanguage(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Language", value: value)
     }
-    
+
     public static func acceptEncoding(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Encoding", value: value)
     }
-    
+
     public static func authorization(username: String, password: String) -> HTTPHeader {
         let credential = Data("\(username):\(password)".utf8).base64EncodedString()
-        
+
         return authorization("Basic \(credential)")
     }
-    
+
     public static func authorization(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Authorization", value: value)
     }
-    
+
     public static func contentDisposition(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Content-Disposition", value: value)
     }
-    
+
     public static func contentType(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Content-Type", value: value)
     }
-    
+
     public static func userAgent(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "User-Agent", value: value)
     }
@@ -210,12 +214,12 @@ extension HTTPHeader {
 
         return .acceptEncoding(encodings.qualityEncoded)
     }()
-    
+
     public static let defaultAcceptLanguage: HTTPHeader = {
         // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
         .acceptLanguage(Locale.preferredLanguages.prefix(6).qualityEncoded)
     }()
-    
+
     public static let defaultUserAgent: HTTPHeader = {
         // User-Agent Header; see https://tools.ietf.org/html/rfc7231#section-5.5.3
         // Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 12.0.0) Alamofire/5.0.0`
@@ -225,11 +229,11 @@ extension HTTPHeader {
                 let bundle = info[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
                 let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
                 let appBuild = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
-                
+
                 let osNameVersion: String = {
                     let version = ProcessInfo.processInfo.operatingSystemVersion
                     let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-                    
+
                     let osName: String = {
                         #if os(iOS)
                         return "iOS"
@@ -245,25 +249,25 @@ extension HTTPHeader {
                         return "Unknown"
                         #endif
                     }()
-                    
+
                     return "\(osName) \(versionString)"
                 }()
-                
+
                 let alamofireVersion: String = {
                     guard
                         let afInfo = Bundle(for: Session.self).infoDictionary,
                         let build = afInfo["CFBundleShortVersionString"]
                         else { return "Unknown" }
-                    
+
                     return "Alamofire/\(build)"
                 }()
-                
+
                 return "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
             }
-            
+
             return "Alamofire"
         }()
-        
+
         return .userAgent(userAgent)
     }()
 }

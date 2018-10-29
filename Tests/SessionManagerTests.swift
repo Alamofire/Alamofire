@@ -42,13 +42,13 @@ class SessionManagerTestCase: BaseTestCase {
         func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void) {
             let result: Result<URLRequest> = Result {
                 guard !throwsError else { throw AFError.invalidURL(url: "") }
-                
+
                 var urlRequest = urlRequest
                 urlRequest.httpMethod = method.rawValue
-                
+
                 return urlRequest
             }
-            
+
             completion(result)
         }
     }
@@ -67,18 +67,18 @@ class SessionManagerTestCase: BaseTestCase {
                     throwsErrorOnSecondAdapt = false
                     throw AFError.invalidURL(url: "")
                 }
-                
+
                 var urlRequest = urlRequest
-                
+
                 adaptedCount += 1
-                
+
                 if shouldApplyAuthorizationHeader && adaptedCount > 1 {
                     urlRequest.httpHeaders.update(.authorization(username: "user", password: "password"))
                 }
-                
+
                 return urlRequest
             }
-            
+
             completion(result)
         }
 
@@ -102,12 +102,12 @@ class SessionManagerTestCase: BaseTestCase {
         func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void) {
             let result: Result<URLRequest> = Result {
                 adaptedCount += 1
-                
+
                 if adaptedCount == 1 { throw AFError.invalidURL(url: "") }
-                
+
                 return urlRequest
             }
-            
+
             completion(result)
         }
 

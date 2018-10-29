@@ -55,6 +55,9 @@
 		3111CE9B20A7EC57008315E2 /* URLProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */; };
 		3111CE9C20A7EC58008315E2 /* URLProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */; };
 		3111CE9D20A7EC58008315E2 /* URLProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */; };
+		3113D46B21878227001CCD21 /* HTTPHeadersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */; };
+		3113D46C21878227001CCD21 /* HTTPHeadersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */; };
+		3113D46D21878227001CCD21 /* HTTPHeadersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */; };
 		311B199020B0D3B40036823B /* MultipartUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311B198F20B0D3B40036823B /* MultipartUpload.swift */; };
 		311B199120B0E3470036823B /* MultipartUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311B198F20B0D3B40036823B /* MultipartUpload.swift */; };
 		311B199220B0E3480036823B /* MultipartUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311B198F20B0D3B40036823B /* MultipartUpload.swift */; };
@@ -321,6 +324,7 @@
 
 /* Begin PBXFileReference section */
 		3111CE8720A77843008315E2 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
+		3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeadersTests.swift; sourceTree = "<group>"; };
 		311B198F20B0D3B40036823B /* MultipartUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartUpload.swift; sourceTree = "<group>"; };
 		312D1E0B1FC2551400E51FF1 /* Usage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Usage.md; path = Documentation/Usage.md; sourceTree = "<group>"; };
 		312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = AdvancedUsage.md; path = Documentation/AdvancedUsage.md; sourceTree = "<group>"; };
@@ -503,6 +507,7 @@
 			isa = PBXGroup;
 			children = (
 				4C341BB91B1A865A00C1B34D /* CacheTests.swift */,
+				3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */,
 				4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */,
 				4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */,
 				4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */,
@@ -1287,6 +1292,7 @@
 				3111CE9D20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683E20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
+				3113D46D21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				3107EA4120A1267D00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EC20B271060089BA7C /* CacheTests.swift in Sources */,
 				3111CE9120A7EC27008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
@@ -1411,6 +1417,7 @@
 				3111CE9B20A7EC57008315E2 /* URLProtocolTests.swift in Sources */,
 				317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683C20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
+				3113D46B21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				3107EA3F20A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EA20B271040089BA7C /* CacheTests.swift in Sources */,
 				3111CE8F20A7EC26008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
@@ -1439,6 +1446,7 @@
 				3111CE9C20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683D20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
+				3113D46C21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
 				3107EA4020A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EB20B271050089BA7C /* CacheTests.swift in Sources */,
 				3111CE9020A7EC27008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,

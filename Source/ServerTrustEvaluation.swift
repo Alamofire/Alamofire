@@ -199,7 +199,7 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
                 AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, trust, status, result)))
             }
         }
-        
+
         if validateHost {
             try trust.validate(policy: .hostname(host)) { (status, result) in
                 AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, trust, status, result)))
@@ -252,23 +252,23 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
         guard !certificates.isEmpty else {
             throw AFError.serverTrustEvaluationFailed(reason: .noCertificatesFound)
         }
-        
+
         if acceptSelfSignedCertificates {
             try trust.setAnchorCertificates(certificates)
         }
-        
+
         if performDefaultValidation {
             try trust.validate(policy: .default) { (status, result) in
                 AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, trust, status, result)))
             }
         }
-        
+
         if validateHost {
             try trust.validate(policy: .hostname(host)) { (status, result) in
                 AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, trust, status, result)))
             }
         }
-        
+
         let serverCertificatesData = Set(trust.certificateData)
         let pinnedCertificatesData = Set(certificates.data)
         let certificatesPinned = !serverCertificatesData.isDisjoint(with: pinnedCertificatesData)
@@ -313,7 +313,7 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
         self.performDefaultValidation = performDefaultValidation
         self.validateHost = validateHost
     }
-    
+
     public func evaluate(_ trust: SecTrust, forHost host: String) throws -> Bool {
         guard !keys.isEmpty else {
             throw AFError.serverTrustEvaluationFailed(reason: .noPublicKeysFound)
@@ -324,7 +324,7 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
                 AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, trust, status, result)))
             }
         }
-        
+
         if validateHost {
             try trust.validate(policy: .hostname(host)) { (status, result) in
                 AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, trust, status, result)))
@@ -412,10 +412,10 @@ public extension SecTrust {
     var isValid: Bool {
         var result = SecTrustResultType.invalid
         let status = SecTrustEvaluate(self, &result)
-        
+
         return (status.isSuccess) ? (result == .unspecified || result == .proceed) : false
     }
-    
+
     @discardableResult
     func validate(policy: SecPolicy, errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> Error) throws -> Bool {
         return try apply(policy: policy).isValid(errorProducer: errorProducer)
@@ -499,7 +499,7 @@ extension Array where Element == SecCertificate {
     var data: [Data] {
         return map { SecCertificateCopyData($0) as Data }
     }
-    
+
     /// All public `SecKey` values for the contained `SecCertificate`s.
     public var publicKeys: [SecKey] {
         return compactMap { $0.publicKey }
