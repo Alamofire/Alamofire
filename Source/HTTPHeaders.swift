@@ -24,27 +24,42 @@
 
 import Foundation
 
+
+/// An order-preserving and case-insensitive representation of HTTP headers.
 public struct HTTPHeaders {
     private var headers = [HTTPHeader]()
 
+    /// Create an empty instance.
     public init() { }
 
+    /// Create an instance from an array of `HTTPHeader`s. Duplicate case-insensitive names are collapsed into the last
+    /// name and value encountered.
     public init(_ headers: [HTTPHeader]) {
         self.init()
 
         headers.forEach { update($0) }
     }
 
+    /// Create an instance from a `[String: String]`. Duplicate case-insensitive names are collapsed into the last name
+    /// and value encountered.
     public init(_ dictionary: [String: String]) {
         self.init()
 
-        headers = dictionary.map { HTTPHeader(name: $0.key, value: $0.value) }
+        dictionary.forEach { update(HTTPHeader(name: $0.key, value: $0.value)) }
     }
 
+    /// Case-insensitively updates or appends an `HTTPHeader` into the instance using the provided `name` and `value`.
+    ///
+    /// - Parameters:
+    ///   - name:  The `HTTPHeader` name.
+    ///   - value: The `HTTPHeader value.
     public mutating func update(name: String, value: String) {
         update(HTTPHeader(name: name, value: value))
     }
 
+    /// Case-insensitively updates or apprends the provided `HTTPHeader` into the instance.
+    ///
+    /// - Parameter header: The `HTTPHeader` to update or append.
     public mutating func update(_ header: HTTPHeader) {
         guard let index = headers.index(of: header.name) else {
             headers.append(header)
@@ -54,26 +69,41 @@ public struct HTTPHeaders {
         headers.replaceSubrange(index...index, with: [header])
     }
 
+    /// Case-insensitively removes an `HTTPHeader`, if it exists, from the instance.
+    ///
+    /// - Parameter name: The name of the `HTTPHeader` to remove.
     public mutating func remove(name: String) {
         guard let index = headers.index(of: name) else { return }
 
         headers.remove(at: index)
     }
 
+    /// Sort the current instance by header name.
     mutating public func sort() {
         return headers.sort { $0.name < $1.name }
     }
 
+    /// Returns an instance sorted by header name.
+    ///
+    /// - Returns: A copy of the current instance sorted by name.
     public func sorted() -> HTTPHeaders {
         return HTTPHeaders(headers.sorted { $0.name < $1.name })
     }
 
-    func value(for name: String) -> String? {
+    /// Case-insensitively find a header's value by name.
+    ///
+    /// - Parameter name: The name of the header to search for, case-insensitively.
+    /// - Returns:        The value of header, if it exists.
+    public func value(for name: String) -> String? {
         guard let index = headers.index(of: name) else { return nil }
 
         return headers[index].value
     }
 
+
+    /// Case-insensitively access the header with the given name.
+    ///
+    /// - Parameter name: The name of the header.
     public subscript(_ name: String) -> String? {
         get { return value(for: name) }
         set {
@@ -84,6 +114,15 @@ public struct HTTPHeaders {
             }
         }
     }
+
+    /// The dictionary representation of all headers.
+    ///
+    /// This representation does not preserve the current order of the instance.
+    public var dictionary: [String: String] {
+        let namesAndValues = headers.map { ($0.name, $0.value) }
+
+        return Dictionary(namesAndValues, uniquingKeysWith: { (_, last) in last })
+    }
 }
 
 extension HTTPHeaders: ExpressibleByDictionaryLiteral {
@@ -91,12 +130,6 @@ extension HTTPHeaders: ExpressibleByDictionaryLiteral {
         self.init()
 
         elements.forEach { update(name: $0.0, value: $0.1) }
-    }
-
-    public var dictionary: [String: String] {
-        let namesAndValues = headers.map { ($0.name, $0.value) }
-
-        return Dictionary(namesAndValues, uniquingKeysWith: { (_, last) in last })
     }
 }
 
@@ -139,10 +172,19 @@ extension HTTPHeaders: CustomStringConvertible {
 
 // MARK: - HTTPHeader
 
+/// A representation of a single HTTP header's name / value pair.
 public struct HTTPHeader: Hashable {
+    /// Name of the header.
     public let name: String
+
+    /// Value of the header.
     public let value: String
 
+    /// Creates an instance from the given `name` and `value`.
+    ///
+    /// - Parameters:
+    ///   - name:  The name of the header.
+    ///   - value: The value of the header.
     public init(name: String, value: String) {
         self.name = name
         self.value = value
@@ -156,38 +198,81 @@ extension HTTPHeader: CustomStringConvertible {
 }
 
 extension HTTPHeader {
+    /// Returns an `Accept-Language` header.
+    ///
+    /// Alamofire offers a default Accept-Language header that accumulates and encodes the system's preferred languages.
+    /// Use `HTTPHeader.defaultAcceptLanguage`.
+    ///
+    /// - Parameter value: The `Accept-Language` value.
+    /// - Returns:         The header.
     public static func acceptLanguage(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Language", value: value)
     }
 
+    /// Returns an `Accept-Encoding` header.
+    ///
+    /// Alamofire offers a default accept encoding value that provides the most common values. Use
+    /// `HTTPHeader.defaultAcceptEncoding`.
+    ///
+    /// - Parameter value: The `Accept-Encoding` value.
+    /// - Returns:         The header
     public static func acceptEncoding(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Encoding", value: value)
     }
 
+    /// Returns a `Basic` `Authorization` header using the `username` and `password` provided.
+    ///
+    /// - Parameters:
+    ///   - username: The username of the header.
+    ///   - password: The password of the header.
+    /// - Returns:    The header.
     public static func authorization(username: String, password: String) -> HTTPHeader {
         let credential = Data("\(username):\(password)".utf8).base64EncodedString()
 
         return authorization("Basic \(credential)")
     }
 
+    /// Returns an `Authorization` header.
+    ///
+    /// Alamofire provides a built-in method to produce Basic Authorization headers. Use
+    /// `HTTPHeader.authorization(username: password:)`.
+    ///
+    /// - Parameter value: The `Authorization` value.
+    /// - Returns:         The header.
     public static func authorization(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Authorization", value: value)
     }
 
+    /// Returns a `Content-Disposition` header.
+    ///
+    /// - Parameter value: The `Content-Disposition` value.
+    /// - Returns:         The header.
     public static func contentDisposition(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Content-Disposition", value: value)
     }
 
+    /// Returns a `Content-Type` header.
+    ///
+    /// All Alamofire `ParameterEncoding`s set the `Content-Type` of the request, so it may not be necessary to manually
+    /// set this value.
+    ///
+    /// - Parameter value: The `Content-Type` value.
+    /// - Returns:         The header.
     public static func contentType(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Content-Type", value: value)
     }
 
+    /// Returns a `User-Agent` header.
+    ///
+    /// - Parameter value: The `User-Agent` value.
+    /// - Returns:         The header.
     public static func userAgent(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "User-Agent", value: value)
     }
 }
 
 extension Array where Element == HTTPHeader {
+    /// Case-insensitively finds the index of an `HTTPHeader` with the provided name, if it exists.
     func index(of name: String) -> Int? {
         let lowercasedName = name.lowercased()
         return firstIndex { $0.name.lowercased() == lowercasedName }
@@ -197,14 +282,19 @@ extension Array where Element == HTTPHeader {
 // MARK: - Defaults
 
 extension HTTPHeaders {
+    /// The default set of `HTTPHeaders` used by Alamofire. Includes `Accept-Encoding`, `Accept-Language`, and
+    /// `User-Agent`.
     public static let `default`: HTTPHeaders = [.defaultAcceptEncoding,
                                                 .defaultAcceptLanguage,
                                                 .defaultUserAgent]
 }
 
 extension HTTPHeader {
+    /// Returns Alamofire's default `Accept-Encoding` header, appropriate for the encodings supporte by particular OS
+    /// versions.
+    ///
+    /// See the [Accept-Encoding HTTP header documentation](https://tools.ietf.org/html/rfc7230#section-4.2.3) .
     public static let defaultAcceptEncoding: HTTPHeader = {
-        // Accept-Encoding HTTP Header; see https://tools.ietf.org/html/rfc7230#section-4.2.3
         let encodings: [String]
         if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
             encodings = ["br", "gzip", "deflate"]
@@ -215,14 +305,20 @@ extension HTTPHeader {
         return .acceptEncoding(encodings.qualityEncoded)
     }()
 
+    /// Returns Alamofire's default `Accept-Language` header, generated by querying `Locale` for the user's
+    /// `preferredLanguages`.
+    ///
+    /// See the [Accept-Language HTTP header documentation](https://tools.ietf.org/html/rfc7231#section-5.3.5).
     public static let defaultAcceptLanguage: HTTPHeader = {
-        // Accept-Language HTTP Header; see https://tools.ietf.org/html/rfc7231#section-5.3.5
         .acceptLanguage(Locale.preferredLanguages.prefix(6).qualityEncoded)
     }()
 
+    /// Returns Alamofire's default `User-Agent` header.
+    ///
+    /// See the [User-Agent header documentation](https://tools.ietf.org/html/rfc7231#section-5.5.3).
+    ///
+    /// Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 12.0.0) Alamofire/5.0.0`
     public static let defaultUserAgent: HTTPHeader = {
-        // User-Agent Header; see https://tools.ietf.org/html/rfc7231#section-5.5.3
-        // Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 12.0.0) Alamofire/5.0.0`
         let userAgent: String = {
             if let info = Bundle.main.infoDictionary {
                 let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
@@ -284,6 +380,7 @@ extension Collection where Element == String {
 // MARK: - System Type Extensions
 
 extension URLRequest {
+    /// Returns `allHTTPHeaderFields` as `HTTPHeaders`.
     public var httpHeaders: HTTPHeaders {
         get { return allHTTPHeaderFields.map(HTTPHeaders.init) ?? HTTPHeaders() }
         set { allHTTPHeaderFields = newValue.dictionary }
@@ -291,12 +388,14 @@ extension URLRequest {
 }
 
 extension HTTPURLResponse {
+    /// Returns `allHeaderFields` as `HTTPHeaders`.
     public var httpHeaders: HTTPHeaders {
         return (allHeaderFields as? [String: String]).map(HTTPHeaders.init) ?? HTTPHeaders()
     }
 }
 
 extension URLSessionConfiguration {
+    /// Returns `httpAdditionalHeaders` as `HTTPHeaders`.
     public var httpHeaders: HTTPHeaders {
         get { return (httpAdditionalHeaders as? [String: String]).map(HTTPHeaders.init) ?? HTTPHeaders() }
         set { httpAdditionalHeaders = newValue.dictionary }
