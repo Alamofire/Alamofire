@@ -138,6 +138,36 @@ open class Session {
 
         return request
     }
+    
+    struct RequestEncodableConvertible<P: Encodable>: URLRequestConvertible {
+        let url: URLConvertible
+        let method: HTTPMethod
+        let parameters: P?
+        let encoder: ParameterEncoder
+        let headers: HTTPHeaders?
+        
+        func asURLRequest() throws -> URLRequest {
+            let request = try URLRequest(url: url, method: method, headers: headers)
+            
+            return try parameters.map { try encoder.encode($0, into: request) } ?? request
+        }
+    }
+    
+    open func request<P: Encodable>(_ url: URLConvertible,
+                      method: HTTPMethod = .get,
+                      parameters: P? = nil,
+                      encoder: ParameterEncoder = JSONParameterEncoder.default,
+                      headers: HTTPHeaders? = nil) -> DataRequest {
+        let convertible = RequestEncodableConvertible(url: url,
+                                                      method: method,
+                                                      parameters: parameters,
+                                                      encoder: encoder,
+                                                      headers: headers)
+        
+        return request(convertible)
+    }
+    
+    
 
     // MARK: - Download
 
@@ -495,5 +525,29 @@ extension Session: SessionStateProvider {
 
     public func credential(for task: URLSessionTask, protectionSpace: URLProtectionSpace) -> URLCredential? {
         return requestTaskMap[task]?.credential ?? session.configuration.urlCredentialStorage?.defaultCredential(for: protectionSpace)
+    }
+}
+
+public protocol ParameterEncoder {
+    // Take optional paramters?
+    func encode<P: Encodable>(_ parameters: P, into request: URLRequest) throws -> URLRequest
+}
+
+open class JSONParameterEncoder: ParameterEncoder {
+    public static let `default` = JSONParameterEncoder()
+    
+    let encoder: JSONEncoder
+    
+    init(encoder: JSONEncoder = JSONEncoder()) {
+        self.encoder = encoder
+    }
+    
+    public func encode<P: Encodable>(_ parameters: P, into request: URLRequest) throws -> URLRequest {
+        let data = try encoder.encode(parameters)
+        var request = request
+        request.httpBody = data
+        request.httpHeaders.update(.contentType("application/json"))
+        
+        return request
     }
 }
