@@ -294,12 +294,6 @@ class ResponseJSONTestCase: BaseTestCase {
 }
 
 class ResponseJSONDecodableTestCase: BaseTestCase {
-    struct HTTPBinResponse: Decodable {
-        let headers: [String: String]
-        let origin: String
-        let url: String
-    }
-
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
         // Given
         let urlString = "https://httpbin.org/get"

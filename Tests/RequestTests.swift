@@ -203,6 +203,31 @@ class RequestResponseTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
     }
+    
+    // MARK: Encodable Paramters
+    
+    func testThatRequestsCanPassEncodableParameters() {
+        // Given
+        struct Params: Encodable {
+            let property: String
+        }
+        
+        let parameters = Params(property: "one")
+        let expect = expectation(description: "request should complete")
+        var receivedResponse: HTTPBinResponse?
+        
+        // When
+        AF.request("https://httpbin.org/post", method: .post, parameters: parameters)
+          .responseJSONDecodable { (response: DataResponse<HTTPBinResponse>) in
+            receivedResponse = response.result.value
+            expect.fulfill()
+          }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertEqual(receivedResponse?.json, ["property": "one"])
+    }
 }
 
 // MARK: -
@@ -503,38 +528,5 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         return request.debugDescription
             .components(separatedBy: whitespaceCharacterSet)
             .filter { $0 != "" && $0 != "\\" }
-    }
-}
-
-class EncodableRequestTests: BaseTestCase {
-    func testEncodableParamters() {
-        struct HTTPBinResponse: Decodable {
-            let headers: [String: String]
-            let origin: String
-            let url: String
-            let json: [String: String]
-        }
-        
-        struct Params: Encodable {
-            let property: String
-        }
-        
-        // Given
-        let parameters = Params(property: "one")
-        let expect = expectation(description: "request should complete")
-        let session = Session()
-        var receivedResponse: HTTPBinResponse?
-        
-        
-        // When
-        session.request("https://httpbin.org/post", method: .post, parameters: parameters).responseJSONDecodable { (response: DataResponse<HTTPBinResponse>) in
-            receivedResponse = response.result.value
-            expect.fulfill()
-        }
-
-        waitForExpectations(timeout: timeout, handler: nil)
-        
-        // Then
-        XCTAssertEqual(receivedResponse?.json, ["property": "one"])
     }
 }
