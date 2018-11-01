@@ -136,7 +136,7 @@ open class Session {
 
         func asURLRequest() throws -> URLRequest {
             let request = try URLRequest(url: url, method: method, headers: headers)
-            
+
             return try parameters.map { try encoder.encode($0, into: request) } ?? request
         }
     }
