@@ -361,11 +361,14 @@ open class DataRequest: Request {
         let urlRequest: URLRequest
 
         func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask {
-            do {
-                let urlRequest = try self.urlRequest.adapt(using: adapter)
-                return queue.sync { session.dataTask(with: urlRequest) }
-            } catch {
-                throw AdaptError(error: error)
+            let request = self.urlRequest
+            return try queue.sync {
+                do {
+                    let urlRequest = try request.adapt(using: adapter)
+                    return session.dataTask(with: urlRequest)
+                } catch {
+                    throw AdaptError(error: error)
+                }
             }
         }
     }
