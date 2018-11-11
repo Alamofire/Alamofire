@@ -656,7 +656,6 @@ final class URLEncodedFormSerializer {
     func serialize(_ object: [String: URLEncodedFormComponent]) throws -> String {
         var output: [String] = []
         for (key, component) in object {
-            // TODO: Escape key
             let value = try serialize(component, forKey: key)
             output.append(value)
         }
@@ -666,7 +665,6 @@ final class URLEncodedFormSerializer {
 
     func serialize(_ component: URLEncodedFormComponent, forKey key: String) throws -> String {
         switch component {
-        // TODO: Escape string.
         case let .string(string): return "\(key.customURLQueryEscaped)=\(string.customURLQueryEscaped)"
         case let .array(array): return try serialize(array, forKey: key)
         case let .object(dictionary): return try serialize(dictionary, forKey: key)
@@ -675,7 +673,6 @@ final class URLEncodedFormSerializer {
 
     func serialize(_ object: [String: URLEncodedFormComponent], forKey key: String) throws -> String {
         let segments: [String] = try object.map { (subKey, value) in
-            // TODO: Escape key
             let keyPath = "[\(subKey)]"
             return try serialize(value, forKey: key + keyPath)
         }
@@ -686,7 +683,6 @@ final class URLEncodedFormSerializer {
     func serialize(_ array: [URLEncodedFormComponent], forKey key: String) throws -> String {
         let segments: [String] = try array.map { (component) in
             let keyPath = arrayEncoding.encode(key)
-            // TODO: Escape key
             return try serialize(component, forKey: keyPath)
         }
 
