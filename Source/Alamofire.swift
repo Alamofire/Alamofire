@@ -58,13 +58,13 @@ public enum AF {
     ///   - url:        The `URLConvertible` value.
     ///   - method:     The `HTTPMethod`, `.get` by default.
     ///   - parameters: The `Encodable` parameters, `nil` by default.
-    ///   - encoding:   The `ParameterEncoding`, `URLEncoding.default` by default.
+    ///   - encoding:   The `ParameterEncoding`, `URLEncodedFormParameterEncoder.default` by default.
     ///   - headers:    The `HTTPHeaders`, `nil` by default.
     /// - Returns:      The created `DataRequest`.
     public static func request<Parameters: Encodable>(_ url: URLConvertible,
                                                       method: HTTPMethod = .get,
                                                       parameters: Parameters? = nil,
-                                                      encoder: ParameterEncoder = JSONParameterEncoder.default,
+                                                      encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                                       headers: HTTPHeaders? = nil) -> DataRequest {
         return Session.default.request(url,
                                        method: method,
@@ -122,7 +122,7 @@ public enum AF {
     ///   - url:         The `URLConvertible` value.
     ///   - method:      The `HTTPMethod`, `.get` by default.
     ///   - parameters:  The `Encodable` parameters, `nil` by default.
-    ///   - encoder:     The `ParameterEncoder`, `TODO` by default.
+    ///   - encoder:     The `ParameterEncoder`, `URLEncodedFormParameterEncoder.default` by default.
     ///   - headers:     The `HTTPHeaders`, `nil` by default.
     ///   - destination: The `DownloadRequest.Destination` closure used the determine the destination of the downloaded
     ///                  file. `nil` by default.
@@ -130,7 +130,7 @@ public enum AF {
     public static func download<Parameters: Encodable>(_ url: URLConvertible,
                                                        method: HTTPMethod = .get,
                                                        parameters: Parameters? = nil,
-                                                       encoder: ParameterEncoder = JSONParameterEncoder.default,
+                                                       encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                                        headers: HTTPHeaders? = nil,
                                                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         return Session.default.download(url,

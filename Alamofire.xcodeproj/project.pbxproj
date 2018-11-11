@@ -65,6 +65,9 @@
 		311B199420B0ED980036823B /* UploadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5F19A9674D0040E7D1 /* UploadTests.swift */; };
 		311B199520B0ED980036823B /* UploadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5F19A9674D0040E7D1 /* UploadTests.swift */; };
 		311B199620B0ED990036823B /* UploadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5F19A9674D0040E7D1 /* UploadTests.swift */; };
+		31501E882196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
+		31501E892196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
+		31501E8A2196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
 		31727418218BAEC90039FFCC /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727417218BAEC90039FFCC /* HTTPMethod.swift */; };
 		31727419218BAEC90039FFCC /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727417218BAEC90039FFCC /* HTTPMethod.swift */; };
 		3172741A218BAEC90039FFCC /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727417218BAEC90039FFCC /* HTTPMethod.swift */; };
@@ -339,6 +342,7 @@
 		311B198F20B0D3B40036823B /* MultipartUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartUpload.swift; sourceTree = "<group>"; };
 		312D1E0B1FC2551400E51FF1 /* Usage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Usage.md; path = Documentation/Usage.md; sourceTree = "<group>"; };
 		312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = AdvancedUsage.md; path = Documentation/AdvancedUsage.md; sourceTree = "<group>"; };
+		31501E872196962A005829F2 /* ParameterEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoderTests.swift; sourceTree = "<group>"; };
 		316250E41F00ABE900E207A6 /* ISSUE_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = ISSUE_TEMPLATE.md; path = .github/ISSUE_TEMPLATE.md; sourceTree = "<group>"; };
 		316250E51F00ACD000E207A6 /* PULL_REQUEST_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = PULL_REQUEST_TEMPLATE.md; path = .github/PULL_REQUEST_TEMPLATE.md; sourceTree = "<group>"; };
 		31727417218BAEC90039FFCC /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
@@ -506,6 +510,7 @@
 			children = (
 				F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */,
 				F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */,
+				31501E872196962A005829F2 /* ParameterEncoderTests.swift */,
 				F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */,
 				F8111E5D19A9674D0040E7D1 /* RequestTests.swift */,
 				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
@@ -1313,6 +1318,7 @@
 				317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683E20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46D21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
+				31501E8A2196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA4120A1267D00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EC20B271060089BA7C /* CacheTests.swift in Sources */,
 				3111CE9120A7EC27008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
@@ -1445,6 +1451,7 @@
 				317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683C20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46B21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
+				31501E882196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA3F20A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EA20B271040089BA7C /* CacheTests.swift in Sources */,
 				3111CE8F20A7EC26008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
@@ -1475,6 +1482,7 @@
 				317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683D20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46C21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
+				31501E892196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA4020A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EB20B271050089BA7C /* CacheTests.swift in Sources */,
 				3111CE9020A7EC27008315E2 /* NetworkReachabilityManagerTests.swift in Sources */,
