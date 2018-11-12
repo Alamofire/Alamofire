@@ -24,18 +24,35 @@
 
 import Foundation
 
+/// A type that can encode any `Encodable` type into a `URLRequest`.
 public protocol ParameterEncoder {
-    func encode<Parameters: Encodable>(_ parameters: Parameters?, into request: URLRequestConvertible) throws -> URLRequest
+    /// Encode the provided `Encodable` parameters into `request`.
+    ///
+    /// - Parameters:
+    ///   - parameters: The `Encodable` parameter value.
+    ///   - request:    The `URLRequest` into which to encode the parameters.
+    /// - Returns:      A `URLRequest` with the result of the encoding.
+    /// - Throws:       An `Error` when encoding fails. For Alamofire provided encoders, this will be an instance of
+    ///                 `AFError.parameterEncoderFailed` with an associated `ParameterEncoderFailureReason`.
+    func encode<Parameters: Encodable>(_ parameters: Parameters?, into request: URLRequest) throws -> URLRequest
 }
 
+/// A `ParameterEncoder` that encodes types as JSON body data.
+///
+/// If no `Content-Type` header is already set on the provided `URLRequest`s, it's set to `application/json`.
 open class JSONParameterEncoder: ParameterEncoder {
+    /// Returns an encoder with default parameters.
     public static var `default`: JSONParameterEncoder { return JSONParameterEncoder() }
+
+    /// Returns an encoder with `JSONEncoder.outputFormatting` set to `.prettyPrinted`.
     public static var prettyPrinted: JSONParameterEncoder {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
 
         return JSONParameterEncoder(encoder: encoder)
     }
+
+    /// Returns an encoder with `JSONEncoder.outputFormatting` set to `.sortedKeys`.
     @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public static var sortedKeys: JSONParameterEncoder {
         let encoder = JSONEncoder()
@@ -46,35 +63,62 @@ open class JSONParameterEncoder: ParameterEncoder {
 
     let encoder: JSONEncoder
 
+    /// Creates an instance with the provided `JSONEncoder`.
+    ///
+    /// - Parameter encoder: The `JSONEncoder`. Defaults to `JSONEncoder()`.
     public init(encoder: JSONEncoder = JSONEncoder()) {
         self.encoder = encoder
     }
 
     open func encode<Parameters: Encodable>(_ parameters: Parameters?,
-                                            into request: URLRequestConvertible) throws -> URLRequest {
-        var urlRequest = try request.asURLRequest()
+                                            into request: URLRequest) throws -> URLRequest {
+        guard let parameters = parameters else { return request }
 
-        guard let parameters = parameters else { return urlRequest }
+        var request = request
 
         do {
             let data = try encoder.encode(parameters)
-            urlRequest.httpBody = data
-            if urlRequest.httpHeaders["Content-Type"] == nil {
-                urlRequest.httpHeaders.update(.contentType("application/json"))
+            request.httpBody = data
+            if request.httpHeaders["Content-Type"] == nil {
+                request.httpHeaders.update(.contentType("application/json"))
             }
-
-            return urlRequest
         } catch {
             throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
         }
+
+        return request
     }
 }
 
+/// A `ParameterEncoder` that encodes types as URL-encoded query strings to be set on the URL or as body data, depending
+/// on the `Destination` set.
+///
+/// If no `Content-Type` header is already set on the provided `URLRequest`s, it will be set to
+/// `application/x-www-form-urlencoded; charset=utf-8`.
+///
+/// There is no published specification for how to encode collection types. By default, the convention of appending
+/// `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for
+/// nested dictionary values (`foo[bar]=baz`) is used. Optionally, `ArrayEncoding` can be used to omit the
+/// square brackets appended to array keys.
+///
+/// `BoolEncoding` can be used to configure how boolean values are encoded. The default behavior is to encode
+/// `true` as 1 and `false` as 0.
 open class URLEncodedFormParameterEncoder: ParameterEncoder {
+    /// Defines where the URL-encoded string should be set for each `URLRequest`.
     public enum Destination {
-        case methodDependent, queryString, httpBody
+        /// Applies the encoded query string to any existing query string for `.get`, `.head`, and `.delete` request.
+        /// Sets it to the `httpBody` for all other methods.
+        case methodDependent
+        /// Applies the encoded query string to any existing query string from the `URLRequest`.
+        case queryString
+        /// Applies the encoded query string to the `httpBody` of the `URLRequest`.
+        case httpBody
 
-        func encodesParamtersInURL(for method: HTTPMethod) -> Bool {
+        /// Determines whether the URL-encoded string should be applied to the `URLRequest`'s `url`.
+        ///
+        /// - Parameter method: The `HTTPMethod`.
+        /// - Returns:          Whether the URL-encoded string should be applied to a `URL`.
+        func encodesParametersInURL(for method: HTTPMethod) -> Bool {
             switch self {
             case .methodDependent: return [.get, .head, .delete].contains(method)
             case .queryString: return true
@@ -83,53 +127,78 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
         }
     }
 
+    /// Returns an encoder with default parameters.
     public static var `default`: URLEncodedFormParameterEncoder { return URLEncodedFormParameterEncoder() }
 
-    let encoder: URLEncodedFormEncoder
-    let destination: Destination
+    /// The `URLEncodedFormEncoder` to use.
+    public let encoder: URLEncodedFormEncoder
 
+    /// The `Destination` for the URL-encoded string.
+    public let destination: Destination
+
+    /// Creates an instance with the provided `URLEncodedFormEncoder` instance and `Destination` value.
+    ///
+    /// - Parameters:
+    ///   - encoder:     The `URLEncodedFormEncoder`. Defaults to `URLEncodedFormEncoder()`.
+    ///   - destination: The `Destination`. Defaults to `.methodDependent`.
     public init(encoder: URLEncodedFormEncoder = URLEncodedFormEncoder(), destination: Destination = .methodDependent) {
         self.encoder = encoder
         self.destination = destination
     }
 
     open func encode<Parameters: Encodable>(_ parameters: Parameters?,
-                                              into request: URLRequestConvertible) throws -> URLRequest {
-        var urlRequest = try request.asURLRequest()
+                                              into request: URLRequest) throws -> URLRequest {
+        guard let parameters = parameters else { return request }
 
-        guard let parameters = parameters else { return urlRequest }
+        var request = request
 
-        guard
-            let url = urlRequest.url,
-            let rawMethod = urlRequest.httpMethod,
-            let method = HTTPMethod(rawValue: rawMethod) else {
-            // TODO: Need new error.
-            throw AFError.parameterEncodingFailed(reason: .missingURL)
+        guard let url = request.url else {
+            throw AFError.parameterEncoderFailed(reason: .missingRequiredComponent(.url))
         }
 
-        if destination.encodesParamtersInURL(for: method), var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) {
-            // TODO: Make this safer?
-            let query: String = try encoder.encode(parameters)
-            let newQueryString = [urlComponents.percentEncodedQuery, query].compactMap { $0 }.joinedWithAmpersands()
-            urlComponents.percentEncodedQuery = newQueryString
-            urlRequest.url = urlComponents.url
-        } else {
-            if urlRequest.httpHeaders["Content-Type"] == nil {
-                urlRequest.httpHeaders.update(.contentType("application/x-www-form-urlencoded; charset=utf-8"))
+        guard let rawMethod = request.httpMethod, let method = HTTPMethod(rawValue: rawMethod) else {
+            let rawValue = request.httpMethod ?? "nil"
+            throw AFError.parameterEncoderFailed(reason: .missingRequiredComponent(.httpMethod(rawValue: rawValue)))
+        }
+
+        if destination.encodesParametersInURL(for: method),
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
+            let query: String = try Result<String> { try encoder.encode(parameters) }
+                                .mapError { AFError.parameterEncoderFailed(reason: .encoderFailed(error: $0)) }.unwrap()
+            let newQueryString = [components.percentEncodedQuery, query].compactMap { $0 }.joinedWithAmpersands()
+            components.percentEncodedQuery = newQueryString
+
+            guard let newURL = components.url else {
+                throw AFError.parameterEncoderFailed(reason: .missingRequiredComponent(.url))
             }
 
-            urlRequest.httpBody = try encoder.encode(parameters)
+            request.url = newURL
+        } else {
+            if request.httpHeaders["Content-Type"] == nil {
+                request.httpHeaders.update(.contentType("application/x-www-form-urlencoded; charset=utf-8"))
+            }
+
+            request.httpBody = try Result<Data> { try encoder.encode(parameters) }
+                                .mapError { AFError.parameterEncoderFailed(reason: .encoderFailed(error: $0)) }.unwrap()
         }
 
-        return urlRequest
+        return request
     }
 }
 
-public class URLEncodedFormEncoder {
+/// An object that encodes instances into URL-encoded query strings.
+public final class URLEncodedFormEncoder {
+    /// Configures how `Bool` parameters are encoded.
     public enum BoolEncoding {
+        /// Encodes `true` as `1`, `false` as `0`.
         case numeric
+        /// Encodes `true` as "true", `false` as "false".
         case literal
 
+        /// Encodes the given `Bool` as a `String`.
+        ///
+        /// - Parameter value: The `Bool` to encode.
+        /// - Returns:         The encoded `String`.
         func encode(_ value: Bool) -> String {
             switch self {
             case .numeric: return value ? "1" : "0"
@@ -138,8 +207,11 @@ public class URLEncodedFormEncoder {
         }
     }
 
+    /// Configures how `Array` parameters are encoded.
     public enum ArrayEncoding {
+        /// An empty set of square brackets ("[]") are sppended to the key for every value.
         case brackets
+        /// No brackets are appended to the key and the key is encoded as is.
         case noBrackets
 
         func encode(_ key: String) -> String {
@@ -150,13 +222,26 @@ public class URLEncodedFormEncoder {
         }
     }
 
-    enum Error: Swift.Error {
+    /// Internal `URLEncodedFormEncoder` error.
+    public enum Error: Swift.Error {
+        /// An invalid root object was created by the encoder. Only keyed values are valid.
         case invalidRootObject
+
+        var localizedDescription: String {
+            return "Root `Encodable` values must be keyed."
+        }
     }
 
-    private let arrayEncoding: ArrayEncoding
-    private let boolEncoding: BoolEncoding
+    /// The `ArrayEncoding` to use.
+    public let arrayEncoding: ArrayEncoding
+    /// The `BoolEncoding` to use.
+    public let boolEncoding: BoolEncoding
 
+    /// Creates an instance from the supplied parameters.
+    ///
+    /// - Parameters:
+    ///   - arrayEncoding: The `ArrayEncoding` instance. Defaults to `.brackets`.
+    ///   - boolEncoding:  The `BoolEncoding` instance. Defaults to `.numeric`.
     public init(arrayEncoding: ArrayEncoding = .brackets, boolEncoding: BoolEncoding = .numeric) {
         self.arrayEncoding = arrayEncoding
         self.boolEncoding = boolEncoding
@@ -717,7 +802,7 @@ extension CharacterSet {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="
         let encodableDelimiters = CharacterSet(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
-        
+
         return CharacterSet.urlQueryAllowed.subtracting(encodableDelimiters)
     }()
 }

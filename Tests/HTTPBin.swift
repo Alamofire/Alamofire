@@ -22,9 +22,49 @@
 //  THE SOFTWARE.
 //
 
+import Alamofire
+import Foundation
+
+extension String {
+    static let httpBinURLString = "https://httpbin.org"
+}
+
+extension URL {
+    static func makeHTTPBinURL(path: String = "get") -> URL {
+        let url = URL(string: .httpBinURLString)!
+        return url.appendingPathComponent(path)
+    }
+}
+
+extension URLRequest {
+    static func makeHTTPBinRequest(path: String = "get",
+                                   method: HTTPMethod = .get,
+                                   headers: HTTPHeaders = .init()) -> URLRequest {
+        var request = URLRequest(url: .makeHTTPBinURL(path: path))
+        request.httpMethod = method.rawValue
+        request.httpHeaders = headers
+        
+        return request
+    }
+}
+
+extension Data {
+    var asString: String {
+        return String(data: self, encoding: .utf8)!
+    }
+}
+
 struct HTTPBinResponse: Decodable {
     let headers: [String: String]
     let origin: String
     let url: String
-    let json: [String: String]
+    let data: String?
+    let form: [String: String]?
+    let args: [String: String]
+}
+
+struct HTTPBinParameters: Encodable {
+    static let `default` = HTTPBinParameters(property: "property")
+    
+    let property: String
 }
