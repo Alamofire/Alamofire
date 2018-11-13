@@ -130,13 +130,13 @@ public enum AFError: Error {
     /// - jsonSerializationFailed:         JSON serialization failed with an underlying system error.
     /// - invalidEmptyResponse:            Generic serialization failed for an empty response that wasn't type `Empty`.
     public enum ResponseSerializationFailureReason {
-        case inputDataNil
         case inputDataNilOrZeroLength
         case inputFileNil
         case inputFileReadFailed(at: URL)
         case stringSerializationFailed(encoding: String.Encoding)
         case jsonSerializationFailed(error: Error)
         case invalidEmptyResponse(type: String)
+        case jsonDecodingFailed(error: Error)
     }
 
     /// Underlying reason a server trust evaluation error occured.
@@ -537,8 +537,6 @@ extension AFError.MultipartEncodingFailureReason {
 extension AFError.ResponseSerializationFailureReason {
     var localizedDescription: String {
         switch self {
-        case .inputDataNil:
-            return "Response could not be serialized, input data was nil."
         case .inputDataNilOrZeroLength:
             return "Response could not be serialized, input data was nil or zero length."
         case .inputFileNil:
@@ -551,6 +549,8 @@ extension AFError.ResponseSerializationFailureReason {
             return "JSON could not be serialized because of error:\n\(error.localizedDescription)"
         case .invalidEmptyResponse(let type):
             return "Empty response could not be serialized to type: \(type). Use Empty as the expected type for such responses."
+        case .jsonDecodingFailed(let error):
+            return "JSON could not be decoded because of error:\n\(error.localizedDescription)"
         }
     }
 }
