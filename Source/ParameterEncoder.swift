@@ -221,6 +221,25 @@ public final class URLEncodedFormEncoder {
             }
         }
     }
+    
+    /// Configures how spaces are encoded.
+    public enum SpaceEncoding {
+        /// Encodes spaces according to normal percent escaping rules (%20).
+        case percentEscaped
+        /// Encodes spaces as `+`,
+        case plusReplaced
+        
+        /// Encodes the string according to the encoding.
+        ///
+        /// - Parameter string: The `String` to encode.
+        /// - Returns:          The encoded `String`.
+        func encode(_ string: String) -> String {
+            switch self {
+            case .percentEscaped: return string.replacingOccurrences(of: " ", with: "%20")
+            case .plusReplaced: return string.replacingOccurrences(of: " ", with: "+")
+            }
+        }
+    }
 
     /// Internal `URLEncodedFormEncoder` error.
     public enum Error: Swift.Error {
@@ -231,20 +250,31 @@ public final class URLEncodedFormEncoder {
             return "Root `Encodable` values must be keyed."
         }
     }
-
+    
     /// The `ArrayEncoding` to use.
     public let arrayEncoding: ArrayEncoding
     /// The `BoolEncoding` to use.
     public let boolEncoding: BoolEncoding
+    /// The `SpaceEncoding` to use.
+    public let spaceEncoding: SpaceEncoding
+    /// The `CharacterSet` of allowed characters.
+    public var allowedCharacters: CharacterSet
 
     /// Creates an instance from the supplied parameters.
     ///
     /// - Parameters:
     ///   - arrayEncoding: The `ArrayEncoding` instance. Defaults to `.brackets`.
     ///   - boolEncoding:  The `BoolEncoding` instance. Defaults to `.numeric`.
-    public init(arrayEncoding: ArrayEncoding = .brackets, boolEncoding: BoolEncoding = .numeric) {
+    ///   - spaceEncoding: The `SpaceEncoding` instance. Defaults to `.percentEscaped`.
+    ///   - allowedCharacters: The `CharacterSet` of allowed (non-escaped) characters. Defaults to `.afURLQueryAllowed`.
+    public init(arrayEncoding: ArrayEncoding = .brackets,
+                boolEncoding: BoolEncoding = .numeric,
+                spaceEncoding: SpaceEncoding = .percentEscaped,
+                allowedCharacters: CharacterSet = .afURLQueryAllowed) {
         self.arrayEncoding = arrayEncoding
         self.boolEncoding = boolEncoding
+        self.spaceEncoding = spaceEncoding
+        self.allowedCharacters = allowedCharacters
     }
 
     func encode(_ value: Encodable) throws -> URLEncodedFormComponent {
@@ -255,16 +285,32 @@ public final class URLEncodedFormEncoder {
         return context.component
     }
 
+    /// Encodes the `value` as a URL form encoded `String`.
+    ///
+    /// - Parameter value: The `Encodable` value.`
+    /// - Returns:         The encoded `String`.
+    /// - Throws:          An `Error` or `EncodingError` instance if encoding fails.
     public func encode(_ value: Encodable) throws -> String {
         let component: URLEncodedFormComponent = try encode(value)
+        
         guard case let .object(object) = component else {
             throw Error.invalidRootObject
         }
-        let serializer = URLEncodedFormSerializer(arrayEncoding: arrayEncoding)
-
-        return try serializer.serialize(object)
+        
+        let serializer = URLEncodedFormSerializer(arrayEncoding: arrayEncoding,
+                                                  spaceEncoding: spaceEncoding,
+                                                  allowedCharacters: allowedCharacters)
+        let query = serializer.serialize(object)
+        
+        return query
     }
 
+    /// Encodes the value as `Data`. This is performed by first creating an encoded `String` and then returning the
+    /// `.utf8` data.
+    ///
+    /// - Parameter value: The `Encodable` value.
+    /// - Returns:         The encoded `Data`.
+    /// - Throws:          An `Error` or `EncodingError` instance if encoding fails.
     public func encode(_ value: Encodable) throws -> Data {
         let string: String = try encode(value)
 
@@ -733,57 +779,66 @@ extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
 
 final class URLEncodedFormSerializer {
     let arrayEncoding: URLEncodedFormEncoder.ArrayEncoding
+    let spaceEncoding: URLEncodedFormEncoder.SpaceEncoding
+    let allowedCharacters: CharacterSet
 
-    init(arrayEncoding: URLEncodedFormEncoder.ArrayEncoding) {
+    init(arrayEncoding: URLEncodedFormEncoder.ArrayEncoding,
+         spaceEncoding: URLEncodedFormEncoder.SpaceEncoding,
+         allowedCharacters: CharacterSet) {
         self.arrayEncoding = arrayEncoding
+        self.spaceEncoding = spaceEncoding
+        self.allowedCharacters = allowedCharacters
     }
 
-    func serialize(_ object: [String: URLEncodedFormComponent]) throws -> String {
+    func serialize(_ object: [String: URLEncodedFormComponent]) -> String {
         var output: [String] = []
         for (key, component) in object {
-            let value = try serialize(component, forKey: key)
+            let value = serialize(component, forKey: key)
             output.append(value)
         }
 
         return output.joinedWithAmpersands()
     }
 
-    func serialize(_ component: URLEncodedFormComponent, forKey key: String) throws -> String {
+    func serialize(_ component: URLEncodedFormComponent, forKey key: String) -> String {
         switch component {
-        case let .string(string): return "\(key.customURLQueryEscaped)=\(string.customURLQueryEscaped)"
-        case let .array(array): return try serialize(array, forKey: key)
-        case let .object(dictionary): return try serialize(dictionary, forKey: key)
+        case let .string(string): return "\(escape(key))=\(escape(string))"
+        case let .array(array): return serialize(array, forKey: key)
+        case let .object(dictionary): return serialize(dictionary, forKey: key)
         }
     }
 
-    func serialize(_ object: [String: URLEncodedFormComponent], forKey key: String) throws -> String {
-        let segments: [String] = try object.map { (subKey, value) in
+    func serialize(_ object: [String: URLEncodedFormComponent], forKey key: String) -> String {
+        let segments: [String] = object.map { (subKey, value) in
             let keyPath = "[\(subKey)]"
-            return try serialize(value, forKey: key + keyPath)
+            return serialize(value, forKey: key + keyPath)
         }
 
         return segments.joinedWithAmpersands()
     }
 
-    func serialize(_ array: [URLEncodedFormComponent], forKey key: String) throws -> String {
-        let segments: [String] = try array.map { (component) in
+    func serialize(_ array: [URLEncodedFormComponent], forKey key: String) -> String {
+        let segments: [String] = array.map { (component) in
             let keyPath = arrayEncoding.encode(key)
-            return try serialize(component, forKey: keyPath)
+            return serialize(component, forKey: keyPath)
         }
 
         return segments.joinedWithAmpersands()
+    }
+    
+    func escape(_ query: String) -> String {
+        var allowedCharactersWithSpace = allowedCharacters
+        allowedCharactersWithSpace.insert(charactersIn: " ")
+        let escapedQuery = query.addingPercentEncoding(withAllowedCharacters: allowedCharactersWithSpace) ?? query
+        let spaceEncodedQuery = spaceEncoding.encode(escapedQuery)
+        
+        return spaceEncodedQuery
     }
 }
 
 extension Array where Element == String {
     func joinedWithAmpersands() -> String {
         return joined(separator: "&")
-    }
-}
-
-extension String {
-    var customURLQueryEscaped: String {
-        return addingPercentEncoding(withAllowedCharacters: .customURLQueryAllowed) ?? self
     }
 }
 
@@ -798,7 +853,7 @@ extension CharacterSet {
     /// In RFC 3986 - Section 3.4, it states that the "?" and "/" characters should not be escaped to allow
     /// query strings to include a URL. Therefore, all "reserved" characters with the exception of "?" and "/"
     /// should be percent-escaped in the query string.
-    static let customURLQueryAllowed: CharacterSet = {
+    public static let afURLQueryAllowed: CharacterSet = {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="
         let encodableDelimiters = CharacterSet(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
