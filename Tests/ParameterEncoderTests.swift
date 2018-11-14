@@ -239,6 +239,32 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Then
         XCTAssertEqual(result.value, "array=1&array=2")
     }
+    
+    func testThatSpacesCanBeEncodedAsPluses() {
+        // Given
+        let encoder = URLEncodedFormEncoder(spaceEncoding: .plusReplaced)
+        let parameters = ["spaces": "replace with spaces"]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "spaces=replace+with+spaces")
+    }
+    
+    func testThatEscapedCharactersCanBeCustomized() {
+        // Given
+        var allowed = CharacterSet.afURLQueryAllowed
+        allowed.remove(charactersIn: "?/")
+        let encoder = URLEncodedFormEncoder(allowedCharacters: allowed)
+        let parameters = ["allowed": "?/"]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "allowed=%3F%2F")
+    }
 
     func testThatUnreservedCharactersAreNotPercentEscaped() {
         // Given
