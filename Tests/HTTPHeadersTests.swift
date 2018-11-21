@@ -1,5 +1,5 @@
 //
-//  HTTPHeaders.swift
+//  HTTPHeadersTests.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -110,7 +110,6 @@ class HTTPHeadersTests: BaseTestCase {
 
         // When
         headers["C"] = "c"
-
 
         // Then
         XCTAssertEqual(headers.description, "C: c")
