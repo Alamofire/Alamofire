@@ -161,6 +161,7 @@ public enum AFError: Error {
 }
 
 public extension Error {
+    /// Returns the instance cast as an `AFError`.
     public var asAFError: AFError? {
         return self as? AFError
     }
