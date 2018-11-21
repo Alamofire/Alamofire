@@ -92,8 +92,8 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
             let sortedHeaders = response.httpHeaders.sorted()
 
             return """
-                   Status Code: \(response.statusCode)
-                   Headers:
+                   [Status Code]: \(response.statusCode)
+                   [Headers]:
                    \(sortedHeaders)
                    """
         } ?? "nil"
@@ -101,7 +101,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
 
         return """
         [Request]: \(requestDescription)
-        [Response]: \(responseDescription)
+        [Response]: \n\(responseDescription)
         [Data]: \(data?.description ?? "None")
         [Network Duration]: \(metricsDescription)
         [Serialization Duration]: \(serializationDuration)s
@@ -276,8 +276,8 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
             let sortedHeaders = response.httpHeaders.sorted()
 
             return """
-                   Status Code: \(response.statusCode)
-                   Headers:
+                   [Status Code]: \(response.statusCode)
+                   [Headers]:
                    \(sortedHeaders)
                    """
         } ?? "nil"
@@ -286,7 +286,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
 
         return """
         [Request]: \(requestDescription)
-        [Response]: \(responseDescription)
+        [Response]: \n\(responseDescription)
         [File URL]: \(fileURL?.path ?? "nil")
         [ResumeData]: \(resumeDataDescription)
         [Network Duration]: \(metricsDescription)
