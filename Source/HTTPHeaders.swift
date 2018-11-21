@@ -100,7 +100,6 @@ public struct HTTPHeaders {
         return headers[index].value
     }
 
-
     /// Case-insensitively access the header with the given name.
     ///
     /// - Parameter name: The name of the header.
@@ -205,7 +204,7 @@ extension HTTPHeader {
     public static func acceptCharset(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Charset", value: value)
     }
-    
+
     /// Returns an `Accept-Language` header.
     ///
     /// Alamofire offers a default Accept-Language header that accumulates and encodes the system's preferred languages.
@@ -239,7 +238,7 @@ extension HTTPHeader {
 
         return authorization("Basic \(credential)")
     }
-    
+
     /// Returns a `Bearer` `Authorization` header using the `bearerToken` provided
     ///
     /// - Parameter bearerToken: The bearer token.
