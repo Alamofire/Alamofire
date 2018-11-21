@@ -221,14 +221,14 @@ public final class URLEncodedFormEncoder {
             }
         }
     }
-    
+
     /// Configures how spaces are encoded.
     public enum SpaceEncoding {
         /// Encodes spaces according to normal percent escaping rules (%20).
         case percentEscaped
         /// Encodes spaces as `+`,
         case plusReplaced
-        
+
         /// Encodes the string according to the encoding.
         ///
         /// - Parameter string: The `String` to encode.
@@ -250,7 +250,7 @@ public final class URLEncodedFormEncoder {
             return "Root `Encodable` values must be keyed."
         }
     }
-    
+
     /// The `ArrayEncoding` to use.
     public let arrayEncoding: ArrayEncoding
     /// The `BoolEncoding` to use.
@@ -292,16 +292,16 @@ public final class URLEncodedFormEncoder {
     /// - Throws:          An `Error` or `EncodingError` instance if encoding fails.
     public func encode(_ value: Encodable) throws -> String {
         let component: URLEncodedFormComponent = try encode(value)
-        
+
         guard case let .object(object) = component else {
             throw Error.invalidRootObject
         }
-        
+
         let serializer = URLEncodedFormSerializer(arrayEncoding: arrayEncoding,
                                                   spaceEncoding: spaceEncoding,
                                                   allowedCharacters: allowedCharacters)
         let query = serializer.serialize(object)
-        
+
         return query
     }
 
@@ -825,13 +825,13 @@ final class URLEncodedFormSerializer {
 
         return segments.joinedWithAmpersands()
     }
-    
+
     func escape(_ query: String) -> String {
         var allowedCharactersWithSpace = allowedCharacters
         allowedCharactersWithSpace.insert(charactersIn: " ")
         let escapedQuery = query.addingPercentEncoding(withAllowedCharacters: allowedCharactersWithSpace) ?? query
         let spaceEncodedQuery = spaceEncoding.encode(escapedQuery)
-        
+
         return spaceEncodedQuery
     }
 }

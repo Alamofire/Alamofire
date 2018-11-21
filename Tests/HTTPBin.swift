@@ -43,7 +43,7 @@ extension URLRequest {
         var request = URLRequest(url: .makeHTTPBinURL(path: path))
         request.httpMethod = method.rawValue
         request.httpHeaders = headers
-        
+
         return request
     }
 }
@@ -65,6 +65,6 @@ struct HTTPBinResponse: Decodable {
 
 struct HTTPBinParameters: Encodable {
     static let `default` = HTTPBinParameters(property: "property")
-    
+
     let property: String
 }

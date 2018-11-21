@@ -30,39 +30,39 @@ final class JSONParameterEncoderTests: BaseTestCase {
         // Given
         let encoder = JSONParameterEncoder()
         let request = URLRequest.makeHTTPBinRequest()
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "application/json")
         XCTAssertEqual(newRequest.httpBody?.asString, "{\"property\":\"property\"}")
     }
-    
+
     func testThatDataIsProperlyEncodedButContentTypeIsNotSetIfRequestAlreadyHasAContentType() throws {
         // Given
         let encoder = JSONParameterEncoder()
         var request = URLRequest.makeHTTPBinRequest()
         request.httpHeaders.update(.contentType("type"))
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "type")
         XCTAssertEqual(newRequest.httpBody?.asString, "{\"property\":\"property\"}")
     }
-    
+
     func testThatJSONEncoderCanBeCustomized() throws {
         // Given
         let jsonEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = .prettyPrinted
         let encoder = JSONParameterEncoder(encoder: jsonEncoder)
         let request = URLRequest.makeHTTPBinRequest()
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         let expected = """
                     {
@@ -78,51 +78,51 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         // Given
         let encoder = URLEncodedFormParameterEncoder()
         let request = URLRequest.makeHTTPBinRequest(method: .post)
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "application/x-www-form-urlencoded; charset=utf-8")
         XCTAssertEqual(newRequest.httpBody?.asString, "property=property")
     }
-    
+
     func testThatQueryIsBodyEncodedButContentTypeIsNotSetWhenRequestAlreadyHasContentType() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder()
         var request = URLRequest.makeHTTPBinRequest(method: .post)
         request.httpHeaders.update(.contentType("type"))
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "type")
         XCTAssertEqual(newRequest.httpBody?.asString, "property=property")
     }
-    
+
     func testThatEncoderCanBeCustomized() throws {
         // Given
         let urlEncoder = URLEncodedFormEncoder(boolEncoding: .literal)
         let encoder = URLEncodedFormParameterEncoder(encoder: urlEncoder)
         let request = URLRequest.makeHTTPBinRequest()
-        
+
         // When
         let newRequest = try encoder.encode(["bool": true], into: request)
-        
+
         // Then
         let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)
         XCTAssertEqual(components?.percentEncodedQuery, "bool=true")
     }
-    
+
     func testThatQueryIsInURLWhenDestinationIsURLAndMethodIsPOST() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder(destination: .queryString)
         let request = URLRequest.makeHTTPBinRequest(method: .post)
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)
         XCTAssertEqual(components?.percentEncodedQuery, "property=property")
@@ -239,29 +239,29 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Then
         XCTAssertEqual(result.value, "array=1&array=2")
     }
-    
+
     func testThatSpacesCanBeEncodedAsPluses() {
         // Given
         let encoder = URLEncodedFormEncoder(spaceEncoding: .plusReplaced)
         let parameters = ["spaces": "replace with spaces"]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "spaces=replace+with+spaces")
     }
-    
+
     func testThatEscapedCharactersCanBeCustomized() {
         // Given
         var allowed = CharacterSet.afURLQueryAllowed
         allowed.remove(charactersIn: "?/")
         let encoder = URLEncodedFormEncoder(allowedCharacters: allowed)
         let parameters = ["allowed": "?/"]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "allowed=%3F%2F")
     }
