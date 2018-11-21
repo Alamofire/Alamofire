@@ -90,11 +90,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
                 return (.performDefaultHandling, nil, nil)
             }
 
-            guard try evaluator.evaluate(trust, forHost: host) else {
-                let error = AFError.serverTrustEvaluationFailed(reason: .unknown(host: host))
-
-                return (.cancelAuthenticationChallenge, nil, error)
-            }
+            try evaluator.evaluate(trust, forHost: host)
 
             return (.useCredential, URLCredential(trust: trust), nil)
         } catch {
