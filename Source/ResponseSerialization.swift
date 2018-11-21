@@ -45,11 +45,31 @@ public protocol DownloadResponseSerializerProtocol {
 }
 
 /// A serializer that can handle both data and download responses.
-public protocol ResponseSerializer: DataResponseSerializerProtocol & DownloadResponseSerializerProtocol { }
+public protocol ResponseSerializer: DataResponseSerializerProtocol & DownloadResponseSerializerProtocol {
+    static var defaultEmptyRequestMethods: Set<HTTPMethod> { get }
+    static var defaultEmptyResponseCodes: Set<Int> { get }
+
+    var emptyRequestMethods: Set<HTTPMethod> { get }
+    var emptyResponseCodes: Set<Int> { get }
+}
 
 extension ResponseSerializer {
-    public static var defaultEmptyResponseCodes: Set<Int> { return emptyResponseCodes }
-    public static var defaultEmptyRequestMethods: Set<HTTPMethod> { return emptyRequestMethods }
+    public static var defaultEmptyRequestMethods: Set<HTTPMethod> { return [.head] }
+    public static var defaultEmptyResponseCodes: Set<Int> { return [204, 205] }
+
+    var emptyRequestMethods: Set<HTTPMethod> { return Self.defaultEmptyRequestMethods }
+    var emptyResponseCodes: Set<Int> { return Self.defaultEmptyResponseCodes }
+
+    public func requestAllowsEmptyResponseData(_ request: URLRequest?) -> Bool? {
+        return request.flatMap { $0.httpMethod }
+                      .flatMap(HTTPMethod.init)
+                      .map { emptyRequestMethods.contains($0) }
+    }
+
+    public func responseAllowsEmptyResponseData(_ response: HTTPURLResponse?) -> Bool? {
+        return response.flatMap { $0.statusCode }
+                       .map { emptyResponseCodes.contains($0) }
+    }
 }
 
 /// By default, any serializer declared to conform to both types will get file serialization for free, as it just feeds
@@ -269,12 +289,7 @@ public final class DataResponseSerializer: ResponseSerializer {
         guard error == nil else { throw error! }
         
         guard let data = data, !data.isEmpty else {
-            let requestAllowsEmptyResponses = request.flatMap { $0.httpMethod }
-                                                     .flatMap(HTTPMethod.init)
-                                                     .map { emptyRequestMethods.contains($0) }
-            let responseAllowsEmptyResponses = response.flatMap { $0.statusCode }
-                                                       .map { emptyResponseCodes.contains($0) }
-            if requestAllowsEmptyResponses ?? responseAllowsEmptyResponses ?? false {
+            if requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false {
                 return Data()
             } else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
@@ -340,12 +355,7 @@ public final class StringResponseSerializer: ResponseSerializer {
         guard error == nil else { throw error! }
 
         guard let data = data else {
-            let requestAllowsEmptyResponses = request.flatMap { $0.httpMethod }
-                                                     .flatMap(HTTPMethod.init)
-                                                     .map { emptyRequestMethods.contains($0) }
-            let responseAllowsEmptyResponses = response.flatMap { $0.statusCode }
-                                                       .map { emptyResponseCodes.contains($0) }
-            if requestAllowsEmptyResponses ?? responseAllowsEmptyResponses ?? false {
+            if requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false {
                 return ""
             } else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
@@ -447,12 +457,7 @@ public final class JSONResponseSerializer: ResponseSerializer {
         guard error == nil else { throw error! }
 
         guard let data = data, !data.isEmpty else {
-            let requestAllowsEmptyResponses = request.flatMap { $0.httpMethod }
-                                                     .flatMap(HTTPMethod.init)
-                                                     .map { emptyRequestMethods.contains($0) }
-            let responseAllowsEmptyResponses = response.flatMap { $0.statusCode }
-                                                       .map { emptyResponseCodes.contains($0) }
-            if requestAllowsEmptyResponses ?? responseAllowsEmptyResponses ?? false {
+            if requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false {
                 return NSNull()
             } else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
@@ -547,16 +552,11 @@ public final class JSONDecodableResponseSerializer<T: Decodable>: ResponseSerial
         guard error == nil else { throw error! }
 
         guard let data = data, !data.isEmpty else {
-            let requestAllowsEmptyResponses = request.flatMap { $0.httpMethod }
-                                                     .flatMap(HTTPMethod.init)
-                                                     .map { emptyRequestMethods.contains($0) }
-            let responseAllowsEmptyResponses = response.flatMap { $0.statusCode }
-                                                       .map { emptyResponseCodes.contains($0) }
-            if requestAllowsEmptyResponses ?? responseAllowsEmptyResponses ?? false {
+            if requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false {
                 guard let emptyValue = Empty.value as? T else {
                     throw AFError.responseSerializationFailed(reason: .invalidEmptyResponse(type: "\(T.self)"))
                 }
-                
+
                 return emptyValue
             } else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
@@ -590,7 +590,3 @@ extension DataRequest {
                         completionHandler: completionHandler)
     }
 }
-
-/// A set of HTTP response status code that do not contain response data.
-private let emptyResponseCodes: Set<Int> = [204, 205]
-private let emptyRequestMethods: Set<HTTPMethod> = [.head]
