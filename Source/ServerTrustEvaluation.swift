@@ -422,9 +422,7 @@ public extension SecTrust {
 
     /// The public keys contained in `self`.
     var publicKeys: [SecKey] {
-        return (0..<SecTrustGetCertificateCount(self)).compactMap { index in
-            return SecTrustGetCertificateAtIndex(self, index)?.publicKey
-        }
+        return certificates.publicKeys
     }
 
     /// The `Data` values for all certificates contained in `self`.
