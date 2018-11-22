@@ -169,6 +169,18 @@ class ServerTrustPolicyTestCase: BaseTestCase {
     }
 }
 
+// MARK: - SecTrust Extension
+
+extension SecTrust {
+    /// Evaluates `self` and returns `true` if the evaluation succeeds with a value of `.unspecified` or `.proceed`.
+    var isValid: Bool {
+        var result = SecTrustResultType.invalid
+        let status = SecTrustEvaluate(self, &result)
+        
+        return (status == errSecSuccess) ? (result == .unspecified || result == .proceed) : false
+    }
+}
+
 // MARK: -
 
 class ServerTrustPolicyExplorationBasicX509PolicyValidationTestCase: ServerTrustPolicyTestCase {
@@ -1394,10 +1406,10 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let serverTrustIsValid = try compositePolicy.evaluate(serverTrust, forHost: host)
+        let result = Result { try compositePolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(serverTrustIsValid, "server trust should pass evaluation")
+        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() throws {
