@@ -138,7 +138,6 @@ public enum AFError: Error {
                 self.result = result
             }
         }
-        case unknown(host: String)
         case noRequiredEvaluator(host: String)
         case noCertificatesFound
         case noPublicKeysFound
@@ -162,6 +161,7 @@ public enum AFError: Error {
 }
 
 public extension Error {
+    /// Returns the instance cast as an `AFError`.
     public var asAFError: AFError? {
         return self as? AFError
     }
@@ -513,8 +513,6 @@ extension AFError.ResponseValidationFailureReason {
 extension AFError.ServerTrustFailureReason {
     var localizedDescription: String {
         switch self {
-        case .unknown:
-            return "Server trust evaluation failed but no specific error was thrown."
         case let .noRequiredEvaluator(host):
             return "A ServerTrustEvaluating value is required for host \(host) but none was found."
         case .noCertificatesFound:

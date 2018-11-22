@@ -314,11 +314,6 @@ extension AFError.ResponseValidationFailureReason {
 // MARK: -
 
 extension AFError.ServerTrustFailureReason {
-    var isUnknown: Bool {
-        if case .unknown = self { return true }
-        return false
-    }
-
     var isNoRequiredEvaluator: Bool {
         if case .noRequiredEvaluator = self { return true }
         return false
