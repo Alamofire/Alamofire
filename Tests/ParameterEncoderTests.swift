@@ -141,6 +141,138 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Then
         XCTAssertEqual(result.value, "a=a")
     }
+    
+    func testEncoderCanEncodeDouble() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters = ["a": 1.0]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1.0")
+    }
+    
+    func testEncoderCanEncodeFloat() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: Float] = ["a": 1.0]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1.0")
+    }
+    
+    func testEncoderCanEncodeInt8() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: Int8] = ["a": 1]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+    
+    func testEncoderCanEncodeInt16() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: Int16] = ["a": 1]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+    
+    func testEncoderCanEncodeInt32() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: Int32] = ["a": 1]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+    
+    func testEncoderCanEncodeInt64() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: Int64] = ["a": 1]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+    
+    func testEncoderCanEncodeUInt() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: UInt] = ["a": 1]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+    
+    func testEncoderCanEncodeUInt8() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: UInt8] = ["a": 1]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+    
+    func testEncoderCanEncodeUInt16() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: UInt16] = ["a": 1]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+    
+    func testEncoderCanEncodeUInt32() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: UInt32] = ["a": 1]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+    
+    func testEncoderCanEncodeUInt64() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: UInt64] = ["a": 1]
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
 
     func testThatNestedDictionariesHaveBracketedKeys() {
         // Given
@@ -163,7 +295,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String> { try encoder.encode(parameters) }
 
         // Then
-        let expected = "four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&two=2&five%5Ba%5D=a&five%5Bb%5D=b&three=1&one=one"
+        let expected = "four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&three=1&one=one&two=2&five%5Ba%5D=a&six%5Ba%5D%5Bb%5D=b&seven%5Ba%5D=a"
         XCTAssertEqual(result.value, expected)
     }
 
@@ -424,7 +556,13 @@ private struct EncodableStruct: Encodable {
     let two = 2
     let three = true
     let four = [1, 2, 3]
-    let five = ["a": "a", "b": "b"]
+    let five = ["a": "a"]
+    let six = ["a": ["b": "b"]]
+    let seven = NestedEncodableStruct()
+}
+
+private struct NestedEncodableStruct: Encodable {
+    let a = "a"
 }
 
 private class EncodableSuperclass: Encodable {

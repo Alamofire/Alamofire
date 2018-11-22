@@ -198,6 +198,8 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
 ///
 /// `SpaceEncoding` can be used to configure how spaces are encoded. Modern encodings use percent replacement (%20),
 /// while older encoding may expect spaces to be replaced with +.
+///
+/// This type is largely based on Vapor's [`url-encoded-form`](https://github.com/vapor/url-encoded-form) project.
 public final class URLEncodedFormEncoder {
     /// Configures how `Bool` parameters are encoded.
     public enum BoolEncoding {
@@ -414,29 +416,6 @@ enum URLEncodedFormComponent {
     ///     - path: `CodingKey` path to update with the supplied value.
     public mutating func set(to value: URLEncodedFormComponent, at path: [CodingKey]) {
         set(&self, to: value, at: path)
-    }
-
-    /// Sets self to the supplied value at a given path.
-    ///
-    ///     data.get(at: ["path", "to", "value"])
-    ///
-    /// - parameters:
-    ///     - path: `CodingKey` path to fetch the supplied value at.
-    /// - returns: An instance of `Self` if a value exists at the path, otherwise `nil`.
-    public func get(at path: [CodingKey]) -> URLEncodedFormComponent? {
-        var child = self
-
-        for seg in path {
-            if let object = child.object, let c = object[seg.stringValue] {
-                child = c
-            } else if let array = child.array, let index = seg.intValue {
-                child = array[index]
-            } else {
-                return nil
-            }
-        }
-
-        return child
     }
 
     /// Recursive backing method to `set(to:at:)`.
