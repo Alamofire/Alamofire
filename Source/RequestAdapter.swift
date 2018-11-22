@@ -26,12 +26,10 @@ import Foundation
 
 /// A type that can inspect and optionally adapt a `URLRequest` in some manner if necessary.
 public protocol RequestAdapter {
-    /// Inspects and adapts the specified `URLRequest` in some manner if necessary and returns the result.
+    /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the Result.
     ///
-    /// - parameter urlRequest: The URL request to adapt.
-    ///
-    /// - throws: An `Error` if the adaptation encounters an error.
-    ///
-    /// - returns: The adapted `URLRequest`.
-    func adapt(_ urlRequest: URLRequest) throws -> URLRequest
+    /// - Parameters:
+    ///   - urlRequest: The `URLRequest` to adapt.
+    ///   - completion: The completion handler that must be called when adaptation is complete.
+    func adapt(_ urlRequest: URLRequest, completion: @escaping (_ result: Result<URLRequest>) -> Void)
 }

@@ -347,14 +347,16 @@ open class Session {
             guard !request.isCancelled else { return }
 
             if let adapter = adapter {
-                do {
-                    let adaptedRequest = try adapter.adapt(initialRequest)
-                    rootQueue.async {
-                        request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
-                        self.didCreateURLRequest(adaptedRequest, for: request)
+                adapter.adapt(initialRequest) { (result) in
+                    do {
+                        let adaptedRequest = try result.unwrap()
+                        self.rootQueue.async {
+                            request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
+                            self.didCreateURLRequest(adaptedRequest, for: request)
+                        }
+                    } catch {
+                        self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: error) }
                     }
-                } catch {
-                    rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: error) }
                 }
             } else {
                 rootQueue.async { self.didCreateURLRequest(initialRequest, for: request) }

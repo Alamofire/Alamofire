@@ -39,13 +39,17 @@ class SessionManagerTestCase: BaseTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-            guard !throwsError else { throw AFError.invalidURL(url: "") }
-
-            var urlRequest = urlRequest
-            urlRequest.httpMethod = method.rawValue
-
-            return urlRequest
+        func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void) {
+            let result: Result<URLRequest> = Result {
+                guard !throwsError else { throw AFError.invalidURL(url: "") }
+                
+                var urlRequest = urlRequest
+                urlRequest.httpMethod = method.rawValue
+                
+                return urlRequest
+            }
+            
+            completion(result)
         }
     }
 
@@ -57,23 +61,27 @@ class SessionManagerTestCase: BaseTestCase {
         var shouldApplyAuthorizationHeader = false
         var throwsErrorOnSecondAdapt = false
 
-        func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-            if throwsErrorOnSecondAdapt && adaptedCount == 1 {
-                throwsErrorOnSecondAdapt = false
-                throw AFError.invalidURL(url: "")
-            }
-
-            var urlRequest = urlRequest
-
-            adaptedCount += 1
-
-            if shouldApplyAuthorizationHeader && adaptedCount > 1 {
-                if let header = HTTPHeaders.authorization(username: "user", password: "password").first {
-                    urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
+        func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void) {
+            let result: Result<URLRequest> = Result {
+                if throwsErrorOnSecondAdapt && adaptedCount == 1 {
+                    throwsErrorOnSecondAdapt = false
+                    throw AFError.invalidURL(url: "")
                 }
+                
+                var urlRequest = urlRequest
+                
+                adaptedCount += 1
+                
+                if shouldApplyAuthorizationHeader && adaptedCount > 1 {
+                    if let header = HTTPHeaders.authorization(username: "user", password: "password").first {
+                        urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
+                    }
+                }
+                
+                return urlRequest
             }
-
-            return urlRequest
+            
+            completion(result)
         }
 
         func should(_ manager: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
@@ -93,12 +101,16 @@ class SessionManagerTestCase: BaseTestCase {
         var retryCount = 0
         var retryErrors: [Error] = []
 
-        func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-            adaptedCount += 1
-
-            if adaptedCount == 1 { throw AFError.invalidURL(url: "") }
-
-            return urlRequest
+        func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void) {
+            let result: Result<URLRequest> = Result {
+                adaptedCount += 1
+                
+                if adaptedCount == 1 { throw AFError.invalidURL(url: "") }
+                
+                return urlRequest
+            }
+            
+            completion(result)
         }
 
         func should(_ manager: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
