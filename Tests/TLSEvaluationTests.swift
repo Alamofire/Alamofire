@@ -27,37 +27,18 @@ import Foundation
 import XCTest
 
 private struct TestCertificates {
-    static let rootCA = TestCertificates.certificate(withFileName: "expired.badssl.com-root-ca")
-    static let intermediateCA1 = TestCertificates.certificate(withFileName: "expired.badssl.com-intermediate-ca-1")
-    static let intermediateCA2 = TestCertificates.certificate(withFileName: "expired.badssl.com-intermediate-ca-2")
-    static let leaf = TestCertificates.certificate(withFileName: "expired.badssl.com-leaf")
+    static let rootCA = TestCertificates.certificate(filename: "expired.badssl.com-root-ca")
+    static let intermediateCA1 = TestCertificates.certificate(filename: "expired.badssl.com-intermediate-ca-1")
+    static let intermediateCA2 = TestCertificates.certificate(filename: "expired.badssl.com-intermediate-ca-2")
+    static let leaf = TestCertificates.certificate(filename: "expired.badssl.com-leaf")
 
-    static func certificate(withFileName fileName: String) -> SecCertificate {
-        class Locater {}
-        let filePath = Bundle(for: Locater.self).path(forResource: fileName, ofType: "cer")!
+    static func certificate(filename: String) -> SecCertificate {
+        class Locator {}
+        let filePath = Bundle(for: Locator.self).path(forResource: filename, ofType: "cer")!
         let data = try! Data(contentsOf: URL(fileURLWithPath: filePath))
         let certificate = SecCertificateCreateWithData(nil, data as CFData)!
 
         return certificate
-    }
-}
-
-// MARK: -
-
-private struct TestPublicKeys {
-    static let rootCA = TestPublicKeys.publicKey(for: TestCertificates.rootCA)
-    static let intermediateCA1 = TestPublicKeys.publicKey(for: TestCertificates.intermediateCA1)
-    static let intermediateCA2 = TestPublicKeys.publicKey(for: TestCertificates.intermediateCA2)
-    static let leaf = TestPublicKeys.publicKey(for: TestCertificates.leaf)
-
-    static func publicKey(for certificate: SecCertificate) -> SecKey {
-        let policy = SecPolicyCreateBasicX509()
-        var trust: SecTrust?
-        SecTrustCreateWithCertificates(certificate, policy, &trust)
-
-        let publicKey = SecTrustCopyPublicKey(trust!)!
-
-        return publicKey
     }
 }
 
@@ -165,8 +146,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
@@ -234,8 +215,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
@@ -267,8 +248,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
@@ -303,8 +284,8 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
@@ -343,18 +324,18 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafCertificateWithoutCertificateChainValidation() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafCertificateWithoutCertificateChainOrHostValidation() {
         // Given
         let certificates = [TestCertificates.leaf]
         let evaluators = [
-            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false, validateHost: false)
         ]
 
         let manager = Session(
@@ -378,11 +359,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCACertificateWithoutCertificateChainValidation() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCACertificateWithoutCertificateChainOrHostValidation() {
         // Given
         let certificates = [TestCertificates.intermediateCA2]
         let evaluators = [
-            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false, validateHost: false)
         ]
 
         let manager = Session(
@@ -410,7 +391,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let certificates = [TestCertificates.rootCA]
         let evaluators = [
-            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, validateCertificateChain: false)
+            expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false)
         ]
 
         let manager = Session(
@@ -442,9 +423,9 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWhenPinningLeafPublicKeyWithCertificateChainValidation() {
         // Given
-        let publicKeys = [TestPublicKeys.leaf]
+        let keys = [TestCertificates.leaf].publicKeys
         let evaluators = [
-            expiredHost: PublicKeysTrustEvaluator(keys: publicKeys)
+            expiredHost: PublicKeysTrustEvaluator(keys: keys)
         ]
 
         let manager = Session(
@@ -467,18 +448,18 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        if let error = error as? AFError {
-            XCTAssertTrue(error.isCertificatePinningError, "should be .certificatePinningFailed")
+        if let error = error?.asAFError {
+            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
         } else {
             XCTFail("error should be an AFError")
         }
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyWithoutCertificateChainValidation() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyWithoutCertificateChainOrHostValidation() {
         // Given
-        let publicKeys = [TestPublicKeys.leaf]
+        let keys = [TestCertificates.leaf].publicKeys
         let evaluators = [
-            expiredHost: PublicKeysTrustEvaluator(keys: publicKeys, validateCertificateChain: false)
+            expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)
         ]
 
         let manager = Session(
@@ -502,11 +483,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyWithoutCertificateChainValidation() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyWithoutCertificateChainOrHostValidation() {
         // Given
-        let publicKeys = [TestPublicKeys.intermediateCA2]
+        let keys = [TestCertificates.intermediateCA2].publicKeys
         let evaluators = [
-            expiredHost: PublicKeysTrustEvaluator(keys: publicKeys, validateCertificateChain: false)
+            expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)
         ]
 
         let manager = Session(
@@ -532,9 +513,9 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningRootCAPublicKeyWithoutCertificateChainValidation() {
         // Given
-        let publicKeys = [TestPublicKeys.rootCA]
+        let keys = [TestCertificates.rootCA].publicKeys
         let evaluators = [
-            expiredHost: PublicKeysTrustEvaluator(keys: publicKeys, validateCertificateChain: false)
+            expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)
         ]
 
         let manager = Session(

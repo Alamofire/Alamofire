@@ -40,12 +40,9 @@ public enum AFError: Error {
     /// - missingURL:                 The URL request did not have a URL to encode.
     /// - jsonEncodingFailed:         JSON serialization failed with an underlying system error during the
     ///                               encoding process.
-    /// - propertyListEncodingFailed: Property list serialization failed with an underlying system error during
-    ///                               encoding process.
     public enum ParameterEncodingFailureReason {
         case missingURL
         case jsonEncodingFailed(error: Error)
-        case propertyListEncodingFailed(error: Error)
     }
 
     /// The underlying reason the multipart encoding error occurred.
@@ -116,7 +113,6 @@ public enum AFError: Error {
     /// - inputFileReadFailed:             The file containing the server response could not be read.
     /// - stringSerializationFailed:       String serialization failed using the provided `String.Encoding`.
     /// - jsonSerializationFailed:         JSON serialization failed with an underlying system error.
-    /// - propertyListSerializationFailed: Property list serialization failed with an underlying system error.
     /// - invalidEmptyResponse:            Generic serialization failed for an empty response that wasn't type `Empty`.
     public enum ResponseSerializationFailureReason {
         case inputDataNil
@@ -125,8 +121,34 @@ public enum AFError: Error {
         case inputFileReadFailed(at: URL)
         case stringSerializationFailed(encoding: String.Encoding)
         case jsonSerializationFailed(error: Error)
-        case propertyListSerializationFailed(error: Error)
         case invalidEmptyResponse(type: String)
+    }
+
+    public enum ServerTrustFailureReason {
+        public struct Output {
+            public let host: String
+            public let trust: SecTrust
+            public let status: OSStatus
+            public let result: SecTrustResultType
+
+            init(_ host: String, _ trust: SecTrust, _ status: OSStatus, _ result: SecTrustResultType) {
+                self.host = host
+                self.trust = trust
+                self.status = status
+                self.result = result
+            }
+        }
+        case noRequiredEvaluator(host: String)
+        case noCertificatesFound
+        case noPublicKeysFound
+        case policyApplicationFailed(trust: SecTrust, policy: SecPolicy, status: OSStatus)
+        case settingAnchorCertificatesFailed(status: OSStatus, certificates: [SecCertificate])
+        case revocationPolicyCreationFailed
+        case defaultEvaluationFailed(output: Output)
+        case hostValidationFailed(output: Output)
+        case revocationCheckFailed(output: Output, options: RevocationTrustEvaluator.Options)
+        case certificatePinningFailed(host: String, trust: SecTrust, pinnedCertificates: [SecCertificate], serverCertificates: [SecCertificate])
+        case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
     }
 
     case explicitlyCancelled
@@ -135,7 +157,14 @@ public enum AFError: Error {
     case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
     case responseValidationFailed(reason: ResponseValidationFailureReason)
     case responseSerializationFailed(reason: ResponseSerializationFailureReason)
-    case certificatePinningFailed
+    case serverTrustEvaluationFailed(reason: ServerTrustFailureReason)
+}
+
+public extension Error {
+    /// Returns the instance cast as an `AFError`.
+    public var asAFError: AFError? {
+        return self as? AFError
+    }
 }
 
 // MARK: - Error Booleans
@@ -181,9 +210,9 @@ extension AFError {
         return false
     }
 
-    /// Returns whether the `AFError` is a certificate pinning error.
-    public var isCertificatePinningError: Bool {
-        if case .certificatePinningFailed = self { return true }
+    /// Returns whether the `AFError` is a server trust evaluation error.
+    public var isServerTrustEvaluationError: Bool {
+        if case .serverTrustEvaluationFailed = self { return true }
         return false
     }
 }
@@ -270,7 +299,7 @@ extension AFError {
 extension AFError.ParameterEncodingFailureReason {
     var underlyingError: Error? {
         switch self {
-        case .jsonEncodingFailed(let error), .propertyListEncodingFailed(let error):
+        case .jsonEncodingFailed(let error):
             return error
         default:
             return nil
@@ -344,10 +373,22 @@ extension AFError.ResponseSerializationFailureReason {
 
     var underlyingError: Error? {
         switch self {
-        case .jsonSerializationFailed(let error), .propertyListSerializationFailed(let error):
+        case .jsonSerializationFailed(let error):
             return error
         default:
             return nil
+        }
+    }
+}
+
+extension AFError.ServerTrustFailureReason {
+    var output: AFError.ServerTrustFailureReason.Output? {
+        switch self {
+        case let .defaultEvaluationFailed(output),
+             let .hostValidationFailed(output),
+             let .revocationCheckFailed(output, _):
+            return output
+        default: return nil
         }
     }
 }
@@ -357,6 +398,8 @@ extension AFError.ResponseSerializationFailureReason {
 extension AFError: LocalizedError {
     public var errorDescription: String? {
         switch self {
+        case .explicitlyCancelled:
+            return "Request explicitly cancelled."
         case .invalidURL(let url):
             return "URL is not valid: \(url)"
         case .parameterEncodingFailed(let reason):
@@ -367,10 +410,8 @@ extension AFError: LocalizedError {
             return reason.localizedDescription
         case .responseSerializationFailed(let reason):
             return reason.localizedDescription
-        case .explicitlyCancelled:
-            return "Request explicitly cancelled."
-        case .certificatePinningFailed:
-            return "Certificate pinning failed."
+        case .serverTrustEvaluationFailed:
+            return "Server trust evaluation failed."
         }
     }
 }
@@ -382,8 +423,6 @@ extension AFError.ParameterEncodingFailureReason {
             return "URL request to encode was missing a URL"
         case .jsonEncodingFailed(let error):
             return "JSON could not be encoded because of error:\n\(error.localizedDescription)"
-        case .propertyListEncodingFailed(let error):
-            return "PropertyList could not be encoded because of error:\n\(error.localizedDescription)"
         }
     }
 }
@@ -442,8 +481,6 @@ extension AFError.ResponseSerializationFailureReason {
             return "String could not be serialized with encoding: \(encoding)."
         case .jsonSerializationFailed(let error):
             return "JSON could not be serialized because of error:\n\(error.localizedDescription)"
-        case .propertyListSerializationFailed(let error):
-            return "PropertyList could not be serialized because of error:\n\(error.localizedDescription)"
         case .invalidEmptyResponse(let type):
             return "Empty response could not be serialized to type: \(type). Use Empty as the expected type for such responses."
         }
@@ -469,6 +506,35 @@ extension AFError.ResponseValidationFailureReason {
             )
         case .unacceptableStatusCode(let code):
             return "Response status code was unacceptable: \(code)."
+        }
+    }
+}
+
+extension AFError.ServerTrustFailureReason {
+    var localizedDescription: String {
+        switch self {
+        case let .noRequiredEvaluator(host):
+            return "A ServerTrustEvaluating value is required for host \(host) but none was found."
+        case .noCertificatesFound:
+            return "No certificates were found or provided for evaluation."
+        case .noPublicKeysFound:
+            return "No public keys were found or provided for evaluation."
+        case .policyApplicationFailed:
+            return "Attempting to set a SecPolicy failed."
+        case .settingAnchorCertificatesFailed:
+            return "Attempting to set the provided certificates as anchor certificates failed."
+        case .revocationPolicyCreationFailed:
+            return "Attempting to create a revocation policy failed."
+        case let .defaultEvaluationFailed(output):
+            return "Default evaluation failed for host \(output.host)."
+        case let .hostValidationFailed(output):
+            return "Host validation failed for host \(output.host)."
+        case let .revocationCheckFailed(output, _):
+            return "Revocation check failed for host \(output.host)."
+        case let .certificatePinningFailed(host, _, _, _):
+            return "Certificate pinning failed for host \(host)."
+        case let .publicKeyPinningFailed(host, _, _, _):
+            return "Public key pinning failed for host \(host)."
         }
     }
 }

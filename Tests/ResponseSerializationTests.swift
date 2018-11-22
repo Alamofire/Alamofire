@@ -60,7 +60,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
@@ -79,7 +79,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
@@ -99,7 +99,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value, "result value should be nil")
         XCTAssertNotNil(result.error, "result error should not be nil")
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
@@ -138,7 +138,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
@@ -211,7 +211,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError, let failedEncoding = error.failedStringEncoding {
+        if let error = result.error?.asAFError, let failedEncoding = error.failedStringEncoding {
             XCTAssertTrue(error.isStringSerializationFailed)
             XCTAssertEqual(failedEncoding, .utf8)
         } else {
@@ -233,7 +233,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError, let failedEncoding = error.failedStringEncoding {
+        if let error = result.error?.asAFError, let failedEncoding = error.failedStringEncoding {
             XCTAssertTrue(error.isStringSerializationFailed)
             XCTAssertEqual(failedEncoding, .utf8)
         } else {
@@ -253,7 +253,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
@@ -273,7 +273,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
@@ -312,7 +312,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
             XCTFail("error should not be nil")
@@ -331,7 +331,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
             XCTFail("error should not be nil")
@@ -365,7 +365,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError, let underlyingError = error.underlyingError as? CocoaError {
+        if let error = result.error?.asAFError, let underlyingError = error.underlyingError as? CocoaError {
             XCTAssertTrue(error.isJSONSerializationFailed)
             XCTAssertEqual(underlyingError.errorCode, 3840)
         } else {
@@ -385,7 +385,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
@@ -405,7 +405,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
             XCTFail("error should not be nil")
@@ -450,7 +450,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
             XCTFail("error should not be nil")
@@ -469,7 +469,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
             XCTFail("error should not be nil")
@@ -517,7 +517,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNil)
         } else {
             XCTFail("error should not be nil")
@@ -537,7 +537,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
             XCTFail("error should not be nil")
@@ -621,7 +621,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileNil)
         } else {
             XCTFail("error should not be nil")
@@ -640,7 +640,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileReadFailed)
         } else {
             XCTFail("error should not be nil")
@@ -659,7 +659,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileNil)
         } else {
             XCTFail("error should not be nil")
@@ -679,7 +679,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileNil)
         } else {
             XCTFail("error should not be nil")
@@ -720,7 +720,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileNil)
         } else {
             XCTFail("error should not be nil")
@@ -740,7 +740,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileReadFailed)
         } else {
             XCTFail("error should not be nil")
@@ -812,7 +812,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError, let failedEncoding = error.failedStringEncoding {
+        if let error = result.error?.asAFError, let failedEncoding = error.failedStringEncoding {
             XCTAssertTrue(error.isStringSerializationFailed)
             XCTAssertEqual(failedEncoding, .utf8)
         } else {
@@ -833,7 +833,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError, let failedEncoding = error.failedStringEncoding {
+        if let error = result.error?.asAFError, let failedEncoding = error.failedStringEncoding {
             XCTAssertTrue(error.isStringSerializationFailed)
             XCTAssertEqual(failedEncoding, .utf8)
         } else {
@@ -853,7 +853,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileNil)
         } else {
             XCTFail("error should not be nil")
@@ -873,7 +873,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileNil)
         } else {
             XCTFail("error should not be nil")
@@ -912,7 +912,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileNil)
         } else {
             XCTFail("error should not be nil")
@@ -931,7 +931,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileReadFailed)
         } else {
             XCTFail("error should not be nil")
@@ -950,7 +950,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
             XCTFail("error should not be nil")
@@ -982,7 +982,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError, let underlyingError = error.underlyingError as? CocoaError {
+        if let error = result.error?.asAFError, let underlyingError = error.underlyingError as? CocoaError {
             XCTAssertTrue(error.isJSONSerializationFailed)
             XCTAssertEqual(underlyingError.errorCode, 3840)
         } else {
@@ -1002,7 +1002,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileNil)
         } else {
             XCTFail("error should not be nil")
@@ -1022,7 +1022,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
 
-        if let error = result.error as? AFError {
+        if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputFileNil)
         } else {
             XCTFail("error should not be nil")

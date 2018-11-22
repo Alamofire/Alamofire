@@ -38,14 +38,14 @@ class StatusCodeValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(statusCode: 200..<300)
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(statusCode: 200..<300)
             .response { resp in
                 downloadError = resp.error
@@ -70,14 +70,14 @@ class StatusCodeValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(statusCode: [200])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(statusCode: [200])
             .response { resp in
                 downloadError = resp.error
@@ -91,7 +91,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError, let statusCode = error.responseCode {
+            if let error = error?.asAFError, let statusCode = error.responseCode {
                 XCTAssertTrue(error.isUnacceptableStatusCode)
                 XCTAssertEqual(statusCode, 404)
             } else {
@@ -111,14 +111,14 @@ class StatusCodeValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(statusCode: [])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(statusCode: [])
             .response { resp in
                 downloadError = resp.error
@@ -132,7 +132,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError, let statusCode = error.responseCode {
+            if let error = error?.asAFError, let statusCode = error.responseCode {
                 XCTAssertTrue(error.isUnacceptableStatusCode)
                 XCTAssertEqual(statusCode, 201)
             } else {
@@ -156,7 +156,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(contentType: ["application/json"])
             .validate(contentType: ["application/json; charset=utf-8"])
             .validate(contentType: ["application/json; q=0.8; charset=utf-8"])
@@ -165,7 +165,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(contentType: ["application/json"])
             .validate(contentType: ["application/json; charset=utf-8"])
             .validate(contentType: ["application/json; q=0.8; charset=utf-8"])
@@ -192,7 +192,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(contentType: ["*/*"])
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
@@ -201,7 +201,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(contentType: ["*/*"])
             .validate(contentType: ["application/*"])
             .validate(contentType: ["*/json"])
@@ -228,14 +228,14 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
                 downloadError = resp.error
@@ -249,7 +249,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError {
+            if let error = error?.asAFError {
                 XCTAssertTrue(error.isUnacceptableContentType)
                 XCTAssertEqual(error.responseContentType, "application/xml")
                 XCTAssertEqual(error.acceptableContentTypes?.first, "application/octet-stream")
@@ -270,14 +270,14 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(contentType: [])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(contentType: [])
             .response { resp in
                 downloadError = resp.error
@@ -291,7 +291,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError {
+            if let error = error?.asAFError {
                 XCTAssertTrue(error.isUnacceptableContentType)
                 XCTAssertEqual(error.responseContentType, "application/xml")
                 XCTAssertTrue(error.acceptableContentTypes?.isEmpty ?? false)
@@ -312,14 +312,14 @@ class ContentTypeValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(contentType: [])
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(contentType: [])
             .response { resp in
                 downloadError = resp.error
@@ -459,7 +459,7 @@ class MultipleValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .response { resp in
@@ -467,7 +467,7 @@ class MultipleValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(statusCode: 200..<300)
             .validate(contentType: ["application/json"])
             .response { resp in
@@ -493,7 +493,7 @@ class MultipleValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
@@ -501,7 +501,7 @@ class MultipleValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(statusCode: 400..<600)
             .validate(contentType: ["application/octet-stream"])
             .response { resp in
@@ -516,7 +516,7 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError {
+            if let error = error?.asAFError {
                 XCTAssertTrue(error.isUnacceptableStatusCode)
                 XCTAssertEqual(error.responseCode, 200)
             } else {
@@ -536,7 +536,7 @@ class MultipleValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(contentType: ["application/octet-stream"])
             .validate(statusCode: 400..<600)
             .response { resp in
@@ -544,7 +544,7 @@ class MultipleValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(contentType: ["application/octet-stream"])
             .validate(statusCode: 400..<600)
             .response { resp in
@@ -559,7 +559,7 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError {
+            if let error = error?.asAFError {
                 XCTAssertTrue(error.isUnacceptableContentType)
                 XCTAssertEqual(error.responseContentType, "application/xml")
                 XCTAssertEqual(error.acceptableContentTypes?.first, "application/octet-stream")
@@ -586,12 +586,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlRequest).validate().response { resp in
+        AF.request(urlRequest).validate().response { resp in
             requestError = resp.error
             expectation1.fulfill()
         }
 
-        Alamofire.download(urlRequest).validate().response { resp in
+        AF.download(urlRequest).validate().response { resp in
             downloadError = resp.error
             expectation2.fulfill()
         }
@@ -614,14 +614,14 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate()
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate()
             .response { resp in
                 downloadError = resp.error
@@ -635,7 +635,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError, let statusCode = error.responseCode {
+            if let error = error?.asAFError, let statusCode = error.responseCode {
                 XCTAssertTrue(error.isUnacceptableStatusCode)
                 XCTAssertEqual(statusCode, 404)
             } else {
@@ -657,12 +657,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlRequest).validate().response { resp in
+        AF.request(urlRequest).validate().response { resp in
             requestError = resp.error
             expectation1.fulfill()
         }
 
-        Alamofire.download(urlRequest).validate().response { resp in
+        AF.download(urlRequest).validate().response { resp in
             downloadError = resp.error
             expectation2.fulfill()
         }
@@ -689,12 +689,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlRequest).validate().response { resp in
+        AF.request(urlRequest).validate().response { resp in
             requestError = resp.error
             expectation1.fulfill()
         }
 
-        Alamofire.download(urlRequest).validate().response { resp in
+        AF.download(urlRequest).validate().response { resp in
             downloadError = resp.error
             expectation2.fulfill()
         }
@@ -719,12 +719,12 @@ class AutomaticValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlRequest).validate().response { resp in
+        AF.request(urlRequest).validate().response { resp in
             requestError = resp.error
             expectation1.fulfill()
         }
 
-        Alamofire.download(urlRequest).validate().response { resp in
+        AF.download(urlRequest).validate().response { resp in
             downloadError = resp.error
             expectation2.fulfill()
         }
@@ -736,7 +736,7 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error as? AFError {
+            if let error = error?.asAFError {
                 XCTAssertTrue(error.isUnacceptableContentType)
                 XCTAssertEqual(error.responseContentType, "application/xml")
                 XCTAssertEqual(error.acceptableContentTypes?.first, "application/json")
@@ -801,7 +801,7 @@ class CustomValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate { request, response, data in
                 guard data != nil else { return .failure(ValidationError.missingData) }
                 return .success(Void())
@@ -811,7 +811,7 @@ class CustomValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate { (request, response, fileURL) in
                 guard let fileURL = fileURL else { return .failure(ValidationError.missingFile) }
 
@@ -845,7 +845,7 @@ class CustomValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate { _, _, _ in .failure(ValidationError.missingData) }
             .validate { _, _, _ in .failure(ValidationError.missingFile) } // should be ignored
             .response { resp in
@@ -853,7 +853,7 @@ class CustomValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate { (_, _, _) in .failure(ValidationError.missingFile) }
             .validate { (_, _, _) in .failure(ValidationError.fileReadFailed) } // should be ignored
             .response { resp in
@@ -879,14 +879,14 @@ class CustomValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validateDataExists()
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
         }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validateDataExists()
             .response { resp in
                 downloadError = resp.error
@@ -911,7 +911,7 @@ class CustomValidationTestCase: BaseTestCase {
         var downloadError: Error?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .validate(with: ValidationError.missingData)
             .validate(with: ValidationError.missingFile) // should be ignored
             .response { resp in
@@ -919,7 +919,7 @@ class CustomValidationTestCase: BaseTestCase {
                 expectation1.fulfill()
             }
 
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .validate(with: ValidationError.missingFile)
             .validate(with: ValidationError.fileReadFailed) // should be ignored
             .response { resp in

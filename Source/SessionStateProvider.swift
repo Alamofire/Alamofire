@@ -80,19 +80,22 @@ extension SessionDelegate: URLSessionTaskDelegate {
         let host = challenge.protectionSpace.host
 
         guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
-            let evaluator = stateProvider?.serverTrustManager?.serverTrustEvaluators(forHost: host),
-            let serverTrust = challenge.protectionSpace.serverTrust
+            let trust = challenge.protectionSpace.serverTrust
             else {
                 return (.performDefaultHandling, nil, nil)
         }
 
-        guard evaluator.evaluate(serverTrust, forHost: host) else {
-            let error = AFError.certificatePinningFailed
+        do {
+            guard let evaluator = try stateProvider?.serverTrustManager?.serverTrustEvaluator(forHost: host) else {
+                return (.performDefaultHandling, nil, nil)
+            }
 
+            try evaluator.evaluate(trust, forHost: host)
+
+            return (.useCredential, URLCredential(trust: trust), nil)
+        } catch {
             return (.cancelAuthenticationChallenge, nil, error)
         }
-
-        return (.useCredential, URLCredential(trust: serverTrust), nil)
     }
 
     func attemptHTTPAuthentication(for challenge: URLAuthenticationChallenge,

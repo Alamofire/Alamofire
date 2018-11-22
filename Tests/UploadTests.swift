@@ -34,7 +34,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = Alamofire.upload(imageURL, to: urlString).response { _ in
+        let request = AF.upload(imageURL, to: urlString).response { _ in
             expectation.fulfill()
         }
 
@@ -55,7 +55,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = Alamofire.upload(imageURL, to: urlString, method: .post, headers: headers).response { _ in
+        let request = AF.upload(imageURL, to: urlString, method: .post, headers: headers).response { _ in
             expectation.fulfill()
         }
 
@@ -82,7 +82,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = Alamofire.upload(Data(), to: urlString).response { _ in
+        let request = AF.upload(Data(), to: urlString).response { _ in
             expectation.fulfill()
         }
 
@@ -102,7 +102,7 @@ class UploadDataInitializationTestCase: BaseTestCase {
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = Alamofire.upload(Data(), to: urlString, headers: headers).response { _ in
+        let request = AF.upload(Data(), to: urlString, headers: headers).response { _ in
             expectation.fulfill()
         }
 
@@ -131,7 +131,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = Alamofire.upload(imageStream, to: urlString).response { _ in
+        let request = AF.upload(imageStream, to: urlString).response { _ in
             expectation.fulfill()
         }
 
@@ -153,7 +153,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         let expectation = self.expectation(description: "upload should complete")
 
         // When
-        let request = Alamofire.upload(imageStream, to: urlString, headers: headers).response { _ in
+        let request = AF.upload(imageStream, to: urlString, headers: headers).response { _ in
             expectation.fulfill()
         }
 
@@ -183,7 +183,7 @@ class UploadDataTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        Alamofire.upload(data, to: urlString)
+        AF.upload(data, to: urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -211,7 +211,7 @@ class UploadDataTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        Alamofire.upload(data, to: urlString)
+        AF.upload(data, to: urlString)
             .uploadProgress { progress in
                 uploadProgressValues.append(progress.fractionCompleted)
             }
@@ -276,7 +276,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        Alamofire.upload(
+        AF.upload(
             multipartFormData: { multipartFormData in
                 multipartFormData.append(uploadData, withName: "upload_data")
                 formData = multipartFormData
@@ -316,7 +316,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        Alamofire.upload(
+        AF.upload(
             multipartFormData: { multipartFormData in
                 multipartFormData.append(frenchData, withName: "french")
                 multipartFormData.append(japaneseData, withName: "japanese")
@@ -354,7 +354,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        let request = Alamofire.upload(
+        let request = AF.upload(
                         multipartFormData: { multipartFormData in
                             multipartFormData.append(frenchData, withName: "french")
                             multipartFormData.append(japaneseData, withName: "japanese")
@@ -387,7 +387,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        let request = Alamofire.upload(
+        let request = AF.upload(
                         multipartFormData: { multipartFormData in
                             multipartFormData.append(uploadData, withName: "upload_data")
                             formData = multipartFormData
@@ -427,7 +427,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        let request = Alamofire.upload(
+        let request = AF.upload(
                         multipartFormData: { multipartFormData in
                             multipartFormData.append(frenchData, withName: "french")
                             multipartFormData.append(japaneseData, withName: "japanese")
@@ -460,7 +460,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var formData: MultipartFormData?
 
         // When
-        let request = Alamofire.upload(
+        let request = AF.upload(
                         multipartFormData: { multipartFormData in
                             multipartFormData.append(uploadData, withName: "upload_data")
                             formData = multipartFormData
@@ -562,7 +562,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        Alamofire.upload(
+        AF.upload(
             multipartFormData: { multipartFormData in
                 multipartFormData.append(loremData1, withName: "lorem1")
                 multipartFormData.append(loremData2, withName: "lorem2")

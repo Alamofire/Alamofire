@@ -36,7 +36,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        Alamofire.request(urlString, parameters: ["foo": "bar"])
+        AF.request(urlString, parameters: ["foo": "bar"])
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -62,7 +62,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Data?>?
 
         // When
-        Alamofire.request(urlString)
+        AF.request(urlString)
             .downloadProgress { progress in
                 progressValues.append(progress.fractionCompleted)
             }
@@ -108,7 +108,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        Alamofire.request(urlString, method: .post, parameters: parameters)
+        AF.request(urlString, method: .post, parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
@@ -160,7 +160,7 @@ class RequestResponseTestCase: BaseTestCase {
         var response: DataResponse<Any>?
 
         // When
-        Alamofire.request(urlString, method: .post, parameters: parameters)
+        AF.request(urlString, method: .post, parameters: parameters)
             .responseJSON { closureResponse in
                 response = closureResponse
                 expectation.fulfill()

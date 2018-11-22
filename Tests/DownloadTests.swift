@@ -33,7 +33,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         let expectation = self.expectation(description: "download should complete")
 
         // When
-        let request = Alamofire.download(urlString).response { (resp) in
+        let request = AF.download(urlString).response { (resp) in
             expectation.fulfill()
         }
 
@@ -53,7 +53,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         let expectation = self.expectation(description: "download should complete")
 
         // When
-        let request = Alamofire.download(urlString, headers: headers).response { (resp) in
+        let request = AF.download(urlString, headers: headers).response { (resp) in
             expectation.fulfill()
         }
 
@@ -86,7 +86,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        Alamofire.download(urlString, to: destination)
+        AF.download(urlString, to: destination)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -123,7 +123,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        Alamofire.download(urlString, to: destination)
+        AF.download(urlString, to: destination)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -151,7 +151,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        Alamofire.download(urlString)
+        AF.download(urlString)
             .downloadProgress { progress in
                 progressValues.append(progress.fractionCompleted)
             }
@@ -194,7 +194,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        Alamofire.download(urlString, parameters: parameters, to: destination)
+        AF.download(urlString, parameters: parameters, to: destination)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -232,7 +232,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        Alamofire.download(urlString, headers: headers, to: destination)
+        AF.download(urlString, headers: headers, to: destination)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -267,7 +267,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
+        AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -297,7 +297,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.createIntermediateDirectories])})
+        AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.createIntermediateDirectories])})
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -326,7 +326,7 @@ class DownloadResponseTestCase: BaseTestCase {
             var response: DownloadResponse<URL?>?
 
             // When
-            Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
+            AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
                 .response { resp in
                     response = resp
                     expectation.fulfill()
@@ -364,7 +364,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        Alamofire.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile, .createIntermediateDirectories])})
+        AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile, .createIntermediateDirectories])})
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -394,7 +394,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        let download = Alamofire.download(urlString)
+        let download = AF.download(urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -422,7 +422,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<URL?>?
 
         // When
-        let download = Alamofire.download(urlString)
+        let download = AF.download(urlString)
         download.downloadProgress { progress in
             guard !cancelled else { return }
 
@@ -458,7 +458,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var response: DownloadResponse<Any>?
 
         // When
-        let download = Alamofire.download(urlString)
+        let download = AF.download(urlString)
         download.downloadProgress { progress in
             guard !cancelled else { return }
 
@@ -495,7 +495,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var response1: DownloadResponse<Data>?
 
         // When
-        let download = Alamofire.download(urlString)
+        let download = AF.download(urlString)
         download.downloadProgress { progress in
             guard !cancelled else { return }
 
@@ -522,7 +522,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         var response2: DownloadResponse<Data>?
         let destination = DownloadRequest.suggestedDownloadDestination(options: [.removePreviousFile, .createIntermediateDirectories])
         // TODO: Added destination because temp file was being deleted very quickly.
-        Alamofire.download(resumingWith: resumeData,
+        AF.download(resumingWith: resumeData,
                            to: destination)
             .downloadProgress { progress in
                 progressValues.append(progress.fractionCompleted)
@@ -561,7 +561,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         var response: DownloadResponse<String>?
 
         // When
-        Alamofire.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.map { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the map function
                 return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
@@ -590,7 +590,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         var response: DownloadResponse<String>?
 
         // When
-        Alamofire.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.map { _ in "ignored" }
             expectation.fulfill()
         }
@@ -619,7 +619,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         var response: DownloadResponse<String>?
 
         // When
-        Alamofire.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.flatMap { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the map function
                 return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
@@ -650,7 +650,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         var response: DownloadResponse<String>?
 
         // When
-        Alamofire.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.flatMap { json in
                 throw TransformError()
             }
@@ -682,7 +682,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         var response: DownloadResponse<String>?
 
         // When
-        Alamofire.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
+        AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.flatMap { _ in "ignored" }
             expectation.fulfill()
         }
@@ -709,7 +709,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         var response: DownloadResponse<Any>?
 
         // When
-        Alamofire.download(urlString).responseJSON { resp in
+        AF.download(urlString).responseJSON { resp in
             response = resp.mapError { error in
                 return TestError.error(error: error)
             }
@@ -740,7 +740,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         var response: DownloadResponse<Data>?
 
         // When
-        Alamofire.download(urlString).responseData { resp in
+        AF.download(urlString).responseData { resp in
             response = resp.mapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
@@ -768,7 +768,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         var response: DownloadResponse<Data>?
 
         // When
-        Alamofire.download(urlString).responseData { resp in
+        AF.download(urlString).responseData { resp in
             response = resp.flatMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
@@ -793,7 +793,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         var response: DownloadResponse<Data>?
 
         // When
-        Alamofire.download(urlString).responseData { resp in
+        AF.download(urlString).responseData { resp in
             response = resp.flatMapError { _ in try TransformationError.error.alwaysFails() }
             expectation.fulfill()
         }
@@ -825,7 +825,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         var response: DownloadResponse<Data>?
 
         // When
-        Alamofire.download(urlString).responseData { resp in
+        AF.download(urlString).responseData { resp in
             response = resp.flatMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
