@@ -24,7 +24,7 @@
 
 import Foundation
 
-/// Global namespace containing API for the `default` `SessionManager` instance.
+/// Global namespace containing API for the `default` `Session` instance.
 public enum AF {
     // MARK: - Data Request
 

@@ -141,135 +141,135 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Then
         XCTAssertEqual(result.value, "a=a")
     }
-    
+
     func testEncoderCanEncodeDouble() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = ["a": 1.0]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1.0")
     }
-    
+
     func testEncoderCanEncodeFloat() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: Float] = ["a": 1.0]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1.0")
     }
-    
+
     func testEncoderCanEncodeInt8() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: Int8] = ["a": 1]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1")
     }
-    
+
     func testEncoderCanEncodeInt16() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: Int16] = ["a": 1]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1")
     }
-    
+
     func testEncoderCanEncodeInt32() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: Int32] = ["a": 1]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1")
     }
-    
+
     func testEncoderCanEncodeInt64() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: Int64] = ["a": 1]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1")
     }
-    
+
     func testEncoderCanEncodeUInt() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: UInt] = ["a": 1]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1")
     }
-    
+
     func testEncoderCanEncodeUInt8() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: UInt8] = ["a": 1]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1")
     }
-    
+
     func testEncoderCanEncodeUInt16() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: UInt16] = ["a": 1]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1")
     }
-    
+
     func testEncoderCanEncodeUInt32() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: UInt32] = ["a": 1]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1")
     }
-    
+
     func testEncoderCanEncodeUInt64() {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters: [String: UInt64] = ["a": 1]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "a=1")
     }
@@ -299,6 +299,19 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.value, expected)
     }
 
+    func testThatManuallyEncodableStructCanBeEncoded() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters = ManuallyEncodableStruct()
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        let expected = "root%5B%5D%5B%5D=1&root%5B%5D%5B%5D=2&root%5B%5D%5B%5D=3&root%5B%5D%5Ba%5D%5Bstring%5D=string&root%5B%5D%5B%5D%5B%5D=1&root%5B%5D%5B%5D%5B%5D=2&root%5B%5D%5B%5D%5B%5D=3"
+        XCTAssertEqual(result.value, expected)
+    }
+
     func testThatEncodableClassWithNoInheritanceCanBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
@@ -324,6 +337,19 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.value, expected)
     }
 
+    func testThatManuallyEncodableSubclassCanBeEncoded() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters = ManuallyEncodableSubclass()
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        let expected = "five%5Ba%5D=a&five%5Bb%5D=b&four%5Bfour%5D=one&four%5Bfive%5D=2"
+        XCTAssertEqual(result.value, expected)
+    }
+
     func testThatARootArrayCannotBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
@@ -340,6 +366,18 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = "string"
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertFalse(result.isSuccess)
+    }
+
+    func testThatOptionalValuesCannotBeEncoded() {
+        // Givenp
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: String?] = ["string": nil]
 
         // When
         let result = Result<String> { try encoder.encode(parameters) }
@@ -585,5 +623,63 @@ private final class EncodableSubclass: EncodableSuperclass {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(four, forKey: .four)
         try container.encode(five, forKey: .five)
+    }
+}
+
+private final class ManuallyEncodableSubclass: EncodableSuperclass {
+    let four = [1, 2, 3]
+    let five = ["a": "a", "b": "b"]
+
+    private enum CodingKeys: String, CodingKey {
+        case four, five
+    }
+
+    override func encode(to encoder: Encoder) throws {
+        var keyedContainer = encoder.container(keyedBy: CodingKeys.self)
+
+        try keyedContainer.encode(four, forKey: .four)
+        try keyedContainer.encode(five, forKey: .five)
+
+        let superEncoder = keyedContainer.superEncoder()
+        var superContainer = superEncoder.container(keyedBy: CodingKeys.self)
+        try superContainer.encode(one, forKey: .four)
+
+        let keyedSuperEncoder = keyedContainer.superEncoder(forKey: .four)
+        var superKeyedContainer = keyedSuperEncoder.container(keyedBy: CodingKeys.self)
+        try superKeyedContainer.encode(two, forKey: .five)
+
+        var unkeyedContainer = keyedContainer.nestedUnkeyedContainer(forKey: .four)
+        let unkeyedSuperEncoder = unkeyedContainer.superEncoder()
+        var keyedUnkeyedSuperContainer = unkeyedSuperEncoder.container(keyedBy: CodingKeys.self)
+        try keyedUnkeyedSuperContainer.encode(one, forKey: .four)
+    }
+}
+
+private struct ManuallyEncodableStruct: Encodable {
+    let a = ["string": "string"]
+    let b = [1, 2, 3]
+
+    private enum RootKey: String, CodingKey {
+        case root
+    }
+
+    private enum TypeKeys: String, CodingKey {
+        case a, b
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: RootKey.self)
+
+        var nestedKeyedContainer = container.nestedContainer(keyedBy: TypeKeys.self, forKey: .root)
+        try nestedKeyedContainer.encode(a, forKey: .a)
+
+        var nestedUnkeyedContainer = container.nestedUnkeyedContainer(forKey: .root)
+        try nestedUnkeyedContainer.encode(b)
+
+        var nestedUnkeyedKeyedContainer = nestedUnkeyedContainer.nestedContainer(keyedBy: TypeKeys.self)
+        try nestedUnkeyedKeyedContainer.encode(a, forKey: .a)
+
+        var nestedUnkeyedUnkeyedContainer = nestedUnkeyedContainer.nestedUnkeyedContainer()
+        try nestedUnkeyedUnkeyedContainer.encode(b)
     }
 }

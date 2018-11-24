@@ -257,10 +257,12 @@ public final class URLEncodedFormEncoder {
     /// `URLEncodedFormEncoder` error.
     public enum Error: Swift.Error {
         /// An invalid root object was created by the encoder. Only keyed values are valid.
-        case invalidRootObject
+        case invalidRootObject(String)
 
         var localizedDescription: String {
-            return "Root `Encodable` values must be keyed."
+            switch self {
+            case let .invalidRootObject(object): return "URLEncodedFormEncoder requires keyed root object. Received \(object) instead."
+            }
         }
     }
 
@@ -307,7 +309,7 @@ public final class URLEncodedFormEncoder {
         let component: URLEncodedFormComponent = try encode(value)
 
         guard case let .object(object) = component else {
-            throw Error.invalidRootObject
+            throw Error.invalidRootObject("\(component)")
         }
 
         let serializer = URLEncodedFormSerializer(arrayEncoding: arrayEncoding,
