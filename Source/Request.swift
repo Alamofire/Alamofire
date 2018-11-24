@@ -320,21 +320,16 @@ extension Request: CustomDebugStringConvertible {
 
         var headers: [AnyHashable: Any] = [:]
 
-        session.configuration.httpAdditionalHeaders?.filter { field, _ -> Bool in
-            field != AnyHashable("Cookie")
-        }.forEach { field, value in
-            headers[field] = value
-        }
+        session.configuration.httpAdditionalHeaders?.filter {  $0.0 != AnyHashable("Cookie") }
+                                                    .forEach { headers[$0.0] = $0.1 }
 
-        request.allHTTPHeaderFields?.filter { field, _ -> Bool in
-            field != "Cookie"
-        }.forEach { field, value in
-            headers[field] = value
-        }
+        request.allHTTPHeaderFields?.filter { $0.0 != "Cookie" }
+                                    .forEach { headers[$0.0] = $0.1 }
 
-        headers.forEach { field, value in
-            let escapedValue = String(describing: value).replacingOccurrences(of: "\"", with: "\\\"")
-            components.append("-H \"\(field): \(escapedValue)\"")
+        components += headers.map {
+            let escapedValue = String(describing: $0.value).replacingOccurrences(of: "\"", with: "\\\"")
+            
+            return "-H \"\($0.key): \(escapedValue)\""
         }
 
         if let httpBodyData = request.httpBody, let httpBody = String(data: httpBodyData, encoding: .utf8) {
