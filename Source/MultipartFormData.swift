@@ -551,7 +551,7 @@ open class MultipartFormData {
         if let fileName = fileName { disposition += "; filename=\"\(fileName)\"" }
 
         var headers: HTTPHeaders = [.contentDisposition(disposition)]
-        if let mimeType = mimeType { headers.update(.contentType(mimeType)) }
+        if let mimeType = mimeType { headers.add(.contentType(mimeType)) }
 
         return headers
     }
