@@ -46,9 +46,6 @@ public protocol DownloadResponseSerializerProtocol {
 
 /// A serializer that can handle both data and download responses.
 public protocol ResponseSerializer: DataResponseSerializerProtocol & DownloadResponseSerializerProtocol {
-    static var defaultEmptyRequestMethods: Set<HTTPMethod> { get }
-    static var defaultEmptyResponseCodes: Set<Int> { get }
-
     var emptyRequestMethods: Set<HTTPMethod> { get }
     var emptyResponseCodes: Set<Int> { get }
 }
@@ -69,6 +66,10 @@ extension ResponseSerializer {
     public func responseAllowsEmptyResponseData(_ response: HTTPURLResponse?) -> Bool? {
         return response.flatMap { $0.statusCode }
                        .map { emptyResponseCodes.contains($0) }
+    }
+
+    public func emptyResponseAllowed(forRequest request: URLRequest?, response: HTTPURLResponse?) -> Bool {
+        return requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false
     }
 }
 
@@ -287,13 +288,13 @@ public final class DataResponseSerializer: ResponseSerializer {
 
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Data {
         guard error == nil else { throw error! }
-        
+
         guard let data = data, !data.isEmpty else {
-            if requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false {
-                return Data()
-            } else {
+            guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
+
+            return Data()
         }
 
         return data
@@ -354,12 +355,12 @@ public final class StringResponseSerializer: ResponseSerializer {
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> String {
         guard error == nil else { throw error! }
 
-        guard let data = data else {
-            if requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false {
-                return ""
-            } else {
+        guard let data = data, !data.isEmpty else {
+            guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
+
+            return ""
         }
 
         var convertedEncoding = encoding
@@ -457,11 +458,11 @@ public final class JSONResponseSerializer: ResponseSerializer {
         guard error == nil else { throw error! }
 
         guard let data = data, !data.isEmpty else {
-            if requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false {
-                return NSNull()
-            } else {
+            guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
+
+            return NSNull()
         }
 
         do {
@@ -552,15 +553,15 @@ public final class JSONDecodableResponseSerializer<T: Decodable>: ResponseSerial
         guard error == nil else { throw error! }
 
         guard let data = data, !data.isEmpty else {
-            if requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false {
-                guard let emptyValue = Empty.value as? T else {
-                    throw AFError.responseSerializationFailed(reason: .invalidEmptyResponse(type: "\(T.self)"))
-                }
-
-                return emptyValue
-            } else {
+            guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
+
+            guard let emptyValue = Empty.value as? T else {
+                throw AFError.responseSerializationFailed(reason: .invalidEmptyResponse(type: "\(T.self)"))
+            }
+
+            return emptyValue
         }
 
         do {

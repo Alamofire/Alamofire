@@ -131,7 +131,7 @@ extension AFError {
         if case let .responseSerializationFailed(reason) = self, reason.isJSONSerializationFailed { return true }
         return false
     }
-    
+
     var isJSONDecodingFailed: Bool {
         if case let .responseSerializationFailed(reason) = self, reason.isJSONDecodingFailed { return true }
         return false
@@ -275,7 +275,7 @@ extension AFError.ResponseSerializationFailureReason {
         if case .jsonSerializationFailed = self { return true }
         return false
     }
-    
+
     var isJSONDecodingFailed: Bool {
         if case .jsonDecodingFailed = self { return true }
         return false
