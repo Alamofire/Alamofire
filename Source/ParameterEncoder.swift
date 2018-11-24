@@ -187,6 +187,19 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
 }
 
 /// An object that encodes instances into URL-encoded query strings.
+///
+/// There is no published specification for how to encode collection types. By default, the convention of appending
+/// `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for
+/// nested dictionary values (`foo[bar]=baz`) is used. Optionally, `ArrayEncoding` can be used to omit the
+/// square brackets appended to array keys.
+///
+/// `BoolEncoding` can be used to configure how `Bool` values are encoded. The default behavior is to encode
+/// `true` as 1 and `false` as 0.
+///
+/// `SpaceEncoding` can be used to configure how spaces are encoded. Modern encodings use percent replacement (%20),
+/// while older encoding may expect spaces to be replaced with +.
+///
+/// This type is largely based on Vapor's [`url-encoded-form`](https://github.com/vapor/url-encoded-form) project.
 public final class URLEncodedFormEncoder {
     /// Configures how `Bool` parameters are encoded.
     public enum BoolEncoding {
@@ -221,14 +234,14 @@ public final class URLEncodedFormEncoder {
             }
         }
     }
-    
+
     /// Configures how spaces are encoded.
     public enum SpaceEncoding {
         /// Encodes spaces according to normal percent escaping rules (%20).
         case percentEscaped
         /// Encodes spaces as `+`,
         case plusReplaced
-        
+
         /// Encodes the string according to the encoding.
         ///
         /// - Parameter string: The `String` to encode.
@@ -241,16 +254,18 @@ public final class URLEncodedFormEncoder {
         }
     }
 
-    /// Internal `URLEncodedFormEncoder` error.
+    /// `URLEncodedFormEncoder` error.
     public enum Error: Swift.Error {
         /// An invalid root object was created by the encoder. Only keyed values are valid.
-        case invalidRootObject
+        case invalidRootObject(String)
 
         var localizedDescription: String {
-            return "Root `Encodable` values must be keyed."
+            switch self {
+            case let .invalidRootObject(object): return "URLEncodedFormEncoder requires keyed root object. Received \(object) instead."
+            }
         }
     }
-    
+
     /// The `ArrayEncoding` to use.
     public let arrayEncoding: ArrayEncoding
     /// The `BoolEncoding` to use.
@@ -292,16 +307,16 @@ public final class URLEncodedFormEncoder {
     /// - Throws:          An `Error` or `EncodingError` instance if encoding fails.
     public func encode(_ value: Encodable) throws -> String {
         let component: URLEncodedFormComponent = try encode(value)
-        
+
         guard case let .object(object) = component else {
-            throw Error.invalidRootObject
+            throw Error.invalidRootObject("\(component)")
         }
-        
+
         let serializer = URLEncodedFormSerializer(arrayEncoding: arrayEncoding,
                                                   spaceEncoding: spaceEncoding,
                                                   allowedCharacters: allowedCharacters)
         let query = serializer.serialize(object)
-        
+
         return query
     }
 
@@ -320,7 +335,7 @@ public final class URLEncodedFormEncoder {
 
 final class _URLEncodedFormEncoder {
     var codingPath: [CodingKey]
-    // Return empty dictionary, as this encoder supports no userInfo.
+    // Returns an empty dictionary, as this encoder doesn't support userInfo.
     var userInfo: [CodingUserInfoKey : Any] { return [:] }
 
     let context: URLEncodedFormContext
@@ -403,29 +418,6 @@ enum URLEncodedFormComponent {
     ///     - path: `CodingKey` path to update with the supplied value.
     public mutating func set(to value: URLEncodedFormComponent, at path: [CodingKey]) {
         set(&self, to: value, at: path)
-    }
-
-    /// Sets self to the supplied value at a given path.
-    ///
-    ///     data.get(at: ["path", "to", "value"])
-    ///
-    /// - parameters:
-    ///     - path: `CodingKey` path to fetch the supplied value at.
-    /// - returns: An instance of `Self` if a value exists at the path, otherwise `nil`.
-    public func get(at path: [CodingKey]) -> URLEncodedFormComponent? {
-        var child = self
-
-        for seg in path {
-            if let object = child.object, let c = object[seg.stringValue] {
-                child = c
-            } else if let array = child.array, let index = seg.intValue {
-                child = array[index]
-            } else {
-                return nil
-            }
-        }
-
-        return child
     }
 
     /// Recursive backing method to `set(to:at:)`.
@@ -603,101 +595,66 @@ extension _URLEncodedFormEncoder.SingleValueContainer: SingleValueEncodingContai
     }
 
     func encode(_ value: Bool) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(boolEncoding.encode(value)), at: codingPath)
+        try encode(value, as: String(boolEncoding.encode(value)))
     }
 
     func encode(_ value: String) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(value), at: codingPath)
+        try encode(value, as: value)
     }
 
     func encode(_ value: Double) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+        try encode(value, as: String(value))
     }
 
     func encode(_ value: Float) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+        try encode(value, as: String(value))
     }
 
     func encode(_ value: Int) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+        try encode(value, as: String(value))
     }
 
     func encode(_ value: Int8) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+        try encode(value, as: String(value))
     }
 
     func encode(_ value: Int16) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+        try encode(value, as: String(value))
     }
 
     func encode(_ value: Int32) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+        try encode(value, as: String(value))
     }
 
     func encode(_ value: Int64) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+       try encode(value, as: String(value))
     }
 
     func encode(_ value: UInt) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+        try encode(value, as: String(value))
     }
 
     func encode(_ value: UInt8) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+        try encode(value, as: String(value))
     }
 
     func encode(_ value: UInt16) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+        try encode(value, as: String(value))
     }
 
     func encode(_ value: UInt32) throws {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
-
-        context.component.set(to: .string(String(value)), at: codingPath)
+        try encode(value, as: String(value))
     }
 
     func encode(_ value: UInt64) throws {
+        try encode(value, as: String(value))
+    }
+
+    private func encode<T>(_ value: T, as string: String) throws where T : Encodable {
         try checkCanEncode(value: value)
         defer { canEncodeNewValue = false }
 
-        context.component.set(to: .string(String(value)), at: codingPath)
+        context.component.set(to: .string(string), at: codingPath)
     }
 
     func encode<T>(_ value: T) throws where T : Encodable {
@@ -825,13 +782,13 @@ final class URLEncodedFormSerializer {
 
         return segments.joinedWithAmpersands()
     }
-    
+
     func escape(_ query: String) -> String {
         var allowedCharactersWithSpace = allowedCharacters
         allowedCharactersWithSpace.insert(charactersIn: " ")
         let escapedQuery = query.addingPercentEncoding(withAllowedCharacters: allowedCharactersWithSpace) ?? query
         let spaceEncodedQuery = spaceEncoding.encode(escapedQuery)
-        
+
         return spaceEncodedQuery
     }
 }

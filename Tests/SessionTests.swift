@@ -1,5 +1,5 @@
 //
-//  SessionManagerTests.swift
+//  SessionTests.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -26,7 +26,7 @@
 import Foundation
 import XCTest
 
-class SessionManagerTestCase: BaseTestCase {
+class SessionTestCase: BaseTestCase {
 
     // MARK: Helper Types
 

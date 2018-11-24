@@ -30,39 +30,39 @@ final class JSONParameterEncoderTests: BaseTestCase {
         // Given
         let encoder = JSONParameterEncoder()
         let request = URLRequest.makeHTTPBinRequest()
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "application/json")
         XCTAssertEqual(newRequest.httpBody?.asString, "{\"property\":\"property\"}")
     }
-    
+
     func testThatDataIsProperlyEncodedButContentTypeIsNotSetIfRequestAlreadyHasAContentType() throws {
         // Given
         let encoder = JSONParameterEncoder()
         var request = URLRequest.makeHTTPBinRequest()
         request.httpHeaders.update(.contentType("type"))
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "type")
         XCTAssertEqual(newRequest.httpBody?.asString, "{\"property\":\"property\"}")
     }
-    
+
     func testThatJSONEncoderCanBeCustomized() throws {
         // Given
         let jsonEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = .prettyPrinted
         let encoder = JSONParameterEncoder(encoder: jsonEncoder)
         let request = URLRequest.makeHTTPBinRequest()
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         let expected = """
                     {
@@ -78,51 +78,51 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         // Given
         let encoder = URLEncodedFormParameterEncoder()
         let request = URLRequest.makeHTTPBinRequest(method: .post)
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "application/x-www-form-urlencoded; charset=utf-8")
         XCTAssertEqual(newRequest.httpBody?.asString, "property=property")
     }
-    
+
     func testThatQueryIsBodyEncodedButContentTypeIsNotSetWhenRequestAlreadyHasContentType() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder()
         var request = URLRequest.makeHTTPBinRequest(method: .post)
         request.httpHeaders.update(.contentType("type"))
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "type")
         XCTAssertEqual(newRequest.httpBody?.asString, "property=property")
     }
-    
+
     func testThatEncoderCanBeCustomized() throws {
         // Given
         let urlEncoder = URLEncodedFormEncoder(boolEncoding: .literal)
         let encoder = URLEncodedFormParameterEncoder(encoder: urlEncoder)
         let request = URLRequest.makeHTTPBinRequest()
-        
+
         // When
         let newRequest = try encoder.encode(["bool": true], into: request)
-        
+
         // Then
         let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)
         XCTAssertEqual(components?.percentEncodedQuery, "bool=true")
     }
-    
+
     func testThatQueryIsInURLWhenDestinationIsURLAndMethodIsPOST() throws {
         // Given
         let encoder = URLEncodedFormParameterEncoder(destination: .queryString)
         let request = URLRequest.makeHTTPBinRequest(method: .post)
-        
+
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
-        
+
         // Then
         let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)
         XCTAssertEqual(components?.percentEncodedQuery, "property=property")
@@ -140,6 +140,138 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(result.value, "a=a")
+    }
+
+    func testEncoderCanEncodeDouble() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters = ["a": 1.0]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1.0")
+    }
+
+    func testEncoderCanEncodeFloat() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: Float] = ["a": 1.0]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1.0")
+    }
+
+    func testEncoderCanEncodeInt8() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: Int8] = ["a": 1]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+
+    func testEncoderCanEncodeInt16() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: Int16] = ["a": 1]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+
+    func testEncoderCanEncodeInt32() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: Int32] = ["a": 1]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+
+    func testEncoderCanEncodeInt64() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: Int64] = ["a": 1]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+
+    func testEncoderCanEncodeUInt() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: UInt] = ["a": 1]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+
+    func testEncoderCanEncodeUInt8() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: UInt8] = ["a": 1]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+
+    func testEncoderCanEncodeUInt16() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: UInt16] = ["a": 1]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+
+    func testEncoderCanEncodeUInt32() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: UInt32] = ["a": 1]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1")
+    }
+
+    func testEncoderCanEncodeUInt64() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: UInt64] = ["a": 1]
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "a=1")
     }
 
     func testThatNestedDictionariesHaveBracketedKeys() {
@@ -163,7 +295,20 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String> { try encoder.encode(parameters) }
 
         // Then
-        let expected = "four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&two=2&five%5Ba%5D=a&five%5Bb%5D=b&three=1&one=one"
+        let expected = "four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&three=1&one=one&two=2&five%5Ba%5D=a&six%5Ba%5D%5Bb%5D=b&seven%5Ba%5D=a"
+        XCTAssertEqual(result.value, expected)
+    }
+
+    func testThatManuallyEncodableStructCanBeEncoded() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters = ManuallyEncodableStruct()
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        let expected = "root%5B%5D%5B%5D=1&root%5B%5D%5B%5D=2&root%5B%5D%5B%5D=3&root%5B%5D%5Ba%5D%5Bstring%5D=string&root%5B%5D%5B%5D%5B%5D=1&root%5B%5D%5B%5D%5B%5D=2&root%5B%5D%5B%5D%5B%5D=3"
         XCTAssertEqual(result.value, expected)
     }
 
@@ -192,6 +337,19 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.value, expected)
     }
 
+    func testThatManuallyEncodableSubclassCanBeEncoded() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters = ManuallyEncodableSubclass()
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        let expected = "five%5Ba%5D=a&five%5Bb%5D=b&four%5Bfour%5D=one&four%5Bfive%5D=2"
+        XCTAssertEqual(result.value, expected)
+    }
+
     func testThatARootArrayCannotBeEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder()
@@ -208,6 +366,18 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Given
         let encoder = URLEncodedFormEncoder()
         let parameters = "string"
+
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertFalse(result.isSuccess)
+    }
+
+    func testThatOptionalValuesCannotBeEncoded() {
+        // Givenp
+        let encoder = URLEncodedFormEncoder()
+        let parameters: [String: String?] = ["string": nil]
 
         // When
         let result = Result<String> { try encoder.encode(parameters) }
@@ -239,29 +409,29 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Then
         XCTAssertEqual(result.value, "array=1&array=2")
     }
-    
+
     func testThatSpacesCanBeEncodedAsPluses() {
         // Given
         let encoder = URLEncodedFormEncoder(spaceEncoding: .plusReplaced)
         let parameters = ["spaces": "replace with spaces"]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "spaces=replace+with+spaces")
     }
-    
+
     func testThatEscapedCharactersCanBeCustomized() {
         // Given
         var allowed = CharacterSet.afURLQueryAllowed
         allowed.remove(charactersIn: "?/")
         let encoder = URLEncodedFormEncoder(allowedCharacters: allowed)
         let parameters = ["allowed": "?/"]
-        
+
         // When
         let result = Result<String> { try encoder.encode(parameters) }
-        
+
         // Then
         XCTAssertEqual(result.value, "allowed=%3F%2F")
     }
@@ -424,7 +594,13 @@ private struct EncodableStruct: Encodable {
     let two = 2
     let three = true
     let four = [1, 2, 3]
-    let five = ["a": "a", "b": "b"]
+    let five = ["a": "a"]
+    let six = ["a": ["b": "b"]]
+    let seven = NestedEncodableStruct()
+}
+
+private struct NestedEncodableStruct: Encodable {
+    let a = "a"
 }
 
 private class EncodableSuperclass: Encodable {
@@ -447,5 +623,63 @@ private final class EncodableSubclass: EncodableSuperclass {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(four, forKey: .four)
         try container.encode(five, forKey: .five)
+    }
+}
+
+private final class ManuallyEncodableSubclass: EncodableSuperclass {
+    let four = [1, 2, 3]
+    let five = ["a": "a", "b": "b"]
+
+    private enum CodingKeys: String, CodingKey {
+        case four, five
+    }
+
+    override func encode(to encoder: Encoder) throws {
+        var keyedContainer = encoder.container(keyedBy: CodingKeys.self)
+
+        try keyedContainer.encode(four, forKey: .four)
+        try keyedContainer.encode(five, forKey: .five)
+
+        let superEncoder = keyedContainer.superEncoder()
+        var superContainer = superEncoder.container(keyedBy: CodingKeys.self)
+        try superContainer.encode(one, forKey: .four)
+
+        let keyedSuperEncoder = keyedContainer.superEncoder(forKey: .four)
+        var superKeyedContainer = keyedSuperEncoder.container(keyedBy: CodingKeys.self)
+        try superKeyedContainer.encode(two, forKey: .five)
+
+        var unkeyedContainer = keyedContainer.nestedUnkeyedContainer(forKey: .four)
+        let unkeyedSuperEncoder = unkeyedContainer.superEncoder()
+        var keyedUnkeyedSuperContainer = unkeyedSuperEncoder.container(keyedBy: CodingKeys.self)
+        try keyedUnkeyedSuperContainer.encode(one, forKey: .four)
+    }
+}
+
+private struct ManuallyEncodableStruct: Encodable {
+    let a = ["string": "string"]
+    let b = [1, 2, 3]
+
+    private enum RootKey: String, CodingKey {
+        case root
+    }
+
+    private enum TypeKeys: String, CodingKey {
+        case a, b
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: RootKey.self)
+
+        var nestedKeyedContainer = container.nestedContainer(keyedBy: TypeKeys.self, forKey: .root)
+        try nestedKeyedContainer.encode(a, forKey: .a)
+
+        var nestedUnkeyedContainer = container.nestedUnkeyedContainer(forKey: .root)
+        try nestedUnkeyedContainer.encode(b)
+
+        var nestedUnkeyedKeyedContainer = nestedUnkeyedContainer.nestedContainer(keyedBy: TypeKeys.self)
+        try nestedUnkeyedKeyedContainer.encode(a, forKey: .a)
+
+        var nestedUnkeyedUnkeyedContainer = nestedUnkeyedContainer.nestedUnkeyedContainer()
+        try nestedUnkeyedUnkeyedContainer.encode(b)
     }
 }

@@ -160,10 +160,6 @@ public enum AFError: Error {
                 self.result = result
             }
         }
-        /// Trust evaluation was failed for an unknown reason. Usually this means the evaluator failed but didn't throw
-        /// an error.
-        case unknown(host: String)
-        /// `allHostsMustBeEvaluated` was `true` but no evaluator was found for the associated host.
         case noRequiredEvaluator(host: String)
         /// No certificates were found with which to perform the trust evaluation.
         case noCertificatesFound
@@ -198,6 +194,7 @@ public enum AFError: Error {
 }
 
 extension Error {
+    /// Returns the instance cast as an `AFError`.
     public var asAFError: AFError? {
         return self as? AFError
     }
@@ -581,8 +578,6 @@ extension AFError.ResponseValidationFailureReason {
 extension AFError.ServerTrustFailureReason {
     var localizedDescription: String {
         switch self {
-        case .unknown:
-            return "Server trust evaluation failed but no specific error was thrown."
         case let .noRequiredEvaluator(host):
             return "A ServerTrustEvaluating value is required for host \(host) but none was found."
         case .noCertificatesFound:

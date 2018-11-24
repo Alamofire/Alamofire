@@ -243,22 +243,22 @@ class RequestResponseTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(receivedResponse?.result.value?.args, ["property": "one"])
     }
-    
+
     func testThatRequestsCanPassEncodableParametersAsURLEncodedBodyData() {
         // Given
         let parameters = HTTPBinParameters(property: "one")
         let expect = expectation(description: "request should complete")
         var receivedResponse: DataResponse<HTTPBinResponse>?
-        
+
         // When
         AF.request("https://httpbin.org/post", method: .post, parameters: parameters)
             .responseJSONDecodable { (response: DataResponse<HTTPBinResponse>) in
                 receivedResponse = response
                 expect.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         // Then
         XCTAssertEqual(receivedResponse?.result.value?.form, ["property": "one"])
     }

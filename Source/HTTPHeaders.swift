@@ -53,11 +53,27 @@ public struct HTTPHeaders {
     /// - Parameters:
     ///   - name:  The `HTTPHeader` name.
     ///   - value: The `HTTPHeader value.
+    public mutating func add(name: String, value: String) {
+        update(HTTPHeader(name: name, value: value))
+    }
+
+    /// Case-insensitively updates or appends the provided `HTTPHeader` into the instance.
+    ///
+    /// - Parameter header: The `HTTPHeader` to update or append.
+    public mutating func add(_ header: HTTPHeader) {
+        update(header)
+    }
+
+    /// Case-insensitively updates or appends an `HTTPHeader` into the instance using the provided `name` and `value`.
+    ///
+    /// - Parameters:
+    ///   - name:  The `HTTPHeader` name.
+    ///   - value: The `HTTPHeader value.
     public mutating func update(name: String, value: String) {
         update(HTTPHeader(name: name, value: value))
     }
 
-    /// Case-insensitively updates or apprends the provided `HTTPHeader` into the instance.
+    /// Case-insensitively updates or appends the provided `HTTPHeader` into the instance.
     ///
     /// - Parameter header: The `HTTPHeader` to update or append.
     public mutating func update(_ header: HTTPHeader) {
@@ -80,7 +96,7 @@ public struct HTTPHeaders {
 
     /// Sort the current instance by header name.
     mutating public func sort() {
-        return headers.sort { $0.name < $1.name }
+        headers.sort { $0.name < $1.name }
     }
 
     /// Returns an instance sorted by header name.
@@ -99,7 +115,6 @@ public struct HTTPHeaders {
 
         return headers[index].value
     }
-
 
     /// Case-insensitively access the header with the given name.
     ///
@@ -198,6 +213,14 @@ extension HTTPHeader: CustomStringConvertible {
 }
 
 extension HTTPHeader {
+    /// Returns an `Accept-Charset` header.
+    ///
+    /// - Parameter value: The `Accept-Charset` value.
+    /// - Returns:         The header.
+    public static func acceptCharset(_ value: String) -> HTTPHeader {
+        return HTTPHeader(name: "Accept-Charset", value: value)
+    }
+
     /// Returns an `Accept-Language` header.
     ///
     /// Alamofire offers a default Accept-Language header that accumulates and encodes the system's preferred languages.
@@ -232,10 +255,19 @@ extension HTTPHeader {
         return authorization("Basic \(credential)")
     }
 
+    /// Returns a `Bearer` `Authorization` header using the `bearerToken` provided
+    ///
+    /// - Parameter bearerToken: The bearer token.
+    /// - Returns:               The header.
+    public static func authorization(bearerToken: String) -> HTTPHeader {
+        return authorization("Bearer \(bearerToken)")
+    }
+
     /// Returns an `Authorization` header.
     ///
-    /// Alamofire provides a built-in method to produce Basic Authorization headers. Use
-    /// `HTTPHeader.authorization(username: password:)`.
+    /// Alamofire provides built-in methods to produce `Authorization` headers. For a Basic `Authorization` header use
+    /// `HTTPHeader.authorization(username: password:)`. For a Bearer `Authorization` header, use
+    /// `HTTPHeader.authorization(bearerToken:)`.
     ///
     /// - Parameter value: The `Authorization` value.
     /// - Returns:         The header.
