@@ -611,6 +611,7 @@ open class SessionManager {
         to url: URLConvertible,
         method: HTTPMethod = .post,
         headers: HTTPHeaders? = nil,
+        queue: DispatchQueue? = nil,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
         do {
@@ -620,10 +621,11 @@ open class SessionManager {
                 multipartFormData: multipartFormData,
                 usingThreshold: encodingMemoryThreshold,
                 with: urlRequest,
+                queue: queue,
                 encodingCompletion: encodingCompletion
             )
         } catch {
-            DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
+            (queue ?? DispatchQueue.main).async { encodingCompletion?(.failure(error)) }
         }
     }
 
@@ -654,6 +656,7 @@ open class SessionManager {
         multipartFormData: @escaping (MultipartFormData) -> Void,
         usingThreshold encodingMemoryThreshold: UInt64 = SessionManager.multipartFormDataEncodingMemoryThreshold,
         with urlRequest: URLRequestConvertible,
+        queue: DispatchQueue? = nil,
         encodingCompletion: ((MultipartFormDataEncodingResult) -> Void)?)
     {
         DispatchQueue.global(qos: .utility).async {
@@ -677,7 +680,7 @@ open class SessionManager {
                         streamFileURL: nil
                     )
 
-                    DispatchQueue.main.async { encodingCompletion?(encodingResult) }
+                    (queue ?? DispatchQueue.main).async { encodingCompletion?(encodingResult) }
                 } else {
                     let fileManager = FileManager.default
                     let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
@@ -713,7 +716,7 @@ open class SessionManager {
                         }
                     }
 
-                    DispatchQueue.main.async {
+                    (queue ?? DispatchQueue.main).async {
                         let encodingResult = MultipartFormDataEncodingResult.success(
                             request: upload,
                             streamingFromDisk: true,
@@ -733,7 +736,7 @@ open class SessionManager {
                     }
                 }
 
-                DispatchQueue.main.async { encodingCompletion?(.failure(error)) }
+                (queue ?? DispatchQueue.main).async { encodingCompletion?(.failure(error)) }
             }
         }
     }
