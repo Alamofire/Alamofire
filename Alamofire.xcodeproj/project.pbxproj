@@ -33,9 +33,9 @@
 		3107EA3F20A1267C00445260 /* SessionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */; };
 		3107EA4020A1267C00445260 /* SessionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */; };
 		3107EA4120A1267D00445260 /* SessionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */; };
-		3111CE8420A7636E008315E2 /* SessionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D1C6F419D52968002E74FE /* SessionManagerTests.swift */; };
-		3111CE8520A7636F008315E2 /* SessionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D1C6F419D52968002E74FE /* SessionManagerTests.swift */; };
-		3111CE8620A76370008315E2 /* SessionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D1C6F419D52968002E74FE /* SessionManagerTests.swift */; };
+		3111CE8420A7636E008315E2 /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D1C6F419D52968002E74FE /* SessionTests.swift */; };
+		3111CE8520A7636F008315E2 /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D1C6F419D52968002E74FE /* SessionTests.swift */; };
+		3111CE8620A76370008315E2 /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D1C6F419D52968002E74FE /* SessionTests.swift */; };
 		3111CE8820A77843008315E2 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3111CE8720A77843008315E2 /* EventMonitor.swift */; };
 		3111CE8920A77944008315E2 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3111CE8720A77843008315E2 /* EventMonitor.swift */; };
 		3111CE8A20A77945008315E2 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3111CE8720A77843008315E2 /* EventMonitor.swift */; };
@@ -445,7 +445,7 @@
 		F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TLSEvaluationTests.swift; sourceTree = "<group>"; };
 		F897FF4019AA800700AB5182 /* Alamofire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alamofire.swift; sourceTree = "<group>"; };
 		F8AE910119D28DCC0078C7B2 /* ValidationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidationTests.swift; sourceTree = "<group>"; };
-		F8D1C6F419D52968002E74FE /* SessionManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagerTests.swift; sourceTree = "<group>"; };
+		F8D1C6F419D52968002E74FE /* SessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
 		F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -516,7 +516,7 @@
 				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
 				4CA028C41B7466C500C84163 /* ResultTests.swift */,
 				4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */,
-				F8D1C6F419D52968002E74FE /* SessionManagerTests.swift */,
+				F8D1C6F419D52968002E74FE /* SessionTests.swift */,
 				F8111E5F19A9674D0040E7D1 /* UploadTests.swift */,
 			);
 			name = Core;
@@ -1312,7 +1312,7 @@
 				4CF627141BA7CC240011A099 /* BaseTestCase.swift in Sources */,
 				31727424218BB9A50039FFCC /* HTTPBin.swift in Sources */,
 				31EBD9C320D1D89D00D1FF34 /* ValidationTests.swift in Sources */,
-				3111CE8620A76370008315E2 /* SessionManagerTests.swift in Sources */,
+				3111CE8620A76370008315E2 /* SessionTests.swift in Sources */,
 				31C2B0F220B271380089BA7C /* TLSEvaluationTests.swift in Sources */,
 				3111CE9D20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */,
@@ -1445,7 +1445,7 @@
 				4C256A531B096C770065714F /* BaseTestCase.swift in Sources */,
 				31727422218BB9A50039FFCC /* HTTPBin.swift in Sources */,
 				31EBD9C120D1D89C00D1FF34 /* ValidationTests.swift in Sources */,
-				3111CE8420A7636E008315E2 /* SessionManagerTests.swift in Sources */,
+				3111CE8420A7636E008315E2 /* SessionTests.swift in Sources */,
 				31C2B0F020B271370089BA7C /* TLSEvaluationTests.swift in Sources */,
 				3111CE9B20A7EC57008315E2 /* URLProtocolTests.swift in Sources */,
 				317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */,
@@ -1476,7 +1476,7 @@
 				F829C6BF1A7A950600A2CD59 /* RequestTests.swift in Sources */,
 				31727423218BB9A50039FFCC /* HTTPBin.swift in Sources */,
 				31EBD9C220D1D89C00D1FF34 /* ValidationTests.swift in Sources */,
-				3111CE8520A7636F008315E2 /* SessionManagerTests.swift in Sources */,
+				3111CE8520A7636F008315E2 /* SessionTests.swift in Sources */,
 				31C2B0F120B271370089BA7C /* TLSEvaluationTests.swift in Sources */,
 				3111CE9C20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */,

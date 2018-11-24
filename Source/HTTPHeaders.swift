@@ -53,6 +53,22 @@ public struct HTTPHeaders {
     /// - Parameters:
     ///   - name:  The `HTTPHeader` name.
     ///   - value: The `HTTPHeader value.
+    public mutating func add(name: String, value: String) {
+        update(HTTPHeader(name: name, value: value))
+    }
+
+    /// Case-insensitively updates or appends the provided `HTTPHeader` into the instance.
+    ///
+    /// - Parameter header: The `HTTPHeader` to update or append.
+    public mutating func add(_ header: HTTPHeader) {
+        update(header)
+    }
+
+    /// Case-insensitively updates or appends an `HTTPHeader` into the instance using the provided `name` and `value`.
+    ///
+    /// - Parameters:
+    ///   - name:  The `HTTPHeader` name.
+    ///   - value: The `HTTPHeader value.
     public mutating func update(name: String, value: String) {
         update(HTTPHeader(name: name, value: value))
     }
