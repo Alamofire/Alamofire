@@ -32,7 +32,7 @@ env:
 
     - DESTINATION="arch=x86_64" SCHEME="$MACOS_FRAMEWORK_SCHEME" RUN_TESTS="YES" BUILD_EXAMPLE="NO" POD_LINT="NO"
 before_install:
-  - gem update cocoapods --pre --no-rdoc --no-ri --no-document --quiet
+  - bundle install
 script:
   - set -o pipefail
   - xcodebuild -version
