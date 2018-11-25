@@ -1,7 +1,6 @@
 // swift-tools-version:4.0
-
 //
-//  Package.swift
+//  Package@swift-4.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -37,5 +36,6 @@ let package = Package(
         .target(
             name: "Alamofire",
             path: "Source")
-    ]
+    ],
+    swiftLanguageVersions: [3, 4]
 )
