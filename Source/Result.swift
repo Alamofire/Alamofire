@@ -166,10 +166,10 @@ extension Result {
     ///
     /// - returns: A `Result` containing the result of the given closure. If this instance is a failure, returns the
     ///            same failure.
-    public func map<T>(_ transform: (Value) throws -> T) rethrows -> Result<T> {
+    public func map<T>(_ transform: (Value) -> T) -> Result<T> {
         switch self {
         case .success(let value):
-            return .success(try transform(value))
+            return .success(transform(value))
         case .failure(let error):
             return .failure(error)
         }
@@ -211,10 +211,10 @@ extension Result {
     /// - Parameter transform: A closure that takes the error of the instance.
     /// - Returns: A `Result` instance containing the result of the transform. If this instance is a success, returns
     ///            the same instance.
-    public func mapError<T: Error>(_ transform: (Error) throws -> T) rethrows -> Result {
+    public func mapError<T: Error>(_ transform: (Error) -> T) -> Result {
         switch self {
         case .failure(let error):
-            return .failure(try transform(error))
+            return .failure(transform(error))
         case .success:
             return self
         }
