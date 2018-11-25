@@ -28,7 +28,7 @@ If you discover a security issue, please bring it to our attention right away!
 Please **DO NOT** file a public issue,
 instead send your report privately to <security@alamofire.org>.
 This will help ensure that any vulnerabilities that _are_ found
-can be [disclosed responsibly](http://en.wikipedia.org/wiki/Responsible_disclosure)
+can be [disclosed responsibly](https://en.wikipedia.org/wiki/Responsible_disclosure)
 to any affected parties.
 
 ## Reporting Other Issues
@@ -88,4 +88,4 @@ See [CONDUCT.md](https://github.com/Alamofire/Foundation/blob/master/CONDUCT.md)
 
 ---
 
-*Some of the ideas and wording for the statements above were based on work by the [Docker](https://github.com/docker/docker/blob/master/CONTRIBUTING.md) and [Linux](http://elinux.org/Developer_Certificate_Of_Origin) communities. We commend them for their efforts to facilitate collaboration in their projects.*
+*Some of the ideas and wording for the statements above were based on work by the [Docker](https://github.com/docker/docker/blob/master/CONTRIBUTING.md) and [Linux](https://elinux.org/Developer_Certificate_Of_Origin) communities. We commend them for their efforts to facilitate collaboration in their projects.*

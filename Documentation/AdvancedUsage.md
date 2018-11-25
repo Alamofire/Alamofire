@@ -333,7 +333,7 @@ class AccessTokenAdapter: RequestAdapter {
         }
 
         return urlRequest
-	}
+    }
 }
 ```
 
