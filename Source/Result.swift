@@ -253,8 +253,8 @@ extension Result {
     /// - Parameter closure: A closure that takes the success value of this instance.
     /// - Returns: This `Result` instance, unmodified.
     @discardableResult
-    public func withValue(_ closure: (Value) -> Void) -> Result {
-        if case let .success(value) = self { closure(value) }
+    public func withValue(_ closure: (Value) throws -> Void) rethrows -> Result {
+        if case let .success(value) = self { try closure(value) }
 
         return self
     }
@@ -266,8 +266,8 @@ extension Result {
     /// - Parameter closure: A closure that takes the success value of this instance.
     /// - Returns: This `Result` instance, unmodified.
     @discardableResult
-    public func withError(_ closure: (Error) -> Void) -> Result {
-        if case let .failure(error) = self { closure(error) }
+    public func withError(_ closure: (Error) throws -> Void) rethrows -> Result {
+        if case let .failure(error) = self { try closure(error) }
 
         return self
     }
@@ -279,8 +279,8 @@ extension Result {
     /// - Parameter closure: A `Void` closure.
     /// - Returns: This `Result` instance, unmodified.
     @discardableResult
-    public func ifSuccess(_ closure: () -> Void) -> Result {
-        if isSuccess { closure() }
+    public func ifSuccess(_ closure: () throws -> Void) rethrows -> Result {
+        if isSuccess { try closure() }
 
         return self
     }
@@ -292,8 +292,8 @@ extension Result {
     /// - Parameter closure: A `Void` closure.
     /// - Returns: This `Result` instance, unmodified.
     @discardableResult
-    public func ifFailure(_ closure: () -> Void) -> Result {
-        if isFailure { closure() }
+    public func ifFailure(_ closure: () throws -> Void) rethrows -> Result {
+        if isFailure { try closure() }
 
         return self
     }
