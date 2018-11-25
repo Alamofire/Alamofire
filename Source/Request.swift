@@ -328,7 +328,7 @@ extension Request: CustomDebugStringConvertible {
 
         components += headers.map {
             let escapedValue = String(describing: $0.value).replacingOccurrences(of: "\"", with: "\\\"")
-            
+
             return "-H \"\($0.key): \(escapedValue)\""
         }
 

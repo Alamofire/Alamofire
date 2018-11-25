@@ -400,7 +400,7 @@ class ResultTestCase: BaseTestCase {
         result.withError { string = "\(type(of: $0))" }
 
         // Then
-    #if swift(>=4.2)
+    #if swift(>=4.0)
         XCTAssertEqual(string, "ResultError")
     #elseif swift(>=3.2)
         XCTAssertEqual(string, "ResultError #1")
