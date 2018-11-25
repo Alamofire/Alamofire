@@ -3,6 +3,10 @@ osx_image: xcode10.1
 branches:
   only:
     - master
+cache: 
+  - bundler
+  - directories:
+       - /home/travis/.rvm/
 env:
   global:
   - LC_CTYPE=en_US.UTF-8
