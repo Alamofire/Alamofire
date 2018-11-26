@@ -4,7 +4,7 @@
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Alamofire.svg)](https://img.shields.io/cocoapods/v/Alamofire.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Platform](https://img.shields.io/cocoapods/p/Alamofire.svg?style=flat)](https://alamofire.github.io/Alamofire)
-[![Twitter](https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat)](http://twitter.com/AlamofireSF)
+[![Twitter](https://img.shields.io/badge/twitter-@AlamofireSF-blue.svg?style=flat)](https://twitter.com/AlamofireSF)
 [![Gitter](https://badges.gitter.im/Alamofire/Alamofire.svg)](https://gitter.im/Alamofire/Alamofire?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 Alamofire is an HTTP networking library written in Swift.
@@ -67,18 +67,19 @@ In order to keep Alamofire focused specifically on core networking implementatio
 - [Alamofire 2.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%202.0%20Migration%20Guide.md)
 
 ## Communication
-
-- If you **need help**, use [Stack Overflow](http://stackoverflow.com/questions/tagged/alamofire). (Tag 'alamofire')
-- If you'd like to **ask a general question**, use [Stack Overflow](http://stackoverflow.com/questions/tagged/alamofire).
-- If you **found a bug**, open an issue.
-- If you **have a feature request**, open an issue.
+- If you **need help with making network requests**, use [Stack Overflow](https://stackoverflow.com/questions/tagged/alamofire) and tag `alamofire`.
+- If you need to **find or understand an API**, check [our documentation](http://alamofire.github.io/Alamofire/) or [Apple's documentation for `URLSession`](https://developer.apple.com/documentation/foundation/url_loading_system), on top of which Alamofire is built.
+- If you need **help with an Alamofire feature**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire).
+- If you'd like to **discuss Alamofire best practices**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire).
+- If you'd like to **discuss a feature request**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire). 
+- If you **found a bug**, open an issue and follow the guide. The more detail the better!
 - If you **want to contribute**, submit a pull request.
 
 ## Installation
 
 ### CocoaPods
 
-[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
+[CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. You can install it with the following command:
 
 ```bash
 $ gem install cocoapods
@@ -108,7 +109,7 @@ $ pod install
 
 [Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks.
 
-You can install Carthage with [Homebrew](http://brew.sh/) using the following command:
+You can install Carthage with [Homebrew](https://brew.sh/) using the following command:
 
 ```bash
 $ brew update
@@ -157,7 +158,7 @@ If you prefer not to use any of the aforementioned dependency managers, you can 
   $ git init
   ```
 
-- Add Alamofire as a git [submodule](http://git-scm.com/docs/git-submodule) by running the following command:
+- Add Alamofire as a git [submodule](https://git-scm.com/docs/git-submodule) by running the following command:
 
   ```bash
   $ git submodule add https://github.com/Alamofire/Alamofire.git
