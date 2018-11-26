@@ -176,7 +176,7 @@ extension SecTrust {
     var isValid: Bool {
         var result = SecTrustResultType.invalid
         let status = SecTrustEvaluate(self, &result)
-        
+
         return (status == errSecSuccess) ? (result == .unspecified || result == .proceed) : false
     }
 }

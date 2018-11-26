@@ -421,12 +421,9 @@ open class MultipartFormData {
     }
 
     private func encodeHeaders(for bodyPart: BodyPart) -> Data {
-        var headerText = ""
-
-        for (key, value) in bodyPart.headers {
-            headerText += "\(key): \(value)\(EncodingCharacters.crlf)"
-        }
-        headerText += EncodingCharacters.crlf
+        let headerText = bodyPart.headers.map { "\($0.name): \($0.value)\(EncodingCharacters.crlf)" }
+                                         .joined()
+                                         + EncodingCharacters.crlf
 
         return Data(headerText.utf8)
     }
@@ -549,12 +546,12 @@ open class MultipartFormData {
 
     // MARK: - Private - Content Headers
 
-    private func contentHeaders(withName name: String, fileName: String? = nil, mimeType: String? = nil) -> [String: String] {
+    private func contentHeaders(withName name: String, fileName: String? = nil, mimeType: String? = nil) -> HTTPHeaders {
         var disposition = "form-data; name=\"\(name)\""
         if let fileName = fileName { disposition += "; filename=\"\(fileName)\"" }
 
-        var headers = ["Content-Disposition": disposition]
-        if let mimeType = mimeType { headers["Content-Type"] = mimeType }
+        var headers: HTTPHeaders = [.contentDisposition(disposition)]
+        if let mimeType = mimeType { headers.add(.contentType(mimeType)) }
 
         return headers
     }

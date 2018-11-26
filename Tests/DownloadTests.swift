@@ -49,7 +49,7 @@ class DownloadInitializationTestCase: BaseTestCase {
     func testDownloadClassMethodWithMethodURLHeadersAndDestination() {
         // Given
         let urlString = "https://httpbin.org/get"
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = ["Authorization": "123456"]
         let expectation = self.expectation(description: "download should complete")
 
         // When
@@ -224,7 +224,7 @@ class DownloadResponseTestCase: BaseTestCase {
         // Given
         let fileURL = randomCachesFileURL
         let urlString = "https://httpbin.org/get"
-        let headers = ["Authorization": "123456"]
+        let headers: HTTPHeaders = ["Authorization": "123456"]
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")

@@ -1,5 +1,5 @@
 //
-//  SessionManagerTests.swift
+//  SessionTests.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -26,7 +26,7 @@
 import Foundation
 import XCTest
 
-class SessionManagerTestCase: BaseTestCase {
+class SessionTestCase: BaseTestCase {
 
     // MARK: Helper Types
 
@@ -42,13 +42,13 @@ class SessionManagerTestCase: BaseTestCase {
         func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void) {
             let result: Result<URLRequest> = Result {
                 guard !throwsError else { throw AFError.invalidURL(url: "") }
-                
+
                 var urlRequest = urlRequest
                 urlRequest.httpMethod = method.rawValue
-                
+
                 return urlRequest
             }
-            
+
             completion(result)
         }
     }
@@ -67,20 +67,18 @@ class SessionManagerTestCase: BaseTestCase {
                     throwsErrorOnSecondAdapt = false
                     throw AFError.invalidURL(url: "")
                 }
-                
+
                 var urlRequest = urlRequest
-                
+
                 adaptedCount += 1
-                
+
                 if shouldApplyAuthorizationHeader && adaptedCount > 1 {
-                    if let header = HTTPHeaders.authorization(username: "user", password: "password").first {
-                        urlRequest.setValue(header.value, forHTTPHeaderField: header.key)
-                    }
+                    urlRequest.httpHeaders.update(.authorization(username: "user", password: "password"))
                 }
-                
+
                 return urlRequest
             }
-            
+
             completion(result)
         }
 
@@ -104,12 +102,12 @@ class SessionManagerTestCase: BaseTestCase {
         func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void) {
             let result: Result<URLRequest> = Result {
                 adaptedCount += 1
-                
+
                 if adaptedCount == 1 { throw AFError.invalidURL(url: "") }
-                
+
                 return urlRequest
             }
-            
+
             completion(result)
         }
 
@@ -195,7 +193,7 @@ class SessionManagerTestCase: BaseTestCase {
 
     func testDefaultUserAgentHeader() {
         // Given, When
-        let userAgent = HTTPHeaders.defaultHTTPHeaders["User-Agent"]
+        let userAgent = HTTPHeaders.default["User-Agent"]
 
         // Then
         let osNameVersion: String = {
@@ -920,9 +918,9 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
                     configuration = .background(withIdentifier: identifier)
                 }
 
-                var headers = HTTPHeaders.defaultHTTPHeaders
+                var headers = HTTPHeaders.default
                 headers["Authorization"] = "Bearer 123456"
-                configuration.httpAdditionalHeaders = headers
+                configuration.httpHeaders = headers
 
                 return configuration
             }()

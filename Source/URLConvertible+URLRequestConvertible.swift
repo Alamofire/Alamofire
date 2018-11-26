@@ -100,11 +100,6 @@ extension URLRequest {
         self.init(url: url)
 
         httpMethod = method.rawValue
-
-        if let headers = headers {
-            for (headerField, headerValue) in headers {
-                setValue(headerValue, forHTTPHeaderField: headerField)
-            }
-        }
+        allHTTPHeaderFields = headers?.dictionary
     }
 }
