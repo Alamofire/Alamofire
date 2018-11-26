@@ -368,7 +368,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        guard let uploadable = request.uploadable, case .data = uploadable else {
+        guard let uploadable = try? request.upload.uploadable(), case .data = uploadable else {
             XCTFail("Uploadable is not .data")
             return
         }
@@ -401,7 +401,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        guard let uploadable = request.uploadable, case .data = uploadable else {
+        guard let uploadable = try? request.upload.uploadable(), case .data = uploadable else {
             XCTFail("Uploadable is not .data")
             return
         }
@@ -441,7 +441,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        guard let uploadable = request.uploadable, case let .file(url, _) = uploadable else {
+        guard let uploadable = try? request.upload.uploadable(), case let .file(url, _) = uploadable else {
             XCTFail("Uploadable is not .file")
             return
         }
@@ -474,7 +474,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        guard let uploadable = request.uploadable, case .file = uploadable else {
+        guard let uploadable = try? request.upload.uploadable(), case .file = uploadable else {
             XCTFail("Uploadable is not .file")
             return
         }
@@ -537,7 +537,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         XCTAssertNotNil(data, "data should not be nil")
         XCTAssertNil(error, "error should be nil")
 
-        guard let uploadable = upload.uploadable, case .file = uploadable else {
+        guard let uploadable = try? upload.upload.uploadable(), case .file = uploadable else {
             XCTFail("Uploadable is not .file")
             return
         }

@@ -240,15 +240,19 @@ open class Session {
     }
 
     struct Upload: UploadConvertible {
-        let request: URLRequestConvertible
-        let uploadable: UploadableConvertible
+        let requestConvertible: URLRequestConvertible
+        let upload: UploadRequest.Uploadable
 
-        func createUploadable() throws -> UploadRequest.Uploadable {
-            return try uploadable.createUploadable()
+        func uploadable() throws -> UploadRequest.Uploadable {
+            return upload
+        }
+
+        func request() throws -> URLRequestConvertible {
+            return requestConvertible
         }
 
         func asURLRequest() throws -> URLRequest {
-            return try request.asURLRequest()
+            return try requestConvertible.asURLRequest()
         }
     }
 
@@ -299,7 +303,10 @@ open class Session {
                      headers: HTTPHeaders? = nil) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
 
-        return upload(multipartFormData: multipartFormData, usingThreshold: encodingMemoryThreshold, with: convertible)
+        return upload(multipartFormData: multipartFormData,
+                      usingThreshold: encodingMemoryThreshold,
+                      fileManager: fileManager,
+                      with: convertible)
     }
 
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
@@ -320,7 +327,7 @@ open class Session {
     // MARK: Uploadable
 
     func upload(_ uploadable: UploadRequest.Uploadable, with convertible: URLRequestConvertible) -> UploadRequest {
-        let uploadable = Upload(request: convertible, uploadable: uploadable)
+        let uploadable = Upload(requestConvertible: convertible, upload: uploadable)
 
         return upload(uploadable)
     }
@@ -349,26 +356,21 @@ open class Session {
     }
 
     func perform(_ request: DataRequest) {
-        requestQueue.async {
-            guard !request.isCancelled else { return }
-
-            self.performSetupOperations(for: request, convertible: request.convertible)
+        guard let convertible = request.provideRequestConvertible() else {
+            // TODO: Fail in some way?
+            return
         }
+
+        performSetupOperations(for: request, convertible: convertible)
     }
 
     func perform(_ request: UploadRequest) {
-        requestQueue.async {
-            guard !request.isCancelled else { return }
-
-            do {
-                let uploadable = try request.upload.createUploadable()
-                self.rootQueue.async { request.didCreateUploadable(uploadable) }
-
-                self.performSetupOperations(for: request, convertible: request.convertible)
-            } catch {
-                self.rootQueue.async { request.didFailToCreateUploadable(with: error) }
-            }
+        guard let convertible = request.provideRequestConvertible() else {
+            // TODO: Fail in some way?
+            return
         }
+
+        performSetupOperations(for: request, convertible: convertible)
     }
 
     func perform(_ request: DownloadRequest) {
@@ -383,29 +385,35 @@ open class Session {
     }
 
     func performSetupOperations(for request: Request, convertible: URLRequestConvertible) {
-        do {
-            let initialRequest = try convertible.asURLRequest()
-            rootQueue.async { request.didCreateURLRequest(initialRequest) }
-
+        requestQueue.async {
             guard !request.isCancelled else { return }
 
-            if let adapter = adapter {
-                adapter.adapt(initialRequest) { (result) in
-                    do {
-                        let adaptedRequest = try result.unwrap()
-                        self.rootQueue.async {
-                            request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
-                            self.didCreateURLRequest(adaptedRequest, for: request)
+            do {
+                let initialRequest = try convertible.asURLRequest()
+                self.rootQueue.async { request.didCreateURLRequest(initialRequest) }
+
+                guard !request.isCancelled else { return }
+
+                if let adapter = self.adapter {
+                    adapter.adapt(initialRequest) { (result) in
+                        guard !request.isCancelled else { return }
+
+                        do {
+                            let adaptedRequest = try result.unwrap()
+                            self.rootQueue.async {
+                                request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
+                                self.didCreateURLRequest(adaptedRequest, for: request)
+                            }
+                        } catch {
+                            self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: error) }
                         }
-                    } catch {
-                        self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: error) }
                     }
+                } else {
+                    self.rootQueue.async { self.didCreateURLRequest(initialRequest, for: request) }
                 }
-            } else {
-                rootQueue.async { self.didCreateURLRequest(initialRequest, for: request) }
+            } catch {
+                self.rootQueue.async { request.didFailToCreateURLRequest(with: error) }
             }
-        } catch {
-            rootQueue.async { request.didFailToCreateURLRequest(with: error) }
         }
     }
 
@@ -414,7 +422,8 @@ open class Session {
     func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
         guard !request.isCancelled else { return }
 
-        let task = request.task(for: urlRequest, using: session)
+        // TODO: Handle error.
+        let task = try! request.task(for: urlRequest, using: session)
         requestTaskMap[request] = task
         request.didCreateTask(task)
 

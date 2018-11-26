@@ -351,7 +351,6 @@ class SessionTestCase: BaseTestCase {
                 expectation.fulfill()
             }
 
-
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then

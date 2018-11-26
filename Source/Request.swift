@@ -370,7 +370,7 @@ open class Request {
     // MARK: Task Creation
 
     /// Called when creating a `URLSessionTask` for this `Request`. Subclasses must override.
-    func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
+    func task(for request: URLRequest, using session: URLSession) throws -> URLSessionTask {
         fatalError("Subclasses must override.")
     }
 
@@ -641,6 +641,10 @@ open class DataRequest: Request {
         protectedData.directValue = nil
     }
 
+    func provideRequestConvertible() -> URLRequestConvertible? {
+        return convertible
+    }
+
     func didReceive(data: Data) {
         if self.data == nil {
             protectedData.directValue = data
@@ -651,7 +655,7 @@ open class DataRequest: Request {
         updateDownloadProgress()
     }
 
-    override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
+    override func task(for request: URLRequest, using session: URLSession) throws -> URLSessionTask {
         let copiedRequest = request
         return session.dataTask(with: copiedRequest)
     }
@@ -874,11 +878,8 @@ open class UploadRequest: DataRequest {
 
     // MARK: - Initial State
 
-    public let upload: UploadableConvertible
-
-    // MARK: - Updated State
-
-    public var uploadable: Uploadable?
+    public var upload: UploadConvertible { return protectedUpload.directValue }
+    private let protectedUpload: Protector<UploadConvertible>
 
     init(id: UUID = UUID(),
          convertible: UploadConvertible,
@@ -886,7 +887,7 @@ open class UploadRequest: DataRequest {
          serializationQueue: DispatchQueue,
          eventMonitor: EventMonitor?,
          delegate: RequestDelegate) {
-        self.upload = convertible
+        self.protectedUpload = Protector(convertible)
 
         super.init(id: id,
                    convertible: convertible,
@@ -898,19 +899,12 @@ open class UploadRequest: DataRequest {
         // Automatically remove temporary upload files (e.g. multipart form data)
         internalQueue.addOperation {
             guard
-                let uploadable = self.uploadable,
-                case let .file(url, shouldRemove) = uploadable,
+                case let .file(url, shouldRemove)? = try? self.upload.uploadable(),
                 shouldRemove else { return }
 
             // TODO: Abstract file manager
             try? FileManager.default.removeItem(at: url)
         }
-    }
-
-    func didCreateUploadable(_ uploadable: Uploadable) {
-        self.uploadable = uploadable
-
-        eventMonitor?.request(self, didCreateUploadable: uploadable)
     }
 
     func didFailToCreateUploadable(with error: Error) {
@@ -921,24 +915,20 @@ open class UploadRequest: DataRequest {
         retryOrFinish(error: error)
     }
 
-    override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
-        guard let uploadable = uploadable else {
-            fatalError("Attempting to create a URLSessionUploadTask when Uploadable value doesn't exist.")
-        }
+    override func provideRequestConvertible() -> URLRequestConvertible? {
+        return upload
+    }
 
-        switch uploadable {
+    override func task(for request: URLRequest, using session: URLSession) throws -> URLSessionTask {
+        switch try upload.uploadable() {
         case let .data(data): return session.uploadTask(with: request, from: data)
         case let .file(url, _): return session.uploadTask(with: request, fromFile: url)
         case .stream: return session.uploadTask(withStreamedRequest: request)
         }
     }
 
-    func inputStream() -> InputStream {
-        guard let uploadable = uploadable else {
-            fatalError("Attempting to access the input stream but the uploadable doesn't exist.")
-        }
-
-        guard case let .stream(stream) = uploadable else {
+    func inputStream() throws -> InputStream {
+        guard case let .stream(stream) = try upload.uploadable() else {
             fatalError("Attempted to access the stream of an UploadRequest that wasn't created with one.")
         }
 
@@ -948,15 +938,19 @@ open class UploadRequest: DataRequest {
     }
 }
 
-public protocol UploadableConvertible {
-    func createUploadable() throws -> UploadRequest.Uploadable
+//public protocol UploadableConvertible {
+//    func createUploadable() throws -> UploadRequest.Uploadable
+//}
+//
+//extension UploadRequest.Uploadable: UploadableConvertible {
+//    public func createUploadable() throws -> UploadRequest.Uploadable {
+//        return self
+//    }
+//}
+
+public protocol UploadConvertible: URLRequestConvertible {
+    func uploadable() throws -> UploadRequest.Uploadable
+    func request() throws -> URLRequestConvertible
 }
 
-extension UploadRequest.Uploadable: UploadableConvertible {
-    public func createUploadable() throws -> UploadRequest.Uploadable {
-        return self
-    }
-}
-
-public protocol UploadConvertible: UploadableConvertible & URLRequestConvertible { }
 

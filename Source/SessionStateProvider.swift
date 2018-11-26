@@ -134,8 +134,8 @@ extension SessionDelegate: URLSessionTaskDelegate {
         guard let request = stateProvider?.request(for: task) as? UploadRequest else {
             fatalError("needNewBodyStream for request that isn't UploadRequest.")
         }
-
-        completionHandler(request.inputStream())
+        // TODO: Real error handling.
+        completionHandler(try? request.inputStream())
     }
 
     open func urlSession(_ session: URLSession,
