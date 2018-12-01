@@ -385,14 +385,6 @@ enum URLEncodedFormComponent {
     case array([URLEncodedFormComponent])
     case object([String: URLEncodedFormComponent])
 
-    /// Converts self to an `String` or returns `nil` if not convertible.
-    var string: String? {
-        switch self {
-        case let .string(string): return string
-        default: return nil
-        }
-    }
-
     /// Converts self to an `[URLEncodedFormData]` or returns `nil` if not convertible.
     var array: [URLEncodedFormComponent]? {
         switch self {

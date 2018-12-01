@@ -71,6 +71,54 @@ final class JSONParameterEncoderTests: BaseTestCase {
                     """
         XCTAssertEqual(newRequest.httpBody?.asString, expected)
     }
+    
+    func testThatJSONEncoderDefaultWorks() throws {
+        // Given
+        let encoder = JSONParameterEncoder.default
+        let request = URLRequest.makeHTTPBinRequest()
+        
+        // When
+        let encoded = try encoder.encode(HTTPBinParameters.default, into: request)
+        
+        // Then
+        let expected = """
+                    {"property":"property"}
+                    """
+        XCTAssertEqual(encoded.httpBody?.asString, expected)
+    }
+    
+    func testThatJSONEncoderPrettyPrintedPrintsPretty() throws {
+        // Given
+        let encoder = JSONParameterEncoder.prettyPrinted
+        let request = URLRequest.makeHTTPBinRequest()
+        
+        // When
+        let encoded = try encoder.encode(HTTPBinParameters.default, into: request)
+        
+        // Then
+        let expected = """
+                    {
+                      "property" : "property"
+                    }
+                    """
+        XCTAssertEqual(encoded.httpBody?.asString, expected)
+    }
+    
+    @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
+    func testTestJSONEncoderSortedKeysHasSortedKeys() throws {
+        // Given
+        let encoder = JSONParameterEncoder.sortedKeys
+        let request = URLRequest.makeHTTPBinRequest()
+        
+        // When
+        let encoded = try encoder.encode(["z": "z", "a": "a", "p": "p"], into: request)
+        
+        // Then
+        let expected = """
+                    {"a":"a","p":"p","z":"z"}
+                    """
+        XCTAssertEqual(encoded.httpBody?.asString, expected)
+    }
 }
 
 final class URLEncodedFormParameterEncoderTests: BaseTestCase {
