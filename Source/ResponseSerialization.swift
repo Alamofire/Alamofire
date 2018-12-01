@@ -329,7 +329,7 @@ extension DownloadRequest {
 /// data is considered an error. However, if the response is has a status code valid for empty responses (`204`, `205`),
 /// then an empty `String` is returned.
 public final class StringResponseSerializer: ResponseSerializer {
-    /// Optional string encodeing used to validate the response.
+    /// Optional string encoding used to validate the response.
     public let encoding: String.Encoding?
     /// HTTP response codes for which empty responses are allowed.
     public let emptyResponseCodes: Set<Int>
