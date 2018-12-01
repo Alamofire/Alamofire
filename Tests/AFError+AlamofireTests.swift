@@ -107,11 +107,6 @@ extension AFError {
 
     // ResponseSerializationFailureReason
 
-    var isInputDataNil: Bool {
-        if case let .responseSerializationFailed(reason) = self, reason.isInputDataNil { return true }
-        return false
-    }
-
     var isInputDataNilOrZeroLength: Bool {
         if case let .responseSerializationFailed(reason) = self, reason.isInputDataNilOrZeroLength { return true }
         return false
@@ -134,6 +129,11 @@ extension AFError {
 
     var isJSONSerializationFailed: Bool {
         if case let .responseSerializationFailed(reason) = self, reason.isJSONSerializationFailed { return true }
+        return false
+    }
+
+    var isJSONDecodingFailed: Bool {
+        if case let .responseSerializationFailed(reason) = self, reason.isJSONDecodingFailed { return true }
         return false
     }
 
@@ -251,11 +251,6 @@ extension AFError.MultipartEncodingFailureReason {
 // MARK: -
 
 extension AFError.ResponseSerializationFailureReason {
-    var isInputDataNil: Bool {
-        if case .inputDataNil = self { return true }
-        return false
-    }
-
     var isInputDataNilOrZeroLength: Bool {
         if case .inputDataNilOrZeroLength = self { return true }
         return false
@@ -278,6 +273,11 @@ extension AFError.ResponseSerializationFailureReason {
 
     var isJSONSerializationFailed: Bool {
         if case .jsonSerializationFailed = self { return true }
+        return false
+    }
+
+    var isJSONDecodingFailed: Bool {
+        if case .jsonDecodingFailed = self { return true }
         return false
     }
 }
