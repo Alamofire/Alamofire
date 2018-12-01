@@ -71,6 +71,54 @@ final class JSONParameterEncoderTests: BaseTestCase {
                     """
         XCTAssertEqual(newRequest.httpBody?.asString, expected)
     }
+    
+    func testThatJSONEncoderDefaultWorks() throws {
+        // Given
+        let encoder = JSONParameterEncoder.default
+        let request = URLRequest.makeHTTPBinRequest()
+        
+        // When
+        let encoded = try encoder.encode(HTTPBinParameters.default, into: request)
+        
+        // Then
+        let expected = """
+                    {"property":"property"}
+                    """
+        XCTAssertEqual(encoded.httpBody?.asString, expected)
+    }
+    
+    func testThatJSONEncoderPrettyPrintedPrintsPretty() throws {
+        // Given
+        let encoder = JSONParameterEncoder.prettyPrinted
+        let request = URLRequest.makeHTTPBinRequest()
+        
+        // When
+        let encoded = try encoder.encode(HTTPBinParameters.default, into: request)
+        
+        // Then
+        let expected = """
+                    {
+                      "property" : "property"
+                    }
+                    """
+        XCTAssertEqual(encoded.httpBody?.asString, expected)
+    }
+    
+    @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
+    func testTestJSONEncoderSortedKeysHasSortedKeys() throws {
+        // Given
+        let encoder = JSONParameterEncoder.sortedKeys
+        let request = URLRequest.makeHTTPBinRequest()
+        
+        // When
+        let encoded = try encoder.encode(["z": "z", "a": "a", "p": "p"], into: request)
+        
+        // Then
+        let expected = """
+                    {"a":"a","p":"p","z":"z"}
+                    """
+        XCTAssertEqual(encoded.httpBody?.asString, expected)
+    }
 }
 
 final class URLEncodedFormParameterEncoderTests: BaseTestCase {
@@ -130,6 +178,30 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
 }
 
 final class URLEncodedFormEncoderTests: BaseTestCase {
+    func testEncoderThrowsErrorWhenAttemptingToEncodeNilInKeyedContainer() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters = FailingOptionalStruct(testedContainer: .keyed)
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertTrue(result.isFailure)
+    }
+    
+    func testEncoderThrowsErrorWhenAttemptingToEncodeNilInUnkeyedContainer() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters = FailingOptionalStruct(testedContainer: .unkeyed)
+        
+        // When
+        let result = Result<String> { try encoder.encode(parameters) }
+        
+        // Then
+        XCTAssertTrue(result.isFailure)
+    }
+    
     func testEncoderCanEncodeDictionary() {
         // Given
         let encoder = URLEncodedFormEncoder()
@@ -681,5 +753,29 @@ private struct ManuallyEncodableStruct: Encodable {
 
         var nestedUnkeyedUnkeyedContainer = nestedUnkeyedContainer.nestedUnkeyedContainer()
         try nestedUnkeyedUnkeyedContainer.encode(b)
+    }
+}
+
+private struct FailingOptionalStruct: Encodable {
+    enum TestedContainer {
+        case keyed, unkeyed
+    }
+    
+    enum CodingKeys: String, CodingKey { case a }
+    
+    let testedContainer: TestedContainer
+    
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        switch testedContainer {
+        case .keyed:
+            var nested = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .a)
+            try nested.encodeNil(forKey: .a)
+        case .unkeyed:
+            var nested = container.nestedUnkeyedContainer(forKey: .a)
+            try nested.encodeNil()
+        }
     }
 }
