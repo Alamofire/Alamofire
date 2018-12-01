@@ -183,50 +183,6 @@ public enum AFError: Error {
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
     }
 
-    /// Underlying reason a server trust evaluation error occured.
-    public enum ServerTrustFailureReason {
-        /// The output of a server trust evaluation.
-        public struct Output {
-            /// The host for which the evaluation was performed.
-            public let host: String
-            /// The `SecTrust` value which was evaluated.
-            public let trust: SecTrust
-            /// The `OSStatus` of evaluation operation.
-            public let status: OSStatus
-            /// The result of the evaluation operation.
-            public let result: SecTrustResultType
-
-            /// Creates an `Output` value from the provided values.
-            init(_ host: String, _ trust: SecTrust, _ status: OSStatus, _ result: SecTrustResultType) {
-                self.host = host
-                self.trust = trust
-                self.status = status
-                self.result = result
-            }
-        }
-        case noRequiredEvaluator(host: String)
-        /// No certificates were found with which to perform the trust evaluation.
-        case noCertificatesFound
-        /// No public keys were found with which to perform the trust evaluation.
-        case noPublicKeysFound
-        /// During evaluation, application of the associated `SecPolicy` failed.
-        case policyApplicationFailed(trust: SecTrust, policy: SecPolicy, status: OSStatus)
-        /// During evaluation, setting the associated anchor certificates failed.
-        case settingAnchorCertificatesFailed(status: OSStatus, certificates: [SecCertificate])
-        /// During evaluation, creation of the revocation policy failed.
-        case revocationPolicyCreationFailed
-        /// Default evaluation failed with the associated `Output`.
-        case defaultEvaluationFailed(output: Output)
-        /// Host validation failed with the associated `Output`.
-        case hostValidationFailed(output: Output)
-        /// Revocation check failed with the associated `Output` and options.
-        case revocationCheckFailed(output: Output, options: RevocationTrustEvaluator.Options)
-        /// Certificate pinning failed.
-        case certificatePinningFailed(host: String, trust: SecTrust, pinnedCertificates: [SecCertificate], serverCertificates: [SecCertificate])
-        /// Public key pinning failed.
-        case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
-    }
-
     case explicitlyCancelled
     case invalidURL(url: URLConvertible)
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
