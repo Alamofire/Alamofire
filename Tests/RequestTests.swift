@@ -203,6 +203,65 @@ class RequestResponseTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(response?.result.isSuccess, true)
     }
+
+    // MARK: Encodable Parameters
+
+    func testThatRequestsCanPassEncodableParametersAsJSONBodyData() {
+        // Given
+        let parameters = HTTPBinParameters(property: "one")
+        let expect = expectation(description: "request should complete")
+        var receivedResponse: DataResponse<HTTPBinResponse>?
+
+        // When
+        AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default)
+          .responseJSONDecodable { (response: DataResponse<HTTPBinResponse>) in
+              receivedResponse = response
+              expect.fulfill()
+          }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(receivedResponse?.result.value?.data, "{\"property\":\"one\"}")
+    }
+
+    func testThatRequestsCanPassEncodableParametersAsAURLQuery() {
+        // Given
+        let parameters = HTTPBinParameters(property: "one")
+        let expect = expectation(description: "request should complete")
+        var receivedResponse: DataResponse<HTTPBinResponse>?
+
+        // When
+        AF.request("https://httpbin.org/get", method: .get, parameters: parameters)
+          .responseJSONDecodable { (response: DataResponse<HTTPBinResponse>) in
+              receivedResponse = response
+              expect.fulfill()
+          }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(receivedResponse?.result.value?.args, ["property": "one"])
+    }
+
+    func testThatRequestsCanPassEncodableParametersAsURLEncodedBodyData() {
+        // Given
+        let parameters = HTTPBinParameters(property: "one")
+        let expect = expectation(description: "request should complete")
+        var receivedResponse: DataResponse<HTTPBinResponse>?
+
+        // When
+        AF.request("https://httpbin.org/post", method: .post, parameters: parameters)
+            .responseJSONDecodable { (response: DataResponse<HTTPBinResponse>) in
+                receivedResponse = response
+                expect.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(receivedResponse?.result.value?.form, ["property": "one"])
+    }
 }
 
 // MARK: -

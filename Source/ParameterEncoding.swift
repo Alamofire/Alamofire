@@ -24,23 +24,6 @@
 
 import Foundation
 
-/// HTTP method definitions.
-///
-/// See https://tools.ietf.org/html/rfc7231#section-4.3
-public enum HTTPMethod: String {
-    case options = "OPTIONS"
-    case get     = "GET"
-    case head    = "HEAD"
-    case post    = "POST"
-    case put     = "PUT"
-    case patch   = "PATCH"
-    case delete  = "DELETE"
-    case trace   = "TRACE"
-    case connect = "CONNECT"
-}
-
-// MARK: -
-
 /// A dictionary of parameters to apply to a `URLRequest`.
 public typealias Parameters = [String: Any]
 
@@ -231,26 +214,11 @@ public struct URLEncoding: ParameterEncoding {
 
     /// Returns a percent-escaped string following RFC 3986 for a query string key or value.
     ///
-    /// RFC 3986 states that the following characters are "reserved" characters.
-    ///
-    /// - General Delimiters: ":", "#", "[", "]", "@", "?", "/"
-    /// - Sub-Delimiters: "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "="
-    ///
-    /// In RFC 3986 - Section 3.4, it states that the "?" and "/" characters should not be escaped to allow
-    /// query strings to include a URL. Therefore, all "reserved" characters with the exception of "?" and "/"
-    /// should be percent-escaped in the query string.
-    ///
     /// - parameter string: The string to be percent-escaped.
     ///
     /// - returns: The percent-escaped string.
     public func escape(_ string: String) -> String {
-        let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
-        let subDelimitersToEncode = "!$&'()*+,;="
-
-        var allowedCharacterSet = CharacterSet.urlQueryAllowed
-        allowedCharacterSet.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
-
-        return string.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? string
+        return string.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) ?? string
     }
 
     private func query(_ parameters: [String: Any]) -> String {

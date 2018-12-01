@@ -24,7 +24,7 @@
 
 import Foundation
 
-/// Global namespace containing API for the `default` `SessionManager` instance.
+/// Global namespace containing API for the `default` `Session` instance.
 public enum AF {
     // MARK: - Data Request
 
@@ -38,33 +38,50 @@ public enum AF {
     ///   - encoding:   The `ParameterEncoding`, `URLEncoding.default` by default.
     ///   - headers:    The `HTTPHeaders`, `nil` by default.
     /// - Returns:      The created `DataRequest`.
-    @discardableResult
     public static func request(_ url: URLConvertible,
                                method: HTTPMethod = .get,
                                parameters: Parameters? = nil,
                                encoding: ParameterEncoding = URLEncoding.default,
                                headers: HTTPHeaders? = nil) -> DataRequest {
         return Session.default.request(url,
-                                              method: method,
-                                              parameters: parameters,
-                                              encoding: encoding,
-                                              headers: headers)
+                                       method: method,
+                                       parameters: parameters,
+                                       encoding: encoding,
+                                       headers: headers)
+    }
+
+
+    /// Creates a `DataRequest` using `SessionManager.default` to retrive the contents of the specified `url`
+    /// using the `method`, `parameters`, `encoding`, and `headers` provided.
+    ///
+    /// - Parameters:
+    ///   - url:        The `URLConvertible` value.
+    ///   - method:     The `HTTPMethod`, `.get` by default.
+    ///   - parameters: The `Encodable` parameters, `nil` by default.
+    ///   - encoding:   The `ParameterEncoding`, `URLEncodedFormParameterEncoder.default` by default.
+    ///   - headers:    The `HTTPHeaders`, `nil` by default.
+    /// - Returns:      The created `DataRequest`.
+    public static func request<Parameters: Encodable>(_ url: URLConvertible,
+                                                      method: HTTPMethod = .get,
+                                                      parameters: Parameters? = nil,
+                                                      encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                      headers: HTTPHeaders? = nil) -> DataRequest {
+        return Session.default.request(url,
+                                       method: method,
+                                       parameters: parameters,
+                                       encoder: encoder,
+                                       headers: headers)
     }
 
     /// Creates a `DataRequest` using `SessionManager.default` to execute the specified `urlRequest`.
     ///
     /// - Parameter urlRequest: The `URLRequestConvertible` value.
     /// - Returns: The created `DataRequest`.
-    @discardableResult
     public static func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
         return Session.default.request(urlRequest)
     }
 
     // MARK: - Download Request
-
-    // MARK: URL
-
-    // TODO: Update docs when download temp file issue resolved.
 
     /// Creates a `DownloadRequest` using `SessionManager.default` to download the contents of the specified `url` to
     /// the provided `destination` using the `method`, `parameters`, `encoding`, and `headers` provided.
@@ -81,7 +98,6 @@ public enum AF {
     ///   - destination: The `DownloadRequest.Destination` closure used the determine the destination of the downloaded
     ///                  file. `nil` by default.
     /// - Returns:       The created `DownloadRequest`.
-    @discardableResult
     public static func download(_ url: URLConvertible,
                                 method: HTTPMethod = .get,
                                 parameters: Parameters? = nil,
@@ -89,11 +105,40 @@ public enum AF {
                                 headers: HTTPHeaders? = nil,
                                 to destination: DownloadRequest.Destination? =  nil) -> DownloadRequest {
         return Session.default.download(url,
-                                               method: method,
-                                               parameters: parameters,
-                                               encoding: encoding,
-                                               headers: headers,
-                                               to: destination)
+                                        method: method,
+                                        parameters: parameters,
+                                        encoding: encoding,
+                                        headers: headers,
+                                        to: destination)
+    }
+
+    /// Creates a `DownloadRequest` using `SessionManager.default` to download the contents of the specified `url` to
+    /// the provided `destination` using the `method`, encodable `parameters`, `encoder`, and `headers` provided.
+    ///
+    /// If `destination` is not specified, the download will remain at the temporary location determined by the
+    /// underlying `URLSession`.
+    ///
+    /// - Parameters:
+    ///   - url:         The `URLConvertible` value.
+    ///   - method:      The `HTTPMethod`, `.get` by default.
+    ///   - parameters:  The `Encodable` parameters, `nil` by default.
+    ///   - encoder:     The `ParameterEncoder`, `URLEncodedFormParameterEncoder.default` by default.
+    ///   - headers:     The `HTTPHeaders`, `nil` by default.
+    ///   - destination: The `DownloadRequest.Destination` closure used the determine the destination of the downloaded
+    ///                  file. `nil` by default.
+    /// - Returns:       The created `DownloadRequest`.
+    public static func download<Parameters: Encodable>(_ url: URLConvertible,
+                                                       method: HTTPMethod = .get,
+                                                       parameters: Parameters? = nil,
+                                                       encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                       headers: HTTPHeaders? = nil,
+                                                       to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
+        return Session.default.download(url,
+                                        method: method,
+                                        parameters: parameters,
+                                        encoder: encoder,
+                                        headers: headers,
+                                        to: destination)
     }
 
     // MARK: URLRequest
@@ -106,7 +151,6 @@ public enum AF {
     ///   - destination: The `DownloadRequest.Destination` closure used the determine the destination of the downloaded
     ///                  file. `nil` by default.
     /// - Returns:       The created `DownloadRequest`.
-    @discardableResult
     public static func download(_ urlRequest: URLRequestConvertible,
                                 to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         return Session.default.download(urlRequest, to: destination)
@@ -132,7 +176,6 @@ public enum AF {
     ///   - destination: The `DownloadRequest.Destination` closure used to determine the destination of the downloaded
     ///                  file. `nil` by default.
     /// - Returns:       The created `DownloadRequest`.
-    @discardableResult
     public static func download(resumingWith resumeData: Data,
                                 to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         return Session.default.download(resumingWith: resumeData, to: destination)
@@ -151,7 +194,6 @@ public enum AF {
     ///   - method:  The `HTTPMethod`, `.post` by default.
     ///   - headers: The `HTTPHeaders`, `nil` by default.
     /// - Returns:   The created `UploadRequest`.
-    @discardableResult
     public static func upload(_ fileURL: URL,
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
@@ -166,7 +208,6 @@ public enum AF {
     ///   - fileURL:    The `URL` of the file to upload.
     ///   - urlRequest: The `URLRequestConvertible` value.
     /// - Returns:      The created `UploadRequest`.
-    @discardableResult
     public static func upload(_ fileURL: URL, with urlRequest: URLRequestConvertible) -> UploadRequest {
         return Session.default.upload(fileURL, with: urlRequest)
     }
@@ -182,7 +223,6 @@ public enum AF {
     ///   - method:  The `HTTPMethod`, `.post` by default.
     ///   - headers: The `HTTPHeaders`, `nil` by default.
     /// - Returns:   The created `UploadRequest`.
-    @discardableResult
     public static func upload(_ data: Data,
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
@@ -197,7 +237,6 @@ public enum AF {
     ///   - data:       The `Data` to upload.
     ///   - urlRequest: The `URLRequestConvertible` value.
     /// - Returns:      The created `UploadRequest`.
-    @discardableResult
     public static func upload(_ data: Data, with urlRequest: URLRequestConvertible) -> UploadRequest {
         return Session.default.upload(data, with: urlRequest)
     }
@@ -213,7 +252,6 @@ public enum AF {
     ///   - method:    The `HTTPMethod`, `.post` by default.
     ///   - headers:   The `HTTPHeaders`, `nil` by default.
     /// - Returns:     The created `UploadRequest`.
-    @discardableResult
     public static func upload(_ stream: InputStream,
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
@@ -228,7 +266,6 @@ public enum AF {
     ///   - stream:     The `InputStream` to upload.
     ///   - urlRequest: The `URLRequestConvertible` value.
     /// - Returns:      The created `UploadRequest`.
-    @discardableResult
     public static func upload(_ stream: InputStream, with urlRequest: URLRequestConvertible) -> UploadRequest {
         return Session.default.upload(stream, with: urlRequest)
     }
@@ -258,17 +295,16 @@ public enum AF {
     ///   - method:                  The `HTTPMethod`, `.post` by default.
     ///   - headers:                 The `HTTPHeaders`, `nil` by default.
     /// - Returns:                   The created `UploadRequest`.
-    @discardableResult
     public static func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
                               usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil) -> UploadRequest {
         return Session.default.upload(multipartFormData: multipartFormData,
-                                             usingThreshold: encodingMemoryThreshold,
-                                             to: url,
-                                             method: method,
-                                             headers: headers)
+                                      usingThreshold: encodingMemoryThreshold,
+                                      to: url,
+                                      method: method,
+                                      headers: headers)
     }
 
     /// Encodes `multipartFormData` using `encodingMemoryThreshold` and uploads the result using `SessionManager.default`
@@ -297,7 +333,7 @@ public enum AF {
                               usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
                               with urlRequest: URLRequestConvertible) -> UploadRequest {
         return Session.default.upload(multipartFormData: multipartFormData,
-                                             usingThreshold: encodingMemoryThreshold,
-                                             with: urlRequest)
+                                      usingThreshold: encodingMemoryThreshold,
+                                      with: urlRequest)
     }
 }

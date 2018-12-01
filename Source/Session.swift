@@ -127,6 +127,34 @@ open class Session {
         return request(convertible)
     }
 
+    struct RequestEncodableConvertible<Parameters: Encodable>: URLRequestConvertible {
+        let url: URLConvertible
+        let method: HTTPMethod
+        let parameters: Parameters?
+        let encoder: ParameterEncoder
+        let headers: HTTPHeaders?
+
+        func asURLRequest() throws -> URLRequest {
+            let request = try URLRequest(url: url, method: method, headers: headers)
+
+            return try parameters.map { try encoder.encode($0, into: request) } ?? request
+        }
+    }
+
+    open func request<Parameters: Encodable>(_ url: URLConvertible,
+                                             method: HTTPMethod = .get,
+                                             parameters: Parameters? = nil,
+                                             encoder: ParameterEncoder = JSONParameterEncoder.default,
+                                             headers: HTTPHeaders? = nil) -> DataRequest {
+        let convertible = RequestEncodableConvertible(url: url,
+                                                      method: method,
+                                                      parameters: parameters,
+                                                      encoder: encoder,
+                                                      headers: headers)
+
+        return request(convertible)
+    }
+
     open func request(_ convertible: URLRequestConvertible) -> DataRequest {
         let request = DataRequest(convertible: convertible,
                                   underlyingQueue: rootQueue,
@@ -152,6 +180,21 @@ open class Session {
                                              parameters: parameters,
                                              encoding: encoding,
                                              headers: headers)
+
+        return download(convertible, to: destination)
+    }
+
+    open func download<Parameters: Encodable>(_ convertible: URLConvertible,
+                                              method: HTTPMethod = .get,
+                                              parameters: Parameters? = nil,
+                                              encoder: ParameterEncoder = JSONParameterEncoder.default,
+                                              headers: HTTPHeaders? = nil,
+                                              to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
+        let convertible = RequestEncodableConvertible(url: convertible,
+                                                      method: method,
+                                                      parameters: parameters,
+                                                      encoder: encoder,
+                                                      headers: headers)
 
         return download(convertible, to: destination)
     }
@@ -210,9 +253,9 @@ open class Session {
     }
 
     open func upload(_ data: Data,
-                to convertible: URLConvertible,
-                method: HTTPMethod = .post,
-                headers: HTTPHeaders? = nil) -> UploadRequest {
+                     to convertible: URLConvertible,
+                     method: HTTPMethod = .post,
+                     headers: HTTPHeaders? = nil) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
 
         return upload(data, with: convertible)
@@ -223,9 +266,9 @@ open class Session {
     }
 
     open func upload(_ fileURL: URL,
-                to convertible: URLConvertible,
-                method: HTTPMethod = .post,
-                headers: HTTPHeaders? = nil) -> UploadRequest {
+                     to convertible: URLConvertible,
+                     method: HTTPMethod = .post,
+                     headers: HTTPHeaders? = nil) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
 
         return upload(fileURL, with: convertible)
@@ -236,9 +279,9 @@ open class Session {
     }
 
     open func upload(_ stream: InputStream,
-                to convertible: URLConvertible,
-                method: HTTPMethod = .post,
-                headers: HTTPHeaders? = nil) -> UploadRequest {
+                     to convertible: URLConvertible,
+                     method: HTTPMethod = .post,
+                     headers: HTTPHeaders? = nil) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
 
         return upload(stream, with: convertible)
@@ -249,20 +292,20 @@ open class Session {
     }
 
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
-                usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
-                fileManager: FileManager = .default,
-                to url: URLConvertible,
-                method: HTTPMethod = .post,
-                headers: HTTPHeaders? = nil) -> UploadRequest {
+                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
+                     fileManager: FileManager = .default,
+                     to url: URLConvertible,
+                     method: HTTPMethod = .post,
+                     headers: HTTPHeaders? = nil) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
 
         return upload(multipartFormData: multipartFormData, usingThreshold: encodingMemoryThreshold, with: convertible)
     }
 
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
-                usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
-                fileManager: FileManager = .default,
-                with request: URLRequestConvertible) -> UploadRequest {
+                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
+                     fileManager: FileManager = .default,
+                     with request: URLRequestConvertible) -> UploadRequest {
         let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
                                               encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: request,
@@ -494,6 +537,7 @@ extension Session: SessionStateProvider {
     }
 
     public func credential(for task: URLSessionTask, protectionSpace: URLProtectionSpace) -> URLCredential? {
-        return requestTaskMap[task]?.credential ?? session.configuration.urlCredentialStorage?.defaultCredential(for: protectionSpace)
+        return requestTaskMap[task]?.credential ??
+               session.configuration.urlCredentialStorage?.defaultCredential(for: protectionSpace)
     }
 }

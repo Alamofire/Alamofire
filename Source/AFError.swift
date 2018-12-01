@@ -45,6 +45,21 @@ public enum AFError: Error {
         case jsonEncodingFailed(error: Error)
     }
 
+    /// Underlying reason the parameter encoder error occured.
+    public enum ParameterEncoderFailureReason {
+        /// Possible missing components.
+        public enum RequiredComponent {
+            /// The `URL` was missing or unable to be extracted from the passed `URLRequest` or during encoding.
+            case url
+            /// The `HTTPMethod` could not be extracted from the passed `URLRequest`.
+            case httpMethod(rawValue: String)
+        }
+        /// A `RequiredComponent` was missing during encoding.
+        case missingRequiredComponent(RequiredComponent)
+        /// The underlying encoder failed with the associated error.
+        case encoderFailed(error: Error)
+    }
+
     /// The underlying reason the multipart encoding error occurred.
     ///
     /// - bodyPartURLInvalid:                   The `fileURL` provided for reading an encodable body part isn't a
@@ -124,13 +139,20 @@ public enum AFError: Error {
         case invalidEmptyResponse(type: String)
     }
 
+    /// Underlying reason a server trust evaluation error occured.
     public enum ServerTrustFailureReason {
+        /// The output of a server trust evaluation.
         public struct Output {
+            /// The host for which the evaluation was performed.
             public let host: String
+            /// The `SecTrust` value which was evaluated.
             public let trust: SecTrust
+            /// The `OSStatus` of evaluation operation.
             public let status: OSStatus
+            /// The result of the evaluation operation.
             public let result: SecTrustResultType
 
+            /// Creates an `Output` value from the provided values.
             init(_ host: String, _ trust: SecTrust, _ status: OSStatus, _ result: SecTrustResultType) {
                 self.host = host
                 self.trust = trust
@@ -139,28 +161,39 @@ public enum AFError: Error {
             }
         }
         case noRequiredEvaluator(host: String)
+        /// No certificates were found with which to perform the trust evaluation.
         case noCertificatesFound
+        /// No public keys were found with which to perform the trust evaluation.
         case noPublicKeysFound
+        /// During evaluation, application of the associated `SecPolicy` failed.
         case policyApplicationFailed(trust: SecTrust, policy: SecPolicy, status: OSStatus)
+        /// During evaluation, setting the associated anchor certificates failed.
         case settingAnchorCertificatesFailed(status: OSStatus, certificates: [SecCertificate])
+        /// During evaluation, creation of the revocation policy failed.
         case revocationPolicyCreationFailed
+        /// Default evaluation failed with the associated `Output`.
         case defaultEvaluationFailed(output: Output)
+        /// Host validation failed with the associated `Output`.
         case hostValidationFailed(output: Output)
+        /// Revocation check failed with the associated `Output` and options.
         case revocationCheckFailed(output: Output, options: RevocationTrustEvaluator.Options)
+        /// Certificate pinning failed.
         case certificatePinningFailed(host: String, trust: SecTrust, pinnedCertificates: [SecCertificate], serverCertificates: [SecCertificate])
+        /// Public key pinning failed.
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
     }
 
     case explicitlyCancelled
     case invalidURL(url: URLConvertible)
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
+    case parameterEncoderFailed(reason: ParameterEncoderFailureReason)
     case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
     case responseValidationFailed(reason: ResponseValidationFailureReason)
     case responseSerializationFailed(reason: ResponseSerializationFailureReason)
     case serverTrustEvaluationFailed(reason: ServerTrustFailureReason)
 }
 
-public extension Error {
+extension Error {
     /// Returns the instance cast as an `AFError`.
     public var asAFError: AFError? {
         return self as? AFError
@@ -186,6 +219,12 @@ extension AFError {
     /// contain the associated value.
     public var isParameterEncodingError: Bool {
         if case .parameterEncodingFailed = self { return true }
+        return false
+    }
+
+    /// Returns whether the instance is a parameter encoder error.
+    public var isParameterEncoderError: Bool {
+        if case .parameterEncoderFailed = self { return true }
         return false
     }
 
@@ -241,10 +280,12 @@ extension AFError {
     }
 
     /// The `Error` returned by a system framework associated with a `.parameterEncodingFailed`,
-    /// `.multipartEncodingFailed` or `.responseSerializationFailed` error.
+    /// `.parameterEncoderFailed`, `.multipartEncodingFailed` or `.responseSerializationFailed` error.
     public var underlyingError: Error? {
         switch self {
         case .parameterEncodingFailed(let reason):
+            return reason.underlyingError
+        case .parameterEncoderFailed(let reason):
             return reason.underlyingError
         case .multipartEncodingFailed(let reason):
             return reason.underlyingError
@@ -300,6 +341,17 @@ extension AFError.ParameterEncodingFailureReason {
     var underlyingError: Error? {
         switch self {
         case .jsonEncodingFailed(let error):
+            return error
+        default:
+            return nil
+        }
+    }
+}
+
+extension AFError.ParameterEncoderFailureReason {
+    var underlyingError: Error? {
+        switch self {
+        case .encoderFailed(let error):
             return error
         default:
             return nil
@@ -404,6 +456,8 @@ extension AFError: LocalizedError {
             return "URL is not valid: \(url)"
         case .parameterEncodingFailed(let reason):
             return reason.localizedDescription
+        case .parameterEncoderFailed(let reason):
+            return reason.localizedDescription
         case .multipartEncodingFailed(let reason):
             return reason.localizedDescription
         case .responseValidationFailed(let reason):
@@ -423,6 +477,17 @@ extension AFError.ParameterEncodingFailureReason {
             return "URL request to encode was missing a URL"
         case .jsonEncodingFailed(let error):
             return "JSON could not be encoded because of error:\n\(error.localizedDescription)"
+        }
+    }
+}
+
+extension AFError.ParameterEncoderFailureReason {
+    var localizedDescription: String {
+        switch self {
+        case .missingRequiredComponent(let component):
+            return "Encoding failed due to a missing request component: \(component)"
+        case .encoderFailed(let error):
+            return "The underlying encoder failed with the error: \(error)"
         }
     }
 }
