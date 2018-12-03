@@ -327,7 +327,7 @@ class SessionTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
-        XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling))
+        XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling || request.task?.state == .completed))
         guard let error = request.error?.asAFError, case .explicitlyCancelled = error else {
             XCTFail("Request should have an .explicitlyCancelled error.")
             return
@@ -360,7 +360,7 @@ class SessionTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
-        XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling))
+        XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling || request.task?.state == .completed))
         guard let error = request.error?.asAFError, case .explicitlyCancelled = error else {
             XCTFail("Request should have an .explicitlyCancelled error.")
             return
@@ -393,7 +393,7 @@ class SessionTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
-        XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling))
+        XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling || request.task?.state == .completed))
         guard let error = request.error?.asAFError, case .explicitlyCancelled = error else {
             XCTFail("Request should have an .explicitlyCancelled error.")
             return
