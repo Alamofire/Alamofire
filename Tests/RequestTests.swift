@@ -272,7 +272,6 @@ class RequestDescriptionTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let manager = Session(startRequestsImmediately: false)
         let request = manager.request(urlString)
-        let initialRequestDescription = request.description
 
         let expectation = self.expectation(description: "Request description should update: \(urlString)")
 
@@ -287,11 +286,8 @@ class RequestDescriptionTestCase: BaseTestCase {
 
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let finalRequestDescription = request.description
-
         // Then
-        XCTAssertEqual(initialRequestDescription, "No request created yet.")
-        XCTAssertEqual(finalRequestDescription, "GET https://httpbin.org/get (\(response?.statusCode ?? -1))")
+        XCTAssertEqual(request.description, "GET https://httpbin.org/get (\(response?.statusCode ?? -1))")
     }
 }
 

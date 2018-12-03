@@ -327,8 +327,11 @@ class SessionTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
-        XCTAssertNil(request.task)
-        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else { XCTFail(); return }
+        XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling))
+        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else {
+            XCTFail("Request should have an .explicitlyCancelled error.")
+            return
+        }
     }
 
     func testSetStartRequestsImmediatelyToFalseAndResumeThenCancelRequestHasCorrectOutput() {
@@ -357,8 +360,11 @@ class SessionTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
-        XCTAssertNil(request.task)
-        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else { XCTFail(); return }
+        XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling))
+        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else {
+            XCTFail("Request should have an .explicitlyCancelled error.")
+            return
+        }
     }
 
     func testSetStartRequestsImmediatelyToFalseAndCancelThenResumeRequestDoesntCreateTaskAndStaysCancelled() {
@@ -387,8 +393,11 @@ class SessionTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
-        XCTAssertNil(request.task)
-        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else { XCTFail(); return }
+        XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling))
+        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else {
+            XCTFail("Request should have an .explicitlyCancelled error.")
+            return
+        }
     }
 
     // MARK: Tests - Deinitialization

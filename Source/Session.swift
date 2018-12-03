@@ -484,8 +484,8 @@ extension Session: RequestDelegate {
                 return
             }
 
-            request.didCancel()
             task.cancel()
+            request.didCancel()
         }
     }
 
