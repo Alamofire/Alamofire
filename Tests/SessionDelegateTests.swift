@@ -97,9 +97,9 @@ class SessionDelegateTestCase: BaseTestCase {
     func testThatAppropriateNotificationsAreCalledWithRequestForDataRequest() {
         // Given
         var request: Request?
-        _ = expectation(forNotification: .afDidResume, object: nil, handler: nil)
-        _ = expectation(forNotification: .afDidComplete, object: nil) { (notification) in
-            request = notification.afRequest
+        _ = expectation(forNotification: Request.didResume, object: nil, handler: nil)
+        _ = expectation(forNotification: Request.didComplete, object: nil) { (notification) in
+            request = notification.request
             return (request != nil)
         }
 
@@ -115,9 +115,9 @@ class SessionDelegateTestCase: BaseTestCase {
     func testThatDidCompleteNotificationIsCalledWithRequestForDownloadRequests() {
         // Given
         var request: Request?
-        _ = expectation(forNotification: .afDidResume, object: nil, handler: nil)
-        _ = expectation(forNotification: .afDidComplete, object: nil) { (notification) in
-            request = notification.afRequest
+        _ = expectation(forNotification: Request.didResume, object: nil, handler: nil)
+        _ = expectation(forNotification: Request.didComplete, object: nil) { (notification) in
+            request = notification.request
             return (request != nil)
         }
 

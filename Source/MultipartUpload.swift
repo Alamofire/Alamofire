@@ -22,6 +22,8 @@
 //  THE SOFTWARE.
 //
 
+import Foundation
+
 open class MultipartUpload {
     /// Default memory threshold used when encoding `MultipartFormData`, in bytes.
     public static let encodingMemoryThreshold: UInt64 = 10_000_000
