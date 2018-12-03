@@ -156,7 +156,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isFailure)
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
-        
+
         if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {
@@ -770,7 +770,7 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isFailure)
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
-        
+
         if let error = result.error?.asAFError {
             XCTAssertTrue(error.isInputDataNilOrZeroLength)
         } else {

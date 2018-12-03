@@ -61,7 +61,8 @@ open class JSONParameterEncoder: ParameterEncoder {
         return JSONParameterEncoder(encoder: encoder)
     }
 
-    let encoder: JSONEncoder
+    /// `JSONEncoder` used to encode parameters.
+    public let encoder: JSONEncoder
 
     /// Creates an instance with the provided `JSONEncoder`.
     ///

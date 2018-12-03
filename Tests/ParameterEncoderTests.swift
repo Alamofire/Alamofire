@@ -106,6 +106,10 @@ final class JSONParameterEncoderTests: BaseTestCase {
 
     @available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func testTestJSONEncoderSortedKeysHasSortedKeys() throws {
+        // Apparently marking the method as unavailable doesn't prevent it from running on older OSes.
+        guard #available(macOS 10.13, iOS 11.0, tvOS 11.0, watchOS 4.0, *) else {
+            return
+        }
         // Given
         let encoder = JSONParameterEncoder.sortedKeys
         let request = URLRequest.makeHTTPBinRequest()
