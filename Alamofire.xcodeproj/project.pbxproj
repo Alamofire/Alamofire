@@ -351,15 +351,15 @@
 		3191B5741F5F53A6003960A8 /* Protector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protector.swift; sourceTree = "<group>"; };
 		31991790209CDA7F00103A19 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		31991791209CDA7F00103A19 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
-		31B2CA9421AA24F5005B371A /* Package@swift-4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Package@swift-4.swift"; sourceTree = "<group>"; };
 		31991792209CDA7F00103A19 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		31991793209CDA7F00103A19 /* SessionStateProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionStateProvider.swift; sourceTree = "<group>"; };
 		319917A4209CDAC400103A19 /* RequestTaskMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTaskMap.swift; sourceTree = "<group>"; };
-		31B2CA9521AA25CD005B371A /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		319917A9209CDCB000103A19 /* HTTPHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeaders.swift; sourceTree = "<group>"; };
 		319917AE209CE34E00103A19 /* RequestAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestAdapter.swift; sourceTree = "<group>"; };
 		319917B3209CE36E00103A19 /* RequestRetrier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestRetrier.swift; sourceTree = "<group>"; };
 		319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Alamofire.swift"; sourceTree = "<group>"; };
+		31B2CA9421AA24F5005B371A /* Package@swift-4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Package@swift-4.swift"; sourceTree = "<group>"; };
+		31B2CA9521AA25CD005B371A /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		31D83FCD20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLConvertible+URLRequestConvertible.swift"; sourceTree = "<group>"; };
 		31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AFError+AlamofireTests.swift"; sourceTree = "<group>"; };
 		31F5085C20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionConfiguration+Alamofire.swift"; sourceTree = "<group>"; };
@@ -1039,14 +1039,17 @@
 				TargetAttributes = {
 					4CCB207C1D45563900C64D5B = {
 						CreatedOnToolsVersion = 7.3.1;
+						ProvisioningStyle = Manual;
 					};
 					4CF626EE1BA7CB3E0011A099 = {
 						CreatedOnToolsVersion = 7.1;
 						LastSwiftMigration = 0900;
+						ProvisioningStyle = Manual;
 					};
 					4CF626F71BA7CB3E0011A099 = {
 						CreatedOnToolsVersion = 7.1;
 						LastSwiftMigration = 0900;
+						ProvisioningStyle = Manual;
 					};
 					4DD67C0A1A5C55C900ED2280 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -1055,18 +1058,22 @@
 					};
 					E4202FCD1B667AA100C997FB = {
 						LastSwiftMigration = 0900;
+						ProvisioningStyle = Manual;
 					};
 					F8111E3219A95C8B0040E7D1 = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 0900;
+						ProvisioningStyle = Manual;
 					};
 					F8111E3D19A95C8B0040E7D1 = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 0900;
+						ProvisioningStyle = Manual;
 					};
 					F829C6B11A7A94F100A2CD59 = {
 						CreatedOnToolsVersion = 6.1.1;
 						LastSwiftMigration = 0900;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -1533,38 +1540,28 @@
 		4CF627001BA7CB3E0011A099 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Source/Info-tvOS.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
-				PRODUCT_NAME = Alamofire;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Debug;
 		};
 		4CF627011BA7CB3E0011A099 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Source/Info-tvOS.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
-				PRODUCT_NAME = Alamofire;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Release;
 		};
@@ -1595,17 +1592,13 @@
 		4DD67C1F1A5C55C900ED2280 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
-				PRODUCT_NAME = Alamofire;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
@@ -1614,17 +1607,13 @@
 		4DD67C201A5C55C900ED2280 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
-				PRODUCT_NAME = Alamofire;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
@@ -1633,38 +1622,28 @@
 		E4202FDE1B667AA100C997FB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
-				PRODUCT_NAME = Alamofire;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Debug;
 		};
 		E4202FDF1B667AA100C997FB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
-				PRODUCT_NAME = Alamofire;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 4;
 			};
 			name = Release;
 		};
@@ -1698,7 +1677,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -1719,22 +1698,21 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-framework",
 					CFNetwork,
 				);
-				SDKROOT = iphoneos;
+				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
+				PRODUCT_NAME = Alamofire;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 			};
 			name = Debug;
@@ -1769,7 +1747,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1783,22 +1761,21 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"-framework",
 					CFNetwork,
 				);
-				SDKROOT = iphoneos;
+				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
+				PRODUCT_NAME = Alamofire;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 10.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 				WATCHOS_DEPLOYMENT_TARGET = 3.0;
 			};
 			name = Release;
@@ -1806,36 +1783,30 @@
 		F8111E4719A95C8B0040E7D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
-				PRODUCT_NAME = Alamofire;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		F8111E4819A95C8B0040E7D1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
-				PRODUCT_NAME = Alamofire;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1843,6 +1814,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
+				CODE_SIGN_STYLE = Manual;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1855,6 +1827,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
+				CODE_SIGN_STYLE = Manual;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1867,7 +1840,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1880,7 +1852,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
