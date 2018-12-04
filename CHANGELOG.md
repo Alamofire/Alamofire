@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
+#### 5.x Releases
+- `5.0.0` Betas - [5.0.0.beta.1](#500.beta.1)
+
 #### 4.x Releases
 - `4.8.x` Releases - [4.8.0](#480)
 - `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471) | [4.7.2](#472) | [4.7.3](#473)
@@ -34,6 +37,27 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+## [5.0.0.beta.1](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0.beta.1)
+Released on 2018-12-03. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0.beta.1).
+
+#### Added
+- Support for `Decodable` JSON reponses using `responseJSONDecodable`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2265](https://github.com/Alamofire/Alamofire/pull/2265).
+- Support for Brotli `Content-Encoding` in Alamofire's default headers.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2346](https://github.com/Alamofire/Alamofire/pull/2346).
+- `HTTPHeaders` type and convenience APIs.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2629](https://github.com/Alamofire/Alamofire/pull/2629).
+- Support for `Encodable` parameter types with `JSONParameterEncoder` and `URLEncodedFormParameterEncoder`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2637](https://github.com/Alamofire/Alamofire/pull/2637).
+- Customizable empty reponse handling in response serializers.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2639](https://github.com/Alamofire/Alamofire/pull/2639).
+
+
+#### Updated
+
+#### Removed
+
+
 ## [4.8.0](https://github.com/Alamofire/Alamofire/releases/tag/4.8.0)
 Released on 2018-11-24. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.8.0).
 
