@@ -523,6 +523,7 @@ public struct Empty: Decodable {
 
 // MARK: - DataDecoder Protocol
 
+/// Any type which can decode `Data`.
 public protocol DataDecoder {
     /// Decode `Data` into the provided type.
     ///
