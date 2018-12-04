@@ -1066,6 +1066,31 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
     }
 }
 
+final class CustomResponseSerializerTestCases: BaseTestCase {
+    func testThatCustomResponseSerializersCanBeWrittenWithoutCompilerIssues() {
+        // Given
+        final class UselessResponseSerializer: ResponseSerializer {
+            func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Data? {
+                return data
+            }
+        }
+        let serializer = UselessResponseSerializer()
+        let expectation = self.expectation(description: "request should finish")
+        var data: Data?
+
+        // When
+        AF.request(URLRequest.makeHTTPBinRequest()).response(responseSerializer: serializer) { (response) in
+            data = response.data
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(data)
+    }
+}
+
 extension HTTPURLResponse {
     convenience init(statusCode: Int, headers: HTTPHeaders? = nil) {
         let url = URL(string: "https://httpbin.org/get")!
