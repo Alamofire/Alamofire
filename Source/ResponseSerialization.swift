@@ -54,8 +54,8 @@ extension ResponseSerializer {
     public static var defaultEmptyRequestMethods: Set<HTTPMethod> { return [.head] }
     public static var defaultEmptyResponseCodes: Set<Int> { return [204, 205] }
 
-    var emptyRequestMethods: Set<HTTPMethod> { return Self.defaultEmptyRequestMethods }
-    var emptyResponseCodes: Set<Int> { return Self.defaultEmptyResponseCodes }
+    public var emptyRequestMethods: Set<HTTPMethod> { return Self.defaultEmptyRequestMethods }
+    public var emptyResponseCodes: Set<Int> { return Self.defaultEmptyResponseCodes }
 
     public func requestAllowsEmptyResponseData(_ request: URLRequest?) -> Bool? {
         return request.flatMap { $0.httpMethod }
