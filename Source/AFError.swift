@@ -121,22 +121,21 @@ public enum AFError: Error {
     }
 
     /// The underlying reason the response serialization error occurred.
-    ///
-    /// - inputDataNil:                    The server response contained no data.
-    /// - inputDataNilOrZeroLength:        The server response contained no data or the data was zero length.
-    /// - inputFileNil:                    The file containing the server response did not exist.
-    /// - inputFileReadFailed:             The file containing the server response could not be read.
-    /// - stringSerializationFailed:       String serialization failed using the provided `String.Encoding`.
-    /// - jsonSerializationFailed:         JSON serialization failed with an underlying system error.
-    /// - invalidEmptyResponse:            Generic serialization failed for an empty response that wasn't type `Empty`.
     public enum ResponseSerializationFailureReason {
+        /// The server response contained no data or the data was zero length.
         case inputDataNilOrZeroLength
+        /// The file containing the server response did not exist.
         case inputFileNil
+        /// The file containing the server response could not be read from the associated `URL`.
         case inputFileReadFailed(at: URL)
+        /// String serialization failed using the provided `String.Encoding`.
         case stringSerializationFailed(encoding: String.Encoding)
+        /// JSON serialization failed with an underlying system error.
         case jsonSerializationFailed(error: Error)
+        /// A `DataDecoder` failed to decode the response due to the associated `Error`.
+        case decodingFailed(error: Error)
+        /// Generic serialization failed for an empty response that wasn't type `Empty` but instead the associated type.
         case invalidEmptyResponse(type: String)
-        case jsonDecodingFailed(error: Error)
     }
 
     /// Underlying reason a server trust evaluation error occured.
@@ -546,8 +545,8 @@ extension AFError.ResponseSerializationFailureReason {
             return "JSON could not be serialized because of error:\n\(error.localizedDescription)"
         case .invalidEmptyResponse(let type):
             return "Empty response could not be serialized to type: \(type). Use Empty as the expected type for such responses."
-        case .jsonDecodingFailed(let error):
-            return "JSON could not be decoded because of error:\n\(error.localizedDescription)"
+        case .decodingFailed(let error):
+            return "Response could not be decoded because of error:\n\(error.localizedDescription)"
         }
     }
 }
