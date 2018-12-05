@@ -214,7 +214,7 @@ class RequestResponseTestCase: BaseTestCase {
 
         // When
         AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default)
-          .responseJSONDecodable { (response: DataResponse<HTTPBinResponse>) in
+          .responseDecodable { (response: DataResponse<HTTPBinResponse>) in
               receivedResponse = response
               expect.fulfill()
           }
@@ -233,7 +233,7 @@ class RequestResponseTestCase: BaseTestCase {
 
         // When
         AF.request("https://httpbin.org/get", method: .get, parameters: parameters)
-          .responseJSONDecodable { (response: DataResponse<HTTPBinResponse>) in
+          .responseDecodable { (response: DataResponse<HTTPBinResponse>) in
               receivedResponse = response
               expect.fulfill()
           }
@@ -252,7 +252,7 @@ class RequestResponseTestCase: BaseTestCase {
 
         // When
         AF.request("https://httpbin.org/post", method: .post, parameters: parameters)
-            .responseJSONDecodable { (response: DataResponse<HTTPBinResponse>) in
+            .responseDecodable { (response: DataResponse<HTTPBinResponse>) in
                 receivedResponse = response
                 expect.fulfill()
         }

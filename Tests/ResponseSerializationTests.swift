@@ -438,7 +438,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    // MARK: JSONDecodableResponseSerializer
+    // MARK: DecodableResponseSerializer
 
     struct DecodableValue: Codable {
         let string: String
@@ -446,7 +446,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONDecodableResponseSerializerFailsWhenDataIsNil() {
         // Given
-        let serializer = JSONDecodableResponseSerializer<DecodableValue>()
+        let serializer = DecodableResponseSerializer<DecodableValue>()
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: nil, error: nil) }
@@ -465,7 +465,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONDecodableResponseSerializerFailsWhenDataIsEmpty() {
         // Given
-        let serializer = JSONDecodableResponseSerializer<DecodableValue>()
+        let serializer = DecodableResponseSerializer<DecodableValue>()
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: Data(), error: nil) }
@@ -485,7 +485,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
     func testThatJSONDecodableResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
         let data = Data("{\"string\":\"string\"}".utf8)
-        let serializer = JSONDecodableResponseSerializer<DecodableValue>()
+        let serializer = DecodableResponseSerializer<DecodableValue>()
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
@@ -499,7 +499,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONDecodableResponseSerializerFailsWhenDataIsInvalidJSON() {
         // Given
-        let serializer = JSONDecodableResponseSerializer<DecodableValue>()
+        let serializer = DecodableResponseSerializer<DecodableValue>()
         let data = Data("definitely not valid json".utf8)
 
         // When
@@ -513,7 +513,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONDecodableResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
-        let serializer = JSONDecodableResponseSerializer<DecodableValue>()
+        let serializer = DecodableResponseSerializer<DecodableValue>()
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: nil, error: error) }
@@ -532,7 +532,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONDecodableResponseSerializerFailsWhenDataIsNilWithNonEmptyResponseStatusCode() {
         // Given
-        let serializer = JSONDecodableResponseSerializer<DecodableValue>()
+        let serializer = DecodableResponseSerializer<DecodableValue>()
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -552,7 +552,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
     func testThatJSONDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseStatusCode() {
         // Given
-        let serializer = JSONDecodableResponseSerializer<Empty>()
+        let serializer = DecodableResponseSerializer<Empty>()
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -1063,6 +1063,31 @@ class DownloadResponseSerializationTestCase: BaseTestCase {
         if let json = result.value as? NSNull {
             XCTAssertEqual(json, NSNull())
         }
+    }
+}
+
+final class CustomResponseSerializerTestCases: BaseTestCase {
+    func testThatCustomResponseSerializersCanBeWrittenWithoutCompilerIssues() {
+        // Given
+        final class UselessResponseSerializer: ResponseSerializer {
+            func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Data? {
+                return data
+            }
+        }
+        let serializer = UselessResponseSerializer()
+        let expectation = self.expectation(description: "request should finish")
+        var data: Data?
+
+        // When
+        AF.request(URLRequest.makeHTTPBinRequest()).response(responseSerializer: serializer) { (response) in
+            data = response.data
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(data)
     }
 }
 

@@ -54,8 +54,8 @@ extension ResponseSerializer {
     public static var defaultEmptyRequestMethods: Set<HTTPMethod> { return [.head] }
     public static var defaultEmptyResponseCodes: Set<Int> { return [204, 205] }
 
-    var emptyRequestMethods: Set<HTTPMethod> { return Self.defaultEmptyRequestMethods }
-    var emptyResponseCodes: Set<Int> { return Self.defaultEmptyResponseCodes }
+    public var emptyRequestMethods: Set<HTTPMethod> { return Self.defaultEmptyRequestMethods }
+    public var emptyResponseCodes: Set<Int> { return Self.defaultEmptyResponseCodes }
 
     public func requestAllowsEmptyResponseData(_ request: URLRequest?) -> Bool? {
         return request.flatMap { $0.httpMethod }
@@ -76,7 +76,7 @@ extension ResponseSerializer {
 /// By default, any serializer declared to conform to both types will get file serialization for free, as it just feeds
 /// the data read from disk into the data response serializer.
 public extension DownloadResponseSerializerProtocol where Self: DataResponseSerializerProtocol {
-    public func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> Self.SerializedObject {
+    func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> Self.SerializedObject {
         guard error == nil else { throw error! }
 
         guard let fileURL = fileURL else {
@@ -521,14 +521,32 @@ public struct Empty: Decodable {
     public static let value = Empty()
 }
 
-// MARK: - JSON Decodable
+// MARK: - DataDecoder Protocol
 
-/// A `ResponseSerializer` that decodes the response data as a generic value using a `JSONDecoder`. By default, a
-/// request returning `nil` or no data is considered an error. However, if the response is has a status code valid for
-/// empty responses (`204`, `205`), then the `Empty.value` value is returned.
-public final class JSONDecodableResponseSerializer<T: Decodable>: ResponseSerializer {
+/// Any type which can decode `Data`.
+public protocol DataDecoder {
+    /// Decode `Data` into the provided type.
+    ///
+    /// - Parameters:
+    ///   - type:  The `Type` to be decoded.
+    ///   - data:  The `Data`
+    /// - Returns: The decoded value of type `D`.
+    /// - Throws:  Any error that occurs during decode.
+    func decode<D: Decodable>(_ type: D.Type, from data: Data) throws -> D
+}
+
+/// `JSONDecoder` automatically conforms to `DataDecoder`.
+extension JSONDecoder: DataDecoder { }
+
+// MARK: - Decodable
+
+/// A `ResponseSerializer` that decodes the response data as a generic value using any type that conforms to
+/// `DataDecoder`. By default, this is an instance of `JSONDecoder`. Additionally, a request returning `nil` or no data
+/// is considered an error. However, if the response is has a status code valid for empty responses (`204`, `205`), then
+/// the `Empty.value` value is returned.
+public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer {
     /// The `JSONDecoder` instance used to decode responses.
-    public let decoder: JSONDecoder
+    public let decoder: DataDecoder
     /// HTTP response codes for which empty responses are allowed.
     public let emptyResponseCodes: Set<Int>
     /// HTTP request methods for which empty responses are allowed.
@@ -541,9 +559,9 @@ public final class JSONDecodableResponseSerializer<T: Decodable>: ResponseSerial
     ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. Defaults to
     ///                          `[204, 205]`.
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. Defaults to `[.head]`.
-    public init(decoder: JSONDecoder = JSONDecoder(),
-                emptyResponseCodes: Set<Int> = JSONDecodableResponseSerializer.defaultEmptyResponseCodes,
-                emptyRequestMethods: Set<HTTPMethod> = JSONDecodableResponseSerializer.defaultEmptyRequestMethods) {
+    public init(decoder: DataDecoder = JSONDecoder(),
+                emptyResponseCodes: Set<Int> = DecodableResponseSerializer.defaultEmptyResponseCodes,
+                emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer.defaultEmptyRequestMethods) {
         self.decoder = decoder
         self.emptyResponseCodes = emptyResponseCodes
         self.emptyRequestMethods = emptyRequestMethods
@@ -567,7 +585,7 @@ public final class JSONDecodableResponseSerializer<T: Decodable>: ResponseSerial
         do {
             return try decoder.decode(T.self, from: data)
         } catch {
-            throw AFError.responseSerializationFailed(reason: .jsonDecodingFailed(error: error))
+            throw AFError.responseSerializationFailed(reason: .decodingFailed(error: error))
         }
     }
 }
@@ -578,16 +596,16 @@ extension DataRequest {
     /// - Parameters:
     ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
     ///                        the handler is called on `.main`.
-    ///   - decoder:           The decoder to use to decode the response. Defaults to a `JSONDecoder` with default
+    ///   - decoder:           The `DataDecoder` to use to decode the response. Defaults to a `JSONDecoder` with default
     ///                        settings.
     ///   - completionHandler: A closure to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
-    public func responseJSONDecodable<T: Decodable>(queue: DispatchQueue? = nil,
-                                                    decoder: JSONDecoder = JSONDecoder(),
-                                                    completionHandler: @escaping (DataResponse<T>) -> Void) -> Self {
+    public func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil,
+                                                decoder: DataDecoder = JSONDecoder(),
+                                                completionHandler: @escaping (DataResponse<T>) -> Void) -> Self {
         return response(queue: queue,
-                        responseSerializer: JSONDecodableResponseSerializer(decoder: decoder),
+                        responseSerializer: DecodableResponseSerializer(decoder: decoder),
                         completionHandler: completionHandler)
     }
 }
