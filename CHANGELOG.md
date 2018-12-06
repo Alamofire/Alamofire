@@ -69,21 +69,15 @@ Released on 2018-12-06. All issues associated with this milestone can be found u
   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
 - Top level `request` API to be inside a real `AF` namespace enum rather than unnecessary `Alamofire.` usage.
    - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2585](https://github.com/Alamofire/Alamofire/pull/2585).
-- Internal implementation of `RequestRetrier`.
-   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
-- Internal use of  `DispatchQueue`.
-   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
-- Internal locking API.
-   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2290](https://github.com/Alamofire/Alamofire/pull/2290).
 
 #### Removed
 - Support for iOS < 10, macOS < 10.12, tvOS < 10, watchOS < 3.
-  - Removed by [Jon Shier](https://github.com/jshier) in Pull Requests [#2254](https://github.com/Alamofire/Alamofire/pull/2254)  and [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
+  - Removed by [Jon Shier](https://github.com/jshier) in Pull Requests [#2254](https://github.com/Alamofire/Alamofire/pull/2254) and [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
 - Support for `PropertyListSerialization` and `responsePropertyList`.
   - Removed by [Jon Shier](https://github.com/jshier) in Pull Request [#2265](https://github.com/Alamofire/Alamofire/pull/2265).
 - Support for `URLSessionStreamTask`.
   - Removed by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
-- Closure API for behavior customization.
+- Closure override and customization API.
   - Removed by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
 - `Timeline` type, as Alamofire now gathers `URLSessionTaskMetrics` for every request.
   - Removed by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
