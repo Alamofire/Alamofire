@@ -24,23 +24,6 @@
 
 import Foundation
 
-/// HTTP method definitions.
-///
-/// See https://tools.ietf.org/html/rfc7231#section-4.3
-public enum HTTPMethod: String {
-    case options = "OPTIONS"
-    case get     = "GET"
-    case head    = "HEAD"
-    case post    = "POST"
-    case put     = "PUT"
-    case patch   = "PATCH"
-    case delete  = "DELETE"
-    case trace   = "TRACE"
-    case connect = "CONNECT"
-}
-
-// MARK: -
-
 /// A dictionary of parameters to apply to a `URLRequest`.
 public typealias Parameters = [String: Any]
 
@@ -191,7 +174,7 @@ public struct URLEncoding: ParameterEncoding {
                 urlRequest.setValue("application/x-www-form-urlencoded; charset=utf-8", forHTTPHeaderField: "Content-Type")
             }
 
-            urlRequest.httpBody = query(parameters).data(using: .utf8, allowLossyConversion: false)
+            urlRequest.httpBody = Data(query(parameters).utf8)
         }
 
         return urlRequest
@@ -231,58 +214,11 @@ public struct URLEncoding: ParameterEncoding {
 
     /// Returns a percent-escaped string following RFC 3986 for a query string key or value.
     ///
-    /// RFC 3986 states that the following characters are "reserved" characters.
-    ///
-    /// - General Delimiters: ":", "#", "[", "]", "@", "?", "/"
-    /// - Sub-Delimiters: "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "="
-    ///
-    /// In RFC 3986 - Section 3.4, it states that the "?" and "/" characters should not be escaped to allow
-    /// query strings to include a URL. Therefore, all "reserved" characters with the exception of "?" and "/"
-    /// should be percent-escaped in the query string.
-    ///
     /// - parameter string: The string to be percent-escaped.
     ///
     /// - returns: The percent-escaped string.
     public func escape(_ string: String) -> String {
-        let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
-        let subDelimitersToEncode = "!$&'()*+,;="
-
-        var allowedCharacterSet = CharacterSet.urlQueryAllowed
-        allowedCharacterSet.remove(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")
-
-        var escaped = ""
-
-        //==========================================================================================================
-        //
-        //  Batching is required for escaping due to an internal bug in iOS 8.1 and 8.2. Encoding more than a few
-        //  hundred Chinese characters causes various malloc error crashes. To avoid this issue until iOS 8 is no
-        //  longer supported, batching MUST be used for encoding. This introduces roughly a 20% overhead. For more
-        //  info, please refer to:
-        //
-        //      - https://github.com/Alamofire/Alamofire/issues/206
-        //
-        //==========================================================================================================
-
-        if #available(iOS 8.3, *) {
-            escaped = string.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? string
-        } else {
-            let batchSize = 50
-            var index = string.startIndex
-
-            while index != string.endIndex {
-                let startIndex = index
-                let endIndex = string.index(index, offsetBy: batchSize, limitedBy: string.endIndex) ?? string.endIndex
-                let range = startIndex..<endIndex
-
-                let substring = string[range]
-
-                escaped += substring.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? String(substring)
-
-                index = endIndex
-            }
-        }
-
-        return escaped
+        return string.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) ?? string
     }
 
     private func query(_ parameters: [String: Any]) -> String {
@@ -395,81 +331,6 @@ public struct JSONEncoding: ParameterEncoding {
             urlRequest.httpBody = data
         } catch {
             throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
-        }
-
-        return urlRequest
-    }
-}
-
-// MARK: -
-
-/// Uses `PropertyListSerialization` to create a plist representation of the parameters object, according to the
-/// associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header
-/// field of an encoded request is set to `application/x-plist`.
-public struct PropertyListEncoding: ParameterEncoding {
-
-    // MARK: Properties
-
-    /// Returns a default `PropertyListEncoding` instance.
-    public static var `default`: PropertyListEncoding { return PropertyListEncoding() }
-
-    /// Returns a `PropertyListEncoding` instance with xml formatting and default writing options.
-    public static var xml: PropertyListEncoding { return PropertyListEncoding(format: .xml) }
-
-    /// Returns a `PropertyListEncoding` instance with binary formatting and default writing options.
-    public static var binary: PropertyListEncoding { return PropertyListEncoding(format: .binary) }
-
-    /// The property list serialization format.
-    public let format: PropertyListSerialization.PropertyListFormat
-
-    /// The options for writing the parameters as plist data.
-    public let options: PropertyListSerialization.WriteOptions
-
-    // MARK: Initialization
-
-    /// Creates a `PropertyListEncoding` instance using the specified format and options.
-    ///
-    /// - parameter format:  The property list serialization format.
-    /// - parameter options: The options for writing the parameters as plist data.
-    ///
-    /// - returns: The new `PropertyListEncoding` instance.
-    public init(
-        format: PropertyListSerialization.PropertyListFormat = .xml,
-        options: PropertyListSerialization.WriteOptions = 0)
-    {
-        self.format = format
-        self.options = options
-    }
-
-    // MARK: Encoding
-
-    /// Creates a URL request by encoding parameters and applying them onto an existing request.
-    ///
-    /// - parameter urlRequest: The request to have parameters applied.
-    /// - parameter parameters: The parameters to apply.
-    ///
-    /// - throws: An `Error` if the encoding process encounters an error.
-    ///
-    /// - returns: The encoded request.
-    public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
-        var urlRequest = try urlRequest.asURLRequest()
-
-        guard let parameters = parameters else { return urlRequest }
-
-        do {
-            let data = try PropertyListSerialization.data(
-                fromPropertyList: parameters,
-                format: format,
-                options: options
-            )
-
-            if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
-                urlRequest.setValue("application/x-plist", forHTTPHeaderField: "Content-Type")
-            }
-
-            urlRequest.httpBody = data
-        } catch {
-            throw AFError.parameterEncodingFailed(reason: .propertyListEncodingFailed(error: error))
         }
 
         return urlRequest

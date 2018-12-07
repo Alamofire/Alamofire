@@ -37,7 +37,7 @@ class ProxyURLProtocol: URLProtocol {
     lazy var session: URLSession = {
         let configuration: URLSessionConfiguration = {
             let configuration = URLSessionConfiguration.ephemeral
-            configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+            configuration.httpHeaders = HTTPHeaders.default
 
             return configuration
         }()
@@ -112,7 +112,7 @@ extension ProxyURLProtocol: URLSessionDataDelegate {
 // MARK: -
 
 class URLProtocolTestCase: BaseTestCase {
-    var manager: SessionManager!
+    var manager: Session!
 
     // MARK: Setup and Teardown
 
@@ -128,7 +128,7 @@ class URLProtocolTestCase: BaseTestCase {
                 return configuration
             }()
 
-            return SessionManager(configuration: configuration)
+            return Session(configuration: configuration)
         }()
     }
 
@@ -145,7 +145,7 @@ class URLProtocolTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "GET request should succeed")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         manager.request(urlRequest)
@@ -163,14 +163,8 @@ class URLProtocolTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
 
         if let headers = response?.response?.allHeaderFields as? [String: String] {
-            XCTAssertEqual(headers["Request-Header"], "foobar")
-
-            // Configuration headers are only passed in on iOS 9.0+
-            if #available(iOS 9.0, *) {
-                XCTAssertEqual(headers["Session-Configuration-Header"], "foo")
-            } else {
-                XCTAssertNil(headers["Session-Configuration-Header"])
-            }
+            XCTAssertEqual(headers["Request-Header"] ?? headers["request-header"], "foobar")
+            XCTAssertEqual(headers["Session-Configuration-Header"] ?? headers["session-configuration-header"], "foo")
         } else {
             XCTFail("headers should not be nil")
         }

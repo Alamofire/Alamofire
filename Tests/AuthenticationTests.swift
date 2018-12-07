@@ -31,12 +31,12 @@ class AuthenticationTestCase: BaseTestCase {
     let password = "password"
     var urlString = ""
 
-    var manager: SessionManager!
+    var manager: Session!
 
     override func setUp() {
         super.setUp()
 
-        manager = SessionManager(configuration: .default)
+        manager = Session(configuration: .default)
 
         // Clear out credentials
         let credentialStorage = URLCredentialStorage.shared
@@ -65,11 +65,11 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         // Given
         let expectation = self.expectation(description: "\(urlString) 401")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         manager.request(urlString)
-            .authenticate(user: "invalid", password: "credentials")
+            .authenticate(username: "invalid", password: "credentials")
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -81,7 +81,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertEqual(response?.response?.statusCode, 401)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertNil(response?.error)
     }
 
@@ -89,11 +89,11 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         // Given
         let expectation = self.expectation(description: "\(urlString) 200")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         manager.request(urlString)
-            .authenticate(user: user, password: password)
+            .authenticate(username: user, password: password)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -113,14 +113,9 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         // Given
         let urlString = "http://httpbin.org/hidden-basic-auth/\(user)/\(password)"
         let expectation = self.expectation(description: "\(urlString) 200")
+        let headers: HTTPHeaders = [.authorization(username: user, password: password)]
 
-        var headers: HTTPHeaders?
-
-        if let authorizationHeader = Request.authorizationHeader(user: user, password: password) {
-            headers = [authorizationHeader.key: authorizationHeader.value]
-        }
-
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         manager.request(urlString, headers: headers)
@@ -154,11 +149,11 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         // Given
         let expectation = self.expectation(description: "\(urlString) 401")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         manager.request(urlString)
-            .authenticate(user: "invalid", password: "credentials")
+            .authenticate(username: "invalid", password: "credentials")
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -170,7 +165,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertEqual(response?.response?.statusCode, 401)
-        XCTAssertNotNil(response?.data)
+        XCTAssertNil(response?.data)
         XCTAssertNil(response?.error)
     }
 
@@ -178,11 +173,11 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         // Given
         let expectation = self.expectation(description: "\(urlString) 200")
 
-        var response: DefaultDataResponse?
+        var response: DataResponse<Data?>?
 
         // When
         manager.request(urlString)
-            .authenticate(user: user, password: password)
+            .authenticate(username: user, password: password)
             .response { resp in
                 response = resp
                 expectation.fulfill()

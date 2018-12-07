@@ -30,7 +30,7 @@ class DetailViewController: UITableViewController {
         case headers, body
     }
 
-    var request: Alamofire.Request? {
+    var request: Request? {
         didSet {
             oldValue?.cancel()
 

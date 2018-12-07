@@ -35,6 +35,19 @@ public enum Result<Value> {
     case success(Value)
     case failure(Error)
 
+    /// Initializes a `Result` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
+    ///
+    /// - Parameters:
+    ///   - value: A value.
+    ///   - error: An `Error`.
+    init(value: Value, error: Error?) {
+        if let error = error {
+            self = .failure(error)
+        } else {
+            self = .success(value)
+        }
+    }
+
     /// Returns `true` if the result is a success, `false` otherwise.
     public var isSuccess: Bool {
         switch self {

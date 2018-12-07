@@ -71,7 +71,7 @@ open class MultipartFormData {
                 boundaryText = "\(EncodingCharacters.crlf)--\(boundary)--\(EncodingCharacters.crlf)"
             }
 
-            return boundaryText.data(using: String.Encoding.utf8, allowLossyConversion: false)!
+            return Data(boundaryText.utf8)
         }
     }
 
@@ -100,6 +100,7 @@ open class MultipartFormData {
     /// The boundary used to separate the body parts in the encoded form data.
     public let boundary: String
 
+    private let fileManager: FileManager
     private var bodyParts: [BodyPart]
     private var bodyPartError: AFError?
     private let streamBufferSize: Int
@@ -109,8 +110,9 @@ open class MultipartFormData {
     /// Creates a multipart form data object.
     ///
     /// - returns: The multipart form data object.
-    public init() {
-        self.boundary = BoundaryGenerator.randomBoundary()
+    public init(fileManager: FileManager = .default, boundary: String? = nil) {
+        self.fileManager = fileManager
+        self.boundary = boundary ?? BoundaryGenerator.randomBoundary()
         self.bodyParts = []
 
         ///
@@ -257,7 +259,7 @@ open class MultipartFormData {
         var isDirectory: ObjCBool = false
         let path = fileURL.path
 
-        guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory.boolValue else {
+        guard fileManager.fileExists(atPath: path, isDirectory: &isDirectory) && !isDirectory.boolValue else {
             setBodyPartError(withReason: .bodyPartFileIsDirectory(at: fileURL))
             return
         }
@@ -269,7 +271,7 @@ open class MultipartFormData {
         let bodyContentLength: UInt64
 
         do {
-            guard let fileSize = try FileManager.default.attributesOfItem(atPath: path)[.size] as? NSNumber else {
+            guard let fileSize = try fileManager.attributesOfItem(atPath: path)[.size] as? NSNumber else {
                 setBodyPartError(withReason: .bodyPartFileSizeNotAvailable(at: fileURL))
                 return
             }
@@ -340,7 +342,7 @@ open class MultipartFormData {
     ///
     /// It is important to note that this method will load all the appended body parts into memory all at the same
     /// time. This method should only be used when the encoded data will have a small memory footprint. For large data
-    /// cases, please use the `writeEncodedDataToDisk(fileURL:completionHandler:)` method.
+    /// cases, please use the `writeEncodedData(to:))` method.
     ///
     /// - throws: An `AFError` if encoding encounters an error.
     ///
@@ -376,7 +378,7 @@ open class MultipartFormData {
             throw bodyPartError
         }
 
-        if FileManager.default.fileExists(atPath: fileURL.path) {
+        if fileManager.fileExists(atPath: fileURL.path) {
             throw AFError.multipartEncodingFailed(reason: .outputStreamFileAlreadyExists(at: fileURL))
         } else if !fileURL.isFileURL {
             throw AFError.multipartEncodingFailed(reason: .outputStreamURLInvalid(url: fileURL))
@@ -419,14 +421,11 @@ open class MultipartFormData {
     }
 
     private func encodeHeaders(for bodyPart: BodyPart) -> Data {
-        var headerText = ""
+        let headerText = bodyPart.headers.map { "\($0.name): \($0.value)\(EncodingCharacters.crlf)" }
+                                         .joined()
+                                         + EncodingCharacters.crlf
 
-        for (key, value) in bodyPart.headers {
-            headerText += "\(key): \(value)\(EncodingCharacters.crlf)"
-        }
-        headerText += EncodingCharacters.crlf
-
-        return headerText.data(using: String.Encoding.utf8, allowLossyConversion: false)!
+        return Data(headerText.utf8)
     }
 
     private func encodeBodyStream(for bodyPart: BodyPart) throws -> Data {
@@ -547,12 +546,12 @@ open class MultipartFormData {
 
     // MARK: - Private - Content Headers
 
-    private func contentHeaders(withName name: String, fileName: String? = nil, mimeType: String? = nil) -> [String: String] {
+    private func contentHeaders(withName name: String, fileName: String? = nil, mimeType: String? = nil) -> HTTPHeaders {
         var disposition = "form-data; name=\"\(name)\""
         if let fileName = fileName { disposition += "; filename=\"\(fileName)\"" }
 
-        var headers = ["Content-Disposition": disposition]
-        if let mimeType = mimeType { headers["Content-Type"] = mimeType }
+        var headers: HTTPHeaders = [.contentDisposition(disposition)]
+        if let mimeType = mimeType { headers.add(.contentType(mimeType)) }
 
         return headers
     }
