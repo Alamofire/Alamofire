@@ -583,11 +583,11 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
 
-            guard let emptyResponseType = T.self as? EmptyResponse.Type else {
+            guard let emptyResponseType = T.self as? EmptyResponse.Type, let emptyValue = emptyResponseType.emptyValue as? T else {
                 throw AFError.responseSerializationFailed(reason: .invalidEmptyResponse(type: "\(T.self)"))
             }
 
-            return emptyResponseType.emptyValue as! T
+            return emptyValue
         }
 
         do {
