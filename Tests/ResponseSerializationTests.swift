@@ -26,7 +26,7 @@ import Alamofire
 import Foundation
 import XCTest
 
-class DataResponseSerializationTestCase: BaseTestCase {
+final class DataResponseSerializationTestCase: BaseTestCase {
 
     // MARK: Properties
 
@@ -437,14 +437,18 @@ class DataResponseSerializationTestCase: BaseTestCase {
             XCTFail("json should not be nil")
         }
     }
+}
 
-    // MARK: DecodableResponseSerializer
+// MARK: -
 
-    struct DecodableValue: Codable {
+final class DecodableResponseSerializerTests: BaseTestCase {
+    private let error = AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
+
+    struct DecodableValue: Decodable {
         let string: String
     }
 
-    func testThatJSONDecodableResponseSerializerFailsWhenDataIsNil() {
+    func testThatDecodableResponseSerializerFailsWhenDataIsNil() {
         // Given
         let serializer = DecodableResponseSerializer<DecodableValue>()
 
@@ -463,7 +467,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    func testThatJSONDecodableResponseSerializerFailsWhenDataIsEmpty() {
+    func testThatDecodableResponseSerializerFailsWhenDataIsEmpty() {
         // Given
         let serializer = DecodableResponseSerializer<DecodableValue>()
 
@@ -482,7 +486,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    func testThatJSONDecodableResponseSerializerSucceedsWhenDataIsValidJSON() {
+    func testThatDecodableResponseSerializerSucceedsWhenDataIsValidJSON() {
         // Given
         let data = Data("{\"string\":\"string\"}".utf8)
         let serializer = DecodableResponseSerializer<DecodableValue>()
@@ -497,10 +501,10 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNil(result.error)
     }
 
-    func testThatJSONDecodableResponseSerializerFailsWhenDataIsInvalidJSON() {
+    func testThatDecodableResponseSerializerFailsWhenDataIsInvalidRepresentation() {
         // Given
         let serializer = DecodableResponseSerializer<DecodableValue>()
-        let data = Data("definitely not valid json".utf8)
+        let data = Data("definitely not valid".utf8)
 
         // When
         let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
@@ -511,7 +515,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.error)
     }
 
-    func testThatJSONDecodableResponseSerializerFailsWhenErrorIsNotNil() {
+    func testThatDecodableResponseSerializerFailsWhenErrorIsNotNil() {
         // Given
         let serializer = DecodableResponseSerializer<DecodableValue>()
 
@@ -530,7 +534,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    func testThatJSONDecodableResponseSerializerFailsWhenDataIsNilWithNonEmptyResponseStatusCode() {
+    func testThatDecodableResponseSerializerFailsWhenDataIsNilWithNonEmptyResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<DecodableValue>()
         let response = HTTPURLResponse(statusCode: 200)
@@ -550,7 +554,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    func testThatJSONDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseStatusCode() {
+    func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
         let response = HTTPURLResponse(statusCode: 204)
@@ -567,7 +571,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
 
 // MARK: -
 
-class DownloadResponseSerializationTestCase: BaseTestCase {
+final class DownloadResponseSerializationTestCase: BaseTestCase {
 
     // MARK: Properties
 
