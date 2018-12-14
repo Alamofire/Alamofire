@@ -517,7 +517,7 @@ extension DownloadRequest {
 // MARK: - Empty
 /// A protocol for a type representing an empty response. Use `T.emptyValue` to get an instance.
 public protocol EmptyResponse {
-    static var emptyValue: EmptyResponse { get }
+    static func emptyResponseValue() -> Self
 }
 
 /// A type representing an empty response. Use `Empty.value` to get the instance.
@@ -526,7 +526,10 @@ public struct Empty: Decodable {
 }
 
 extension Empty: EmptyResponse {
-    public static var emptyValue: EmptyResponse { return value }
+    public static func emptyResponseValue() -> Empty {
+        return value
+    }
+    public static var emptyResponseValueVar: Empty { return value }
 }
 
 // MARK: - DataDecoder Protocol
@@ -583,11 +586,11 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
 
-            guard let emptyResponseType = T.self as? EmptyResponse.Type, let emptyValue = emptyResponseType.emptyValue as? T else {
+            guard let emptyResponseType = T.self as? EmptyResponse.Type else {
                 throw AFError.responseSerializationFailed(reason: .invalidEmptyResponse(type: "\(T.self)"))
             }
 
-            return emptyValue
+            return emptyResponseType.emptyResponseValue() as! T
         }
 
         do {

@@ -443,7 +443,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
 
 // used by testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseConformingTypeAndEmptyResponseStatusCode
 extension Bool: EmptyResponse {
-    public static var emptyValue: EmptyResponse {
+    public static func emptyResponseValue() -> Bool {
         return true
     }
 }
@@ -452,7 +452,9 @@ final class DecodableResponseSerializerTests: BaseTestCase {
     private let error = AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
 
     struct DecodableValue: Decodable, EmptyResponse {
-        static var emptyValue: EmptyResponse { return DecodableValue(string: "") }
+        static func emptyResponseValue() -> DecodableValue {
+            return DecodableValue(string: "")
+        }
 
         let string: String
     }
@@ -625,38 +627,12 @@ final class DecodableResponseSerializerTests: BaseTestCase {
         }
     }
 
-     struct DecodableValueWithEmptyResponseOfWrongType: Decodable, EmptyResponse {
-        static var emptyValue: EmptyResponse { return DecodableValue(string: ""); }
-
-        let string: String
-    }
-
-    func testThatDecodableResponseSerializerFailsWhenEmptyResponseIsWrongType() {
-        // Given
-        let serializer = DecodableResponseSerializer<DecodableValueWithEmptyResponseOfWrongType>()
-        let response = HTTPURLResponse(statusCode: 204)
-
-        // When
-        let result = Result { try serializer.serialize(request: nil, response: response, data: nil, error: nil) }
-
-        // Then
-        XCTAssertTrue(result.isFailure)
-        XCTAssertNil(result.value)
-        XCTAssertNotNil(result.error)
-
-        if let error = result.error?.asAFError {
-            XCTAssertTrue(error.isInvalidEmptyResponse)
-        } else {
-            XCTFail("error should not be nil")
-        }
-    }
-
-    class DecodableClassWithEmptyResponse: Decodable, EmptyResponse, Equatable {
-        static func == (lhs: DecodableClassWithEmptyResponse, rhs: DecodableClassWithEmptyResponse) -> Bool {
-            return lhs.string == rhs.string
+    final class DecodableClassWithEmptyResponse: Decodable, EmptyResponse {
+        static func emptyResponseValue() -> DecodableClassWithEmptyResponse {
+            return emptyValue
         }
 
-        static var emptyValue: EmptyResponse = { return DecodableClassWithEmptyResponse(string: ""); }()
+        static let emptyValue = DecodableClassWithEmptyResponse(string: "");
 
         init(string: String) { self.string = string }
 
@@ -674,8 +650,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
         // Then
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
-        XCTAssertEqual(result.value, DecodableClassWithEmptyResponse.emptyValue as? DecodableClassWithEmptyResponse)
-        XCTAssertTrue(result.value! === DecodableClassWithEmptyResponse.emptyValue as! DecodableClassWithEmptyResponse)
+        XCTAssertTrue(result.value! === DecodableClassWithEmptyResponse.emptyValue)
         XCTAssertNil(result.error)
     }
 }
