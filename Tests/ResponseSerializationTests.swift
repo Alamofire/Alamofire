@@ -626,33 +626,6 @@ final class DecodableResponseSerializerTests: BaseTestCase {
             XCTFail("error should not be nil")
         }
     }
-
-    final class DecodableClassWithEmptyResponse: Decodable, EmptyResponse {
-        static func emptyValue() -> DecodableClassWithEmptyResponse {
-            return empty
-        }
-
-        static let empty = DecodableClassWithEmptyResponse(string: "");
-
-        init(string: String) { self.string = string }
-
-        let string: String
-    }
-
-    func testThatJSONDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseStatusCodeAndDecodableClassHasEmptyResponse() {
-        // Given
-        let serializer = DecodableResponseSerializer<DecodableClassWithEmptyResponse>()
-        let response = HTTPURLResponse(statusCode: 204)
-
-        // When
-        let result = Result { try serializer.serialize(request: nil, response: response, data: nil, error: nil) }
-
-        // Then
-        XCTAssertTrue(result.isSuccess)
-        XCTAssertNotNil(result.value)
-        XCTAssertTrue(result.value! === DecodableClassWithEmptyResponse.empty)
-        XCTAssertNil(result.error)
-    }
 }
 
 // MARK: -
