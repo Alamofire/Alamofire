@@ -59,12 +59,6 @@ func responseJSON(
     queue: DispatchQueue?,
     completionHandler: @escaping (DataResponse<Any>) -> Void)
     -> Self
-
-// Response PropertyList (plist) Handler - Serialized into Any
-func responsePropertyList(
-    queue: DispatchQueue?,
-    completionHandler: @escaping (DataResponse<Any>) -> Void))
-    -> Self
 ```
 
 None of the response handlers perform any validation of the `HTTPURLResponse` it gets back from the server.
@@ -331,11 +325,6 @@ Alamofire.request("https://httpbin.org/post", method: .post, parameters: paramet
 
 // HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
 ```
-
-#### Property List Encoding
-
-The `PropertyListEncoding` uses `PropertyListSerialization` to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
-
 #### Custom Encoding
 
 In the event that the provided `ParameterEncoding` types do not meet your needs, you can create your own custom encoding. Here's a quick example of how you could build a custom `JSONStringArrayEncoding` type to encode a JSON string array onto a `Request`.
