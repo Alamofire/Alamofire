@@ -1363,6 +1363,63 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
     }
 }
 
+class ServerTrustPolicyPinSubjectPublicKeysTestCase: ServerTrustPolicyTestCase {
+
+    func testThatPinningLeafKeyPassesEvaluationWithoutHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        
+        // SPKI of Valid DNS Name        tW/0nr4+I+ugTkHNsTrtmYhavrOLTnKYpEe0x4U3zRE=
+        // openssl x509 -pubkey -inform der < valid-dns-name.cer | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64
+        let serverTrust = TestTrusts.leafValidDNSName.trust
+        let keys = ["tW/0nr4+I+ugTkHNsTrtmYhavrOLTnKYpEe0x4U3zRE="]
+        let serverTrustPolicy = SubjectPublicKeysInfoTrustEvaluator(keys: keys, validateHost: false)
+        
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+    }
+    
+    func testThatPinnedIntermediateCertificatePassesEvaluationWithoutHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        
+        // SPKI of Alamofire Signing CA2 n0R/zZQ/dl0/URG5Ux/1CD43+F7SxDQeO+6Z+CZ/Cjk=
+        // openssl x509 -pubkey -inform der < alamofire-signing-ca2.cer | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64
+        let serverTrust = TestTrusts.leafValidDNSName.trust
+        let keys = ["n0R/zZQ/dl0/URG5Ux/1CD43+F7SxDQeO+6Z+CZ/Cjk="]
+        let serverTrustPolicy = SubjectPublicKeysInfoTrustEvaluator(keys: keys, validateHost: false)
+
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+    }
+    
+    func testThatPinnedRootCertificatePassesEvaluationWithoutHostValidation() {
+        // Given
+        let host = "test.alamofire.org"
+        // SPKI of Alamofire Root CA     pi+o8MdphyoodFJm96qqKXB5YLxd5Q8CWmSV/hU69VQ=
+        // openssl x509 -pubkey -inform der < alamofire-root-ca.cer | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64
+        let serverTrust = TestTrusts.leafValidDNSName.trust
+        let keys = ["pi+o8MdphyoodFJm96qqKXB5YLxd5Q8CWmSV/hU69VQ="]
+        let serverTrustPolicy = SubjectPublicKeysInfoTrustEvaluator(keys: keys, validateHost: false)
+
+        // When
+        setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+    }
+
+    
+}
 // MARK: -
 
 class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {

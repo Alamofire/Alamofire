@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import CommonCrypto
 
 /// Responsible for managing the mapping of `ServerTrustEvaluating` values to given hosts.
 open class ServerTrustManager {
@@ -322,6 +323,137 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
                                                                                       trust: trust,
                                                                                       pinnedKeys: keys,
                                                                                       serverKeys: trust.publicKeys))
+        }
+    }
+}
+
+/// Uses the pinned public keys to validate the server trust. The server trust is considered valid if one of the pinned
+/// public keys match one of the server certificate public keys. By validating both the certificate chain and host,
+/// public key pinning provides a very secure form of server trust validation mitigating most, if not all, MITM attacks.
+/// Applications are encouraged to always validate the host and require a valid certificate chain in production
+/// environments.
+public final class SubjectPublicKeysInfoTrustEvaluator: ServerTrustEvaluating {
+    private let keys: [String]
+    private let performDefaultValidation: Bool
+    private let validateHost: Bool
+
+    /// Creates a `SubjectPublicKeysInfoTrustEvaluator`.
+    ///
+    /// - Note: Default and host validation will fail when using this evaluator with self-signed certificates. Use
+    ///         `PinnedCertificatesTrustEvaluator` if you need to use self-signed certificates.
+    ///
+    /// - Parameters:
+    ///   - keys:                     The Base64 encoded SPKI hashes to use to validate public keys.
+    ///   - performDefaultValidation: Determines whether default validation should be performed in addition to
+    ///                               evaluating the pinned certificates. Defaults to `true`.
+    ///   - validateHost:             Determines whether or not the evaluator should validate the host, in addition to
+    ///                               performing the default evaluation, even if `performDefaultValidation` is `false`.
+    ///                               Defaults to `true`.
+    public init(keys: [String],
+                performDefaultValidation: Bool = true,
+                validateHost: Bool = true) {
+        self.keys = keys
+        self.performDefaultValidation = performDefaultValidation
+        self.validateHost = validateHost
+    }
+
+    private enum Asn1Header {
+        case rsa2048
+        case rsa4096
+        case ecDsaSecp256r1
+        case ecDsaSecp384r1
+
+        var bytes:[UInt8] {
+            switch self {
+            case .rsa2048:
+                return [
+                    0x30, 0x82, 0x01, 0x22, 0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,
+                    0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00, 0x03, 0x82, 0x01, 0x0f, 0x00
+                ]
+            case .rsa4096:
+                return  [
+                    0x30, 0x82, 0x02, 0x22, 0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,
+                    0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00, 0x03, 0x82, 0x02, 0x0f, 0x00
+                ]
+            case .ecDsaSecp256r1:
+                return  [
+                    0x30, 0x59, 0x30, 0x13, 0x06, 0x07, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x02,
+                    0x01, 0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07, 0x03,
+                    0x42, 0x00
+                ]
+            case .ecDsaSecp384r1:
+                return [
+                    0x30, 0x76, 0x30, 0x10, 0x06, 0x07, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x02,
+                    0x01, 0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22, 0x03, 0x62, 0x00
+                ]
+            }
+        }
+    }
+
+    private func getAsn1HeaderBytes(publicKeyType:String,publicKeySize:Int) -> [UInt8]? {
+        if publicKeyType == kSecAttrKeyTypeRSA as String && publicKeySize == 2048 {
+            return Asn1Header.rsa2048.bytes
+        } else if publicKeyType == kSecAttrKeyTypeRSA as String && publicKeySize == 4096 {
+            return Asn1Header.rsa4096.bytes
+        } else if publicKeyType == kSecAttrKeyTypeECSECPrimeRandom as String && publicKeySize == 256 {
+            return Asn1Header.ecDsaSecp256r1.bytes
+        } else if publicKeyType == kSecAttrKeyTypeECSECPrimeRandom as String && publicKeySize == 384 {
+            return Asn1Header.ecDsaSecp384r1.bytes
+        }
+        return nil // Unknown Algorithm
+    }
+
+    private func hashSubjectPublicKeyInfoFromCertificate(certificate:SecCertificate) -> String? {
+        guard let publicKey = certificate.publicKey,
+            let publicKeyData = SecKeyCopyExternalRepresentation(publicKey, nil) as Data?
+            else { return nil }
+
+        guard let publicKeyAttributes = SecKeyCopyAttributes(publicKey) as? [CFString:Any],
+            let publicKeyType = publicKeyAttributes[kSecAttrKeyType] as? String,
+            let publicKeysize = publicKeyAttributes[kSecAttrKeySizeInBits] as? NSNumber,
+            let asnHeaderBytes = getAsn1HeaderBytes(publicKeyType: publicKeyType, publicKeySize: publicKeysize.intValue)
+            else { return nil }
+        let asnHeaderSize = asnHeaderBytes.count
+        var subjectPublicKeyInfoHash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        var shaCtx = CC_SHA256_CTX()
+        CC_SHA256_Init(&shaCtx)
+        CC_SHA256_Update(&shaCtx, asnHeaderBytes, CC_LONG(asnHeaderSize))
+        _ = publicKeyData.withUnsafeBytes { bytes in
+            CC_SHA256_Update(&shaCtx, bytes, CC_LONG(publicKeyData.count));
+        }
+        CC_SHA256_Final(&subjectPublicKeyInfoHash, &shaCtx)
+        return Data(bytes: subjectPublicKeyInfoHash).base64EncodedString()
+    }
+
+    public func evaluate(_ trust: SecTrust, forHost host: String) throws {
+        guard !keys.isEmpty else {
+            throw AFError.serverTrustEvaluationFailed(reason: .noPublicKeysFound)
+        }
+
+        if performDefaultValidation {
+            try trust.performDefaultEvaluation(forHost: host)
+        }
+
+        if validateHost {
+            try trust.validateHost(host)
+        }
+
+        let pinnedKeysInServerKeys: Bool = {
+            for certificate in trust.certificates {
+                for key in keys {
+                    if hashSubjectPublicKeyInfoFromCertificate(certificate: certificate) == key {
+                        return true
+                    }
+                }
+            }
+            return false
+        }()
+
+        if !pinnedKeysInServerKeys {
+            throw AFError.serverTrustEvaluationFailed(reason: .subjectPublicKeyInfoPinningFailed(host: host,
+                                                                                                 trust: trust,
+                                                                                                 pinnedKeys: keys,
+                                                                                                 serverKeys: trust.publicKeys))
         }
     }
 }

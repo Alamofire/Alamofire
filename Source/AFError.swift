@@ -180,6 +180,8 @@ public enum AFError: Error {
         case certificatePinningFailed(host: String, trust: SecTrust, pinnedCertificates: [SecCertificate], serverCertificates: [SecCertificate])
         /// Public key pinning failed.
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
+        /// Subject PublicKey Info pinning failed
+        case subjectPublicKeyInfoPinningFailed(host: String, trust: SecTrust, pinnedKeys: [String], serverKeys:[SecKey])
     }
 
     case explicitlyCancelled
@@ -599,6 +601,8 @@ extension AFError.ServerTrustFailureReason {
             return "Certificate pinning failed for host \(host)."
         case let .publicKeyPinningFailed(host, _, _, _):
             return "Public key pinning failed for host \(host)."
+        case let .subjectPublicKeyInfoPinningFailed(host, _, _, _):
+            return "Subject Public key info pinning failed for host \(host)."
         }
     }
 }
