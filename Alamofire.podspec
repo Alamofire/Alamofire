@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.source = { :git => 'https://github.com/Alamofire/Alamofire.git', :tag => s.version }
   s.documentation_url = 'https://alamofire.github.io/Alamofire/'
   s.swift_version = '4.2'
-  
+
   s.ios.deployment_target = '10.0'
   s.osx.deployment_target = '10.12'
   s.tvos.deployment_target = '10.0'
