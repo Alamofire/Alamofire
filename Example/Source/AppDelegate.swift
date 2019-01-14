@@ -27,6 +27,8 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
 
+    // MARK: - Properties
+
     var window: UIWindow?
 
     // MARK: - UIApplicationDelegate

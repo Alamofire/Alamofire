@@ -27,10 +27,14 @@ import UIKit
 
 class MasterViewController: UITableViewController {
 
+    // MARK: - Properties
+
     @IBOutlet weak var titleImageView: UIImageView!
 
     var detailViewController: DetailViewController? = nil
     var objects = NSMutableArray()
+
+    private var reachability: NetworkReachabilityManager!
 
     // MARK: - View Lifecycle
 
@@ -38,21 +42,9 @@ class MasterViewController: UITableViewController {
         super.awakeFromNib()
 
         navigationItem.titleView = titleImageView
-    }
+        clearsSelectionOnViewWillAppear = true
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        if let split = splitViewController {
-            let controllers = split.viewControllers
-
-            if
-                let navigationController = controllers.last as? UINavigationController,
-                let topViewController = navigationController.topViewController as? DetailViewController
-            {
-                detailViewController = topViewController
-            }
-        }
+        monitorReachability()
     }
 
     // MARK: - UIStoryboardSegue
@@ -93,5 +85,25 @@ class MasterViewController: UITableViewController {
             }
         }
     }
-}
 
+    // MARK: - UITableViewDelegate
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 3 && indexPath.row == 0 {
+            print("Reachability Status: \(reachability.networkReachabilityStatus)")
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+
+    // MARK: - Private - Reachability
+
+    private func monitorReachability() {
+        reachability = NetworkReachabilityManager(host: "www.apple.com")
+
+        reachability.listener = { status in
+            print("Reachability Status Changed: \(status)")
+        }
+
+        reachability.startListening()
+    }
+}
