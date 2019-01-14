@@ -128,7 +128,9 @@ open class NetworkReachabilityManager {
 
     private init(reachability: SCNetworkReachability) {
         self.reachability = reachability
-        self.previousFlags = SCNetworkReachabilityFlags()
+
+        // Set the previous flags to an unreserved value to represent unknown status
+        self.previousFlags = SCNetworkReachabilityFlags(rawValue: 1 << 30)
     }
 
     deinit {
@@ -157,8 +159,8 @@ open class NetworkReachabilityManager {
         let queueEnabled = SCNetworkReachabilitySetDispatchQueue(reachability, listenerQueue)
 
         listenerQueue.async {
-            self.previousFlags = SCNetworkReachabilityFlags()
-            self.notifyListener(self.flags ?? SCNetworkReachabilityFlags())
+            guard let flags = self.flags else { return }
+            self.notifyListener(flags)
         }
 
         return callbackEnabled && queueEnabled
