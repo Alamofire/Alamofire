@@ -101,7 +101,7 @@ public struct URLEncoding: ParameterEncoding {
             case .numeric:
                 return value ? "1" : "0"
             case .literal:
-                return value ? "true" : "false"
+                return value.description
             }
         }
     }
