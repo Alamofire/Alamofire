@@ -951,5 +951,3 @@ There are some important things to remember when using network reachability to d
     - Even though the network requests may still fail, this is a good moment to retry them.
 - The network reachability status can be useful for determining why a network request may have failed.
     - If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
-
-> It is recommended to check out [WWDC 2012 Session 706, "Networking Best Practices"](https://developer.apple.com/videos/play/wwdc2012-706/) for more info.
