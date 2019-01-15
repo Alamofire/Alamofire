@@ -216,7 +216,7 @@ public final class URLEncodedFormEncoder {
         func encode(_ value: Bool) -> String {
             switch self {
             case .numeric: return value ? "1" : "0"
-            case .literal: return value ? "true" : "false"
+            case .literal: return value.description
             }
         }
     }
