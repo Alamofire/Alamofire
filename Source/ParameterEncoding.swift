@@ -108,11 +108,8 @@ public struct URLEncoding: ParameterEncoding {
 
     // MARK: Properties
 
-    /// Returns a default `URLEncoding` instance.
+    /// Returns a default `URLEncoding` instance with a `.methodDependent` destination.
     public static var `default`: URLEncoding { return URLEncoding() }
-
-    /// Returns a `URLEncoding` instance with a `.methodDependent` destination.
-    public static var methodDependent: URLEncoding { return URLEncoding() }
 
     /// Returns a `URLEncoding` instance with a `.queryString` destination.
     public static var queryString: URLEncoding { return URLEncoding(destination: .queryString) }
