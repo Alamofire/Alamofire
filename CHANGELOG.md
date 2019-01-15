@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 4.x Releases
-- `4.8.x` Releases - [4.8.0](#480)
+- `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481)
 - `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471) | [4.7.2](#472) | [4.7.3](#473)
 - `4.6.x` Releases - [4.6.0](#460)
 - `4.5.x` Releases - [4.5.0](#450) | [4.5.1](#451)
@@ -34,6 +34,14 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [4.8.1](https://github.com/Alamofire/Alamofire/releases/tag/4.8.1)
+Released on 2019-01-15. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.8.1).
+
+#### Fixed
+- Issue where the network reachability listener closure was not being called immediately when launching an app in airplane mode.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2688](https://github.com/Alamofire/Alamofire/pull/2688) regards to Issues [#2275](https://github.com/Alamofire/Alamofire/issues/2275) and [#2677](https://github.com/Alamofire/Alamofire/issues/2677).
+
 ## [4.8.0](https://github.com/Alamofire/Alamofire/releases/tag/4.8.0)
 Released on 2018-11-24. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.8.0).
 
@@ -53,6 +61,7 @@ Released on 2018-11-24. All issues associated with this milestone can be found u
 - cURL representation implementation readability.
   - Updated by [Giulio](https://github.com/giulio92) in Pull Request [#2625](https://github.com/Alamofire/Alamofire/pull/2625).
 
+---
 
 ## [4.7.3](https://github.com/Alamofire/Alamofire/releases/tag/4.7.3)
 Released on 2018-7-8. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.7.3).
@@ -62,7 +71,6 @@ Released on 2018-7-8. All issues associated with this milestone can be found usi
   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2552](https://github.com/Alamofire/Alamofire/pull/2552).
 - Documentation styling and content.
   - Updated by [Constantin Lungu](https://github.com/nemesis) in Pull Request [#2505](https://github.com/Alamofire/Alamofire/pull/2505), [Xing He](https://github.com/kukushi) in Pull Request [#2484](https://github.com/Alamofire/Alamofire/pull/2484), and [Karim](https://github.com/karimhm) in Pull Request [#2550](https://github.com/Alamofire/Alamofire/pull/2550).
-
 
 ## [4.7.2](https://github.com/Alamofire/Alamofire/releases/tag/4.7.2)
 Released on 2018-4-15. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.7.2).
@@ -105,6 +113,8 @@ Released on 2018-3-5. All issues associated with this milestone can be found usi
 - Typos in `ResultTests`.
   - Fixed by [Aleph Retamal](https://github.com/alaphao) in Pull Request [#2416](https://github.com/Alamofire/Alamofire/pull/2416).
 
+---
+
 ## [4.6.0](https://github.com/Alamofire/Alamofire/releases/tag/4.6.0)
 Released on 2017-12-3. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.6.0).
 
@@ -134,6 +144,8 @@ Released on 2017-12-3. All issues associated with this milestone can be found us
 - Colon placement.
   - Fixed by [Issarapong Poesua](https://github.com/Dekablade01) in Pull Request
   [#2329](https://github.com/Alamofire/Alamofire/pull/2329).
+
+---
 
 ## [4.5.1](https://github.com/Alamofire/Alamofire/releases/tag/4.5.1)
 Released on 2017-09-06. All issues associated with this milestone can be found using this
