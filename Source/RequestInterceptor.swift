@@ -1,5 +1,5 @@
 //
-//  RequestRetrier.swift
+//  RequestInterceptor.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -24,6 +24,18 @@
 
 import Foundation
 
+/// A type that can inspect and optionally adapt a `URLRequest` in some manner if necessary.
+public protocol RequestAdapter {
+    /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the Result.
+    ///
+    /// - Parameters:
+    ///   - urlRequest: The `URLRequest` to adapt.
+    ///   - completion: The completion handler that must be called when adaptation is complete.
+    func adapt(_ urlRequest: URLRequest, completion: @escaping (_ result: Result<URLRequest>) -> Void)
+}
+
+// MARK: -
+
 /// A closure executed when the `RequestRetrier` determines whether a `Request` should be retried or not.
 public typealias RequestRetryCompletion = (_ shouldRetry: Bool, _ timeDelay: TimeInterval) -> Void
 
@@ -42,3 +54,8 @@ public protocol RequestRetrier {
     /// - parameter completion: The completion closure to be executed when retry decision has been determined.
     func should(_ manager: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion)
 }
+
+// MARK: -
+
+/// A type that intercepts requests to potentially adapt and retry them.
+public protocol RequestInterceptor: RequestAdapter, RequestRetrier {}

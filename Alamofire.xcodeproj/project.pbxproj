@@ -110,14 +110,6 @@
 		319917AB209CDCB000103A19 /* HTTPHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917A9209CDCB000103A19 /* HTTPHeaders.swift */; };
 		319917AC209CDCB000103A19 /* HTTPHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917A9209CDCB000103A19 /* HTTPHeaders.swift */; };
 		319917AD209CDCB000103A19 /* HTTPHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917A9209CDCB000103A19 /* HTTPHeaders.swift */; };
-		319917AF209CE34F00103A19 /* RequestAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917AE209CE34E00103A19 /* RequestAdapter.swift */; };
-		319917B0209CE34F00103A19 /* RequestAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917AE209CE34E00103A19 /* RequestAdapter.swift */; };
-		319917B1209CE34F00103A19 /* RequestAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917AE209CE34E00103A19 /* RequestAdapter.swift */; };
-		319917B2209CE34F00103A19 /* RequestAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917AE209CE34E00103A19 /* RequestAdapter.swift */; };
-		319917B4209CE36E00103A19 /* RequestRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B3209CE36E00103A19 /* RequestRetrier.swift */; };
-		319917B5209CE36E00103A19 /* RequestRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B3209CE36E00103A19 /* RequestRetrier.swift */; };
-		319917B6209CE36E00103A19 /* RequestRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B3209CE36E00103A19 /* RequestRetrier.swift */; };
-		319917B7209CE36E00103A19 /* RequestRetrier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B3209CE36E00103A19 /* RequestRetrier.swift */; };
 		319917B9209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */; };
 		319917BA209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */; };
 		319917BB209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */; };
@@ -151,6 +143,10 @@
 		4C1DC8551B68908E00476DE3 /* AFError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C1DC8531B68908E00476DE3 /* AFError.swift */; };
 		4C23EB431B327C5B0090E0BC /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */; };
 		4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */; };
+		4C256A0621EEB69000AD5D87 /* RequestInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A0521EEB69000AD5D87 /* RequestInterceptor.swift */; };
+		4C256A0721EEB69000AD5D87 /* RequestInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A0521EEB69000AD5D87 /* RequestInterceptor.swift */; };
+		4C256A0821EEB69000AD5D87 /* RequestInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A0521EEB69000AD5D87 /* RequestInterceptor.swift */; };
+		4C256A0921EEB69000AD5D87 /* RequestInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A0521EEB69000AD5D87 /* RequestInterceptor.swift */; };
 		4C256A531B096C770065714F /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
 		4C256A541B096C770065714F /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
 		4C33A1391B5207DB00873DFF /* rainbow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1231B5207DB00873DFF /* rainbow.jpg */; };
@@ -355,8 +351,6 @@
 		31991793209CDA7F00103A19 /* SessionStateProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionStateProvider.swift; sourceTree = "<group>"; };
 		319917A4209CDAC400103A19 /* RequestTaskMap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestTaskMap.swift; sourceTree = "<group>"; };
 		319917A9209CDCB000103A19 /* HTTPHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeaders.swift; sourceTree = "<group>"; };
-		319917AE209CE34E00103A19 /* RequestAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestAdapter.swift; sourceTree = "<group>"; };
-		319917B3209CE36E00103A19 /* RequestRetrier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestRetrier.swift; sourceTree = "<group>"; };
 		319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Alamofire.swift"; sourceTree = "<group>"; };
 		31B2CA9421AA24F5005B371A /* Package@swift-4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Package@swift-4.swift"; sourceTree = "<group>"; };
 		31B2CA9521AA25CD005B371A /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
@@ -369,6 +363,7 @@
 		4C0E5BF71B673D3400816CCC /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		4C1DC8531B68908E00476DE3 /* AFError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AFError.swift; sourceTree = "<group>"; };
 		4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormData.swift; sourceTree = "<group>"; };
+		4C256A0521EEB69000AD5D87 /* RequestInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestInterceptor.swift; sourceTree = "<group>"; };
 		4C256A501B096C2C0065714F /* BaseTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormDataTests.swift; sourceTree = "<group>"; };
 		4C33A1231B5207DB00873DFF /* rainbow.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = rainbow.jpg; sourceTree = "<group>"; };
@@ -697,8 +692,7 @@
 				4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */,
 				311B198F20B0D3B40036823B /* MultipartUpload.swift */,
 				4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */,
-				319917AE209CE34E00103A19 /* RequestAdapter.swift */,
-				319917B3209CE36E00103A19 /* RequestRetrier.swift */,
+				4C256A0521EEB69000AD5D87 /* RequestInterceptor.swift */,
 				4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */,
 				4C811F8C1B51856D00E0F59A /* ServerTrustEvaluation.swift */,
 				4CDE2C421AF89F0900BABAE5 /* Validation.swift */,
@@ -1290,7 +1284,7 @@
 				4CF6270E1BA7CBF60011A099 /* MultipartFormData.swift in Sources */,
 				4CB9282B1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				4CF6270F1BA7CBF60011A099 /* ResponseSerialization.swift in Sources */,
-				319917B6209CE36E00103A19 /* RequestRetrier.swift in Sources */,
+				4C256A0821EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
 				4C43669D1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				4C3D00561C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
 				311B199220B0E3480036823B /* MultipartUpload.swift in Sources */,
@@ -1298,7 +1292,6 @@
 				4CF6270A1BA7CBF60011A099 /* ParameterEncoding.swift in Sources */,
 				31991796209CDA7F00103A19 /* Request.swift in Sources */,
 				4CF627101BA7CBF60011A099 /* ServerTrustEvaluation.swift in Sources */,
-				319917B1209CE34F00103A19 /* RequestAdapter.swift in Sources */,
 				3199179E209CDA7F00103A19 /* Session.swift in Sources */,
 				4CF627071BA7CBF60011A099 /* Alamofire.swift in Sources */,
 				3111CE8A20A77945008315E2 /* EventMonitor.swift in Sources */,
@@ -1355,7 +1348,7 @@
 				4CB9282A1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */,
 				4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
-				319917B5209CE36E00103A19 /* RequestRetrier.swift in Sources */,
+				4C256A0721EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
 				4C43669C1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				4C811F8E1B51856D00E0F59A /* ServerTrustEvaluation.swift in Sources */,
 				311B199120B0E3470036823B /* MultipartUpload.swift in Sources */,
@@ -1363,7 +1356,6 @@
 				4C3D00551C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
 				31991795209CDA7F00103A19 /* Request.swift in Sources */,
 				4CDE2C441AF89F0900BABAE5 /* Validation.swift in Sources */,
-				319917B0209CE34F00103A19 /* RequestAdapter.swift in Sources */,
 				3199179D209CDA7F00103A19 /* Session.swift in Sources */,
 				4C0E5BF91B673D3400816CCC /* Result.swift in Sources */,
 				3111CE8920A77944008315E2 /* EventMonitor.swift in Sources */,
@@ -1389,7 +1381,7 @@
 				E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */,
 				4CB9282C1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				4CEC605B1B745C9100E684F4 /* Result.swift in Sources */,
-				319917B7209CE36E00103A19 /* RequestRetrier.swift in Sources */,
+				4C256A0921EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
 				4C43669E1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */,
 				311B199320B0E3480036823B /* MultipartUpload.swift in Sources */,
@@ -1397,7 +1389,6 @@
 				E4202FD51B667AA100C997FB /* MultipartFormData.swift in Sources */,
 				31991797209CDA7F00103A19 /* Request.swift in Sources */,
 				E4202FD61B667AA100C997FB /* ServerTrustEvaluation.swift in Sources */,
-				319917B2209CE34F00103A19 /* RequestAdapter.swift in Sources */,
 				3199179F209CDA7F00103A19 /* Session.swift in Sources */,
 				E4202FD81B667AA100C997FB /* Validation.swift in Sources */,
 				3111CE8B20A77945008315E2 /* EventMonitor.swift in Sources */,
@@ -1423,7 +1414,7 @@
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
 				4C23EB431B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
 				4C811F8D1B51856D00E0F59A /* ServerTrustEvaluation.swift in Sources */,
-				319917B4209CE36E00103A19 /* RequestRetrier.swift in Sources */,
+				4C256A0621EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
 				4C43669B1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				4C3D00541C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
 				311B199020B0D3B40036823B /* MultipartUpload.swift in Sources */,
@@ -1431,7 +1422,6 @@
 				4CDE2C431AF89F0900BABAE5 /* Validation.swift in Sources */,
 				31991794209CDA7F00103A19 /* Request.swift in Sources */,
 				4CB928291C66BFBC00CE5F08 /* Notifications.swift in Sources */,
-				319917AF209CE34F00103A19 /* RequestAdapter.swift in Sources */,
 				3199179C209CDA7F00103A19 /* Session.swift in Sources */,
 				4C0E5BF81B673D3400816CCC /* Result.swift in Sources */,
 				3111CE8820A77843008315E2 /* EventMonitor.swift in Sources */,
