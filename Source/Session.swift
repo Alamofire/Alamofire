@@ -418,7 +418,7 @@ open class Session {
 
             guard !request.isCancelled else { return }
 
-            if let adapter = adapter {
+            if let adapter = adapter(for: request) {
                 adapter.adapt(initialRequest) { (result) in
                     do {
                         let adaptedRequest = try result.unwrap()
@@ -471,6 +471,16 @@ open class Session {
             request.didSuspend()
         }
     }
+
+    // MARK: - Adapters and Retriers
+
+    func adapter(for request: Request) -> RequestAdapter? {
+        return request.interceptor ?? adapter
+    }
+
+    func retrier(for request: Request) -> RequestRetrier? {
+        return request.interceptor ?? retrier
+    }
 }
 
 // MARK: - RequestDelegate
@@ -481,13 +491,13 @@ extension Session: RequestDelegate {
     }
 
     public func willRetryRequest(_ request: Request) -> Bool {
-        return (retrier != nil)
+        return retrier(for: request) != nil
     }
 
     public func retryRequest(_ request: Request, ifNecessaryWithError error: Error) {
-        guard let retrier = retrier else { return }
+        guard let retrier = retrier(for: request) else { return }
 
-        retrier.should(self, retry: request, with: error) { (shouldRetry, retryInterval) in
+        retrier.should(self, retry: request, with: error) { shouldRetry, retryInterval in
             guard !request.isCancelled else { return }
 
             self.rootQueue.async {
