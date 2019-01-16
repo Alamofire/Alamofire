@@ -204,54 +204,54 @@ extension Error {
 extension AFError {
     /// Returns whether the `AFError` is an explicitly cancelled error.
     public var isExplicitlyCancelledError: Bool {
-        if case .explicitlyCancelled = self { return true }
-        return false
+        guard case .explicitlyCancelled = self else { return false }
+        return true
     }
 
     /// Returns whether the AFError is an invalid URL error.
     public var isInvalidURLError: Bool {
-        if case .invalidURL = self { return true }
-        return false
+        guard case .invalidURL = self else { return false }
+        return true
     }
 
     /// Returns whether the AFError is a parameter encoding error. When `true`, the `underlyingError` property will
     /// contain the associated value.
     public var isParameterEncodingError: Bool {
-        if case .parameterEncodingFailed = self { return true }
-        return false
+        guard case .parameterEncodingFailed = self else { return false }
+        return true
     }
 
     /// Returns whether the instance is a parameter encoder error.
     public var isParameterEncoderError: Bool {
-        if case .parameterEncoderFailed = self { return true }
-        return false
+        guard case .parameterEncoderFailed = self else { return false }
+        return true
     }
 
     /// Returns whether the AFError is a multipart encoding error. When `true`, the `url` and `underlyingError` properties
     /// will contain the associated values.
     public var isMultipartEncodingError: Bool {
-        if case .multipartEncodingFailed = self { return true }
-        return false
+        guard case .multipartEncodingFailed = self else { return false }
+        return true
     }
 
     /// Returns whether the `AFError` is a response validation error. When `true`, the `acceptableContentTypes`,
     /// `responseContentType`, and `responseCode` properties will contain the associated values.
     public var isResponseValidationError: Bool {
-        if case .responseValidationFailed = self { return true }
-        return false
+        guard case .responseValidationFailed = self else { return false }
+        return true
     }
 
     /// Returns whether the `AFError` is a response serialization error. When `true`, the `failedStringEncoding` and
     /// `underlyingError` properties will contain the associated values.
     public var isResponseSerializationError: Bool {
-        if case .responseSerializationFailed = self { return true }
-        return false
+        guard case .responseSerializationFailed = self else { return false }
+        return true
     }
 
     /// Returns whether the `AFError` is a server trust evaluation error.
     public var isServerTrustEvaluationError: Bool {
-        if case .serverTrustEvaluationFailed = self { return true }
-        return false
+        guard case .serverTrustEvaluationFailed = self else { return false }
+        return true
     }
 }
 
