@@ -50,8 +50,12 @@ public enum Result<Value> {
 
     /// Returns `true` if the result is a success, `false` otherwise.
     public var isSuccess: Bool {
-        guard case .success = self else { return false }
-        return true
+        switch self {
+        case .success:
+            return true
+        case .failure:
+            return false
+        }
     }
 
     /// Returns `true` if the result is a failure, `false` otherwise.
@@ -61,14 +65,22 @@ public enum Result<Value> {
 
     /// Returns the associated value if the result is a success, `nil` otherwise.
     public var value: Value? {
-        guard case .success(let value) = self else { return nil }
-        return value
+        switch self {
+        case .success(let value):
+            return value
+        case .failure:
+            return nil
+        }
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
     public var error: Error? {
-        guard case .failure(let error) = self else { return nil }
-        return error
+        switch self {
+        case .success:
+            return nil
+        case .failure(let error):
+            return error
+        }
     }
 }
 
