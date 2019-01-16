@@ -225,8 +225,12 @@ extension Result {
     /// - Returns: A `Result` instance containing the result of the transform. If this instance is a success, returns
     ///            the same instance.
     public func mapError<T: Error>(_ transform: (Error) -> T) -> Result {
-        guard case .failure(let error) = self else { return self }
-        return .failure(transform(error))
+        switch self {
+        case .failure(let error):
+            return .failure(transform(error))
+        case .success:
+            return self
+        }
     }
 
     /// Evaluates the specified closure when the `Result` is a failure, passing the unwrapped error as a parameter.
