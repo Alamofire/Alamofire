@@ -373,6 +373,8 @@ open class Session {
 
     func perform(_ request: DownloadRequest) {
         requestQueue.async {
+            guard !request.isCancelled else { return }
+
             switch request.downloadable {
             case let .request(convertible):
                 self.performSetupOperations(for: request, convertible: convertible)
