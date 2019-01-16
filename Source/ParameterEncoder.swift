@@ -388,18 +388,14 @@ enum URLEncodedFormComponent {
 
     /// Converts self to an `[URLEncodedFormData]` or returns `nil` if not convertible.
     var array: [URLEncodedFormComponent]? {
-        switch self {
-        case let .array(array): return array
-        default: return nil
-        }
+        guard case let .array(array) = self else { return nil }
+        return array
     }
 
     /// Converts self to an `[String: URLEncodedFormData]` or returns `nil` if not convertible.
     var object: [String: URLEncodedFormComponent]? {
-        switch self {
-        case let .object(object): return object
-        default: return nil
-        }
+        guard case let .object(object) = self else { return nil }
+        return object
     }
 
     /// Sets self to the supplied value at a given path.
