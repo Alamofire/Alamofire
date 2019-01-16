@@ -419,7 +419,7 @@ open class Session {
             guard !request.isCancelled else { return }
 
             if let adapter = adapter(for: request) {
-                adapter.adapt(initialRequest) { (result) in
+                adapter.adapt(initialRequest) { result in
                     do {
                         let adaptedRequest = try result.unwrap()
                         self.rootQueue.async {
