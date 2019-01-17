@@ -48,11 +48,11 @@ public protocol RequestRetrier {
     /// to be retried. The one requirement is that the completion closure is called to ensure the request is properly
     /// cleaned up after.
     ///
-    /// - parameter manager:    The session manager the request was executed on.
+    /// - parameter session:    The session the request was executed on.
     /// - parameter request:    The request that failed due to the encountered error.
     /// - parameter error:      The error encountered when executing the request.
     /// - parameter completion: The completion closure to be executed when retry decision has been determined.
-    func should(_ manager: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion)
+    func should(_ session: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion)
 }
 
 // MARK: -

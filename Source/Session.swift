@@ -33,6 +33,7 @@ open class Session {
     public let serializationQueue: DispatchQueue
     public let adapter: RequestAdapter?
     public let retrier: RequestRetrier?
+    public let retryPolicies: [RetryPolicy]
     public let serverTrustManager: ServerTrustManager?
 
     public let session: URLSession
@@ -49,8 +50,9 @@ open class Session {
                 requestQueue: DispatchQueue? = nil,
                 serializationQueue: DispatchQueue? = nil,
                 adapter: RequestAdapter? = nil,
-                serverTrustManager: ServerTrustManager? = nil,
                 retrier: RequestRetrier? = nil,
+                retryPolicies: [RetryPolicy] = [],
+                serverTrustManager: ServerTrustManager? = nil,
                 eventMonitors: [EventMonitor] = []) {
         precondition(session.delegate === delegate,
                      "SessionManager(session:) initializer must be passed the delegate that has been assigned to the URLSession as the SessionDataProvider.")
@@ -65,6 +67,7 @@ open class Session {
         self.serializationQueue = serializationQueue ?? DispatchQueue(label: "\(rootQueue.label).serializationQueue", target: rootQueue)
         self.adapter = adapter
         self.retrier = retrier
+        self.retryPolicies = retryPolicies
         self.serverTrustManager = serverTrustManager
         eventMonitor = CompositeEventMonitor(monitors: defaultEventMonitors + eventMonitors)
         delegate.eventMonitor = eventMonitor
@@ -78,8 +81,9 @@ open class Session {
                             requestQueue: DispatchQueue? = nil,
                             serializationQueue: DispatchQueue? = nil,
                             adapter: RequestAdapter? = nil,
-                            serverTrustManager: ServerTrustManager? = nil,
                             retrier: RequestRetrier? = nil,
+                            retryPolicies: [RetryPolicy] = [],
+                            serverTrustManager: ServerTrustManager? = nil,
                             eventMonitors: [EventMonitor] = []) {
         let delegateQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: rootQueue, name: "org.alamofire.sessionManager.sessionDelegateQueue")
         let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
@@ -90,8 +94,9 @@ open class Session {
                   requestQueue: requestQueue,
                   serializationQueue: serializationQueue,
                   adapter: adapter,
-                  serverTrustManager: serverTrustManager,
                   retrier: retrier,
+                  retryPolicies: retryPolicies,
+                  serverTrustManager: serverTrustManager,
                   eventMonitors: eventMonitors)
     }
 
@@ -119,14 +124,15 @@ open class Session {
                       parameters: Parameters? = nil,
                       encoding: ParameterEncoding = URLEncoding.default,
                       headers: HTTPHeaders? = nil,
-                      interceptor: RequestInterceptor? = nil) -> DataRequest {
+                      interceptor: RequestInterceptor? = nil,
+                      retryPolicies: [RetryPolicy] = []) -> DataRequest {
         let convertible = RequestConvertible(url: url,
                                              method: method,
                                              parameters: parameters,
                                              encoding: encoding,
                                              headers: headers)
 
-        return request(convertible, interceptor: interceptor)
+        return request(convertible, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     struct RequestEncodableConvertible<Parameters: Encodable>: URLRequestConvertible {
@@ -148,22 +154,26 @@ open class Session {
                                              parameters: Parameters? = nil,
                                              encoder: ParameterEncoder = JSONParameterEncoder.default,
                                              headers: HTTPHeaders? = nil,
-                                             interceptor: RequestInterceptor? = nil) -> DataRequest {
+                                             interceptor: RequestInterceptor? = nil,
+                                             retryPolicies: [RetryPolicy] = []) -> DataRequest {
         let convertible = RequestEncodableConvertible(url: url,
                                                       method: method,
                                                       parameters: parameters,
                                                       encoder: encoder,
                                                       headers: headers)
 
-        return request(convertible, interceptor: interceptor)
+        return request(convertible, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
-    open func request(_ convertible: URLRequestConvertible, interceptor: RequestInterceptor? = nil) -> DataRequest {
+    open func request(_ convertible: URLRequestConvertible,
+                      interceptor: RequestInterceptor? = nil,
+                      retryPolicies: [RetryPolicy] = []) -> DataRequest {
         let request = DataRequest(convertible: convertible,
                                   underlyingQueue: rootQueue,
                                   serializationQueue: serializationQueue,
                                   eventMonitor: eventMonitor,
                                   interceptor: interceptor,
+                                  retryPolicies: retryPolicies,
                                   delegate: self)
 
         perform(request)
@@ -179,6 +189,7 @@ open class Session {
                        encoding: ParameterEncoding = URLEncoding.default,
                        headers: HTTPHeaders? = nil,
                        interceptor: RequestInterceptor? = nil,
+                       retryPolicies: [RetryPolicy] = [],
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
@@ -186,7 +197,7 @@ open class Session {
                                              encoding: encoding,
                                              headers: headers)
 
-        return download(convertible, interceptor: interceptor, to: destination)
+        return download(convertible, interceptor: interceptor, retryPolicies: retryPolicies, to: destination)
     }
 
     open func download<Parameters: Encodable>(_ convertible: URLConvertible,
@@ -195,6 +206,7 @@ open class Session {
                                               encoder: ParameterEncoder = JSONParameterEncoder.default,
                                               headers: HTTPHeaders? = nil,
                                               interceptor: RequestInterceptor? = nil,
+                                              retryPolicies: [RetryPolicy] = [],
                                               to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
@@ -202,17 +214,19 @@ open class Session {
                                                       encoder: encoder,
                                                       headers: headers)
 
-        return download(convertible, interceptor: interceptor, to: destination)
+        return download(convertible, interceptor: interceptor, retryPolicies: retryPolicies, to: destination)
     }
 
     open func download(_ convertible: URLRequestConvertible,
                        interceptor: RequestInterceptor? = nil,
+                       retryPolicies: [RetryPolicy] = [],
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let request = DownloadRequest(downloadable: .request(convertible),
                                       underlyingQueue: rootQueue,
                                       serializationQueue: serializationQueue,
                                       eventMonitor: eventMonitor,
                                       interceptor: interceptor,
+                                      retryPolicies: retryPolicies,
                                       delegate: self,
                                       destination: destination)
 
@@ -223,12 +237,14 @@ open class Session {
 
     open func download(resumingWith data: Data,
                        interceptor: RequestInterceptor? = nil,
+                       retryPolicies: [RetryPolicy] = [],
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let request = DownloadRequest(downloadable: .resumeData(data),
                                       underlyingQueue: rootQueue,
                                       serializationQueue: serializationQueue,
                                       eventMonitor: eventMonitor,
                                       interceptor: interceptor,
+                                      retryPolicies: retryPolicies,
                                       delegate: self,
                                       destination: destination)
 
@@ -266,48 +282,57 @@ open class Session {
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                     interceptor: RequestInterceptor? = nil,
+                     retryPolicies: [RetryPolicy] = []) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
 
-        return upload(data, with: convertible, interceptor: interceptor)
+        return upload(data, with: convertible, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     open func upload(_ data: Data,
                      with convertible: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return upload(.data(data), with: convertible, interceptor: interceptor)
+                     interceptor: RequestInterceptor? = nil,
+                     retryPolicies: [RetryPolicy] = []) -> UploadRequest {
+        return upload(.data(data), with: convertible, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     open func upload(_ fileURL: URL,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                     interceptor: RequestInterceptor? = nil,
+                     retryPolicies: [RetryPolicy] = []) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
 
-        return upload(fileURL, with: convertible, interceptor: interceptor)
+        return upload(fileURL, with: convertible, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     open func upload(_ fileURL: URL,
                      with convertible: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return upload(.file(fileURL, shouldRemove: false), with: convertible, interceptor: interceptor)
+                     interceptor: RequestInterceptor? = nil,
+                     retryPolicies: [RetryPolicy] = []) -> UploadRequest {
+        return upload(.file(fileURL, shouldRemove: false),
+                      with: convertible,
+                      interceptor: interceptor,
+                      retryPolicies: retryPolicies)
     }
 
     open func upload(_ stream: InputStream,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                     interceptor: RequestInterceptor? = nil,
+                     retryPolicies: [RetryPolicy] = []) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
 
-        return upload(stream, with: convertible, interceptor: interceptor)
+        return upload(stream, with: convertible, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     open func upload(_ stream: InputStream,
                      with convertible: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return upload(.stream(stream), with: convertible, interceptor: interceptor)
+                     interceptor: RequestInterceptor? = nil,
+                     retryPolicies: [RetryPolicy] = []) -> UploadRequest {
+        return upload(.stream(stream), with: convertible, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
@@ -316,27 +341,30 @@ open class Session {
                      to url: URLConvertible,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                     interceptor: RequestInterceptor? = nil,
+                     retryPolicies: [RetryPolicy] = []) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
 
         return upload(multipartFormData: multipartFormData,
                       usingThreshold: encodingMemoryThreshold,
                       with: convertible,
-                      interceptor: interceptor)
+                      interceptor: interceptor,
+                      retryPolicies: retryPolicies)
     }
 
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
                      fileManager: FileManager = .default,
                      with request: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                     interceptor: RequestInterceptor? = nil,
+                     retryPolicies: [RetryPolicy] = []) -> UploadRequest {
         let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
                                               encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: request,
                                               fileManager: fileManager,
                                               multipartBuilder: multipartFormData)
 
-        return upload(multipartUpload, interceptor: interceptor)
+        return upload(multipartUpload, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     // MARK: - Internal API
@@ -345,18 +373,22 @@ open class Session {
 
     func upload(_ uploadable: UploadRequest.Uploadable,
                 with convertible: URLRequestConvertible,
-                interceptor: RequestInterceptor?) -> UploadRequest {
+                interceptor: RequestInterceptor?,
+                retryPolicies: [RetryPolicy]) -> UploadRequest {
         let uploadable = Upload(request: convertible, uploadable: uploadable)
 
-        return upload(uploadable, interceptor: interceptor)
+        return upload(uploadable, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
-    func upload(_ upload: UploadConvertible, interceptor: RequestInterceptor?) -> UploadRequest {
+    func upload(_ upload: UploadConvertible,
+                interceptor: RequestInterceptor?,
+                retryPolicies: [RetryPolicy]) -> UploadRequest {
         let request = UploadRequest(convertible: upload,
                                     underlyingQueue: rootQueue,
                                     serializationQueue: serializationQueue,
                                     eventMonitor: eventMonitor,
                                     interceptor: interceptor,
+                                    retryPolicies: retryPolicies,
                                     delegate: self)
 
         perform(request)
@@ -481,6 +513,10 @@ open class Session {
     func retrier(for request: Request) -> RequestRetrier? {
         return request.interceptor ?? retrier
     }
+
+    func retryPolicies(for request: Request) -> [RetryPolicy] {
+        return request.retryPolicies + retryPolicies
+    }
 }
 
 // MARK: - RequestDelegate
@@ -490,12 +526,30 @@ extension Session: RequestDelegate {
         return session.configuration
     }
 
-    public func willRetryRequest(_ request: Request) -> Bool {
-        return retrier(for: request) != nil
+    public func willAttemptToRetryRequest(_ request: Request) -> Bool {
+        let willExecuteRetryPolicies = !retryPolicies(for: request).isEmpty
+        let willExecuteRetrier = retrier(for: request) != nil
+
+        return willExecuteRetryPolicies || willExecuteRetrier
     }
 
     public func retryRequest(_ request: Request, ifNecessaryWithError error: Error) {
-        guard let retrier = retrier(for: request) else { return }
+        for retryPolicy in retryPolicies(for: request) {
+            let (shouldRetry, timeDelay) = retryPolicy.shouldRetry(request, with: error)
+
+            if shouldRetry {
+                self.rootQueue.after(timeDelay) {
+                    guard !request.isCancelled else { return }
+
+                    request.requestIsRetrying()
+                    self.perform(request)
+                }
+
+                return
+            }
+        }
+
+        guard let retrier = retrier(for: request) else { request.finish(); return }
 
         retrier.should(self, retry: request, with: error) { shouldRetry, retryInterval in
             guard !request.isCancelled else { return }

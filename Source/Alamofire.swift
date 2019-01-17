@@ -32,12 +32,13 @@ public enum AF {
     /// using the `method`, `parameters`, `encoding`, and `headers` provided.
     ///
     /// - Parameters:
-    ///   - url:         The `URLConvertible` value.
-    ///   - method:      The `HTTPMethod`, `.get` by default.
-    ///   - parameters:  The `Parameters`, `nil` by default.
-    ///   - encoding:    The `ParameterEncoding`, `URLEncoding.default` by default.
-    ///   - headers:     The `HTTPHeaders`, `nil` by default.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
+    ///   - url:           The `URLConvertible` value.
+    ///   - method:        The `HTTPMethod`, `.get` by default.
+    ///   - parameters:    The `Parameters`, `nil` by default.
+    ///   - encoding:      The `ParameterEncoding`, `URLEncoding.default` by default.
+    ///   - headers:       The `HTTPHeaders`, `nil` by default.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The created `DataRequest`.
     public static func request(_ url: URLConvertible,
@@ -45,25 +46,28 @@ public enum AF {
                                parameters: Parameters? = nil,
                                encoding: ParameterEncoding = URLEncoding.default,
                                headers: HTTPHeaders? = nil,
-                               interceptor: RequestInterceptor? = nil) -> DataRequest {
+                               interceptor: RequestInterceptor? = nil,
+                               retryPolicies: [RetryPolicy] = []) -> DataRequest {
         return Session.default.request(url,
                                        method: method,
                                        parameters: parameters,
                                        encoding: encoding,
                                        headers: headers,
-                                       interceptor: interceptor)
+                                       interceptor: interceptor,
+                                       retryPolicies: retryPolicies)
     }
 
     /// Creates a `DataRequest` using `SessionManager.default` to retrive the contents of the specified `url`
     /// using the `method`, `parameters`, `encoding`, and `headers` provided.
     ///
     /// - Parameters:
-    ///   - url:         The `URLConvertible` value.
-    ///   - method:      The `HTTPMethod`, `.get` by default.
-    ///   - parameters:  The `Encodable` parameters, `nil` by default.
-    ///   - encoding:    The `ParameterEncoding`, `URLEncodedFormParameterEncoder.default` by default.
-    ///   - headers:     The `HTTPHeaders`, `nil` by default.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
+    ///   - url:           The `URLConvertible` value.
+    ///   - method:        The `HTTPMethod`, `.get` by default.
+    ///   - parameters:    The `Encodable` parameters, `nil` by default.
+    ///   - encoding:      The `ParameterEncoding`, `URLEncodedFormParameterEncoder.default` by default.
+    ///   - headers:       The `HTTPHeaders`, `nil` by default.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The created `DataRequest`.
     public static func request<Parameters: Encodable>(_ url: URLConvertible,
@@ -71,25 +75,29 @@ public enum AF {
                                                       parameters: Parameters? = nil,
                                                       encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                                       headers: HTTPHeaders? = nil,
-                                                      interceptor: RequestInterceptor? = nil) -> DataRequest {
+                                                      interceptor: RequestInterceptor? = nil,
+                                                      retryPolicies: [RetryPolicy] = []) -> DataRequest {
         return Session.default.request(url,
                                        method: method,
                                        parameters: parameters,
                                        encoder: encoder,
                                        headers: headers,
-                                       interceptor: interceptor)
+                                       interceptor: interceptor,
+                                       retryPolicies: retryPolicies)
     }
 
     /// Creates a `DataRequest` using `SessionManager.default` to execute the specified `urlRequest`.
     ///
     /// - Parameters:
-    ///   - urlRequest:  The `URLRequestConvertible` value.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
+    ///   - urlRequest:    The `URLRequestConvertible` value.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The created `DataRequest`.
     public static func request(_ urlRequest: URLRequestConvertible,
-                               interceptor: RequestInterceptor? = nil) -> DataRequest {
-        return Session.default.request(urlRequest, interceptor: interceptor)
+                               interceptor: RequestInterceptor? = nil,
+                               retryPolicies: [RetryPolicy] = []) -> DataRequest {
+        return Session.default.request(urlRequest, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     // MARK: - Download Request
@@ -101,14 +109,15 @@ public enum AF {
     /// underlying `URLSession`.
     ///
     /// - Parameters:
-    ///   - url:         The `URLConvertible` value.
-    ///   - method:      The `HTTPMethod`, `.get` by default.
-    ///   - parameters:  The `Parameters`, `nil` by default.
-    ///   - encoding:    The `ParameterEncoding`, `URLEncoding.default` by default.
-    ///   - headers:     The `HTTPHeaders`, `nil` by default.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
-    ///   - destination: The `DownloadRequest.Destination` closure used the determine the destination of the downloaded
-    ///                  file. `nil` by default.
+    ///   - url:           The `URLConvertible` value.
+    ///   - method:        The `HTTPMethod`, `.get` by default.
+    ///   - parameters:    The `Parameters`, `nil` by default.
+    ///   - encoding:      The `ParameterEncoding`, `URLEncoding.default` by default.
+    ///   - headers:       The `HTTPHeaders`, `nil` by default.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
+    ///   - destination:   The `DownloadRequest.Destination` closure used the determine the destination of the
+    ///                    downloaded file. `nil` by default.
     ///
     /// - Returns: The created `DownloadRequest`.
     public static func download(_ url: URLConvertible,
@@ -117,6 +126,7 @@ public enum AF {
                                 encoding: ParameterEncoding = URLEncoding.default,
                                 headers: HTTPHeaders? = nil,
                                 interceptor: RequestInterceptor? = nil,
+                                retryPolicies: [RetryPolicy] = [],
                                 to destination: DownloadRequest.Destination? =  nil) -> DownloadRequest {
         return Session.default.download(url,
                                         method: method,
@@ -124,6 +134,7 @@ public enum AF {
                                         encoding: encoding,
                                         headers: headers,
                                         interceptor: interceptor,
+                                        retryPolicies: retryPolicies,
                                         to: destination)
     }
 
@@ -134,14 +145,15 @@ public enum AF {
     /// underlying `URLSession`.
     ///
     /// - Parameters:
-    ///   - url:         The `URLConvertible` value.
-    ///   - method:      The `HTTPMethod`, `.get` by default.
-    ///   - parameters:  The `Encodable` parameters, `nil` by default.
-    ///   - encoder:     The `ParameterEncoder`, `URLEncodedFormParameterEncoder.default` by default.
-    ///   - headers:     The `HTTPHeaders`, `nil` by default.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
-    ///   - destination: The `DownloadRequest.Destination` closure used the determine the destination of the downloaded
-    ///                  file. `nil` by default.
+    ///   - url:           The `URLConvertible` value.
+    ///   - method:        The `HTTPMethod`, `.get` by default.
+    ///   - parameters:    The `Encodable` parameters, `nil` by default.
+    ///   - encoder:       The `ParameterEncoder`, `URLEncodedFormParameterEncoder.default` by default.
+    ///   - headers:       The `HTTPHeaders`, `nil` by default.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
+    ///   - destination:   The `DownloadRequest.Destination` closure used the determine the destination of the
+    ///                    downloaded file. `nil` by default.
     ///
     /// - Returns: The created `DownloadRequest`.
     public static func download<Parameters: Encodable>(_ url: URLConvertible,
@@ -150,6 +162,7 @@ public enum AF {
                                                        encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                                        headers: HTTPHeaders? = nil,
                                                        interceptor: RequestInterceptor? = nil,
+                                                       retryPolicies: [RetryPolicy] = [],
                                                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         return Session.default.download(url,
                                         method: method,
@@ -157,6 +170,7 @@ public enum AF {
                                         encoder: encoder,
                                         headers: headers,
                                         interceptor: interceptor,
+                                        retryPolicies: retryPolicies,
                                         to: destination)
     }
 
@@ -166,16 +180,21 @@ public enum AF {
     /// the result to the provided `destination`.
     ///
     /// - Parameters:
-    ///   - urlRequest:  The `URLRequestConvertible` value.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
-    ///   - destination: The `DownloadRequest.Destination` closure used the determine the destination of the downloaded
-    ///                  file. `nil` by default.
+    ///   - urlRequest:    The `URLRequestConvertible` value.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
+    ///   - destination:   The `DownloadRequest.Destination` closure used the determine the destination of the
+    ///                    downloaded file. `nil` by default.
     ///
     /// - Returns: The created `DownloadRequest`.
     public static func download(_ urlRequest: URLRequestConvertible,
                                 interceptor: RequestInterceptor? = nil,
+                                retryPolicies: [RetryPolicy] = [],
                                 to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        return Session.default.download(urlRequest, interceptor: interceptor, to: destination)
+        return Session.default.download(urlRequest,
+                                        interceptor: interceptor,
+                                        retryPolicies: retryPolicies,
+                                        to: destination)
     }
 
     // MARK: Resume Data
@@ -192,18 +211,23 @@ public enum AF {
     /// information about the bug and possible workarounds, please refer to the [this Stack Overflow post](http://stackoverflow.com/a/39347461/1342462).
     ///
     /// - Parameters:
-    ///   - resumeData:  The resume `Data`. This is an opaque blob produced by `URLSessionDownloadTask` when a task is
-    ///                  cancelled. See [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel)
-    ///                  for more information.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
-    ///   - destination: The `DownloadRequest.Destination` closure used to determine the destination of the downloaded
-    ///                  file. `nil` by default.
+    ///   - resumeData:    The resume `Data`. This is an opaque blob produced by `URLSessionDownloadTask` when a task is
+    ///                    cancelled. See [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel)
+    ///                    for more information.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
+    ///   - destination:   The `DownloadRequest.Destination` closure used to determine the destination of the downloaded
+    ///                    file. `nil` by default.
     ///
     /// - Returns: The created `DownloadRequest`.
     public static func download(resumingWith resumeData: Data,
                                 interceptor: RequestInterceptor? = nil,
+                                retryPolicies: [RetryPolicy] = [],
                                 to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        return Session.default.download(resumingWith: resumeData, interceptor: interceptor, to: destination)
+        return Session.default.download(resumingWith: resumeData,
+                                        interceptor: interceptor,
+                                        retryPolicies: retryPolicies,
+                                        to: destination)
     }
 
     // MARK: - Upload Request
@@ -214,34 +238,43 @@ public enum AF {
     /// using the `url`, `method` and `headers` provided.
     ///
     /// - Parameters:
-    ///   - fileURL:     The `URL` of the file to upload.
-    ///   - url:         The `URLConvertible` value.
-    ///   - method:      The `HTTPMethod`, `.post` by default.
-    ///   - headers:     The `HTTPHeaders`, `nil` by default.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
+    ///   - fileURL:       The `URL` of the file to upload.
+    ///   - url:           The `URLConvertible` value.
+    ///   - method:        The `HTTPMethod`, `.post` by default.
+    ///   - headers:       The `HTTPHeaders`, `nil` by default.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The created `UploadRequest`.
     public static func upload(_ fileURL: URL,
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil,
+                              retryPolicies: [RetryPolicy] = [],
                               interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(fileURL, to: url, method: method, headers: headers, interceptor: interceptor)
+        return Session.default.upload(fileURL,
+                                      to: url,
+                                      method: method,
+                                      headers: headers,
+                                      interceptor: interceptor,
+                                      retryPolicies: retryPolicies)
     }
 
     /// Creates an `UploadRequest` using the `SessionManager.default` to upload the contents of the `fileURL` specificed
     /// using the `urlRequest` provided.
     ///
     /// - Parameters:
-    ///   - fileURL:     The `URL` of the file to upload.
-    ///   - urlRequest:  The `URLRequestConvertible` value.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
+    ///   - fileURL:       The `URL` of the file to upload.
+    ///   - urlRequest:    The `URLRequestConvertible` value.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The created `UploadRequest`.
     public static func upload(_ fileURL: URL,
                               with urlRequest: URLRequestConvertible,
+                              retryPolicies: [RetryPolicy] = [],
                               interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(fileURL, with: urlRequest, interceptor: interceptor)
+        return Session.default.upload(fileURL, with: urlRequest, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     // MARK: Data
@@ -250,34 +283,43 @@ public enum AF {
     /// the `url`, `method` and `headers` provided.
     ///
     /// - Parameters:
-    ///   - data:        The `Data` to upload.
-    ///   - url:         The `URLConvertible` value.
-    ///   - method:      The `HTTPMethod`, `.post` by default.
-    ///   - headers:     The `HTTPHeaders`, `nil` by default.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
+    ///   - data:          The `Data` to upload.
+    ///   - url:           The `URLConvertible` value.
+    ///   - method:        The `HTTPMethod`, `.post` by default.
+    ///   - headers:       The `HTTPHeaders`, `nil` by default.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The created `UploadRequest`.
     public static func upload(_ data: Data,
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(data, to: url, method: method, headers: headers, interceptor: interceptor)
+                              interceptor: RequestInterceptor? = nil,
+                              retryPolicies: [RetryPolicy] = []) -> UploadRequest {
+        return Session.default.upload(data,
+                                      to: url,
+                                      method: method,
+                                      headers: headers,
+                                      interceptor: interceptor,
+                                      retryPolicies: retryPolicies)
     }
 
     /// Creates an `UploadRequest` using `SessionManager.default` to upload the contents of the `data` specified using
     /// the `urlRequest` provided.
     ///
     /// - Parameters:
-    ///   - data:        The `Data` to upload.
-    ///   - urlRequest:  The `URLRequestConvertible` value.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
+    ///   - data:          The `Data` to upload.
+    ///   - urlRequest:    The `URLRequestConvertible` value.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The created `UploadRequest`.
     public static func upload(_ data: Data,
                               with urlRequest: URLRequestConvertible,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(data, with: urlRequest, interceptor: interceptor)
+                              interceptor: RequestInterceptor? = nil,
+                              retryPolicies: [RetryPolicy] = []) -> UploadRequest {
+        return Session.default.upload(data, with: urlRequest, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     // MARK: InputStream
@@ -286,34 +328,43 @@ public enum AF {
     /// specified using the `url`, `method` and `headers` provided.
     ///
     /// - Parameters:
-    ///   - stream:      The `InputStream` to upload.
-    ///   - url:         The `URLConvertible` value.
-    ///   - method:      The `HTTPMethod`, `.post` by default.
-    ///   - headers:     The `HTTPHeaders`, `nil` by default.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
+    ///   - stream:        The `InputStream` to upload.
+    ///   - url:           The `URLConvertible` value.
+    ///   - method:        The `HTTPMethod`, `.post` by default.
+    ///   - headers:       The `HTTPHeaders`, `nil` by default.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The created `UploadRequest`.
     public static func upload(_ stream: InputStream,
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(stream, to: url, method: method, headers: headers, interceptor: interceptor)
+                              interceptor: RequestInterceptor? = nil,
+                              retryPolicies: [RetryPolicy] = []) -> UploadRequest {
+        return Session.default.upload(stream,
+                                      to: url,
+                                      method: method,
+                                      headers: headers,
+                                      interceptor: interceptor,
+                                      retryPolicies: retryPolicies)
     }
 
     /// Creates an `UploadRequest` using `SessionManager.default` to upload the content provided by the `stream`
     /// specified using the `urlRequest` specified.
     ///
     /// - Parameters:
-    ///   - stream:      The `InputStream` to upload.
-    ///   - urlRequest:  The `URLRequestConvertible` value.
-    ///   - interceptor: The `RequestInterceptor`, `nil` by default.
+    ///   - stream:        The `InputStream` to upload.
+    ///   - urlRequest:    The `URLRequestConvertible` value.
+    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The created `UploadRequest`.
     public static func upload(_ stream: InputStream,
                               with urlRequest: URLRequestConvertible,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(stream, with: urlRequest, interceptor: interceptor)
+                              interceptor: RequestInterceptor? = nil,
+                              retryPolicies: [RetryPolicy] = []) -> UploadRequest {
+        return Session.default.upload(stream, with: urlRequest, interceptor: interceptor, retryPolicies: retryPolicies)
     }
 
     // MARK: MultipartFormData
@@ -341,6 +392,7 @@ public enum AF {
     ///   - method:                  The `HTTPMethod`, `.post` by default.
     ///   - headers:                 The `HTTPHeaders`, `nil` by default.
     ///   - interceptor:             The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies:           The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The created `UploadRequest`.
     public static func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
@@ -348,13 +400,15 @@ public enum AF {
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                              interceptor: RequestInterceptor? = nil,
+                              retryPolicies: [RetryPolicy] = []) -> UploadRequest {
         return Session.default.upload(multipartFormData: multipartFormData,
                                       usingThreshold: encodingMemoryThreshold,
                                       to: url,
                                       method: method,
                                       headers: headers,
-                                      interceptor: interceptor)
+                                      interceptor: interceptor,
+                                      retryPolicies: retryPolicies)
     }
 
     /// Encodes `multipartFormData` using `encodingMemoryThreshold` and uploads the result using `SessionManager.default`
@@ -378,16 +432,19 @@ public enum AF {
     ///   - encodingMemoryThreshold: The encoding memory threshold in bytes. `10_000_000` bytes by default.
     ///   - urlRequest:              The `URLRequestConvertible` value.
     ///   - interceptor:             The `RequestInterceptor`, `nil` by default.
+    ///   - retryPolicies:           The `RetryPolicy` types, `[]` by default.
     ///
     /// - Returns: The `UploadRequest` created.
     @discardableResult
     public static func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
                               usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
                               with urlRequest: URLRequestConvertible,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                              interceptor: RequestInterceptor? = nil,
+                              retryPolicies: [RetryPolicy] = []) -> UploadRequest {
         return Session.default.upload(multipartFormData: multipartFormData,
                                       usingThreshold: encodingMemoryThreshold,
                                       with: urlRequest,
-                                      interceptor: interceptor)
+                                      interceptor: interceptor,
+                                      retryPolicies: retryPolicies)
     }
 }

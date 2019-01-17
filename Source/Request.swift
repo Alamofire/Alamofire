@@ -65,6 +65,8 @@ open class Request {
     public let eventMonitor: EventMonitor?
     /// The `Request`'s interceptor.
     public let interceptor: RequestInterceptor?
+    /// The retry policies associated with the request.
+    public let retryPolicies: [RetryPolicy]
     /// The `Request`'s delegate.
     public weak var delegate: RequestDelegate?
 
@@ -209,12 +211,14 @@ open class Request {
     ///                         `underlyingQueue` when created by a `SessionManager`.
     ///   - eventMonitor:       `EventMonitor` used for event callbacks from internal `Request` actions.
     ///   - interceptor:        `RequestInterceptor` used throughout the request lifecycle.
+    ///   - retryPolicies:      `Array` of `RetryPolicy` types used to retry the request in failure scenarios.
     ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
     public init(id: UUID = UUID(),
                 underlyingQueue: DispatchQueue,
                 serializationQueue: DispatchQueue,
                 eventMonitor: EventMonitor?,
                 interceptor: RequestInterceptor?,
+                retryPolicies: [RetryPolicy],
                 delegate: RequestDelegate) {
         self.id = id
         self.underlyingQueue = underlyingQueue
@@ -225,6 +229,7 @@ open class Request {
                                        startSuspended: true)
         self.eventMonitor = eventMonitor
         self.interceptor = interceptor
+        self.retryPolicies = retryPolicies
         self.delegate = delegate
     }
 
@@ -337,7 +342,7 @@ open class Request {
 
     /// Called to trigger retry or finish this `Request`.
     func retryOrFinish(error: Error?) {
-        if let error = error, delegate?.willRetryRequest(self) == true {
+        if let error = error, delegate?.willAttemptToRetryRequest(self) == true {
             delegate?.retryRequest(self, ifNecessaryWithError: error)
             return
         } else {
@@ -605,7 +610,7 @@ extension Request: CustomDebugStringConvertible {
 public protocol RequestDelegate: AnyObject {
     var sessionConfiguration: URLSessionConfiguration { get }
 
-    func willRetryRequest(_ request: Request) -> Bool
+    func willAttemptToRetryRequest(_ request: Request) -> Bool
     func retryRequest(_ request: Request, ifNecessaryWithError error: Error)
 
     func cancelRequest(_ request: Request)
@@ -630,6 +635,7 @@ open class DataRequest: Request {
          serializationQueue: DispatchQueue,
          eventMonitor: EventMonitor?,
          interceptor: RequestInterceptor?,
+         retryPolicies: [RetryPolicy],
          delegate: RequestDelegate) {
         self.convertible = convertible
 
@@ -638,6 +644,7 @@ open class DataRequest: Request {
                    serializationQueue: serializationQueue,
                    eventMonitor: eventMonitor,
                    interceptor: interceptor,
+                   retryPolicies: retryPolicies,
                    delegate: delegate)
     }
 
@@ -787,6 +794,7 @@ open class DownloadRequest: Request {
          serializationQueue: DispatchQueue,
          eventMonitor: EventMonitor?,
          interceptor: RequestInterceptor?,
+         retryPolicies: [RetryPolicy],
          delegate: RequestDelegate,
          destination: Destination? = nil) {
         self.downloadable = downloadable
@@ -797,6 +805,7 @@ open class DownloadRequest: Request {
                    serializationQueue: serializationQueue,
                    eventMonitor: eventMonitor,
                    interceptor: interceptor,
+                   retryPolicies: retryPolicies,
                    delegate: delegate)
     }
 
@@ -894,6 +903,7 @@ open class UploadRequest: DataRequest {
          serializationQueue: DispatchQueue,
          eventMonitor: EventMonitor?,
          interceptor: RequestInterceptor?,
+         retryPolicies: [RetryPolicy],
          delegate: RequestDelegate) {
         self.upload = convertible
 
@@ -903,6 +913,7 @@ open class UploadRequest: DataRequest {
                    serializationQueue: serializationQueue,
                    eventMonitor: eventMonitor,
                    interceptor: interceptor,
+                   retryPolicies: retryPolicies,
                    delegate: delegate)
 
         // Automatically remove temporary upload files (e.g. multipart form data)

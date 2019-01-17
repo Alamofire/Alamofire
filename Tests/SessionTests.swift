@@ -128,6 +128,14 @@ class SessionTestCase: BaseTestCase {
         }
     }
 
+    private struct MaxRetryCountPolicy: RetryPolicy {
+        let maxRetryCount: Int
+
+        func shouldRetry(_ request: Request, with error: Error) -> (shouldRetry: Bool, timeDelay: TimeInterval) {
+            return (request.retryCount < maxRetryCount, 0.0)
+        }
+    }
+
     // MARK: Tests - Initialization
 
     func testInitializerWithDefaultArguments() {
@@ -937,7 +945,7 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
     }
-    // TODO: Confirm retry logic.
+
     func testThatRequestAdapterErrorThrowsResponseHandlerErrorWhenRequestIsRetried() {
         // Given
         let handler = RequestHandler()
@@ -971,6 +979,62 @@ class SessionTestCase: BaseTestCase {
         } else {
             XCTFail("error should not be nil")
         }
+    }
+
+    // MARK: Tests - Retry Policies
+
+    func testThatSessionRetriesRequestWhenRetryPolicyIsSet() {
+        // Given
+        let urlString = "https://httpbin.org/basic-auth/user/password"
+
+        let retryPolicies: [RetryPolicy] = [
+            MaxRetryCountPolicy(maxRetryCount: 0),
+            MaxRetryCountPolicy(maxRetryCount: 1),
+            MaxRetryCountPolicy(maxRetryCount: 2)
+        ]
+
+        let session = Session()
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        // When
+        let request = session.request(urlString, retryPolicies: retryPolicies).validate().responseJSON { jsonResponse in
+            response = jsonResponse
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(request.retryCount, 2)
+        XCTAssertEqual(response?.result.isSuccess, false)
+    }
+
+    func testThatSessionRetriesRequestWithBothRetryPoliciesAndRetrier() {
+        // Given
+        let urlString = "https://httpbin.org/basic-auth/user/password"
+        let handler = RequestHandler()
+        let retryPolicies: [RetryPolicy] = [MaxRetryCountPolicy(maxRetryCount: 1)]
+
+        let session = Session(adapter: handler, retrier: handler)
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        // When
+        let request = session.request(urlString, retryPolicies: retryPolicies).validate().responseJSON { jsonResponse in
+            response = jsonResponse
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 3)
+        XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(request.retryCount, 2)
+        XCTAssertEqual(response?.result.isSuccess, false)
     }
 }
 
