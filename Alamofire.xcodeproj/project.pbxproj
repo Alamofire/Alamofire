@@ -158,6 +158,13 @@
 		4C256A1621F11EDA00AD5D87 /* ConnectionLostRetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1521F11EDA00AD5D87 /* ConnectionLostRetryPolicyTests.swift */; };
 		4C256A1721F11EDA00AD5D87 /* ConnectionLostRetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1521F11EDA00AD5D87 /* ConnectionLostRetryPolicyTests.swift */; };
 		4C256A1821F11EDA00AD5D87 /* ConnectionLostRetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1521F11EDA00AD5D87 /* ConnectionLostRetryPolicyTests.swift */; };
+		4C256A1A21F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1921F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift */; };
+		4C256A1B21F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1921F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift */; };
+		4C256A1C21F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1921F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift */; };
+		4C256A1D21F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1921F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift */; };
+		4C256A1F21F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1E21F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift */; };
+		4C256A2021F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1E21F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift */; };
+		4C256A2121F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A1E21F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift */; };
 		4C256A531B096C770065714F /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
 		4C256A541B096C770065714F /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C256A501B096C2C0065714F /* BaseTestCase.swift */; };
 		4C33A1391B5207DB00873DFF /* rainbow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4C33A1231B5207DB00873DFF /* rainbow.jpg */; };
@@ -378,6 +385,8 @@
 		4C256A0A21EFE35300AD5D87 /* RetryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryPolicy.swift; sourceTree = "<group>"; };
 		4C256A1021F11DA700AD5D87 /* ConnectionLostRetryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionLostRetryPolicy.swift; sourceTree = "<group>"; };
 		4C256A1521F11EDA00AD5D87 /* ConnectionLostRetryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionLostRetryPolicyTests.swift; sourceTree = "<group>"; };
+		4C256A1921F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponentialBackoffRetryPolicy.swift; sourceTree = "<group>"; };
+		4C256A1E21F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExponentialBackoffRetryPolicyTests.swift; sourceTree = "<group>"; };
 		4C256A501B096C2C0065714F /* BaseTestCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 		4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormDataTests.swift; sourceTree = "<group>"; };
 		4C33A1231B5207DB00873DFF /* rainbow.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = rainbow.jpg; sourceTree = "<group>"; };
@@ -537,6 +546,7 @@
 			children = (
 				4C341BB91B1A865A00C1B34D /* CacheTests.swift */,
 				4C256A1521F11EDA00AD5D87 /* ConnectionLostRetryPolicyTests.swift */,
+				4C256A1E21F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift */,
 				3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */,
 				4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */,
 				4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */,
@@ -705,6 +715,7 @@
 			children = (
 				4C256A1021F11DA700AD5D87 /* ConnectionLostRetryPolicy.swift */,
 				3111CE8720A77843008315E2 /* EventMonitor.swift */,
+				4C256A1921F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift */,
 				4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */,
 				311B198F20B0D3B40036823B /* MultipartUpload.swift */,
 				4C3D00531C66A63000D1F709 /* NetworkReachabilityManager.swift */,
@@ -1309,6 +1320,7 @@
 				311B199220B0E3480036823B /* MultipartUpload.swift in Sources */,
 				319917A2209CDA7F00103A19 /* SessionStateProvider.swift in Sources */,
 				4CF6270A1BA7CBF60011A099 /* ParameterEncoding.swift in Sources */,
+				4C256A1C21F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift in Sources */,
 				31991796209CDA7F00103A19 /* Request.swift in Sources */,
 				4CF627101BA7CBF60011A099 /* ServerTrustEvaluation.swift in Sources */,
 				3199179E209CDA7F00103A19 /* Session.swift in Sources */,
@@ -1322,6 +1334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CF627181BA7CC240011A099 /* RequestTests.swift in Sources */,
+				4C256A2121F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift in Sources */,
 				3111CE9720A7EC3A008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
 				3111CE9420A7EC32008315E2 /* ResponseSerializationTests.swift in Sources */,
 				3111CE8E20A7EBE7008315E2 /* MultipartFormDataTests.swift in Sources */,
@@ -1376,6 +1389,7 @@
 				311B199120B0E3470036823B /* MultipartUpload.swift in Sources */,
 				319917A1209CDA7F00103A19 /* SessionStateProvider.swift in Sources */,
 				4C3D00551C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
+				4C256A1B21F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift in Sources */,
 				31991795209CDA7F00103A19 /* Request.swift in Sources */,
 				4CDE2C441AF89F0900BABAE5 /* Validation.swift in Sources */,
 				3199179D209CDA7F00103A19 /* Session.swift in Sources */,
@@ -1411,6 +1425,7 @@
 				311B199320B0E3480036823B /* MultipartUpload.swift in Sources */,
 				319917A3209CDA7F00103A19 /* SessionStateProvider.swift in Sources */,
 				E4202FD51B667AA100C997FB /* MultipartFormData.swift in Sources */,
+				4C256A1D21F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift in Sources */,
 				31991797209CDA7F00103A19 /* Request.swift in Sources */,
 				E4202FD61B667AA100C997FB /* ServerTrustEvaluation.swift in Sources */,
 				3199179F209CDA7F00103A19 /* Session.swift in Sources */,
@@ -1446,6 +1461,7 @@
 				311B199020B0D3B40036823B /* MultipartUpload.swift in Sources */,
 				319917A0209CDA7F00103A19 /* SessionStateProvider.swift in Sources */,
 				4CDE2C431AF89F0900BABAE5 /* Validation.swift in Sources */,
+				4C256A1A21F1449C00AD5D87 /* ExponentialBackoffRetryPolicy.swift in Sources */,
 				31991794209CDA7F00103A19 /* Request.swift in Sources */,
 				4CB928291C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				3199179C209CDA7F00103A19 /* Session.swift in Sources */,
@@ -1459,6 +1475,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				31ED52E81D73891B00199085 /* AFError+AlamofireTests.swift in Sources */,
+				4C256A1F21F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift in Sources */,
 				3111CE9520A7EC39008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
 				3111CE9220A7EC30008315E2 /* ResponseSerializationTests.swift in Sources */,
 				3111CE8C20A7EBE6008315E2 /* MultipartFormDataTests.swift in Sources */,
@@ -1491,6 +1508,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				31ED52E91D73891C00199085 /* AFError+AlamofireTests.swift in Sources */,
+				4C256A2021F1454100AD5D87 /* ExponentialBackoffRetryPolicyTests.swift in Sources */,
 				3111CE9620A7EC3A008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
 				3111CE9320A7EC31008315E2 /* ResponseSerializationTests.swift in Sources */,
 				3111CE8D20A7EBE7008315E2 /* MultipartFormDataTests.swift in Sources */,
