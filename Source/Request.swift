@@ -498,7 +498,7 @@ extension Request: Equatable {
 
 extension Request: Hashable {
     public func hash(into hasher: inout Hasher) {
-        id.hash(into: &hasher)
+        hasher.combine(id)
     }
 }
 
