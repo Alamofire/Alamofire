@@ -454,6 +454,7 @@ open class Session {
                 adapter.adapt(initialRequest) { result in
                     do {
                         let adaptedRequest = try result.unwrap()
+
                         self.rootQueue.async {
                             request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
                             self.didCreateURLRequest(adaptedRequest, for: request)

@@ -89,7 +89,7 @@ class SessionTestCase: BaseTestCase {
             completion(result)
         }
 
-        func should(_ manager: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
+        func should(_ session: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             guard shouldRetry else { completion(false, 0.0); return }
 
             retryCount += 1
@@ -120,7 +120,7 @@ class SessionTestCase: BaseTestCase {
             completion(result)
         }
 
-        func should(_ manager: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
+        func should(_ session: Session, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             retryCount += 1
             retryErrors.append(error)
 
