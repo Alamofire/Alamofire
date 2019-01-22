@@ -80,6 +80,8 @@ open class Request {
         var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
         /// `ProgressHandler` and `DispatchQueue` provided for download progress callbacks.
         var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
+        /// `RetryHandler` provided for redirect responses.
+        var redirectHandler: RedirectHandler?
         /// `URLCredential` used for authentication challenges.
         var credential: URLCredential?
         /// All `URLRequest`s created by Alamofire on behalf of the `Request`.
@@ -130,6 +132,13 @@ open class Request {
     fileprivate var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
         get { return protectedMutableState.directValue.downloadProgressHandler }
         set { protectedMutableState.write { $0.downloadProgressHandler = newValue } }
+    }
+
+    // Redirects
+
+    public private(set) var redirectHandler: RedirectHandler? {
+        get { return protectedMutableState.directValue.redirectHandler }
+        set { protectedMutableState.write { $0.redirectHandler = newValue } }
     }
 
     // Credential
@@ -197,7 +206,6 @@ open class Request {
         get { return protectedMutableState.directValue.error }
         set { protectedMutableState.write { $0.error = newValue } }
     }
-
 
     /// Default initializer for the `Request` superclass.
     ///
@@ -484,6 +492,18 @@ open class Request {
     open func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         protectedMutableState.write { $0.uploadProgressHandler = (handler: closure, queue: queue) }
 
+        return self
+    }
+
+    // MARK: - Redirects
+
+    /// Sets the redirect handler for the `Request` which will be used if a redirect response is encountered.
+    ///
+    /// - Parameter handler: The redirect handler.
+    /// - Returns: The `Request`.
+    @discardableResult
+    open func redirect(with handler: RedirectHandler) -> Self {
+        protectedMutableState.write { $0.redirectHandler = handler }
         return self
     }
 }
