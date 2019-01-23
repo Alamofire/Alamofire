@@ -82,6 +82,8 @@ open class Request {
         var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)?
         /// `RetryHandler` provided for redirect responses.
         var redirectHandler: RedirectHandler?
+        /// `CachedResponseHandler` provided to handle caching responses.
+        var cachedResponseHandler: CachedResponseHandler?
         /// `URLCredential` used for authentication challenges.
         var credential: URLCredential?
         /// All `URLRequest`s created by Alamofire on behalf of the `Request`.
@@ -139,6 +141,13 @@ open class Request {
     public private(set) var redirectHandler: RedirectHandler? {
         get { return protectedMutableState.directValue.redirectHandler }
         set { protectedMutableState.write { $0.redirectHandler = newValue } }
+    }
+
+    // Cached Responses
+
+    public private(set) var cachedResponseHandler: CachedResponseHandler? {
+        get { return protectedMutableState.directValue.cachedResponseHandler }
+        set { protectedMutableState.write { $0.cachedResponseHandler = newValue } }
     }
 
     // Credential
@@ -501,6 +510,14 @@ open class Request {
             mutableState.redirectHandler = handler
         }
 
+        return self
+    }
+
+    // MARK: - Cached Responses
+
+    @discardableResult
+    open func cacheResponse(with handler: CachedResponseHandler) -> Self {
+        protectedMutableState.write { $0.cachedResponseHandler = handler }
         return self
     }
 }

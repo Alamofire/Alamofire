@@ -29,6 +29,7 @@ public protocol SessionStateProvider: AnyObject {
     func didCompleteTask(_ task: URLSessionTask)
     var serverTrustManager: ServerTrustManager? { get }
     var redirectHandler: RedirectHandler? { get }
+    var cachedResponseHandler: CachedResponseHandler? { get }
     func credential(for task: URLSessionTask, protectionSpace: URLProtectionSpace) -> URLCredential?
 }
 
@@ -190,7 +191,11 @@ extension SessionDelegate: URLSessionDataDelegate {
                          completionHandler: @escaping (CachedURLResponse?) -> Void) {
         eventMonitor?.urlSession(session, dataTask: dataTask, willCacheResponse: proposedResponse)
 
-        completionHandler(proposedResponse)
+        if let handler = stateProvider?.request(for: dataTask)?.cachedResponseHandler ?? stateProvider?.cachedResponseHandler {
+            handler.dataTask(dataTask, willCacheResponse: proposedResponse, completion: completionHandler)
+        } else {
+            completionHandler(proposedResponse)
+        }
     }
 }
 

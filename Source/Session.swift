@@ -35,6 +35,7 @@ open class Session {
     public let retrier: RequestRetrier?
     public let serverTrustManager: ServerTrustManager?
     public let redirectHandler: RedirectHandler?
+    public let cachedResponseHandler: CachedResponseHandler?
 
     public let session: URLSession
     public let eventMonitor: CompositeEventMonitor
@@ -53,6 +54,7 @@ open class Session {
                 retrier: RequestRetrier? = nil,
                 serverTrustManager: ServerTrustManager? = nil,
                 redirectHandler: RedirectHandler? = nil,
+                cachedResponseHandler: CachedResponseHandler? = nil,
                 eventMonitors: [EventMonitor] = []) {
         precondition(session.delegate === delegate,
                      "SessionManager(session:) initializer must be passed the delegate that has been assigned to the URLSession as the SessionDataProvider.")
@@ -69,6 +71,7 @@ open class Session {
         self.retrier = retrier
         self.serverTrustManager = serverTrustManager
         self.redirectHandler = redirectHandler
+        self.cachedResponseHandler = cachedResponseHandler
         eventMonitor = CompositeEventMonitor(monitors: defaultEventMonitors + eventMonitors)
         delegate.eventMonitor = eventMonitor
         delegate.stateProvider = self
@@ -84,6 +87,7 @@ open class Session {
                             retrier: RequestRetrier? = nil,
                             serverTrustManager: ServerTrustManager? = nil,
                             redirectHandler: RedirectHandler? = nil,
+                            cachedResponseHandler: CachedResponseHandler? = nil,
                             eventMonitors: [EventMonitor] = []) {
         let delegateQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: rootQueue, name: "org.alamofire.sessionManager.sessionDelegateQueue")
         let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
@@ -97,6 +101,7 @@ open class Session {
                   retrier: retrier,
                   serverTrustManager: serverTrustManager,
                   redirectHandler: redirectHandler,
+                  cachedResponseHandler: cachedResponseHandler,
                   eventMonitors: eventMonitors)
     }
 
