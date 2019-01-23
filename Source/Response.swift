@@ -88,6 +88,12 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     /// result.
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
+        let parameters = { () -> String in
+            if let httpBody = self.request?.httpBody {
+                return String(data: httpBody, encoding: .utf8) ?? "nil"
+            }
+            return "nil"
+        }
         let responseDescription = response.map { (response) in
             let sortedHeaders = response.httpHeaders.sorted()
 
@@ -101,6 +107,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
 
         return """
         [Request]: \(requestDescription)
+        [Parameters]: \(parameters)
         [Response]: \n\(responseDescription)
         [Data]: \(data?.description ?? "None")
         [Network Duration]: \(metricsDescription)
@@ -272,6 +279,12 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     /// actions, and the response serialization result.
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
+        let parameters = { () -> String in
+            if let httpBody = self.request?.httpBody {
+                return String(data: httpBody, encoding: .utf8) ?? "nil"
+            }
+            return "nil"
+        }
         let responseDescription = response.map { (response) in
             let sortedHeaders = response.httpHeaders.sorted()
 
@@ -286,6 +299,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
 
         return """
         [Request]: \(requestDescription)
+        [Parameters]: \(parameters)
         [Response]: \n\(responseDescription)
         [File URL]: \(fileURL?.path ?? "nil")
         [ResumeData]: \(resumeDataDescription)
