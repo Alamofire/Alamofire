@@ -44,3 +44,53 @@ public protocol RedirectHandler {
               for response: HTTPURLResponse,
               completion: @escaping (URLRequest?) -> Void)
 }
+
+// MARK: -
+
+/// `Redirector` is a convenience `RedirectHandler` making it easy to follow, not follow, or modify a redirect.
+public struct Redirector {
+    /// Defines the behavior of the `Redirector` type.
+    ///
+    /// - follow:      Follows the redirect as defined in the response.
+    /// - doNotFollow: Does not follow the redirect defined in the response.
+    /// - modify:      Modifies the redirect request defined in the response.
+    public enum Behavior {
+        case follow
+        case doNotFollow
+        case modify((URLSessionTask, URLRequest, HTTPURLResponse) -> URLRequest?)
+    }
+
+    /// Returns a `Redirector` with a follow `Behavior`.
+    public static let follow = Redirector(behavior: .follow)
+    /// Returns a `Redirector` with a do not follow `Behavior`.
+    public static let doNotFollow = Redirector(behavior: .doNotFollow)
+
+    /// The `Behavior` of the `Redirector`.
+    public let behavior: Behavior
+
+    /// Creates a `Redirector` instance from the `Behavior`.
+    ///
+    /// - Parameter behavior: The `Behavior`.
+    public init(behavior: Behavior) {
+        self.behavior = behavior
+    }
+}
+
+// MARK: -
+
+extension Redirector: RedirectHandler {
+    public func task(_ task: URLSessionTask,
+              willBeRedirectedTo request: URLRequest,
+              for response: HTTPURLResponse,
+              completion: @escaping (URLRequest?) -> Void) {
+        switch behavior {
+        case .follow:
+            completion(request)
+        case .doNotFollow:
+            completion(nil)
+        case .modify(let closure):
+            let request = closure(task, request, response)
+            completion(request)
+        }
+    }
+}
