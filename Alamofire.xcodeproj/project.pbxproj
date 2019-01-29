@@ -298,6 +298,9 @@
 		4CFB030D1D7D2FA20056F249 /* utf8_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F41D7D2FA20056F249 /* utf8_string.txt */; };
 		4CFB030E1D7D2FA20056F249 /* utf8_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F41D7D2FA20056F249 /* utf8_string.txt */; };
 		4CFB030F1D7D2FA20056F249 /* utf8_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F41D7D2FA20056F249 /* utf8_string.txt */; };
+		4CFD6B102201145500FFB5E3 /* RedirectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B0F2201145500FFB5E3 /* RedirectHandlerTests.swift */; };
+		4CFD6B112201145500FFB5E3 /* RedirectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B0F2201145500FFB5E3 /* RedirectHandlerTests.swift */; };
+		4CFD6B122201145500FFB5E3 /* RedirectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B0F2201145500FFB5E3 /* RedirectHandlerTests.swift */; };
 		4DD67C241A5C58FB00ED2280 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
 		8035DB621BAB492500466CB3 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */; };
@@ -428,6 +431,7 @@
 		4CFB02F21D7D2FA20056F249 /* empty_string.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = empty_string.txt; sourceTree = "<group>"; };
 		4CFB02F31D7D2FA20056F249 /* utf32_string.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = utf32_string.txt; sourceTree = "<group>"; };
 		4CFB02F41D7D2FA20056F249 /* utf8_string.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = utf8_string.txt; sourceTree = "<group>"; };
+		4CFD6B0F2201145500FFB5E3 /* RedirectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedirectHandlerTests.swift; sourceTree = "<group>"; };
 		4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39E2F831C1A72F8002DA1A9 /* certDER.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = certDER.cer; path = selfSignedAndMalformedCerts/certDER.cer; sourceTree = "<group>"; };
 		B39E2F841C1A72F8002DA1A9 /* certDER.crt */ = {isa = PBXFileReference; lastKnownFileType = file; name = certDER.crt; path = selfSignedAndMalformedCerts/certDER.crt; sourceTree = "<group>"; };
@@ -535,6 +539,7 @@
 				3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */,
 				4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */,
 				4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */,
+				4CFD6B0F2201145500FFB5E3 /* RedirectHandlerTests.swift */,
 				4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */,
 				4C33A1421B52089C00873DFF /* ServerTrustEvaluatorTests.swift */,
 				F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */,
@@ -1334,6 +1339,7 @@
 				317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683E20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46D21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
+				4CFD6B122201145500FFB5E3 /* RedirectHandlerTests.swift in Sources */,
 				31501E8A2196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA4120A1267D00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EC20B271060089BA7C /* CacheTests.swift in Sources */,
@@ -1470,6 +1476,7 @@
 				317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683C20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46B21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
+				4CFD6B102201145500FFB5E3 /* RedirectHandlerTests.swift in Sources */,
 				31501E882196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA3F20A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EA20B271040089BA7C /* CacheTests.swift in Sources */,
@@ -1501,6 +1508,7 @@
 				317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683D20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46C21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
+				4CFD6B112201145500FFB5E3 /* RedirectHandlerTests.swift in Sources */,
 				31501E892196962A005829F2 /* ParameterEncoderTests.swift in Sources */,
 				3107EA4020A1267C00445260 /* SessionDelegateTests.swift in Sources */,
 				31C2B0EB20B271050089BA7C /* CacheTests.swift in Sources */,
