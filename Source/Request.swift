@@ -460,13 +460,6 @@ open class Request {
 
     /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
     ///
-    /// - parameter queue:   The dispatch queue to execute the closure on.
-    /// - parameter closure: The code to be executed periodically as data is read from the server.
-    ///
-    /// - returns: The request.
-
-    /// Sets a closure to be called periodically during the lifecycle of the `Request` as data is read from the server.
-    ///
     /// Only the last closure provided is used.
     ///
     /// - Parameters:
@@ -499,11 +492,15 @@ open class Request {
 
     /// Sets the redirect handler for the `Request` which will be used if a redirect response is encountered.
     ///
-    /// - Parameter handler: The redirect handler.
-    /// - Returns: The `Request`.
+    /// - Parameter handler: The `RedirectHandler`.
+    /// - Returns:           The `Request`.
     @discardableResult
-    open func redirect(with handler: RedirectHandler) -> Self {
-        protectedMutableState.write { $0.redirectHandler = handler }
+    open func redirect(using handler: RedirectHandler) -> Self {
+        protectedMutableState.write { mutableState in
+            precondition(mutableState.redirectHandler == nil, "Redirect handler has already set")
+            mutableState.redirectHandler = handler
+        }
+
         return self
     }
 }
