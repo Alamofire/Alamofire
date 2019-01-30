@@ -515,9 +515,17 @@ open class Request {
 
     // MARK: - Cached Responses
 
+    /// Sets the cached response handler for the `Request` which will be used when attempting to cache a response.
+    ///
+    /// - Parameter handler: The `CachedResponseHandler`.
+    /// - Returns:           The `Request`.
     @discardableResult
-    open func cacheResponse(with handler: CachedResponseHandler) -> Self {
-        protectedMutableState.write { $0.cachedResponseHandler = handler }
+    open func cacheResponse(using handler: CachedResponseHandler) -> Self {
+        protectedMutableState.write { mutableState in
+            precondition(mutableState.cachedResponseHandler == nil, "Cached response handler has already been set")
+            mutableState.cachedResponseHandler = handler
+        }
+
         return self
     }
 }
