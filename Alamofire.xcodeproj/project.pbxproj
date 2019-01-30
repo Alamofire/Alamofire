@@ -305,6 +305,9 @@
 		4CFD6B102201145500FFB5E3 /* RedirectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B0F2201145500FFB5E3 /* RedirectHandlerTests.swift */; };
 		4CFD6B112201145500FFB5E3 /* RedirectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B0F2201145500FFB5E3 /* RedirectHandlerTests.swift */; };
 		4CFD6B122201145500FFB5E3 /* RedirectHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B0F2201145500FFB5E3 /* RedirectHandlerTests.swift */; };
+		4CFD6B142201338E00FFB5E3 /* CachedResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */; };
+		4CFD6B152201338E00FFB5E3 /* CachedResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */; };
+		4CFD6B162201338E00FFB5E3 /* CachedResponseHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */; };
 		4DD67C241A5C58FB00ED2280 /* Alamofire.h in Headers */ = {isa = PBXBuildFile; fileRef = F8111E3819A95C8B0040E7D1 /* Alamofire.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = F897FF4019AA800700AB5182 /* Alamofire.swift */; };
 		8035DB621BAB492500466CB3 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8111E3319A95C8B0040E7D1 /* Alamofire.framework */; };
@@ -437,6 +440,7 @@
 		4CFB02F31D7D2FA20056F249 /* utf32_string.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = utf32_string.txt; sourceTree = "<group>"; };
 		4CFB02F41D7D2FA20056F249 /* utf8_string.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = utf8_string.txt; sourceTree = "<group>"; };
 		4CFD6B0F2201145500FFB5E3 /* RedirectHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedirectHandlerTests.swift; sourceTree = "<group>"; };
+		4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedResponseHandlerTests.swift; sourceTree = "<group>"; };
 		4DD67C0B1A5C55C900ED2280 /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39E2F831C1A72F8002DA1A9 /* certDER.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = certDER.cer; path = selfSignedAndMalformedCerts/certDER.cer; sourceTree = "<group>"; };
 		B39E2F841C1A72F8002DA1A9 /* certDER.crt */ = {isa = PBXFileReference; lastKnownFileType = file; name = certDER.crt; path = selfSignedAndMalformedCerts/certDER.crt; sourceTree = "<group>"; };
@@ -540,6 +544,7 @@
 		4C256A4F1B09656E0065714F /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */,
 				4C341BB91B1A865A00C1B34D /* CacheTests.swift */,
 				3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */,
 				4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */,
@@ -1333,6 +1338,7 @@
 				3111CE9420A7EC32008315E2 /* ResponseSerializationTests.swift in Sources */,
 				3111CE8E20A7EBE7008315E2 /* MultipartFormDataTests.swift in Sources */,
 				311B199620B0ED990036823B /* UploadTests.swift in Sources */,
+				4CFD6B162201338E00FFB5E3 /* CachedResponseHandlerTests.swift in Sources */,
 				3107EA3720A11AE200445260 /* AuthenticationTests.swift in Sources */,
 				31ED52EA1D73891C00199085 /* AFError+AlamofireTests.swift in Sources */,
 				3107EA3A20A11F9700445260 /* ResponseTests.swift in Sources */,
@@ -1473,6 +1479,7 @@
 				3111CE9220A7EC30008315E2 /* ResponseSerializationTests.swift in Sources */,
 				3111CE8C20A7EBE6008315E2 /* MultipartFormDataTests.swift in Sources */,
 				311B199420B0ED980036823B /* UploadTests.swift in Sources */,
+				4CFD6B142201338E00FFB5E3 /* CachedResponseHandlerTests.swift in Sources */,
 				3107EA3520A11AE100445260 /* AuthenticationTests.swift in Sources */,
 				4CFB02901D7CF28F0056F249 /* FileManager+AlamofireTests.swift in Sources */,
 				3107EA3820A11F9600445260 /* ResponseTests.swift in Sources */,
@@ -1505,6 +1512,7 @@
 				3111CE9320A7EC31008315E2 /* ResponseSerializationTests.swift in Sources */,
 				3111CE8D20A7EBE7008315E2 /* MultipartFormDataTests.swift in Sources */,
 				311B199520B0ED980036823B /* UploadTests.swift in Sources */,
+				4CFD6B152201338E00FFB5E3 /* CachedResponseHandlerTests.swift in Sources */,
 				3107EA3620A11AE100445260 /* AuthenticationTests.swift in Sources */,
 				4CFB02911D7CF28F0056F249 /* FileManager+AlamofireTests.swift in Sources */,
 				3107EA3920A11F9600445260 /* ResponseTests.swift in Sources */,
