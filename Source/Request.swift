@@ -506,7 +506,7 @@ open class Request {
     @discardableResult
     open func redirect(using handler: RedirectHandler) -> Self {
         protectedMutableState.write { mutableState in
-            precondition(mutableState.redirectHandler == nil, "Redirect handler has already set")
+            precondition(mutableState.redirectHandler == nil, "Redirect handler has already been set")
             mutableState.redirectHandler = handler
         }
 
