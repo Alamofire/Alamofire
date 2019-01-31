@@ -425,7 +425,7 @@ open class Session {
             guard !request.isCancelled else { return }
 
             if let adapter = adapter(for: request) {
-                adapter.adapt(initialRequest) { result in
+                adapter.adapt(initialRequest, for: self) { result in
                     do {
                         let adaptedRequest = try result.unwrap()
 
@@ -434,7 +434,8 @@ open class Session {
                             self.didCreateURLRequest(adaptedRequest, for: request)
                         }
                     } catch {
-                        self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: error) }
+                        let adaptError = AFError.requestAdaptationFailed(error: error)
+                        self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: adaptError) }
                     }
                 }
             } else {
@@ -482,11 +483,19 @@ open class Session {
     // MARK: - Adapters and Retriers
 
     func adapter(for request: Request) -> RequestAdapter? {
-        return request.interceptor ?? interceptor
+        if let requestInterceptor = request.interceptor, let sessionInterceptor = interceptor {
+            return Interceptor(adapters: [requestInterceptor, sessionInterceptor])
+        } else {
+            return request.interceptor ?? interceptor
+        }
     }
 
     func retrier(for request: Request) -> RequestRetrier? {
-        return request.interceptor ?? interceptor
+        if let requestInterceptor = request.interceptor, let sessionInterceptor = interceptor {
+            return Interceptor(retriers: [requestInterceptor, sessionInterceptor])
+        } else {
+            return request.interceptor ?? interceptor
+        }
     }
 }
 
@@ -504,21 +513,32 @@ extension Session: RequestDelegate {
     public func retryRequest(_ request: Request, ifNecessaryWithError error: Error) {
         guard let retrier = retrier(for: request) else { request.finish(); return }
 
-        retrier.should(self, retry: request, with: error) { result in
+        retrier.retry(request, for: self, dueTo: error) { result in
             guard !request.isCancelled else { return }
 
             self.rootQueue.async {
                 guard !request.isCancelled else { return }
 
-                switch result {
-                case .success(let retryDelay):
-                    self.rootQueue.after(retryDelay) {
+                if result.retryRequired {
+                    let retry: () -> Void = {
                         guard !request.isCancelled else { return }
 
                         request.requestIsRetrying()
                         self.perform(request)
                     }
-                case .failure(let retryError):
+
+                    if let retryDelay = result.delay {
+                        self.rootQueue.after(retryDelay) { retry() }
+                    } else {
+                        self.rootQueue.async { retry() }
+                    }
+                } else {
+                    var retryError = error
+
+                    if let retryResultError = result.error {
+                        retryError = AFError.requestRetryFailed(retryError: retryResultError, originError: error)
+                    }
+
                     request.finish(error: retryError)
                 }
             }

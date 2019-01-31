@@ -30,10 +30,13 @@ import Foundation
 /// - explicitlyCancelled:         Returned when a `Request` is explicitly cancelled.
 /// - invalidURL:                  Returned when a `URLConvertible` type fails to create a valid `URL`.
 /// - parameterEncodingFailed:     Returned when a parameter encoding object throws an error during the encoding process.
+/// - parameterEncoderFailed:      Returned when a parameter encoder throws an error during the encoding process.
 /// - multipartEncodingFailed:     Returned when some step in the multipart encoding process fails.
+/// - requestAdaptationFailed:     Returned when a `RequestAdapter` throws an error during request adaptation.
 /// - responseValidationFailed:    Returned when a `validate()` call fails.
-/// - responseSerializationFailed: Returned when a response serializer encounters an error in the serialization process.
-/// - certificatePinningFailed:    Returned when a response fails certificate pinning.
+/// - responseSerializationFailed: Returned when a response serializer throws an error in the serialization process.
+/// - serverTrustEvaluationFailed: Returned when a `ServerTrustEvaluating` instance fails during the server trust evaluation process.
+/// - requestRetryFailed:          Returned when a `RequestRetrier` throws an error during the request retry process.
 public enum AFError: Error {
     /// The underlying reason the parameter encoding error occurred.
     ///
@@ -187,9 +190,11 @@ public enum AFError: Error {
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
     case parameterEncoderFailed(reason: ParameterEncoderFailureReason)
     case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
+    case requestAdaptationFailed(error: Error)
     case responseValidationFailed(reason: ResponseValidationFailureReason)
     case responseSerializationFailed(reason: ResponseSerializationFailureReason)
     case serverTrustEvaluationFailed(reason: ServerTrustFailureReason)
+    case requestRetryFailed(retryError: Error, originError: Error)
 }
 
 extension Error {
@@ -234,6 +239,13 @@ extension AFError {
         return false
     }
 
+    /// Returns whether the AFError is a request adaptation error. When `true`, the `underlyingError` property will
+    /// contain the associated value.
+    public var isRequestAdaptationError: Bool {
+        if case .requestAdaptationFailed = self { return true }
+        return false
+    }
+
     /// Returns whether the `AFError` is a response validation error. When `true`, the `acceptableContentTypes`,
     /// `responseContentType`, and `responseCode` properties will contain the associated values.
     public var isResponseValidationError: Bool {
@@ -251,6 +263,13 @@ extension AFError {
     /// Returns whether the `AFError` is a server trust evaluation error.
     public var isServerTrustEvaluationError: Bool {
         if case .serverTrustEvaluationFailed = self { return true }
+        return false
+    }
+
+    /// Returns whether the AFError is a request retry error. When `true`, the `underlyingError` property will
+    /// contain the associated value.
+    public var isRequestRetryError: Bool {
+        if case .requestRetryFailed = self { return true }
         return false
     }
 }
@@ -278,8 +297,9 @@ extension AFError {
         }
     }
 
-    /// The `Error` returned by a system framework associated with a `.parameterEncodingFailed`,
-    /// `.parameterEncoderFailed`, `.multipartEncodingFailed` or `.responseSerializationFailed` error.
+    /// The underlying `Error` responsible for generating the failure associated with `.parameterEncodingFailed`,
+    /// `.parameterEncoderFailed`, `.multipartEncodingFailed`, `.requestAdaptationFailed`,
+    /// `.responseSerializationFailed`, `.requestRetryFailed` errors.
     public var underlyingError: Error? {
         switch self {
         case .parameterEncodingFailed(let reason):
@@ -288,8 +308,12 @@ extension AFError {
             return reason.underlyingError
         case .multipartEncodingFailed(let reason):
             return reason.underlyingError
+        case .requestAdaptationFailed(let error):
+            return error
         case .responseSerializationFailed(let reason):
             return reason.underlyingError
+        case .requestRetryFailed(let retryError, _):
+            return retryError
         default:
             return nil
         }
@@ -459,12 +483,17 @@ extension AFError: LocalizedError {
             return reason.localizedDescription
         case .multipartEncodingFailed(let reason):
             return reason.localizedDescription
+        case .requestAdaptationFailed(let error):
+            return "Request adaption failed with error: \(error.localizedDescription)"
         case .responseValidationFailed(let reason):
             return reason.localizedDescription
         case .responseSerializationFailed(let reason):
             return reason.localizedDescription
         case .serverTrustEvaluationFailed:
             return "Server trust evaluation failed."
+        case .requestRetryFailed(let retryError, let originError):
+            return "Request retry failed with retry error: \(retryError.localizedDescription), " +
+                "origin error: \(originError.localizedDescription)"
         }
     }
 }
