@@ -336,11 +336,13 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
         class MockManager: Session {
-            override func request(_ convertible: URLRequestConvertible) -> DataRequest {
+            override func request(_ convertible: URLRequestConvertible,
+                                  interceptor: RequestInterceptor? = nil) -> DataRequest {
                 let request = MockDataRequest(convertible: convertible,
                                               underlyingQueue: rootQueue,
                                               serializationQueue: serializationQueue,
                                               eventMonitor: eventMonitor,
+                                              interceptor: interceptor,
                                               delegate: self)
 
                 perform(request)
@@ -350,6 +352,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
             override func download(
                 _ convertible: URLRequestConvertible,
+                interceptor: RequestInterceptor? = nil,
                 to destination: DownloadRequest.Destination? = nil)
                 -> DownloadRequest
             {
@@ -357,6 +360,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
                                                   underlyingQueue: rootQueue,
                                                   serializationQueue: serializationQueue,
                                                   eventMonitor: eventMonitor,
+                                                  interceptor: interceptor,
                                                   delegate: self
                 )
 
