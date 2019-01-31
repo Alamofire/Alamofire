@@ -39,7 +39,7 @@ class SessionTestCase: BaseTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
             let result: Result<URLRequest> = Result {
                 guard !throwsError else { throw AFError.invalidURL(url: "") }
 
@@ -50,10 +50,6 @@ class SessionTestCase: BaseTestCase {
             }
 
             completion(result)
-        }
-
-        func should(_ session: Session, retry request: Request, with error: Error, completion: @escaping (Result<TimeInterval>) -> Void) {
-            completion(.failure(error))
         }
     }
 
@@ -67,7 +63,7 @@ class SessionTestCase: BaseTestCase {
         var throwsErrorOnSecondAdapt = false
         var shouldRetry = true
 
-        func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
             let result: Result<URLRequest> = Result {
                 if throwsErrorOnFirstAdapt {
                     throwsErrorOnFirstAdapt = false
@@ -93,21 +89,21 @@ class SessionTestCase: BaseTestCase {
             completion(result)
         }
 
-        func should(
-            _ session: Session,
-            retry request: Request,
-            with error: Error,
-            completion: @escaping (Result<TimeInterval>) -> Void)
+        func retry(
+            _ request: Request,
+            for session: Session,
+            dueTo error: Error,
+            completion: @escaping (RetryResult) -> Void)
         {
-            guard shouldRetry else { completion(.failure(error)); return }
+            guard shouldRetry else { completion(.doNotRetry); return }
 
             retryCount += 1
             retryErrors.append(error)
 
             if retryCount < 2 {
-                completion(.success(0.0))
+                completion(.retry)
             } else {
-                completion(.failure(error))
+                completion(.doNotRetry)
             }
         }
     }
@@ -117,7 +113,7 @@ class SessionTestCase: BaseTestCase {
         var retryCount = 0
         var retryErrors: [Error] = []
 
-        func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
             let result: Result<URLRequest> = Result {
                 adaptedCount += 1
 
@@ -129,16 +125,16 @@ class SessionTestCase: BaseTestCase {
             completion(result)
         }
 
-        func should(
-            _ session: Session,
-            retry request: Request,
-            with error: Error,
-            completion: @escaping (Result<TimeInterval>) -> Void)
+        func retry(
+            _ request: Request,
+            for session: Session,
+            dueTo error: Error,
+            completion: @escaping (RetryResult) -> Void)
         {
             retryCount += 1
             retryErrors.append(error)
 
-            completion(.success(0.0))
+            completion(.retry)
         }
     }
 
@@ -642,7 +638,7 @@ class SessionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(request1.task?.originalRequest?.httpMethod, adapter.method.rawValue)
-        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.get.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.post.rawValue)
         XCTAssertEqual(requestHandler.adaptedCount, 1)
     }
 
@@ -671,7 +667,7 @@ class SessionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(request1.task?.originalRequest?.httpMethod, adapter.method.rawValue)
-        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.get.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.post.rawValue)
         XCTAssertEqual(requestHandler.adaptedCount, 1)
     }
 
@@ -701,7 +697,7 @@ class SessionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(request1.task?.originalRequest?.httpMethod, adapter.method.rawValue)
-        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.post.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.get.rawValue)
         XCTAssertEqual(requestHandler.adaptedCount, 1)
     }
 
@@ -731,7 +727,7 @@ class SessionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(request1.task?.originalRequest?.httpMethod, adapter.method.rawValue)
-        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.post.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.get.rawValue)
         XCTAssertEqual(requestHandler.adaptedCount, 1)
     }
 
@@ -761,7 +757,7 @@ class SessionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(request1.task?.originalRequest?.httpMethod, adapter.method.rawValue)
-        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.post.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.get.rawValue)
         XCTAssertEqual(requestHandler.adaptedCount, 1)
     }
 
@@ -796,8 +792,8 @@ class SessionTestCase: BaseTestCase {
         // Then
         for request in requests {
             if let error = request.error?.asAFError {
-                XCTAssertTrue(error.isInvalidURLError)
-                XCTAssertEqual(error.urlConvertible as? String, "")
+                XCTAssertTrue(error.isRequestAdaptationError)
+                XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
             } else {
                 XCTFail("error should not be nil")
             }
@@ -979,8 +975,8 @@ class SessionTestCase: BaseTestCase {
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
         if let error = response?.result.error?.asAFError {
-            XCTAssertTrue(error.isInvalidURLError)
-            XCTAssertEqual(error.urlConvertible as? String, "")
+            XCTAssertTrue(error.isRequestAdaptationError)
+            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
         } else {
             XCTFail("error should not be nil")
         }

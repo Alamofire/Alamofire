@@ -30,11 +30,41 @@ public protocol RequestAdapter {
     ///
     /// - Parameters:
     ///   - urlRequest: The `URLRequest` to adapt.
+    ///   - session:    The `Session` that will execute the `URLRequest`.
     ///   - completion: The completion handler that must be called when adaptation is complete.
-    func adapt(_ urlRequest: URLRequest, completion: @escaping (Result<URLRequest>) -> Void)
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void)
 }
 
 // MARK: -
+
+public enum RetryResult {
+    case retry
+    case retryWithDelay(TimeInterval)
+    case doNotRetry
+    case doNotRetryWithError(Error)
+}
+
+extension RetryResult {
+    var retryRequired: Bool {
+        switch self {
+        case .retry, .retryWithDelay: return true
+        default:                      return false
+        }
+    }
+
+    var delay: TimeInterval? {
+        switch self {
+        case .retryWithDelay(let delay): return delay
+        case .retry:                     return 0.0
+        default:                         return nil
+        }
+    }
+
+    var error: Error? {
+        guard case .doNotRetryWithError(let error) = self else { return nil }
+        return error
+    }
+}
 
 /// A type that determines whether a request should be retried after being executed by the specified session manager
 /// and encountering an error.
@@ -45,11 +75,11 @@ public protocol RequestRetrier {
     /// to be retried. The one requirement is that the completion closure is called to ensure the request is properly
     /// cleaned up after.
     ///
-    /// - parameter session:    The session the request was executed on.
-    /// - parameter request:    The request that failed due to the encountered error.
-    /// - parameter error:      The error encountered when executing the request.
+    /// - parameter request:    The `Request` that failed due to the encountered error.
+    /// - parameter session:    The `Session` the request was executed on.
+    /// - parameter error:      The `Error` encountered when executing the request.
     /// - parameter completion: The completion closure to be executed when retry decision has been determined.
-    func should(_ session: Session, retry request: Request, with error: Error, completion: @escaping (Result<TimeInterval>) -> Void)
+    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
 }
 
 // MARK: -
@@ -57,29 +87,87 @@ public protocol RequestRetrier {
 /// A type that intercepts requests to potentially adapt and retry them.
 public protocol RequestInterceptor: RequestAdapter, RequestRetrier {}
 
+extension RequestInterceptor {
+    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+        completion(.success(urlRequest))
+    }
+
+    public func retry(
+        _ request: Request,
+        for session: Session,
+        dueTo error: Error,
+        completion: @escaping (RetryResult) -> Void)
+    {
+        completion(.doNotRetry)
+    }
+}
+
+public typealias AdaptHandler = (URLRequest, Session, _ completion: (Result<URLRequest>) -> Void) -> Void
+public typealias RetryHandler = (Request, Session, Error, _ completion: (RetryResult) -> Void) -> Void
+
 // MARK: -
 
-open class Interceptor {
+open class Adapter: RequestInterceptor {
+    private let adaptHandler: AdaptHandler
+
+    public init(_ adaptHandler: @escaping AdaptHandler) {
+        self.adaptHandler = adaptHandler
+    }
+
+    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+        adaptHandler(urlRequest, session, completion)
+    }
+}
+
+// MARK: -
+
+open class Retrier: RequestInterceptor {
+    private let retryHandler: RetryHandler
+
+    public init(_ retryHandler: @escaping RetryHandler) {
+        self.retryHandler = retryHandler
+    }
+
+    open func retry(
+        _ request: Request,
+        for session: Session,
+        dueTo error: Error,
+        completion: @escaping (RetryResult) -> Void)
+    {
+        retryHandler(request, session, error, completion)
+    }
+}
+
+// MARK: -
+
+open class Interceptor: RequestInterceptor {
     public let adapters: [RequestAdapter]
     public let retriers: [RequestRetrier]
+
+    public init(adaptHandler: @escaping AdaptHandler, retryHandler: @escaping RetryHandler) {
+        self.adapters = [Adapter(adaptHandler)]
+        self.retriers = [Retrier(retryHandler)]
+    }
+
+    public init(adapter: RequestAdapter, retrier: RequestRetrier) {
+        self.adapters = [adapter]
+        self.retriers = [retrier]
+    }
 
     public init(adapters: [RequestAdapter] = [], retriers: [RequestRetrier] = []) {
         self.adapters = adapters
         self.retriers = retriers
     }
-}
 
-// MARK: - RequestAdapter
-
-extension Interceptor: RequestAdapter {
-    open func adapt(_ urlRequest: URLRequest, completion: @escaping (_ result: Result<URLRequest>) -> Void) {
-        adapt(urlRequest, using: adapters, completion: completion)
+    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+        adapt(urlRequest, for: session, using: adapters, completion: completion)
     }
 
     private func adapt(
         _ urlRequest: URLRequest,
+        for session: Session,
         using adapters: [RequestAdapter],
-        completion: @escaping (_ result: Result<URLRequest>) -> Void)
+        completion: @escaping (Result<URLRequest>) -> Void)
     {
         var pendingAdapters = adapters
 
@@ -87,44 +175,45 @@ extension Interceptor: RequestAdapter {
 
         let adapter = pendingAdapters.removeFirst()
 
-        adapter.adapt(urlRequest) { result in
+        adapter.adapt(urlRequest, for: session) { result in
             switch result {
             case .success(let urlRequest):
-                self.adapt(urlRequest, using: pendingAdapters, completion: completion)
+                self.adapt(urlRequest, for: session, using: pendingAdapters, completion: completion)
             case .failure:
                 completion(result)
             }
         }
     }
-}
 
-// MARK: - RequestRetrier
-
-extension Interceptor: RequestRetrier {
-    open func should(_ session: Session, retry request: Request, with error: Error, completion: @escaping (_ result: Result<TimeInterval>) -> Void) {
-        completion(.success(0.0))
-        should(session, retry: request, with: error, using: retriers, completion: completion)
+    open func retry(
+        _ request: Request,
+        for session: Session,
+        dueTo error: Error,
+        completion: @escaping (RetryResult) -> Void)
+    {
+        retry(request, for: session, dueTo: error, using: retriers, completion: completion)
     }
 
-    private func should(
-        _ session: Session,
-        retry request: Request,
-        with error: Error,
+    private func retry(
+        _ request: Request,
+        for session: Session,
+        dueTo error: Error,
         using retriers: [RequestRetrier],
-        completion: @escaping (_ result: Result<TimeInterval>) -> Void)
+        completion: @escaping (RetryResult) -> Void)
     {
         var pendingRetriers = retriers
 
-        guard !pendingRetriers.isEmpty else { completion(.failure(error)); return }
+        guard !pendingRetriers.isEmpty else { completion(.doNotRetry); return }
 
         let retrier = pendingRetriers.removeFirst()
 
-        retrier.should(session, retry: request, with: error) { result in
+        retrier.retry(request, for: session, dueTo: error) { result in
             switch result {
-            case .success:
+            case .retry, .retryWithDelay, .doNotRetryWithError:
                 completion(result)
-            case .failure(let error):
-                self.should(session, retry: request, with: error, using: pendingRetriers, completion: completion)
+            case .doNotRetry:
+                // Only continue to the next retrier if retry was not triggered and no error was encountered
+                self.retry(request, for: session, dueTo: error, using: pendingRetriers, completion: completion)
             }
         }
     }

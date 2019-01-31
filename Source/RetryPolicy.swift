@@ -42,9 +42,9 @@ open class RetryPolicy {
         .delete,  // [Delete](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.7) - not always idempotent
         .get,     // [GET](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.3) - generally idempotent
         .head,    // [HEAD](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.4) - generally idempotent
-        .options, // [OPTIONS](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.2) - inheritantly idempotent
+        .options, // [OPTIONS](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.2) - inherently idempotent
         .put,     // [PUT](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.6) - not always idempotent
-        .trace    // [TRACE](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.8) - inheritantly idempotent
+        .trace    // [TRACE](https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html#sec9.8) - inherently idempotent
     ]
 
     /// The default HTTP status codes to retry.
@@ -73,7 +73,7 @@ open class RetryPolicy {
         //.backgroundSessionRequiresSharedContainer,
 
         // [System] The app is suspended or exits while a background data task is processing.
-        //   - [Enabled] App can be foregrounded to launched to recover.
+        //   - [Enabled] App can be foregrounded or launched to recover.
         .backgroundSessionWasDisconnected,
 
         // [Network] The URL Loading system received bad data from the server.
@@ -314,26 +314,26 @@ open class RetryPolicy {
 // MARK: -
 
 extension RetryPolicy: RequestRetrier {
-    public func should(
-        _ session: Session,
-        retry request: Request,
-        with error: Error,
-        completion: @escaping (_ result: Result<TimeInterval>) -> Void)
+    open func retry(
+        _ request: Request,
+        for session: Session,
+        dueTo error: Error,
+        completion: @escaping (RetryResult) -> Void)
     {
         if
             request.retryCount < retryLimit,
             let httpMethod = request.request?.method,
             retryableHTTPMethods.contains(httpMethod),
-            isRetryable(request.response, with: error)
+            shouldRetry(response: request.response, error: error)
         {
             let timeDelay = pow(Double(exponentialBackoffBase), Double(request.retryCount)) * exponentialBackoffScale
-            completion(.success(timeDelay))
+            completion(.retryWithDelay(timeDelay))
         } else {
-            completion(.failure(error))
+            completion(.doNotRetry)
         }
     }
 
-    private func isRetryable(_ response: HTTPURLResponse?, with error: Error) -> Bool {
+    private func shouldRetry(response: HTTPURLResponse?, error: Error) -> Bool {
         if let statusCode = response?.statusCode, retryableHTTPStatusCodes.contains(statusCode) {
             return true
         } else if let errorCode = (error as? URLError)?.code, retryableURLErrorCodes.contains(errorCode) {
