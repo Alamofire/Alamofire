@@ -1,7 +1,7 @@
 //
-//  RequestAdapter.swift
+//  URLRequest+Alamofire.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,9 @@
 
 import Foundation
 
-/// A type that can inspect and optionally adapt a `URLRequest` in some manner if necessary.
-public protocol RequestAdapter {
-    /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the Result.
-    ///
-    /// - Parameters:
-    ///   - urlRequest: The `URLRequest` to adapt.
-    ///   - completion: The completion handler that must be called when adaptation is complete.
-    func adapt(_ urlRequest: URLRequest, completion: @escaping (_ result: Result<URLRequest>) -> Void)
+extension URLRequest {
+    var method: HTTPMethod? {
+        guard let httpMethod = self.httpMethod else { return nil }
+        return HTTPMethod(rawValue: httpMethod)
+    }
 }
