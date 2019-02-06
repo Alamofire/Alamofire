@@ -239,6 +239,9 @@
 		4CB9282A1C66BFBC00CE5F08 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB928281C66BFBC00CE5F08 /* Notifications.swift */; };
 		4CB9282B1C66BFBC00CE5F08 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB928281C66BFBC00CE5F08 /* Notifications.swift */; };
 		4CB9282C1C66BFBC00CE5F08 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB928281C66BFBC00CE5F08 /* Notifications.swift */; };
+		4CBD2180220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBD217F220B48AE008F1C59 /* RetryPolicyTests.swift */; };
+		4CBD2181220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBD217F220B48AE008F1C59 /* RetryPolicyTests.swift */; };
+		4CBD2182220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBD217F220B48AE008F1C59 /* RetryPolicyTests.swift */; };
 		4CCB206C1D4549E000C64D5B /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4CCB20681D4549E000C64D5B /* expired.badssl.com-leaf.cer */; };
 		4CCB206D1D4549E000C64D5B /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4CCB20681D4549E000C64D5B /* expired.badssl.com-leaf.cer */; };
 		4CCB206E1D4549E000C64D5B /* expired.badssl.com-leaf.cer in Resources */ = {isa = PBXBuildFile; fileRef = 4CCB20681D4549E000C64D5B /* expired.badssl.com-leaf.cer */; };
@@ -418,6 +421,7 @@
 		4C9E88391F5FB3B0000BEC61 /* Alamofire 4.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "Alamofire 4.0 Migration Guide.md"; path = "Documentation/Alamofire 4.0 Migration Guide.md"; sourceTree = "<group>"; };
 		4CA028C41B7466C500C84163 /* ResultTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		4CB928281C66BFBC00CE5F08 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		4CBD217F220B48AE008F1C59 /* RetryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryPolicyTests.swift; sourceTree = "<group>"; };
 		4CCB20681D4549E000C64D5B /* expired.badssl.com-leaf.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-leaf.cer"; sourceTree = "<group>"; };
 		4CCB20691D4549E000C64D5B /* expired.badssl.com-root-ca.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-root-ca.cer"; sourceTree = "<group>"; };
 		4CCB206A1D4549E000C64D5B /* expired.badssl.com-intermediate-ca-1.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-intermediate-ca-1.cer"; sourceTree = "<group>"; };
@@ -556,6 +560,7 @@
 				4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */,
 				4CFD6B0F2201145500FFB5E3 /* RedirectHandlerTests.swift */,
 				4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */,
+				4CBD217F220B48AE008F1C59 /* RetryPolicyTests.swift */,
 				4C33A1421B52089C00873DFF /* ServerTrustEvaluatorTests.swift */,
 				F86AEFE51AE6A282007D9C76 /* TLSEvaluationTests.swift */,
 				4CCFA7991B2BE71600B6F460 /* URLProtocolTests.swift */,
@@ -1356,6 +1361,7 @@
 				3111CE8620A76370008315E2 /* SessionTests.swift in Sources */,
 				31C2B0F220B271380089BA7C /* TLSEvaluationTests.swift in Sources */,
 				3111CE9D20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
+				4CBD2182220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683E20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46D21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
@@ -1500,6 +1506,7 @@
 				3111CE8420A7636E008315E2 /* SessionTests.swift in Sources */,
 				31C2B0F020B271370089BA7C /* TLSEvaluationTests.swift in Sources */,
 				3111CE9B20A7EC57008315E2 /* URLProtocolTests.swift in Sources */,
+				4CBD2180220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683C20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46B21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
@@ -1533,6 +1540,7 @@
 				3111CE8520A7636F008315E2 /* SessionTests.swift in Sources */,
 				31C2B0F120B271370089BA7C /* TLSEvaluationTests.swift in Sources */,
 				3111CE9C20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
+				4CBD2181220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */,
 				31F9683D20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */,
 				3113D46C21878227001CCD21 /* HTTPHeadersTests.swift in Sources */,
