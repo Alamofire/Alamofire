@@ -55,7 +55,6 @@ extension RetryResult {
     var delay: TimeInterval? {
         switch self {
         case .retryWithDelay(let delay): return delay
-        case .retry:                     return 0.0
         default:                         return nil
         }
     }
