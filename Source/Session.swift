@@ -536,7 +536,7 @@ extension Session: RequestDelegate {
                     var retryError = error
 
                     if let retryResultError = result.error {
-                        retryError = AFError.requestRetryFailed(retryError: retryResultError, originError: error)
+                        retryError = AFError.requestRetryFailed(retryError: retryResultError, originalError: error)
                     }
 
                     request.finish(error: retryError)

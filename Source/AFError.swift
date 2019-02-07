@@ -194,7 +194,7 @@ public enum AFError: Error {
     case responseValidationFailed(reason: ResponseValidationFailureReason)
     case responseSerializationFailed(reason: ResponseSerializationFailureReason)
     case serverTrustEvaluationFailed(reason: ServerTrustFailureReason)
-    case requestRetryFailed(retryError: Error, originError: Error)
+    case requestRetryFailed(retryError: Error, originalError: Error)
 }
 
 extension Error {
@@ -491,9 +491,9 @@ extension AFError: LocalizedError {
             return reason.localizedDescription
         case .serverTrustEvaluationFailed:
             return "Server trust evaluation failed."
-        case .requestRetryFailed(let retryError, let originError):
+        case .requestRetryFailed(let retryError, let originalError):
             return "Request retry failed with retry error: \(retryError.localizedDescription), " +
-                "origin error: \(originError.localizedDescription)"
+                "original error: \(originalError.localizedDescription)"
         }
     }
 }
