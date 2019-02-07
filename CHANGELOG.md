@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1)
+- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2)
 
 #### 4.x Releases
 - `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481)
@@ -38,8 +38,29 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [5.0.0-beta.2](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.2)
+Released on 2019-01-07. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0-beta.2). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- Support for controlling redirect behavior per `Session` and per `Request` using the `RedirectHandler` protocol.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2699](https://github.com/Alamofire/Alamofire/pull/2699).
+- Support for controlling cached response behavior per `Session` and per `Request` using the `CachedResponseHandler` protocol.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2701](https://github.com/Alamofire/Alamofire/pull/2701).
+- Support for controlling retry behavior per `Session` and per `Request` using the `RequestInterceptor` protocol.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2704](https://github.com/Alamofire/Alamofire/pull/2704) in regards to Issue [#2241](https://github.com/Alamofire/Alamofire/issues/2241).
+- The `Adapter`, `Retrier`, and `Interceptor` types to provide fine grained control of retry behavior.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2704](https://github.com/Alamofire/Alamofire/pull/2704).
+- Support for exponential backoff retry policies through the new `RetryPolicy` and `ConnectionLostRetryPolicy` types.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2704](https://github.com/Alamofire/Alamofire/pull/2704).
+
+#### Updated
+- The `RequestRetrier` protocol to take a `RetryResult` in the `completion` closure allowing custom retry errors to be thrown.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2704](https://github.com/Alamofire/Alamofire/pull/2704).
+- The `Hashable` implementation on `Request` to use new `hash(into:)` API.
+  - Updated by [Jeff Kelley](https://github.com/SlaunchaMan) in Pull Request [#2696](https://github.com/Alamofire/Alamofire/pull/2696).
+
 ## [5.0.0-beta.1](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.1)
-Released on 2018-12-06. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0.beta.1). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+Released on 2018-12-06. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0.beta-1). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
 
 #### Added
 - Support for `Decodable` response serialization with `responseDecodable`.
