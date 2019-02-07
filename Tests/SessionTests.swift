@@ -34,17 +34,52 @@ class SessionTestCase: BaseTestCase {
         let method: HTTPMethod
         let throwsError: Bool
 
+        var adaptedCount = 0
+
         init(method: HTTPMethod, throwsError: Bool = false) {
             self.method = method
             self.throwsError = throwsError
         }
 
         func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+            adaptedCount += 1
+
             let result: Result<URLRequest> = Result {
                 guard !throwsError else { throw AFError.invalidURL(url: "") }
 
                 var urlRequest = urlRequest
                 urlRequest.httpMethod = method.rawValue
+
+                return urlRequest
+            }
+
+            completion(result)
+        }
+    }
+
+    private class HeaderAdapter: RequestInterceptor {
+        let headers: HTTPHeaders
+        let throwsError: Bool
+
+        var adaptedCount = 0
+
+        init(headers: HTTPHeaders = ["field": "value"], throwsError: Bool = false) {
+            self.headers = headers
+            self.throwsError = throwsError
+        }
+
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+            adaptedCount += 1
+
+            let result: Result<URLRequest> = Result {
+                guard !throwsError else { throw AFError.invalidURL(url: "") }
+
+                var urlRequest = urlRequest
+
+                var finalHeaders = urlRequest.httpHeaders
+                headers.forEach { finalHeaders.add($0) }
+
+                urlRequest.httpHeaders = finalHeaders
 
                 return urlRequest
             }
@@ -613,15 +648,15 @@ class SessionTestCase: BaseTestCase {
 
     // MARK: Tests - Request Adapter
 
-    func testThatSessionCallsRequestAdapterWhenCreatingDataRequest() {
+    func testThatSessionCallsRequestAdaptersWhenCreatingDataRequest() {
         // Given
         let urlString = "https://httpbin.org/get"
 
-        let adapter = HTTPMethodAdapter(method: .post)
-        let requestHandler = RequestHandler()
+        let methodAdapter = HTTPMethodAdapter(method: .post)
+        let headerAdapter = HeaderAdapter()
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, interceptor: adapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = self.expectation(description: "Request 1 created")
@@ -633,24 +668,26 @@ class SessionTestCase: BaseTestCase {
         let expectation2 = self.expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
-        let request2 = session.request(urlString, interceptor: requestHandler)
+        let request2 = session.request(urlString, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request1.task?.originalRequest?.httpMethod, adapter.method.rawValue)
-        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.post.rawValue)
-        XCTAssertEqual(requestHandler.adaptedCount, 1)
+        XCTAssertEqual(request1.task?.originalRequest?.httpMethod, methodAdapter.method.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, methodAdapter.method.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.allHTTPHeaderFields?.count, 1)
+        XCTAssertEqual(methodAdapter.adaptedCount, 2)
+        XCTAssertEqual(headerAdapter.adaptedCount, 1)
     }
 
-    func testThatSessionCallsRequestAdapterWhenCreatingDownloadRequest() {
+    func testThatSessionCallsRequestAdaptersWhenCreatingDownloadRequest() {
         // Given
         let urlString = "https://httpbin.org/get"
 
-        let adapter = HTTPMethodAdapter(method: .post)
-        let requestHandler = RequestHandler()
+        let methodAdapter = HTTPMethodAdapter(method: .post)
+        let headerAdapter = HeaderAdapter()
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, interceptor: adapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = self.expectation(description: "Request 1 created")
@@ -662,25 +699,27 @@ class SessionTestCase: BaseTestCase {
         let expectation2 = self.expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
-        let request2 = session.download(urlString, interceptor: requestHandler)
+        let request2 = session.download(urlString, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request1.task?.originalRequest?.httpMethod, adapter.method.rawValue)
-        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.post.rawValue)
-        XCTAssertEqual(requestHandler.adaptedCount, 1)
+        XCTAssertEqual(request1.task?.originalRequest?.httpMethod, methodAdapter.method.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, methodAdapter.method.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.allHTTPHeaderFields?.count, 1)
+        XCTAssertEqual(methodAdapter.adaptedCount, 2)
+        XCTAssertEqual(headerAdapter.adaptedCount, 1)
     }
 
-    func testThatSessionCallsRequestAdapterWhenCreatingUploadRequestWithData() {
+    func testThatSessionCallsRequestAdaptersWhenCreatingUploadRequestWithData() {
         // Given
         let data = Data("data".utf8)
         let urlString = "https://httpbin.org/post"
 
-        let adapter = HTTPMethodAdapter(method: .get)
-        let requestHandler = RequestHandler()
+        let methodAdapter = HTTPMethodAdapter(method: .get)
+        let headerAdapter = HeaderAdapter()
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, interceptor: adapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = self.expectation(description: "Request 1 created")
@@ -692,25 +731,27 @@ class SessionTestCase: BaseTestCase {
         let expectation2 = self.expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
-        let request2 = session.upload(data, to: urlString, interceptor: requestHandler)
+        let request2 = session.upload(data, to: urlString, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request1.task?.originalRequest?.httpMethod, adapter.method.rawValue)
-        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.get.rawValue)
-        XCTAssertEqual(requestHandler.adaptedCount, 1)
+        XCTAssertEqual(request1.task?.originalRequest?.httpMethod, methodAdapter.method.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, methodAdapter.method.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.allHTTPHeaderFields?.count, 1)
+        XCTAssertEqual(methodAdapter.adaptedCount, 2)
+        XCTAssertEqual(headerAdapter.adaptedCount, 1)
     }
 
-    func testThatSessionCallsRequestAdapterWhenCreatingUploadRequestWithFile() {
+    func testThatSessionCallsRequestAdaptersWhenCreatingUploadRequestWithFile() {
         // Given
         let fileURL = URL(fileURLWithPath: "/path/to/some/file.txt")
         let urlString = "https://httpbin.org/post"
 
-        let adapter = HTTPMethodAdapter(method: .get)
-        let requestHandler = RequestHandler()
+        let methodAdapter = HTTPMethodAdapter(method: .get)
+        let headerAdapter = HeaderAdapter()
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, interceptor: adapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = self.expectation(description: "Request 1 created")
@@ -722,25 +763,27 @@ class SessionTestCase: BaseTestCase {
         let expectation2 = self.expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
-        let request2 = session.upload(fileURL, to: urlString, interceptor: requestHandler)
+        let request2 = session.upload(fileURL, to: urlString, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request1.task?.originalRequest?.httpMethod, adapter.method.rawValue)
-        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.get.rawValue)
-        XCTAssertEqual(requestHandler.adaptedCount, 1)
+        XCTAssertEqual(request1.task?.originalRequest?.httpMethod, methodAdapter.method.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, methodAdapter.method.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.allHTTPHeaderFields?.count, 1)
+        XCTAssertEqual(methodAdapter.adaptedCount, 2)
+        XCTAssertEqual(headerAdapter.adaptedCount, 1)
     }
 
-    func testThatSessionCallsRequestAdapterWhenCreatingUploadRequestWithInputStream() {
+    func testThatSessionCallsRequestAdaptersWhenCreatingUploadRequestWithInputStream() {
         // Given
         let inputStream = InputStream(data: Data("data".utf8))
         let urlString = "https://httpbin.org/post"
 
-        let adapter = HTTPMethodAdapter(method: .get)
-        let requestHandler = RequestHandler()
+        let methodAdapter = HTTPMethodAdapter(method: .get)
+        let headerAdapter = HeaderAdapter()
         let monitor = ClosureEventMonitor()
 
-        let session = Session(startRequestsImmediately: false, interceptor: adapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = self.expectation(description: "Request 1 created")
@@ -752,27 +795,26 @@ class SessionTestCase: BaseTestCase {
         let expectation2 = self.expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
-        let request2 = session.upload(inputStream, to: urlString, interceptor: requestHandler)
+        let request2 = session.upload(inputStream, to: urlString, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request1.task?.originalRequest?.httpMethod, adapter.method.rawValue)
-        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, HTTPMethod.get.rawValue)
-        XCTAssertEqual(requestHandler.adaptedCount, 1)
+        XCTAssertEqual(request1.task?.originalRequest?.httpMethod, methodAdapter.method.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.httpMethod, methodAdapter.method.rawValue)
+        XCTAssertEqual(request2.task?.originalRequest?.allHTTPHeaderFields?.count, 1)
+        XCTAssertEqual(methodAdapter.adaptedCount, 2)
+        XCTAssertEqual(headerAdapter.adaptedCount, 1)
     }
 
-    func testThatRequestAdapterErrorThrowsResponseHandlerError() {
+    func testThatSessionReturnsRequestAdaptationErrorWhenRequestAdapterThrowsError() {
         // Given
         let urlString = "https://httpbin.org/get"
 
-        let adapter = HTTPMethodAdapter(method: .post, throwsError: true)
+        let methodAdapter = HTTPMethodAdapter(method: .post, throwsError: true)
+        let headerAdapter = HeaderAdapter(throwsError: true)
         let monitor = ClosureEventMonitor()
 
-        let requestHandler = RequestHandler()
-        requestHandler.throwsErrorOnFirstAdapt = true
-        requestHandler.shouldRetry = false
-
-        let session = Session(startRequestsImmediately: false, interceptor: adapter, eventMonitors: [monitor])
+        let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
         let expectation1 = self.expectation(description: "Request 1 created")
@@ -784,7 +826,7 @@ class SessionTestCase: BaseTestCase {
         let expectation2 = self.expectation(description: "Request 2 created")
         monitor.requestDidFailToAdaptURLRequestWithError = { _, _, _ in expectation2.fulfill() }
 
-        let request2 = session.request(urlString, interceptor: requestHandler)
+        let request2 = session.request(urlString, interceptor: headerAdapter)
         waitForExpectations(timeout: timeout, handler: nil)
 
         let requests = [request1, request2]
@@ -825,6 +867,36 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 2)
         XCTAssertEqual(request.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, false)
+        XCTAssertTrue(session.requestTaskMap.isEmpty)
+    }
+
+    func testThatSessionCallsRequestRetrierThenSessionRetrierWhenRequestEncountersError() {
+        // Given
+        let sessionHandler = RequestHandler()
+        let requestHandler = RequestHandler()
+
+        let session = Session(interceptor: sessionHandler)
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        // When
+        let request = session.request("https://httpbin.org/basic-auth/user/password", interceptor: requestHandler)
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(sessionHandler.adaptedCount, 3)
+        XCTAssertEqual(sessionHandler.retryCount, 2)
+        XCTAssertEqual(requestHandler.adaptedCount, 3)
+        XCTAssertEqual(requestHandler.retryCount, 3)
+        XCTAssertEqual(request.retryCount, 2)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
     }
@@ -947,7 +1019,7 @@ class SessionTestCase: BaseTestCase {
         XCTAssertTrue(session.requestTaskMap.isEmpty)
     }
 
-    func testThatRequestAdapterErrorThrowsResponseHandlerErrorWhenRequestIsRetried() {
+    func testThatRequestAdapterErrorThrowsRequestAdaptationErrorWhenRequestIsRetried() {
         // Given
         let handler = RequestHandler()
         handler.throwsErrorOnSecondAdapt = true
