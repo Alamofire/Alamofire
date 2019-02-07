@@ -133,7 +133,6 @@ class DownloadResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.fileURL)
         XCTAssertNotNil(response?.error)
