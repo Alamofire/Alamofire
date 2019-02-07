@@ -96,7 +96,9 @@ class SessionTestCase: BaseTestCase {
         var shouldApplyAuthorizationHeader = false
         var throwsErrorOnFirstAdapt = false
         var throwsErrorOnSecondAdapt = false
+        var throwsErrorOnRetry = false
         var shouldRetry = true
+        var retryDelay: TimeInterval?
 
         func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
             let result: Result<URLRequest> = Result {
@@ -130,13 +132,23 @@ class SessionTestCase: BaseTestCase {
             dueTo error: Error,
             completion: @escaping (RetryResult) -> Void)
         {
+            if throwsErrorOnRetry {
+                let error = AFError.invalidURL(url: "")
+                completion(.doNotRetryWithError(error))
+                return
+            }
+
             guard shouldRetry else { completion(.doNotRetry); return }
 
             retryCount += 1
             retryErrors.append(error)
 
             if retryCount < 2 {
-                completion(.retry)
+                if let retryDelay = retryDelay {
+                    completion(.retryWithDelay(retryDelay))
+                } else {
+                    completion(.retry)
+                }
             } else {
                 completion(.doNotRetry)
             }
@@ -1019,7 +1031,7 @@ class SessionTestCase: BaseTestCase {
         XCTAssertTrue(session.requestTaskMap.isEmpty)
     }
 
-    func testThatRequestAdapterErrorThrowsRequestAdaptationErrorWhenRequestIsRetried() {
+    func testThatSessionReturnsRequestAdaptationErrorWhenRequestIsRetried() {
         // Given
         let handler = RequestHandler()
         handler.throwsErrorOnSecondAdapt = true
@@ -1048,6 +1060,77 @@ class SessionTestCase: BaseTestCase {
 
         if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isRequestAdaptationError)
+            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
+
+    func testThatSessionRetriesRequestWithDelayWhenRetryResultContainsDelay() {
+        // Given
+        let handler = RequestHandler()
+        handler.retryDelay = 0.01
+        handler.throwsErrorOnSecondAdapt = true
+
+        let session = Session(interceptor: handler)
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        // When
+        let request = session.request("https://httpbin.org/basic-auth/user/password")
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(request.retryCount, 1)
+        XCTAssertEqual(response?.result.isSuccess, false)
+        XCTAssertTrue(session.requestTaskMap.isEmpty)
+
+        if let error = response?.result.error?.asAFError {
+            XCTAssertTrue(error.isRequestAdaptationError)
+            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
+
+    func testThatSessionReturnsRequestRetryErrorWhenRequestRetrierThrowsError() {
+        // Given
+        let handler = RequestHandler()
+        handler.throwsErrorOnRetry = true
+
+        let session = Session(interceptor: handler)
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        // When
+        let request = session.request("https://httpbin.org/basic-auth/user/password")
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCount, 0)
+        XCTAssertEqual(request.retryCount, 0)
+        XCTAssertEqual(response?.result.isSuccess, false)
+        XCTAssertTrue(session.requestTaskMap.isEmpty)
+
+        if let error = response?.result.error?.asAFError {
+            XCTAssertTrue(error.isRequestRetryError)
             XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
         } else {
             XCTFail("error should not be nil")
