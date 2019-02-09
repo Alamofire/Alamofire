@@ -26,7 +26,7 @@ import Foundation
 
 /// A retry policy that retries requests using an exponential backoff for allowed HTTP methods and HTTP status codes
 /// as well as certain types of networking errors.
-open class RetryPolicy {
+open class RetryPolicy: RequestRetrier {
     /// The default retry limit for retry policies.
     public static let defaultRetryLimit: UInt = 2
 
@@ -309,11 +309,7 @@ open class RetryPolicy {
         self.retryableHTTPStatusCodes = retryableHTTPStatusCodes
         self.retryableURLErrorCodes = retryableURLErrorCodes
     }
-}
 
-// MARK: -
-
-extension RetryPolicy: RequestRetrier {
     open func retry(
         _ request: Request,
         for session: Session,
