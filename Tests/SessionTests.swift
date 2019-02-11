@@ -877,7 +877,7 @@ class SessionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(handler.adaptedCount, 2)
-        XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
@@ -905,9 +905,9 @@ class SessionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(sessionHandler.adaptedCount, 3)
-        XCTAssertEqual(sessionHandler.retryCount, 2)
+        XCTAssertEqual(sessionHandler.retryCount, 3)
         XCTAssertEqual(requestHandler.adaptedCount, 3)
-        XCTAssertEqual(requestHandler.retryCount, 3)
+        XCTAssertEqual(requestHandler.retryCount, 4)
         XCTAssertEqual(request.retryCount, 2)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
@@ -1053,7 +1053,7 @@ class SessionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(handler.adaptedCount, 1)
-        XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
@@ -1089,7 +1089,7 @@ class SessionTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(handler.adaptedCount, 1)
-        XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)

@@ -517,8 +517,8 @@ extension Session: RequestDelegate {
         return retrier(for: request) != nil
     }
 
-    public func retryRequest(_ request: Request, ifNecessaryWithError error: Error) {
-        guard let retrier = retrier(for: request) else { request.finish(); return }
+    public func retryRequest(_ request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        guard let retrier = retrier(for: request) else { completion(.doNotRetry); return }
 
         retrier.retry(request, for: self, dueTo: error) { result in
             guard !request.isCancelled else { return }
@@ -546,7 +546,7 @@ extension Session: RequestDelegate {
                         retryError = AFError.requestRetryFailed(retryError: retryResultError, originalError: error)
                     }
 
-                    request.finish(error: retryError)
+                    completion(.doNotRetryWithError(retryError))
                 }
             }
         }

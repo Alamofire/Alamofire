@@ -86,6 +86,8 @@ open class Request {
         var redirectHandler: RedirectHandler?
         /// `CachedResponseHandler` provided to handle caching responses.
         var cachedResponseHandler: CachedResponseHandler?
+        /// TODO: CN - docstring
+        var responseSerializers: [() -> Bool] = []
         /// `URLCredential` used for authentication challenges.
         var credential: URLCredential?
         /// All `URLRequest`s created by Alamofire on behalf of the `Request`.
@@ -150,6 +152,20 @@ open class Request {
     public private(set) var cachedResponseHandler: CachedResponseHandler? {
         get { return protectedMutableState.directValue.cachedResponseHandler }
         set { protectedMutableState.write { $0.cachedResponseHandler = newValue } }
+    }
+
+    // Response Serializers
+
+    func appendResponseSerializer(_ responseSerializer: @escaping () -> Bool) {
+        protectedMutableState.write { $0.responseSerializers.append(responseSerializer) }
+    }
+
+    func nextResponseSerializer() -> (() -> Bool)? {
+        return protectedMutableState.directValue.responseSerializers.first
+    }
+
+    func removeResponseSerializer() {
+        _ = protectedMutableState.directValue.responseSerializers.removeFirst()
     }
 
     // Credential
@@ -356,8 +372,19 @@ open class Request {
     /// Called to trigger retry or finish this `Request`.
     func retryOrFinish(error: Error?) {
         if let error = error, delegate?.willAttemptToRetryRequest(self) == true {
-            delegate?.retryRequest(self, ifNecessaryWithError: error)
-            return
+            delegate?.retryRequest(self, dueTo: error) { retryResult in
+                switch retryResult {
+                case .doNotRetry:
+                    self.finish()
+
+                case .doNotRetryWithError(let error):
+                    self.finish(error: error)
+
+                default:
+                    // No-op: retry is already being executed
+                    break
+                }
+            }
         } else {
             finish()
         }
@@ -368,9 +395,39 @@ open class Request {
         if let error = error { self.error = error }
 
         // Start response handlers
-        internalQueue.isSuspended = false
+        processNextResponseSerializer()
 
         eventMonitor?.requestDidFinish(self)
+    }
+
+    func processNextResponseSerializer() {
+        guard let responseSerializer = nextResponseSerializer() else {
+            // There's a single hook right now for the multipart upload to delete the original file
+            internalQueue.isSuspended = false
+            return
+        }
+
+        serializationQueue.async {
+            let succeeded = responseSerializer()
+
+            if succeeded {
+                // Remove the respose serializer that succeeded from the queue
+                self.removeResponseSerializer()
+
+                // Move on to the next response serializer
+                self.processNextResponseSerializer()
+
+                // Open questions:
+                // 1) What if the next response serializer throws an error that trips retry?
+                //    - Does it make sense to retry after the first response serializer has succeeded and been removed?
+                //    - Should all response serializers be executed until an error trips retry or they all succeed?
+                // 2) If any response serializer trips retry, should they all be executed the next time around?
+                //    - Currently, a successful response serializer is popped from the queue when it succeeds
+                // 3) If you can retry from a response serializer, does it make sense to allow multiple response serializers?
+                //    - Supporting multiple greatly overcomplicates things
+                //    - It's not difficult to make a custom response serializer that makes multiple passes if necessary
+            }
+        }
     }
 
     /// Resets all task related state for retry.
@@ -651,7 +708,7 @@ public protocol RequestDelegate: AnyObject {
     var sessionConfiguration: URLSessionConfiguration { get }
 
     func willAttemptToRetryRequest(_ request: Request) -> Bool
-    func retryRequest(_ request: Request, ifNecessaryWithError error: Error)
+    func retryRequest(_ request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
 
     func cancelRequest(_ request: Request)
     func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void)
