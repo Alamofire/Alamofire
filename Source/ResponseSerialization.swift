@@ -121,9 +121,9 @@ extension DataRequest {
 
             self.eventMonitor?.request(self, didParseResponse: response)
 
-            (queue ?? .main).async { completionHandler(response) }
-
-            return true
+            self.responseSerializerDidComplete {
+                (queue ?? .main).async { completionHandler(response) }
+            }
         }
 
         return self
@@ -165,7 +165,9 @@ extension DataRequest {
                 self.delegate?.retryRequest(self, dueTo: serializerError) { retryResult in
                     switch retryResult {
                     case .doNotRetry:
-                        (queue ?? .main).async { completionHandler(response) }
+                        self.responseSerializerDidComplete {
+                            (queue ?? .main).async { completionHandler(response) }
+                        }
 
                     case .doNotRetryWithError(let retryError):
                         let result = Result<Serializer.SerializedObject>.failure(retryError)
@@ -177,7 +179,9 @@ extension DataRequest {
                                                     serializationDuration: (end - start),
                                                     result: result)
 
-                        (queue ?? .main).async { completionHandler(response) }
+                        self.responseSerializerDidComplete {
+                            (queue ?? .main).async { completionHandler(response) }
+                        }
 
                     default:
                         // No-op: request is being retried
@@ -185,10 +189,10 @@ extension DataRequest {
                     }
                 }
             } else {
-                (queue ?? .main).async { completionHandler(response) }
+                self.responseSerializerDidComplete {
+                    (queue ?? .main).async { completionHandler(response) }
+                }
             }
-
-            return result.isSuccess
         }
 
         return self
@@ -219,9 +223,9 @@ extension DownloadRequest {
                                             serializationDuration: 0,
                                             result: result)
 
-            (queue ?? .main).async { completionHandler(response) }
-
-            return true
+            self.responseSerializerDidComplete {
+                (queue ?? .main).async { completionHandler(response) }
+            }
         }
 
         return self
@@ -263,7 +267,9 @@ extension DownloadRequest {
                 self.delegate?.retryRequest(self, dueTo: serializerError) { retryResult in
                     switch retryResult {
                     case .doNotRetry:
-                        (queue ?? .main).async { completionHandler(response) }
+                        self.responseSerializerDidComplete {
+                            (queue ?? .main).async { completionHandler(response) }
+                        }
 
                     case .doNotRetryWithError(let retryError):
                         let result = Result<T.SerializedObject>.failure(retryError)
@@ -276,7 +282,9 @@ extension DownloadRequest {
                                                         serializationDuration: (end - start),
                                                         result: result)
 
-                        (queue ?? .main).async { completionHandler(response) }
+                        self.responseSerializerDidComplete {
+                            (queue ?? .main).async { completionHandler(response) }
+                        }
 
                     default:
                         // No-op: request is being retried
@@ -284,10 +292,10 @@ extension DownloadRequest {
                     }
                 }
             } else {
-                (queue ?? .main).async { completionHandler(response) }
+                self.responseSerializerDidComplete {
+                    (queue ?? .main).async { completionHandler(response) }
+                }
             }
-
-            return result.isSuccess
         }
 
         return self

@@ -68,10 +68,6 @@ open class Request {
     /// The `Request`'s delegate.
     public weak var delegate: RequestDelegate?
 
-    /// `OperationQueue` used internally to enqueue response callbacks. Starts suspended but is activated when the
-    /// `Request` is finished.
-    let internalQueue: OperationQueue
-
     // MARK: - Updated State
 
     /// Type encapsulating all mutable state that may need to be accessed from anything other than the `underlyingQueue`.
@@ -86,8 +82,12 @@ open class Request {
         var redirectHandler: RedirectHandler?
         /// `CachedResponseHandler` provided to handle caching responses.
         var cachedResponseHandler: CachedResponseHandler?
-        /// TODO: CN - docstring
-        var responseSerializers: [() -> Bool] = []
+        /// Response serialization closures that handle parsing responses.
+        var responseSerializers: [() -> Void] = []
+        /// Current response serialization closure index used to track iteration.
+        var responseSerializerIndex: Int = 0
+        /// Response serialization completion closures executed once all response serialization is complete.
+        var responseSerializerCompletions: [() -> Void] = []
         /// `URLCredential` used for authentication challenges.
         var credential: URLCredential?
         /// All `URLRequest`s created by Alamofire on behalf of the `Request`.
@@ -152,20 +152,6 @@ open class Request {
     public private(set) var cachedResponseHandler: CachedResponseHandler? {
         get { return protectedMutableState.directValue.cachedResponseHandler }
         set { protectedMutableState.write { $0.cachedResponseHandler = newValue } }
-    }
-
-    // Response Serializers
-
-    func appendResponseSerializer(_ responseSerializer: @escaping () -> Bool) {
-        protectedMutableState.write { $0.responseSerializers.append(responseSerializer) }
-    }
-
-    func nextResponseSerializer() -> (() -> Bool)? {
-        return protectedMutableState.directValue.responseSerializers.first
-    }
-
-    func removeResponseSerializer() {
-        _ = protectedMutableState.directValue.responseSerializers.removeFirst()
     }
 
     // Credential
@@ -253,10 +239,6 @@ open class Request {
         self.id = id
         self.underlyingQueue = underlyingQueue
         self.serializationQueue = serializationQueue
-        internalQueue = OperationQueue(maxConcurrentOperationCount: 1,
-                                       underlyingQueue: underlyingQueue,
-                                       name: "org.alamofire.request-\(id)",
-                                       startSuspended: true)
         self.eventMonitor = eventMonitor
         self.interceptor = interceptor
         self.delegate = delegate
@@ -400,37 +382,36 @@ open class Request {
         eventMonitor?.requestDidFinish(self)
     }
 
+    /// Returns the next response serializer closure to execute if there's one left.
+    func nextResponseSerializer() -> (() -> Void)? {
+        var responseSerializer: (() -> Void)?
+
+        protectedMutableState.write { mutableState in
+            if mutableState.responseSerializerIndex < mutableState.responseSerializers.count {
+                responseSerializer = mutableState.responseSerializers[mutableState.responseSerializerIndex]
+                mutableState.responseSerializerIndex += 1
+            }
+        }
+
+        return responseSerializer
+    }
+
+    /// Processes the next response serializer and calls all completions if response serialization is complete.
     func processNextResponseSerializer() {
         guard let responseSerializer = nextResponseSerializer() else {
-            // There's a single hook right now for the multipart upload to delete the original file
-            internalQueue.isSuspended = false
+            // Execute all response serializer completions
+            protectedMutableState.directValue.responseSerializerCompletions.forEach { $0() }
+
+            // Cleanup the request
+            cleanup()
+
             return
         }
 
-        serializationQueue.async {
-            let succeeded = responseSerializer()
-
-            if succeeded {
-                // Remove the respose serializer that succeeded from the queue
-                self.removeResponseSerializer()
-
-                // Move on to the next response serializer
-                self.processNextResponseSerializer()
-
-                // Open questions:
-                // 1) What if the next response serializer throws an error that trips retry?
-                //    - Does it make sense to retry after the first response serializer has succeeded and been removed?
-                //    - Should all response serializers be executed until an error trips retry or they all succeed?
-                // 2) If any response serializer trips retry, should they all be executed the next time around?
-                //    - Currently, a successful response serializer is popped from the queue when it succeeds
-                // 3) If you can retry from a response serializer, does it make sense to allow multiple response serializers?
-                //    - Supporting multiple greatly overcomplicates things
-                //    - It's not difficult to make a custom response serializer that makes multiple passes if necessary
-            }
-        }
+        serializationQueue.async { responseSerializer() }
     }
 
-    /// Resets all task related state for retry.
+    /// Resets all task and response serializer related state for retry.
     func reset() {
         error = nil
 
@@ -438,6 +419,11 @@ open class Request {
         uploadProgress.completedUnitCount = 0
         downloadProgress.totalUnitCount = 0
         downloadProgress.completedUnitCount = 0
+
+        protectedMutableState.write { mutableState in
+            mutableState.responseSerializerCompletions = []
+            mutableState.responseSerializerIndex = 0
+        }
     }
 
     /// Called when updating the upload progress.
@@ -591,6 +577,30 @@ open class Request {
         }
 
         return self
+    }
+
+    // MARK: - Response Serializers
+
+    /// Appends the response serialization closure to the `Request`.
+    ///
+    /// - Parameter responseSerializer: The responser serialization closure.
+    open func appendResponseSerializer(_ closure: @escaping () -> Void) {
+        protectedMutableState.write { $0.responseSerializers.append(closure) }
+    }
+
+    /// Notifies the `Request` that the response serializer is complete.
+    ///
+    /// - Parameter completion: The closure to execute once all response serializers are executed.
+    open func responseSerializerDidComplete(completion: @escaping () -> Void) {
+        protectedMutableState.write { $0.responseSerializerCompletions.append(completion) }
+        processNextResponseSerializer()
+    }
+
+    // MARK: - Cleanup
+
+    /// Final cleanup step executed when a `Request` finishes response serialization.
+    open func cleanup() {
+        // No-op: override in subclass
     }
 }
 
@@ -1006,17 +1016,6 @@ open class UploadRequest: DataRequest {
                    eventMonitor: eventMonitor,
                    interceptor: interceptor,
                    delegate: delegate)
-
-        // Automatically remove temporary upload files (e.g. multipart form data)
-        internalQueue.addOperation {
-            guard
-                let uploadable = self.uploadable,
-                case let .file(url, shouldRemove) = uploadable,
-                shouldRemove else { return }
-
-            // TODO: Abstract file manager
-            try? FileManager.default.removeItem(at: url)
-        }
     }
 
     func didCreateUploadable(_ uploadable: Uploadable) {
@@ -1057,6 +1056,19 @@ open class UploadRequest: DataRequest {
         eventMonitor?.request(self, didProvideInputStream: stream)
 
         return stream
+    }
+
+    open override func cleanup() {
+        super.cleanup()
+
+        guard
+            let uploadable = self.uploadable,
+            case let .file(url, shouldRemove) = uploadable,
+            shouldRemove
+        else { return }
+
+        // TODO: Abstract file manager
+        try? FileManager.default.removeItem(at: url)
     }
 }
 
