@@ -165,7 +165,7 @@ The following radars have been resolved over time after being filed against the 
 - [`rdar://26761490`](http://www.openradar.me/radar?id=5010235949318144) - Swift string interpolation causing memory leak with common usage.
   - (Resolved): 9/1/17 in Xcode 9 beta 6.
 - [`rdar://36082113`](http://openradar.appspot.com/radar?id=4942308441063424) - `URLSessionTaskMetrics` failing to link on watchOS 3.0+
-  - (Resolved): Just add `CFNetwork` to you linked frameworks.
+  - (Resolved): Just add `CFNetwork` to your linked frameworks.
 ## FAQ
 
 ### What's the origin of the name Alamofire?
