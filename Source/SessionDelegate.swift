@@ -83,7 +83,7 @@ open class SessionDelegate: NSObject {
     open var dataTaskDidBecomeDownloadTask: ((URLSession, URLSessionDataTask, URLSessionDownloadTask) -> Void)?
 
     /// Overrides default behavior for URLSessionDataDelegate method `urlSession(_:dataTask:didReceive:)`.
-    open var dataTaskDidReceiveData: ((URLSession, URLSessionDataTask, Data) -> Void)?
+    open var dataTaskDidReceiveData: ((URLSession, URLSessionDataTask, Data?) -> Void)?
 
     /// Overrides default behavior for URLSessionDataDelegate method `urlSession(_:dataTask:willCacheResponse:completionHandler:)`.
     open var dataTaskWillCacheResponse: ((URLSession, URLSessionDataTask, CachedURLResponse) -> CachedURLResponse?)?
@@ -550,10 +550,10 @@ extension SessionDelegate: URLSessionDataDelegate {
     /// - parameter session:  The session containing the data task that provided data.
     /// - parameter dataTask: The data task that provided data.
     /// - parameter data:     A data object containing the transferred data.
-    open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data?) {
         if let dataTaskDidReceiveData = dataTaskDidReceiveData {
             dataTaskDidReceiveData(session, dataTask, data)
-        } else if let delegate = self[dataTask]?.delegate as? DataTaskDelegate {
+        } else if let delegate = self[dataTask]?.delegate as? DataTaskDelegate, let data = data {
             delegate.urlSession(session, dataTask: dataTask, didReceive: data)
         }
     }

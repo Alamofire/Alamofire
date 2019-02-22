@@ -96,7 +96,8 @@ extension ProxyURLProtocol: URLSessionDataDelegate {
 
     // MARK: NSURLSessionDelegate
 
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data?) {
+        guard let data = data else { return }
         client?.urlProtocol(self, didLoad: data)
     }
 
