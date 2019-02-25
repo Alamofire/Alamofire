@@ -220,7 +220,7 @@ extension AFError {
         return false
     }
 
-    /// Returns whether the instances is `.invalidURL`.
+    /// Returns whether the instance is `.invalidURL`.
     public var isInvalidURLError: Bool {
         if case .invalidURL = self { return true }
         return false
@@ -254,7 +254,7 @@ extension AFError {
         return false
     }
 
-    /// Returns whether the instances is `.responseValidationFailed`. When `true`, the `acceptableContentTypes`,
+    /// Returns whether the instance is `.responseValidationFailed`. When `true`, the `acceptableContentTypes`,
     /// `responseContentType`, and `responseCode` properties will contain the associated values.
     public var isResponseValidationError: Bool {
         if case .responseValidationFailed = self { return true }
@@ -274,7 +274,7 @@ extension AFError {
         return false
     }
 
-    /// Returns whether the instances is `requestRetryFailed`. When `true`, the `underlyingError` property will
+    /// Returns whether the instance is `requestRetryFailed`. When `true`, the `underlyingError` property will
     /// contain the associated value.
     public var isRequestRetryError: Bool {
         if case .requestRetryFailed = self { return true }
