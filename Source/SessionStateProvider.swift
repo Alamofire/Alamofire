@@ -25,12 +25,14 @@
 import Foundation
 
 public protocol SessionStateProvider: AnyObject {
-    func request(for task: URLSessionTask) -> Request?
-    func didCompleteTask(_ task: URLSessionTask)
     var serverTrustManager: ServerTrustManager? { get }
     var redirectHandler: RedirectHandler? { get }
     var cachedResponseHandler: CachedResponseHandler? { get }
-    func credential(for task: URLSessionTask, protectionSpace: URLProtectionSpace) -> URLCredential?
+
+    func request(for task: URLSessionTask) -> Request?
+    func didCompleteTask(_ task: URLSessionTask)
+    func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential?
+    func cancelRequestsForSessionInvalidation(with error: Error?)
 }
 
 open class SessionDelegate: NSObject {
@@ -47,6 +49,8 @@ open class SessionDelegate: NSObject {
 extension SessionDelegate: URLSessionDelegate {
     open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
         eventMonitor?.urlSession(session, didBecomeInvalidWithError: error)
+
+        stateProvider?.cancelRequestsForSessionInvalidation(with: error)
     }
 }
 
@@ -106,7 +110,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
             return (.rejectProtectionSpace, nil, nil)
         }
 
-        guard let credential = stateProvider?.credential(for: task, protectionSpace: challenge.protectionSpace) else {
+        guard let credential = stateProvider?.credential(for: task, in: challenge.protectionSpace) else {
             return (.performDefaultHandling, nil, nil)
         }
 

@@ -26,63 +26,67 @@ import Foundation
 
 /// A type that maintains a two way, one to one map of `URLSessionTask`s to `Request`s.
 struct RequestTaskMap {
-    private var requests: [URLSessionTask: Request]
-    private var tasks: [Request: URLSessionTask]
+    private var tasksToRequests: [URLSessionTask: Request]
+    private var requestsToTasks: [Request: URLSessionTask]
 
-    init(requests: [URLSessionTask: Request] = [:], tasks: [Request: URLSessionTask] = [:]) {
-        self.requests = requests
-        self.tasks = tasks
+    var requests: [Request] {
+        return Array(tasksToRequests.values)
+    }
+
+    init(tasksToRequests: [URLSessionTask: Request] = [:], requestsToTasks: [Request: URLSessionTask] = [:]) {
+        self.tasksToRequests = tasksToRequests
+        self.requestsToTasks = requestsToTasks
     }
 
     subscript(_ request: Request) -> URLSessionTask? {
-        get { return tasks[request] }
+        get { return requestsToTasks[request] }
         set {
             guard let newValue = newValue else {
-                guard let task = tasks[request] else {
+                guard let task = requestsToTasks[request] else {
                     fatalError("RequestTaskMap consistency error: no task corresponding to request found.")
                 }
 
-                tasks.removeValue(forKey: request)
-                requests.removeValue(forKey: task)
+                requestsToTasks.removeValue(forKey: request)
+                tasksToRequests.removeValue(forKey: task)
 
                 return
             }
 
-            tasks[request] = newValue
-            requests[newValue] = request
+            requestsToTasks[request] = newValue
+            tasksToRequests[newValue] = request
         }
     }
 
     subscript(_ task: URLSessionTask) -> Request? {
-        get { return requests[task] }
+        get { return tasksToRequests[task] }
         set {
             guard let newValue = newValue else {
-                guard let request = requests[task] else {
+                guard let request = tasksToRequests[task] else {
                     fatalError("RequestTaskMap consistency error: no request corresponding to task found.")
                 }
 
-                requests.removeValue(forKey: task)
-                tasks.removeValue(forKey: request)
+                tasksToRequests.removeValue(forKey: task)
+                requestsToTasks.removeValue(forKey: request)
 
                 return
             }
 
-            requests[task] = newValue
-            tasks[newValue] = task
+            tasksToRequests[task] = newValue
+            requestsToTasks[newValue] = task
         }
     }
 
     var count: Int {
-        precondition(requests.count == tasks.count,
-                     "RequestTaskMap.count invalid, requests.count: \(requests.count) != tasks.count: \(tasks.count)")
+        precondition(tasksToRequests.count == requestsToTasks.count,
+                     "RequestTaskMap.count invalid, requests.count: \(tasksToRequests.count) != tasks.count: \(requestsToTasks.count)")
 
-        return requests.count
+        return tasksToRequests.count
     }
 
     var isEmpty: Bool {
-        precondition(requests.isEmpty == tasks.isEmpty,
-                     "RequestTaskMap.isEmpty invalid, requests.isEmpty: \(requests.isEmpty) != tasks.isEmpty: \(tasks.isEmpty)")
+        precondition(tasksToRequests.isEmpty == requestsToTasks.isEmpty,
+                     "RequestTaskMap.isEmpty invalid, requests.isEmpty: \(tasksToRequests.isEmpty) != tasks.isEmpty: \(requestsToTasks.isEmpty)")
 
-        return requests.isEmpty
+        return tasksToRequests.isEmpty
     }
 }
