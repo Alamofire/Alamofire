@@ -184,7 +184,10 @@ extension DataRequest {
     /// - returns: The request.
     @discardableResult
     public func validate() -> Self {
-        return validate(statusCode: self.acceptableStatusCodes).validate(contentType: self.acceptableContentTypes)
+        let contentType: () -> [String] = { [unowned self] in
+            return self.acceptableContentTypes
+        }
+        return validate(statusCode: self.acceptableStatusCodes).validate(contentType: contentType())
     }
 }
 
