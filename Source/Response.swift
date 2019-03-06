@@ -88,7 +88,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     /// result.
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
-        let body = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
+        let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         let responseDescription = response.map { (response) in
             let sortedHeaders = response.httpHeaders.sorted()
 
@@ -98,12 +98,14 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
                    \(sortedHeaders)
                    """
         } ?? "nil"
+        let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
 
         return """
         [Request]: \(requestDescription)
-        [Request Body]: \(body)
+        [Request Body]: \n\(requestBody)
         [Response]: \n\(responseDescription)
+        [Response Body]: \n\(responseBody)
         [Data]: \(data?.description ?? "None")
         [Network Duration]: \(metricsDescription)
         [Serialization Duration]: \(serializationDuration)s
@@ -274,7 +276,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     /// actions, and the response serialization result.
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
-        let body = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
+        let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         let responseDescription = response.map { (response) in
             let sortedHeaders = response.httpHeaders.sorted()
 
@@ -284,13 +286,15 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
                    \(sortedHeaders)
                    """
         } ?? "nil"
+        let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
         let resumeDataDescription = resumeData.map { "\($0)" } ?? "None"
 
         return """
         [Request]: \(requestDescription)
-        [Request Body]: \(body)
+        [Request Body]: \n\(requestBody)
         [Response]: \n\(responseDescription)
+        [Response Body]: \n\(responseBody)
         [File URL]: \(fileURL?.path ?? "nil")
         [ResumeData]: \(resumeDataDescription)
         [Network Duration]: \(metricsDescription)
