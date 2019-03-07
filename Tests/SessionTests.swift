@@ -1136,6 +1136,32 @@ class SessionTestCase: BaseTestCase {
             XCTFail("error should not be nil")
         }
     }
+
+    // MARK: Tests - Session Invalidation
+
+    func testThatSessionIsInvalidatedAndAllRequestsCompleteWhenSessionIsDeinitialized() {
+        // Given
+        let invalidationExpectation = expectation(description: "sessionDidBecomeInvalidWithError should be called")
+        let events = ClosureEventMonitor()
+        events.sessionDidBecomeInvalidWithError = { (_, _) in
+            invalidationExpectation.fulfill()
+        }
+        var session: Session? = Session(startRequestsImmediately: false, eventMonitors: [events])
+        var error: Error?
+        let requestExpectation = expectation(description: "request should complete")
+
+        // When
+        session?.request(URLRequest.makeHTTPBinRequest()).response { (response) in
+            error = response.error
+            requestExpectation.fulfill()
+        }
+        session = nil
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        assertErrorIsAFError(error) { XCTAssertTrue($0.isSessionDeinitializedError) }
+    }
 }
 
 // MARK: -
