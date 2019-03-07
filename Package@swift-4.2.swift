@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:4.2
 //
 //  Package.swift
 //
@@ -27,12 +27,6 @@ import PackageDescription
 
 let package = Package(
     name: "Alamofire",
-    platforms: [
-        .macOS(.v10_12),
-        .iOS(.v10),
-        .tvOS(.v10),
-        .watchOS(.v3)
-    ],
     products: [
         .library(
             name: "Alamofire",
@@ -43,5 +37,5 @@ let package = Package(
             name: "Alamofire",
             path: "Source")
     ],
-    swiftLanguageVersions: [.v4]
+    swiftLanguageVersions: [.v3, .v4]
 )
