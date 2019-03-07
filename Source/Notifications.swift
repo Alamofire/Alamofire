@@ -25,14 +25,14 @@
 import Foundation
 
 public extension Request {
-    /// Posted when a `Request`'s task is resumed. The `Notification` contains the resumed `Request`.
+    /// Posted when a `Request` is resumed. The `Notification` contains the resumed `Request`.
     static let didResume = Notification.Name(rawValue: "org.alamofire.notification.name.request.didResume")
-    /// Posted when a `Request`'s task is suspended. The `Notification` contains the suspended `Request`.
+    /// Posted when a `Request` is suspended. The `Notification` contains the suspended `Request`.
     static let didSuspend = Notification.Name(rawValue: "org.alamofire.notification.name.request.didSuspend")
     /// Posted when a `Request` is cancelled. The `Notification` contains the cancelled `Request`.
     static let didCancel = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCancel")
-    /// Posted when a `Request`'s task is completed. The `Notification` contains the completed `Request`.
-    static let didComplete = Notification.Name(rawValue: "org.alamofire.notification.name.request.didComplete")
+    /// Posted when a `Request` is finished. The `Notification` contains the completed `Request`.
+    static let didFinish = Notification.Name(rawValue: "org.alamofire.notification.name.request.didFinish")
 }
 
 // MARK: -
@@ -72,8 +72,8 @@ extension String {
 
 /// `EventMonitor` that provides Alamofire's notifications.
 public final class AlamofireNotifications: EventMonitor {
-    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?) {
-        NotificationCenter.default.postNotification(named: Request.didComplete, with: request)
+    public func requestDidFinish(_ request: Request) {
+        NotificationCenter.default.postNotification(named: Request.didFinish, with: request)
     }
 
     public func requestDidResume(_ request: Request) {
