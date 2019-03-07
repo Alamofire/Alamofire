@@ -185,6 +185,7 @@ public enum AFError: Error {
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
     }
 
+    case sessionDeinitialized
     case sessionInvalidated(error: Error?)
     case explicitlyCancelled
     case invalidURL(url: URLConvertible)
@@ -208,6 +209,12 @@ extension Error {
 // MARK: - Error Booleans
 
 extension AFError {
+    // Returns whether the instance is `.sessionDeinitialized`.
+    public var isSessionDeinitializedError: Bool {
+        if case .sessionDeinitialized = self { return true }
+        return false
+    }
+
     // Returns whether the instance is `.sessionInvalidated`.
     public var isSessionInvalidatedError: Bool {
         if case .sessionInvalidated = self { return true }
@@ -483,15 +490,13 @@ extension AFError.ServerTrustFailureReason {
 extension AFError: LocalizedError {
     public var errorDescription: String? {
         switch self {
+        case .sessionDeinitialized:
+            return """
+                   Session was invalidated without error, so it was likely deinitialized unexpectedly. \
+                   Be sure to retain a reference to your Session for the duration of your requests.
+                   """
         case .sessionInvalidated(let error):
-            if let error = error {
-                return "Session was invalidated with error: \(error)"
-            } else {
-                return """
-                       Session was invalidated without error, so it was likely deinitialized unexpectedly.\
-                       Be sure to retain a reference to your Session for the duration of your requests.
-                       """
-            }
+            return "Session was invalidated with error: \(error?.localizedDescription ?? "No description.")"
         case .explicitlyCancelled:
             return "Request explicitly cancelled."
         case .invalidURL(let url):
@@ -511,8 +516,10 @@ extension AFError: LocalizedError {
         case .serverTrustEvaluationFailed:
             return "Server trust evaluation failed."
         case .requestRetryFailed(let retryError, let originalError):
-            return "Request retry failed with retry error: \(retryError.localizedDescription), " +
-                "original error: \(originalError.localizedDescription)"
+            return """
+                   Request retry failed with retry error: \(retryError.localizedDescription), \
+                   original error: \(originalError.localizedDescription)
+                   """
         }
     }
 }

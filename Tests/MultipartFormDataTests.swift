@@ -909,7 +909,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         var writerError: Error?
 
         do {
-            try "dummy data".write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
+            try "dummy data".write(to: fileURL, atomically: true, encoding: .utf8)
         } catch {
             writerError = error
         }

@@ -102,8 +102,8 @@ open class Session {
     }
 
     deinit {
+        finishRequestsForDeinit()
         session.invalidateAndCancel()
-        cancelRequestsForSessionInvalidation(with: nil)
     }
 
     // MARK: - Request
@@ -497,6 +497,12 @@ open class Session {
         } else {
             return request.interceptor ?? interceptor
         }
+    }
+
+    // MARK: - Invalidation
+
+    func finishRequestsForDeinit() {
+        requestTaskMap.requests.forEach { $0.finish(error: AFError.sessionDeinitialized) }
     }
 }
 

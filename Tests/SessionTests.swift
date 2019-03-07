@@ -1139,7 +1139,7 @@ class SessionTestCase: BaseTestCase {
 
     // MARK: Tests - Session Invalidation
 
-    func testThatAllRequestsCompleteWhenSessionIsInvalidated() {
+    func testThatSessionIsInvalidatedAndAllRequestsCompleteWhenSessionIsDeinitialized() {
         // Given
         let invalidationExpectation = expectation(description: "sessionDidBecomeInvalidWithError should be called")
         let events = ClosureEventMonitor()
@@ -1160,7 +1160,7 @@ class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assertErrorIsAFError(error) { XCTAssertTrue($0.isSessionInvalidatedError) }
+        assertErrorIsAFError(error) { XCTAssertTrue($0.isSessionDeinitializedError) }
     }
 }
 
