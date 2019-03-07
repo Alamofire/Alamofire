@@ -286,7 +286,6 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
                    \(sortedHeaders)
                    """
         } ?? "nil"
-        let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
         let resumeDataDescription = resumeData.map { "\($0)" } ?? "None"
 
@@ -294,7 +293,6 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
         [Request]: \(requestDescription)
         [Request Body]: \n\(requestBody)
         [Response]: \n\(responseDescription)
-        [Response Body]: \n\(responseBody)
         [File URL]: \(fileURL?.path ?? "nil")
         [ResumeData]: \(resumeDataDescription)
         [Network Duration]: \(metricsDescription)
