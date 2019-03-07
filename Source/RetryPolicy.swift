@@ -26,7 +26,7 @@ import Foundation
 
 /// A retry policy that retries requests using an exponential backoff for allowed HTTP methods and HTTP status codes
 /// as well as certain types of networking errors.
-open class RetryPolicy: RequestRetrier {
+open class RetryPolicy: RequestInterceptor {
     /// The default retry limit for retry policies.
     public static let defaultRetryLimit: UInt = 2
 
