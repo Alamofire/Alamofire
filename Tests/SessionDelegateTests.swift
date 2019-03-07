@@ -96,11 +96,15 @@ class SessionDelegateTestCase: BaseTestCase {
 
     func testThatAppropriateNotificationsAreCalledWithRequestForDataRequest() {
         // Given
-        var request: Request?
-        _ = expectation(forNotification: Request.didResume, object: nil, handler: nil)
-        _ = expectation(forNotification: Request.didComplete, object: nil) { (notification) in
-            request = notification.request
-            return (request != nil)
+        var resumedRequest: Request?
+        var completedRequest: Request?
+        expectation(forNotification: Request.didResume, object: nil) { (notification) in
+            resumedRequest = notification.request
+            return (resumedRequest != nil)
+        }
+        expectation(forNotification: Request.didComplete, object: nil) { (notification) in
+            completedRequest = notification.request
+            return (completedRequest != nil)
         }
 
         // When
@@ -109,16 +113,21 @@ class SessionDelegateTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request?.response?.statusCode, 200)
+        XCTAssertEqual(resumedRequest, completedRequest)
+        XCTAssertEqual(completedRequest?.response?.statusCode, 200)
     }
 
     func testThatDidCompleteNotificationIsCalledWithRequestForDownloadRequests() {
         // Given
-        var request: Request?
-        _ = expectation(forNotification: Request.didResume, object: nil, handler: nil)
-        _ = expectation(forNotification: Request.didComplete, object: nil) { (notification) in
-            request = notification.request
-            return (request != nil)
+        var resumedRequest: Request?
+        var completedRequest: Request?
+        expectation(forNotification: Request.didResume, object: nil) { (notification) in
+            resumedRequest = notification.request
+            return (resumedRequest != nil)
+        }
+        expectation(forNotification: Request.didComplete, object: nil) { (notification) in
+            completedRequest = notification.request
+            return (completedRequest != nil)
         }
 
         // When
@@ -127,6 +136,7 @@ class SessionDelegateTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request?.response?.statusCode, 200)
+        XCTAssertEqual(resumedRequest, completedRequest)
+        XCTAssertEqual(completedRequest?.response?.statusCode, 200)
     }
 }
