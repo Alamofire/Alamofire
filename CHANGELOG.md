@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2)
+- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3)
 
 #### 4.x Releases
 - `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481)
@@ -37,6 +37,37 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.0.0-beta.3](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.3)
+Released on 2019-01-07. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0-beta.3). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- The `EmptyResponse` protocol, to allow any type to provides values to stand in for an empty response.
+  - Added by [James Van Noord](https://github.com/jvannoord) in Pull Request [#2664](https://github.com/Alamofire/Alamofire/pull/2664).
+- Request and response bodies to `Request`'s `debugDescription`.
+  - Added by [rain2540](https://github.com/rain2540) in pull Request [#2700](https://github.com/Alamofire/Alamofire/pull/2700).
+
+#### Updated
+- `Package.swift` for Swift 5 support, moving Swift 4.2 support to `Package@swift-4.2.swift`.
+  - Updated by [Mattt](https://github.com/mattt) in Pull Requests [#2737](https://github.com/Alamofire/Alamofire/pull/2737) and [#2736](https://github.com/Alamofire/Alamofire/pull/2736).
+- Use of `Array` to `Range` in `Request`'s default `acceptableResponseCodes`.
+  - Updated by [StevenArmandLee](https://github.com/StevenArmandLee) in Pull Request [#2720](https://github.com/Alamofire/Alamofire/pull/2720).
+- `RetryPolicy` to allow subclasses to override `retry(_:, for: Session, dueTo:, completion:)`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2713](https://github.com/Alamofire/Alamofire/pull/2713).
+- Alamofire's `didResume` notification to `didFinish`, which is now called when a `Request` finished, not when tasks resume.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2728](https://github.com/Alamofire/Alamofire/pull/2728).
+  
+#### Fixed
+- `Request`s not finishing when their controlling `Session` is `deinit`d or invalidated.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2728](https://github.com/Alamofire/Alamofire/pull/2728).
+- Memory leak when using `validate()` due to reference cycle from implicit `self` capture when using an `@autoclosure`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2728](https://github.com/Alamofire/Alamofire/pull/2728).
+- Crash when using `requestDidParseAnyResponse` when using `ClosureEventMonitor`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2740](https://github.com/Alamofire/Alamofire/pull/2740).
+- `RetryPolicy` to properly conform to `RequestInterceptor`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2739](https://github.com/Alamofire/Alamofire/pull/2739).
+- Typos in documentation.
+  - Fixed by [Łukasz Mróz](https://github.com/sunshinejr), [Jacob Wood](https://github.com/jacoblukewood), [Paulo Henrique](https://github.com/Cardoso222), and [Todd Lahtinen](https://github.com/toddlahtinen0) in Pull Requests [#2715](https://github.com/Alamofire/Alamofire/pull/2715), [#2725](https://github.com/Alamofire/Alamofire/pull/2725), [#2729](https://github.com/Alamofire/Alamofire/pull/2729), and [#2697](https://github.com/Alamofire/Alamofire/pull/2697).
 
 ## [5.0.0-beta.2](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.2)
 Released on 2019-01-07. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0-beta.2). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
