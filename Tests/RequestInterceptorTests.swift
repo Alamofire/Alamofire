@@ -117,6 +117,36 @@ final class AdapterTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(result, .doNotRetry)
     }
+
+    func testThatAdapterCanBeImplementedAsynchronously() {
+        // Given
+        let urlRequest = URLRequest(url: URL(string: "https://httpbin.org/get")!)
+        let session = Session()
+        var adapted = false
+
+        let adapter = Adapter { request, _, completion in
+            adapted = true
+            DispatchQueue.main.async {
+                completion(.success(request))
+            }
+        }
+
+        var result: Result<URLRequest>!
+
+        let completesExpectation = expectation(description: "adapter completes")
+
+        // When
+        adapter.adapt(urlRequest, for: session) {
+            result = $0
+            completesExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(adapted)
+        XCTAssertTrue(result.isSuccess)
+    }
 }
 
 // MARK: -
@@ -160,6 +190,37 @@ final class RetrierTestCase: BaseTestCase {
 
         // Then
         XCTAssertTrue(result.isSuccess)
+    }
+
+    func testThatRetrierCanBeImplementedAsynchronously() {
+        // Given
+        let url = URL(string: "https://httpbin.org/get")!
+        let session = Session(startRequestsImmediately: false)
+        let request = session.request(url)
+        var retried = false
+
+        let retrier = Retrier { request, session, error, completion in
+            retried = true
+            DispatchQueue.main.async {
+                completion(.retry)
+            }
+        }
+
+        var result: RetryResult!
+
+        let completesExpectation = expectation(description: "retrier completes")
+
+        // When
+        retrier.retry(request, for: session, dueTo: MockError()) {
+            result = $0
+            completesExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(retried)
+        XCTAssertEqual(result, .retry)
     }
 }
 
@@ -258,6 +319,35 @@ final class InterceptorTestCase: BaseTestCase {
         XCTAssertTrue(result.error is MockError)
     }
 
+    func testThatInterceptorCanAdaptRequestAsynchronously() {
+        // Given
+        let urlRequest = URLRequest(url: URL(string: "https://httpbin.org/get")!)
+        let session = Session()
+
+        let adapter = Adapter { urlRequest, _, completion in
+            DispatchQueue.main.async {
+                completion(.failure(MockError()))
+            }
+        }
+        let interceptor = Interceptor(adapters: [adapter])
+
+        var result: Result<URLRequest>!
+
+        let completesExpectation = expectation(description: "interceptor completes")
+
+        // When
+        interceptor.adapt(urlRequest, for: session) {
+            result = $0
+            completesExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(result.isFailure)
+        XCTAssertTrue(result.error is MockError)
+    }
+
     func testThatInterceptorCanRetryRequestWithNoRetriers() {
         // Given
         let url = URL(string: "https://httpbin.org/get")!
@@ -307,6 +397,35 @@ final class InterceptorTestCase: BaseTestCase {
 
         // When
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
+
+        // Then
+        XCTAssertEqual(result, .retry)
+    }
+
+    func testThatInterceptorCanRetryRequestAsynchronously() {
+        // Given
+        let url = URL(string: "https://httpbin.org/get")!
+        let session = Session(startRequestsImmediately: false)
+        let request = session.request(url)
+
+        let retrier = Retrier { _, _, _, completion in
+            DispatchQueue.main.async {
+                completion(.retry)
+            }
+        }
+        let interceptor = Interceptor(retriers: [retrier])
+
+        var result: RetryResult!
+
+        let completesExpectation = expectation(description: "interceptor completes")
+
+        // When
+        interceptor.retry(request, for: session, dueTo: MockError()) {
+            result = $0
+            completesExpectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
 
         // Then
         XCTAssertEqual(result, .retry)
