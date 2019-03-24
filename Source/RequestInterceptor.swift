@@ -101,8 +101,8 @@ extension RequestInterceptor {
     }
 }
 
-public typealias AdaptHandler = (URLRequest, Session, _ completion: (Result<URLRequest>) -> Void) -> Void
-public typealias RetryHandler = (Request, Session, Error, _ completion: (RetryResult) -> Void) -> Void
+public typealias AdaptHandler = (URLRequest, Session, _ completion: @escaping (Result<URLRequest>) -> Void) -> Void
+public typealias RetryHandler = (Request, Session, Error, _ completion: @escaping (RetryResult) -> Void) -> Void
 
 // MARK: -
 
