@@ -306,7 +306,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         var headers = HTTPHeaders.default
         headers["Accept-Language"] = "en-US"
 
-        let configuration = URLSessionConfiguration.alamofireDefault
+        let configuration = URLSessionConfiguration.af.default
         configuration.httpHeaders = headers
 
         let manager = Session(configuration: configuration)
@@ -318,7 +318,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         var headers = HTTPHeaders.default
         headers["Content-Type"] = "application/json"
 
-        let configuration = URLSessionConfiguration.alamofireDefault
+        let configuration = URLSessionConfiguration.af.default
         configuration.httpHeaders = headers
 
         let manager = Session(configuration: configuration)
@@ -327,14 +327,14 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
     }()
 
     func managerWithCookie(_ cookie: HTTPCookie) -> Session {
-        let configuration = URLSessionConfiguration.alamofireDefault
+        let configuration = URLSessionConfiguration.af.default
         configuration.httpCookieStorage?.setCookie(cookie)
 
         return Session(configuration: configuration)
     }
 
     let managerDisallowingCookies: Session = {
-        let configuration = URLSessionConfiguration.alamofireDefault
+        let configuration = URLSessionConfiguration.af.default
         configuration.httpShouldSetCookies = false
 
         let manager = Session(configuration: configuration)

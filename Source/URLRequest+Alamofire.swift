@@ -24,9 +24,9 @@
 
 import Foundation
 
-extension URLRequest {
+public extension URLRequest {
     var method: HTTPMethod? {
-        guard let httpMethod = self.httpMethod else { return nil }
+        guard let httpMethod = httpMethod else { return nil }
         return HTTPMethod(rawValue: httpMethod)
     }
 }

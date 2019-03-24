@@ -1,7 +1,7 @@
 //
-//  URLSessionConfiguration+Alamofire.swift
+//  AlamofireExtended.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +22,34 @@
 //  THE SOFTWARE.
 //
 
-import Foundation
+/// Type that acts as a generic extension point for all `AlamofireExtended` types.
+public struct AlamofireExtension<ExtendedType> {
+    /// Stores the type or metatype of any extended type.
+    let type: ExtendedType
 
-extension URLSessionConfiguration: AlamofireExtended { }
-extension AlamofireExtension where ExtendedType: URLSessionConfiguration {
-    public static var `default`: URLSessionConfiguration {
-        let configuration = URLSessionConfiguration.default
-        configuration.httpHeaders = .default
+    init(_ type: ExtendedType) {
+        self.type = type
+    }
+}
 
-        return configuration
+/// Protocol describing the `af` extension points for Alamofire extended types.
+public protocol AlamofireExtended {
+    associatedtype ExtendedType
+
+    /// Static Alamofire extension point.
+    static var af: AlamofireExtension<ExtendedType>.Type { get set }
+    /// Instance Alamofire extension point.
+    var af: AlamofireExtension<ExtendedType> { get set }
+}
+
+public extension AlamofireExtended {
+    static var af: AlamofireExtension<Self>.Type {
+        get { return AlamofireExtension<Self>.self }
+        set { }
+    }
+
+    var af: AlamofireExtension<Self> {
+        get { return AlamofireExtension(self) }
+        set { }
     }
 }

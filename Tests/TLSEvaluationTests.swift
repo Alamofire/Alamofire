@@ -423,7 +423,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWhenPinningLeafPublicKeyWithCertificateChainValidation() {
         // Given
-        let keys = [TestCertificates.leaf].publicKeys
+        let keys = [TestCertificates.leaf].af.publicKeys
         let evaluators = [
             expiredHost: PublicKeysTrustEvaluator(keys: keys)
         ]
@@ -457,7 +457,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyWithoutCertificateChainOrHostValidation() {
         // Given
-        let keys = [TestCertificates.leaf].publicKeys
+        let keys = [TestCertificates.leaf].af.publicKeys
         let evaluators = [
             expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)
         ]
@@ -485,7 +485,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyWithoutCertificateChainOrHostValidation() {
         // Given
-        let keys = [TestCertificates.intermediateCA2].publicKeys
+        let keys = [TestCertificates.intermediateCA2].af.publicKeys
         let evaluators = [
             expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)
         ]
@@ -513,7 +513,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningRootCAPublicKeyWithoutCertificateChainValidation() {
         // Given
-        let keys = [TestCertificates.rootCA].publicKeys
+        let keys = [TestCertificates.rootCA].af.publicKeys
         let evaluators = [
             expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)
         ]
