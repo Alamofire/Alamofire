@@ -185,6 +185,7 @@ extension DataRequest {
 
                         default:
                             delegate.retryRequest(self, withDelay: retryResult.delay)
+                            didComplete = nil
                         }
                     }
 
@@ -290,6 +291,7 @@ extension DownloadRequest {
 
                         default:
                             delegate.retryRequest(self, withDelay: retryResult.delay)
+                            didComplete = nil
                         }
                     }
 
