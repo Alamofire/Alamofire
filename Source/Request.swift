@@ -353,18 +353,17 @@ open class Request {
 
     /// Called to trigger retry or finish this `Request`.
     func retryOrFinish(error: Error?) {
-        if let error = error, delegate?.willAttemptToRetryRequest(self) == true {
-            delegate?.retryRequest(self, dueTo: error) { retryResult in
+        if let error = error, let delegate = delegate {
+            delegate.retryResult(for: self, dueTo: error) { retryResult in
+                guard let retryResult = retryResult else { self.finish(); return }
+
                 switch retryResult {
                 case .doNotRetry:
                     self.finish()
-
                 case .doNotRetryWithError(let error):
                     self.finish(error: error)
-
                 default:
-                    // No-op: retry is already being executed
-                    break
+                    delegate.retryRequest(self, withDelay: retryResult.delay)
                 }
             }
         } else {
@@ -717,8 +716,8 @@ extension Request: CustomDebugStringConvertible {
 public protocol RequestDelegate: AnyObject {
     var sessionConfiguration: URLSessionConfiguration { get }
 
-    func willAttemptToRetryRequest(_ request: Request) -> Bool
-    func retryRequest(_ request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
+    func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult?) -> Void)
+    func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?)
 
     func cancelRequest(_ request: Request)
     func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void)
