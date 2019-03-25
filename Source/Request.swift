@@ -84,8 +84,6 @@ open class Request {
         var cachedResponseHandler: CachedResponseHandler?
         /// Response serialization closures that handle parsing responses.
         var responseSerializers: [() -> Void] = []
-        /// Current response serialization closure index used to track iteration.
-        var responseSerializerIndex: Int = 0
         /// Response serialization completion closures executed once all response serialization is complete.
         var responseSerializerCompletions: [() -> Void] = []
         /// `URLCredential` used for authentication challenges.
@@ -386,9 +384,10 @@ open class Request {
         var responseSerializer: (() -> Void)?
 
         protectedMutableState.write { mutableState in
-            if mutableState.responseSerializerIndex < mutableState.responseSerializers.count {
-                responseSerializer = mutableState.responseSerializers[mutableState.responseSerializerIndex]
-                mutableState.responseSerializerIndex += 1
+            let responseSerializerIndex = mutableState.responseSerializerCompletions.count
+
+            if responseSerializerIndex < mutableState.responseSerializers.count {
+                responseSerializer = mutableState.responseSerializers[responseSerializerIndex]
             }
         }
 
@@ -419,10 +418,7 @@ open class Request {
         downloadProgress.totalUnitCount = 0
         downloadProgress.completedUnitCount = 0
 
-        protectedMutableState.write { mutableState in
-            mutableState.responseSerializerCompletions = []
-            mutableState.responseSerializerIndex = 0
-        }
+        protectedMutableState.write { $0.responseSerializerCompletions = [] }
     }
 
     /// Called when updating the upload progress.
