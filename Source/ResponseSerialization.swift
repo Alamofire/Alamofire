@@ -111,6 +111,7 @@ extension DataRequest {
     @discardableResult
     public func response(queue: DispatchQueue? = nil, completionHandler: @escaping (DataResponse<Data?>) -> Void) -> Self {
         appendResponseSerializer {
+            let queue = queue ?? .main
             let result = Result(value: self.data, error: self.error)
             let response = DataResponse(request: self.request,
                                         response: self.response,
@@ -121,9 +122,7 @@ extension DataRequest {
 
             self.eventMonitor?.request(self, didParseResponse: response)
 
-            self.responseSerializerDidComplete {
-                (queue ?? .main).async { completionHandler(response) }
-            }
+            self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
         }
 
         return self
@@ -217,6 +216,7 @@ extension DownloadRequest {
         -> Self
     {
         appendResponseSerializer {
+            let queue = queue ?? .main
             let result = Result(value: self.fileURL , error: self.error)
             let response = DownloadResponse(request: self.request,
                                             response: self.response,
@@ -226,9 +226,7 @@ extension DownloadRequest {
                                             serializationDuration: 0,
                                             result: result)
 
-            self.responseSerializerDidComplete {
-                (queue ?? .main).async { completionHandler(response) }
-            }
+            self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
         }
 
         return self
