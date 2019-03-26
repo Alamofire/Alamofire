@@ -37,5 +37,5 @@ let package = Package(
             name: "Alamofire",
             path: "Source")
     ],
-    swiftLanguageVersions: [3, 4]
+    swiftLanguageVersions: [.v3, .v4]
 )
