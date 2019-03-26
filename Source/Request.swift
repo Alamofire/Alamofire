@@ -289,13 +289,11 @@ open class Request {
         retryOrFinish(error: error)
     }
 
-    /// Called when a `URLSessionTask` is created on behalf of the `Request`. Calls `reset()`.
+    /// Called when a `URLSessionTask` is created on behalf of the `Request`.
     ///
     /// - Parameter task: The `URLSessionTask` created.
     func didCreateTask(_ task: URLSessionTask) {
         protectedMutableState.write { $0.tasks.append(task) }
-
-        reset()
 
         eventMonitor?.request(self, didCreateTask: task)
     }
@@ -342,9 +340,11 @@ open class Request {
         retryOrFinish(error: self.error)
     }
 
-    /// Called when the `RequestDelegate` is retrying this `Request`.
+    /// Called when the `RequestDelegate` is retrying this `Request`. Calls `reset()`.
     func requestIsRetrying() {
         protectedMutableState.write { $0.retryCount += 1 }
+
+        reset()
 
         eventMonitor?.requestIsRetrying(self)
     }
