@@ -326,22 +326,23 @@ open class Session {
                      interceptor: RequestInterceptor? = nil) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
 
-        return upload(multipartFormData: multipartFormData,
+        let formData = MultipartFormData(fileManager: fileManager)
+        multipartFormData(formData)
+
+        return upload(multipartFormData: formData,
                       usingThreshold: encodingMemoryThreshold,
                       with: convertible,
                       interceptor: interceptor)
     }
 
-    open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
+    open func upload(multipartFormData: MultipartFormData,
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
-                     fileManager: FileManager = .default,
                      with request: URLRequestConvertible,
                      interceptor: RequestInterceptor? = nil) -> UploadRequest {
         let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
                                               encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: request,
-                                              fileManager: fileManager,
-                                              multipartBuilder: multipartFormData)
+                                              multipartFormData: multipartFormData)
 
         return upload(multipartUpload, interceptor: interceptor)
     }

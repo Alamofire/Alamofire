@@ -100,7 +100,8 @@ open class MultipartFormData {
     /// The boundary used to separate the body parts in the encoded form data.
     public let boundary: String
 
-    private let fileManager: FileManager
+    let fileManager: FileManager
+
     private var bodyParts: [BodyPart]
     private var bodyPartError: AFError?
     private let streamBufferSize: Int
