@@ -31,7 +31,7 @@ open class MultipartUpload {
     lazy var result = Result { try build() }
 
     let isInBackgroundSession: Bool
-    let multipartBuilder: (MultipartFormData) -> Void
+    let multipartFormData: MultipartFormData
     let encodingMemoryThreshold: UInt64
     let request: URLRequestConvertible
     let fileManager: FileManager
@@ -39,25 +39,21 @@ open class MultipartUpload {
     init(isInBackgroundSession: Bool,
          encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
          request: URLRequestConvertible,
-         fileManager: FileManager = .default,
-         multipartBuilder: @escaping (MultipartFormData) -> Void) {
+         multipartFormData: MultipartFormData) {
         self.isInBackgroundSession = isInBackgroundSession
         self.encodingMemoryThreshold = encodingMemoryThreshold
         self.request = request
-        self.fileManager =  fileManager
-        self.multipartBuilder = multipartBuilder
+        self.fileManager =  multipartFormData.fileManager
+        self.multipartFormData = multipartFormData
     }
 
     func build() throws -> (request: URLRequest, uploadable: UploadRequest.Uploadable) {
-        let formData = MultipartFormData(fileManager: fileManager)
-        multipartBuilder(formData)
-
         var urlRequest = try request.asURLRequest()
-        urlRequest.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
+        urlRequest.setValue(multipartFormData.contentType, forHTTPHeaderField: "Content-Type")
 
         let uploadable: UploadRequest.Uploadable
-        if formData.contentLength < encodingMemoryThreshold && !isInBackgroundSession {
-            let data = try formData.encode()
+        if multipartFormData.contentLength < encodingMemoryThreshold && !isInBackgroundSession {
+            let data = try multipartFormData.encode()
 
             uploadable = .data(data)
         } else {
@@ -69,7 +65,7 @@ open class MultipartUpload {
             try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
 
             do {
-                try formData.writeEncodedData(to: fileURL)
+                try multipartFormData.writeEncodedData(to: fileURL)
             } catch {
                 // Cleanup after attempted write if it fails.
                 try? fileManager.removeItem(at: fileURL)
