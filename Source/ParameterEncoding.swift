@@ -69,6 +69,14 @@ public struct URLEncoding: ParameterEncoding {
     /// - httpBody:        Sets encoded query string result as the HTTP body of the URL request.
     public enum Destination {
         case methodDependent, queryString, httpBody
+
+        func encodesParametersInURL(for method: HTTPMethod) -> Bool {
+            switch self {
+            case .methodDependent: return [.get, .head, .delete].contains(method)
+            case .queryString:     return true
+            case .httpBody:        return false
+            }
+        }
     }
 
     /// Configures how `Array` parameters are encoded.
@@ -108,11 +116,8 @@ public struct URLEncoding: ParameterEncoding {
 
     // MARK: Properties
 
-    /// Returns a default `URLEncoding` instance.
+    /// Returns a default `URLEncoding` instance with a `.methodDependent` destination.
     public static var `default`: URLEncoding { return URLEncoding() }
-
-    /// Returns a `URLEncoding` instance with a `.methodDependent` destination.
-    public static var methodDependent: URLEncoding { return URLEncoding() }
 
     /// Returns a `URLEncoding` instance with a `.queryString` destination.
     public static var queryString: URLEncoding { return URLEncoding(destination: .queryString) }
@@ -159,7 +164,7 @@ public struct URLEncoding: ParameterEncoding {
 
         guard let parameters = parameters else { return urlRequest }
 
-        if let method = HTTPMethod(rawValue: urlRequest.httpMethod ?? "GET"), encodesParametersInURL(with: method) {
+        if let method = urlRequest.method, destination.encodesParametersInURL(for: method) {
             guard let url = urlRequest.url else {
                 throw AFError.parameterEncodingFailed(reason: .missingURL)
             }
@@ -229,24 +234,6 @@ public struct URLEncoding: ParameterEncoding {
             components += queryComponents(fromKey: key, value: value)
         }
         return components.map { "\($0)=\($1)" }.joined(separator: "&")
-    }
-
-    private func encodesParametersInURL(with method: HTTPMethod) -> Bool {
-        switch destination {
-        case .queryString:
-            return true
-        case .httpBody:
-            return false
-        default:
-            break
-        }
-
-        switch method {
-        case .get, .head, .delete:
-            return true
-        default:
-            return false
-        }
     }
 }
 

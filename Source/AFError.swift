@@ -294,22 +294,14 @@ extension AFError {
 extension AFError {
     /// The `URLConvertible` associated with the error.
     public var urlConvertible: URLConvertible? {
-        switch self {
-        case .invalidURL(let url):
-            return url
-        default:
-            return nil
-        }
+        guard case .invalidURL(let url) = self else { return nil }
+        return url
     }
 
     /// The `URL` associated with the error.
     public var url: URL? {
-        switch self {
-        case .multipartEncodingFailed(let reason):
-            return reason.url
-        default:
-            return nil
-        }
+        guard case .multipartEncodingFailed(let reason) = self else { return nil }
+        return reason.url
     }
 
     /// The underlying `Error` responsible for generating the failure associated with `.sessionInvalidated`,
@@ -338,64 +330,40 @@ extension AFError {
 
     /// The acceptable `Content-Type`s of a `.responseValidationFailed` error.
     public var acceptableContentTypes: [String]? {
-        switch self {
-        case .responseValidationFailed(let reason):
-            return reason.acceptableContentTypes
-        default:
-            return nil
-        }
+        guard case .responseValidationFailed(let reason) = self else { return nil }
+        return reason.acceptableContentTypes
     }
 
     /// The response `Content-Type` of a `.responseValidationFailed` error.
     public var responseContentType: String? {
-        switch self {
-        case .responseValidationFailed(let reason):
-            return reason.responseContentType
-        default:
-            return nil
-        }
+        guard case  .responseValidationFailed(let reason) = self else { return nil }
+        return reason.responseContentType
     }
 
     /// The response code of a `.responseValidationFailed` error.
     public var responseCode: Int? {
-        switch self {
-        case .responseValidationFailed(let reason):
-            return reason.responseCode
-        default:
-            return nil
-        }
+        guard case .responseValidationFailed(let reason) = self else { return nil }
+        return reason.responseCode
     }
 
     /// The `String.Encoding` associated with a failed `.stringResponse()` call.
     public var failedStringEncoding: String.Encoding? {
-        switch self {
-        case .responseSerializationFailed(let reason):
-            return reason.failedStringEncoding
-        default:
-            return nil
-        }
+        guard case .responseSerializationFailed(let reason) = self else { return nil }
+        return reason.failedStringEncoding
     }
 }
 
 extension AFError.ParameterEncodingFailureReason {
     var underlyingError: Error? {
-        switch self {
-        case .jsonEncodingFailed(let error):
-            return error
-        default:
-            return nil
-        }
+        guard case .jsonEncodingFailed(let error) = self else { return nil }
+        return error
     }
 }
 
 extension AFError.ParameterEncoderFailureReason {
     var underlyingError: Error? {
-        switch self {
-        case .encoderFailed(let error):
-            return error
-        default:
-            return nil
-        }
+        guard case .encoderFailed(let error) = self else { return nil }
+        return error
     }
 }
 
@@ -435,41 +403,25 @@ extension AFError.ResponseValidationFailureReason {
     }
 
     var responseContentType: String? {
-        switch self {
-        case .unacceptableContentType(_, let responseType):
-            return responseType
-        default:
-            return nil
-        }
+        guard case .unacceptableContentType(_, let responseType) = self else { return nil }
+        return responseType
     }
 
     var responseCode: Int? {
-        switch self {
-        case .unacceptableStatusCode(let code):
-            return code
-        default:
-            return nil
-        }
+        guard case .unacceptableStatusCode(let code) = self else { return nil }
+        return code
     }
 }
 
 extension AFError.ResponseSerializationFailureReason {
     var failedStringEncoding: String.Encoding? {
-        switch self {
-        case .stringSerializationFailed(let encoding):
-            return encoding
-        default:
-            return nil
-        }
+        guard case .stringSerializationFailed(let encoding) = self else { return nil }
+        return encoding
     }
 
     var underlyingError: Error? {
-        switch self {
-        case .jsonSerializationFailed(let error):
-            return error
-        default:
-            return nil
-        }
+        guard case .jsonSerializationFailed(let error) = self else { return nil }
+        return error
     }
 }
 
