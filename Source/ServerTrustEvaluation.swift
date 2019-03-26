@@ -519,7 +519,7 @@ public extension AlamofireExtension where ExtendedType == Array<SecCertificate> 
     }
 
     /// All public `SecKey` values for the contained `SecCertificate`s.
-    public var publicKeys: [SecKey] {
+    var publicKeys: [SecKey] {
         return type.compactMap { $0.af.publicKey }
     }
 }

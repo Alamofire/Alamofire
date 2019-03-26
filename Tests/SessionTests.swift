@@ -41,10 +41,10 @@ class SessionTestCase: BaseTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
             adaptedCount += 1
 
-            let result: Result<URLRequest> = Result {
+            let result: AFResult<URLRequest> = AFResult {
                 guard !throwsError else { throw AFError.invalidURL(url: "") }
 
                 var urlRequest = urlRequest
@@ -68,10 +68,10 @@ class SessionTestCase: BaseTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
             adaptedCount += 1
 
-            let result: Result<URLRequest> = Result {
+            let result: AFResult<URLRequest> = AFResult {
                 guard !throwsError else { throw AFError.invalidURL(url: "") }
 
                 var urlRequest = urlRequest
@@ -105,7 +105,7 @@ class SessionTestCase: BaseTestCase {
         func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
             adaptCalledCount += 1
 
-            let result: Result<URLRequest> = Result {
+            let result: AFResult<URLRequest> = Result {
                 if throwsErrorOnFirstAdapt {
                     throwsErrorOnFirstAdapt = false
                     throw AFError.invalidURL(url: "/adapt/error/1")
@@ -171,7 +171,7 @@ class SessionTestCase: BaseTestCase {
         func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
             adaptCalledCount += 1
 
-            let result: Result<URLRequest> = Result {
+            let result: AFResult<URLRequest> = Result {
                 adaptedCount += 1
 
                 if adaptedCount == 1 { throw AFError.invalidURL(url: "") }

@@ -87,11 +87,11 @@ Alamofire.request("https://httpbin.org/get").response { response in
 }
 ```
 
-> We strongly encourage you to leverage the other response serializers taking advantage of `Response` and `Result` types.
+> We strongly encourage you to leverage the other response serializers taking advantage of `Response` and `AFResult` types.
 
 #### Response Data Handler
 
-The `responseData` handler uses the `responseDataSerializer` (the object that serializes the server data into some other type) to extract the `Data` returned by the server. If no errors occur and `Data` is returned, the response `Result` will be a `.success` and the `value` will be of type `Data`.
+The `responseData` handler uses the `responseDataSerializer` (the object that serializes the server data into some other type) to extract the `Data` returned by the server. If no errors occur and `Data` is returned, the response `AFResult` will be a `.success` and the `value` will be of type `Data`.
 
 ```swift
 Alamofire.request("https://httpbin.org/get").responseData { response in
@@ -105,7 +105,7 @@ Alamofire.request("https://httpbin.org/get").responseData { response in
 
 #### Response String Handler
 
-The `responseString` handler uses the `responseStringSerializer` to convert the `Data` returned by the server into a `String` with the specified encoding. If no errors occur and the server data is successfully serialized into a `String`, the response `Result` will be a `.success` and the `value` will be of type `String`.
+The `responseString` handler uses the `responseStringSerializer` to convert the `Data` returned by the server into a `String` with the specified encoding. If no errors occur and the server data is successfully serialized into a `String`, the response `AFResult` will be a `.success` and the `value` will be of type `String`.
 
 ```swift
 Alamofire.request("https://httpbin.org/get").responseString { response in
@@ -118,7 +118,7 @@ Alamofire.request("https://httpbin.org/get").responseString { response in
 
 #### Response JSON Handler
 
-The `responseJSON` handler uses the `responseJSONSerializer` to convert the `Data` returned by the server into an `Any` type using the specified `JSONSerialization.ReadingOptions`. If no errors occur and the server data is successfully serialized into a JSON object, the response `Result` will be a `.success` and the `value` will be of type `Any`.
+The `responseJSON` handler uses the `responseJSONSerializer` to convert the `Data` returned by the server into an `Any` type using the specified `JSONSerialization.ReadingOptions`. If no errors occur and the server data is successfully serialized into a JSON object, the response `AFResult` will be a `.success` and the `value` will be of type `Any`.
 
 ```swift
 Alamofire.request("https://httpbin.org/get").responseJSON { response in

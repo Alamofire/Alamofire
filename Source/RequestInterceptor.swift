@@ -26,13 +26,13 @@ import Foundation
 
 /// A type that can inspect and optionally adapt a `URLRequest` in some manner if necessary.
 public protocol RequestAdapter {
-    /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the Result.
+    /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the AFResult.
     ///
     /// - Parameters:
     ///   - urlRequest: The `URLRequest` to adapt.
     ///   - session:    The `Session` that will execute the `URLRequest`.
     ///   - completion: The completion handler that must be called when adaptation is complete.
-    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void)
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void)
 }
 
 // MARK: -
@@ -87,7 +87,7 @@ public protocol RequestRetrier {
 public protocol RequestInterceptor: RequestAdapter, RequestRetrier {}
 
 extension RequestInterceptor {
-    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
         completion(.success(urlRequest))
     }
 
@@ -101,7 +101,7 @@ extension RequestInterceptor {
     }
 }
 
-public typealias AdaptHandler = (URLRequest, Session, _ completion: @escaping (Result<URLRequest>) -> Void) -> Void
+public typealias AdaptHandler = (URLRequest, Session, _ completion: @escaping (AFResult<URLRequest>) -> Void) -> Void
 public typealias RetryHandler = (Request, Session, Error, _ completion: @escaping (RetryResult) -> Void) -> Void
 
 // MARK: -
@@ -113,7 +113,7 @@ open class Adapter: RequestInterceptor {
         self.adaptHandler = adaptHandler
     }
 
-    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
         adaptHandler(urlRequest, session, completion)
     }
 }
@@ -158,7 +158,7 @@ open class Interceptor: RequestInterceptor {
         self.retriers = retriers
     }
 
-    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
         adapt(urlRequest, for: session, using: adapters, completion: completion)
     }
 
@@ -166,7 +166,7 @@ open class Interceptor: RequestInterceptor {
         _ urlRequest: URLRequest,
         for session: Session,
         using adapters: [RequestAdapter],
-        completion: @escaping (Result<URLRequest>) -> Void)
+        completion: @escaping (AFResult<URLRequest>) -> Void)
     {
         var pendingAdapters = adapters
 
