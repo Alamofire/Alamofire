@@ -379,6 +379,11 @@ open class Request {
         eventMonitor?.requestDidFinish(self)
     }
 
+    /// Appends the response serialization closure to the `Request`.
+    func appendResponseSerializer(_ closure: @escaping () -> Void) {
+        protectedMutableState.write { $0.responseSerializers.append(closure) }
+    }
+
     /// Returns the next response serializer closure to execute if there's one left.
     func nextResponseSerializer() -> (() -> Void)? {
         var responseSerializer: (() -> Void)?
@@ -407,6 +412,12 @@ open class Request {
         }
 
         serializationQueue.async { responseSerializer() }
+    }
+
+    /// Notifies the `Request` that the response serializer is complete.
+    func responseSerializerDidComplete(completion: @escaping () -> Void) {
+        protectedMutableState.write { $0.responseSerializerCompletions.append(completion) }
+        processNextResponseSerializer()
     }
 
     /// Resets all task and response serializer related state for retry.
@@ -572,23 +583,6 @@ open class Request {
         }
 
         return self
-    }
-
-    // MARK: - Response Serializers
-
-    /// Appends the response serialization closure to the `Request`.
-    ///
-    /// - Parameter responseSerializer: The responser serialization closure.
-    open func appendResponseSerializer(_ closure: @escaping () -> Void) {
-        protectedMutableState.write { $0.responseSerializers.append(closure) }
-    }
-
-    /// Notifies the `Request` that the response serializer is complete.
-    ///
-    /// - Parameter completion: The closure to execute once all response serializers are executed.
-    open func responseSerializerDidComplete(completion: @escaping () -> Void) {
-        protectedMutableState.write { $0.responseSerializerCompletions.append(completion) }
-        processNextResponseSerializer()
     }
 
     // MARK: - Cleanup
