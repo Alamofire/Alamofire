@@ -1,5 +1,5 @@
 //
-//  ResultTests.swift
+//  AFResultTests.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -26,7 +26,7 @@
 import Foundation
 import XCTest
 
-class ResultTestCase: BaseTestCase {
+class AFResultTestCase: BaseTestCase {
     let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 404))
 
     // MARK: - Is Success Tests
