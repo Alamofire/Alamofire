@@ -477,6 +477,7 @@ class DataResponseSerializationTestCase: BaseTestCase {
         }
     }
 
+    @available(macOS 10.11, iOS 9.0, tvOS 9.0, *)
     func testThatPropertyListResponseSerializerSucceedsWhenDataIsValidPropertyListData() {
         // Given
         let serializer = DataRequest.propertyListResponseSerializer()
