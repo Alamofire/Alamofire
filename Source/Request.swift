@@ -351,17 +351,15 @@ open class Request {
 
     /// Called to trigger retry or finish this `Request`.
     func retryOrFinish(error: Error?) {
-        if let error = error, let delegate = delegate {
-            delegate.retryResult(for: self, dueTo: error) { retryResult in
-                switch retryResult {
-                case .doNotRetry, .doNotRetryWithError:
-                    self.finish(error: retryResult.error)
-                case .retry, .retryWithDelay:
-                    delegate.retryRequest(self, withDelay: retryResult.delay)
-                }
+        guard let error = error, let delegate = delegate else { finish(); return }
+
+        delegate.retryResult(for: self, dueTo: error) { retryResult in
+            switch retryResult {
+            case .doNotRetry, .doNotRetryWithError:
+                self.finish(error: retryResult.error)
+            case .retry, .retryWithDelay:
+                delegate.retryRequest(self, withDelay: retryResult.delay)
             }
-        } else {
-            finish()
         }
     }
 
