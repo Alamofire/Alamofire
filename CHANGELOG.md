@@ -44,7 +44,7 @@ Released on 2019-03-27. All issues associated with this milestone can be found u
 
 #### Updated
 - Project for compatability with Xcode 10.2.
-  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2767](https://github.com/Alamofire/Alamofire/pull/2762).
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2767](https://github.com/Alamofire/Alamofire/pull/2767).
 
 ## [4.8.1](https://github.com/Alamofire/Alamofire/releases/tag/4.8.1)
 Released on 2019-01-15. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.8.1).
