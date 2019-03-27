@@ -176,7 +176,7 @@ extension DataRequest {
                     didComplete = { completionHandler(response) }
 
                 case .doNotRetryWithError(let retryError):
-                    let result = Result<Serializer.SerializedObject>.failure(retryError)
+                    let result = AFResult<Serializer.SerializedObject>.failure(retryError)
 
                     let response = DataResponse(request: self.request,
                                                 response: self.response,
@@ -276,7 +276,7 @@ extension DownloadRequest {
                     didComplete = { completionHandler(response) }
 
                 case .doNotRetryWithError(let retryError):
-                    let result = Result<T.SerializedObject>.failure(retryError)
+                    let result = AFResult<T.SerializedObject>.failure(retryError)
 
                     let response = DownloadResponse(request: self.request,
                                                     response: self.response,
