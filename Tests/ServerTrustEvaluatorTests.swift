@@ -1110,7 +1110,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let keys = [TestCertificates.leafValidDNSName].publicKeys
+        let keys = [TestCertificates.leafValidDNSName].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys, validateHost: false)
 
         // When
@@ -1125,7 +1125,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let keys = [TestCertificates.intermediateCA2].publicKeys
+        let keys = [TestCertificates.intermediateCA2].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys, validateHost: false)
 
         // When
@@ -1140,7 +1140,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let keys = [TestCertificates.rootCA].publicKeys
+        let keys = [TestCertificates.rootCA].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys, validateHost: false)
 
         // When
@@ -1155,7 +1155,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let keys = [TestCertificates.leafSignedByCA2].publicKeys
+        let keys = [TestCertificates.leafSignedByCA2].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys, validateHost: false)
 
         // When
@@ -1170,7 +1170,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let keys = [TestCertificates.leafSignedByCA1, TestCertificates.intermediateCA1, TestCertificates.leafValidDNSName].publicKeys
+        let keys = [TestCertificates.leafSignedByCA1, TestCertificates.intermediateCA1, TestCertificates.leafValidDNSName].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys, validateHost: false)
 
         // When
@@ -1187,7 +1187,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let keys = [TestCertificates.leafValidDNSName].publicKeys
+        let keys = [TestCertificates.leafValidDNSName].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys)
 
         // When
@@ -1202,7 +1202,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let keys = [TestCertificates.intermediateCA2].publicKeys
+        let keys = [TestCertificates.intermediateCA2].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys)
 
         // When
@@ -1217,7 +1217,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let keys = [TestCertificates.rootCA].publicKeys
+        let keys = [TestCertificates.rootCA].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys)
 
         // When
@@ -1232,7 +1232,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let keys = [TestCertificates.leafSignedByCA2].publicKeys
+        let keys = [TestCertificates.leafSignedByCA2].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys)
 
         // When
@@ -1247,7 +1247,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSName.trust
-        let keys = [TestCertificates.leafSignedByCA1, TestCertificates.intermediateCA1, TestCertificates.leafValidDNSName].publicKeys
+        let keys = [TestCertificates.leafSignedByCA1, TestCertificates.intermediateCA1, TestCertificates.leafValidDNSName].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys)
 
         // When
@@ -1264,7 +1264,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let keys = [TestCertificates.leafValidDNSName].publicKeys
+        let keys = [TestCertificates.leafValidDNSName].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys,
                                                          performDefaultValidation: false,
                                                          validateHost: false)
@@ -1281,7 +1281,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameMissingIntermediate.trust
-        let keys = [TestCertificates.rootCA].publicKeys
+        let keys = [TestCertificates.rootCA].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys,
                                                          performDefaultValidation: false,
                                                          validateHost: false)
@@ -1298,7 +1298,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafValidDNSNameWithIncorrectIntermediate.trust
-        let keys = [TestCertificates.leafValidDNSName].publicKeys
+        let keys = [TestCertificates.leafValidDNSName].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys,
                                                          performDefaultValidation: false,
                                                          validateHost: false)
@@ -1315,7 +1315,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let keys = [TestCertificates.leafExpired].publicKeys
+        let keys = [TestCertificates.leafExpired].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys,
                                                          performDefaultValidation: false,
                                                          validateHost: false)
@@ -1332,7 +1332,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let keys = [TestCertificates.intermediateCA2].publicKeys
+        let keys = [TestCertificates.intermediateCA2].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys,
                                                          performDefaultValidation: false,
                                                          validateHost: false)
@@ -1349,7 +1349,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         // Given
         let host = "test.alamofire.org"
         let serverTrust = TestTrusts.leafExpired.trust
-        let keys = [TestCertificates.rootCA].publicKeys
+        let keys = [TestCertificates.rootCA].af.publicKeys
         let serverTrustPolicy = PublicKeysTrustEvaluator(keys: keys,
                                                          performDefaultValidation: false,
                                                          validateHost: false)
@@ -1461,7 +1461,7 @@ class ServerTrustPolicyCertificatesInBundleTestCase: ServerTrustPolicyTestCase {
         // keyDER.der: DER-encoded key, not a certificate, should fail
 
         // When
-        let certificates = Bundle(for: ServerTrustPolicyCertificatesInBundleTestCase.self).certificates
+        let certificates = Bundle(for: ServerTrustPolicyCertificatesInBundleTestCase.self).af.certificates
 
         // Then
         // Expectation: 19 well-formed certificates in the test bundle plus 4 invalid certificates.

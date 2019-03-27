@@ -74,7 +74,7 @@ open class Session {
         delegate.stateProvider = self
     }
 
-    public convenience init(configuration: URLSessionConfiguration = .alamofireDefault,
+    public convenience init(configuration: URLSessionConfiguration = URLSessionConfiguration.af.default,
                             delegate: SessionDelegate = SessionDelegate(),
                             rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.sessionManager.rootQueue"),
                             startRequestsImmediately: Bool = true,
