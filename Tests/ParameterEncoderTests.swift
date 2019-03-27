@@ -370,7 +370,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&three=1&one=one&two=2&five%5Ba%5D=a&six%5Ba%5D%5Bb%5D=b&seven%5Ba%5D=a"
-        XCTAssertEqual(result.value, expected)
+        XCTAssertQueryEqual(result.value, expected)
     }
 
     func testThatManuallyEncodableStructCanBeEncoded() {
@@ -383,7 +383,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "root%5B%5D%5B%5D=1&root%5B%5D%5B%5D=2&root%5B%5D%5B%5D=3&root%5B%5D%5Ba%5D%5Bstring%5D=string&root%5B%5D%5B%5D%5B%5D=1&root%5B%5D%5B%5D%5B%5D=2&root%5B%5D%5B%5D%5B%5D=3"
-        XCTAssertEqual(result.value, expected)
+        XCTAssertQueryEqual(result.value, expected)
     }
 
     func testThatEncodableClassWithNoInheritanceCanBeEncoded() {
@@ -395,7 +395,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.value, "two=2&one=one&three=1")
+        XCTAssertQueryEqual(result.value, "two=2&one=one&three=1")
     }
 
     func testThatEncodableSubclassCanBeEncoded() {
@@ -408,7 +408,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&two=2&five%5Ba%5D=a&five%5Bb%5D=b&three=1&one=one"
-        XCTAssertEqual(result.value, expected)
+        XCTAssertQueryEqual(result.value, expected)
     }
 
     func testThatManuallyEncodableSubclassCanBeEncoded() {
@@ -421,7 +421,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         let expected = "five%5Ba%5D=a&five%5Bb%5D=b&four%5Bfour%5D=one&four%5Bfive%5D=2"
-        XCTAssertEqual(result.value, expected)
+        XCTAssertQueryEqual(result.value, expected)
     }
 
     func testThatARootArrayCannotBeEncoded() {
@@ -481,7 +481,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.value, "array=1&array=2")
+        XCTAssertQueryEqual(result.value, "array=1&array=2")
     }
 
     func testThatSpacesCanBeEncodedAsPluses() {
@@ -521,7 +521,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.value,
+        XCTAssertQueryEqual(result.value,
                        "uppercase=ABCDEFGHIJKLMNOPQRSTUVWXYZ&numbers=0123456789&lowercase=abcdefghijklmnopqrstuvwxyz")
     }
 
@@ -560,7 +560,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let result = Result<String> { try encoder.encode(parameters) }
 
         // Then
-        XCTAssertEqual(result.value, "foobar=bazqux&foo%26bar=baz%26qux")
+        XCTAssertQueryEqual(result.value, "foobar=bazqux&foo%26bar=baz%26qux")
     }
 
     func testThatQuestionMarksInKeysAndValuesAreNotPercentEscaped() {
@@ -643,7 +643,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
             "french=fran%C3%A7ais",
             "emoji=%F0%9F%98%83"
         ].joined(separator: "&")
-        XCTAssertEqual(result.value, expectedParameterValues)
+        XCTAssertQueryEqual(result.value, expectedParameterValues)
     }
 
     func testStringWithThousandsOfChineseCharactersIsPercentEscaped() {
@@ -779,4 +779,11 @@ private struct FailingOptionalStruct: Encodable {
             try nested.encodeNil()
         }
     }
+}
+
+private func XCTAssertQueryEqual(_ query1: String?, _ query2: String?) {
+    let items1 = query1?.split(separator: "&").sorted()
+    let items2 = query2?.split(separator: "&").sorted()
+
+    XCTAssertEqual(items1, items2)
 }
