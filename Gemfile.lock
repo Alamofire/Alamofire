@@ -2,7 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     CFPropertyList (3.0.0)
-    activesupport (4.2.11)
+    activesupport (4.2.11.1)
       i18n (~> 0.7)
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
@@ -32,7 +32,7 @@ GEM
       activesupport (>= 4.0.2, < 6)
       fuzzy_match (~> 2.0.4)
       nap (~> 1.0)
-    cocoapods-deintegrate (1.0.3)
+    cocoapods-deintegrate (1.0.4)
     cocoapods-downloader (1.2.2)
     cocoapods-plugins (1.0.0)
       nap
@@ -43,7 +43,7 @@ GEM
       netrc (~> 0.11)
     cocoapods-try (1.1.0)
     colored2 (3.1.2)
-    concurrent-ruby (1.1.4)
+    concurrent-ruby (1.1.5)
     escape (0.0.4)
     ffi (1.10.0)
     fourflusher (2.2.0)
@@ -98,7 +98,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  cocoapods (~> 1.6.0.beta.2)
+  cocoapods (~> 1.6)
   jazzy
   xcpretty
 
