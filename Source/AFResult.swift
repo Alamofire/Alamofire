@@ -26,6 +26,36 @@ import Foundation
 
 public typealias AFResult<T> = Result<T, Error>
 
+// MARK: - CustomStringConvertible
+
+extension AFResult: CustomStringConvertible {
+    /// The textual representation used when written to an output stream, which includes whether the result was a
+    /// success or failure.
+    public var description: String {
+        switch self {
+        case .success:
+            return "SUCCESS"
+        case .failure:
+            return "FAILURE"
+        }
+    }
+}
+
+// MARK: - CustomDebugStringConvertible
+
+extension AFResult: CustomDebugStringConvertible {
+    /// The debug textual representation used when written to an output stream, which includes whether the result was a
+    /// success or failure in addition to the value or error.
+    public var debugDescription: String {
+        switch self {
+        case .success(let value):
+            return "SUCCESS: \(value)"
+        case .failure(let error):
+            return "FAILURE: \(error)"
+        }
+    }
+}
+
 // MARK: - Functional APIs
 
 extension AFResult {
@@ -43,7 +73,7 @@ extension AFResult {
     }
 
     /// Returns `true` if the result is a success, `false` otherwise.
-    public var isSuccess: Bool {
+    var isSuccess: Bool {
         switch self {
         case .success:
             return true
@@ -53,7 +83,7 @@ extension AFResult {
     }
 
     /// Returns `true` if the result is a failure, `false` otherwise.
-    public var isFailure: Bool {
+    var isFailure: Bool {
         return !isSuccess
     }
 
@@ -66,7 +96,7 @@ extension AFResult {
     ///     let noString: AFResult<String> = .failure(error)
     ///     try print(noString.unwrap())
     ///     // Throws error
-    public func unwrap() throws -> Success {
+    func unwrap() throws -> Success {
         switch self {
         case .success(let value):
             return value
@@ -88,7 +118,7 @@ extension AFResult {
     ///
     /// - returns: An `AFResult` containing the result of the given closure. If this instance is a failure, returns the
     ///            same failure.
-    public func flatMap<T>(_ transform: (Success) throws -> T) -> AFResult<T> {
+    func flatMap<T>(_ transform: (Success) throws -> T) -> AFResult<T> {
         switch self {
         case .success(let value):
             do {
@@ -114,7 +144,7 @@ extension AFResult {
     ///
     /// - Returns: An `AFResult` instance containing the result of the transform. If this instance is a success, returns
     ///            the same success.
-    public func flatMapError<T: Error>(_ transform: (Failure) throws -> T) -> AFResult<Success> {
+    func flatMapError<T: Error>(_ transform: (Failure) throws -> T) -> AFResult<Success> {
         switch self {
         case .failure(let error):
             do {
@@ -134,7 +164,7 @@ extension AFResult {
     /// - Parameter closure: A closure that takes the success value of this instance.
     /// - Returns: An `AFResult` instance, unmodified.
     @discardableResult
-    public func withValue(_ closure: (Success) throws -> Void) rethrows -> AFResult<Success> {
+    func withValue(_ closure: (Success) throws -> Void) rethrows -> AFResult<Success> {
         switch self {
         case .success(let value):
             try closure(value)
@@ -151,7 +181,7 @@ extension AFResult {
     /// - Parameter closure: A closure that takes the success value of this instance.
     /// - Returns: An `AFResult` instance, unmodified.
     @discardableResult
-    public func withError(_ closure: (Failure) throws -> Void) rethrows -> AFResult<Success> {
+    func withError(_ closure: (Failure) throws -> Void) rethrows -> AFResult<Success> {
         switch self {
         case .failure(let error):
             try closure(error)
@@ -168,7 +198,7 @@ extension AFResult {
     /// - Parameter closure: A `Void` closure.
     /// - Returns: This `AFResult` instance, unmodified.
     @discardableResult
-    public func ifSuccess(_ closure: () throws -> Void) rethrows -> AFResult<Success> {
+    func ifSuccess(_ closure: () throws -> Void) rethrows -> AFResult<Success> {
         switch self {
         case .success(let value):
             try closure()
@@ -185,7 +215,7 @@ extension AFResult {
     /// - Parameter closure: A `Void` closure.
     /// - Returns: This `AFResult` instance, unmodified.
     @discardableResult
-    public func ifFailure(_ closure: () throws -> Void) rethrows -> AFResult<Success> {
+    func ifFailure(_ closure: () throws -> Void) rethrows -> AFResult<Success> {
         switch self {
         case .success(let value):
             return .success(value)
@@ -196,7 +226,7 @@ extension AFResult {
     }
 
     /// Returns the associated value if the result is a success, `nil` otherwise.
-    public var value: Success? {
+    var value: Success? {
         switch self {
         case .success(let value):
             return value
@@ -206,7 +236,7 @@ extension AFResult {
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    public var error: Error? {
+    var error: Error? {
         switch self {
         case .success:
             return nil
