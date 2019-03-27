@@ -50,12 +50,8 @@ public enum Result<Value> {
 
     /// Returns `true` if the result is a success, `false` otherwise.
     public var isSuccess: Bool {
-        switch self {
-        case .success:
-            return true
-        case .failure:
-            return false
-        }
+        guard case .success = self else { return false }
+        return true
     }
 
     /// Returns `true` if the result is a failure, `false` otherwise.
@@ -65,22 +61,14 @@ public enum Result<Value> {
 
     /// Returns the associated value if the result is a success, `nil` otherwise.
     public var value: Value? {
-        switch self {
-        case .success(let value):
-            return value
-        case .failure:
-            return nil
-        }
+        guard case .success(let value) = self else { return nil }
+        return value
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
     public var error: Error? {
-        switch self {
-        case .success:
-            return nil
-        case .failure(let error):
-            return error
-        }
+        guard case .failure(let error) = self else { return nil }
+        return error
     }
 }
 
@@ -225,12 +213,8 @@ extension Result {
     /// - Returns: A `Result` instance containing the result of the transform. If this instance is a success, returns
     ///            the same instance.
     public func mapError<T: Error>(_ transform: (Error) -> T) -> Result {
-        switch self {
-        case .failure(let error):
-            return .failure(transform(error))
-        case .success:
-            return self
-        }
+        guard case .failure(let error) = self else { return self }
+        return .failure(transform(error))
     }
 
     /// Evaluates the specified closure when the `Result` is a failure, passing the unwrapped error as a parameter.
