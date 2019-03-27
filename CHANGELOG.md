@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 4.x Releases
-- `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481)
+- `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481) | [4.8.2](#482)
 - `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471) | [4.7.2](#472) | [4.7.3](#473)
 - `4.6.x` Releases - [4.6.0](#460)
 - `4.5.x` Releases - [4.5.0](#450) | [4.5.1](#451)
@@ -34,6 +34,17 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [4.8.2](https://github.com/Alamofire/Alamofire/releases/tag/4.8.2)
+Released on 2019-03-27. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.8.2).
+
+#### Fixed
+- Compatability with SPM from Xcode 10.2.
+  - Fixed by [Klaas](https://github.com/klaas) in Pull Request [#2762](https://github.com/Alamofire/Alamofire/pull/2762).
+
+#### Updated
+- Project for compatability with Xcode 10.2.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2767](https://github.com/Alamofire/Alamofire/pull/2762).
 
 ## [4.8.1](https://github.com/Alamofire/Alamofire/releases/tag/4.8.1)
 Released on 2019-01-15. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.8.1).
