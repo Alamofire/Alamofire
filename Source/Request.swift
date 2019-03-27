@@ -340,8 +340,8 @@ open class Request {
         retryOrFinish(error: self.error)
     }
 
-    /// Called when the `RequestDelegate` is retrying this `Request`. Calls `reset()`.
-    func requestIsRetrying() {
+    /// Called when the `RequestDelegate` is going to retry this `Request`. Calls `reset()`.
+    func prepareForRetry() {
         protectedMutableState.write { $0.retryCount += 1 }
 
         reset()
@@ -353,14 +353,10 @@ open class Request {
     func retryOrFinish(error: Error?) {
         if let error = error, let delegate = delegate {
             delegate.retryResult(for: self, dueTo: error) { retryResult in
-                guard let retryResult = retryResult else { self.finish(); return }
-
                 switch retryResult {
-                case .doNotRetry:
-                    self.finish()
-                case .doNotRetryWithError(let error):
-                    self.finish(error: error)
-                default:
+                case .doNotRetry, .doNotRetryWithError:
+                    self.finish(error: retryResult.error)
+                case .retry, .retryWithDelay:
                     delegate.retryRequest(self, withDelay: retryResult.delay)
                 }
             }
@@ -706,7 +702,7 @@ extension Request: CustomDebugStringConvertible {
 public protocol RequestDelegate: AnyObject {
     var sessionConfiguration: URLSessionConfiguration { get }
 
-    func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult?) -> Void)
+    func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
     func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?)
 
     func cancelRequest(_ request: Request)

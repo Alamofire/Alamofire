@@ -513,17 +513,18 @@ extension Session: RequestDelegate {
         return session.configuration
     }
 
-    public func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult?) -> Void) {
-        guard let retrier = retrier(for: request) else { completion(nil); return }
+    public func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        guard let retrier = retrier(for: request) else {
+            rootQueue.async { completion(.doNotRetry) }
+            return
+        }
 
         retrier.retry(request, for: self, dueTo: error) { result in
             self.rootQueue.async {
-                if let retryResultError = result.error {
-                    let retryError = AFError.requestRetryFailed(retryError: retryResultError, originalError: error)
-                    completion(.doNotRetryWithError(retryError))
-                } else {
-                    completion(result)
-                }
+                guard let retryResultError = result.error else { completion(result); return }
+
+                let retryError = AFError.requestRetryFailed(retryError: retryResultError, originalError: error)
+                completion(.doNotRetryWithError(retryError))
             }
         }
     }
@@ -533,7 +534,7 @@ extension Session: RequestDelegate {
             let retry: () -> Void = {
                 guard !request.isCancelled else { return }
 
-                request.requestIsRetrying()
+                request.prepareForRetry()
                 self.perform(request)
             }
 

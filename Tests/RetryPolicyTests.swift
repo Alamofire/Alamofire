@@ -159,7 +159,7 @@ class RetryPolicyTestCase: BaseRetryPolicyTestCase {
 
             waitForExpectations(timeout: timeout, handler: nil)
 
-            request.requestIsRetrying()
+            request.prepareForRetry()
         }
 
         // Then
@@ -321,7 +321,7 @@ class RetryPolicyTestCase: BaseRetryPolicyTestCase {
 
             waitForExpectations(timeout: timeout, handler: nil)
 
-            request.requestIsRetrying()
+            request.prepareForRetry()
         }
 
         // Then

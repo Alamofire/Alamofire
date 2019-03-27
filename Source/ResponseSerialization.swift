@@ -161,39 +161,39 @@ extension DataRequest {
 
             self.eventMonitor?.request(self, didParseResponse: response)
 
-            if let serializerError = result.error, let delegate = self.delegate {
-                delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
-                    var didComplete: (() -> Void)? = { completionHandler(response) }
+            guard let serializerError = result.error, let delegate = self.delegate else {
+                self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+                return
+            }
 
-                    if let retryResult = retryResult {
-                        switch retryResult {
-                        case .doNotRetry:
-                            break
+            delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
+                var didComplete: (() -> Void)?
 
-                        case .doNotRetryWithError(let retryError):
-                            let result = Result<Serializer.SerializedObject>.failure(retryError)
-
-                            let response = DataResponse(request: self.request,
-                                                        response: self.response,
-                                                        data: self.data,
-                                                        metrics: self.metrics,
-                                                        serializationDuration: (end - start),
-                                                        result: result)
-
-                            didComplete = { completionHandler(response) }
-
-                        default:
-                            delegate.retryRequest(self, withDelay: retryResult.delay)
-                            didComplete = nil
-                        }
-                    }
-
+                defer {
                     if let didComplete = didComplete {
                         self.responseSerializerDidComplete { queue.async { didComplete() } }
                     }
                 }
-            } else {
-                self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+
+                switch retryResult {
+                case .doNotRetry:
+                    didComplete = { completionHandler(response) }
+
+                case .doNotRetryWithError(let retryError):
+                    let result = Result<Serializer.SerializedObject>.failure(retryError)
+
+                    let response = DataResponse(request: self.request,
+                                                response: self.response,
+                                                data: self.data,
+                                                metrics: self.metrics,
+                                                serializationDuration: (end - start),
+                                                result: result)
+
+                    didComplete = { completionHandler(response) }
+
+                case .retry, .retryWithDelay:
+                    delegate.retryRequest(self, withDelay: retryResult.delay)
+                }
             }
         }
 
@@ -265,40 +265,40 @@ extension DownloadRequest {
                                             serializationDuration: (end - start),
                                             result: result)
 
-            if let serializerError = result.error, let delegate = self.delegate {
-                delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
-                    var didComplete: (() -> Void)? = { completionHandler(response) }
+            guard let serializerError = result.error, let delegate = self.delegate else {
+                self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+                return
+            }
 
-                    if let retryResult = retryResult {
-                        switch retryResult {
-                        case .doNotRetry:
-                            break
+            delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
+                var didComplete: (() -> Void)?
 
-                        case .doNotRetryWithError(let retryError):
-                            let result = Result<T.SerializedObject>.failure(retryError)
-
-                            let response = DownloadResponse(request: self.request,
-                                                            response: self.response,
-                                                            fileURL: self.fileURL,
-                                                            resumeData: self.resumeData,
-                                                            metrics: self.metrics,
-                                                            serializationDuration: (end - start),
-                                                            result: result)
-
-                            didComplete = { completionHandler(response) }
-
-                        default:
-                            delegate.retryRequest(self, withDelay: retryResult.delay)
-                            didComplete = nil
-                        }
-                    }
-
+                defer {
                     if let didComplete = didComplete {
                         self.responseSerializerDidComplete { queue.async { didComplete() } }
                     }
                 }
-            } else {
-                self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+
+                switch retryResult {
+                case .doNotRetry:
+                    didComplete = { completionHandler(response) }
+
+                case .doNotRetryWithError(let retryError):
+                    let result = Result<T.SerializedObject>.failure(retryError)
+
+                    let response = DownloadResponse(request: self.request,
+                                                    response: self.response,
+                                                    fileURL: self.fileURL,
+                                                    resumeData: self.resumeData,
+                                                    metrics: self.metrics,
+                                                    serializationDuration: (end - start),
+                                                    result: result)
+
+                    didComplete = { completionHandler(response) }
+
+                case .retry, .retryWithDelay:
+                    delegate.retryRequest(self, withDelay: retryResult.delay)
+                }
             }
         }
 
