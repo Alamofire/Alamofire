@@ -513,41 +513,35 @@ extension Session: RequestDelegate {
         return session.configuration
     }
 
-    public func willAttemptToRetryRequest(_ request: Request) -> Bool {
-        return retrier(for: request) != nil
-    }
-
-    public func retryRequest(_ request: Request, ifNecessaryWithError error: Error) {
-        guard let retrier = retrier(for: request) else { request.finish(); return }
+    public func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        guard let retrier = retrier(for: request) else {
+            rootQueue.async { completion(.doNotRetry) }
+            return
+        }
 
         retrier.retry(request, for: self, dueTo: error) { result in
-            guard !request.isCancelled else { return }
-
             self.rootQueue.async {
+                guard let retryResultError = result.error else { completion(result); return }
+
+                let retryError = AFError.requestRetryFailed(retryError: retryResultError, originalError: error)
+                completion(.doNotRetryWithError(retryError))
+            }
+        }
+    }
+
+    public func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?) {
+        self.rootQueue.async {
+            let retry: () -> Void = {
                 guard !request.isCancelled else { return }
 
-                if result.retryRequired {
-                    let retry: () -> Void = {
-                        guard !request.isCancelled else { return }
+                request.prepareForRetry()
+                self.perform(request)
+            }
 
-                        request.requestIsRetrying()
-                        self.perform(request)
-                    }
-
-                    if let retryDelay = result.delay {
-                        self.rootQueue.after(retryDelay) { retry() }
-                    } else {
-                        self.rootQueue.async { retry() }
-                    }
-                } else {
-                    var retryError = error
-
-                    if let retryResultError = result.error {
-                        retryError = AFError.requestRetryFailed(retryError: retryResultError, originalError: error)
-                    }
-
-                    request.finish(error: retryError)
-                }
+            if let retryDelay = timeDelay {
+                self.rootQueue.after(retryDelay) { retry() }
+            } else {
+                retry()
             }
         }
     }

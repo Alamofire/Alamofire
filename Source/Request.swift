@@ -68,10 +68,6 @@ open class Request {
     /// The `Request`'s delegate.
     public weak var delegate: RequestDelegate?
 
-    /// `OperationQueue` used internally to enqueue response callbacks. Starts suspended but is activated when the
-    /// `Request` is finished.
-    let internalQueue: OperationQueue
-
     // MARK: - Updated State
 
     /// Type encapsulating all mutable state that may need to be accessed from anything other than the `underlyingQueue`.
@@ -86,6 +82,10 @@ open class Request {
         var redirectHandler: RedirectHandler?
         /// `CachedResponseHandler` provided to handle caching responses.
         var cachedResponseHandler: CachedResponseHandler?
+        /// Response serialization closures that handle parsing responses.
+        var responseSerializers: [() -> Void] = []
+        /// Response serialization completion closures executed once all response serialization is complete.
+        var responseSerializerCompletions: [() -> Void] = []
         /// `URLCredential` used for authentication challenges.
         var credential: URLCredential?
         /// All `URLRequest`s created by Alamofire on behalf of the `Request`.
@@ -237,10 +237,6 @@ open class Request {
         self.id = id
         self.underlyingQueue = underlyingQueue
         self.serializationQueue = serializationQueue
-        internalQueue = OperationQueue(maxConcurrentOperationCount: 1,
-                                       underlyingQueue: underlyingQueue,
-                                       name: "org.alamofire.request-\(id)",
-                                       startSuspended: true)
         self.eventMonitor = eventMonitor
         self.interceptor = interceptor
         self.delegate = delegate
@@ -293,13 +289,11 @@ open class Request {
         retryOrFinish(error: error)
     }
 
-    /// Called when a `URLSessionTask` is created on behalf of the `Request`. Calls `reset()`.
+    /// Called when a `URLSessionTask` is created on behalf of the `Request`.
     ///
     /// - Parameter task: The `URLSessionTask` created.
     func didCreateTask(_ task: URLSessionTask) {
         protectedMutableState.write { $0.tasks.append(task) }
-
-        reset()
 
         eventMonitor?.request(self, didCreateTask: task)
     }
@@ -346,20 +340,26 @@ open class Request {
         retryOrFinish(error: self.error)
     }
 
-    /// Called when the `RequestDelegate` is retrying this `Request`.
-    func requestIsRetrying() {
+    /// Called when the `RequestDelegate` is going to retry this `Request`. Calls `reset()`.
+    func prepareForRetry() {
         protectedMutableState.write { $0.retryCount += 1 }
+
+        reset()
 
         eventMonitor?.requestIsRetrying(self)
     }
 
     /// Called to trigger retry or finish this `Request`.
     func retryOrFinish(error: Error?) {
-        if let error = error, delegate?.willAttemptToRetryRequest(self) == true {
-            delegate?.retryRequest(self, ifNecessaryWithError: error)
-            return
-        } else {
-            finish()
+        guard let error = error, let delegate = delegate else { finish(); return }
+
+        delegate.retryResult(for: self, dueTo: error) { retryResult in
+            switch retryResult {
+            case .doNotRetry, .doNotRetryWithError:
+                self.finish(error: retryResult.error)
+            case .retry, .retryWithDelay:
+                delegate.retryRequest(self, withDelay: retryResult.delay)
+            }
         }
     }
 
@@ -368,12 +368,53 @@ open class Request {
         if let error = error { self.error = error }
 
         // Start response handlers
-        internalQueue.isSuspended = false
+        processNextResponseSerializer()
 
         eventMonitor?.requestDidFinish(self)
     }
 
-    /// Resets all task related state for retry.
+    /// Appends the response serialization closure to the `Request`.
+    func appendResponseSerializer(_ closure: @escaping () -> Void) {
+        protectedMutableState.write { $0.responseSerializers.append(closure) }
+    }
+
+    /// Returns the next response serializer closure to execute if there's one left.
+    func nextResponseSerializer() -> (() -> Void)? {
+        var responseSerializer: (() -> Void)?
+
+        protectedMutableState.write { mutableState in
+            let responseSerializerIndex = mutableState.responseSerializerCompletions.count
+
+            if responseSerializerIndex < mutableState.responseSerializers.count {
+                responseSerializer = mutableState.responseSerializers[responseSerializerIndex]
+            }
+        }
+
+        return responseSerializer
+    }
+
+    /// Processes the next response serializer and calls all completions if response serialization is complete.
+    func processNextResponseSerializer() {
+        guard let responseSerializer = nextResponseSerializer() else {
+            // Execute all response serializer completions
+            protectedMutableState.directValue.responseSerializerCompletions.forEach { $0() }
+
+            // Cleanup the request
+            cleanup()
+
+            return
+        }
+
+        serializationQueue.async { responseSerializer() }
+    }
+
+    /// Notifies the `Request` that the response serializer is complete.
+    func responseSerializerDidComplete(completion: @escaping () -> Void) {
+        protectedMutableState.write { $0.responseSerializerCompletions.append(completion) }
+        processNextResponseSerializer()
+    }
+
+    /// Resets all task and response serializer related state for retry.
     func reset() {
         error = nil
 
@@ -381,6 +422,8 @@ open class Request {
         uploadProgress.completedUnitCount = 0
         downloadProgress.totalUnitCount = 0
         downloadProgress.completedUnitCount = 0
+
+        protectedMutableState.write { $0.responseSerializerCompletions = [] }
     }
 
     /// Called when updating the upload progress.
@@ -535,6 +578,13 @@ open class Request {
 
         return self
     }
+
+    // MARK: - Cleanup
+
+    /// Final cleanup step executed when a `Request` finishes response serialization.
+    open func cleanup() {
+        // No-op: override in subclass
+    }
 }
 
 // MARK: - Protocol Conformances
@@ -650,8 +700,8 @@ extension Request: CustomDebugStringConvertible {
 public protocol RequestDelegate: AnyObject {
     var sessionConfiguration: URLSessionConfiguration { get }
 
-    func willAttemptToRetryRequest(_ request: Request) -> Bool
-    func retryRequest(_ request: Request, ifNecessaryWithError error: Error)
+    func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
+    func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?)
 
     func cancelRequest(_ request: Request)
     func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void)
@@ -949,17 +999,6 @@ open class UploadRequest: DataRequest {
                    eventMonitor: eventMonitor,
                    interceptor: interceptor,
                    delegate: delegate)
-
-        // Automatically remove temporary upload files (e.g. multipart form data)
-        internalQueue.addOperation {
-            guard
-                let uploadable = self.uploadable,
-                case let .file(url, shouldRemove) = uploadable,
-                shouldRemove else { return }
-
-            // TODO: Abstract file manager
-            try? FileManager.default.removeItem(at: url)
-        }
     }
 
     func didCreateUploadable(_ uploadable: Uploadable) {
@@ -1000,6 +1039,19 @@ open class UploadRequest: DataRequest {
         eventMonitor?.request(self, didProvideInputStream: stream)
 
         return stream
+    }
+
+    open override func cleanup() {
+        super.cleanup()
+
+        guard
+            let uploadable = self.uploadable,
+            case let .file(url, shouldRemove) = uploadable,
+            shouldRemove
+        else { return }
+
+        // TODO: Abstract file manager
+        try? FileManager.default.removeItem(at: url)
     }
 }
 

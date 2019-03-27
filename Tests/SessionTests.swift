@@ -89,8 +89,10 @@ class SessionTestCase: BaseTestCase {
     }
 
     private class RequestHandler: RequestInterceptor {
+        var adaptCalledCount = 0
         var adaptedCount = 0
         var retryCount = 0
+        var retryCalledCount = 0
         var retryErrors: [Error] = []
 
         var shouldApplyAuthorizationHeader = false
@@ -101,15 +103,17 @@ class SessionTestCase: BaseTestCase {
         var retryDelay: TimeInterval?
 
         func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+            adaptCalledCount += 1
+
             let result: Result<URLRequest> = Result {
                 if throwsErrorOnFirstAdapt {
                     throwsErrorOnFirstAdapt = false
-                    throw AFError.invalidURL(url: "")
+                    throw AFError.invalidURL(url: "/adapt/error/1")
                 }
 
                 if throwsErrorOnSecondAdapt && adaptedCount == 1 {
                     throwsErrorOnSecondAdapt = false
-                    throw AFError.invalidURL(url: "")
+                    throw AFError.invalidURL(url: "/adapt/error/2")
                 }
 
                 var urlRequest = urlRequest
@@ -132,8 +136,10 @@ class SessionTestCase: BaseTestCase {
             dueTo error: Error,
             completion: @escaping (RetryResult) -> Void)
         {
+            retryCalledCount += 1
+
             if throwsErrorOnRetry {
-                let error = AFError.invalidURL(url: "")
+                let error = AFError.invalidURL(url: "/invalid/url/\(retryCalledCount)")
                 completion(.doNotRetryWithError(error))
                 return
             }
@@ -156,11 +162,15 @@ class SessionTestCase: BaseTestCase {
     }
 
     private class UploadHandler: RequestInterceptor {
+        var adaptCalledCount = 0
         var adaptedCount = 0
+        var retryCalledCount = 0
         var retryCount = 0
         var retryErrors: [Error] = []
 
         func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest>) -> Void) {
+            adaptCalledCount += 1
+
             let result: Result<URLRequest> = Result {
                 adaptedCount += 1
 
@@ -178,6 +188,8 @@ class SessionTestCase: BaseTestCase {
             dueTo error: Error,
             completion: @escaping (RetryResult) -> Void)
         {
+            retryCalledCount += 1
+
             retryCount += 1
             retryErrors.append(error)
 
@@ -876,8 +888,10 @@ class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
         XCTAssertEqual(handler.adaptedCount, 2)
-        XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(handler.retryCalledCount, 3)
+        XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
@@ -904,10 +918,14 @@ class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+        XCTAssertEqual(sessionHandler.adaptCalledCount, 3)
         XCTAssertEqual(sessionHandler.adaptedCount, 3)
-        XCTAssertEqual(sessionHandler.retryCount, 2)
+        XCTAssertEqual(sessionHandler.retryCalledCount, 3)
+        XCTAssertEqual(sessionHandler.retryCount, 3)
+        XCTAssertEqual(requestHandler.adaptCalledCount, 3)
         XCTAssertEqual(requestHandler.adaptedCount, 3)
-        XCTAssertEqual(requestHandler.retryCount, 3)
+        XCTAssertEqual(requestHandler.retryCalledCount, 4)
+        XCTAssertEqual(requestHandler.retryCount, 4)
         XCTAssertEqual(request.retryCount, 2)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
@@ -936,7 +954,9 @@ class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
         XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
@@ -970,7 +990,9 @@ class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
         XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
@@ -997,7 +1019,9 @@ class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
         XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
@@ -1024,7 +1048,9 @@ class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
         XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
@@ -1052,15 +1078,17 @@ class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
         XCTAssertEqual(handler.adaptedCount, 1)
-        XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(handler.retryCalledCount, 3)
+        XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
         if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isRequestAdaptationError)
-            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
+            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         } else {
             XCTFail("error should not be nil")
         }
@@ -1088,15 +1116,17 @@ class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
         XCTAssertEqual(handler.adaptedCount, 1)
-        XCTAssertEqual(handler.retryCount, 2)
+        XCTAssertEqual(handler.retryCalledCount, 3)
+        XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
         if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isRequestAdaptationError)
-            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
+            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         } else {
             XCTFail("error should not be nil")
         }
@@ -1123,7 +1153,9 @@ class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
+        XCTAssertEqual(handler.adaptCalledCount, 1)
         XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCalledCount, 2)
         XCTAssertEqual(handler.retryCount, 0)
         XCTAssertEqual(request.retryCount, 0)
         XCTAssertEqual(response?.result.isSuccess, false)
@@ -1131,9 +1163,249 @@ class SessionTestCase: BaseTestCase {
 
         if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isRequestRetryError)
-            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
+            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/invalid/url/2")
         } else {
             XCTFail("error should not be nil")
+        }
+    }
+
+    // MARK: Tests - Response Serializer Retry
+
+    func testThatSessionCallsRequestRetrierWhenResponseSerializerThrowsError() {
+        // Given
+        let handler = RequestHandler()
+        handler.shouldRetry = false
+
+        let session = Session()
+
+        let expectation = self.expectation(description: "request should eventually fail")
+        var response: DataResponse<Any>?
+
+        // When
+        let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
+            .validate()
+            .responseJSON { jsonResponse in
+                response = jsonResponse
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptCalledCount, 1)
+        XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCalledCount, 1)
+        XCTAssertEqual(handler.retryCount, 0)
+        XCTAssertEqual(request.retryCount, 0)
+        XCTAssertEqual(response?.result.isSuccess, false)
+        XCTAssertTrue(session.requestTaskMap.isEmpty)
+
+        if let error = response?.error?.asAFError {
+            XCTAssertTrue(error.isResponseSerializationError)
+            XCTAssertTrue(error.localizedDescription.starts(with: "JSON could not be serialized"))
+        } else {
+            XCTFail("error should not be nil")
+        }
+    }
+
+    func testThatSessionCallsRequestRetrierForAllResponseSerializersThatThrowError() throws {
+        // Given
+        let handler = RequestHandler()
+        handler.throwsErrorOnRetry = true
+
+        let session = Session()
+
+        let json1Expectation = self.expectation(description: "request should eventually fail")
+        var json1Response: DataResponse<Any>?
+
+        let json2Expectation = self.expectation(description: "request should eventually fail")
+        var json2Response: DataResponse<Any>?
+
+        // When
+        let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
+            .validate()
+            .responseJSON { response in
+                json1Response = response
+                json1Expectation.fulfill()
+            }
+            .responseJSON { response in
+                json2Response = response
+                json2Expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptCalledCount, 1)
+        XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCalledCount, 2)
+        XCTAssertEqual(handler.retryCount, 0)
+        XCTAssertEqual(request.retryCount, 0)
+        XCTAssertEqual(json1Response?.result.isSuccess, false)
+        XCTAssertEqual(json2Response?.result.isSuccess, false)
+        XCTAssertTrue(session.requestTaskMap.isEmpty)
+
+        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
+        XCTAssertEqual(errors.count, 2)
+
+        for (index, error) in errors.enumerated() {
+            XCTAssertTrue(error.isRequestRetryError)
+            XCTAssertEqual(error.localizedDescription.starts(with: "Request retry failed with retry error"), true)
+
+            if case let .requestRetryFailed(retryError, originalError) = error {
+                XCTAssertEqual(try retryError.asAFError?.urlConvertible?.asURL().absoluteString, "/invalid/url/\(index + 1)")
+                XCTAssertTrue(originalError.localizedDescription.starts(with: "JSON could not be serialized"))
+            } else {
+                XCTFail("Error failure reason should be response serialization failure")
+            }
+        }
+    }
+
+    func testThatSessionRetriesRequestImmediatelyWhenResponseSerializerRequestsRetry() throws {
+        // Given
+        let handler = RequestHandler()
+        let session = Session()
+
+        let json1Expectation = self.expectation(description: "request should eventually fail")
+        var json1Response: DataResponse<Any>?
+
+        let json2Expectation = self.expectation(description: "request should eventually fail")
+        var json2Response: DataResponse<Any>?
+
+        // When
+        let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
+            .validate()
+            .responseJSON { response in
+                json1Response = response
+                json1Expectation.fulfill()
+            }
+            .responseJSON { response in
+                json2Response = response
+                json2Expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: 10, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
+        XCTAssertEqual(handler.adaptedCount, 2)
+        XCTAssertEqual(handler.retryCalledCount, 3)
+        XCTAssertEqual(handler.retryCount, 3)
+        XCTAssertEqual(request.retryCount, 1)
+        XCTAssertEqual(json1Response?.result.isSuccess, false)
+        XCTAssertEqual(json2Response?.result.isSuccess, false)
+        XCTAssertTrue(session.requestTaskMap.isEmpty)
+
+        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
+        XCTAssertEqual(errors.count, 2)
+
+        for error in errors {
+            XCTAssertTrue(error.isResponseSerializationError)
+            XCTAssertTrue(error.localizedDescription.starts(with: "JSON could not be serialized"))
+        }
+    }
+
+    func testThatSessionCallsResponseSerializerCompletionsWhenAdapterThrowsErrorDuringRetry() {
+        // Four retries should occur given this scenario:
+        // 1) Retrier is called from first response serializer failure (trips retry)
+        // 2) Retrier is called by Session for adapt error thrown
+        // 3) Retrier is called again from first response serializer failure
+        // 4) Retrier is called from second response serializer failure
+
+        // Given
+        let handler = RequestHandler()
+        handler.throwsErrorOnSecondAdapt = true
+
+        let session = Session()
+
+        let json1Expectation = self.expectation(description: "request should eventually fail")
+        var json1Response: DataResponse<Any>?
+
+        let json2Expectation = self.expectation(description: "request should eventually fail")
+        var json2Response: DataResponse<Any>?
+
+        // When
+        let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
+            .validate()
+            .responseJSON { response in
+                json1Response = response
+                json1Expectation.fulfill()
+            }
+            .responseJSON { response in
+                json2Response = response
+                json2Expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: 10, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
+        XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCalledCount, 4)
+        XCTAssertEqual(handler.retryCount, 4)
+        XCTAssertEqual(request.retryCount, 1)
+        XCTAssertEqual(json1Response?.result.isSuccess, false)
+        XCTAssertEqual(json2Response?.result.isSuccess, false)
+        XCTAssertTrue(session.requestTaskMap.isEmpty)
+
+        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
+        XCTAssertEqual(errors.count, 2)
+
+        for error in errors {
+            XCTAssertTrue(error.isRequestAdaptationError)
+            XCTAssertEqual(error.localizedDescription, "Request adaption failed with error: URL is not valid: /adapt/error/2")
+        }
+    }
+
+    func testThatSessionCallsResponseSerializerCompletionsWhenAdapterThrowsErrorDuringRetryForDownloads() {
+        // Four retries should occur given this scenario:
+        // 1) Retrier is called from first response serializer failure (trips retry)
+        // 2) Retrier is called by Session for adapt error thrown
+        // 3) Retrier is called again from first response serializer failure
+        // 4) Retrier is called from second response serializer failure
+
+        // Given
+        let handler = RequestHandler()
+        handler.throwsErrorOnSecondAdapt = true
+
+        let session = Session()
+
+        let json1Expectation = self.expectation(description: "request should eventually fail")
+        var json1Response: DownloadResponse<Any>?
+
+        let json2Expectation = self.expectation(description: "request should eventually fail")
+        var json2Response: DownloadResponse<Any>?
+
+        // When
+        let request = session.download("https://httpbin.org/image/jpeg", interceptor: handler)
+            .validate()
+            .responseJSON { response in
+                json1Response = response
+                json1Expectation.fulfill()
+            }
+            .responseJSON { response in
+                json2Response = response
+                json2Expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: 10, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptCalledCount, 2)
+        XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCalledCount, 4)
+        XCTAssertEqual(handler.retryCount, 4)
+        XCTAssertEqual(request.retryCount, 1)
+        XCTAssertEqual(json1Response?.result.isSuccess, false)
+        XCTAssertEqual(json2Response?.result.isSuccess, false)
+        XCTAssertTrue(session.requestTaskMap.isEmpty)
+
+        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
+        XCTAssertEqual(errors.count, 2)
+
+        for error in errors {
+            XCTAssertTrue(error.isRequestAdaptationError)
+            XCTAssertEqual(error.localizedDescription, "Request adaption failed with error: URL is not valid: /adapt/error/2")
         }
     }
 
