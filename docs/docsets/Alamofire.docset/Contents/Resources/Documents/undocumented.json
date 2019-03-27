@@ -1,481 +1,481 @@
 {
   "warnings": [
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 44,
       "symbol": "AFError.ParameterEncodingFailureReason.missingURL",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 45,
       "symbol": "AFError.ParameterEncodingFailureReason.jsonEncodingFailed(error:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 46,
       "symbol": "AFError.ParameterEncodingFailureReason.propertyListEncodingFailed(error:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 75,
       "symbol": "AFError.MultipartEncodingFailureReason.bodyPartURLInvalid(url:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 76,
       "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFilenameInvalid(in:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 77,
       "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFileNotReachable(at:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 78,
       "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFileNotReachableWithError(atURL:error:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 79,
       "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFileIsDirectory(at:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 80,
       "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFileSizeNotAvailable(at:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 81,
       "symbol": "AFError.MultipartEncodingFailureReason.bodyPartFileSizeQueryFailedWithError(forURL:error:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 82,
       "symbol": "AFError.MultipartEncodingFailureReason.bodyPartInputStreamCreationFailed(for:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 84,
       "symbol": "AFError.MultipartEncodingFailureReason.outputStreamCreationFailed(for:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 85,
       "symbol": "AFError.MultipartEncodingFailureReason.outputStreamFileAlreadyExists(at:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 86,
       "symbol": "AFError.MultipartEncodingFailureReason.outputStreamURLInvalid(url:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 87,
       "symbol": "AFError.MultipartEncodingFailureReason.outputStreamWriteFailed(error:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 89,
       "symbol": "AFError.MultipartEncodingFailureReason.inputStreamReadFailed(error:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 102,
       "symbol": "AFError.ResponseValidationFailureReason.dataFileNil",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 103,
       "symbol": "AFError.ResponseValidationFailureReason.dataFileReadFailed(at:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 104,
       "symbol": "AFError.ResponseValidationFailureReason.missingContentType(acceptableContentTypes:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 105,
       "symbol": "AFError.ResponseValidationFailureReason.unacceptableContentType(acceptableContentTypes:responseContentType:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 106,
       "symbol": "AFError.ResponseValidationFailureReason.unacceptableStatusCode(code:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 119,
       "symbol": "AFError.ResponseSerializationFailureReason.inputDataNil",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 120,
       "symbol": "AFError.ResponseSerializationFailureReason.inputDataNilOrZeroLength",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 121,
       "symbol": "AFError.ResponseSerializationFailureReason.inputFileNil",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 122,
       "symbol": "AFError.ResponseSerializationFailureReason.inputFileReadFailed(at:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 123,
       "symbol": "AFError.ResponseSerializationFailureReason.stringSerializationFailed(encoding:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 124,
       "symbol": "AFError.ResponseSerializationFailureReason.jsonSerializationFailed(error:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 125,
       "symbol": "AFError.ResponseSerializationFailureReason.propertyListSerializationFailed(error:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 128,
       "symbol": "AFError.invalidURL(url:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 129,
       "symbol": "AFError.parameterEncodingFailed(reason:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 130,
       "symbol": "AFError.multipartEncodingFailed(reason:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 131,
       "symbol": "AFError.responseValidationFailed(reason:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/AFError.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
       "line": 132,
       "symbol": "AFError.responseSerializationFailed(reason:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/NetworkReachabilityManager.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/NetworkReachabilityManager.swift",
       "line": 43,
       "symbol": "NetworkReachabilityManager.NetworkReachabilityStatus.unknown",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/NetworkReachabilityManager.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/NetworkReachabilityManager.swift",
       "line": 44,
       "symbol": "NetworkReachabilityManager.NetworkReachabilityStatus.notReachable",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/NetworkReachabilityManager.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/NetworkReachabilityManager.swift",
       "line": 45,
       "symbol": "NetworkReachabilityManager.NetworkReachabilityStatus.reachable(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/NetworkReachabilityManager.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/NetworkReachabilityManager.swift",
       "line": 53,
       "symbol": "NetworkReachabilityManager.ConnectionType.ethernetOrWiFi",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/NetworkReachabilityManager.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/NetworkReachabilityManager.swift",
       "line": 54,
       "symbol": "NetworkReachabilityManager.ConnectionType.wwan",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/NetworkReachabilityManager.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/NetworkReachabilityManager.swift",
       "line": 84,
       "symbol": "NetworkReachabilityManager.flags",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/NetworkReachabilityManager.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/NetworkReachabilityManager.swift",
       "line": 95,
       "symbol": "NetworkReachabilityManager.previousFlags",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 31,
       "symbol": "HTTPMethod.options",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 32,
       "symbol": "HTTPMethod.get",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 33,
       "symbol": "HTTPMethod.head",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 34,
       "symbol": "HTTPMethod.post",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 35,
       "symbol": "HTTPMethod.put",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 36,
       "symbol": "HTTPMethod.patch",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 37,
       "symbol": "HTTPMethod.delete",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 38,
       "symbol": "HTTPMethod.trace",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 39,
       "symbol": "HTTPMethod.connect",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 88,
       "symbol": "URLEncoding.Destination.httpBody",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 88,
       "symbol": "URLEncoding.Destination.methodDependent",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 88,
       "symbol": "URLEncoding.Destination.queryString",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 97,
       "symbol": "URLEncoding.ArrayEncoding.brackets",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 97,
       "symbol": "URLEncoding.ArrayEncoding.noBrackets",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 114,
       "symbol": "URLEncoding.BoolEncoding.literal",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ParameterEncoding.swift",
       "line": 114,
       "symbol": "URLEncoding.BoolEncoding.numeric",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Result.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Result.swift",
       "line": 35,
       "symbol": "Result.success(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Result.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Result.swift",
       "line": 36,
       "symbol": "Result.failure(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ServerTrustPolicy.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ServerTrustPolicy.swift",
       "line": 116,
       "symbol": "ServerTrustPolicy.performDefaultEvaluation(validateHost:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ServerTrustPolicy.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ServerTrustPolicy.swift",
       "line": 117,
       "symbol": "ServerTrustPolicy.performRevokedEvaluation(validateHost:revocationFlags:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ServerTrustPolicy.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ServerTrustPolicy.swift",
       "line": 118,
       "symbol": "ServerTrustPolicy.pinCertificates(certificates:validateCertificateChain:validateHost:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ServerTrustPolicy.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ServerTrustPolicy.swift",
       "line": 119,
       "symbol": "ServerTrustPolicy.pinPublicKeys(publicKeys:validateCertificateChain:validateHost:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ServerTrustPolicy.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ServerTrustPolicy.swift",
       "line": 120,
       "symbol": "ServerTrustPolicy.disableEvaluation",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ServerTrustPolicy.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ServerTrustPolicy.swift",
       "line": 121,
       "symbol": "ServerTrustPolicy.customEvaluation(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionManager.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionManager.swift",
       "line": 40,
       "symbol": "SessionManager.MultipartFormDataEncodingResult.success(request:streamingFromDisk:streamFileURL:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionManager.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionManager.swift",
       "line": 41,
       "symbol": "SessionManager.MultipartFormDataEncodingResult.failure(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Validation.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Validation.swift",
       "line": 38,
       "symbol": "Request.ValidationResult.success",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/Validation.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Validation.swift",
       "line": 39,
       "symbol": "Request.ValidationResult.failure(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     }
   ],
-  "source_directory": "/Users/jshier/Desktop/Code/Alamofire"
+  "source_directory": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire"
 }
