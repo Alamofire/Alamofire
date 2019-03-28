@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-@testable import Alamofire
+import Alamofire
 import Foundation
 import XCTest
 
@@ -406,7 +406,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return
         }
 
-        XCTAssertTrue(response?.result.isSuccess ==  true)
+        XCTAssertTrue(response?.result.af.isSuccess ==  true)
     }
 
     func testThatUploadingMultipartFormDataBelowMemoryThresholdSetsContentTypeHeader() {
@@ -479,7 +479,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return
         }
 
-        XCTAssertTrue(response?.result.isSuccess == true)
+        XCTAssertTrue(response?.result.af.isSuccess == true)
         XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
     }
 
@@ -512,7 +512,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return
         }
 
-        XCTAssertTrue(response?.result.isSuccess == true)
+        XCTAssertTrue(response?.result.af.isSuccess == true)
 
         if
             let request = response?.request,

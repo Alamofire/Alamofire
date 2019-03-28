@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-@testable import Alamofire
+import Alamofire
 import Foundation
 import XCTest
 
@@ -389,7 +389,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() {
@@ -405,7 +405,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatMissingDNSNameLeafCertificatePassesEvaluationWithoutHostValidation() {
@@ -419,7 +419,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatExpiredCertificateChainFailsEvaluationWithoutHostValidation() {
@@ -433,7 +433,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatMissingIntermediateCertificateInChainFailsEvaluationWithoutHostValidation() {
@@ -447,7 +447,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     // MARK: Validate Host
@@ -463,7 +463,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatNonAnchoredRootCertificateChainFailsEvaluationWithHostValidation() {
@@ -479,7 +479,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatMissingDNSNameLeafCertificateFailsEvaluationWithHostValidation() {
@@ -493,7 +493,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatWildcardedLeafCertificateChainPassesEvaluationWithHostValidation() {
@@ -507,7 +507,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatExpiredCertificateChainFailsEvaluationWithHostValidation() {
@@ -521,7 +521,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatMissingIntermediateCertificateInChainFailsEvaluationWithHostValidation() {
@@ -535,8 +535,8 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
-        assertErrorIsAFError(result.error) { (error) in
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
+        assertErrorIsAFError(result.af.error) { error in
             XCTAssertTrue(error.isServerTrustEvaluationError)
         }
     }
@@ -559,7 +559,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() {
@@ -575,7 +575,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatMissingDNSNameLeafCertificatePassesEvaluationWithoutHostValidation() {
@@ -589,7 +589,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatExpiredCertificateChainFailsEvaluationWithoutHostValidation() {
@@ -603,7 +603,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatMissingIntermediateCertificateInChainFailsEvaluationWithoutHostValidation() {
@@ -617,7 +617,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     // MARK: Validate Host
@@ -633,7 +633,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatNonAnchoredRootCertificateChainFailsEvaluationWithHostValidation() {
@@ -649,7 +649,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatMissingDNSNameLeafCertificateFailsEvaluationWithHostValidation() {
@@ -663,7 +663,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatWildcardedLeafCertificateChainPassesEvaluationWithHostValidation() {
@@ -677,7 +677,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatExpiredCertificateChainFailsEvaluationWithHostValidation() {
@@ -691,7 +691,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatMissingIntermediateCertificateInChainFailsEvaluationWithHostValidation() {
@@ -705,7 +705,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 }
 
@@ -728,7 +728,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinnedIntermediateCertificatePassesEvaluationWithoutHostValidation() {
@@ -744,7 +744,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinnedRootCertificatePassesEvaluationWithoutHostValidation() {
@@ -760,7 +760,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningLeafCertificateNotInCertificateChainFailsEvaluationWithoutHostValidation() {
@@ -778,7 +778,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningIntermediateCertificateNotInCertificateChainFailsEvaluationWithoutHostValidation() {
@@ -792,7 +792,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningExpiredLeafCertificateFailsEvaluationWithoutHostValidation() {
@@ -806,7 +806,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningIntermediateCertificateWithExpiredLeafCertificateFailsEvaluationWithoutHostValidation() {
@@ -820,7 +820,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     // MARK: Validate Certificate Chain and Host
@@ -836,7 +836,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinnedIntermediateCertificatePassesEvaluationWithSelfSignedSupportAndHostValidation() {
@@ -850,7 +850,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinnedRootCertificatePassesEvaluationWithSelfSignedSupportAndHostValidation() {
@@ -864,7 +864,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningLeafCertificateNotInCertificateChainFailsEvaluationWithHostValidation() {
@@ -882,7 +882,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningIntermediateCertificateNotInCertificateChainFailsEvaluationWithHostValidation() {
@@ -896,7 +896,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningExpiredLeafCertificateFailsEvaluationWithHostValidation() {
@@ -910,7 +910,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningIntermediateCertificateWithExpiredLeafCertificateFailsEvaluationWithHostValidation() {
@@ -924,7 +924,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     // MARK: Do NOT Validate Certificate Chain or Host
@@ -944,7 +944,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinnedIntermediateCertificateWithoutCertificateChainValidationPassesEvaluation() {
@@ -962,7 +962,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinnedRootCertificateWithoutCertificateChainValidationPassesEvaluation() {
@@ -980,7 +980,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningLeafCertificateNotInCertificateChainWithoutCertificateChainValidationFailsEvaluation() {
@@ -998,7 +998,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningIntermediateCertificateNotInCertificateChainWithoutCertificateChainValidationFailsEvaluation() {
@@ -1016,7 +1016,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningExpiredLeafCertificateWithoutCertificateChainValidationPassesEvaluation() {
@@ -1034,7 +1034,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningIntermediateCertificateWithExpiredLeafCertificateWithoutCertificateChainValidationPassesEvaluation() {
@@ -1052,7 +1052,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningRootCertificateWithExpiredLeafCertificateWithoutCertificateChainValidationPassesEvaluation() {
@@ -1070,7 +1070,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningMultipleCertificatesWithoutCertificateChainValidationPassesEvaluation() {
@@ -1096,7 +1096,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 }
 
@@ -1118,7 +1118,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningIntermediateKeyPassesEvaluationWithoutHostValidation() {
@@ -1133,7 +1133,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningRootKeyPassesEvaluationWithoutHostValidation() {
@@ -1148,7 +1148,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningKeyNotInCertificateChainFailsEvaluationWithoutHostValidation() {
@@ -1163,7 +1163,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningBackupKeyPassesEvaluationWithoutHostValidation() {
@@ -1178,7 +1178,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     // MARK: Validate Certificate Chain and Host
@@ -1195,7 +1195,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningIntermediateKeyPassesEvaluationWithHostValidation() {
@@ -1210,7 +1210,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningRootKeyPassesEvaluationWithHostValidation() {
@@ -1225,7 +1225,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningKeyNotInCertificateChainFailsEvaluationWithHostValidation() {
@@ -1240,7 +1240,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningBackupKeyPassesEvaluationWithHostValidation() {
@@ -1255,7 +1255,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     // MARK: Do NOT perform default validation or validate host.
@@ -1274,7 +1274,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningRootKeyWithoutCertificateChainValidationFailsEvaluationWithMissingIntermediateCertificate() {
@@ -1291,7 +1291,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithIncorrectIntermediateCertificate() {
@@ -1308,7 +1308,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningLeafKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() {
@@ -1325,7 +1325,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningIntermediateKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() {
@@ -1342,7 +1342,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatPinningRootKeyWithoutCertificateChainValidationPassesEvaluationWithExpiredLeafCertificate() {
@@ -1359,7 +1359,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 }
 
@@ -1376,7 +1376,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatExpiredLeafCertificatePassesEvaluation() throws {
@@ -1389,7 +1389,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 }
 
@@ -1409,7 +1409,7 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try compositePolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
+        XCTAssertTrue(result.af.isSuccess, "server trust should pass evaluation")
     }
 
     func testThatNonAnchoredRootCertificateChainFailsEvaluationWithoutHostValidation() throws {
@@ -1427,7 +1427,7 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try compositePolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 
     func testThatExpiredLeafCertificateFailsDefaultAndRevocationComposite() throws {
@@ -1443,7 +1443,7 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
         let result = AFResult { try compositePolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
-        XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
+        XCTAssertFalse(result.af.isSuccess, "server trust should not pass evaluation")
     }
 }
 

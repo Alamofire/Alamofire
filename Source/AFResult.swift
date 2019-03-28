@@ -26,30 +26,32 @@ import Foundation
 
 public typealias AFResult<T> = Result<T, Error>
 
-extension AFResult {
+
+// MARK: AFExtension
+
+extension Result {
+    /// Type that acts as a extension point for all `Result` types.
+    public struct AFExtension {
+        let result: Result<Success, Failure>
+    }
+
+    public static var af: AFExtension.Type { return AFExtension.self }
+    public var af: AFExtension { return AFExtension(result: self) }
+}
+
+// MARK: - Public APIs
+
+extension Result.AFExtension {
     /// Returns the associated value if the result is a success, `nil` otherwise.
-    var value: Success? {
-        guard case .success(let value) = self else { return nil }
+    public var value: Success? {
+        guard case .success(let value) = result else { return nil }
         return value
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    var error: Error? {
-        guard case .failure(let error) = self else { return nil }
+    public var error: Error? {
+        guard case .failure(let error) = result else { return nil }
         return error
-    }
-
-    /// Initializes an `AFResult` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
-    ///
-    /// - Parameters:
-    ///   - value: A value.
-    ///   - error: An `Error`.
-    init(value: Success, error: Failure?) {
-        if let error = error {
-            self = .failure(error)
-        } else {
-            self = .success(value)
-        }
     }
 
     /// Evaluates the specified closure when the `AFResult` is a success, passing the unwrapped value as a parameter.
@@ -66,7 +68,7 @@ extension AFResult {
     /// - returns: An `AFResult` containing the result of the given closure. If this instance is a failure, returns the
     ///            same failure.
     func flatMap<T>(_ transform: (Success) throws -> T) -> AFResult<T> {
-        switch self {
+        switch result {
         case .success(let value):
             do {
                 return try .success(transform(value))
@@ -92,7 +94,7 @@ extension AFResult {
     /// - Returns: An `AFResult` instance containing the result of the transform. If this instance is a success, returns
     ///            the same success.
     func flatMapError<T: Error>(_ transform: (Failure) throws -> T) -> AFResult<Success> {
-        switch self {
+        switch result {
         case .failure(let error):
             do {
                 return try .failure(transform(error))
@@ -101,6 +103,23 @@ extension AFResult {
             }
         case .success(let value):
             return .success(value)
+        }
+    }
+}
+
+// MARK: - Internal APIs
+
+extension AFResult {
+    /// Initializes an `AFResult` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
+    ///
+    /// - Parameters:
+    ///   - value: A value.
+    ///   - error: An `Error`.
+    init(value: Success, error: Failure?) {
+        if let error = error {
+            self = .failure(error)
+        } else {
+            self = .success(value)
         }
     }
 }
