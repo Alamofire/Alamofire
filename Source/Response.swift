@@ -80,7 +80,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     /// The textual representation used when written to an output stream, which includes whether the result was a
     /// success or failure.
     public var description: String {
-        return result.debugDescription
+        return "\(result)"
     }
 
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
@@ -109,7 +109,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
         [Data]: \(data?.description ?? "None")
         [Network Duration]: \(metricsDescription)
         [Serialization Duration]: \(serializationDuration)s
-        [Result]: \(result.debugDescription)
+        [Result]: \(result)
         """
     }
 }
@@ -268,7 +268,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     /// The textual representation used when written to an output stream, which includes whether the result was a
     /// success or failure.
     public var description: String {
-        return result.debugDescription
+        return "\(result)"
     }
 
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
@@ -297,7 +297,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
         [ResumeData]: \(resumeDataDescription)
         [Network Duration]: \(metricsDescription)
         [Serialization Duration]: \(serializationDuration)s
-        [Result]: \(result.debugDescription)
+        [Result]: \(result)
         """
     }
 }
