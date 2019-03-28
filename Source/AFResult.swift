@@ -26,39 +26,19 @@ import Foundation
 
 public typealias AFResult<T> = Result<T, Error>
 
-// MARK: - CustomStringConvertible
-
-extension AFResult: CustomStringConvertible {
-    /// The textual representation used when written to an output stream, which includes whether the result was a
-    /// success or failure.
-    public var description: String {
-        switch self {
-        case .success:
-            return "SUCCESS"
-        case .failure:
-            return "FAILURE"
-        }
-    }
-}
-
-// MARK: - CustomDebugStringConvertible
-
-extension AFResult: CustomDebugStringConvertible {
-    /// The debug textual representation used when written to an output stream, which includes whether the result was a
-    /// success or failure in addition to the value or error.
-    public var debugDescription: String {
-        switch self {
-        case .success(let value):
-            return "SUCCESS: \(value)"
-        case .failure(let error):
-            return "FAILURE: \(error)"
-        }
-    }
-}
-
-// MARK: - Functional APIs
-
 extension AFResult {
+    /// Returns the associated value if the result is a success, `nil` otherwise.
+    var value: Success? {
+        guard case .success(let value) = self else { return nil }
+        return value
+    }
+
+    /// Returns the associated error value if the result is a failure, `nil` otherwise.
+    var error: Error? {
+        guard case .failure(let error) = self else { return nil }
+        return error
+    }
+
     /// Initializes an `AFResult` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
     ///
     /// - Parameters:
@@ -69,39 +49,6 @@ extension AFResult {
             self = .failure(error)
         } else {
             self = .success(value)
-        }
-    }
-
-    /// Returns `true` if the result is a success, `false` otherwise.
-    var isSuccess: Bool {
-        switch self {
-        case .success:
-            return true
-        case .failure:
-            return false
-        }
-    }
-
-    /// Returns `true` if the result is a failure, `false` otherwise.
-    var isFailure: Bool {
-        return !isSuccess
-    }
-
-    /// Returns the success value, or throws the failure error.
-    ///
-    ///     let possibleString: AFResult<String> = .success("success")
-    ///     try print(possibleString.unwrap())
-    ///     // Prints "success"
-    ///
-    ///     let noString: AFResult<String> = .failure(error)
-    ///     try print(noString.unwrap())
-    ///     // Throws error
-    func unwrap() throws -> Success {
-        switch self {
-        case .success(let value):
-            return value
-        case .failure(let error):
-            throw error
         }
     }
 
@@ -154,94 +101,6 @@ extension AFResult {
             }
         case .success(let value):
             return .success(value)
-        }
-    }
-
-    /// Evaluates the specified closure when the `AFResult` is a success, passing the unwrapped value as a parameter.
-    ///
-    /// Use the `withValue` function to evaluate the passed closure.
-    ///
-    /// - Parameter closure: A closure that takes the success value of this instance.
-    /// - Returns: An `AFResult` instance, unmodified.
-    @discardableResult
-    func withValue(_ closure: (Success) throws -> Void) rethrows -> AFResult<Success> {
-        switch self {
-        case .success(let value):
-            try closure(value)
-            return .success(value)
-        case .failure(let error):
-            return .failure(error)
-        }
-    }
-
-    /// Evaluates the specified closure when the `AFResult` is a failure, passing the unwrapped error as a parameter.
-    ///
-    /// Use the `withError` function to evaluate the passed closure.
-    ///
-    /// - Parameter closure: A closure that takes the success value of this instance.
-    /// - Returns: An `AFResult` instance, unmodified.
-    @discardableResult
-    func withError(_ closure: (Failure) throws -> Void) rethrows -> AFResult<Success> {
-        switch self {
-        case .failure(let error):
-            try closure(error)
-            return .failure(error)
-        case .success(let value):
-            return .success(value)
-        }
-    }
-
-    /// Evaluates the specified closure when the `AFResult` is a success.
-    ///
-    /// Use the `ifSuccess` function to evaluate the passed closure without modifying the `AFResult` instance.
-    ///
-    /// - Parameter closure: A `Void` closure.
-    /// - Returns: This `AFResult` instance, unmodified.
-    @discardableResult
-    func ifSuccess(_ closure: () throws -> Void) rethrows -> AFResult<Success> {
-        switch self {
-        case .success(let value):
-            try closure()
-            return .success(value)
-        case .failure(let error):
-            return .failure(error)
-        }
-    }
-
-    /// Evaluates the specified closure when the `AFResult` is a failure.
-    ///
-    /// Use the `ifFailure` function to evaluate the passed closure without modifying the `AFResult` instance.
-    ///
-    /// - Parameter closure: A `Void` closure.
-    /// - Returns: This `AFResult` instance, unmodified.
-    @discardableResult
-    func ifFailure(_ closure: () throws -> Void) rethrows -> AFResult<Success> {
-        switch self {
-        case .success(let value):
-            return .success(value)
-        case .failure(let error):
-            try closure()
-            return .failure(error)
-        }
-    }
-
-    /// Returns the associated value if the result is a success, `nil` otherwise.
-    var value: Success? {
-        switch self {
-        case .success(let value):
-            return value
-        case .failure:
-            return nil
-        }
-    }
-
-    /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    var error: Error? {
-        switch self {
-        case .success:
-            return nil
-        case .failure(let error):
-            return error
         }
     }
 }

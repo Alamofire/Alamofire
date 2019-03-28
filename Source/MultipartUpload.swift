@@ -80,10 +80,10 @@ open class MultipartUpload {
 
 extension MultipartUpload: UploadConvertible {
     public func asURLRequest() throws -> URLRequest {
-        return try result.unwrap().request
+        return try result.get().request
     }
 
     public func createUploadable() throws -> UploadRequest.Uploadable {
-        return try result.unwrap().uploadable
+        return try result.get().uploadable
     }
 }

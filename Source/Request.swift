@@ -781,7 +781,7 @@ open class DataRequest: Request {
 
             let result = validation(self.request, response, self.data)
 
-            result.withError { self.error = $0 }
+            if case .failure(let error) = result { self.error = error }
 
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,
@@ -905,8 +905,10 @@ open class DownloadRequest: Request {
     func didFinishDownloading(using task: URLSessionTask, with result: AFResult<URL>) {
         eventMonitor?.request(self, didFinishDownloadingUsing: task, with: result)
 
-        result.withValue { url in protectedMutableState.write { $0.fileURL = url } }
-              .withError { self.error = $0 }
+        switch result {
+        case .success(let url):   protectedMutableState.write { $0.fileURL = url }
+        case .failure(let error): self.error = error
+        }
     }
 
     func updateDownloadProgress(bytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
@@ -953,7 +955,7 @@ open class DownloadRequest: Request {
 
             let result = validation(self.request, response, self.fileURL)
 
-            result.withError { self.error = $0 }
+            if case .failure(let error) = result { self.error = error }
 
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,

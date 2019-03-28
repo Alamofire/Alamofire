@@ -429,7 +429,7 @@ open class Session {
             if let adapter = adapter(for: request) {
                 adapter.adapt(initialRequest, for: self) { result in
                     do {
-                        let adaptedRequest = try result.unwrap()
+                        let adaptedRequest = try result.get()
 
                         self.rootQueue.async {
                             request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
