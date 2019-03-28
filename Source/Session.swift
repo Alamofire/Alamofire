@@ -24,24 +24,341 @@
 
 import Foundation
 
-open class Session {
+public protocol SessionProtocol {
+    var session: URLSession { get }
+    var delegate: SessionDelegate { get }
+    var interceptor: RequestInterceptor? { get }
+    var eventMonitor: CompositeEventMonitor { get }
+    var defaultEventMonitors: [EventMonitor] { get }
+
+    // MARK: - Request
+
+    func request(_ url: URLConvertible,
+                 method: HTTPMethod,
+                 parameters: Parameters?,
+                 encoding: ParameterEncoding,
+                 headers: HTTPHeaders?,
+                 interceptor: RequestInterceptor?) -> DataRequest
+
+    func request<Parameters: Encodable>(_ url: URLConvertible,
+                                        method: HTTPMethod,
+                                        parameters: Parameters?,
+                                        encoder: ParameterEncoder,
+                                        headers: HTTPHeaders?,
+                                        interceptor: RequestInterceptor?) -> DataRequest
+
+    func request(_ convertible: URLRequestConvertible, interceptor: RequestInterceptor?) -> DataRequest
+
+    // MARK: - Download
+
+    func download(_ convertible: URLConvertible,
+                  method: HTTPMethod,
+                  parameters: Parameters?,
+                  encoding: ParameterEncoding,
+                  headers: HTTPHeaders?,
+                  interceptor: RequestInterceptor?,
+                  to destination: DownloadRequest.Destination?) -> DownloadRequest
+
+    func download<Parameters: Encodable>(_ convertible: URLConvertible,
+                                         method: HTTPMethod,
+                                         parameters: Parameters?,
+                                         encoder: ParameterEncoder,
+                                         headers: HTTPHeaders?,
+                                         interceptor: RequestInterceptor?,
+                                         to destination: DownloadRequest.Destination?) -> DownloadRequest
+
+    func download(_ convertible: URLRequestConvertible,
+                  interceptor: RequestInterceptor?,
+                  to destination: DownloadRequest.Destination?) -> DownloadRequest
+
+    func download(resumingWith data: Data,
+                  interceptor: RequestInterceptor?,
+                  to destination: DownloadRequest.Destination?) -> DownloadRequest
+
+    // MARK: - Upload
+
+    func upload(_ data: Data,
+                to convertible: URLConvertible,
+                method: HTTPMethod,
+                headers: HTTPHeaders?,
+                interceptor: RequestInterceptor?) -> UploadRequest
+
+    func upload(_ data: Data,
+                with convertible: URLRequestConvertible,
+                interceptor: RequestInterceptor?) -> UploadRequest
+
+    func upload(_ fileURL: URL,
+                to convertible: URLConvertible,
+                method: HTTPMethod,
+                headers: HTTPHeaders?,
+                interceptor: RequestInterceptor?) -> UploadRequest
+
+    func upload(_ fileURL: URL,
+                with convertible: URLRequestConvertible,
+                interceptor: RequestInterceptor?) -> UploadRequest
+
+    func upload(_ stream: InputStream,
+                to convertible: URLConvertible,
+                method: HTTPMethod,
+                headers: HTTPHeaders?,
+                interceptor: RequestInterceptor?) -> UploadRequest
+
+    func upload(_ stream: InputStream,
+                with convertible: URLRequestConvertible,
+                interceptor: RequestInterceptor?) -> UploadRequest
+
+    func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
+                usingThreshold encodingMemoryThreshold: UInt64,
+                fileManager: FileManager,
+                to url: URLConvertible,
+                method: HTTPMethod,
+                headers: HTTPHeaders?,
+                interceptor: RequestInterceptor?) -> UploadRequest
+
+    func upload(multipartFormData: MultipartFormData,
+                usingThreshold encodingMemoryThreshold: UInt64,
+                with request: URLRequestConvertible,
+                interceptor: RequestInterceptor?) -> UploadRequest
+
+    func upload(_ uploadable: UploadRequest.Uploadable,
+                with convertible: URLRequestConvertible,
+                interceptor: RequestInterceptor?) -> UploadRequest
+
+    func upload(_ upload: UploadConvertible, interceptor: RequestInterceptor?) -> UploadRequest
+}
+
+extension SessionProtocol {
+    // MARK: - Request
+
+    public func request(_ url: URLConvertible,
+                        method: HTTPMethod = .get,
+                        parameters: Parameters? = nil,
+                        encoding: ParameterEncoding = URLEncoding.default,
+                        headers: HTTPHeaders? = nil,
+                        interceptor: RequestInterceptor? = nil) -> DataRequest {
+        let convertible = RequestConvertible(url: url,
+                                             method: method,
+                                             parameters: parameters,
+                                             encoding: encoding,
+                                             headers: headers)
+
+        return request(convertible, interceptor: interceptor)
+    }
+
+    public func request<Parameters: Encodable>(_ url: URLConvertible,
+                                               method: HTTPMethod = .get,
+                                               parameters: Parameters? = nil,
+                                               encoder: ParameterEncoder = JSONParameterEncoder.default,
+                                               headers: HTTPHeaders? = nil,
+                                               interceptor: RequestInterceptor? = nil) -> DataRequest {
+        let convertible = RequestEncodableConvertible(url: url,
+                                                      method: method,
+                                                      parameters: parameters,
+                                                      encoder: encoder,
+                                                      headers: headers)
+
+        return request(convertible, interceptor: interceptor)
+    }
+
+    // MARK: - Download
+
+    public func download(_ convertible: URLConvertible,
+                         method: HTTPMethod = .get,
+                         parameters: Parameters? = nil,
+                         encoding: ParameterEncoding = URLEncoding.default,
+                         headers: HTTPHeaders? = nil,
+                         interceptor: RequestInterceptor? = nil,
+                         to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
+        let convertible = RequestConvertible(url: convertible,
+                                             method: method,
+                                             parameters: parameters,
+                                             encoding: encoding,
+                                             headers: headers)
+
+        return download(convertible, interceptor: interceptor, to: destination)
+    }
+
+    public func download<Parameters: Encodable>(_ convertible: URLConvertible,
+                                                method: HTTPMethod = .get,
+                                                parameters: Parameters? = nil,
+                                                encoder: ParameterEncoder = JSONParameterEncoder.default,
+                                                headers: HTTPHeaders? = nil,
+                                                interceptor: RequestInterceptor? = nil,
+                                                to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
+        let convertible = RequestEncodableConvertible(url: convertible,
+                                                      method: method,
+                                                      parameters: parameters,
+                                                      encoder: encoder,
+                                                      headers: headers)
+
+        return download(convertible, interceptor: interceptor, to: destination)
+    }
+
+    // MARK: - Upload
+
+    public func upload(_ data: Data,
+                       to convertible: URLConvertible,
+                       method: HTTPMethod = .post,
+                       headers: HTTPHeaders? = nil,
+                       interceptor: RequestInterceptor? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+
+        return upload(data, with: convertible, interceptor: interceptor)
+    }
+
+    public func upload(_ data: Data,
+                       with convertible: URLRequestConvertible,
+                       interceptor: RequestInterceptor? = nil) -> UploadRequest {
+        return upload(.data(data), with: convertible, interceptor: interceptor)
+    }
+
+    public func upload(_ fileURL: URL,
+                       to convertible: URLConvertible,
+                       method: HTTPMethod = .post,
+                       headers: HTTPHeaders? = nil,
+                       interceptor: RequestInterceptor? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+
+        return upload(fileURL, with: convertible, interceptor: interceptor)
+    }
+
+    public func upload(_ fileURL: URL,
+                       with convertible: URLRequestConvertible,
+                       interceptor: RequestInterceptor? = nil) -> UploadRequest {
+        return upload(.file(fileURL, shouldRemove: false), with: convertible, interceptor: interceptor)
+    }
+
+    public func upload(_ stream: InputStream,
+                       to convertible: URLConvertible,
+                       method: HTTPMethod = .post,
+                       headers: HTTPHeaders? = nil,
+                       interceptor: RequestInterceptor? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+
+        return upload(stream, with: convertible, interceptor: interceptor)
+    }
+
+    public func upload(_ stream: InputStream,
+                       with convertible: URLRequestConvertible,
+                       interceptor: RequestInterceptor? = nil) -> UploadRequest {
+        return upload(.stream(stream), with: convertible, interceptor: interceptor)
+    }
+
+    public func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
+                       usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
+                       fileManager: FileManager = .default,
+                       to url: URLConvertible,
+                       method: HTTPMethod = .post,
+                       headers: HTTPHeaders? = nil,
+                       interceptor: RequestInterceptor? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
+
+        let formData = MultipartFormData(fileManager: fileManager)
+        multipartFormData(formData)
+
+        return upload(multipartFormData: formData,
+                      usingThreshold: encodingMemoryThreshold,
+                      with: convertible,
+                      interceptor: interceptor)
+    }
+
+    public func upload(multipartFormData: MultipartFormData,
+                       usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
+                       with request: URLRequestConvertible,
+                       interceptor: RequestInterceptor? = nil) -> UploadRequest {
+        let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
+                                              encodingMemoryThreshold: encodingMemoryThreshold,
+                                              request: request,
+                                              multipartFormData: multipartFormData)
+
+        return upload(multipartUpload, interceptor: interceptor)
+    }
+
+    public func upload(_ uploadable: UploadRequest.Uploadable,
+                       with convertible: URLRequestConvertible,
+                       interceptor: RequestInterceptor?) -> UploadRequest {
+        let uploadable = Upload(request: convertible, uploadable: uploadable)
+
+        return upload(uploadable, interceptor: interceptor)
+    }
+}
+
+public struct RequestEncodableConvertible<Parameters: Encodable>: URLRequestConvertible {
+    let url: URLConvertible
+    let method: HTTPMethod
+    let parameters: Parameters?
+    let encoder: ParameterEncoder
+    let headers: HTTPHeaders?
+
+    public func asURLRequest() throws -> URLRequest {
+        let request = try URLRequest(url: url, method: method, headers: headers)
+
+        return try parameters.map { try encoder.encode($0, into: request) } ?? request
+    }
+}
+
+public struct RequestConvertible: URLRequestConvertible {
+    let url: URLConvertible
+    let method: HTTPMethod
+    let parameters: Parameters?
+    let encoding: ParameterEncoding
+    let headers: HTTPHeaders?
+
+    public func asURLRequest() throws -> URLRequest {
+        let request = try URLRequest(url: url, method: method, headers: headers)
+        return try encoding.encode(request, with: parameters)
+    }
+}
+
+public struct ParameterlessRequestConvertible: URLRequestConvertible {
+    let url: URLConvertible
+    let method: HTTPMethod
+    let headers: HTTPHeaders?
+
+    public func asURLRequest() throws -> URLRequest {
+        return try URLRequest(url: url, method: method, headers: headers)
+    }
+}
+
+public struct Upload: UploadConvertible {
+    let request: URLRequestConvertible
+    let uploadable: UploadableConvertible
+
+    public func createUploadable() throws -> UploadRequest.Uploadable {
+        return try uploadable.createUploadable()
+    }
+
+    public func asURLRequest() throws -> URLRequest {
+        return try request.asURLRequest()
+    }
+}
+
+
+open class Session: SessionProtocol {
     public static let `default` = Session()
 
-    public let delegate: SessionDelegate
     public let rootQueue: DispatchQueue
     public let requestQueue: DispatchQueue
     public let serializationQueue: DispatchQueue
+    public let startRequestsImmediately: Bool
+
+    internal var requestTaskMap = RequestTaskMap()
+
+    // MARK: - SessionProtocol
+
+    public let session: URLSession
+    public let delegate: SessionDelegate
     public let interceptor: RequestInterceptor?
+    public let eventMonitor: CompositeEventMonitor
+    public let defaultEventMonitors: [EventMonitor] = [AlamofireNotifications()]
+
+    // MARK: - SessionStateProvider
+
     public let serverTrustManager: ServerTrustManager?
     public let redirectHandler: RedirectHandler?
     public let cachedResponseHandler: CachedResponseHandler?
 
-    public let session: URLSession
-    public let eventMonitor: CompositeEventMonitor
-    public let defaultEventMonitors: [EventMonitor] = [AlamofireNotifications()]
-
-    var requestTaskMap = RequestTaskMap()
-    public let startRequestsImmediately: Bool
+    // MARK: -
 
     public init(session: URLSession,
                 delegate: SessionDelegate,
@@ -106,63 +423,6 @@ open class Session {
 
     // MARK: - Request
 
-    struct RequestConvertible: URLRequestConvertible {
-        let url: URLConvertible
-        let method: HTTPMethod
-        let parameters: Parameters?
-        let encoding: ParameterEncoding
-        let headers: HTTPHeaders?
-
-        func asURLRequest() throws -> URLRequest {
-            let request = try URLRequest(url: url, method: method, headers: headers)
-            return try encoding.encode(request, with: parameters)
-        }
-    }
-
-    open func request(_ url: URLConvertible,
-                      method: HTTPMethod = .get,
-                      parameters: Parameters? = nil,
-                      encoding: ParameterEncoding = URLEncoding.default,
-                      headers: HTTPHeaders? = nil,
-                      interceptor: RequestInterceptor? = nil) -> DataRequest {
-        let convertible = RequestConvertible(url: url,
-                                             method: method,
-                                             parameters: parameters,
-                                             encoding: encoding,
-                                             headers: headers)
-
-        return request(convertible, interceptor: interceptor)
-    }
-
-    struct RequestEncodableConvertible<Parameters: Encodable>: URLRequestConvertible {
-        let url: URLConvertible
-        let method: HTTPMethod
-        let parameters: Parameters?
-        let encoder: ParameterEncoder
-        let headers: HTTPHeaders?
-
-        func asURLRequest() throws -> URLRequest {
-            let request = try URLRequest(url: url, method: method, headers: headers)
-
-            return try parameters.map { try encoder.encode($0, into: request) } ?? request
-        }
-    }
-
-    open func request<Parameters: Encodable>(_ url: URLConvertible,
-                                             method: HTTPMethod = .get,
-                                             parameters: Parameters? = nil,
-                                             encoder: ParameterEncoder = JSONParameterEncoder.default,
-                                             headers: HTTPHeaders? = nil,
-                                             interceptor: RequestInterceptor? = nil) -> DataRequest {
-        let convertible = RequestEncodableConvertible(url: url,
-                                                      method: method,
-                                                      parameters: parameters,
-                                                      encoder: encoder,
-                                                      headers: headers)
-
-        return request(convertible, interceptor: interceptor)
-    }
-
     open func request(_ convertible: URLRequestConvertible, interceptor: RequestInterceptor? = nil) -> DataRequest {
         let request = DataRequest(convertible: convertible,
                                   underlyingQueue: rootQueue,
@@ -177,38 +437,6 @@ open class Session {
     }
 
     // MARK: - Download
-
-    open func download(_ convertible: URLConvertible,
-                       method: HTTPMethod = .get,
-                       parameters: Parameters? = nil,
-                       encoding: ParameterEncoding = URLEncoding.default,
-                       headers: HTTPHeaders? = nil,
-                       interceptor: RequestInterceptor? = nil,
-                       to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        let convertible = RequestConvertible(url: convertible,
-                                             method: method,
-                                             parameters: parameters,
-                                             encoding: encoding,
-                                             headers: headers)
-
-        return download(convertible, interceptor: interceptor, to: destination)
-    }
-
-    open func download<Parameters: Encodable>(_ convertible: URLConvertible,
-                                              method: HTTPMethod = .get,
-                                              parameters: Parameters? = nil,
-                                              encoder: ParameterEncoder = JSONParameterEncoder.default,
-                                              headers: HTTPHeaders? = nil,
-                                              interceptor: RequestInterceptor? = nil,
-                                              to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
-        let convertible = RequestEncodableConvertible(url: convertible,
-                                                      method: method,
-                                                      parameters: parameters,
-                                                      encoder: encoder,
-                                                      headers: headers)
-
-        return download(convertible, interceptor: interceptor, to: destination)
-    }
 
     open func download(_ convertible: URLRequestConvertible,
                        interceptor: RequestInterceptor? = nil,
@@ -244,120 +472,7 @@ open class Session {
 
     // MARK: - Upload
 
-    struct ParameterlessRequestConvertible: URLRequestConvertible {
-        let url: URLConvertible
-        let method: HTTPMethod
-        let headers: HTTPHeaders?
-
-        func asURLRequest() throws -> URLRequest {
-            return try URLRequest(url: url, method: method, headers: headers)
-        }
-    }
-
-    struct Upload: UploadConvertible {
-        let request: URLRequestConvertible
-        let uploadable: UploadableConvertible
-
-        func createUploadable() throws -> UploadRequest.Uploadable {
-            return try uploadable.createUploadable()
-        }
-
-        func asURLRequest() throws -> URLRequest {
-            return try request.asURLRequest()
-        }
-    }
-
-    open func upload(_ data: Data,
-                     to convertible: URLConvertible,
-                     method: HTTPMethod = .post,
-                     headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
-
-        return upload(data, with: convertible, interceptor: interceptor)
-    }
-
-    open func upload(_ data: Data,
-                     with convertible: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return upload(.data(data), with: convertible, interceptor: interceptor)
-    }
-
-    open func upload(_ fileURL: URL,
-                     to convertible: URLConvertible,
-                     method: HTTPMethod = .post,
-                     headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
-
-        return upload(fileURL, with: convertible, interceptor: interceptor)
-    }
-
-    open func upload(_ fileURL: URL,
-                     with convertible: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return upload(.file(fileURL, shouldRemove: false), with: convertible, interceptor: interceptor)
-    }
-
-    open func upload(_ stream: InputStream,
-                     to convertible: URLConvertible,
-                     method: HTTPMethod = .post,
-                     headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
-
-        return upload(stream, with: convertible, interceptor: interceptor)
-    }
-
-    open func upload(_ stream: InputStream,
-                     with convertible: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return upload(.stream(stream), with: convertible, interceptor: interceptor)
-    }
-
-    open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
-                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
-                     fileManager: FileManager = .default,
-                     to url: URLConvertible,
-                     method: HTTPMethod = .post,
-                     headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
-
-        let formData = MultipartFormData(fileManager: fileManager)
-        multipartFormData(formData)
-
-        return upload(multipartFormData: formData,
-                      usingThreshold: encodingMemoryThreshold,
-                      with: convertible,
-                      interceptor: interceptor)
-    }
-
-    open func upload(multipartFormData: MultipartFormData,
-                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
-                     with request: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
-                                              encodingMemoryThreshold: encodingMemoryThreshold,
-                                              request: request,
-                                              multipartFormData: multipartFormData)
-
-        return upload(multipartUpload, interceptor: interceptor)
-    }
-
-    // MARK: - Internal API
-
-    // MARK: Uploadable
-
-    func upload(_ uploadable: UploadRequest.Uploadable,
-                with convertible: URLRequestConvertible,
-                interceptor: RequestInterceptor?) -> UploadRequest {
-        let uploadable = Upload(request: convertible, uploadable: uploadable)
-
-        return upload(uploadable, interceptor: interceptor)
-    }
-
-    func upload(_ upload: UploadConvertible, interceptor: RequestInterceptor?) -> UploadRequest {
+    open func upload(_ upload: UploadConvertible, interceptor: RequestInterceptor?) -> UploadRequest {
         let request = UploadRequest(convertible: upload,
                                     underlyingQueue: rootQueue,
                                     serializationQueue: serializationQueue,
@@ -369,6 +484,8 @@ open class Session {
 
         return request
     }
+
+    // MARK: - Internal API
 
     // MARK: Perform
 

@@ -40,7 +40,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
         init(_ url: URL, method: HTTPMethod, response: HTTPURLResponse?, session: Session) {
             mockedResponse = response
 
-            let request = Session.RequestConvertible(
+            let request = RequestConvertible(
                 url: url,
                 method: method,
                 parameters: nil,
