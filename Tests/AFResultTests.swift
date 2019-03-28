@@ -1,5 +1,5 @@
 //
-//  ResultTests.swift
+//  AFResultTests.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -26,14 +26,14 @@
 import Foundation
 import XCTest
 
-class ResultTestCase: BaseTestCase {
+class AFResultTestCase: BaseTestCase {
     let error = AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: 404))
 
     // MARK: - Is Success Tests
 
     func testThatIsSuccessPropertyReturnsTrueForSuccessCase() {
         // Given, When
-        let result = Result<String>.success("success")
+        let result = AFResult<String>.success("success")
 
         // Then
         XCTAssertTrue(result.isSuccess, "result is success should be true for success case")
@@ -41,7 +41,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatIsSuccessPropertyReturnsFalseForFailureCase() {
         // Given, When
-        let result = Result<String>.failure(error)
+        let result = AFResult<String>.failure(error)
 
         // Then
         XCTAssertFalse(result.isSuccess, "result is success should be false for failure case")
@@ -51,7 +51,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatIsFailurePropertyReturnsFalseForSuccessCase() {
         // Given, When
-        let result = Result<String>.success("success")
+        let result = AFResult<String>.success("success")
 
         // Then
         XCTAssertFalse(result.isFailure, "result is failure should be false for success case")
@@ -59,7 +59,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatIsFailurePropertyReturnsTrueForFailureCase() {
         // Given, When
-        let result = Result<String>.failure(error)
+        let result = AFResult<String>.failure(error)
 
         // Then
         XCTAssertTrue(result.isFailure, "result is failure should be true for failure case")
@@ -69,7 +69,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatValuePropertyReturnsValueForSuccessCase() {
         // Given, When
-        let result = Result<String>.success("success")
+        let result = AFResult<String>.success("success")
 
         // Then
         XCTAssertEqual(result.value ?? "", "success", "result value should match expected value")
@@ -77,7 +77,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatValuePropertyReturnsNilForFailureCase() {
         // Given, When
-        let result = Result<String>.failure(error)
+        let result = AFResult<String>.failure(error)
 
         // Then
         XCTAssertNil(result.value, "result value should be nil for failure case")
@@ -87,7 +87,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatErrorPropertyReturnsNilForSuccessCase() {
         // Given, When
-        let result = Result<String>.success("success")
+        let result = AFResult<String>.success("success")
 
         // Then
         XCTAssertNil(result.error, "result error should be nil for success case")
@@ -95,7 +95,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatErrorPropertyReturnsErrorForFailureCase() {
         // Given, When
-        let result = Result<String>.failure(error)
+        let result = AFResult<String>.failure(error)
 
         // Then
         XCTAssertNotNil(result.error, "result error should not be nil for failure case")
@@ -105,7 +105,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatDescriptionStringMatchesExpectedValueForSuccessCase() {
         // Given, When
-        let result = Result<String>.success("success")
+        let result = AFResult<String>.success("success")
 
         // Then
         XCTAssertEqual(result.description, "SUCCESS", "result description should match expected value for success case")
@@ -113,7 +113,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatDescriptionStringMatchesExpectedValueForFailureCase() {
         // Given, When
-        let result = Result<String>.failure(error)
+        let result = AFResult<String>.failure(error)
 
         // Then
         XCTAssertEqual(result.description, "FAILURE", "result description should match expected value for failure case")
@@ -123,7 +123,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatDebugDescriptionStringMatchesExpectedValueForSuccessCase() {
         // Given, When
-        let result = Result<String>.success("success value")
+        let result = AFResult<String>.success("success value")
 
         // Then
         XCTAssertEqual(
@@ -135,7 +135,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatDebugDescriptionStringMatchesExpectedValueForFailureCase() {
         // Given, When
-        let result = Result<String>.failure(error)
+        let result = AFResult<String>.failure(error)
 
         // Then
         XCTAssertEqual(
@@ -152,8 +152,8 @@ class ResultTestCase: BaseTestCase {
         let value = "success value"
 
         // When
-        let result1 = Result(value: { value })
-        let result2 = Result { value }
+        let result1 = AFResult(catching: { value })
+        let result2 = AFResult { value }
 
         // Then
         for result in [result1, result2] {
@@ -167,8 +167,8 @@ class ResultTestCase: BaseTestCase {
         struct ResultError: Error {}
 
         // When
-        let result1 = Result(value: { throw ResultError() })
-        let result2 = Result { throw ResultError() }
+        let result1 = AFResult(catching: { throw ResultError() })
+        let result2 = AFResult { throw ResultError() }
 
         // Then
         for result in [result1, result2] {
@@ -181,7 +181,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatUnwrapReturnsSuccessValue() {
         // Given
-        let result = Result<String>.success("success value")
+        let result = AFResult<String>.success("success value")
 
         // When
         let unwrappedValue = try? result.unwrap()
@@ -195,7 +195,7 @@ class ResultTestCase: BaseTestCase {
         struct ResultError: Error {}
 
         // When
-        let result = Result<String>.failure(ResultError())
+        let result = AFResult<String>.failure(ResultError())
 
         // Then
         do {
@@ -210,7 +210,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatMapTransformsSuccessValue() {
         // Given
-        let result = Result<String>.success("success value")
+        let result = AFResult<String>.success("success value")
 
         // When
         let mappedResult = result.map { $0.count }
@@ -222,7 +222,7 @@ class ResultTestCase: BaseTestCase {
     func testThatMapPreservesFailureError() {
         // Given
         struct ResultError: Error {}
-        let result = Result<String>.failure(ResultError())
+        let result = AFResult<String>.failure(ResultError())
 
         // When
         let mappedResult = result.map { $0.count }
@@ -239,7 +239,7 @@ class ResultTestCase: BaseTestCase {
 
     func testThatFlatMapTransformsSuccessValue() {
         // Given
-        let result = Result<String>.success("success value")
+        let result = AFResult<String>.success("success value")
 
         // When
         let mappedResult = result.map { $0.count }
@@ -251,7 +251,7 @@ class ResultTestCase: BaseTestCase {
     func testThatFlatMapCatchesTransformationError() {
         // Given
         struct TransformError: Error {}
-        let result = Result<String>.success("success value")
+        let result = AFResult<String>.success("success value")
 
         // When
         let mappedResult = result.flatMap { _ in throw TransformError() }
@@ -268,7 +268,7 @@ class ResultTestCase: BaseTestCase {
         // Given
         struct ResultError: Error {}
         struct TransformError: Error {}
-        let result = Result<String>.failure(ResultError())
+        let result = AFResult<String>.failure(ResultError())
 
         // When
         let mappedResult = result.flatMap { _ in throw TransformError() }
@@ -287,7 +287,7 @@ class ResultTestCase: BaseTestCase {
         // Given
         struct ResultError: Error {}
         struct OtherError: Error { let error: Error }
-        let result: Result<String> = .failure(ResultError())
+        let result: AFResult<String> = .failure(ResultError())
 
         // When
         let mappedResult = result.mapError { OtherError(error: $0) }
@@ -304,7 +304,7 @@ class ResultTestCase: BaseTestCase {
         // Given
         struct ResultError: Error {}
         struct OtherError: Error { let error: Error }
-        let result: Result<String> = .success("success")
+        let result: AFResult<String> = .success("success")
 
         // When
         let mappedResult = result.mapError { OtherError(error: $0) }
@@ -317,7 +317,7 @@ class ResultTestCase: BaseTestCase {
         // Given
         struct ResultError: Error {}
         struct OtherError: Error { let error: Error }
-        let result: Result<String> = .failure(ResultError())
+        let result: AFResult<String> = .failure(ResultError())
 
         // When
         let mappedResult = result.flatMapError { OtherError(error: $0) }
@@ -338,7 +338,7 @@ class ResultTestCase: BaseTestCase {
             init(error: Error) throws { throw ThrownError() }
         }
         struct ThrownError: Error {}
-        let result: Result<String> = .failure(ResultError())
+        let result: AFResult<String> = .failure(ResultError())
 
         // When
         let mappedResult = result.flatMapError { try OtherError(error: $0) }
@@ -355,7 +355,7 @@ class ResultTestCase: BaseTestCase {
 
     func testWithValueExecutesWhenSuccess() {
         // Given
-        let result: Result<String> = .success("success")
+        let result: AFResult<String> = .success("success")
         var string = "failure"
 
         // When
@@ -368,7 +368,7 @@ class ResultTestCase: BaseTestCase {
     func testWithValueDoesNotExecutesWhenFailure() {
         // Given
         struct ResultError: Error {}
-        let result: Result<String> = .failure(ResultError())
+        let result: AFResult<String> = .failure(ResultError())
         var string = "failure"
 
         // When
@@ -381,7 +381,7 @@ class ResultTestCase: BaseTestCase {
     func testWithErrorExecutesWhenFailure() {
         // Given
         struct ResultError: Error {}
-        let result: Result<String> = .failure(ResultError())
+        let result: AFResult<String> = .failure(ResultError())
         var string = "success"
 
         // When
@@ -393,7 +393,7 @@ class ResultTestCase: BaseTestCase {
 
     func testWithErrorDoesNotExecuteWhenSuccess() {
         // Given
-        let result: Result<String> = .success("success")
+        let result: AFResult<String> = .success("success")
         var string = "success"
 
         // When
@@ -407,7 +407,7 @@ class ResultTestCase: BaseTestCase {
 
     func testIfSuccessExecutesWhenSuccess() {
         // Given
-        let result: Result<String> = .success("success")
+        let result: AFResult<String> = .success("success")
         var string = "failure"
 
         // When
@@ -420,7 +420,7 @@ class ResultTestCase: BaseTestCase {
     func testIfSuccessDoesNotExecutesWhenFailure() {
         // Given
         struct ResultError: Error {}
-        let result: Result<String> = .failure(ResultError())
+        let result: AFResult<String> = .failure(ResultError())
         var string = "failure"
 
         // When
@@ -433,7 +433,7 @@ class ResultTestCase: BaseTestCase {
     func testIfFailureExecutesWhenFailure() {
         // Given
         struct ResultError: Error {}
-        let result: Result<String> = .failure(ResultError())
+        let result: AFResult<String> = .failure(ResultError())
         var string = "success"
 
         // When
@@ -445,7 +445,7 @@ class ResultTestCase: BaseTestCase {
 
     func testIfFailureDoesNotExecuteWhenSuccess() {
         // Given
-        let result: Result<String> = .success("success")
+        let result: AFResult<String> = .success("success")
         var string = "success"
 
         // When
@@ -460,7 +460,7 @@ class ResultTestCase: BaseTestCase {
     func testFunctionalMethodsCanBeChained() {
         // Given
         struct ResultError: Error {}
-        let result: Result<String> = .success("first")
+        let result: AFResult<String> = .success("first")
         var string = "first"
         var success = false
 

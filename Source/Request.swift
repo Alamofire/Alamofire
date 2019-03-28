@@ -902,7 +902,7 @@ open class DownloadRequest: Request {
         protectedMutableState.write { $0.fileURL = nil }
     }
 
-    func didFinishDownloading(using task: URLSessionTask, with result: Result<URL>) {
+    func didFinishDownloading(using task: URLSessionTask, with result: AFResult<URL>) {
         eventMonitor?.request(self, didFinishDownloadingUsing: task, with: result)
 
         result.withValue { url in protectedMutableState.write { $0.fileURL = url } }

@@ -89,7 +89,7 @@ final class AdapterTestCase: BaseTestCase {
             completion(.success(request))
         }
 
-        var result: Result<URLRequest>!
+        var result: AFResult<URLRequest>!
 
         // When
         adapter.adapt(urlRequest, for: session) { result = $0 }
@@ -131,7 +131,7 @@ final class AdapterTestCase: BaseTestCase {
             }
         }
 
-        var result: Result<URLRequest>!
+        var result: AFResult<URLRequest>!
 
         let completesExpectation = expectation(description: "adapter completes")
 
@@ -183,7 +183,7 @@ final class RetrierTestCase: BaseTestCase {
             completion(.retry)
         }
 
-        var result: Result<URLRequest>!
+        var result: AFResult<URLRequest>!
 
         // When
         retrier.adapt(urlRequest, for: session) { result = $0 }
@@ -272,7 +272,7 @@ final class InterceptorTestCase: BaseTestCase {
         let session = Session()
         let interceptor = Interceptor()
 
-        var result: Result<URLRequest>!
+        var result: AFResult<URLRequest>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
@@ -290,7 +290,7 @@ final class InterceptorTestCase: BaseTestCase {
         let adapter = Adapter { urlRequest, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter])
 
-        var result: Result<URLRequest>!
+        var result: AFResult<URLRequest>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
@@ -309,7 +309,7 @@ final class InterceptorTestCase: BaseTestCase {
         let adapter2 = Adapter { urlRequest, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter1, adapter2])
 
-        var result: Result<URLRequest>!
+        var result: AFResult<URLRequest>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
@@ -331,7 +331,7 @@ final class InterceptorTestCase: BaseTestCase {
         }
         let interceptor = Interceptor(adapters: [adapter])
 
-        var result: Result<URLRequest>!
+        var result: AFResult<URLRequest>!
 
         let completesExpectation = expectation(description: "interceptor completes")
 
