@@ -520,9 +520,9 @@ extension Session: RequestDelegate {
             return
         }
 
-        retrier.retry(request, for: self, dueTo: error) { result in
+        retrier.retry(request, for: self, dueTo: error) { retryResult in
             self.rootQueue.async {
-                guard let retryResultError = result.error else { completion(result); return }
+                guard let retryResultError = retryResult.error else { completion(retryResult); return }
 
                 let retryError = AFError.requestRetryFailed(retryError: retryResultError, originalError: error)
                 completion(.doNotRetryWithError(retryError))

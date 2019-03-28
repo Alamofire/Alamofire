@@ -36,7 +36,7 @@ class AFResultTestCase: BaseTestCase {
         let result = AFResult<String>.success("success")
 
         // Then
-        XCTAssertEqual(result.value ?? "", "success", "result value should match expected value")
+        XCTAssertEqual(result.af.value ?? "", "success", "result value should match expected value")
     }
 
     func testThatValuePropertyReturnsNilForFailureCase() {
@@ -44,7 +44,7 @@ class AFResultTestCase: BaseTestCase {
         let result = AFResult<String>.failure(error)
 
         // Then
-        XCTAssertNil(result.value, "result value should be nil for failure case")
+        XCTAssertNil(result.af.value, "result value should be nil for failure case")
     }
 
     // MARK: - Error Tests
@@ -54,7 +54,7 @@ class AFResultTestCase: BaseTestCase {
         let result = AFResult<String>.success("success")
 
         // Then
-        XCTAssertNil(result.error, "result error should be nil for success case")
+        XCTAssertNil(result.af.error, "result error should be nil for success case")
     }
 
     func testThatErrorPropertyReturnsErrorForFailureCase() {
@@ -62,7 +62,7 @@ class AFResultTestCase: BaseTestCase {
         let result = AFResult<String>.failure(error)
 
         // Then
-        XCTAssertNotNil(result.error, "result error should not be nil for failure case")
+        XCTAssertNotNil(result.af.error, "result error should not be nil for failure case")
     }
 
     // MARK: - Initializer Tests
@@ -77,8 +77,8 @@ class AFResultTestCase: BaseTestCase {
 
         // Then
         for result in [result1, result2] {
-            XCTAssertTrue(result.isSuccess)
-            XCTAssertEqual(result.value, value)
+            XCTAssertTrue(result.af.isSuccess)
+            XCTAssertEqual(result.af.value, value)
         }
     }
 
@@ -92,8 +92,8 @@ class AFResultTestCase: BaseTestCase {
 
         // Then
         for result in [result1, result2] {
-            XCTAssertTrue(result.isFailure)
-            XCTAssertTrue(result.error! is ResultError)
+            XCTAssertTrue(result.af.isFailure)
+            XCTAssertTrue(result.af.error! is ResultError)
         }
     }
 
@@ -107,7 +107,7 @@ class AFResultTestCase: BaseTestCase {
         let mappedResult = result.map { $0.count }
 
         // Then
-        XCTAssertEqual(mappedResult.value, 13)
+        XCTAssertEqual(mappedResult.af.value, 13)
     }
 
     func testThatFlatMapCatchesTransformationError() {
@@ -116,10 +116,10 @@ class AFResultTestCase: BaseTestCase {
         let result = AFResult<String>.success("success value")
 
         // When
-        let mappedResult = result.flatMap { _ in throw TransformError() }
+        let mappedResult = result.af.flatMap { _ in throw TransformError() }
 
         // Then
-        if let error = mappedResult.error {
+        if let error = mappedResult.af.error {
             XCTAssertTrue(error is TransformError)
         } else {
             XCTFail("flatMap should catch the transformation error")
@@ -133,10 +133,10 @@ class AFResultTestCase: BaseTestCase {
         let result = AFResult<String>.failure(ResultError())
 
         // When
-        let mappedResult = result.flatMap { _ in throw TransformError() }
+        let mappedResult = result.af.flatMap { _ in throw TransformError() }
 
         // Then
-        if let error = mappedResult.error {
+        if let error = mappedResult.af.error {
             XCTAssertTrue(error is ResultError)
         } else {
             XCTFail("flatMap should preserve the failure error")
@@ -152,10 +152,10 @@ class AFResultTestCase: BaseTestCase {
         let result: AFResult<String> = .failure(ResultError())
 
         // When
-        let mappedResult = result.flatMapError { OtherError(error: $0) }
+        let mappedResult = result.af.flatMapError { OtherError(error: $0) }
 
         // Then
-        if let error = mappedResult.error {
+        if let error = mappedResult.af.error {
             XCTAssertTrue(error is OtherError)
         } else {
             XCTFail("flatMapError should transform error value")
@@ -173,10 +173,10 @@ class AFResultTestCase: BaseTestCase {
         let result: AFResult<String> = .failure(ResultError())
 
         // When
-        let mappedResult = result.flatMapError { try OtherError(error: $0) }
+        let mappedResult = result.af.flatMapError { try OtherError(error: $0) }
 
         // Then
-        if let error = mappedResult.error {
+        if let error = mappedResult.af.error {
             XCTAssertTrue(error is ThrownError)
         } else {
             XCTFail("flatMapError should capture thrown error value")

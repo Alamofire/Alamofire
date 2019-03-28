@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-@testable import Alamofire
+import Alamofire
 import Foundation
 import XCTest
 
@@ -121,7 +121,7 @@ class RequestResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
 
-        if let json = response?.result.value as? [String: Any], let form = json["form"] as? [String: String] {
+        if let json = response?.result.af.value as? [String: Any], let form = json["form"] as? [String: String] {
             XCTAssertEqual(form["french"], parameters["french"])
             XCTAssertEqual(form["japanese"], parameters["japanese"])
             XCTAssertEqual(form["arabic"], parameters["arabic"])
@@ -172,9 +172,9 @@ class RequestResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertEqual(response?.result.af.isSuccess, true)
 
-        if let json = response?.result.value as? [String: Any], let form = json["form"] as? [String: String] {
+        if let json = response?.result.af.value as? [String: Any], let form = json["form"] as? [String: String] {
             XCTAssertEqual(form["email"], parameters["email"])
             XCTAssertEqual(form["png_image"], parameters["png_image"])
             XCTAssertEqual(form["jpeg_image"], parameters["jpeg_image"])
@@ -201,7 +201,7 @@ class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertEqual(response?.result.af.isSuccess, true)
     }
 
     // MARK: Encodable Parameters
@@ -222,7 +222,7 @@ class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(receivedResponse?.result.value?.data, "{\"property\":\"one\"}")
+        XCTAssertEqual(receivedResponse?.result.af.value?.data, "{\"property\":\"one\"}")
     }
 
     func testThatRequestsCanPassEncodableParametersAsAURLQuery() {
@@ -241,7 +241,7 @@ class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(receivedResponse?.result.value?.args, ["property": "one"])
+        XCTAssertEqual(receivedResponse?.result.af.value?.args, ["property": "one"])
     }
 
     func testThatRequestsCanPassEncodableParametersAsURLEncodedBodyData() {
@@ -260,7 +260,7 @@ class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(receivedResponse?.result.value?.form, ["property": "one"])
+        XCTAssertEqual(receivedResponse?.result.af.value?.form, ["property": "one"])
     }
 }
 
