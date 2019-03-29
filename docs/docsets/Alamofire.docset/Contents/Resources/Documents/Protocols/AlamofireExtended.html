@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>URLRequestConvertible Protocol Reference</title>
+    <title>AlamofireExtended Protocol Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset="utf-8">
@@ -14,9 +14,9 @@
   </head>
   <body>
 
-    <a name="//apple_ref/swift/Protocol/URLRequestConvertible" class="dashAnchor"></a>
+    <a name="//apple_ref/swift/Protocol/AlamofireExtended" class="dashAnchor"></a>
 
-    <a title="URLRequestConvertible Protocol Reference"></a>
+    <a title="AlamofireExtended Protocol Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -50,7 +50,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
       <img class="carat" src="../img/carat.png" />
-      URLRequestConvertible Protocol Reference
+      AlamofireExtended Protocol Reference
     </p>
 
     <div class="content-wrapper">
@@ -409,14 +409,14 @@
 
         <section class="section">
           <div class="section-content">
-            <h1>URLRequestConvertible</h1>
+            <h1>AlamofireExtended</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">URLRequestConvertible</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">AlamofireExtended</span></code></pre>
 
                 </div>
               </div>
-            <p>Types adopting the <code>URLRequestConvertible</code> protocol can be used to safely construct <code>URLRequest</code>s.</p>
+            <p>Protocol describing the <code>af</code> extension points for Alamofire extended types.</p>
 
           </div>
         </section>
@@ -428,9 +428,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire21URLRequestConvertibleP02asB010Foundation0B0VyKF"></a>
-                    <a name="//apple_ref/swift/Method/asURLRequest()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire21URLRequestConvertibleP02asB010Foundation0B0VyKF">asURLRequest()</a>
+                    <a name="/s:9Alamofire0A8ExtendedP0B4TypeQa"></a>
+                    <a name="//apple_ref/swift/Alias/ExtendedType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A8ExtendedP0B4TypeQa">ExtendedType</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -438,42 +438,29 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Returns a <code>URLRequest</code> or throws if an <code>Error</code> was encoutered.</p>
-<div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    Any error thrown while constructing the <code>URLRequest</code>.
-
-</div>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">asURLRequest</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">URLRequest</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">associatedtype</span> <span class="kt">ExtendedType</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>A <code>URLRequest</code>.</p>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire21URLRequestConvertiblePAAE10urlRequest10Foundation0B0VSgvp"></a>
-                    <a name="//apple_ref/swift/Property/urlRequest" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire21URLRequestConvertiblePAAE10urlRequest10Foundation0B0VSgvp">urlRequest</a>
+                    <a name="/s:9Alamofire0A8ExtendedP2afAA0A9ExtensionVy0B4TypeQzGmvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/af" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A8ExtendedP2afAA0A9ExtensionVy0B4TypeQzGmvpZ">af</a>
                     </code>
                       <span class="declaration-note">
-                        Extension method
+                        Default implementation
                       </span>
                   </div>
                   <div class="height-container">
@@ -481,14 +468,47 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The <code>URLRequest</code> returned by discarding any <code>Error</code> encountered.</p>
+                        <p>Static Alamofire extension point.</p>
+
+                      </div>
+                      <h4>Default Implementation</h4>
+                      <div class="default_impl abstract">
+                        <p>Undocumented</p>
+<p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="k">var</span> <span class="nv">af</span><span class="p">:</span> <span class="kt"><a href="../Structs/AlamofireExtension.html">AlamofireExtension</a></span><span class="o">&lt;</span><span class="kt"><a href="../Protocols/AlamofireExtended.html#/s:9Alamofire0A8ExtendedP0B4TypeQa">ExtendedType</a></span><span class="o">&gt;.</span><span class="k">Type</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A8ExtendedP2afAA0A9ExtensionVy0B4TypeQzGvp"></a>
+                    <a name="//apple_ref/swift/Property/af" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A8ExtendedP2afAA0A9ExtensionVy0B4TypeQzGvp">af</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Instance Alamofire extension point.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">af</span><span class="p">:</span> <span class="kt"><a href="../Structs/AlamofireExtension.html">AlamofireExtension</a></span><span class="o">&lt;</span><span class="kt"><a href="../Protocols/AlamofireExtended.html#/s:9Alamofire0A8ExtendedP0B4TypeQa">ExtendedType</a></span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>

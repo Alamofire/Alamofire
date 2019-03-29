@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>NetworkReachabilityManager Class Reference</title>
+    <title>AlamofireExtension Structure Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset="utf-8">
@@ -14,9 +14,9 @@
   </head>
   <body>
 
-    <a name="//apple_ref/swift/Class/NetworkReachabilityManager" class="dashAnchor"></a>
+    <a name="//apple_ref/swift/Struct/AlamofireExtension" class="dashAnchor"></a>
 
-    <a title="NetworkReachabilityManager Class Reference"></a>
+    <a title="AlamofireExtension Structure Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -50,7 +50,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">Alamofire Reference</a>
       <img class="carat" src="../img/carat.png" />
-      NetworkReachabilityManager Class Reference
+      AlamofireExtension Structure Reference
     </p>
 
     <div class="content-wrapper">
@@ -409,19 +409,14 @@
 
         <section class="section">
           <div class="section-content">
-            <h1>NetworkReachabilityManager</h1>
+            <h1>AlamofireExtension</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">NetworkReachabilityManager</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">AlamofireExtension</span><span class="o">&lt;</span><span class="kt">ExtendedType</span><span class="o">&gt;</span></code></pre>
 
                 </div>
               </div>
-            <p>The <code>NetworkReachabilityManager</code> class listens for reachability changes of hosts and addresses for both WWAN and
-WiFi network interfaces.</p>
-
-<p>Reachability can be used to determine background information about why a network operation failed, or to retry
-network requests when a connection is established. It should not be used to prevent a user from initiating a network
-request, as it&rsquo;s possible that an initial request may be required to establish reachability.</p>
+            <p>Type that acts as a generic extension point for all <code><a href="../Protocols/AlamofireExtended.html">AlamofireExtended</a></code> types.</p>
 
           </div>
         </section>
@@ -429,13 +424,20 @@ request, as it&rsquo;s possible that an initial request may be required to estab
         <section class="section">
           <div class="section-content">
             <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Extensions"></a>
+                <a name="//apple_ref/swift/Section/Extensions" class="dashAnchor"></a>
+                <a href="#/Extensions">
+                  <h3 class="section-name">Extensions</h3>
+                </a>
+              </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC0bC6StatusO"></a>
-                    <a name="//apple_ref/swift/Enum/NetworkReachabilityStatus" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC0bC6StatusO">NetworkReachabilityStatus</a>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo8NSBundleCRbzlE12certificatesSaySo17SecCertificateRefaGvp"></a>
+                    <a name="//apple_ref/swift/Property/certificates" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo8NSBundleCRbzlE12certificatesSaySo17SecCertificateRefaGvp">certificates</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -443,21 +445,14 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Defines the various states of network reachability.</p>
+                        <p>Returns all valid <code>cer</code>, <code>crt</code>, and <code>der</code> certificates in the bundle.</p>
 
-<ul>
-<li>unknown:      It is unknown whether the network is reachable.</li>
-<li>notReachable: The network is not reachable.</li>
-<li>reachable:    The network is reachable.</li>
-</ul>
-
-                        <a href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">NetworkReachabilityStatus</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">certificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecCertificate</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -467,9 +462,9 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC14ConnectionTypeO"></a>
-                    <a name="//apple_ref/swift/Enum/ConnectionType" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC14ConnectionTypeO">ConnectionType</a>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo8NSBundleCRbzlE10publicKeysSaySo9SecKeyRefaGvp"></a>
+                    <a name="//apple_ref/swift/Property/publicKeys" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo8NSBundleCRbzlE10publicKeysSaySo9SecKeyRefaGvp">publicKeys</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -477,20 +472,14 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Defines the various connection types detected by reachability flags.</p>
+                        <p>Returns all public keys for the valid certificates in the bundle.</p>
 
-<ul>
-<li>ethernetOrWiFi: The connection type is either over Ethernet or WiFi.</li>
-<li>wwan:           The connection type is a WWAN connection.</li>
-</ul>
-
-                        <a href="../Classes/NetworkReachabilityManager/ConnectionType.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ConnectionType</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">publicKeys</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecKey</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -500,9 +489,9 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC8Listenera"></a>
-                    <a name="//apple_ref/swift/Alias/Listener" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC8Listenera">Listener</a>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo8NSBundleCRbzlE5paths19forResourcesOfTypesSaySSGAH_tF"></a>
+                    <a name="//apple_ref/swift/Method/paths(forResourcesOfTypes:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo8NSBundleCRbzlE5paths19forResourcesOfTypesSaySSGAH_tF">paths(forResourcesOfTypes:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -510,17 +499,39 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A closure executed when the network reachability status changes. The closure takes a single argument: the
-network reachability status.</p>
+                        <p>Returns all pathnames for the resources identified by the provided file extensions.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Listener</span> <span class="o">=</span> <span class="p">(</span><span class="kt"><a href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">NetworkReachabilityStatus</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">paths</span><span class="p">(</span><span class="n">forResourcesOfTypes</span> <span class="nv">types</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span><span class="p">]</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>types</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The filename extensions locate.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>All pathnames for the given filename extensions.</p>
                       </div>
                     </section>
                   </div>
@@ -529,19 +540,19 @@ network reachability status.</p>
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Properties"></a>
-                <a name="//apple_ref/swift/Section/Properties" class="dashAnchor"></a>
-                <a href="#/Properties">
-                  <h3 class="section-name">Properties</h3>
+                <a name="/Extensions2"></a>
+                <a name="//apple_ref/swift/Section/Extensions" class="dashAnchor"></a>
+                <a href="#/Extensions2">
+                  <h3 class="section-name">Extensions</h3>
                 </a>
               </div>
               <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC11isReachableSbvp"></a>
-                    <a name="//apple_ref/swift/Property/isReachable" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC11isReachableSbvp">isReachable</a>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8validate6policy13errorProducerySo0c6PolicyE0a_s5Error_ps5Int32V_So0cD10ResultTypeVtXEtKF"></a>
+                    <a name="//apple_ref/swift/Method/validate(policy:errorProducer:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8validate6policy13errorProducerySo0c6PolicyE0a_s5Error_ps5Int32V_So0cD10ResultTypeVtXEtKF">validate(policy:errorProducer:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -549,14 +560,235 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Whether the network is currently reachable.</p>
+                        <p>Attempts to validate <code>self</code> using the policy provided and transforming any error produced using the closure passed.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    Any error from applying the <code>policy</code>, or the result of <code>errorProducer</code> if validation fails.
+
+</div>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">isReachable</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">,</span> <span class="nv">errorProducer</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">OSStatus</span><span class="p">,</span> <span class="n">_</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">SecTrustResultType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>policy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>SecPolicy</code> used to evaluate <code>self</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>errorProducer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The closure used transform the failed <code>OSStatus</code> and <code>SecTrustResultType</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE5apply6policyAESo0c6PolicyE0a_tKF"></a>
+                    <a name="//apple_ref/swift/Method/apply(policy:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE5apply6policyAESo0c6PolicyE0a_tKF">apply(policy:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Applies a <code>SecPolicy</code> to <code>self</code>, throwing if it fails.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    An <code>AFError.serverTrustEvaluationFailed</code> instance with a <code>.policyApplicationFailed</code> reason.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">apply</span><span class="p">(</span><span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">SecTrust</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>policy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>SecPolicy</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p><code>self</code>, with the policy applied.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8validate13errorProducerys5Error_ps5Int32V_So0cD10ResultTypeVtXE_tKF"></a>
+                    <a name="//apple_ref/swift/Method/validate(errorProducer:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8validate13errorProducerys5Error_ps5Int32V_So0cD10ResultTypeVtXE_tKF">validate(errorProducer:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Validate <code>self</code>, passing any failure values through <code>errorProducer</code>.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    The <code>Error</code> produced by the <code>errorProducer</code> closure.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">errorProducer</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">OSStatus</span><span class="p">,</span> <span class="n">_</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">SecTrustResultType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>errorProducer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The closure used to transform the failed <code>OSStatus</code> and <code>SecTrustResultType</code> into an
+                       <code>Error</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE21setAnchorCertificatesyySaySo0c11CertificateE0aGKF"></a>
+                    <a name="//apple_ref/swift/Method/setAnchorCertificates(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE21setAnchorCertificatesyySaySo0c11CertificateE0aGKF">setAnchorCertificates(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets a custom certificate chain on <code>self</code>, allowing full validation of a self-signed certificate and its chain.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    Any error produced when applying the new certificate chain.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">setAnchorCertificates</span><span class="p">(</span><span class="n">_</span> <span class="nv">certificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecCertificate</span><span class="p">])</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>certificates</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>SecCertificate</code>s to add to the chain.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE10publicKeysSaySo0c3KeyE0aGvp"></a>
+                    <a name="//apple_ref/swift/Property/publicKeys" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE10publicKeysSaySo0c3KeyE0aGvp">publicKeys</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The public keys contained in <code>self</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">publicKeys</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecKey</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -566,9 +798,9 @@ network reachability status.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC17isReachableOnWWANSbvp"></a>
-                    <a name="//apple_ref/swift/Property/isReachableOnWWAN" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC17isReachableOnWWANSbvp">isReachableOnWWAN</a>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE12certificatesSaySo0c11CertificateE0aGvp"></a>
+                    <a name="//apple_ref/swift/Property/certificates" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE12certificatesSaySo0c11CertificateE0aGvp">certificates</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -576,14 +808,14 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Whether the network is currently reachable over the WWAN interface.</p>
+                        <p>The <code>SecCertificate</code>s contained i <code>self</code>.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">isReachableOnWWAN</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">certificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecCertificate</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -593,9 +825,9 @@ network reachability status.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC27isReachableOnEthernetOrWiFiSbvp"></a>
-                    <a name="//apple_ref/swift/Property/isReachableOnEthernetOrWiFi" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC27isReachableOnEthernetOrWiFiSbvp">isReachableOnEthernetOrWiFi</a>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE15certificateDataSay10Foundation0G0VGvp"></a>
+                    <a name="//apple_ref/swift/Property/certificateData" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE15certificateDataSay10Foundation0G0VGvp">certificateData</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -603,14 +835,14 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Whether the network is currently reachable over Ethernet or WiFi interface.</p>
+                        <p>The <code>Data</code> values for all certificates contained in <code>self</code>.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">isReachableOnEthernetOrWiFi</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">certificateData</span><span class="p">:</span> <span class="p">[</span><span class="kt">Data</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -620,9 +852,9 @@ network reachability status.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC07networkC6StatusAC0bcF0Ovp"></a>
-                    <a name="//apple_ref/swift/Property/networkReachabilityStatus" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC07networkC6StatusAC0bcF0Ovp">networkReachabilityStatus</a>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE24performDefaultValidation7forHostySS_tKF"></a>
+                    <a name="//apple_ref/swift/Method/performDefaultValidation(forHost:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE24performDefaultValidation7forHostySS_tKF">performDefaultValidation(forHost:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -630,160 +862,19 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The current network reachability status.</p>
+                        <p>Validates <code>self</code> after applying <code>SecPolicy.af.default</code>. This evaluation does not validate the hostname.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    An <code>AFError.serverTrustEvaluationFailed</code> instance with a <code>.defaultEvaluationFailed</code> reason.
+
+</div>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">networkReachabilityStatus</span><span class="p">:</span> <span class="kt"><a href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">NetworkReachabilityStatus</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC13listenerQueueSo17OS_dispatch_queueCvp"></a>
-                    <a name="//apple_ref/swift/Property/listenerQueue" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC13listenerQueueSo17OS_dispatch_queueCvp">listenerQueue</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The dispatch queue to execute the <code><a href="../Classes/NetworkReachabilityManager.html#/s:9Alamofire26NetworkReachabilityManagerC8listeneryAC0bC6StatusOcSgvp">listener</a></code> closure on.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">listenerQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC8listeneryAC0bC6StatusOcSgvp"></a>
-                    <a name="//apple_ref/swift/Property/listener" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC8listeneryAC0bC6StatusOcSgvp">listener</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A closure executed when the network reachability status changes.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">listener</span><span class="p">:</span> <span class="kt">NetworkReachabilityManager</span><span class="o">.</span><span class="kt"><a href="../Classes/NetworkReachabilityManager.html#/s:9Alamofire26NetworkReachabilityManagerC8Listenera">Listener</a></span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC5flagsSo09SCNetworkC5FlagsVSgvp"></a>
-                    <a name="//apple_ref/swift/Property/flags" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC5flagsSo09SCNetworkC5FlagsVSgvp">flags</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">flags</span><span class="p">:</span> <span class="kt">SCNetworkReachabilityFlags</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC13previousFlagsSo09SCNetworkcF0Vvp"></a>
-                    <a name="//apple_ref/swift/Property/previousFlags" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC13previousFlagsSo09SCNetworkcF0Vvp">previousFlags</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">previousFlags</span><span class="p">:</span> <span class="kt">SCNetworkReachabilityFlags</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Initialization"></a>
-                <a name="//apple_ref/swift/Section/Initialization" class="dashAnchor"></a>
-                <a href="#/Initialization">
-                  <h3 class="section-name">Initialization</h3>
-                </a>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC4hostACSgSS_tcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(host:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC4hostACSgSS_tcfc">init(host:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Creates a <code>NetworkReachabilityManager</code> instance with the specified host.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="n">convenience</span> <span class="nf">init</span><span class="p">?(</span><span class="nv">host</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">performDefaultValidation</span><span class="p">(</span><span class="n">forHost</span> <span class="nv">host</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -799,7 +890,143 @@ network reachability status.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The host used to evaluate network reachability.</p>
+                                  <p>The hostname, used only in the error output if validation fails.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE17performValidation7forHostySS_tKF"></a>
+                    <a name="//apple_ref/swift/Method/performValidation(forHost:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE17performValidation7forHostySS_tKF">performValidation(forHost:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Validates <code>self</code> after applying <code>SecPolicy.af.hostname(host)</code>, which performs the default validation as well as
+hostname validation.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    An <code>AFError.serverTrustEvaluationFailed</code> instance with a <code>.defaultEvaluationFailed</code> reason.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">performValidation</span><span class="p">(</span><span class="n">forHost</span> <span class="nv">host</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>host</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The hostname to use in the validation.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Extensions3"></a>
+                <a name="//apple_ref/swift/Section/Extensions" class="dashAnchor"></a>
+                <a href="#/Extensions3">
+                  <h3 class="section-name">Extensions</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo12SecPolicyRefaRszlE7defaultAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/default" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo12SecPolicyRefaRszlE7defaultAEvpZ">default</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code>SecPolicy</code> instance which will validate server certificates but not require a host name match.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">let</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">SecPolicy</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo12SecPolicyRefaRszlE8hostnameyAESSFZ"></a>
+                    <a name="//apple_ref/swift/Method/hostname(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo12SecPolicyRefaRszlE8hostnameyAESSFZ">hostname(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a <code>SecPolicy</code> instance which will validate server certificates and much match the provided hostname.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">func</span> <span class="nf">hostname</span><span class="p">(</span><span class="n">_</span> <span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">SecPolicy</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>hostname</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The hostname to validate against.</p>
                                 </div>
                               </td>
                             </tr>
@@ -808,7 +1035,7 @@ network reachability status.</p>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>The new <code>NetworkReachabilityManager</code> instance.</p>
+                        <p>The <code>SecPolicy</code>.</p>
                       </div>
                     </section>
                   </div>
@@ -816,9 +1043,9 @@ network reachability status.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerCACSgycfc"></a>
-                    <a name="//apple_ref/swift/Method/init()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerCACSgycfc">init()</a>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo12SecPolicyRefaRszlE10revocation7optionsAeA24RevocationTrustEvaluatorC7OptionsV_tKFZ"></a>
+                    <a name="//apple_ref/swift/Method/revocation(options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo12SecPolicyRefaRszlE10revocation7optionsAeA24RevocationTrustEvaluatorC7OptionsV_tKFZ">revocation(options:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -826,23 +1053,83 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code>NetworkReachabilityManager</code> instance that monitors the address 0.0.0.0.</p>
+                        <p>Creates a <code>SecPolicy</code> which checks the revocation of certificates.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    An <code>AFError.serverTrustEvaluationFailed</code> error with reason <code>.revocationPolicyCreationFailed</code>
+                 if the policy cannot be created.
 
-<p>Reachability treats the 0.0.0.0 address as a special token that causes it to monitor the general routing
-status of the device, both IPv4 and IPv6.</p>
+</div>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="n">convenience</span> <span class="nf">init</span><span class="p">?()</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">func</span> <span class="nf">revocation</span><span class="p">(</span><span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Classes/RevocationTrustEvaluator.html">RevocationTrustEvaluator</a></span><span class="o">.</span><span class="kt">Options</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">SecPolicy</span></code></pre>
 
                         </div>
                       </div>
                       <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Classes/RevocationTrustEvaluator/Options.html">RevocationTrustEvaluator.Options</a></code> for evaluation.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
                         <h4>Return Value</h4>
-                        <p>The new <code>NetworkReachabilityManager</code> instance.</p>
+                        <p>The <code>SecPolicy</code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Extensions4"></a>
+                <a name="//apple_ref/swift/Section/Extensions" class="dashAnchor"></a>
+                <a href="#/Extensions4">
+                  <h3 class="section-name">Extensions</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASaySo17SecCertificateRefaGRszlE4dataSay10Foundation4DataVGvp"></a>
+                    <a name="//apple_ref/swift/Property/data" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASaySo17SecCertificateRefaGRszlE4dataSay10Foundation4DataVGvp">data</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>All <code>Data</code> values for the contained <code>SecCertificate</code>s.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">data</span><span class="p">:</span> <span class="p">[</span><span class="kt">Data</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -850,9 +1137,154 @@ status of the device, both IPv4 and IPv6.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerCfd"></a>
-                    <a name="//apple_ref/swift/Method/deinit" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerCfd">deinit</a>
+                    <a name="/s:9Alamofire0A9ExtensionVAASaySo17SecCertificateRefaGRszlE10publicKeysSaySo0c3KeyE0aGvp"></a>
+                    <a name="//apple_ref/swift/Property/publicKeys" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASaySo17SecCertificateRefaGRszlE10publicKeysSaySo0c3KeyE0aGvp">publicKeys</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>All public <code>SecKey</code> values for the contained <code>SecCertificate</code>s.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">publicKeys</span><span class="p">:</span> <span class="p">[</span><span class="kt">SecKey</span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Extensions5"></a>
+                <a name="//apple_ref/swift/Section/Extensions" class="dashAnchor"></a>
+                <a href="#/Extensions5">
+                  <h3 class="section-name">Extensions</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo17SecCertificateRefaRszlE9publicKeySo0cgE0aSgvp"></a>
+                    <a name="//apple_ref/swift/Property/publicKey" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo17SecCertificateRefaRszlE9publicKeySo0cgE0aSgvp">publicKey</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The public key for <code>self</code>, if it can be extracted.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">publicKey</span><span class="p">:</span> <span class="kt">SecKey</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Extensions6"></a>
+                <a name="//apple_ref/swift/Section/Extensions" class="dashAnchor"></a>
+                <a href="#/Extensions6">
+                  <h3 class="section-name">Extensions</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAAs5Int32VRszlE9isSuccessSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isSuccess" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAAs5Int32VRszlE9isSuccessSbvp">isSuccess</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns whether <code>self</code> is <code>errSecSuccess</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isSuccess</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Extensions7"></a>
+                <a name="//apple_ref/swift/Section/Extensions" class="dashAnchor"></a>
+                <a href="#/Extensions7">
+                  <h3 class="section-name">Extensions</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo18SecTrustResultTypeVRszlE9isSuccessSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isSuccess" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo18SecTrustResultTypeVRszlE9isSuccessSbvp">isSuccess</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns whether <code>self is</code>.unspecified<code>or</code>.proceed`.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isSuccess</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo25NSURLSessionConfigurationCRbzlE7defaultAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/default" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo25NSURLSessionConfigurationCRbzlE7defaultAEvpZ">default</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -867,77 +1299,7 @@ status of the device, both IPv4 and IPv6.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">deinit</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Listening"></a>
-                <a name="//apple_ref/swift/Section/Listening" class="dashAnchor"></a>
-                <a href="#/Listening">
-                  <h3 class="section-name">Listening</h3>
-                </a>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC14startListeningSbyF"></a>
-                    <a name="//apple_ref/swift/Method/startListening()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC14startListeningSbyF">startListening()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Starts listening for changes in network reachability status.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">open</span> <span class="kd">func</span> <span class="nf">startListening</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>true</code> if listening was started successfully, <code>false</code> otherwise.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC13stopListeningyyF"></a>
-                    <a name="//apple_ref/swift/Method/stopListening()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC13stopListeningyyF">stopListening()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Stops listening for changes in network reachability status.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">stopListening</span><span class="p">()</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">var</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">URLSessionConfiguration</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>

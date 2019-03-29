@@ -221,9 +221,6 @@
                 <a class="nav-group-task-link" href="../Enums/HTTPMethod.html">HTTPMethod</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/Result.html">Result</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/RetryResult.html">RetryResult</a>
               </li>
             </ul>
@@ -233,9 +230,6 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/Bundle.html">Bundle</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/CharacterSet.html">CharacterSet</a>
@@ -248,9 +242,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Notification.html">Notification</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/SecTrust.html">SecTrust</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
@@ -280,6 +271,9 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/AlamofireExtended.html">AlamofireExtended</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a>
               </li>
@@ -346,6 +340,9 @@
             <a class="nav-group-name-link" href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/AlamofireExtension.html">AlamofireExtension</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DataResponse.html">DataResponse</a>
               </li>
               <li class="nav-group-task">
@@ -392,6 +389,9 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire12AdaptHandlera">AdaptHandler</a>
               </li>
@@ -1790,9 +1790,9 @@ specified using the <code>urlRequest</code> specified.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold2to6method7headers11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0N11Interceptor_pSgtFZ"></a>
-                    <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:to:method:headers:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold2to6method7headers11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0N11Interceptor_pSgtFZ">upload(multipartFormData:usingThreshold:to:method:headers:interceptor:)</a>
+                    <a name="/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold11fileManager2to6method7headers11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VSo06NSFileJ0CAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0P11Interceptor_pSgtFZ"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:fileManager:to:method:headers:interceptor:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold11fileManager2to6method7headers11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VSo06NSFileJ0CAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0P11Interceptor_pSgtFZ">upload(multipartFormData:usingThreshold:fileManager:to:method:headers:interceptor:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1823,6 +1823,7 @@ technique was used.</p>
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">,</span>
                           <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartUpload.html">MultipartUpload</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
+                          <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
                           <span class="n">to</span> <span class="nv">url</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
                           <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
                           <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -1855,6 +1856,18 @@ technique was used.</p>
                               <td>
                                 <div>
                                   <p>The encoding memory threshold in bytes. <code>10_000_000</code> bytes by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>FileManager</code> instance to use to manage streaming and encoding.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1919,9 +1932,9 @@ technique was used.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold4with11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VAA21URLRequestConvertible_pAA0L11Interceptor_pSgtFZ"></a>
+                    <a name="/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold4with11interceptorAA13UploadRequestCAA09MultiparteF0C_s6UInt64VAA21URLRequestConvertible_pAA0L11Interceptor_pSgtFZ"></a>
                     <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:with:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold4with11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VAA21URLRequestConvertible_pAA0L11Interceptor_pSgtFZ">upload(multipartFormData:usingThreshold:with:interceptor:)</a>
+                    <a class="token" href="#/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold4with11interceptorAA13UploadRequestCAA09MultiparteF0C_s6UInt64VAA21URLRequestConvertible_pAA0L11Interceptor_pSgtFZ">upload(multipartFormData:usingThreshold:with:interceptor:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1951,7 +1964,7 @@ technique was used.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">,</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">,</span>
                           <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartUpload.html">MultipartUpload</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
                           <span class="n">with</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
                           <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
@@ -2028,7 +2041,7 @@ technique was used.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-03-07)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-03-29)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

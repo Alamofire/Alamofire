@@ -221,9 +221,6 @@
                 <a class="nav-group-task-link" href="../Enums/HTTPMethod.html">HTTPMethod</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/Result.html">Result</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/RetryResult.html">RetryResult</a>
               </li>
             </ul>
@@ -233,9 +230,6 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/Bundle.html">Bundle</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/CharacterSet.html">CharacterSet</a>
@@ -248,9 +242,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Notification.html">Notification</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/SecTrust.html">SecTrust</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
@@ -280,6 +271,9 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/AlamofireExtended.html">AlamofireExtended</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a>
               </li>
@@ -346,6 +340,9 @@
             <a class="nav-group-name-link" href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/AlamofireExtension.html">AlamofireExtension</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DataResponse.html">DataResponse</a>
               </li>
               <li class="nav-group-task">
@@ -392,6 +389,9 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire12AdaptHandlera">AdaptHandler</a>
               </li>
@@ -759,9 +759,9 @@ file URL in the first available directory with the specified search path directo
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire15DownloadRequestC8validateyACXDAA6ResultOyytG10Foundation10URLRequestVSg_So17NSHTTPURLResponseCAH3URLVSgtcF"></a>
+                    <a name="/s:9Alamofire15DownloadRequestC8validateyACXDs6ResultOyyts5Error_pG10Foundation10URLRequestVSg_So17NSHTTPURLResponseCAI3URLVSgtcF"></a>
                     <a name="//apple_ref/swift/Method/validate(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8validateyACXDAA6ResultOyytG10Foundation10URLRequestVSg_So17NSHTTPURLResponseCAH3URLVSgtcF">validate(_:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8validateyACXDs6ResultOyyts5Error_pG10Foundation10URLRequestVSg_So17NSHTTPURLResponseCAI3URLVSgtcF">validate(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -823,9 +823,9 @@ file URL in the first available directory with the specified search path directo
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire15DownloadRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0CSg_yAA0B8ResponseVy10Foundation3URLVSgGctF"></a>
+                    <a name="/s:9Alamofire15DownloadRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0C_yAA0B8ResponseVy10Foundation3URLVSgGctF"></a>
                     <a name="//apple_ref/swift/Method/response(queue:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0CSg_yAA0B8ResponseVy10Foundation3URLVSgGctF">response(queue:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0C_yAA0B8ResponseVy10Foundation3URLVSgGctF">response(queue:completionHandler:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -842,7 +842,7 @@ file URL in the first available directory with the specified search path directo
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">response</span><span class="p">(</span>
-    <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
     <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/DownloadResponse.html">DownloadResponse</a></span><span class="o">&lt;</span><span class="kt">URL</span><span class="p">?</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span>
     <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
 
@@ -860,8 +860,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>nil</code>, which means
-               the handler is called on <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -890,9 +889,9 @@ file URL in the first available directory with the specified search path directo
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire15DownloadRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0CSg_xyAA0B8ResponseVy16SerializedObjectQzGctAA0bkF8ProtocolRzlF"></a>
+                    <a name="/s:9Alamofire15DownloadRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzGctAA0bkF8ProtocolRzlF"></a>
                     <a name="//apple_ref/swift/Method/response(queue:responseSerializer:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0CSg_xyAA0B8ResponseVy16SerializedObjectQzGctAA0bkF8ProtocolRzlF">response(queue:responseSerializer:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzGctAA0bkF8ProtocolRzlF">response(queue:responseSerializer:completionHandler:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -909,7 +908,7 @@ file URL in the first available directory with the specified search path directo
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="n">response</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DownloadResponseSerializerProtocol.html">DownloadResponseSerializerProtocol</a></span><span class="o">&gt;</span><span class="p">(</span>
-    <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
     <span class="nv">responseSerializer</span><span class="p">:</span> <span class="kt">T</span><span class="p">,</span>
     <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/DownloadResponse.html">DownloadResponse</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">.</span><span class="kt">SerializedObject</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span>
     <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
@@ -928,8 +927,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>nil</code>, which means
-                the handler is called on <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -982,9 +980,9 @@ file URL in the first available directory with the specified search path directo
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire15DownloadRequestC12responseData5queue17completionHandlerACXDSo012OS_dispatch_F0CSg_yAA0B8ResponseVy10Foundation0E0VGctF"></a>
+                    <a name="/s:9Alamofire15DownloadRequestC12responseData5queue17completionHandlerACXDSo012OS_dispatch_F0C_yAA0B8ResponseVy10Foundation0E0VGctF"></a>
                     <a name="//apple_ref/swift/Method/responseData(queue:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC12responseData5queue17completionHandlerACXDSo012OS_dispatch_F0CSg_yAA0B8ResponseVy10Foundation0E0VGctF">responseData(queue:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC12responseData5queue17completionHandlerACXDSo012OS_dispatch_F0C_yAA0B8ResponseVy10Foundation0E0VGctF">responseData(queue:completionHandler:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1001,7 +999,7 @@ file URL in the first available directory with the specified search path directo
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseData</span><span class="p">(</span>
-    <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
     <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/DownloadResponse.html">DownloadResponse</a></span><span class="o">&lt;</span><span class="kt">Data</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span>
     <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
 
@@ -1019,8 +1017,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>nil</code>, which means
-               the handler is called on <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1060,9 +1057,9 @@ file URL in the first available directory with the specified search path directo
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire15DownloadRequestC14responseString5queue8encoding17completionHandlerACXDSo012OS_dispatch_F0CSg_SS10FoundationE8EncodingVSgyAA0B8ResponseVySSGctF"></a>
+                    <a name="/s:9Alamofire15DownloadRequestC14responseString5queue8encoding17completionHandlerACXDSo012OS_dispatch_F0C_SS10FoundationE8EncodingVSgyAA0B8ResponseVySSGctF"></a>
                     <a name="//apple_ref/swift/Method/responseString(queue:encoding:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC14responseString5queue8encoding17completionHandlerACXDSo012OS_dispatch_F0CSg_SS10FoundationE8EncodingVSgyAA0B8ResponseVySSGctF">responseString(queue:encoding:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC14responseString5queue8encoding17completionHandlerACXDSo012OS_dispatch_F0C_SS10FoundationE8EncodingVSgyAA0B8ResponseVySSGctF">responseString(queue:encoding:completionHandler:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1079,7 +1076,7 @@ file URL in the first available directory with the specified search path directo
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseString</span><span class="p">(</span>
-    <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
     <span class="nv">encoding</span><span class="p">:</span> <span class="kt">String</span><span class="o">.</span><span class="kt">Encoding</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/DownloadResponse.html">DownloadResponse</a></span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span>
     <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
@@ -1098,8 +1095,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>nil</code>, which means
-               the handler is called on <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1152,9 +1148,9 @@ file URL in the first available directory with the specified search path directo
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire15DownloadRequestC12responseJSON5queue7options17completionHandlerACXDSo012OS_dispatch_F0CSg_So20NSJSONReadingOptionsVyAA0B8ResponseVyypGctF"></a>
+                    <a name="/s:9Alamofire15DownloadRequestC12responseJSON5queue7options17completionHandlerACXDSo012OS_dispatch_F0C_So20NSJSONReadingOptionsVyAA0B8ResponseVyypGctF"></a>
                     <a name="//apple_ref/swift/Method/responseJSON(queue:options:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC12responseJSON5queue7options17completionHandlerACXDSo012OS_dispatch_F0CSg_So20NSJSONReadingOptionsVyAA0B8ResponseVyypGctF">responseJSON(queue:options:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC12responseJSON5queue7options17completionHandlerACXDSo012OS_dispatch_F0C_So20NSJSONReadingOptionsVyAA0B8ResponseVyypGctF">responseJSON(queue:options:completionHandler:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1171,7 +1167,7 @@ file URL in the first available directory with the specified search path directo
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
 <span class="kd">public</span> <span class="kd">func</span> <span class="nf">responseJSON</span><span class="p">(</span>
-    <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
     <span class="nv">options</span><span class="p">:</span> <span class="kt">JSONSerialization</span><span class="o">.</span><span class="kt">ReadingOptions</span> <span class="o">=</span> <span class="o">.</span><span class="n">allowFragments</span><span class="p">,</span>
     <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/DownloadResponse.html">DownloadResponse</a></span><span class="o">&lt;</span><span class="kt">Any</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span>
     <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
@@ -1190,8 +1186,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>nil</code>, which means
-               the handler is called on <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1410,7 +1405,7 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-03-07)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-03-29)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3)
+- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4)
 
 #### 4.x Releases
 - `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481)
@@ -38,6 +38,33 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [5.0.0-beta.4](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.4)
+Released on 2019-03-29. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0-beta.4). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- The `AlamofireExtended` protocol and used it to namespace all public extensions.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2758](https://github.com/Alamofire/Alamofire/pull/2758).
+- The ability to retry requests after encountering response serialization errors.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2716](https://github.com/Alamofire/Alamofire/pull/2716).
+
+#### Updated
+- The `switch` and `DispatchQueue` logic throughout codebase to simplify usage patterns.
+  - Updated by [Joan Disho](https://github.com/jdisho) and [Christian Noon](https://github.com/cnoon) in Pull Requests [#2691](https://github.com/Alamofire/Alamofire/pull/2691) and [#2765](https://github.com/Alamofire/Alamofire/pull/2765).
+- The `MultipartFormData` data APIs by condensing them using optional parameters.
+  - Updated by [Ernesto Rivera](https://github.com/rivera-ernesto) in Pull Request [#2766](https://github.com/Alamofire/Alamofire/pull/2766).
+- The upload APIs for `MultipartFormData` to support custom boundaries.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2764](https://github.com/Alamofire/Alamofire/pull/2764).
+- The Xcode project, source code, SPM package, and podspec to support Swift 5 only.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2771](https://github.com/Alamofire/Alamofire/pull/2771).
+- The Alamofire `Result` type to be a new `AFResult` typealias on the new `Swift.Result` type in Swift 5 and removed all public extensions.
+  - Updated by [Dave Camp](https://github.com/AtomicCat), [Eric Jensen](https://github.com/ejensen), and [Christian Noon](https://github.com/cnoon) in Pull Requests [#2769](https://github.com/Alamofire/Alamofire/pull/2769) and [#2774](https://github.com/Alamofire/Alamofire/pull/2774).
+
+#### Fixed
+- Issue in `RequestInterceptor` closures where callback arguments were not marked as `@escaping`.
+  - Fixed by [Scott Talbot](https://github.com/cysp) in Pull Request [#2747](https://github.com/Alamofire/Alamofire/pull/2747).
+- Issue in response serializers where `emptyResponseAllowed` logic was not working as expected.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2772](https://github.com/Alamofire/Alamofire/pull/2772) in Regards to Issue [#2770](https://github.com/Alamofire/Alamofire/issues/2770).
+
 ## [5.0.0-beta.3](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.3)
 Released on 2019-01-07. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0-beta.3). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
 
@@ -45,7 +72,7 @@ Released on 2019-01-07. All issues associated with this milestone can be found u
 - The `EmptyResponse` protocol, to allow any type to provides values to stand in for an empty response.
   - Added by [James Van Noord](https://github.com/jvannoord) in Pull Request [#2664](https://github.com/Alamofire/Alamofire/pull/2664).
 - Request and response bodies to `Request`'s `debugDescription`.
-  - Added by [rain2540](https://github.com/rain2540) in pull Request [#2700](https://github.com/Alamofire/Alamofire/pull/2700).
+  - Added by [rain2540](https://github.com/rain2540) in Pull Request [#2700](https://github.com/Alamofire/Alamofire/pull/2700).
 
 #### Updated
 - `Package.swift` for Swift 5 support, moving Swift 4.2 support to `Package@swift-4.2.swift`.
