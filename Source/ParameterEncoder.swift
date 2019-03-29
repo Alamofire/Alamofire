@@ -164,8 +164,8 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
 
         if destination.encodesParametersInURL(for: method),
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
-            let query: String = try Result<String> { try encoder.encode(parameters) }
-                                .mapError { AFError.parameterEncoderFailed(reason: .encoderFailed(error: $0)) }.unwrap()
+            let query: String = try AFResult<String> { try encoder.encode(parameters) }
+                                .mapError { AFError.parameterEncoderFailed(reason: .encoderFailed(error: $0)) }.get()
             let newQueryString = [components.percentEncodedQuery, query].compactMap { $0 }.joinedWithAmpersands()
             components.percentEncodedQuery = newQueryString
 
@@ -179,8 +179,8 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
                 request.httpHeaders.update(.contentType("application/x-www-form-urlencoded; charset=utf-8"))
             }
 
-            request.httpBody = try Result<Data> { try encoder.encode(parameters) }
-                                .mapError { AFError.parameterEncoderFailed(reason: .encoderFailed(error: $0)) }.unwrap()
+            request.httpBody = try AFResult<Data> { try encoder.encode(parameters) }
+                                .mapError { AFError.parameterEncoderFailed(reason: .encoderFailed(error: $0)) }.get()
         }
 
         return request
