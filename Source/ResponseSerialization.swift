@@ -69,7 +69,7 @@ extension ResponseSerializer {
     }
 
     public func emptyResponseAllowed(forRequest request: URLRequest?, response: HTTPURLResponse?) -> Bool {
-        return requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false
+        return (requestAllowsEmptyResponseData(request) == true) || (responseAllowsEmptyResponseData(response) == true)
     }
 }
 

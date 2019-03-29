@@ -301,15 +301,6 @@
 		4CFB02FB1D7D2FA20056F249 /* valid_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02EC1D7D2FA20056F249 /* valid_data.json */; };
 		4CFB02FC1D7D2FA20056F249 /* valid_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02EC1D7D2FA20056F249 /* valid_data.json */; };
 		4CFB02FD1D7D2FA20056F249 /* valid_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02EC1D7D2FA20056F249 /* valid_data.json */; };
-		4CFB02FE1D7D2FA20056F249 /* empty.data in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02EE1D7D2FA20056F249 /* empty.data */; };
-		4CFB02FF1D7D2FA20056F249 /* empty.data in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02EE1D7D2FA20056F249 /* empty.data */; };
-		4CFB03001D7D2FA20056F249 /* empty.data in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02EE1D7D2FA20056F249 /* empty.data */; };
-		4CFB03011D7D2FA20056F249 /* invalid.data in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02EF1D7D2FA20056F249 /* invalid.data */; };
-		4CFB03021D7D2FA20056F249 /* invalid.data in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02EF1D7D2FA20056F249 /* invalid.data */; };
-		4CFB03031D7D2FA20056F249 /* invalid.data in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02EF1D7D2FA20056F249 /* invalid.data */; };
-		4CFB03041D7D2FA20056F249 /* valid.data in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F01D7D2FA20056F249 /* valid.data */; };
-		4CFB03051D7D2FA20056F249 /* valid.data in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F01D7D2FA20056F249 /* valid.data */; };
-		4CFB03061D7D2FA20056F249 /* valid.data in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F01D7D2FA20056F249 /* valid.data */; };
 		4CFB03071D7D2FA20056F249 /* empty_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F21D7D2FA20056F249 /* empty_string.txt */; };
 		4CFB03081D7D2FA20056F249 /* empty_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F21D7D2FA20056F249 /* empty_string.txt */; };
 		4CFB03091D7D2FA20056F249 /* empty_string.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4CFB02F21D7D2FA20056F249 /* empty_string.txt */; };
@@ -448,9 +439,6 @@
 		4CFB02EA1D7D2FA20056F249 /* empty_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_data.json; sourceTree = "<group>"; };
 		4CFB02EB1D7D2FA20056F249 /* invalid_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = invalid_data.json; sourceTree = "<group>"; };
 		4CFB02EC1D7D2FA20056F249 /* valid_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = valid_data.json; sourceTree = "<group>"; };
-		4CFB02EE1D7D2FA20056F249 /* empty.data */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = empty.data; sourceTree = "<group>"; };
-		4CFB02EF1D7D2FA20056F249 /* invalid.data */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = invalid.data; sourceTree = "<group>"; };
-		4CFB02F01D7D2FA20056F249 /* valid.data */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = valid.data; sourceTree = "<group>"; };
 		4CFB02F21D7D2FA20056F249 /* empty_string.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = empty_string.txt; sourceTree = "<group>"; };
 		4CFB02F31D7D2FA20056F249 /* utf32_string.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = utf32_string.txt; sourceTree = "<group>"; };
 		4CFB02F41D7D2FA20056F249 /* utf8_string.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = utf8_string.txt; sourceTree = "<group>"; };
@@ -784,7 +772,6 @@
 			isa = PBXGroup;
 			children = (
 				4CFB02E91D7D2FA20056F249 /* JSON */,
-				4CFB02ED1D7D2FA20056F249 /* Property List */,
 				4CFB02F11D7D2FA20056F249 /* String */,
 			);
 			name = Responses;
@@ -799,16 +786,6 @@
 				4CFB02EC1D7D2FA20056F249 /* valid_data.json */,
 			);
 			path = JSON;
-			sourceTree = "<group>";
-		};
-		4CFB02ED1D7D2FA20056F249 /* Property List */ = {
-			isa = PBXGroup;
-			children = (
-				4CFB02EE1D7D2FA20056F249 /* empty.data */,
-				4CFB02EF1D7D2FA20056F249 /* invalid.data */,
-				4CFB02F01D7D2FA20056F249 /* valid.data */,
-			);
-			path = "Property List";
 			sourceTree = "<group>";
 		};
 		4CFB02F11D7D2FA20056F249 /* String */ = {
@@ -1177,16 +1154,13 @@
 				4C743D051C22772D00BCB23E /* missing-dns-name-and-uri.cer in Resources */,
 				4C743CFB1C22772D00BCB23E /* randomGibberish.crt in Resources */,
 				4C743CFE1C22772D00BCB23E /* alamofire-signing-ca1.cer in Resources */,
-				4CFB03001D7D2FA20056F249 /* empty.data in Resources */,
 				4C743D001C22772D00BCB23E /* multiple-dns-names.cer in Resources */,
 				4C743D011C22772D00BCB23E /* signed-by-ca1.cer in Resources */,
-				4CFB03031D7D2FA20056F249 /* invalid.data in Resources */,
 				4C743D021C22772D00BCB23E /* test.alamofire.org.cer in Resources */,
 				4C743CF61C22772D00BCB23E /* certDER.cer in Resources */,
 				4C743CFD1C22772D00BCB23E /* alamofire-root-ca.cer in Resources */,
 				4C743CF91C22772D00BCB23E /* certPEM.cer in Resources */,
 				4CF627351BA7CC300011A099 /* unicorn.png in Resources */,
-				4CFB03061D7D2FA20056F249 /* valid.data in Resources */,
 				4C743CFA1C22772D00BCB23E /* certPEM.crt in Resources */,
 				4C743CF71C22772D00BCB23E /* certDER.crt in Resources */,
 				4CCB20711D4549E000C64D5B /* expired.badssl.com-root-ca.cer in Resources */,
@@ -1239,16 +1213,13 @@
 				4C743D311C22772F00BCB23E /* missing-dns-name-and-uri.cer in Resources */,
 				4C743D271C22772F00BCB23E /* randomGibberish.crt in Resources */,
 				4C743D2A1C22772F00BCB23E /* alamofire-signing-ca1.cer in Resources */,
-				4CFB02FE1D7D2FA20056F249 /* empty.data in Resources */,
 				4C743D2C1C22772F00BCB23E /* multiple-dns-names.cer in Resources */,
 				4C743D2D1C22772F00BCB23E /* signed-by-ca1.cer in Resources */,
-				4CFB03011D7D2FA20056F249 /* invalid.data in Resources */,
 				4C743D2E1C22772F00BCB23E /* test.alamofire.org.cer in Resources */,
 				4C743D221C22772F00BCB23E /* certDER.cer in Resources */,
 				4C743D291C22772F00BCB23E /* alamofire-root-ca.cer in Resources */,
 				4C743D251C22772F00BCB23E /* certPEM.cer in Resources */,
 				4C33A1391B5207DB00873DFF /* rainbow.jpg in Resources */,
-				4CFB03041D7D2FA20056F249 /* valid.data in Resources */,
 				4C743D261C22772F00BCB23E /* certPEM.crt in Resources */,
 				4C743D231C22772F00BCB23E /* certDER.crt in Resources */,
 				4CCB206F1D4549E000C64D5B /* expired.badssl.com-root-ca.cer in Resources */,
@@ -1280,16 +1251,13 @@
 				4C743D1B1C22772E00BCB23E /* missing-dns-name-and-uri.cer in Resources */,
 				4C743D111C22772E00BCB23E /* randomGibberish.crt in Resources */,
 				4C743D141C22772E00BCB23E /* alamofire-signing-ca1.cer in Resources */,
-				4CFB02FF1D7D2FA20056F249 /* empty.data in Resources */,
 				4C743D161C22772E00BCB23E /* multiple-dns-names.cer in Resources */,
 				4C743D171C22772E00BCB23E /* signed-by-ca1.cer in Resources */,
-				4CFB03021D7D2FA20056F249 /* invalid.data in Resources */,
 				4C743D181C22772E00BCB23E /* test.alamofire.org.cer in Resources */,
 				4C743D0C1C22772E00BCB23E /* certDER.cer in Resources */,
 				4C743D131C22772E00BCB23E /* alamofire-root-ca.cer in Resources */,
 				4C743D0F1C22772E00BCB23E /* certPEM.cer in Resources */,
 				4C33A13A1B5207DB00873DFF /* rainbow.jpg in Resources */,
-				4CFB03051D7D2FA20056F249 /* valid.data in Resources */,
 				4C743D101C22772E00BCB23E /* certPEM.crt in Resources */,
 				4C743D0D1C22772E00BCB23E /* certDER.crt in Resources */,
 				4CCB20701D4549E000C64D5B /* expired.badssl.com-root-ca.cer in Resources */,

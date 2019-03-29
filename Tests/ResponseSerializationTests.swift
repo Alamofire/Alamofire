@@ -106,13 +106,52 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    func testThatDataResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseStatusCode() {
+    func testThatDataResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = DataResponseSerializer()
+        let request = URLRequest.make(method: .get)
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
-        let result = AFResult { try serializer.serialize(request: nil, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+
+        if let data = result.value {
+            XCTAssertEqual(data.count, 0)
+        }
+    }
+
+    func testThatDataResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
+        // Given
+        let serializer = DataResponseSerializer()
+        let request = URLRequest.make(method: .get)
+        let response = HTTPURLResponse(statusCode: 205)
+
+        // When
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+
+        if let data = result.value {
+            XCTAssertEqual(data.count, 0)
+        }
+    }
+
+    func testThatDataResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
+        // Given
+        let serializer = DataResponseSerializer()
+        let request = URLRequest.make(method: .head)
+        let response = HTTPURLResponse(statusCode: 200)
+
+        // When
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -286,13 +325,52 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    func testThatStringResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseStatusCode() {
+    func testThatStringResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = StringResponseSerializer()
+        let request = URLRequest.make(method: .get)
+        let response = HTTPURLResponse(statusCode: 204)
+
+        // When
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+
+        if let string = result.value {
+            XCTAssertEqual(string, "")
+        }
+    }
+
+    func testThatStringResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
+        // Given
+        let serializer = StringResponseSerializer()
+        let request = URLRequest.make(method: .get)
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
-        let result = AFResult { try serializer.serialize(request: nil, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+
+        if let string = result.value {
+            XCTAssertEqual(string, "")
+        }
+    }
+
+    func testThatStringResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
+        // Given
+        let serializer = StringResponseSerializer()
+        let request = URLRequest.make(method: .head)
+        let response = HTTPURLResponse(statusCode: 200)
+
+        // When
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -418,13 +496,56 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         }
     }
 
-    func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseStatusCode() {
+    func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
+        let request = URLRequest.make(method: .get)
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
-        let result = AFResult { try serializer.serialize(request: nil, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+
+        if let json = result.value as? NSNull {
+            XCTAssertEqual(json, NSNull())
+        } else {
+            XCTFail("json should not be nil")
+        }
+    }
+
+    func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
+        // Given
+        let serializer = JSONResponseSerializer()
+        let request = URLRequest.make(method: .get)
+        let response = HTTPURLResponse(statusCode: 205)
+
+        // When
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+
+        if let json = result.value as? NSNull {
+            XCTAssertEqual(json, NSNull())
+        } else {
+            XCTFail("json should not be nil")
+        }
+    }
+
+    func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
+        // Given
+        let serializer = JSONResponseSerializer()
+        let request = URLRequest.make(method: .head)
+        let response = HTTPURLResponse(statusCode: 200)
+
+        // When
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -593,6 +714,51 @@ final class DecodableResponseSerializerTests: BaseTestCase {
         XCTAssertNil(result.error)
     }
 
+    func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
+        // Given
+        let serializer = DecodableResponseSerializer<Empty>()
+        let request = URLRequest.make(method: .get)
+        let response = HTTPURLResponse(statusCode: 204)
+
+        // When
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+    }
+
+    func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
+        // Given
+        let serializer = DecodableResponseSerializer<Empty>()
+        let request = URLRequest.make(method: .get)
+        let response = HTTPURLResponse(statusCode: 205)
+
+        // When
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+    }
+
+    func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
+        // Given
+        let serializer = DecodableResponseSerializer<Empty>()
+        let request = URLRequest.make(method: .head)
+        let response = HTTPURLResponse(statusCode: 200)
+
+        // When
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertNotNil(result.value)
+        XCTAssertNil(result.error)
+    }
+
     func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseConformingTypeAndEmptyResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Bool>()
@@ -639,10 +805,6 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
     private var jsonEmptyDataFileURL: URL { return url(forResource: "empty_data", withExtension: "json") }
     private var jsonValidDataFileURL: URL { return url(forResource: "valid_data", withExtension: "json") }
     private var jsonInvalidDataFileURL: URL { return url(forResource: "invalid_data", withExtension: "json") }
-
-    private var plistEmptyDataFileURL: URL { return url(forResource: "empty", withExtension: "data") }
-    private var plistValidDataFileURL: URL { return url(forResource: "valid", withExtension: "data") }
-    private var plistInvalidDataFileURL: URL { return url(forResource: "invalid", withExtension: "data") }
 
     private var stringEmptyDataFileURL: URL { return url(forResource: "empty_string", withExtension: "txt") }
     private var stringUTF8DataFileURL: URL { return url(forResource: "utf8_string", withExtension: "txt") }
