@@ -36,7 +36,7 @@ extension AFResult {
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    var error: Error? {
+    var error: Failure? {
         guard case .failure(let error) = self else { return nil }
         return error
     }
