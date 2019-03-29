@@ -450,8 +450,8 @@ class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNil(response?.fileURL)
-        XCTAssertEqual(response?.result.af.isFailure, true)
-        XCTAssertNotNil(response?.result.af.error)
+        XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertNotNil(response?.result.error)
 
         XCTAssertNotNil(response?.resumeData)
         XCTAssertNotNil(download.resumeData)
@@ -510,13 +510,13 @@ class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertNotNil(response1?.request)
         XCTAssertNotNil(response1?.response)
         XCTAssertNil(response1?.fileURL)
-        XCTAssertEqual(response1?.result.af.isFailure, true)
-        XCTAssertNotNil(response1?.result.af.error)
+        XCTAssertEqual(response1?.result.isFailure, true)
+        XCTAssertNotNil(response1?.result.error)
 
         XCTAssertNotNil(response2?.response)
         XCTAssertNotNil(response2?.fileURL)
-        XCTAssertEqual(response2?.result.af.isSuccess, true)
-        XCTAssertNil(response2?.result.af.error)
+        XCTAssertEqual(response2?.result.isSuccess, true)
+        XCTAssertNil(response2?.result.error)
 
         progressValues.forEach { XCTAssertGreaterThanOrEqual($0, 0.4) }
     }
@@ -550,7 +550,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(response?.error)
-        XCTAssertEqual(response?.result.af.value, "bar")
+        XCTAssertEqual(response?.result.value, "bar")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -575,7 +575,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         XCTAssertNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -608,7 +608,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(response?.error)
-        XCTAssertEqual(response?.result.af.value, "bar")
+        XCTAssertEqual(response?.result.value, "bar")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -637,7 +637,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
-        if let error = response?.result.af.error {
+        if let error = response?.result.error {
             XCTAssertTrue(error is TransformError)
         } else {
             XCTFail("flatMap should catch the transformation error")
@@ -667,7 +667,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -697,7 +697,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
 
         guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
 
@@ -724,7 +724,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -753,7 +753,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(response?.error)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -778,9 +778,9 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
 
-        if let error = response?.result.af.error {
+        if let error = response?.result.error {
             XCTAssertTrue(error is TransformationError)
         } else {
             XCTFail("flatMapError should catch the transformation error")
@@ -810,7 +810,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
         guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
 
         XCTAssertNotNil(response?.metrics)

@@ -1,7 +1,7 @@
 //
 //  AFResult.swift
 //
-//  Copyright (c) 2014-2019 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -26,32 +26,32 @@ import Foundation
 
 public typealias AFResult<T> = Result<T, Error>
 
+// MARK: - Internal APIs
 
-// MARK: AFExtension
-
-extension Result {
-    /// Type that acts as a extension point for all `Result` types.
-    public struct AFExtension {
-        let result: Result<Success, Failure>
-    }
-
-    public static var af: AFExtension.Type { return AFExtension.self }
-    public var af: AFExtension { return AFExtension(result: self) }
-}
-
-// MARK: - Public APIs
-
-extension Result.AFExtension {
+extension AFResult {
     /// Returns the associated value if the result is a success, `nil` otherwise.
-    public var value: Success? {
-        guard case .success(let value) = result else { return nil }
+    var value: Success? {
+        guard case .success(let value) = self else { return nil }
         return value
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    public var error: Error? {
-        guard case .failure(let error) = result else { return nil }
+    var error: Error? {
+        guard case .failure(let error) = self else { return nil }
         return error
+    }
+
+    /// Initializes an `AFResult` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
+    ///
+    /// - Parameters:
+    ///   - value: A value.
+    ///   - error: An `Error`.
+    init(value: Success, error: Failure?) {
+        if let error = error {
+            self = .failure(error)
+        } else {
+            self = .success(value)
+        }
     }
 
     /// Evaluates the specified closure when the `AFResult` is a success, passing the unwrapped value as a parameter.
@@ -68,7 +68,7 @@ extension Result.AFExtension {
     /// - returns: An `AFResult` containing the result of the given closure. If this instance is a failure, returns the
     ///            same failure.
     func flatMap<T>(_ transform: (Success) throws -> T) -> AFResult<T> {
-        switch result {
+        switch self {
         case .success(let value):
             do {
                 return try .success(transform(value))
@@ -94,7 +94,7 @@ extension Result.AFExtension {
     /// - Returns: An `AFResult` instance containing the result of the transform. If this instance is a success, returns
     ///            the same success.
     func flatMapError<T: Error>(_ transform: (Failure) throws -> T) -> AFResult<Success> {
-        switch result {
+        switch self {
         case .failure(let error):
             do {
                 return try .failure(transform(error))
@@ -103,23 +103,6 @@ extension Result.AFExtension {
             }
         case .success(let value):
             return .success(value)
-        }
-    }
-}
-
-// MARK: - Internal APIs
-
-extension AFResult {
-    /// Initializes an `AFResult` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
-    ///
-    /// - Parameters:
-    ///   - value: A value.
-    ///   - error: An `Error`.
-    init(value: Success, error: Failure?) {
-        if let error = error {
-            self = .failure(error)
-        } else {
-            self = .success(value)
         }
     }
 }

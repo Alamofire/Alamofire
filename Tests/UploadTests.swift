@@ -406,7 +406,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return
         }
 
-        XCTAssertTrue(response?.result.af.isSuccess ==  true)
+        XCTAssertTrue(response?.result.isSuccess ==  true)
     }
 
     func testThatUploadingMultipartFormDataBelowMemoryThresholdSetsContentTypeHeader() {
@@ -479,7 +479,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return
         }
 
-        XCTAssertTrue(response?.result.af.isSuccess == true)
+        XCTAssertTrue(response?.result.isSuccess == true)
         XCTAssertFalse(FileManager.default.fileExists(atPath: url.path))
     }
 
@@ -512,7 +512,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return
         }
 
-        XCTAssertTrue(response?.result.af.isSuccess == true)
+        XCTAssertTrue(response?.result.isSuccess == true)
 
         if
             let request = response?.request,

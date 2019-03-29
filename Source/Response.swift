@@ -45,10 +45,10 @@ public struct DataResponse<Value> {
     public let result: AFResult<Value>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
-    public var value: Value? { return result.af.value }
+    public var value: Value? { return result.value }
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    public var error: Error? { return result.af.error }
+    public var error: Error? { return result.error }
 
     /// Creates a `DataResponse` instance with the specified parameters derviced from the response serialization.
     ///
@@ -158,7 +158,7 @@ extension DataResponse {
                                data: data,
                                metrics: metrics,
                                serializationDuration: serializationDuration,
-                               result: result.af.flatMap(transform))
+                               result: result.flatMap(transform))
     }
 
     /// Evaluates the specified closure when the `DataResponse` is a failure, passing the unwrapped error as a parameter.
@@ -197,7 +197,7 @@ extension DataResponse {
                             data: data,
                             metrics: metrics,
                             serializationDuration: serializationDuration,
-                            result: result.af.flatMapError(transform))
+                            result: result.flatMapError(transform))
     }
 }
 
@@ -227,10 +227,10 @@ public struct DownloadResponse<Value> {
     public let result: AFResult<Value>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
-    public var value: Value? { return result.af.value }
+    public var value: Value? { return result.value }
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    public var error: Error? { return result.af.error }
+    public var error: Error? { return result.error }
 
     /// Creates a `DownloadResponse` instance with the specified parameters derived from response serialization.
     ///
@@ -351,7 +351,7 @@ extension DownloadResponse {
             resumeData: resumeData,
             metrics: metrics,
             serializationDuration: serializationDuration,
-            result: result.af.flatMap(transform)
+            result: result.flatMap(transform)
         )
     }
 
@@ -396,7 +396,7 @@ extension DownloadResponse {
             resumeData: resumeData,
             metrics: metrics,
             serializationDuration: serializationDuration,
-            result: result.af.flatMapError(transform)
+            result: result.flatMapError(transform)
         )
     }
 }
