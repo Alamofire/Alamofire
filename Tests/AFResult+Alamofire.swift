@@ -22,14 +22,26 @@
 //  THE SOFTWARE.
 //
 
-@testable import Alamofire
+import Alamofire
 import Foundation
 
-extension Result.AFExtension {
+extension AFResult {
     var isSuccess: Bool {
-        guard case .success = result else { return false }
+        guard case .success = self else { return false }
         return true
     }
 
-    var isFailure: Bool { return !isSuccess }
+    var isFailure: Bool {
+        return !isSuccess
+    }
+
+    var value: Success? {
+        guard case .success(let value) = self else { return nil }
+        return value
+    }
+
+    var error: Error? {
+        guard case .failure(let error) = self else { return nil }
+        return error
+    }
 }

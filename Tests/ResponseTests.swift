@@ -97,7 +97,7 @@ class ResponseDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -120,7 +120,7 @@ class ResponseDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -148,7 +148,7 @@ class ResponseStringTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -171,7 +171,7 @@ class ResponseStringTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -199,7 +199,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -222,7 +222,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -246,11 +246,11 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertNotNil(response?.metrics)
 
         if
-            let responseDictionary = response?.result.af.value as? [String: Any],
+            let responseDictionary = response?.result.value as? [String: Any],
             let args = responseDictionary["args"] as? [String: String]
         {
             XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
@@ -279,11 +279,11 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertNotNil(response?.metrics)
 
         if
-            let responseDictionary = response?.result.af.value as? [String: Any],
+            let responseDictionary = response?.result.value as? [String: Any],
             let form = responseDictionary["form"] as? [String: String]
         {
             XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
@@ -313,8 +313,8 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
-        XCTAssertEqual(response?.result.af.value?.url, "https://httpbin.org/get")
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertEqual(response?.result.value?.url, "https://httpbin.org/get")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -337,7 +337,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -368,8 +368,8 @@ class ResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
-        XCTAssertEqual(response?.result.af.value, "bar")
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertEqual(response?.result.value, "bar")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -392,7 +392,7 @@ class ResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -423,8 +423,8 @@ class ResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
-        XCTAssertEqual(response?.result.af.value, "bar")
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertEqual(response?.result.value, "bar")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -452,9 +452,9 @@ class ResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
 
-        if let error = response?.result.af.error {
+        if let error = response?.result.error {
             XCTAssertTrue(error is TransformError)
         } else {
             XCTFail("flatMap should catch the transformation error")
@@ -482,7 +482,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -524,7 +524,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
         guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
 
         XCTAssertNotNil(response?.metrics)
@@ -549,7 +549,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -576,7 +576,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -599,9 +599,9 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
 
-        if let error = response?.result.af.error {
+        if let error = response?.result.error {
             XCTAssertTrue(error is TransformationError)
         } else {
             XCTFail("flatMapError should catch the transformation error")
@@ -629,7 +629,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.request)
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
-        XCTAssertEqual(response?.result.af.isFailure, true)
+        XCTAssertEqual(response?.result.isFailure, true)
 
         guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
 

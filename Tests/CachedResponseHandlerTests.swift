@@ -50,7 +50,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.cachedResponseExists(for: request))
     }
 
@@ -70,7 +70,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertFalse(session.cachedResponseExists(for: request))
     }
 
@@ -101,7 +101,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.cachedResponseExists(for: request))
         XCTAssertEqual(session.cachedResponse(for: request)?.userInfo?["key"] as? String, "value")
     }
@@ -124,7 +124,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.cachedResponseExists(for: request))
     }
 
@@ -144,7 +144,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertFalse(session.cachedResponseExists(for: request))
     }
 
@@ -175,7 +175,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.cachedResponseExists(for: request))
         XCTAssertEqual(session.cachedResponse(for: request)?.userInfo?["key"] as? String, "value")
     }
@@ -198,7 +198,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertFalse(session.cachedResponseExists(for: request))
     }
 

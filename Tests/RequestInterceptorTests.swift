@@ -96,7 +96,7 @@ final class AdapterTestCase: BaseTestCase {
 
         // Then
         XCTAssertTrue(adapted)
-        XCTAssertTrue(result.af.isSuccess)
+        XCTAssertTrue(result.isSuccess)
     }
 
     func testThatAdapterCallsRequestRetrierDefaultImplementationInProtocolExtension() {
@@ -145,7 +145,7 @@ final class AdapterTestCase: BaseTestCase {
 
         // Then
         XCTAssertTrue(adapted)
-        XCTAssertTrue(result.af.isSuccess)
+        XCTAssertTrue(result.isSuccess)
     }
 }
 
@@ -189,7 +189,7 @@ final class RetrierTestCase: BaseTestCase {
         retrier.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
-        XCTAssertTrue(result.af.isSuccess)
+        XCTAssertTrue(result.isSuccess)
     }
 
     func testThatRetrierCanBeImplementedAsynchronously() {
@@ -278,8 +278,8 @@ final class InterceptorTestCase: BaseTestCase {
         interceptor.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
-        XCTAssertTrue(result.af.isSuccess)
-        XCTAssertEqual(result.af.value, urlRequest)
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertEqual(result.value, urlRequest)
     }
 
     func testThatInterceptorCanAdaptRequestWithOneAdapter() {
@@ -296,8 +296,8 @@ final class InterceptorTestCase: BaseTestCase {
         interceptor.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
-        XCTAssertTrue(result.af.isFailure)
-        XCTAssertTrue(result.af.error is MockError)
+        XCTAssertTrue(result.isFailure)
+        XCTAssertTrue(result.error is MockError)
     }
 
     func testThatInterceptorCanAdaptRequestWithMultipleAdapters() {
@@ -315,8 +315,8 @@ final class InterceptorTestCase: BaseTestCase {
         interceptor.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
-        XCTAssertTrue(result.af.isFailure)
-        XCTAssertTrue(result.af.error is MockError)
+        XCTAssertTrue(result.isFailure)
+        XCTAssertTrue(result.error is MockError)
     }
 
     func testThatInterceptorCanAdaptRequestAsynchronously() {
@@ -344,8 +344,8 @@ final class InterceptorTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertTrue(result.af.isFailure)
-        XCTAssertTrue(result.af.error is MockError)
+        XCTAssertTrue(result.isFailure)
+        XCTAssertTrue(result.error is MockError)
     }
 
     func testThatInterceptorCanRetryRequestWithNoRetriers() {

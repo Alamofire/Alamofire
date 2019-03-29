@@ -345,13 +345,13 @@ class SessionTestCase: BaseTestCase {
 
         // Then
         if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
-            XCTAssertTrue(brotliResponse?.result.af.isSuccess == true)
+            XCTAssertTrue(brotliResponse?.result.isSuccess == true)
         } else {
-            XCTAssertTrue(brotliResponse?.result.af.isFailure == true)
+            XCTAssertTrue(brotliResponse?.result.isFailure == true)
         }
 
-        XCTAssertTrue(gzipResponse?.result.af.isSuccess == true)
-        XCTAssertTrue(deflateResponse?.result.af.isSuccess == true)
+        XCTAssertTrue(gzipResponse?.result.isSuccess == true)
+        XCTAssertTrue(deflateResponse?.result.isSuccess == true)
     }
 
     // MARK: Tests - Start Requests Immediately
@@ -894,7 +894,7 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 3)
         XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
-        XCTAssertEqual(response?.result.af.isSuccess, false)
+        XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
     }
 
@@ -928,7 +928,7 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(requestHandler.retryCalledCount, 4)
         XCTAssertEqual(requestHandler.retryCount, 4)
         XCTAssertEqual(request.retryCount, 2)
-        XCTAssertEqual(response?.result.af.isSuccess, false)
+        XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
     }
 
@@ -959,7 +959,7 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
     }
 
@@ -995,7 +995,7 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
     }
 
@@ -1024,7 +1024,7 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
     }
 
@@ -1054,7 +1054,7 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(request.retryCount, 1)
-        XCTAssertEqual(response?.result.af.isSuccess, true)
+        XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
     }
 
@@ -1084,10 +1084,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 3)
         XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
-        XCTAssertEqual(response?.result.af.isSuccess, false)
+        XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
-        if let error = response?.result.af.error?.asAFError {
+        if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isRequestAdaptationError)
             XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         } else {
@@ -1122,10 +1122,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 3)
         XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
-        XCTAssertEqual(response?.result.af.isSuccess, false)
+        XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
-        if let error = response?.result.af.error?.asAFError {
+        if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isRequestAdaptationError)
             XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         } else {
@@ -1159,10 +1159,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 2)
         XCTAssertEqual(handler.retryCount, 0)
         XCTAssertEqual(request.retryCount, 0)
-        XCTAssertEqual(response?.result.af.isSuccess, false)
+        XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
-        if let error = response?.result.af.error?.asAFError {
+        if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isRequestRetryError)
             XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/invalid/url/2")
         } else {
@@ -1198,7 +1198,7 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 0)
         XCTAssertEqual(request.retryCount, 0)
-        XCTAssertEqual(response?.result.af.isSuccess, false)
+        XCTAssertEqual(response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
         if let error = response?.error?.asAFError {
@@ -1242,8 +1242,8 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 2)
         XCTAssertEqual(handler.retryCount, 0)
         XCTAssertEqual(request.retryCount, 0)
-        XCTAssertEqual(json1Response?.result.af.isSuccess, false)
-        XCTAssertEqual(json2Response?.result.af.isSuccess, false)
+        XCTAssertEqual(json1Response?.result.isSuccess, false)
+        XCTAssertEqual(json2Response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
         let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
@@ -1293,8 +1293,8 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 3)
         XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
-        XCTAssertEqual(json1Response?.result.af.isSuccess, false)
-        XCTAssertEqual(json2Response?.result.af.isSuccess, false)
+        XCTAssertEqual(json1Response?.result.isSuccess, false)
+        XCTAssertEqual(json2Response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
         let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
@@ -1345,8 +1345,8 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 4)
         XCTAssertEqual(handler.retryCount, 4)
         XCTAssertEqual(request.retryCount, 1)
-        XCTAssertEqual(json1Response?.result.af.isSuccess, false)
-        XCTAssertEqual(json2Response?.result.af.isSuccess, false)
+        XCTAssertEqual(json1Response?.result.isSuccess, false)
+        XCTAssertEqual(json2Response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
         let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
@@ -1397,8 +1397,8 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 4)
         XCTAssertEqual(handler.retryCount, 4)
         XCTAssertEqual(request.retryCount, 1)
-        XCTAssertEqual(json1Response?.result.af.isSuccess, false)
-        XCTAssertEqual(json2Response?.result.af.isSuccess, false)
+        XCTAssertEqual(json1Response?.result.isSuccess, false)
+        XCTAssertEqual(json2Response?.result.isSuccess, false)
         XCTAssertTrue(session.requestTaskMap.isEmpty)
 
         let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
@@ -1504,10 +1504,10 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
             XCTAssertNotNil(response.request, "request should not be nil")
             XCTAssertNotNil(response.response, "response should not be nil")
             XCTAssertNotNil(response.data, "data should not be nil")
-            XCTAssertTrue(response.result.af.isSuccess, "result should be a success")
+            XCTAssertTrue(response.result.isSuccess, "result should be a success")
 
             if
-                let response = response.result.af.value as? [String: Any],
+                let response = response.result.value as? [String: Any],
                 let headers = response["headers"] as? [String: String],
                 let authorization = headers["Authorization"]
             {
