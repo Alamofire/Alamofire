@@ -132,7 +132,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
-        let result = Result { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -151,7 +151,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
-        let result = Result { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -332,7 +332,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
-        let result = Result { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -370,7 +370,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
-        let result = Result { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -503,7 +503,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
-        let result = Result { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -545,7 +545,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
-        let result = Result { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -706,7 +706,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
-        let result = Result { try serializer.serialize(request: nil, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: nil, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -721,7 +721,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
-        let result = Result { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
@@ -736,7 +736,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
-        let result = Result { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
+        let result = AFResult { try serializer.serialize(request: request, response: response, data: nil, error: nil) }
 
         // Then
         XCTAssertTrue(result.isSuccess)
