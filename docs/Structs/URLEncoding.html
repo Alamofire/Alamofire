@@ -221,9 +221,6 @@
                 <a class="nav-group-task-link" href="../Enums/HTTPMethod.html">HTTPMethod</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/Result.html">Result</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/RetryResult.html">RetryResult</a>
               </li>
             </ul>
@@ -233,9 +230,6 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/Bundle.html">Bundle</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/CharacterSet.html">CharacterSet</a>
@@ -248,9 +242,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Notification.html">Notification</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/SecTrust.html">SecTrust</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
@@ -280,6 +271,9 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/AlamofireExtended.html">AlamofireExtended</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a>
               </li>
@@ -346,6 +340,9 @@
             <a class="nav-group-name-link" href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/AlamofireExtension.html">AlamofireExtension</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DataResponse.html">DataResponse</a>
               </li>
               <li class="nav-group-task">
@@ -392,6 +389,9 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire12AdaptHandlera">AdaptHandler</a>
               </li>
@@ -572,7 +572,7 @@ resulting URL request.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Returns a default <code>URLEncoding</code> instance.</p>
+                        <p>Returns a default <code>URLEncoding</code> instance with a <code>.methodDependent</code> destination.</p>
 
                       </div>
                       <div class="declaration">
@@ -580,33 +580,6 @@ resulting URL request.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">var</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">URLEncoding</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire11URLEncodingV15methodDependentACvpZ"></a>
-                    <a name="//apple_ref/swift/Variable/methodDependent" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11URLEncodingV15methodDependentACvpZ">methodDependent</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Returns a <code>URLEncoding</code> instance with a <code>.methodDependent</code> destination.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">methodDependent</span><span class="p">:</span> <span class="kt">URLEncoding</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -779,7 +752,7 @@ resulting URL request.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/Destination.html">Destination</a></span> <span class="o">=</span> <span class="o">.</span><span class="n"><a href="../Structs/URLEncoding.html#/s:9Alamofire11URLEncodingV15methodDependentACvpZ">methodDependent</a></span><span class="p">,</span> <span class="nv">arrayEncoding</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/ArrayEncoding.html">ArrayEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">brackets</span><span class="p">,</span> <span class="nv">boolEncoding</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/BoolEncoding.html">BoolEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">numeric</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/Destination.html">Destination</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">methodDependent</span><span class="p">,</span> <span class="nv">arrayEncoding</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/ArrayEncoding.html">ArrayEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">brackets</span><span class="p">,</span> <span class="nv">boolEncoding</span><span class="p">:</span> <span class="kt"><a href="../Structs/URLEncoding/BoolEncoding.html">BoolEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">numeric</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1031,7 +1004,7 @@ resulting URL request.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-03-07)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-03-29)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
