@@ -40,7 +40,7 @@ extension AFResult {
         return value
     }
 
-    var error: Error? {
+    var error: Failure? {
         guard case .failure(let error) = self else { return nil }
         return error
     }
