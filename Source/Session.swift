@@ -471,12 +471,25 @@ open class Session {
     }
 
     func resumeOrSuspendTask(_ task: URLSessionTask, ifNecessaryForRequest request: Request) {
-        if startRequestsImmediately || request.isResumed {
+        if startRequestsImmediately && request.isInitialized {
+            // Resumes the request and ensures the state is updated to .resumed
+            request.resume()
+            return
+        }
+
+        // There's no way right now to avoid calling didResume or didSuspend twice in this case.
+        // The race is created by creating a request and calling resume (or suspend) on it right afterwards.
+        // Depending on conditions, you may end up resuming or suspending the task twice. The only way to guarantee
+        // this would only resume the task once would be to add thread-safety around the `resume`, `suspend`,
+        // and `cancel` APIs on Request. That thread-safety would also have to lock the actual calls to the
+        // task as well.
+
+        if request.isResumed && task.state != .running {
             task.resume()
             request.didResume()
         }
 
-        if request.isSuspended {
+        if request.isSuspended && task.state != .suspended {
             task.suspend()
             request.didSuspend()
         }
