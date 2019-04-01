@@ -396,8 +396,21 @@ open class Request {
     /// Processes the next response serializer and calls all completions if response serialization is complete.
     func processNextResponseSerializer() {
         guard let responseSerializer = nextResponseSerializer() else {
-            // Execute all response serializer completions
-            protectedMutableState.directValue.responseSerializerCompletions.forEach { $0() }
+            // Execute all response serializer completions and clear them
+            var completions: [() -> Void] = []
+
+            protectedMutableState.write { mutableState in
+                completions = mutableState.responseSerializerCompletions
+
+                // Clear out all response serializers and response serializer completions in mutable state since the
+                // request is complete. It's important to do this prior to calling the completion closures in case
+                // the completions call back into the request triggering a re-processing of the response serializers.
+                // An example of how this can happen is by calling cancel inside a response completion closure.
+                mutableState.responseSerializers.removeAll()
+                mutableState.responseSerializerCompletions.removeAll()
+            }
+
+            completions.forEach { $0() }
 
             // Cleanup the request
             cleanup()

@@ -1435,6 +1435,43 @@ class SessionTestCase: BaseTestCase {
         // Then
         assertErrorIsAFError(error) { XCTAssertTrue($0.isSessionDeinitializedError) }
     }
+
+    // MARK: Tests - Request Cancellation
+
+    func testThatSessionOnlyCallsResponseSerializerCompletionWhenCancellingInsideCompletion() {
+        // Given
+        let handler = RequestHandler()
+        let session = Session()
+
+        let expectation = self.expectation(description: "request should complete")
+        var response: DataResponse<Any>?
+        var completionCallCount = 0
+
+        // When
+        let request = session.request("https://httpbin.org/get", interceptor: handler)
+        request.validate()
+
+        request.responseJSON { resp in
+            request.cancel()
+
+            response = resp
+            completionCallCount += 1
+
+            DispatchQueue.main.after(0.01) { expectation.fulfill() }
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(handler.adaptCalledCount, 1)
+        XCTAssertEqual(handler.adaptedCount, 1)
+        XCTAssertEqual(handler.retryCalledCount, 0)
+        XCTAssertEqual(handler.retryCount, 0)
+        XCTAssertEqual(request.retryCount, 0)
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        XCTAssertEqual(completionCallCount, 1)
+    }
 }
 
 // MARK: -
