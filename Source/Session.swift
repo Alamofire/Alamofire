@@ -54,8 +54,6 @@ open class Session {
                 redirectHandler: RedirectHandler? = nil,
                 cachedResponseHandler: CachedResponseHandler? = nil,
                 eventMonitors: [EventMonitor] = []) {
-        precondition(session.delegate === delegate,
-                     "SessionManager(session:) initializer must be passed the delegate that has been assigned to the URLSession as the SessionDataProvider.")
         precondition(session.delegateQueue.underlyingQueue === rootQueue,
                      "SessionManager(session:) intializer must be passed the DispatchQueue used as the delegateQueue's underlyingQueue as rootQueue.")
 
