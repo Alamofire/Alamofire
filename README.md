@@ -99,6 +99,27 @@ pod 'Alamofire', '~> 5.0.0-beta.3'
 github "Alamofire/Alamofire" "5.0.0-beta.3"
 ```
 
+### Accio
+
+[Accio](https://github.com/JamitLabs/Accio) is a SwiftPM based dependency manager with improvements over Carthage and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Accio, specify it in you `Package.swift`:
+
+```swift
+.package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "4.8.2")),
+```
+
+Next, add `Alamofire` to your App targets dependencies like so:
+
+```swift
+.target(
+    name: "App",
+    dependencies: [
+        "Alamofire",
+    ]
+),
+```
+
+Then run `accio update`.
+
 ### Swift Package Manager
 
 The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler. It is in early development, but Alamofire does support its use on supported platforms.
