@@ -1,12 +1,281 @@
-## Usage
+# Using Alamofire
 
-### Making a Request
+--
+
+### Introduction
+Alamofire provides an elegant and composable interface to HTTP network requests. It does not implement its own HTTP networking functionality. Instead it builds on top of Apple's [URL Loading System](https://developer.apple.com/documentation/foundation/url_loading_system/) provided by the Foundation framework. At the core of the system is [`URLSession`](https://developer.apple.com/documentation/foundation/urlsession) and the [`URLSessionTask`](https://developer.apple.com/documentation/foundation/urlsessiontask) subclasses. Alamofire wraps these APIs, and many others, in an easier to use interface and provides a variety of functionality necessary for modern application development using HTTP networking. However, it's important to know where many of Alamofire's core behaviors come from, so familiarity with the URL Loading System is important. Ultimately, the networking features of Alamofire are limited by the capabilities of that system, and the behaviors and best practices should always be remembered and observed.
+
+Additionally, networking in Alamofire (and the URL Loading System in general) is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
+
+#### Aside: The `AF` Namespace
+Previous versions of Alamofire's documentation used examples like `Alamofire.request()`. This API, while it appeared to require the `Alamofire` prefix, in fact worked fine without it. The `request` method and other functions were available globally in any file with `import Alamofire`. Starting in Alamofire 5, this functionality has been moved out of the global [namespace](https://en.wikipedia.org/wiki/Namespace) and into the `AF` enumeration, which acts as a namespace. This allows Alamofire to offer the same convenience functionality while not having to pollute the global namespace every time Alamofire is used. Similarly, types extended by Alamofire will use a `.af.` extension prefix to separate the functionality Alamofire offers from other extensions.
+
+### Making Requests
+Alamofire provides a variety of convenient methods for making HTTP requests. At the simplest level, just provide a `String` that can be converted into a `URL`:
 
 ```swift
-import Alamofire
-
-Alamofire.request("https://httpbin.org/get")
+AF.request("https://httpbin.org/get").response { (response) in
+    debugPrint(response)
+}
 ```
+> All examples require `import Alamofire` somewhere in the source file.
+
+This is actually one form of the two top-level Alamofire APIs for making requests. Its full definition looks like this:
+
+```swift
+public static func request<Parameters: Encodable>(_ url: URLConvertible,
+                                                  method: HTTPMethod = .get,
+                                                  parameters: Parameters? = nil,
+                                                  encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                  headers: HTTPHeaders? = nil,
+                                                  interceptor: RequestInterceptor? = nil) -> DataRequest
+```
+This method allows the composition of requests from individual components, such as the `method` and `headers`, while also allowing per-request `RequestInterceptor`s and `Encodable` parameters.
+
+> There are additional methods that allow you to make requests using `Parameters` dictionaries. This API is no longer recommended and will eventually be deprecated and removed from Alamofire.
+
+The second version of this API is much simpler:
+
+```swift
+public static func request(_ urlRequest: URLRequestConvertible, 
+                           interceptor: RequestInterceptor? = nil) -> DataRequest
+```
+
+This method creates a `DataRequest` for any type conforming to Alamofire's `URLRequestConvertible` protocol. All of the different parameters from the previous version are incapsulated into that value, which can give rise to very powerful abstractions. This is discussed later in this documentation.
+
+#### HTTP Methods
+
+The `HTTPMethod` enumeration lists the HTTP methods defined in [RFC 7231 §4.3](https://tools.ietf.org/html/rfc7231#section-4.3):
+
+```swift
+public enum HTTPMethod: String {
+    case connect = "CONNECT"
+    case delete  = "DELETE"
+    case get     = "GET"
+    case head    = "HEAD"
+    case options = "OPTIONS"
+    case patch   = "PATCH"
+    case post    = "POST"
+    case put     = "PUT"
+    case trace   = "TRACE"
+}
+```
+
+These values can be passed as the `method` argument to the `AF.request` API:
+
+```swift
+AF.request("https://httpbin.org/get")
+AF.request("https://httpbin.org/post", method: .post)
+AF.request("https://httpbin.org/put", method: .put)
+AF.request("https://httpbin.org/delete", method: .delete)
+```
+
+It's important to remember that the different HTTP methods may have different semantics and require different parameter encodings depending on what the server expects. For instance, passing body data in a `GET` requests can cause timeouts or other errors when communicating with servers that don't support that configuration.
+
+Alamofire also offers an extension on `URLRequest` to bridge the `httpMethod` property that returns a `String` to an `HTTPMethod` value:
+
+```swift
+public extension URLRequest {
+    /// Returns the `httpMethod` as Alamofire's `HTTPMethod` type.
+    var method: HTTPMethod? {
+        get { return httpMethod.flatMap(HTTPMethod.init) }
+        set { httpMethod = newValue?.rawValue }
+    }
+}
+```
+
+If you need to use an HTTP method that Alamofire's `HTTPMethod` type doesn't support, you can still set the `String` `httpMethod` property on `URLRequest` directly.
+
+
+### Parameter Encoding
+
+Alamofire supports three types of parameter encoding including: `URL`, `JSON` and `PropertyList`. It can also support any custom encoding that conforms to the `ParameterEncoding` protocol.
+
+#### URL Encoding
+
+The `URLEncoding` type creates a url-encoded query string to be set as or appended to any existing URL query string or set as the HTTP body of the URL request. Whether the query string is set or appended to any existing URL query string or set as the HTTP body depends on the `Destination` of the encoding. The `Destination` enumeration has three cases:
+
+- `.methodDependent` - Applies encoded query string result to existing query string for `GET`, `HEAD` and `DELETE` requests and sets as the HTTP body for requests with any other HTTP method.
+- `.queryString` - Sets or appends encoded query string result to existing query string.
+- `.httpBody` - Sets encoded query string result as the HTTP body of the URL request.
+
+The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded; charset=utf-8`. Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
+
+##### GET Request With URL-Encoded Parameters
+
+```swift
+let parameters: Parameters = ["foo": "bar"]
+
+// All three of these calls are equivalent
+Alamofire.request("https://httpbin.org/get", parameters: parameters) // encoding defaults to `URLEncoding.default`
+Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding.default)
+Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding(destination: .methodDependent))
+
+// https://httpbin.org/get?foo=bar
+```
+
+##### POST Request With URL-Encoded Parameters
+
+```swift
+let parameters: Parameters = [
+    "foo": "bar",
+    "baz": ["a", 1],
+    "qux": [
+        "x": 1,
+        "y": 2,
+        "z": 3
+    ]
+]
+
+// All three of these calls are equivalent
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters)
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.default)
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.httpBody)
+
+// HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
+```
+
+##### Configuring the Encoding of `Bool` Parameters
+
+The `URLEncoding.BoolEncoding` enumeration provides the following methods for encoding `Bool` parameters:
+
+- `.numeric` - Encode `true` as `1` and `false` as `0`.
+- `.literal` - Encode `true` and `false` as string literals.
+
+By default, Alamofire uses the `.numeric` encoding.
+
+You can create your own `URLEncoding` and specify the desired `Bool` encoding in the initializer:
+
+```swift
+let encoding = URLEncoding(boolEncoding: .literal)
+```
+
+##### Configuring the Encoding of `Array` Parameters
+
+The `URLEncoding.ArrayEncoding` enumeration provides the following methods for encoding `Array` parameters:
+
+- `.brackets` - An empty set of square brackets is appended to the key for every value.
+- `.noBrackets` - No brackets are appended. The key is encoded as is.
+
+By default, Alamofire uses the `.brackets` encoding, where `foo=[1,2]` is encoded as `foo[]=1&foo[]=2`.
+
+Using the `.noBrackets` encoding will encode `foo=[1,2]` as `foo=1&foo=2`.
+
+You can create your own `URLEncoding` and specify the desired `Array` encoding in the initializer:
+
+```swift
+let encoding = URLEncoding(arrayEncoding: .noBrackets)
+```
+
+#### JSON Encoding
+
+The `JSONEncoding` type creates a JSON representation of the parameters object, which is set as the HTTP body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
+
+##### POST Request with JSON-Encoded Parameters
+
+```swift
+let parameters: Parameters = [
+    "foo": [1,2,3],
+    "bar": [
+        "baz": "qux"
+    ]
+]
+
+// Both calls are equivalent
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding.default)
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding(options: []))
+
+// HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
+```
+
+#### Property List Encoding
+
+The `PropertyListEncoding` uses `PropertyListSerialization` to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
+
+#### Custom Encoding
+
+In the event that the provided `ParameterEncoding` types do not meet your needs, you can create your own custom encoding. Here's a quick example of how you could build a custom `JSONStringArrayEncoding` type to encode a JSON string array onto a `Request`.
+
+```swift
+struct JSONStringArrayEncoding: ParameterEncoding {
+    private let array: [String]
+
+    init(array: [String]) {
+        self.array = array
+    }
+
+    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
+        var urlRequest = try urlRequest.asURLRequest()
+
+        let data = try JSONSerialization.data(withJSONObject: array, options: [])
+
+        if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+
+        urlRequest.httpBody = data
+
+        return urlRequest
+    }
+}
+```
+
+#### Manual Parameter Encoding of a URLRequest
+
+The `ParameterEncoding` APIs can be used outside of making network requests.
+
+```swift
+let url = URL(string: "https://httpbin.org/get")!
+var urlRequest = URLRequest(url: url)
+
+let parameters: Parameters = ["foo": "bar"]
+let encodedURLRequest = try URLEncoding.queryString.encode(urlRequest, with: parameters)
+```
+
+### HTTP Headers
+
+Adding a custom HTTP header to a `Request` is supported directly in the global `request` method. This makes it easy to attach HTTP headers to a `Request` that can be constantly changing.
+
+```swift
+let headers: HTTPHeaders = [
+    "Authorization": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
+    "Accept": "application/json"
+]
+
+Alamofire.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
+    debugPrint(response)
+}
+```
+
+> For HTTP headers that do not change, it is recommended to set them on the `URLSessionConfiguration` so they are automatically applied to any `URLSessionTask` created by the underlying `URLSession`. For more information, see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
+
+The default Alamofire `SessionManager` provides a default set of headers for every `Request`. These include:
+
+- `Accept-Encoding`, which defaults to `gzip;q=1.0, compress;q=0.5`, per [RFC 7230 §4.2.3](https://tools.ietf.org/html/rfc7230#section-4.2.3).
+- `Accept-Language`, which defaults to up to the top 6 preferred languages on the system, formatted like `en;q=1.0`, per [RFC 7231 §5.3.5](https://tools.ietf.org/html/rfc7231#section-5.3.5).
+- `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
+
+If you need to customize these headers, a custom `URLSessionConfiguration` should be created, the `defaultHTTPHeaders` property updated and the configuration applied to a new `SessionManager` instance.
+
+#### Request Parameters and Parameter Encoders
+
+Alamofire supports sending any `Encodable`-conforming type as the parameters of a request. It also provides two builtin types conforming to the `ParameterEncoder` protocol: `URLFormEndcodedParameterEncoder` and `JSONParameterEncoder`. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader). 
+
+```swift
+struct Login: Encodable {
+    let email: String
+    let password: String
+}
+let login = Login(email: "test@test.test", password: "testPassword")
+AF.request("https://httpbin.org/post",
+           method: .post,
+           parameters: login,
+           encoder: JSONParameterEncoder.default).response { (response) in
+    debugPrint(response)
+}
+```
+
+
 
 ### Response Handling
 
@@ -201,205 +470,7 @@ Response Caching is handled on the system framework level by [`URLCache`](https:
 
 > By default, Alamofire leverages the shared `URLCache`. In order to customize it, see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
 
-### HTTP Methods
 
-The `HTTPMethod` enumeration lists the HTTP methods defined in [RFC 7231 §4.3](https://tools.ietf.org/html/rfc7231#section-4.3):
-
-```swift
-public enum HTTPMethod: String {
-    case options = "OPTIONS"
-    case get     = "GET"
-    case head    = "HEAD"
-    case post    = "POST"
-    case put     = "PUT"
-    case patch   = "PATCH"
-    case delete  = "DELETE"
-    case trace   = "TRACE"
-    case connect = "CONNECT"
-}
-```
-
-These values can be passed as the `method` argument to the `Alamofire.request` API:
-
-```swift
-Alamofire.request("https://httpbin.org/get") // method defaults to `.get`
-
-Alamofire.request("https://httpbin.org/post", method: .post)
-Alamofire.request("https://httpbin.org/put", method: .put)
-Alamofire.request("https://httpbin.org/delete", method: .delete)
-```
-
-> The `Alamofire.request` method parameter defaults to `.get`.
-
-### Parameter Encoding
-
-Alamofire supports three types of parameter encoding including: `URL`, `JSON` and `PropertyList`. It can also support any custom encoding that conforms to the `ParameterEncoding` protocol.
-
-#### URL Encoding
-
-The `URLEncoding` type creates a url-encoded query string to be set as or appended to any existing URL query string or set as the HTTP body of the URL request. Whether the query string is set or appended to any existing URL query string or set as the HTTP body depends on the `Destination` of the encoding. The `Destination` enumeration has three cases:
-
-- `.methodDependent` - Applies encoded query string result to existing query string for `GET`, `HEAD` and `DELETE` requests and sets as the HTTP body for requests with any other HTTP method.
-- `.queryString` - Sets or appends encoded query string result to existing query string.
-- `.httpBody` - Sets encoded query string result as the HTTP body of the URL request.
-
-The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded; charset=utf-8`. Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
-
-##### GET Request With URL-Encoded Parameters
-
-```swift
-let parameters: Parameters = ["foo": "bar"]
-
-// All three of these calls are equivalent
-Alamofire.request("https://httpbin.org/get", parameters: parameters) // encoding defaults to `URLEncoding.default`
-Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding.default)
-Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding(destination: .methodDependent))
-
-// https://httpbin.org/get?foo=bar
-```
-
-##### POST Request With URL-Encoded Parameters
-
-```swift
-let parameters: Parameters = [
-    "foo": "bar",
-    "baz": ["a", 1],
-    "qux": [
-        "x": 1,
-        "y": 2,
-        "z": 3
-    ]
-]
-
-// All three of these calls are equivalent
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.default)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.httpBody)
-
-// HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
-```
-
-##### Configuring the Encoding of `Bool` Parameters
-
-The `URLEncoding.BoolEncoding` enumeration provides the following methods for encoding `Bool` parameters:
-
-- `.numeric` - Encode `true` as `1` and `false` as `0`.
-- `.literal` - Encode `true` and `false` as string literals.
-
-By default, Alamofire uses the `.numeric` encoding.
-
-You can create your own `URLEncoding` and specify the desired `Bool` encoding in the initializer:
-
-```swift
-let encoding = URLEncoding(boolEncoding: .literal)
-```
-
-##### Configuring the Encoding of `Array` Parameters
-
-The `URLEncoding.ArrayEncoding` enumeration provides the following methods for encoding `Array` parameters:
-
-- `.brackets` - An empty set of square brackets is appended to the key for every value.
-- `.noBrackets` - No brackets are appended. The key is encoded as is.
-
-By default, Alamofire uses the `.brackets` encoding, where `foo=[1,2]` is encoded as `foo[]=1&foo[]=2`.
-
-Using the `.noBrackets` encoding will encode `foo=[1,2]` as `foo=1&foo=2`.
-
-You can create your own `URLEncoding` and specify the desired `Array` encoding in the initializer:
-
-```swift
-let encoding = URLEncoding(arrayEncoding: .noBrackets)
-```
-
-#### JSON Encoding
-
-The `JSONEncoding` type creates a JSON representation of the parameters object, which is set as the HTTP body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
-
-##### POST Request with JSON-Encoded Parameters
-
-```swift
-let parameters: Parameters = [
-    "foo": [1,2,3],
-    "bar": [
-        "baz": "qux"
-    ]
-]
-
-// Both calls are equivalent
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding.default)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding(options: []))
-
-// HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
-```
-
-#### Property List Encoding
-
-The `PropertyListEncoding` uses `PropertyListSerialization` to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
-
-#### Custom Encoding
-
-In the event that the provided `ParameterEncoding` types do not meet your needs, you can create your own custom encoding. Here's a quick example of how you could build a custom `JSONStringArrayEncoding` type to encode a JSON string array onto a `Request`.
-
-```swift
-struct JSONStringArrayEncoding: ParameterEncoding {
-    private let array: [String]
-
-    init(array: [String]) {
-        self.array = array
-    }
-
-    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
-        var urlRequest = try urlRequest.asURLRequest()
-
-        let data = try JSONSerialization.data(withJSONObject: array, options: [])
-
-        if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        }
-
-        urlRequest.httpBody = data
-
-        return urlRequest
-    }
-}
-```
-
-#### Manual Parameter Encoding of a URLRequest
-
-The `ParameterEncoding` APIs can be used outside of making network requests.
-
-```swift
-let url = URL(string: "https://httpbin.org/get")!
-var urlRequest = URLRequest(url: url)
-
-let parameters: Parameters = ["foo": "bar"]
-let encodedURLRequest = try URLEncoding.queryString.encode(urlRequest, with: parameters)
-```
-
-### HTTP Headers
-
-Adding a custom HTTP header to a `Request` is supported directly in the global `request` method. This makes it easy to attach HTTP headers to a `Request` that can be constantly changing.
-
-```swift
-let headers: HTTPHeaders = [
-    "Authorization": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
-    "Accept": "application/json"
-]
-
-Alamofire.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
-    debugPrint(response)
-}
-```
-
-> For HTTP headers that do not change, it is recommended to set them on the `URLSessionConfiguration` so they are automatically applied to any `URLSessionTask` created by the underlying `URLSession`. For more information, see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
-
-The default Alamofire `SessionManager` provides a default set of headers for every `Request`. These include:
-
-- `Accept-Encoding`, which defaults to `gzip;q=1.0, compress;q=0.5`, per [RFC 7230 §4.2.3](https://tools.ietf.org/html/rfc7230#section-4.2.3).
-- `Accept-Language`, which defaults to up to the top 6 preferred languages on the system, formatted like `en;q=1.0`, per [RFC 7231 §5.3.5](https://tools.ietf.org/html/rfc7231#section-5.3.5).
-- `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
-
-If you need to customize these headers, a custom `URLSessionConfiguration` should be created, the `defaultHTTPHeaders` property updated and the configuration applied to a new `SessionManager` instance.
 
 ### Authentication
 
