@@ -219,9 +219,9 @@ public enum ServerTrustPolicy {
             }
 
             if certificateChainEvaluationPassed {
-                outerLoop: for serverPublicKey in ServerTrustPolicy.publicKeys(for: serverTrust) as [AnyObject] {
-                    for pinnedPublicKey in pinnedPublicKeys as [AnyObject] {
-                        if serverPublicKey.isEqual(pinnedPublicKey) {
+                outerLoop: for serverPublicKey in ServerTrustPolicy.publicKeys(for: serverTrust) {
+                    for pinnedPublicKey in pinnedPublicKeys {
+                        if serverPublicKey == pinnedPublicKey {
                             serverTrustIsValid = true
                             break outerLoop
                         }
