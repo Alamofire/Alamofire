@@ -472,27 +472,18 @@ open class Session {
         switch (startRequestsImmediately, request.state) {
         case (true, .initialized):
             request.resume()
-        case (true, .resumed):
-            task.resume()
-            request.didResumeTask(task)
-        case (true, .suspended):
-            task.suspend()
-            request.didSuspendTask(task)
-        case (true, .cancelled):
-            task.cancel()
-            request.didCancelTask(task)
         case (false, .initialized):
             // Do nothing.
             break
-        case (false, .cancelled):
-            task.cancel()
-            request.didCancelTask(task)
-        case (false, .resumed):
+        case (_, .resumed):
             task.resume()
             request.didResumeTask(task)
-        case (false, .suspended):
+        case (_, .suspended):
             task.suspend()
             request.didSuspendTask(task)
+        case (_, .cancelled):
+            task.cancel()
+            request.didCancelTask(task)
         }
     }
 
