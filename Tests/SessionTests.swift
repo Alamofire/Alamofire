@@ -1472,6 +1472,28 @@ class SessionTestCase: BaseTestCase {
         XCTAssertTrue(session.requestTaskMap.isEmpty)
         XCTAssertEqual(completionCallCount, 1)
     }
+
+    // MARK: Tests - Request State
+
+    func testThatSessionSetsRequestStateWhenStartRequestsImmediatelyIsTrue() {
+        // Given
+        let session = Session()
+
+        let expectation = self.expectation(description: "request should complete")
+        var response: DataResponse<Any>?
+
+        // When
+        let request = session.request("https://httpbin.org/get").responseJSON { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(request.state, .resumed)
+        XCTAssertEqual(response?.result.isSuccess, true)
+    }
 }
 
 // MARK: -

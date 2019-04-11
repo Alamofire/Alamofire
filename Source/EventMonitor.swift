@@ -130,11 +130,20 @@ public protocol EventMonitor {
     /// Event called when a `Request` receives a `resume` call.
     func requestDidResume(_ request: Request)
 
+    /// Event called when a `Request`'s associated `URLSessionTask` is resumed.
+    func request(_ request: Request, didResumeTask task: URLSessionTask)
+
     /// Event called when a `Request` receives a `suspend` call.
     func requestDidSuspend(_ request: Request)
 
+    /// Event called when a `Request`'s associated `URLSessionTask` is suspended.
+    func request(_ request: Request, didSuspendTask task: URLSessionTask)
+
     /// Event called when a `Request` receives a `cancel` call.
     func requestDidCancel(_ request: Request)
+
+    /// Event called when a `Request`'s associated `URLSessionTask` is cancelled.
+    func request(_ request: Request, didCancelTask task: URLSessionTask)
 
     // MARK: DataRequest Events
 
@@ -242,8 +251,11 @@ extension EventMonitor {
     public func requestIsRetrying(_ request: Request) { }
     public func requestDidFinish(_ request: Request) { }
     public func requestDidResume(_ request: Request) { }
+    public func request(_ request: Request, didResumeTask task: URLSessionTask) { }
     public func requestDidSuspend(_ request: Request) { }
+    public func request(_ request: Request, didSuspendTask task: URLSessionTask) { }
     public func requestDidCancel(_ request: Request) { }
+    public func request(_ request: Request, didCancelTask task: URLSessionTask) { }
     public func request(_ request: DataRequest,
                         didValidateRequest urlRequest: URLRequest?,
                         response: HTTPURLResponse,
@@ -424,12 +436,24 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.requestDidResume(request) }
     }
 
+    public func request(_ request: Request, didResumeTask task: URLSessionTask) {
+        performEvent { $0.request(request, didResumeTask: task) }
+    }
+
     public func requestDidSuspend(_ request: Request) {
         performEvent { $0.requestDidSuspend(request) }
     }
 
+    public func request(_ request: Request, didSuspendTask task: URLSessionTask) {
+        performEvent { $0.request(request, didSuspendTask: task) }
+    }
+
     public func requestDidCancel(_ request: Request) {
         performEvent { $0.requestDidCancel(request) }
+    }
+
+    public func request(_ request: Request, didCancelTask task: URLSessionTask) {
+        performEvent { $0.request(request, didCancelTask: task) }
     }
 
     public func request(_ request: DataRequest,
@@ -571,11 +595,20 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `requestDidResume(_:)` event.
     open var requestDidResume: ((Request) -> Void)?
 
+    /// Closure called on the `request(_:didResumeTask:)` event.
+    open var requestDidResumeTask: ((Request, URLSessionTask) -> Void)?
+
     /// Closure called on the `requestDidSuspend(_:)` event.
     open var requestDidSuspend: ((Request) -> Void)?
 
+    /// Closure called on the `request(_:didSuspendTask:)` event.
+    open var requestDidSuspendTask: ((Request, URLSessionTask) -> Void)?
+
     /// Closure called on the `requestDidCancel(_:)` event.
     open var requestDidCancel: ((Request) -> Void)?
+
+    /// Closure called on the `request(_:didCancelTask:)` event.
+    open var requestDidCancelTask: ((Request, URLSessionTask) -> Void)?
 
     /// Closure called on the `request(_:didValidateRequest:response:data:withResult:)` event.
     open var requestDidValidateRequestResponseDataWithResult: ((DataRequest, URLRequest?, HTTPURLResponse, Data?, Request.ValidationResult) -> Void)?
@@ -722,12 +755,24 @@ open class ClosureEventMonitor: EventMonitor {
         requestDidResume?(request)
     }
 
+    public func request(_ request: Request, didResumeTask task: URLSessionTask) {
+        requestDidResumeTask?(request, task)
+    }
+
     open func requestDidSuspend(_ request: Request) {
         requestDidSuspend?(request)
     }
 
+    public func request(_ request: Request, didSuspendTask task: URLSessionTask) {
+        requestDidSuspendTask?(request, task)
+    }
+
     open func requestDidCancel(_ request: Request) {
         requestDidCancel?(request)
+    }
+
+    public func request(_ request: Request, didCancelTask task: URLSessionTask) {
+        requestDidCancelTask?(request, task)
     }
 
     open func request(_ request: DataRequest,

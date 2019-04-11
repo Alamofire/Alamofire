@@ -455,7 +455,7 @@ open class Session {
         requestTaskMap[request] = task
         request.didCreateTask(task)
 
-        resumeOrSuspendTask(task, ifNecessaryForRequest: request)
+        updateStatesForTask(task, request: request)
     }
 
     func didReceiveResumeData(_ data: Data, for request: DownloadRequest) {
@@ -465,18 +465,34 @@ open class Session {
         requestTaskMap[request] = task
         request.didCreateTask(task)
 
-        resumeOrSuspendTask(task, ifNecessaryForRequest: request)
+        updateStatesForTask(task, request: request)
     }
 
-    func resumeOrSuspendTask(_ task: URLSessionTask, ifNecessaryForRequest request: Request) {
-        if startRequestsImmediately || request.isResumed {
+    func updateStatesForTask(_ task: URLSessionTask, request: Request) {
+        switch (startRequestsImmediately, request.state) {
+        case (true, .initialized):
+            request.resume()
+        case (true, .resumed):
             task.resume()
-            request.didResume()
-        }
-
-        if request.isSuspended {
+            request.didResumeTask(task)
+        case (true, .suspended):
             task.suspend()
-            request.didSuspend()
+            request.didSuspendTask(task)
+        case (true, .cancelled):
+            task.cancel()
+            request.didCancelTask(task)
+        case (false, .initialized):
+            // Do nothing.
+            break
+        case (false, .cancelled):
+            task.cancel()
+            request.didCancelTask(task)
+        case (false, .resumed):
+            task.resume()
+            request.didResumeTask(task)
+        case (false, .suspended):
+            task.suspend()
+            request.didSuspendTask(task)
         }
     }
 
@@ -547,21 +563,23 @@ extension Session: RequestDelegate {
 
     public func cancelRequest(_ request: Request) {
         rootQueue.async {
+            request.didCancel()
+
             guard let task = self.requestTaskMap[request] else {
-                request.didCancel()
                 request.finish()
                 return
             }
 
             task.cancel()
-            request.didCancel()
+            request.didCancelTask(task)
         }
     }
 
     public func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
         rootQueue.async {
+            request.didCancel()
+
             guard let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask else {
-                request.didCancel()
                 request.finish()
                 return
             }
@@ -569,7 +587,7 @@ extension Session: RequestDelegate {
             downloadTask.cancel { (data) in
                 self.rootQueue.async {
                     byProducingResumeData(data)
-                    request.didCancel()
+                    request.didCancelTask(downloadTask)
                 }
             }
         }
@@ -577,19 +595,27 @@ extension Session: RequestDelegate {
 
     public func suspendRequest(_ request: Request) {
         rootQueue.async {
-            guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
+            guard !request.isCancelled else { return }
+
+            request.didSuspend()
+
+            guard let task = self.requestTaskMap[request] else { return }
 
             task.suspend()
-            request.didSuspend()
+            request.didSuspendTask(task)
         }
     }
 
     public func resumeRequest(_ request: Request) {
         rootQueue.async {
-            guard !request.isCancelled, let task = self.requestTaskMap[request] else { return }
+            guard !request.isCancelled else { return }
+
+            request.didResume()
+
+            guard let task = self.requestTaskMap[request] else { return }
 
             task.resume()
-            request.didResume()
+            request.didResumeTask(task)
         }
     }
 }
