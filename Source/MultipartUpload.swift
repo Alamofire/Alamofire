@@ -24,7 +24,7 @@
 
 import Foundation
 
-class MultipartUpload {
+final class MultipartUpload {
     lazy var result = AFResult { try build() }
 
     let isInBackgroundSession: Bool
