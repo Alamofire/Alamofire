@@ -33,6 +33,15 @@ public extension Request {
     static let didCancelNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCancel")
     /// Posted when a `Request` is finished. The `Notification` contains the completed `Request`.
     static let didFinishNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didFinish")
+
+    /// Posted when a `URLSessionTask` is resumed. The `Notification` contains the `Request` associated with the `URLSessionTask`.
+    static let didResumeTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didResumeTask")
+    /// Posted when a `URLSessionTask` is suspended. The `Notification` contains the `Request` associated with the `URLSessionTask`.
+    static let didSuspendTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didSuspendTask")
+    /// Posted when a `URLSessionTask` is cancelled. The `Notification` contains the `Request` associated with the `URLSessionTask`.
+    static let didCancelTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCancelTask")
+    /// Posted when a `URLSessionTask` is completed. The `Notification` contains the `Request` associated with the `URLSessionTask`.
+    static let didCompleteTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didFinishTask")
 }
 
 // MARK: -
@@ -86,5 +95,21 @@ public final class AlamofireNotifications: EventMonitor {
 
     public func requestDidFinish(_ request: Request) {
         NotificationCenter.default.postNotification(named: Request.didFinishNotification, with: request)
+    }
+
+    public func request(_ request: Request, didResumeTask task: URLSessionTask) {
+        NotificationCenter.default.postNotification(named: Request.didResumeTaskNotification, with: request)
+    }
+
+    public func request(_ request: Request, didSuspendTask task: URLSessionTask) {
+        NotificationCenter.default.postNotification(named: Request.didSuspendTaskNotification, with: request)
+    }
+
+    public func request(_ request: Request, didCancelTask task: URLSessionTask) {
+        NotificationCenter.default.postNotification(named: Request.didCancelTaskNotification, with: request)
+    }
+
+    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?) {
+        NotificationCenter.default.postNotification(named: Request.didCompleteTaskNotification, with: request)
     }
 }
