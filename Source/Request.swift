@@ -26,7 +26,7 @@ import Foundation
 
 /// `Request` is the common superclass of all Alamofire request types and provides common state, delegate, and callback
 /// handling.
-open class Request {
+public class Request {
     /// State of the `Request`, with managed transitions between states set when calling `resume()`, `suspend()`, or
     /// `cancel()` on the `Request`.
     ///
@@ -479,7 +479,7 @@ open class Request {
     ///
     /// - Returns: The `Request`.
     @discardableResult
-    open func cancel() -> Self {
+    public func cancel() -> Self {
         guard protectedMutableState.attemptToTransitionTo(.cancelled) else { return self }
 
         delegate?.cancelRequest(self)
@@ -491,7 +491,7 @@ open class Request {
     ///
     /// - Returns: The `Request`.
     @discardableResult
-    open func suspend() -> Self {
+    public func suspend() -> Self {
         guard protectedMutableState.attemptToTransitionTo(.suspended) else { return self }
 
         delegate?.suspendRequest(self)
@@ -504,7 +504,7 @@ open class Request {
     ///
     /// - Returns: The `Request`.
     @discardableResult
-    open func resume() -> Self {
+    public func resume() -> Self {
         guard protectedMutableState.attemptToTransitionTo(.resumed) else { return self }
 
         delegate?.resumeRequest(self)
@@ -522,7 +522,7 @@ open class Request {
     ///   - persistence: The `URLCredential.Persistence` for the created `URLCredential`.
     /// - Returns:       The `Request`.
     @discardableResult
-    open func authenticate(username: String, password: String, persistence: URLCredential.Persistence = .forSession) -> Self {
+    public func authenticate(username: String, password: String, persistence: URLCredential.Persistence = .forSession) -> Self {
         let credential = URLCredential(user: username, password: password, persistence: persistence)
 
         return authenticate(with: credential)
@@ -533,7 +533,7 @@ open class Request {
     /// - Parameter credential: The `URLCredential`.
     /// - Returns:              The `Request`.
     @discardableResult
-    open func authenticate(with credential: URLCredential) -> Self {
+    public func authenticate(with credential: URLCredential) -> Self {
         protectedMutableState.write { $0.credential = credential }
 
         return self
@@ -548,7 +548,7 @@ open class Request {
     ///   - closure: The code to be executed periodically as data is read from the server.
     /// - Returns:   The `Request`.
     @discardableResult
-    open func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
+    public func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         protectedMutableState.write { $0.downloadProgressHandler = (handler: closure, queue: queue) }
 
         return self
@@ -563,7 +563,7 @@ open class Request {
     ///   - closure: The closure to be executed periodically as data is sent to the server.
     /// - Returns:   The `Request`.
     @discardableResult
-    open func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
+    public func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
         protectedMutableState.write { $0.uploadProgressHandler = (handler: closure, queue: queue) }
 
         return self
@@ -576,7 +576,7 @@ open class Request {
     /// - Parameter handler: The `RedirectHandler`.
     /// - Returns:           The `Request`.
     @discardableResult
-    open func redirect(using handler: RedirectHandler) -> Self {
+    public func redirect(using handler: RedirectHandler) -> Self {
         protectedMutableState.write { mutableState in
             precondition(mutableState.redirectHandler == nil, "Redirect handler has already been set")
             mutableState.redirectHandler = handler
@@ -592,7 +592,7 @@ open class Request {
     /// - Parameter handler: The `CachedResponseHandler`.
     /// - Returns:           The `Request`.
     @discardableResult
-    open func cacheResponse(using handler: CachedResponseHandler) -> Self {
+    public func cacheResponse(using handler: CachedResponseHandler) -> Self {
         protectedMutableState.write { mutableState in
             precondition(mutableState.cachedResponseHandler == nil, "Cached response handler has already been set")
             mutableState.cachedResponseHandler = handler
@@ -735,7 +735,7 @@ public protocol RequestDelegate: AnyObject {
 
 // MARK: DataRequest
 
-open class DataRequest: Request {
+public class DataRequest: Request {
     public let convertible: URLRequestConvertible
 
     private var protectedData: Protector<Data?> = Protector(nil)
@@ -818,7 +818,7 @@ open class DataRequest: Request {
     }
 }
 
-open class DownloadRequest: Request {
+public class DownloadRequest: Request {
     /// A collection of options to be executed prior to moving a downloaded file from the temporary URL to the
     /// destination URL.
     public struct Options: OptionSet {
@@ -857,10 +857,10 @@ open class DownloadRequest: Request {
     /// - parameter domain:    The search path domain mask. `.userDomainMask` by default.
     ///
     /// - returns: A download file destination closure.
-    open class func suggestedDownloadDestination(for directory: FileManager.SearchPathDirectory = .documentDirectory,
-                                                 in domain: FileManager.SearchPathDomainMask = .userDomainMask,
-                                                 options: Options = []) -> Destination {
-        return { (temporaryURL, response) in
+    public class func suggestedDownloadDestination(for directory: FileManager.SearchPathDirectory = .documentDirectory,
+                                                   in domain: FileManager.SearchPathDomainMask = .userDomainMask,
+                                                   options: Options = []) -> Destination {
+        return { temporaryURL, response in
             let directoryURLs = FileManager.default.urls(for: directory, in: domain)
             let url = directoryURLs.first?.appendingPathComponent(response.suggestedFilename!) ?? temporaryURL
 
@@ -944,12 +944,12 @@ open class DownloadRequest: Request {
         return session.downloadTask(with: request)
     }
 
-    open func task(forResumeData data: Data, using session: URLSession) -> URLSessionTask {
+    public func task(forResumeData data: Data, using session: URLSession) -> URLSessionTask {
         return session.downloadTask(withResumeData: data)
     }
 
     @discardableResult
-    open override func cancel() -> Self {
+    public override func cancel() -> Self {
         guard state.canTransitionTo(.cancelled) else { return self }
 
         state = .cancelled
@@ -992,7 +992,7 @@ open class DownloadRequest: Request {
     }
 }
 
-open class UploadRequest: DataRequest {
+public class UploadRequest: DataRequest {
     public enum Uploadable {
         case data(Data)
         case file(URL, shouldRemove: Bool)
@@ -1065,7 +1065,7 @@ open class UploadRequest: DataRequest {
         return stream
     }
 
-    open override func cleanup() {
+    public override func cleanup() {
         super.cleanup()
 
         guard
