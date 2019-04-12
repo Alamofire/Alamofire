@@ -24,7 +24,7 @@
 
 import Foundation
 
-public protocol SessionStateProvider: AnyObject {
+protocol SessionStateProvider: AnyObject {
     var serverTrustManager: ServerTrustManager? { get }
     var redirectHandler: RedirectHandler? { get }
     var cachedResponseHandler: CachedResponseHandler? { get }
