@@ -94,6 +94,8 @@ class SessionDelegateTestCase: BaseTestCase {
         XCTAssertEqual(response?.response?.statusCode, 200)
     }
 
+    // MARK: - Tests - Notification
+
     func testThatAppropriateNotificationsAreCalledWithRequestForDataRequest() {
         // Given
         let session = Session(startRequestsImmediately: false)
@@ -103,17 +105,17 @@ class SessionDelegateTestCase: BaseTestCase {
         let expect = expectation(description: "request should complete")
 
         // When
-        let request = session.request("https://httpbin.org/get").response { (response) in
+        let request = session.request("https://httpbin.org/get").response { response in
             requestResponse = response
             expect.fulfill()
         }
-        expectation(forNotification: Request.didResume, object: nil) { (notification) in
+        expectation(forNotification: Request.didResumeNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             resumedRequest = notification.request
             return true
         }
-        expectation(forNotification: Request.didFinish, object: nil) { (notification) in
+        expectation(forNotification: Request.didFinishNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             completedRequest = notification.request
@@ -142,13 +144,13 @@ class SessionDelegateTestCase: BaseTestCase {
             requestResponse = response
             expect.fulfill()
         }
-        expectation(forNotification: Request.didResume, object: nil) { (notification) in
+        expectation(forNotification: Request.didResumeNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             resumedRequest = notification.request
             return true
         }
-        expectation(forNotification: Request.didFinish, object: nil) { (notification) in
+        expectation(forNotification: Request.didFinishNotification, object: nil) { notification in
             guard let receivedRequest = notification.request, receivedRequest == request else { return false }
 
             completedRequest = notification.request

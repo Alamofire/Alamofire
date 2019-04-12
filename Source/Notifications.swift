@@ -26,13 +26,13 @@ import Foundation
 
 public extension Request {
     /// Posted when a `Request` is resumed. The `Notification` contains the resumed `Request`.
-    static let didResume = Notification.Name(rawValue: "org.alamofire.notification.name.request.didResume")
+    static let didResumeNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didResume")
     /// Posted when a `Request` is suspended. The `Notification` contains the suspended `Request`.
-    static let didSuspend = Notification.Name(rawValue: "org.alamofire.notification.name.request.didSuspend")
+    static let didSuspendNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didSuspend")
     /// Posted when a `Request` is cancelled. The `Notification` contains the cancelled `Request`.
-    static let didCancel = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCancel")
+    static let didCancelNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCancel")
     /// Posted when a `Request` is finished. The `Notification` contains the completed `Request`.
-    static let didFinish = Notification.Name(rawValue: "org.alamofire.notification.name.request.didFinish")
+    static let didFinishNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didFinish")
 }
 
 // MARK: -
@@ -72,19 +72,19 @@ extension String {
 
 /// `EventMonitor` that provides Alamofire's notifications.
 public final class AlamofireNotifications: EventMonitor {
-    public func requestDidFinish(_ request: Request) {
-        NotificationCenter.default.postNotification(named: Request.didFinish, with: request)
-    }
-
     public func requestDidResume(_ request: Request) {
-        NotificationCenter.default.postNotification(named: Request.didResume, with: request)
+        NotificationCenter.default.postNotification(named: Request.didResumeNotification, with: request)
     }
 
     public func requestDidSuspend(_ request: Request) {
-        NotificationCenter.default.postNotification(named: Request.didSuspend, with: request)
+        NotificationCenter.default.postNotification(named: Request.didSuspendNotification, with: request)
     }
 
     public func requestDidCancel(_ request: Request) {
-        NotificationCenter.default.postNotification(named: Request.didCancel, with: request)
+        NotificationCenter.default.postNotification(named: Request.didCancelNotification, with: request)
+    }
+
+    public func requestDidFinish(_ request: Request) {
+        NotificationCenter.default.postNotification(named: Request.didFinishNotification, with: request)
     }
 }
