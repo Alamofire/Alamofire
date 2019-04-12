@@ -1,5 +1,5 @@
 //
-//  SessionStateProvider.swift
+//  SessionDelegate.swift
 //
 //  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -24,7 +24,7 @@
 
 import Foundation
 
-public protocol SessionStateProvider: AnyObject {
+protocol SessionStateProvider: AnyObject {
     var serverTrustManager: ServerTrustManager? { get }
     var redirectHandler: RedirectHandler? { get }
     var cachedResponseHandler: CachedResponseHandler? { get }
