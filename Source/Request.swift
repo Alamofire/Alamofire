@@ -66,12 +66,12 @@ open class Request {
     /// The `Request`'s interceptor.
     public let interceptor: RequestInterceptor?
     /// The `Request`'s delegate.
-    public weak var delegate: RequestDelegate?
+    public private(set) weak var delegate: RequestDelegate?
 
     // MARK: - Updated State
 
     /// Type encapsulating all mutable state that may need to be accessed from anything other than the `underlyingQueue`.
-    private struct MutableState {
+    struct MutableState {
         /// State of the `Request`.
         var state: State = .initialized
         /// `ProgressHandler` and `DispatchQueue` provided for upload progress callbacks.
@@ -303,9 +303,19 @@ open class Request {
         eventMonitor?.requestDidResume(self)
     }
 
+    /// Called when a `URLSessionTask` is resumed on behalf of the instance.
+    func didResumeTask(_ task: URLSessionTask) {
+        eventMonitor?.request(self, didResumeTask: task)
+    }
+
     /// Called when suspension is completed.
     func didSuspend() {
         eventMonitor?.requestDidSuspend(self)
+    }
+
+    /// Callend when a `URLSessionTask` is suspended on behalf of the instance.
+    func didSuspendTask(_ task: URLSessionTask) {
+        eventMonitor?.request(self, didSuspendTask: task)
     }
 
     /// Called when cancellation is completed, sets `error` to `AFError.explicitlyCancelled`.
@@ -313,6 +323,11 @@ open class Request {
         error = AFError.explicitlyCancelled
 
         eventMonitor?.requestDidCancel(self)
+    }
+
+    /// Called when a `URLSessionTask` is cancelled on behalf of the instance.
+    func didCancelTask(_ task: URLSessionTask) {
+        eventMonitor?.request(self, didCancelTask: task)
     }
 
     /// Called when a `URLSessionTaskMetrics` value is gathered on behalf of the `Request`.
@@ -465,9 +480,7 @@ open class Request {
     /// - Returns: The `Request`.
     @discardableResult
     open func cancel() -> Self {
-        guard state.canTransitionTo(.cancelled) else { return self }
-
-        state = .cancelled
+        guard protectedMutableState.attemptToTransitionTo(.cancelled) else { return self }
 
         delegate?.cancelRequest(self)
 
@@ -479,9 +492,7 @@ open class Request {
     /// - Returns: The `Request`.
     @discardableResult
     open func suspend() -> Self {
-        guard state.canTransitionTo(.suspended) else { return self }
-
-        state = .suspended
+        guard protectedMutableState.attemptToTransitionTo(.suspended) else { return self }
 
         delegate?.suspendRequest(self)
 
@@ -494,9 +505,7 @@ open class Request {
     /// - Returns: The `Request`.
     @discardableResult
     open func resume() -> Self {
-        guard state.canTransitionTo(.resumed) else { return self }
-
-        state = .resumed
+        guard protectedMutableState.attemptToTransitionTo(.resumed) else { return self }
 
         delegate?.resumeRequest(self)
 
@@ -877,12 +886,12 @@ open class DownloadRequest: Request {
 
     // MARK: Updated State
 
-    private struct MutableState {
+    private struct DownloadRequestMutableState {
         var resumeData: Data?
         var fileURL: URL?
     }
 
-    private let protectedMutableState: Protector<MutableState> = Protector(MutableState())
+    private let protectedMutableState: Protector<DownloadRequestMutableState> = Protector(DownloadRequestMutableState())
 
     public var resumeData: Data? { return protectedMutableState.directValue.resumeData }
     public var fileURL: URL? { return protectedMutableState.directValue.fileURL }
