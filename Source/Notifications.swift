@@ -41,7 +41,7 @@ public extension Request {
     /// Posted when a `URLSessionTask` is cancelled. The `Notification` contains the `Request` associated with the `URLSessionTask`.
     static let didCancelTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCancelTask")
     /// Posted when a `URLSessionTask` is completed. The `Notification` contains the `Request` associated with the `URLSessionTask`.
-    static let didCompleteTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didFinishTask")
+    static let didCompleteTaskNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didCompleteTask")
 }
 
 // MARK: -
