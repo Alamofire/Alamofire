@@ -316,7 +316,7 @@ open class Session {
     }
 
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
-                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
+                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      fileManager: FileManager = .default,
                      to url: URLConvertible,
                      method: HTTPMethod = .post,
@@ -334,7 +334,7 @@ open class Session {
     }
 
     open func upload(multipartFormData: MultipartFormData,
-                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
+                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      with request: URLRequestConvertible,
                      interceptor: RequestInterceptor? = nil) -> UploadRequest {
         let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
