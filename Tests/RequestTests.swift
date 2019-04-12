@@ -491,6 +491,39 @@ class RequestResponseTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(request.state, .cancelled)
     }
+    
+    func testThatRequestManuallyCancelledManyTimesOnManyQueuesOnlyReceivesAppropriateLifetimeEvents() {
+        // Given
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(eventMonitors: [eventMonitor])
+        
+        let expect = expectation(description: "request should receive appropriate lifetime events")
+        expect.expectedFulfillmentCount = 5
+        
+        eventMonitor.requestDidCancelTask = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
+        eventMonitor.requestDidResume = { _ in expect.fulfill() }
+        eventMonitor.requestDidResumeTask = { (_, _) in expect.fulfill() }
+        // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
+        eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
+        eventMonitor.requestDidSuspendTask = { (_, _) in expect.fulfill() }
+        
+        // When
+        let request = session.request(URLRequest.makeHTTPBinRequest())
+        // Cancellation stops task creation, so don't cancel the request until the task has been created.
+        eventMonitor.requestDidCreateTask = { (_, _) in
+            DispatchQueue.concurrentPerform(iterations: 100) { i in
+                request.cancel()
+                
+                if i == 99 { expect.fulfill() }
+            }
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertEqual(request.state, .cancelled)
+    }
 }
 
 // MARK: -
