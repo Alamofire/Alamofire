@@ -22,7 +22,7 @@
         <a class="header-link" href="index.html">
           Alamofire Docs
         </a>
-         (75% documented)
+         (77% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -111,9 +111,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/MultipartFormData.html">MultipartFormData</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/MultipartUpload.html">MultipartUpload</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/NetworkReachabilityManager.html">NetworkReachabilityManager</a>
@@ -319,9 +316,6 @@
                 <a class="nav-group-task-link" href="Protocols/ServerTrustEvaluating.html">ServerTrustEvaluating</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Protocols/SessionStateProvider.html">SessionStateProvider</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/URLConvertible.html">URLConvertible</a>
               </li>
               <li class="nav-group-task">
@@ -481,8 +475,8 @@
 
 <ul>
 <li>iOS 10.0+ / macOS 10.12+ / tvOS 10.0+ / watchOS 3.0+</li>
-<li>Xcode 10.1+</li>
-<li>Swift 4.2+</li>
+<li>Xcode 10.2+</li>
+<li>Swift 5+</li>
 </ul>
 <h2 id='migration-guides' class='heading'>Migration Guides</h2>
 
@@ -495,24 +489,24 @@
 <h2 id='communication' class='heading'>Communication</h2>
 
 <ul>
-<li>If you <strong>need help with making network requests</strong>, use <a href="https://stackoverflow.com/questions/tagged/alamofire">Stack Overflow</a> and tag <code>alamofire</code>.</li>
+<li>If you <strong>need help with making network requests</strong> using Alamofire, use <a href="https://stackoverflow.com/questions/tagged/alamofire">Stack Overflow</a> and tag <code>alamofire</code>.</li>
 <li>If you need to <strong>find or understand an API</strong>, check <a href="http://alamofire.github.io/Alamofire/">our documentation</a> or <a href="https://developer.apple.com/documentation/foundation/url_loading_system">Apple&rsquo;s documentation for <code>URLSession</code></a>, on top of which Alamofire is built.</li>
 <li>If you need <strong>help with an Alamofire feature</strong>, use <a href="https://forums.swift.org/c/related-projects/alamofire">our forum on swift.org</a>.</li>
 <li>If you&rsquo;d like to <strong>discuss Alamofire best practices</strong>, use <a href="https://forums.swift.org/c/related-projects/alamofire">our forum on swift.org</a>.</li>
 <li>If you&rsquo;d like to <strong>discuss a feature request</strong>, use <a href="https://forums.swift.org/c/related-projects/alamofire">our forum on swift.org</a>.</li>
-<li>If you <strong>found a bug</strong>, open an issue and follow the guide. The more detail the better!</li>
+<li>If you <strong>found a bug</strong>, open an issue here on GitHub and follow the guide. The more detail the better!</li>
 <li>If you <strong>want to contribute</strong>, submit a pull request.</li>
 </ul>
 <h2 id='installation' class='heading'>Installation</h2>
 <h3 id='cocoapods' class='heading'>CocoaPods</h3>
 
 <p><a href="https://cocoapods.org">CocoaPods</a> is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>:</p>
-<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.0.0-beta.3'</span>
+<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.0.0-beta.5'</span>
 </code></pre>
 <h3 id='carthage' class='heading'>Carthage</h3>
 
 <p><a href="https://github.com/Carthage/Carthage">Carthage</a> is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your <code>Cartfile</code>:</p>
-<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" "5.0.0-beta.3"
+<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" "5.0.0-beta.5"
 </code></pre>
 <h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
 
@@ -521,7 +515,7 @@
 <p>Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the <code>dependencies</code> value of your <code>Package.swift</code>.</p>
 <h4 id='swift-4' class='heading'>Swift 4</h4>
 <pre class="highlight swift"><code><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
-    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="s">"5.0.0-beta.3"</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="s">"5.0.0-beta.5"</span><span class="p">)</span>
 <span class="p">]</span>
 </code></pre>
 <h3 id='manually' class='heading'>Manually</h3>
@@ -596,11 +590,6 @@
 <h3 id='what-39-s-the-origin-of-the-name-alamofire' class='heading'>What&rsquo;s the origin of the name Alamofire?</h3>
 
 <p>Alamofire is named after the <a href="https://aggie-horticulture.tamu.edu/wildseed/alamofire.html">Alamo Fire flower</a>, a hybrid variant of the Bluebonnet, the official state flower of Texas.</p>
-<h3 id='what-logic-belongs-in-a-router-vs-a-request-adapter' class='heading'>What logic belongs in a Router vs. a Request Adapter?</h3>
-
-<p>Simple, static data such as paths, HTTP methods, and common headers belong in the <code>Router</code>. Dynamic data such as an <code>Authorization</code> header whose value can changed based on an authentication system belongs in a <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code>.</p>
-
-<p>The reason the dynamic data MUST be placed into the <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> is to support retry operations. When a <code><a href="Classes/Request.html">Request</a></code> is retried, the original request is not rebuilt meaning the <code>Router</code> will not be called again. The <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> is called again allowing the dynamic data to be updated on the original request before retrying the <code><a href="Classes/Request.html">Request</a></code>.</p>
 <h2 id='credits' class='heading'>Credits</h2>
 
 <p>Alamofire is owned and maintained by the <a href="http://alamofire.org">Alamofire Software Foundation</a>. You can follow them on Twitter at <a href="https://twitter.com/AlamofireSF">@AlamofireSF</a> for project updates and releases.</p>
@@ -638,7 +627,7 @@ Any amount you can donate today to help us reach our goal would be greatly appre
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-03-29)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-12)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

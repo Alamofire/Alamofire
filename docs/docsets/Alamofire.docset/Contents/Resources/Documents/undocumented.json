@@ -1590,13 +1590,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/URLRequest+Alamofire.swift",
-      "line": 28,
-      "symbol": "URLRequest.method",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/URLSessionConfiguration+Alamofire.swift",
       "line": 29,
       "symbol": "AlamofireExtension.default",
