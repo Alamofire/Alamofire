@@ -142,7 +142,7 @@ If you prefer not to use any of the aforementioned dependency managers, you can 
 
     > It does not matter which `Products` folder you choose from, but it does matter whether you choose the top or bottom `Alamofire.framework`.
 
-- Select the top `Alamofire.framework` for iOS and the bottom one for OS X.
+- Select the top `Alamofire.framework` for iOS and the bottom one for macOS.
 
     > You can verify which one you selected by inspecting the build log for your project. The build target for `Alamofire` will be listed as either `Alamofire iOS`, `Alamofire macOS`, `Alamofire tvOS` or `Alamofire watchOS`.
 
