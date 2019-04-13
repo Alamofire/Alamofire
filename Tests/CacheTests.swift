@@ -94,7 +94,7 @@ class CacheTestCase: BaseTestCase {
         manager = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.default
-                configuration.httpHeaders = HTTPHeaders.default
+                configuration.headers = HTTPHeaders.default
                 configuration.requestCachePolicy = .useProtocolCachePolicy
                 configuration.urlCache = urlCache
 

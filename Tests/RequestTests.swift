@@ -569,7 +569,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         headers["Accept-Language"] = "en-US"
 
         let configuration = URLSessionConfiguration.af.default
-        configuration.httpHeaders = headers
+        configuration.headers = headers
 
         let manager = Session(configuration: configuration)
 
@@ -581,7 +581,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         headers["Content-Type"] = "application/json"
 
         let configuration = URLSessionConfiguration.af.default
-        configuration.httpHeaders = headers
+        configuration.headers = headers
 
         let manager = Session(configuration: configuration)
 

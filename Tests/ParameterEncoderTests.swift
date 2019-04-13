@@ -35,7 +35,7 @@ final class JSONParameterEncoderTests: BaseTestCase {
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
 
         // Then
-        XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "application/json")
+        XCTAssertEqual(newRequest.headers["Content-Type"], "application/json")
         XCTAssertEqual(newRequest.httpBody?.asString, "{\"property\":\"property\"}")
     }
 
@@ -43,13 +43,13 @@ final class JSONParameterEncoderTests: BaseTestCase {
         // Given
         let encoder = JSONParameterEncoder()
         var request = URLRequest.makeHTTPBinRequest()
-        request.httpHeaders.update(.contentType("type"))
+        request.headers.update(.contentType("type"))
 
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
 
         // Then
-        XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "type")
+        XCTAssertEqual(newRequest.headers["Content-Type"], "type")
         XCTAssertEqual(newRequest.httpBody?.asString, "{\"property\":\"property\"}")
     }
 
@@ -133,7 +133,7 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
 
         // Then
-        XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "application/x-www-form-urlencoded; charset=utf-8")
+        XCTAssertEqual(newRequest.headers["Content-Type"], "application/x-www-form-urlencoded; charset=utf-8")
         XCTAssertEqual(newRequest.httpBody?.asString, "property=property")
     }
 
@@ -141,13 +141,13 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         // Given
         let encoder = URLEncodedFormParameterEncoder()
         var request = URLRequest.makeHTTPBinRequest(method: .post)
-        request.httpHeaders.update(.contentType("type"))
+        request.headers.update(.contentType("type"))
 
         // When
         let newRequest = try encoder.encode(HTTPBinParameters.default, into: request)
 
         // Then
-        XCTAssertEqual(newRequest.httpHeaders["Content-Type"], "type")
+        XCTAssertEqual(newRequest.headers["Content-Type"], "type")
         XCTAssertEqual(newRequest.httpBody?.asString, "property=property")
     }
 
