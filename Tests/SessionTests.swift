@@ -76,10 +76,10 @@ class SessionTestCase: BaseTestCase {
 
                 var urlRequest = urlRequest
 
-                var finalHeaders = urlRequest.httpHeaders
+                var finalHeaders = urlRequest.headers
                 headers.forEach { finalHeaders.add($0) }
 
-                urlRequest.httpHeaders = finalHeaders
+                urlRequest.headers = finalHeaders
 
                 return urlRequest
             }
@@ -121,7 +121,7 @@ class SessionTestCase: BaseTestCase {
                 adaptedCount += 1
 
                 if shouldApplyAuthorizationHeader && adaptedCount > 1 {
-                    urlRequest.httpHeaders.update(.authorization(username: "user", password: "password"))
+                    urlRequest.headers.update(.authorization(username: "user", password: "password"))
                 }
 
                 return urlRequest
@@ -1537,7 +1537,7 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
 
                 var headers = HTTPHeaders.default
                 headers["Authorization"] = "Bearer 123456"
-                configuration.httpHeaders = headers
+                configuration.headers = headers
 
                 return configuration
             }()

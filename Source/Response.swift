@@ -90,7 +90,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
         let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         let responseDescription = response.map { (response) in
-            let sortedHeaders = response.httpHeaders.sorted()
+            let sortedHeaders = response.headers.sorted()
 
             return """
                    [Status Code]: \(response.statusCode)
@@ -278,7 +278,7 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
         let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         let responseDescription = response.map { (response) in
-            let sortedHeaders = response.httpHeaders.sorted()
+            let sortedHeaders = response.headers.sorted()
 
             return """
                    [Status Code]: \(response.statusCode)

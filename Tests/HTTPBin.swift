@@ -42,7 +42,7 @@ extension URLRequest {
                                    headers: HTTPHeaders = .init()) -> URLRequest {
         var request = URLRequest(url: .makeHTTPBinURL(path: path))
         request.httpMethod = method.rawValue
-        request.httpHeaders = headers
+        request.headers = headers
 
         return request
     }
@@ -50,7 +50,7 @@ extension URLRequest {
     static func make(url: URL = URL(string: "https://httpbin.org/get")!, method: HTTPMethod = .get, headers: HTTPHeaders = .init()) -> URLRequest {
         var request = URLRequest(url:url)
         request.method = method
-        request.httpHeaders = headers
+        request.headers = headers
 
         return request
     }

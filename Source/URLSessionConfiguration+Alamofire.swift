@@ -28,7 +28,7 @@ extension URLSessionConfiguration: AlamofireExtended { }
 extension AlamofireExtension where ExtendedType: URLSessionConfiguration {
     public static var `default`: URLSessionConfiguration {
         let configuration = URLSessionConfiguration.default
-        configuration.httpHeaders = .default
+        configuration.headers = .default
 
         return configuration
     }
