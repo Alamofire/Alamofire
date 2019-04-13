@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4)
+- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4) | [5.0.0-beta.5](#500-beta5)
 
 #### 4.x Releases
 - `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481)
@@ -37,6 +37,39 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.0.0-beta.5](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.5)
+Released on 2019-04-12. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/55). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- `Request.didResumeTaskNotification`, `Request.didSuspendTaskNotification`, `Request.didCancelTaskNotification`, and `Request.didCompleteTaskNotification` notifications.
+  - Added by [Christian Noon](https://github.com/cnoon) in Pull Request [#2803](https://github.com/Alamofire/Alamofire/pull/2803).
+- Separate `URLSessionTask` lifetime events to `EventMonitor`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2796](https://github.com/Alamofire/Alamofire/pull/2796).
+
+#### Updated
+- `SessionStateProvider` to no longer be `public` and renamed the file it lives in.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2801](https://github.com/Alamofire/Alamofire/pull/2801).
+- `MultipartUpload` to no longer be `public`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2805](https://github.com/Alamofire/Alamofire/pull/2805).
+- `Request`, `DataRequest`, `UploadRequest`, and `DownloadRequest` to longer be `open`, as Alamofire does not support subclassing these types.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2804](https://github.com/Alamofire/Alamofire/pull/2804).
+- Names of the notifications posted by `Request` to include `Notification`.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2803](https://github.com/Alamofire/Alamofire/pull/2803).
+- `httpHeaders` extensions on `URLRequest`, `HTTPURLResponse`,  and `URLSessionConfiguration` to be `headers` instead.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2802](https://github.com/Alamofire/Alamofire/pull/2802).
+
+#### Fixed
+- Issue in `Request` where calling `cancel()` inside a response serializer would result in the serializer running again.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2778](https://github.com/Alamofire/Alamofire/pull/2778).
+- Issue in `Session` where the delegate `precondition` would be triggered when running with a swizzled `URLSessionDelegate`.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2783](https://github.com/Alamofire/Alamofire/pull/2783).
+- Compiler error in the example app.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2786](https://github.com/Alamofire/Alamofire/pull/2786).
+- Issues `Request` where certain lifetime events could be triggered more than once by repeatedly calling `resume()`, `suspend()`, or `cancel()`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2796](https://github.com/Alamofire/Alamofire/pull/2796) in Regards to Issue [#2759](https://github.com/Alamofire/Alamofire/issues/2759).
+- Framework version string to be compatible with TestFlight and AppStore releases.
+  - Fixed by [Christian Noon](https://github.com/cnoon) in Pull Request [#2799](https://github.com/Alamofire/Alamofire/pull/2799) in Regards to Issue [#2797](https://github.com/Alamofire/Alamofire/issues/2797).
 
 ## [5.0.0-beta.4](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.4)
 Released on 2019-03-29. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A5.0.0-beta.4). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
