@@ -74,7 +74,7 @@ GEM
     redcarpet (3.4.0)
     rouge (2.0.7)
     ruby-macho (1.4.0)
-    sass (3.7.3)
+    sass (3.7.4)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -85,7 +85,7 @@ GEM
       thread_safe (~> 0.1)
     xcinvoke (0.3.0)
       liferaft (~> 0.0.6)
-    xcodeproj (1.8.1)
+    xcodeproj (1.8.2)
       CFPropertyList (>= 2.3.3, < 4.0)
       atomos (~> 0.1.3)
       claide (>= 1.0.2, < 2.0)
@@ -103,4 +103,4 @@ DEPENDENCIES
   xcpretty
 
 BUNDLED WITH
-   1.17.1
+   1.17.3
