@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (75% documented)
+         (77% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -112,9 +112,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/MultipartFormData.html">MultipartFormData</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/MultipartUpload.html">MultipartUpload</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager.html">NetworkReachabilityManager</a>
@@ -320,9 +317,6 @@
                 <a class="nav-group-task-link" href="../Protocols/ServerTrustEvaluating.html">ServerTrustEvaluating</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Protocols/SessionStateProvider.html">SessionStateProvider</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/URLConvertible.html">URLConvertible</a>
               </li>
               <li class="nav-group-task">
@@ -412,7 +406,7 @@
             <h1>DownloadRequest</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">DownloadRequest</span> <span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">DownloadRequest</span> <span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span></code></pre>
 
                 </div>
               </div>
@@ -516,9 +510,9 @@ file URL in the first available directory with the specified search path directo
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kd">func</span> <span class="nf">suggestedDownloadDestination</span><span class="p">(</span><span class="k">for</span> <span class="nv">directory</span><span class="p">:</span> <span class="kt">FileManager</span><span class="o">.</span><span class="kt">SearchPathDirectory</span> <span class="o">=</span> <span class="o">.</span><span class="n">documentDirectory</span><span class="p">,</span>
-                                             <span class="k">in</span> <span class="nv">domain</span><span class="p">:</span> <span class="kt">FileManager</span><span class="o">.</span><span class="kt">SearchPathDomainMask</span> <span class="o">=</span> <span class="o">.</span><span class="n">userDomainMask</span><span class="p">,</span>
-                                             <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest/Options.html">Options</a></span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">Destination</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kd">func</span> <span class="nf">suggestedDownloadDestination</span><span class="p">(</span><span class="k">for</span> <span class="nv">directory</span><span class="p">:</span> <span class="kt">FileManager</span><span class="o">.</span><span class="kt">SearchPathDirectory</span> <span class="o">=</span> <span class="o">.</span><span class="n">documentDirectory</span><span class="p">,</span>
+                                               <span class="k">in</span> <span class="nv">domain</span><span class="p">:</span> <span class="kt">FileManager</span><span class="o">.</span><span class="kt">SearchPathDomainMask</span> <span class="o">=</span> <span class="o">.</span><span class="n">userDomainMask</span><span class="p">,</span>
+                                               <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest/Options.html">Options</a></span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">Destination</a></span></code></pre>
 
                         </div>
                       </div>
@@ -722,7 +716,7 @@ file URL in the first available directory with the specified search path directo
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">task</span><span class="p">(</span><span class="n">forResumeData</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="n">using</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">URLSessionTask</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">task</span><span class="p">(</span><span class="n">forResumeData</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="n">using</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">URLSessionTask</span></code></pre>
 
                         </div>
                       </div>
@@ -749,7 +743,7 @@ file URL in the first available directory with the specified search path directo
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">open</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">cancel</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+<span class="kd">public</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">cancel</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
 
                         </div>
                       </div>
@@ -1405,7 +1399,7 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-03-29)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-12)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
