@@ -102,7 +102,7 @@ public class Request {
     }
 
     /// Protected `MutableState` value that provides threadsafe access to state values.
-    private let protectedMutableState: Protector<MutableState> = Protector(MutableState())
+    fileprivate let protectedMutableState: Protector<MutableState> = Protector(MutableState())
 
     /// `State` of the `Request`.
     public fileprivate(set) var state: State {
@@ -891,10 +891,10 @@ public class DownloadRequest: Request {
         var fileURL: URL?
     }
 
-    private let protectedMutableState: Protector<DownloadRequestMutableState> = Protector(DownloadRequestMutableState())
+    private let protectedDownloadMutableState: Protector<DownloadRequestMutableState> = Protector(DownloadRequestMutableState())
 
-    public var resumeData: Data? { return protectedMutableState.directValue.resumeData }
-    public var fileURL: URL? { return protectedMutableState.directValue.fileURL }
+    public var resumeData: Data? { return protectedDownloadMutableState.directValue.resumeData }
+    public var fileURL: URL? { return protectedDownloadMutableState.directValue.fileURL }
 
     // MARK: Init
 
@@ -920,15 +920,15 @@ public class DownloadRequest: Request {
     override func reset() {
         super.reset()
 
-        protectedMutableState.write { $0.resumeData = nil }
-        protectedMutableState.write { $0.fileURL = nil }
+        protectedDownloadMutableState.write { $0.resumeData = nil }
+        protectedDownloadMutableState.write { $0.fileURL = nil }
     }
 
     func didFinishDownloading(using task: URLSessionTask, with result: AFResult<URL>) {
         eventMonitor?.request(self, didFinishDownloadingUsing: task, with: result)
 
         switch result {
-        case .success(let url):   protectedMutableState.write { $0.fileURL = url }
+        case .success(let url):   protectedDownloadMutableState.write { $0.fileURL = url }
         case .failure(let error): self.error = error
         }
     }
@@ -950,15 +950,11 @@ public class DownloadRequest: Request {
 
     @discardableResult
     public override func cancel() -> Self {
-        guard state.canTransitionTo(.cancelled) else { return self }
-
-        state = .cancelled
+        guard protectedMutableState.attemptToTransitionTo(.cancelled) else { return self }
 
         delegate?.cancelDownloadRequest(self) { (resumeData) in
-            self.protectedMutableState.write { $0.resumeData = resumeData }
+            self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
         }
-
-        eventMonitor?.requestDidCancel(self)
 
         return self
     }
