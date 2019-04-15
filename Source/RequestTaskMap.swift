@@ -115,7 +115,7 @@ struct RequestTaskMap {
             fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
         }
 
-        switch events {
+        switch (events.completed, events.metricsGathered) {
         case (_, true): fatalError("RequestTaskMap consistency error: duplicate metricsGatheredForTask call.")
         case (false, false): taskEvents[task] = (completed: false, metricsGathered: true)
         case (true, false): self[task] = nil
@@ -127,7 +127,7 @@ struct RequestTaskMap {
             fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
         }
 
-        switch events {
+        switch (events.completed, events.metricsGathered) {
         case (true, _): fatalError("RequestTaskMap consistency error: duplicate completionReceivedForTask call.")
         case (false, false): taskEvents[task] = (completed: true, metricsGathered: false)
         case (false, true): self[task] = nil
