@@ -625,11 +625,11 @@ extension Session: SessionStateProvider {
     }
 
     public func didGatherMetricsForTask(_ task: URLSessionTask) {
-        requestTaskMap.metricsGatheredForTask(task)
+        requestTaskMap.disassociateIfNecessaryAfterGatheringMetricsForTask(task)
     }
 
     public func didCompleteTask(_ task: URLSessionTask) {
-        requestTaskMap.completionReceivedForTask(task)
+        requestTaskMap.disassociateIfNecessaryAfterCompletingTask(task)
     }
 
     public func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {

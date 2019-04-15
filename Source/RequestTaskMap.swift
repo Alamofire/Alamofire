@@ -105,12 +105,12 @@ struct RequestTaskMap {
     }
 
     var isEventsEmpty: Bool {
-        precondition(taskEvents.isEmpty == isEmpty, "RequestTaskMap.isEventsEmpty, isEmpty: \(isEmpty) != taskEvents.isEmpty: \(taskEvents.isEmpty)")
+        precondition(taskEvents.isEmpty == isEmpty, "RequestTaskMap.isEventsEmpty invalid, isEmpty: \(isEmpty) != taskEvents.isEmpty: \(taskEvents.isEmpty)")
 
         return taskEvents.isEmpty
     }
 
-    mutating func metricsGatheredForTask(_ task: URLSessionTask) {
+    mutating func disassociateIfNecessaryAfterGatheringMetricsForTask(_ task: URLSessionTask) {
         guard let events = taskEvents[task] else {
             fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
         }
@@ -122,7 +122,7 @@ struct RequestTaskMap {
         }
     }
 
-    mutating func completionReceivedForTask(_ task: URLSessionTask) {
+    mutating func disassociateIfNecessaryAfterCompletingTask(_ task: URLSessionTask) {
         guard let events = taskEvents[task] else {
             fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
         }
