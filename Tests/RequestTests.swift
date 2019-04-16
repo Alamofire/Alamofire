@@ -491,15 +491,15 @@ class RequestResponseTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(request.state, .cancelled)
     }
-    
+
     func testThatRequestManuallyCancelledManyTimesOnManyQueuesOnlyReceivesAppropriateLifetimeEvents() {
         // Given
         let eventMonitor = ClosureEventMonitor()
         let session = Session(eventMonitors: [eventMonitor])
-        
+
         let expect = expectation(description: "request should receive appropriate lifetime events")
         expect.expectedFulfillmentCount = 5
-        
+
         eventMonitor.requestDidCancelTask = { (_, _) in expect.fulfill() }
         eventMonitor.requestDidCancel = { _ in expect.fulfill() }
         eventMonitor.requestDidResume = { _ in expect.fulfill() }
@@ -507,20 +507,96 @@ class RequestResponseTestCase: BaseTestCase {
         // Fulfill other events that would exceed the expected count. Inverted expectations require the full timeout.
         eventMonitor.requestDidSuspend = { _ in expect.fulfill() }
         eventMonitor.requestDidSuspendTask = { (_, _) in expect.fulfill() }
-        
+
         // When
         let request = session.request(URLRequest.makeHTTPBinRequest())
         // Cancellation stops task creation, so don't cancel the request until the task has been created.
         eventMonitor.requestDidCreateTask = { (_, _) in
             DispatchQueue.concurrentPerform(iterations: 100) { i in
                 request.cancel()
-                
+
                 if i == 99 { expect.fulfill() }
             }
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
+        // Then
+        XCTAssertEqual(request.state, .cancelled)
+    }
+
+    func testThatRequestTriggersAllAppropriateLifetimeEvents() {
+        // Given
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(eventMonitors: [eventMonitor])
+
+        let expect = expectation(description: "request should receive appropriate lifetime events")
+        expect.expectedFulfillmentCount = 13
+
+        var dataReceived = false
+
+        eventMonitor.taskDidReceiveChallenge = { (_, _, _) in expect.fulfill() }
+        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in expect.fulfill() }
+        eventMonitor.dataTaskDidReceiveData = { (_, _, _) in
+            guard !dataReceived else { return }
+            // Data may be received many times, fulfill only once.
+            dataReceived = true
+            expect.fulfill()
+        }
+        eventMonitor.dataTaskWillCacheResponse = { (_, _, _) in expect.fulfill() }
+        eventMonitor.requestDidCreateURLRequest = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidCreateTask = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in expect.fulfill() }
+        eventMonitor.requestDidFinish = { (_) in expect.fulfill() }
+        eventMonitor.requestDidResume = { (_) in expect.fulfill() }
+        eventMonitor.requestDidResumeTask = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidParseResponse = { (_, _) in expect.fulfill() }
+
+        // When
+        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in
+            expect.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(request.state, .resumed)
+    }
+
+    func testThatCancelledRequestTriggersAllAppropriateLifetimeEvents() {
+        // Given
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+
+        let expect = expectation(description: "request should receive appropriate lifetime events")
+        expect.expectedFulfillmentCount = 12
+
+        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in expect.fulfill() }
+        eventMonitor.requestDidCreateURLRequest = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidCreateTask = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in expect.fulfill() }
+        eventMonitor.requestDidFinish = { (_) in expect.fulfill() }
+        eventMonitor.requestDidResume = { (_) in expect.fulfill() }
+        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidParseResponse = { (_, _) in expect.fulfill() }
+
+        // When
+        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in
+            expect.fulfill()
+        }
+
+        eventMonitor.requestDidResumeTask = { (_, _) in
+            request.cancel()
+            expect.fulfill()
+        }
+
+        request.resume()
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
         // Then
         XCTAssertEqual(request.state, .cancelled)
     }

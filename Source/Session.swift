@@ -556,7 +556,8 @@ extension Session: RequestDelegate {
         rootQueue.async {
             request.didCancel()
 
-            guard let task = self.requestTaskMap[request] else {
+            // Cancellation only has an effect on running or suspended tasks.
+            guard let task = self.requestTaskMap[request], [.running, .suspended].contains(task.state) else {
                 request.finish()
                 return
             }
@@ -570,7 +571,10 @@ extension Session: RequestDelegate {
         rootQueue.async {
             request.didCancel()
 
-            guard let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask else {
+            // Cancellation only has an effect on running or suspended tasks.
+            guard
+                let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask,
+                [.running, .suspended].contains(downloadTask.state) else {
                 request.finish()
                 return
             }
@@ -590,7 +594,8 @@ extension Session: RequestDelegate {
 
             request.didSuspend()
 
-            guard let task = self.requestTaskMap[request] else { return }
+            // Tasks can only be suspended if they're running.
+            guard let task = self.requestTaskMap[request], task.state == .running else { return }
 
             task.suspend()
             request.didSuspendTask(task)
@@ -603,7 +608,8 @@ extension Session: RequestDelegate {
 
             request.didResume()
 
-            guard let task = self.requestTaskMap[request] else { return }
+            // Tasks can only be resumed if they're suspended.
+            guard let task = self.requestTaskMap[request], task.state == .suspended else { return }
 
             task.resume()
             request.didResumeTask(task)
@@ -618,8 +624,12 @@ extension Session: SessionStateProvider {
         return requestTaskMap[task]
     }
 
+    public func didGatherMetricsForTask(_ task: URLSessionTask) {
+        requestTaskMap.disassociateIfNecessaryAfterGatheringMetricsForTask(task)
+    }
+
     public func didCompleteTask(_ task: URLSessionTask) {
-        requestTaskMap[task] = nil
+        requestTaskMap.disassociateIfNecessaryAfterCompletingTask(task)
     }
 
     public func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {
