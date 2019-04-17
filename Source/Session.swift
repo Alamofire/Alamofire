@@ -487,10 +487,10 @@ open class Session {
             case (true, .initialized):
                 guard request.attemptToTransitionTo(.resumed) else { return }
 
-                request.didResume()
+                rootQueue.async { request.didResume() }
 
                 task.resume()
-                request.didResumeTask(task)
+                rootQueue.async { request.didResumeTask(task) }
 
             case (false, .initialized):
                 // Do nothing.
@@ -499,15 +499,15 @@ open class Session {
             // NOTE: This is necessary since we don't have a retrying state (request just sticks to resumed when retrying)
             case (_, .resumed):
                 task.resume()
-                request.didResumeTask(task)
+                rootQueue.async { request.didResumeTask(task) }
 
             case (_, .suspended):
                 task.suspend()
-                request.didSuspendTask(task)
+                rootQueue.async { request.didSuspendTask(task) }
 
             case (_, .cancelled):
                 task.cancel()
-                request.didCancelTask(task)
+                rootQueue.async { request.didCancelTask(task) }
             }
         }
     }
@@ -583,7 +583,7 @@ extension Session: RequestDelegate {
 
             switch state {
             case .resumed:
-                request.didResume()
+                rootQueue.async { request.didResume() }
 
                 guard let task = request.task, task.state != .completed else { return }
 
@@ -591,7 +591,7 @@ extension Session: RequestDelegate {
                 rootQueue.async { request.didResumeTask(task) }
 
             case .suspended:
-                request.didSuspend()
+                rootQueue.async { request.didSuspend() }
 
                 guard let task = request.task, task.state != .completed else { return }
 
@@ -599,7 +599,7 @@ extension Session: RequestDelegate {
                 rootQueue.async { request.didSuspendTask(task) }
 
             case .cancelled:
-                request.didCancel()
+                rootQueue.async { request.didCancel() }
 
                 guard let task = request.task, task.state != .completed else { return }
 
@@ -619,7 +619,7 @@ extension Session: RequestDelegate {
             request.didCancel()
 
             guard let downloadTask = request.task as? URLSessionDownloadTask else {
-                request.finish()
+                rootQueue.async { request.finish() }
                 return
             }
 
