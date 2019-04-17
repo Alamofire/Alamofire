@@ -25,17 +25,14 @@
 import Foundation
 
 /// A type that maintains a two way, one to one map of `URLSessionTask`s to `Request`s.
-class RequestTaskMap {
+struct RequestTaskMap {
     private var tasksToRequests: [URLSessionTask: Request]
     private var requestsToTasks: [Request: URLSessionTask]
     private var taskEvents: [URLSessionTask: (completed: Bool, metricsGathered: Bool)]
 
     var requests: [Request] {
-        lock.lock() ; defer { lock.unlock() }
         return Array(tasksToRequests.values)
     }
-
-    private let lock = NSRecursiveLock()
 
     init(tasksToRequests: [URLSessionTask: Request] = [:],
          requestsToTasks: [Request: URLSessionTask] = [:],
@@ -46,13 +43,8 @@ class RequestTaskMap {
     }
 
     subscript(_ request: Request) -> URLSessionTask? {
-        get {
-            lock.lock() ; defer { lock.unlock() }
-            return requestsToTasks[request]
-        }
+        get { return requestsToTasks[request] }
         set {
-            lock.lock() ; defer { lock.unlock() }
-
             guard let newValue = newValue else {
                 guard let task = requestsToTasks[request] else {
                     fatalError("RequestTaskMap consistency error: no task corresponding to request found.")
@@ -72,13 +64,8 @@ class RequestTaskMap {
     }
 
     subscript(_ task: URLSessionTask) -> Request? {
-        get {
-            lock.lock() ; defer { lock.unlock() }
-            return tasksToRequests[task]
-        }
+        get { return tasksToRequests[task] }
         set {
-            lock.lock() ; defer { lock.unlock() }
-
             guard let newValue = newValue else {
                 guard let request = tasksToRequests[task] else {
                     fatalError("RequestTaskMap consistency error: no request corresponding to task found.")
@@ -98,8 +85,6 @@ class RequestTaskMap {
     }
 
     var count: Int {
-        lock.lock() ; defer { lock.unlock() }
-
         precondition(tasksToRequests.count == requestsToTasks.count,
                      "RequestTaskMap.count invalid, requests.count: \(tasksToRequests.count) != tasks.count: \(requestsToTasks.count)")
 
@@ -107,16 +92,12 @@ class RequestTaskMap {
     }
 
     var eventCount: Int {
-        lock.lock() ; defer { lock.unlock() }
-
         precondition(taskEvents.count == count, "RequestTaskMap.eventCount invalid, count: \(count) != taskEvents.count: \(taskEvents.count)")
 
         return taskEvents.count
     }
 
     var isEmpty: Bool {
-        lock.lock() ; defer { lock.unlock() }
-
         precondition(tasksToRequests.isEmpty == requestsToTasks.isEmpty,
                      "RequestTaskMap.isEmpty invalid, requests.isEmpty: \(tasksToRequests.isEmpty) != tasks.isEmpty: \(requestsToTasks.isEmpty)")
 
@@ -124,16 +105,12 @@ class RequestTaskMap {
     }
 
     var isEventsEmpty: Bool {
-        lock.lock() ; defer { lock.unlock() }
-
         precondition(taskEvents.isEmpty == isEmpty, "RequestTaskMap.isEventsEmpty invalid, isEmpty: \(isEmpty) != taskEvents.isEmpty: \(taskEvents.isEmpty)")
 
         return taskEvents.isEmpty
     }
 
-    func disassociateIfNecessaryAfterGatheringMetricsForTask(_ task: URLSessionTask) {
-        lock.lock() ; defer { lock.unlock() }
-
+    mutating func disassociateIfNecessaryAfterGatheringMetricsForTask(_ task: URLSessionTask) {
         guard let events = taskEvents[task] else {
             fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
         }
@@ -148,9 +125,7 @@ class RequestTaskMap {
         }
     }
 
-    func disassociateIfNecessaryAfterCompletingTask(_ task: URLSessionTask) {
-        lock.lock() ; defer { lock.unlock() }
-
+    mutating func disassociateIfNecessaryAfterCompletingTask(_ task: URLSessionTask) {
         guard let events = taskEvents[task] else {
             fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
         }

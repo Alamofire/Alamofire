@@ -585,7 +585,7 @@ extension Session: RequestDelegate {
             case .resumed:
                 request.didResume()
 
-                guard let task = self.requestTaskMap[request] else { return }
+                guard let task = request.task, task.state != .completed else { return }
 
                 task.resume()
                 rootQueue.async { request.didResumeTask(task) }
@@ -593,7 +593,7 @@ extension Session: RequestDelegate {
             case .suspended:
                 request.didSuspend()
 
-                guard let task = self.requestTaskMap[request] else { return }
+                guard let task = request.task, task.state != .completed else { return }
 
                 task.suspend()
                 rootQueue.async { request.didSuspendTask(task) }
@@ -601,7 +601,7 @@ extension Session: RequestDelegate {
             case .cancelled:
                 request.didCancel()
 
-                guard let task = self.requestTaskMap[request] else { return }
+                guard let task = request.task, task.state != .completed else { return }
 
                 task.cancel()
                 rootQueue.async { request.didCancelTask(task) }
@@ -618,7 +618,7 @@ extension Session: RequestDelegate {
 
             request.didCancel()
 
-            guard let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask else {
+            guard let downloadTask = request.task as? URLSessionDownloadTask else {
                 request.finish()
                 return
             }
