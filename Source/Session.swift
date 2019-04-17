@@ -385,14 +385,7 @@ open class Session {
 
     func perform(_ request: DataRequest) {
         requestQueue.async {
-            // NOTE: CN - Probably a cleaner way we could do this sync in one line
-            var isCancelled = false
-            self.requestStateQueue.sync { isCancelled = request.isCancelled }
-
-            guard !isCancelled else {
-                self.rootQueue.async { request.finish() }
-                return
-            }
+            guard !self.finishRequestIfCancelled(request) else { return }
 
             self.performSetupOperations(for: request, convertible: request.convertible)
         }
@@ -400,13 +393,7 @@ open class Session {
 
     func perform(_ request: UploadRequest) {
         requestQueue.async {
-            var isCancelled = false
-            self.requestStateQueue.sync { isCancelled = request.isCancelled }
-
-            guard !isCancelled else {
-                self.rootQueue.async { request.finish() }
-                return
-            }
+            guard !self.finishRequestIfCancelled(request) else { return }
 
             do {
                 let uploadable = try request.upload.createUploadable()
@@ -421,13 +408,7 @@ open class Session {
 
     func perform(_ request: DownloadRequest) {
         requestQueue.async {
-            var isCancelled = false
-            self.requestStateQueue.sync { isCancelled = request.isCancelled }
-
-            guard !isCancelled else {
-                self.rootQueue.async { request.finish() }
-                return
-            }
+            guard !self.finishRequestIfCancelled(request) else { return }
 
             switch request.downloadable {
             case let .request(convertible):
@@ -442,6 +423,8 @@ open class Session {
         do {
             let initialRequest = try convertible.asURLRequest()
             rootQueue.async { request.didCreateURLRequest(initialRequest) }
+
+            guard !self.finishRequestIfCancelled(request) else { return }
 
             if let adapter = adapter(for: request) {
                 adapter.adapt(initialRequest, for: self) { result in
@@ -465,13 +448,21 @@ open class Session {
         }
     }
 
+    private func finishRequestIfCancelled(_ request: Request) -> Bool {
+        var isCancelled = false
+        self.requestStateQueue.sync { isCancelled = request.isCancelled }
+
+        if isCancelled {
+            self.rootQueue.async { request.finish() }
+        }
+
+        return isCancelled
+    }
+
     // MARK: - Task Handling
 
     func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
-        // NOTE: CN - removed cancellation check since it's picked up in updateStatesForTask
-        // If we want to be as efficient as possible about stopping the request without doing any extra
-        // work, then we need to refactor cancellation checking into it's own API that we can reuse in
-        // all the places it is needed.
+        guard !self.finishRequestIfCancelled(request) else { return }
 
         let task = request.task(for: urlRequest, using: session)
         requestTaskMap[request] = task
@@ -481,6 +472,8 @@ open class Session {
     }
 
     func didReceiveResumeData(_ data: Data, for request: DownloadRequest) {
+        guard !self.finishRequestIfCancelled(request) else { return }
+
         let task = request.task(forResumeData: data, using: session)
         requestTaskMap[request] = task
         request.didCreateTask(task)
@@ -570,8 +563,7 @@ extension Session: RequestDelegate {
     public func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?) {
         self.rootQueue.async {
             let retry: () -> Void = {
-                // TODO: CN - Need to figure out if this is an issue as well (probably is)
-                guard !request.isCancelled else { return }
+                guard !self.finishRequestIfCancelled(request) else { return }
 
                 request.prepareForRetry()
                 self.perform(request)
