@@ -585,8 +585,7 @@ extension Session: RequestDelegate {
             case .resumed:
                 request.didResume()
 
-                // Tasks can only be resumed if they're suspended.
-                guard let task = self.requestTaskMap[request], task.state == .suspended else { return }
+                guard let task = self.requestTaskMap[request] else { return }
 
                 task.resume()
                 rootQueue.async { request.didResumeTask(task) }
@@ -594,8 +593,7 @@ extension Session: RequestDelegate {
             case .suspended:
                 request.didSuspend()
 
-                // Tasks can only be suspended if they're running.
-                guard let task = self.requestTaskMap[request], task.state == .running else { return }
+                guard let task = self.requestTaskMap[request] else { return }
 
                 task.suspend()
                 rootQueue.async { request.didSuspendTask(task) }
@@ -603,11 +601,11 @@ extension Session: RequestDelegate {
             case .cancelled:
                 request.didCancel()
 
-                // Cancellation only has an effect on running or suspended tasks.
-                guard let task = self.requestTaskMap[request], [.running, .suspended].contains(task.state) else { return }
+                guard let task = self.requestTaskMap[request] else { return }
 
                 task.cancel()
                 rootQueue.async { request.didCancelTask(task) }
+
             default:
                 break
             }
