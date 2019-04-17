@@ -142,6 +142,11 @@ extension AFError {
         return false
     }
 
+    var isResponseSerializerAddedAfterRequestFinished: Bool {
+        if case let .responseSerializationFailed(reason) = self, reason.isResponseSerializerAddedAfterRequestFinished { return true }
+        return false
+    }
+
     // ResponseValidationFailureReason
 
     var isDataFileNil: Bool {
@@ -288,6 +293,11 @@ extension AFError.ResponseSerializationFailureReason {
 
     var isInvalidEmptyResponse: Bool {
         if case .invalidEmptyResponse = self { return true }
+        return false
+    }
+
+    var isResponseSerializerAddedAfterRequestFinished: Bool {
+        if case .responseSerializerAddedAfterRequestFinished = self { return true }
         return false
     }
 }

@@ -485,6 +485,9 @@ open class Session {
             case (_, .cancelled):
                 task.cancel()
                 rootQueue.async { request.didCancelTask(task) }
+            case (_, .finished):
+                // Do nothing
+                break
             }
         }
     }
