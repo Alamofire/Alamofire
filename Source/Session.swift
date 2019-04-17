@@ -492,7 +492,7 @@ open class Session {
         requestStateQueue.sync {
             switch (startRequestsImmediately, request.state) {
             case (true, .initialized):
-                guard request.protectedMutableState.attemptToTransitionTo(.resumed) else { return }
+                guard request.attemptToTransitionTo(.resumed) else { return }
 
                 request.didResume()
 
@@ -587,7 +587,7 @@ extension Session: RequestDelegate {
 
     public func attemptToTransition(_ request: Request, to state: Request.State) {
         requestStateQueue.sync {
-            guard request.protectedMutableState.attemptToTransitionTo(state) else { return }
+            guard request.attemptToTransitionTo(state) else { return }
 
             switch state {
             case .resumed:
@@ -625,7 +625,7 @@ extension Session: RequestDelegate {
     public func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
         // NOTE: CN - I plan on cleaning this up later if we go with this approach
         requestStateQueue.sync {
-            guard request.protectedMutableState.attemptToTransitionTo(.cancelled) else { byProducingResumeData(nil); return }
+            guard request.attemptToTransitionTo(.cancelled) else { byProducingResumeData(nil); return }
 
             request.didCancel()
 

@@ -102,7 +102,7 @@ public class Request {
     }
 
     /// Protected `MutableState` value that provides threadsafe access to state values.
-    let protectedMutableState: Protector<MutableState> = Protector(MutableState()) // NOTE: CN - probably shouldn't make this internal
+    fileprivate let protectedMutableState: Protector<MutableState> = Protector(MutableState())
 
     /// `State` of the `Request`.
     public fileprivate(set) var state: State {
@@ -467,6 +467,21 @@ public class Request {
     /// Called when creating a `URLSessionTask` for this `Request`. Subclasses must override.
     func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
         fatalError("Subclasses must override.")
+    }
+
+    // MARK: Request State
+
+    func attemptToTransitionTo(_ state: Request.State) -> Bool {
+        var transitioned = false
+
+        protectedMutableState.write { mutableState in
+            guard mutableState.state.canTransitionTo(state) else { return }
+
+            mutableState.state = state
+            transitioned = true
+        }
+
+        return transitioned
     }
 
     // MARK: - Public API
