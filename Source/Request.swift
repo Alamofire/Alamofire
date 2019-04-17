@@ -102,7 +102,7 @@ public class Request {
     }
 
     /// Protected `MutableState` value that provides threadsafe access to state values.
-    fileprivate let protectedMutableState: Protector<MutableState> = Protector(MutableState())
+    let protectedMutableState: Protector<MutableState> = Protector(MutableState()) // NOTE: CN - probably shouldn't make this internal
 
     /// `State` of the `Request`.
     public fileprivate(set) var state: State {
@@ -480,10 +480,7 @@ public class Request {
     /// - Returns: The `Request`.
     @discardableResult
     public func cancel() -> Self {
-        guard protectedMutableState.attemptToTransitionTo(.cancelled) else { return self }
-
-        delegate?.cancelRequest(self)
-
+        delegate?.attemptToTransition(self, to: .cancelled)
         return self
     }
 
@@ -492,10 +489,7 @@ public class Request {
     /// - Returns: The `Request`.
     @discardableResult
     public func suspend() -> Self {
-        guard protectedMutableState.attemptToTransitionTo(.suspended) else { return self }
-
-        delegate?.suspendRequest(self)
-
+        delegate?.attemptToTransition(self, to: .suspended)
         return self
     }
 
@@ -505,10 +499,7 @@ public class Request {
     /// - Returns: The `Request`.
     @discardableResult
     public func resume() -> Self {
-        guard protectedMutableState.attemptToTransitionTo(.resumed) else { return self }
-
-        delegate?.resumeRequest(self)
-
+        delegate?.attemptToTransition(self, to: .resumed)
         return self
     }
 
@@ -725,10 +716,9 @@ public protocol RequestDelegate: AnyObject {
     func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
     func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?)
 
-    func cancelRequest(_ request: Request)
+    func attemptToTransition(_ request: Request, to state: Request.State)
+
     func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void)
-    func suspendRequest(_ request: Request)
-    func resumeRequest(_ request: Request)
 }
 
 // MARK: - Subclasses
@@ -950,9 +940,7 @@ public class DownloadRequest: Request {
 
     @discardableResult
     public override func cancel() -> Self {
-        guard protectedMutableState.attemptToTransitionTo(.cancelled) else { return self }
-
-        delegate?.cancelDownloadRequest(self) { (resumeData) in
+        delegate?.cancelDownloadRequest(self) { resumeData in
             self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
         }
 

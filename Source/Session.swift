@@ -43,6 +43,8 @@ open class Session {
     var requestTaskMap = RequestTaskMap()
     public let startRequestsImmediately: Bool
 
+    private let requestStateQueue = DispatchQueue(label: "org.alamofire.session.requestStateQueue")
+
     public init(session: URLSession,
                 delegate: SessionDelegate,
                 rootQueue: DispatchQueue,
@@ -383,7 +385,14 @@ open class Session {
 
     func perform(_ request: DataRequest) {
         requestQueue.async {
-            guard !request.isCancelled else { return }
+            // NOTE: CN - Probably a cleaner way we could do this sync in one line
+            var isCancelled = false
+            self.requestStateQueue.sync { isCancelled = request.isCancelled }
+
+            guard !isCancelled else {
+                self.rootQueue.async { request.finish() }
+                return
+            }
 
             self.performSetupOperations(for: request, convertible: request.convertible)
         }
@@ -391,7 +400,13 @@ open class Session {
 
     func perform(_ request: UploadRequest) {
         requestQueue.async {
-            guard !request.isCancelled else { return }
+            var isCancelled = false
+            self.requestStateQueue.sync { isCancelled = request.isCancelled }
+
+            guard !isCancelled else {
+                self.rootQueue.async { request.finish() }
+                return
+            }
 
             do {
                 let uploadable = try request.upload.createUploadable()
@@ -406,7 +421,13 @@ open class Session {
 
     func perform(_ request: DownloadRequest) {
         requestQueue.async {
-            guard !request.isCancelled else { return }
+            var isCancelled = false
+            self.requestStateQueue.sync { isCancelled = request.isCancelled }
+
+            guard !isCancelled else {
+                self.rootQueue.async { request.finish() }
+                return
+            }
 
             switch request.downloadable {
             case let .request(convertible):
@@ -421,8 +442,6 @@ open class Session {
         do {
             let initialRequest = try convertible.asURLRequest()
             rootQueue.async { request.didCreateURLRequest(initialRequest) }
-
-            guard !request.isCancelled else { return }
 
             if let adapter = adapter(for: request) {
                 adapter.adapt(initialRequest, for: self) { result in
@@ -449,7 +468,10 @@ open class Session {
     // MARK: - Task Handling
 
     func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
-        guard !request.isCancelled else { return }
+        // NOTE: CN - removed cancellation check since it's picked up in updateStatesForTask
+        // If we want to be as efficient as possible about stopping the request without doing any extra
+        // work, then we need to refactor cancellation checking into it's own API that we can reuse in
+        // all the places it is needed.
 
         let task = request.task(for: urlRequest, using: session)
         requestTaskMap[request] = task
@@ -459,8 +481,6 @@ open class Session {
     }
 
     func didReceiveResumeData(_ data: Data, for request: DownloadRequest) {
-        guard !request.isCancelled else { return }
-
         let task = request.task(forResumeData: data, using: session)
         requestTaskMap[request] = task
         request.didCreateTask(task)
@@ -469,21 +489,33 @@ open class Session {
     }
 
     func updateStatesForTask(_ task: URLSessionTask, request: Request) {
-        switch (startRequestsImmediately, request.state) {
-        case (true, .initialized):
-            request.resume()
-        case (false, .initialized):
-            // Do nothing.
-            break
-        case (_, .resumed):
-            task.resume()
-            request.didResumeTask(task)
-        case (_, .suspended):
-            task.suspend()
-            request.didSuspendTask(task)
-        case (_, .cancelled):
-            task.cancel()
-            request.didCancelTask(task)
+        requestStateQueue.sync {
+            switch (startRequestsImmediately, request.state) {
+            case (true, .initialized):
+                guard request.protectedMutableState.attemptToTransitionTo(.resumed) else { return }
+
+                request.didResume()
+
+                task.resume()
+                request.didResumeTask(task)
+
+            case (false, .initialized):
+                // Do nothing.
+                break
+
+            // NOTE: This is necessary since we don't have a retrying state (request just sticks to resumed when retrying)
+            case (_, .resumed):
+                task.resume()
+                request.didResumeTask(task)
+
+            case (_, .suspended):
+                task.suspend()
+                request.didSuspendTask(task)
+
+            case (_, .cancelled):
+                task.cancel()
+                request.didCancelTask(task)
+            }
         }
     }
 
@@ -538,6 +570,7 @@ extension Session: RequestDelegate {
     public func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?) {
         self.rootQueue.async {
             let retry: () -> Void = {
+                // TODO: CN - Need to figure out if this is an issue as well (probably is)
                 guard !request.isCancelled else { return }
 
                 request.prepareForRetry()
@@ -552,23 +585,48 @@ extension Session: RequestDelegate {
         }
     }
 
-    public func cancelRequest(_ request: Request) {
-        rootQueue.async {
-            request.didCancel()
+    public func attemptToTransition(_ request: Request, to state: Request.State) {
+        requestStateQueue.sync {
+            guard request.protectedMutableState.attemptToTransitionTo(state) else { return }
 
-            // Cancellation only has an effect on running or suspended tasks.
-            guard let task = self.requestTaskMap[request], [.running, .suspended].contains(task.state) else {
-                request.finish()
-                return
+            switch state {
+            case .resumed:
+                request.didResume()
+
+                // Tasks can only be resumed if they're suspended.
+                guard let task = self.requestTaskMap[request], task.state == .suspended else { return }
+
+                task.resume()
+                rootQueue.async { request.didResumeTask(task) }
+
+            case .suspended:
+                request.didSuspend()
+
+                // Tasks can only be suspended if they're running.
+                guard let task = self.requestTaskMap[request], task.state == .running else { return }
+
+                task.suspend()
+                rootQueue.async { request.didSuspendTask(task) }
+
+            case .cancelled:
+                request.didCancel()
+
+                // Cancellation only has an effect on running or suspended tasks.
+                guard let task = self.requestTaskMap[request], [.running, .suspended].contains(task.state) else { return }
+
+                task.cancel()
+                rootQueue.async { request.didCancelTask(task) }
+            default:
+                break
             }
-
-            task.cancel()
-            request.didCancelTask(task)
         }
     }
 
     public func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
-        rootQueue.async {
+        // NOTE: CN - I plan on cleaning this up later if we go with this approach
+        requestStateQueue.sync {
+            guard request.protectedMutableState.attemptToTransitionTo(.cancelled) else { byProducingResumeData(nil); return }
+
             request.didCancel()
 
             // Cancellation only has an effect on running or suspended tasks.
@@ -585,34 +643,6 @@ extension Session: RequestDelegate {
                     request.didCancelTask(downloadTask)
                 }
             }
-        }
-    }
-
-    public func suspendRequest(_ request: Request) {
-        rootQueue.async {
-            guard !request.isCancelled else { return }
-
-            request.didSuspend()
-
-            // Tasks can only be suspended if they're running.
-            guard let task = self.requestTaskMap[request], task.state == .running else { return }
-
-            task.suspend()
-            request.didSuspendTask(task)
-        }
-    }
-
-    public func resumeRequest(_ request: Request) {
-        rootQueue.async {
-            guard !request.isCancelled else { return }
-
-            request.didResume()
-
-            // Tasks can only be resumed if they're suspended.
-            guard let task = self.requestTaskMap[request], task.state == .suspended else { return }
-
-            task.resume()
-            request.didResumeTask(task)
         }
     }
 }
