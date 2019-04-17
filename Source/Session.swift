@@ -613,21 +613,17 @@ extension Session: RequestDelegate {
     }
 
     public func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
-        // NOTE: CN - I plan on cleaning this up later if we go with this approach
         requestStateQueue.sync {
             guard request.attemptToTransitionTo(.cancelled) else { byProducingResumeData(nil); return }
 
             request.didCancel()
 
-            // Cancellation only has an effect on running or suspended tasks.
-            guard
-                let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask,
-                [.running, .suspended].contains(downloadTask.state) else {
+            guard let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask else {
                 request.finish()
                 return
             }
 
-            downloadTask.cancel { (data) in
+            downloadTask.cancel { data in
                 self.rootQueue.async {
                     byProducingResumeData(data)
                     request.didCancelTask(downloadTask)
