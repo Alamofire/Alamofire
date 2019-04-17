@@ -25,14 +25,17 @@
 import Foundation
 
 /// A type that maintains a two way, one to one map of `URLSessionTask`s to `Request`s.
-struct RequestTaskMap {
+class RequestTaskMap {
     private var tasksToRequests: [URLSessionTask: Request]
     private var requestsToTasks: [Request: URLSessionTask]
     private var taskEvents: [URLSessionTask: (completed: Bool, metricsGathered: Bool)]
 
     var requests: [Request] {
+        lock.lock() ; defer { lock.unlock() }
         return Array(tasksToRequests.values)
     }
+
+    private let lock = NSRecursiveLock()
 
     init(tasksToRequests: [URLSessionTask: Request] = [:],
          requestsToTasks: [Request: URLSessionTask] = [:],
@@ -43,8 +46,13 @@ struct RequestTaskMap {
     }
 
     subscript(_ request: Request) -> URLSessionTask? {
-        get { return requestsToTasks[request] }
+        get {
+            lock.lock() ; defer { lock.unlock() }
+            return requestsToTasks[request]
+        }
         set {
+            lock.lock() ; defer { lock.unlock() }
+
             guard let newValue = newValue else {
                 guard let task = requestsToTasks[request] else {
                     fatalError("RequestTaskMap consistency error: no task corresponding to request found.")
@@ -64,8 +72,13 @@ struct RequestTaskMap {
     }
 
     subscript(_ task: URLSessionTask) -> Request? {
-        get { return tasksToRequests[task] }
+        get {
+            lock.lock() ; defer { lock.unlock() }
+            return tasksToRequests[task]
+        }
         set {
+            lock.lock() ; defer { lock.unlock() }
+
             guard let newValue = newValue else {
                 guard let request = tasksToRequests[task] else {
                     fatalError("RequestTaskMap consistency error: no request corresponding to task found.")
@@ -85,6 +98,8 @@ struct RequestTaskMap {
     }
 
     var count: Int {
+        lock.lock() ; defer { lock.unlock() }
+
         precondition(tasksToRequests.count == requestsToTasks.count,
                      "RequestTaskMap.count invalid, requests.count: \(tasksToRequests.count) != tasks.count: \(requestsToTasks.count)")
 
@@ -92,12 +107,16 @@ struct RequestTaskMap {
     }
 
     var eventCount: Int {
+        lock.lock() ; defer { lock.unlock() }
+
         precondition(taskEvents.count == count, "RequestTaskMap.eventCount invalid, count: \(count) != taskEvents.count: \(taskEvents.count)")
 
         return taskEvents.count
     }
 
     var isEmpty: Bool {
+        lock.lock() ; defer { lock.unlock() }
+
         precondition(tasksToRequests.isEmpty == requestsToTasks.isEmpty,
                      "RequestTaskMap.isEmpty invalid, requests.isEmpty: \(tasksToRequests.isEmpty) != tasks.isEmpty: \(requestsToTasks.isEmpty)")
 
@@ -105,32 +124,44 @@ struct RequestTaskMap {
     }
 
     var isEventsEmpty: Bool {
+        lock.lock() ; defer { lock.unlock() }
+
         precondition(taskEvents.isEmpty == isEmpty, "RequestTaskMap.isEventsEmpty invalid, isEmpty: \(isEmpty) != taskEvents.isEmpty: \(taskEvents.isEmpty)")
 
         return taskEvents.isEmpty
     }
 
-    mutating func disassociateIfNecessaryAfterGatheringMetricsForTask(_ task: URLSessionTask) {
+    func disassociateIfNecessaryAfterGatheringMetricsForTask(_ task: URLSessionTask) {
+        lock.lock() ; defer { lock.unlock() }
+
         guard let events = taskEvents[task] else {
             fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
         }
 
         switch (events.completed, events.metricsGathered) {
-        case (_, true): fatalError("RequestTaskMap consistency error: duplicate metricsGatheredForTask call.")
-        case (false, false): taskEvents[task] = (completed: false, metricsGathered: true)
-        case (true, false): self[task] = nil
+        case (_, true):
+            fatalError("RequestTaskMap consistency error: duplicate metricsGatheredForTask call.")
+        case (false, false):
+            taskEvents[task] = (completed: false, metricsGathered: true)
+        case (true, false):
+            self[task] = nil
         }
     }
 
-    mutating func disassociateIfNecessaryAfterCompletingTask(_ task: URLSessionTask) {
+    func disassociateIfNecessaryAfterCompletingTask(_ task: URLSessionTask) {
+        lock.lock() ; defer { lock.unlock() }
+
         guard let events = taskEvents[task] else {
             fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
         }
 
         switch (events.completed, events.metricsGathered) {
-        case (true, _): fatalError("RequestTaskMap consistency error: duplicate completionReceivedForTask call.")
-        case (false, false): taskEvents[task] = (completed: true, metricsGathered: false)
-        case (false, true): self[task] = nil
+        case (true, _):
+            fatalError("RequestTaskMap consistency error: duplicate completionReceivedForTask call.")
+        case (false, false):
+            taskEvents[task] = (completed: true, metricsGathered: false)
+        case (false, true):
+            self[task] = nil
         }
     }
 }
