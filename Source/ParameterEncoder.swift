@@ -197,6 +197,9 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
 /// `BoolEncoding` can be used to configure how `Bool` values are encoded. The default behavior is to encode
 /// `true` as 1 and `false` as 0.
 ///
+/// `DateEncoding` can be used to configure how `Date` values are encoded. By default, the `.deferredToDate`
+/// strategy is used, which formats dates from their structure.
+///
 /// `SpaceEncoding` can be used to configure how spaces are encoded. Modern encodings use percent replacement (%20),
 /// while older encoding may expect spaces to be replaced with +.
 ///
@@ -217,6 +220,45 @@ public final class URLEncodedFormEncoder {
             switch self {
             case .numeric: return value ? "1" : "0"
             case .literal: return value ? "true" : "false"
+            }
+        }
+    }
+
+    /// Configures how `Date` parameters are encoded.
+    public enum DateEncoding {
+        /// Encodes the date from `Date` structure.
+        case deferredToDate
+        /// Encodes the date as a UNIX timestamp.
+        case secondsSince1970
+        /// Encodes the date as UNIX millisecond timestamp.
+        case millisecondsSince1970
+        /// Encodes the date as an ISO-8601-formatted string (in RFC 3339 format).
+        case iso8601
+        /// Encodes the date as a string formatted by the given formatter.
+        case formatted(DateFormatter)
+        /// Encodes the date as a custom string formatted by the given closure.
+        case custom((Date) -> String)
+
+        /// Encodes the date according to the strategy.
+        ///
+        /// - Parameter string: The `Date` to encode.
+        /// - Returns:          The encoded `String` or `nil` if the date should be encoded as `Encodable` structure.
+        func encode(_ value: Date) -> String? {
+            switch self {
+            case .deferredToDate:
+                return nil
+            case .secondsSince1970:
+                return String(value.timeIntervalSince1970)
+            case .millisecondsSince1970:
+                return String(value.timeIntervalSince1970 * 1000.0)
+            case .iso8601:
+                return ISO8601DateFormatter.string(from: value,
+                                                   timeZone: TimeZone(secondsFromGMT: 0)!,
+                                                   formatOptions: .withInternetDateTime)
+            case let .formatted(formatter):
+                return formatter.string(from: value)
+            case let .custom(closure):
+                return closure(value)
             }
         }
     }
@@ -271,6 +313,8 @@ public final class URLEncodedFormEncoder {
     public let arrayEncoding: ArrayEncoding
     /// The `BoolEncoding` to use.
     public let boolEncoding: BoolEncoding
+    /// The `DateEncoding` to use.
+    public let dateEncoding: DateEncoding
     /// The `SpaceEncoding` to use.
     public let spaceEncoding: SpaceEncoding
     /// The `CharacterSet` of allowed characters.
@@ -281,21 +325,26 @@ public final class URLEncodedFormEncoder {
     /// - Parameters:
     ///   - arrayEncoding: The `ArrayEncoding` instance. Defaults to `.brackets`.
     ///   - boolEncoding:  The `BoolEncoding` instance. Defaults to `.numeric`.
+    ///   - dateEncoding:  The `DateEncoding` instance. Defaults to `.deferredToDate`.
     ///   - spaceEncoding: The `SpaceEncoding` instance. Defaults to `.percentEscaped`.
     ///   - allowedCharacters: The `CharacterSet` of allowed (non-escaped) characters. Defaults to `.afURLQueryAllowed`.
     public init(arrayEncoding: ArrayEncoding = .brackets,
                 boolEncoding: BoolEncoding = .numeric,
+                dateEncoding: DateEncoding = .deferredToDate,
                 spaceEncoding: SpaceEncoding = .percentEscaped,
                 allowedCharacters: CharacterSet = .afURLQueryAllowed) {
         self.arrayEncoding = arrayEncoding
         self.boolEncoding = boolEncoding
+        self.dateEncoding = dateEncoding
         self.spaceEncoding = spaceEncoding
         self.allowedCharacters = allowedCharacters
     }
 
     func encode(_ value: Encodable) throws -> URLEncodedFormComponent {
         let context = URLEncodedFormContext(.object([:]))
-        let encoder = _URLEncodedFormEncoder(context: context, boolEncoding: boolEncoding)
+        let encoder = _URLEncodedFormEncoder(context: context,
+                                             boolEncoding: boolEncoding,
+                                             dateEncoding: dateEncoding)
         try value.encode(to: encoder)
 
         return context.component
@@ -342,13 +391,16 @@ final class _URLEncodedFormEncoder {
     let context: URLEncodedFormContext
 
     private let boolEncoding: URLEncodedFormEncoder.BoolEncoding
+    private let dateEncoding: URLEncodedFormEncoder.DateEncoding
 
     public init(context: URLEncodedFormContext,
                 codingPath: [CodingKey] = [],
-                boolEncoding: URLEncodedFormEncoder.BoolEncoding) {
+                boolEncoding: URLEncodedFormEncoder.BoolEncoding,
+                dateEncoding: URLEncodedFormEncoder.DateEncoding) {
         self.context = context
         self.codingPath = codingPath
         self.boolEncoding = boolEncoding
+        self.dateEncoding = dateEncoding
     }
 }
 
@@ -356,20 +408,23 @@ extension _URLEncodedFormEncoder: Encoder {
     func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
         let container = _URLEncodedFormEncoder.KeyedContainer<Key>(context: context,
                                                                    codingPath: codingPath,
-                                                                   boolEncoding: boolEncoding)
+                                                                   boolEncoding: boolEncoding,
+                                                                   dateEncoding: dateEncoding)
         return KeyedEncodingContainer(container)
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
         return _URLEncodedFormEncoder.UnkeyedContainer(context: context,
                                                        codingPath: codingPath,
-                                                       boolEncoding: boolEncoding)
+                                                       boolEncoding: boolEncoding,
+                                                       dateEncoding: dateEncoding)
     }
 
     func singleValueContainer() -> SingleValueEncodingContainer {
         return _URLEncodedFormEncoder.SingleValueContainer(context: context,
                                                            codingPath: codingPath,
-                                                           boolEncoding: boolEncoding)
+                                                           boolEncoding: boolEncoding,
+                                                           dateEncoding: dateEncoding)
     }
 }
 
@@ -492,13 +547,16 @@ extension _URLEncodedFormEncoder {
 
         private let context: URLEncodedFormContext
         private let boolEncoding: URLEncodedFormEncoder.BoolEncoding
+        private let dateEncoding: URLEncodedFormEncoder.DateEncoding
 
         init(context: URLEncodedFormContext,
              codingPath: [CodingKey],
-             boolEncoding: URLEncodedFormEncoder.BoolEncoding) {
+             boolEncoding: URLEncodedFormEncoder.BoolEncoding,
+             dateEncoding: URLEncodedFormEncoder.DateEncoding) {
             self.context = context
             self.codingPath = codingPath
             self.boolEncoding = boolEncoding
+            self.dateEncoding = dateEncoding
         }
 
         private func nestedCodingPath(for key: CodingKey) -> [CodingKey] {
@@ -522,7 +580,8 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
     func nestedSingleValueEncoder(for key: Key) -> SingleValueEncodingContainer {
         let container = _URLEncodedFormEncoder.SingleValueContainer(context: context,
                                                                     codingPath: nestedCodingPath(for: key),
-                                                                    boolEncoding: boolEncoding)
+                                                                    boolEncoding: boolEncoding,
+                                                                    dateEncoding: dateEncoding)
 
         return container
     }
@@ -530,7 +589,8 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
     func nestedUnkeyedContainer(forKey key: Key) -> UnkeyedEncodingContainer {
         let container = _URLEncodedFormEncoder.UnkeyedContainer(context: context,
                                                                 codingPath: nestedCodingPath(for: key),
-                                                                boolEncoding: boolEncoding)
+                                                                boolEncoding: boolEncoding,
+                                                                dateEncoding: dateEncoding)
 
         return container
     }
@@ -538,17 +598,24 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
         let container = _URLEncodedFormEncoder.KeyedContainer<NestedKey>(context: context,
                                                                          codingPath: nestedCodingPath(for: key),
-                                                                         boolEncoding: boolEncoding)
+                                                                         boolEncoding: boolEncoding,
+                                                                         dateEncoding: dateEncoding)
 
         return KeyedEncodingContainer(container)
     }
 
     func superEncoder() -> Encoder {
-        return _URLEncodedFormEncoder(context: context, codingPath: codingPath, boolEncoding: boolEncoding)
+        return _URLEncodedFormEncoder(context: context,
+                                      codingPath: codingPath,
+                                      boolEncoding: boolEncoding,
+                                      dateEncoding: dateEncoding)
     }
 
     func superEncoder(forKey key: Key) -> Encoder {
-        return _URLEncodedFormEncoder(context: context, codingPath: nestedCodingPath(for: key), boolEncoding: boolEncoding)
+        return _URLEncodedFormEncoder(context: context,
+                                      codingPath: nestedCodingPath(for: key),
+                                      boolEncoding: boolEncoding,
+                                      dateEncoding: dateEncoding)
     }
 }
 
@@ -560,11 +627,16 @@ extension _URLEncodedFormEncoder {
 
         private let context: URLEncodedFormContext
         private let boolEncoding: URLEncodedFormEncoder.BoolEncoding
+        private let dateEncoding: URLEncodedFormEncoder.DateEncoding
 
-        init(context: URLEncodedFormContext, codingPath: [CodingKey], boolEncoding: URLEncodedFormEncoder.BoolEncoding) {
+        init(context: URLEncodedFormContext,
+             codingPath: [CodingKey],
+             boolEncoding: URLEncodedFormEncoder.BoolEncoding,
+             dateEncoding: URLEncodedFormEncoder.DateEncoding) {
             self.context = context
             self.codingPath = codingPath
             self.boolEncoding = boolEncoding
+            self.dateEncoding = dateEncoding
         }
 
         private func checkCanEncode(value: Any?) throws {
@@ -651,13 +723,24 @@ extension _URLEncodedFormEncoder.SingleValueContainer: SingleValueEncodingContai
     }
 
     func encode<T>(_ value: T) throws where T : Encodable {
-        try checkCanEncode(value: value)
-        defer { canEncodeNewValue = false }
+        switch value {
+        case let date as Date:
+            guard let string = dateEncoding.encode(date) else {
+                fallthrough
+            }
 
-        let encoder = _URLEncodedFormEncoder(context: context,
-                                             codingPath: codingPath,
-                                             boolEncoding: boolEncoding)
-        try value.encode(to: encoder)
+            try encode(value, as: string)
+
+        default:
+            try checkCanEncode(value: value)
+            defer { canEncodeNewValue = false }
+
+            let encoder = _URLEncodedFormEncoder(context: context,
+                                                 codingPath: codingPath,
+                                                 boolEncoding: boolEncoding,
+                                                 dateEncoding: dateEncoding)
+            try value.encode(to: encoder)
+        }
     }
 }
 
@@ -672,13 +755,16 @@ extension _URLEncodedFormEncoder {
 
         private let context: URLEncodedFormContext
         private let boolEncoding: URLEncodedFormEncoder.BoolEncoding
+        private let dateEncoding: URLEncodedFormEncoder.DateEncoding
 
         init(context: URLEncodedFormContext,
              codingPath: [CodingKey],
-             boolEncoding: URLEncodedFormEncoder.BoolEncoding) {
+             boolEncoding: URLEncodedFormEncoder.BoolEncoding,
+             dateEncoding: URLEncodedFormEncoder.DateEncoding) {
             self.context = context
             self.codingPath = codingPath
             self.boolEncoding = boolEncoding
+            self.dateEncoding = dateEncoding
         }
     }
 }
@@ -700,14 +786,16 @@ extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
 
         return _URLEncodedFormEncoder.SingleValueContainer(context: context,
                                                            codingPath: nestedCodingPath,
-                                                           boolEncoding: boolEncoding)
+                                                           boolEncoding: boolEncoding,
+                                                           dateEncoding: dateEncoding)
     }
 
     func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
         defer { count += 1 }
         let container = _URLEncodedFormEncoder.KeyedContainer<NestedKey>(context: context,
                                                                          codingPath: nestedCodingPath,
-                                                                         boolEncoding: boolEncoding)
+                                                                         boolEncoding: boolEncoding,
+                                                                         dateEncoding: dateEncoding)
 
         return KeyedEncodingContainer(container)
     }
@@ -717,13 +805,17 @@ extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
 
         return _URLEncodedFormEncoder.UnkeyedContainer(context: context,
                                                        codingPath: nestedCodingPath,
-                                                       boolEncoding: boolEncoding)
+                                                       boolEncoding: boolEncoding,
+                                                       dateEncoding: dateEncoding)
     }
 
     func superEncoder() -> Encoder {
         defer { count += 1 }
 
-        return _URLEncodedFormEncoder(context: context, codingPath: codingPath, boolEncoding: boolEncoding)
+        return _URLEncodedFormEncoder(context: context,
+                                      codingPath: codingPath,
+                                      boolEncoding: boolEncoding,
+                                      dateEncoding: dateEncoding)
     }
 }
 
