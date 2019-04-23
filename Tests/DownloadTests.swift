@@ -571,10 +571,8 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         var progressValues: [Double] = []
         var response2: DownloadResponse<Data>?
-        let destination = DownloadRequest.suggestedDownloadDestination(options: [.removePreviousFile, .createIntermediateDirectories])
-        // TODO: Added destination because temp file was being deleted very quickly.
-        AF.download(resumingWith: resumeData,
-                           to: destination)
+
+        AF.download(resumingWith: resumeData)
             .downloadProgress { progress in
                 progressValues.append(progress.fractionCompleted)
             }
