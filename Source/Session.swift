@@ -469,21 +469,23 @@ open class Session {
     }
 
     func updateStatesForTask(_ task: URLSessionTask, request: Request) {
-        switch (startRequestsImmediately, request.state) {
-        case (true, .initialized):
-            request.resume()
-        case (false, .initialized):
-            // Do nothing.
-            break
-        case (_, .resumed):
-            task.resume()
-            request.didResumeTask(task)
-        case (_, .suspended):
-            task.suspend()
-            request.didSuspendTask(task)
-        case (_, .cancelled):
-            task.cancel()
-            request.didCancelTask(task)
+        request.withState { (state) in
+            switch (startRequestsImmediately, state) {
+            case (true, .initialized):
+                rootQueue.async { request.resume() }
+            case (false, .initialized):
+                // Do nothing.
+                break
+            case (_, .resumed):
+                task.resume()
+                rootQueue.async { request.didResumeTask(task) }
+            case (_, .suspended):
+                task.suspend()
+                rootQueue.async { request.didSuspendTask(task) }
+            case (_, .cancelled):
+                task.cancel()
+                rootQueue.async { request.didCancelTask(task) }
+            }
         }
     }
 
@@ -549,70 +551,6 @@ extension Session: RequestDelegate {
             } else {
                 retry()
             }
-        }
-    }
-
-    public func cancelRequest(_ request: Request) {
-        rootQueue.async {
-            request.didCancel()
-
-            // Cancellation only has an effect on running or suspended tasks.
-            guard let task = self.requestTaskMap[request], [.running, .suspended].contains(task.state) else {
-                request.finish()
-                return
-            }
-
-            task.cancel()
-            request.didCancelTask(task)
-        }
-    }
-
-    public func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void) {
-        rootQueue.async {
-            request.didCancel()
-
-            // Cancellation only has an effect on running or suspended tasks.
-            guard
-                let downloadTask = self.requestTaskMap[request] as? URLSessionDownloadTask,
-                [.running, .suspended].contains(downloadTask.state) else {
-                request.finish()
-                return
-            }
-
-            downloadTask.cancel { (data) in
-                self.rootQueue.async {
-                    byProducingResumeData(data)
-                    request.didCancelTask(downloadTask)
-                }
-            }
-        }
-    }
-
-    public func suspendRequest(_ request: Request) {
-        rootQueue.async {
-            guard !request.isCancelled else { return }
-
-            request.didSuspend()
-
-            // Tasks can only be suspended if they're running.
-            guard let task = self.requestTaskMap[request], task.state == .running else { return }
-
-            task.suspend()
-            request.didSuspendTask(task)
-        }
-    }
-
-    public func resumeRequest(_ request: Request) {
-        rootQueue.async {
-            guard !request.isCancelled else { return }
-
-            request.didResume()
-
-            // Tasks can only be resumed if they're suspended.
-            guard let task = self.requestTaskMap[request], task.state == .suspended else { return }
-
-            task.resume()
-            request.didResumeTask(task)
         }
     }
 }

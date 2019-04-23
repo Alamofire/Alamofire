@@ -105,10 +105,7 @@ public class Request {
     fileprivate let protectedMutableState: Protector<MutableState> = Protector(MutableState())
 
     /// `State` of the `Request`.
-    public fileprivate(set) var state: State {
-        get { return protectedMutableState.directValue.state }
-        set { protectedMutableState.write { $0.state = newValue } }
-    }
+    public var state: State { return protectedMutableState.directValue.state }
     /// Returns whether `state` is `.cancelled`.
     public var isCancelled: Bool { return state == .cancelled }
     /// Returns whether `state is `.resumed`.
@@ -461,6 +458,13 @@ public class Request {
 
         uploadProgressHandler?.queue.async { self.uploadProgressHandler?.handler(self.uploadProgress) }
     }
+    
+    /// Perform a closure on the current `state` while locked.
+    ///
+    /// - Parameter perform: The closure to perform.
+    func withState(perform: (State) -> Void) {
+        protectedMutableState.withState(perform: perform)
+    }
 
     // MARK: Task Creation
 
@@ -480,9 +484,21 @@ public class Request {
     /// - Returns: The `Request`.
     @discardableResult
     public func cancel() -> Self {
-        guard protectedMutableState.attemptToTransitionTo(.cancelled) else { return self }
-
-        delegate?.cancelRequest(self)
+        protectedMutableState.write { (mutableState) in
+            guard mutableState.state.canTransitionTo(.cancelled) else { return }
+            
+            mutableState.state = .cancelled
+            
+            underlyingQueue.async { self.didCancel() }
+            
+            guard let task = mutableState.tasks.last, task.state != .completed else {
+                underlyingQueue.async { self.finish() }
+                return
+            }
+            
+            task.cancel()
+            underlyingQueue.async { self.didCancelTask(task) }
+        }
 
         return self
     }
@@ -492,9 +508,18 @@ public class Request {
     /// - Returns: The `Request`.
     @discardableResult
     public func suspend() -> Self {
-        guard protectedMutableState.attemptToTransitionTo(.suspended) else { return self }
-
-        delegate?.suspendRequest(self)
+        protectedMutableState.write { (mutableState) in
+            guard mutableState.state.canTransitionTo(.suspended) else { return }
+            
+            mutableState.state = .suspended
+            
+            underlyingQueue.async { self.didSuspend() }
+            
+            guard let task = mutableState.tasks.last, task.state != .completed else { return }
+            
+            task.suspend()
+            underlyingQueue.async { self.didSuspendTask(task) }
+        }
 
         return self
     }
@@ -505,9 +530,18 @@ public class Request {
     /// - Returns: The `Request`.
     @discardableResult
     public func resume() -> Self {
-        guard protectedMutableState.attemptToTransitionTo(.resumed) else { return self }
-
-        delegate?.resumeRequest(self)
+        protectedMutableState.write { (mutableState) in
+            guard mutableState.state.canTransitionTo(.resumed) else { return }
+            
+            mutableState.state = .resumed
+            
+            underlyingQueue.async { self.didResume() }
+            
+            guard let task = mutableState.tasks.last, task.state != .completed else { return }
+            
+            task.resume()
+            underlyingQueue.async { self.didResumeTask(task) }
+        }
 
         return self
     }
@@ -724,11 +758,6 @@ public protocol RequestDelegate: AnyObject {
 
     func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
     func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?)
-
-    func cancelRequest(_ request: Request)
-    func cancelDownloadRequest(_ request: DownloadRequest, byProducingResumeData: @escaping (Data?) -> Void)
-    func suspendRequest(_ request: Request)
-    func resumeRequest(_ request: Request)
 }
 
 // MARK: - Subclasses
@@ -950,10 +979,22 @@ public class DownloadRequest: Request {
 
     @discardableResult
     public override func cancel() -> Self {
-        guard protectedMutableState.attemptToTransitionTo(.cancelled) else { return self }
-
-        delegate?.cancelDownloadRequest(self) { (resumeData) in
-            self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
+        protectedMutableState.write { (mutableState) in
+            guard mutableState.state.canTransitionTo(.cancelled) else { return }
+            
+            mutableState.state = .cancelled
+            
+            underlyingQueue.async { self.didCancel() }
+            
+            guard let task = mutableState.tasks.last as? URLSessionDownloadTask, task.state != .completed else {
+                underlyingQueue.async { self.finish() }
+                return
+            }
+            
+            task.cancel { (resumeData) in
+                self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
+                self.underlyingQueue.async { self.didCancelTask(task) }
+            }
         }
 
         return self
