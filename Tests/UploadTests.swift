@@ -678,7 +678,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request.state, .resumed)
+        XCTAssertEqual(request.state, .finished)
     }
 
     func testThatCancelledUploadRequestTriggersAllAppropriateLifetimeEvents() {

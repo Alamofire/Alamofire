@@ -26,8 +26,6 @@ import Alamofire
 import Foundation
 import XCTest
 
-// MARK: -
-
 class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
@@ -263,7 +261,7 @@ class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(receivedResponse?.result.value?.form, ["property": "one"])
     }
 
-    // MARK: - Lifetime Events
+    // MARK: Lifetime Events
 
     func testThatAutomaticallyResumedRequestReceivesAppropriateLifetimeEvents() {
         // Given
@@ -288,7 +286,7 @@ class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request.state, .resumed)
+        XCTAssertEqual(request.state, .finished)
     }
 
     func testThatAutomaticallyAndManuallyResumedRequestReceivesAppropriateLifetimeEvents() {
@@ -317,7 +315,7 @@ class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request.state, .resumed)
+        XCTAssertEqual(request.state, .finished)
     }
 
     func testThatManuallyResumedRequestReceivesAppropriateLifetimeEvents() {
@@ -346,7 +344,7 @@ class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request.state, .resumed)
+        XCTAssertEqual(request.state, .finished)
     }
 
     func testThatRequestManuallyResumedManyTimesOnlyReceivesAppropriateLifetimeEvents() {
@@ -375,7 +373,7 @@ class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request.state, .resumed)
+        XCTAssertEqual(request.state, .finished)
     }
 
     func testThatRequestManuallySuspendedManyTimesAfterAutomaticResumeOnlyReceivesAppropriateLifetimeEvents() {
@@ -561,7 +559,7 @@ class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(request.state, .resumed)
+        XCTAssertEqual(request.state, .finished)
     }
 
     func testThatCancelledRequestTriggersAllAppropriateLifetimeEvents() {
@@ -599,6 +597,68 @@ class RequestResponseTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(request.state, .cancelled)
+    }
+
+    func testThatAppendingResponseSerializerToCancelledRequestCallsCompletion() {
+        // Given
+        let session = Session()
+
+        var response1: DataResponse<Any>?
+        var response2: DataResponse<Any>?
+
+        let expect = expectation(description: "both response serializer completions should be called")
+        expect.expectedFulfillmentCount = 2
+
+        // When
+        let request = session.request(URLRequest.makeHTTPBinRequest())
+
+        request.responseJSON { resp in
+            response1 = resp
+            expect.fulfill()
+
+            request.responseJSON { resp in
+                response2 = resp
+                expect.fulfill()
+            }
+        }
+
+        request.cancel()
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(response1?.error?.asAFError?.isExplicitlyCancelledError, true)
+        XCTAssertEqual(response2?.error?.asAFError?.isExplicitlyCancelledError, true)
+    }
+
+    func testThatAppendingResponseSerializerToCompletedRequestCallsCompletion() {
+        // Given
+        let session = Session()
+
+        var response1: DataResponse<Any>?
+        var response2: DataResponse<Any>?
+
+        let expect = expectation(description: "both response serializer completions should be called")
+        expect.expectedFulfillmentCount = 2
+
+        // When
+        let request = session.request(URLRequest.makeHTTPBinRequest())
+
+        request.responseJSON { resp in
+            response1 = resp
+            expect.fulfill()
+
+            request.responseJSON { resp in
+                response2 = resp
+                expect.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response1?.value)
+        XCTAssertEqual(response2?.error?.asAFError?.isResponseSerializerAddedAfterRequestFinished, true)
     }
 }
 
