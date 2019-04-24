@@ -445,6 +445,8 @@ handling.</p>
 <li>cancelled: Set when <code><a href="../Classes/Request.html#/s:9Alamofire7RequestC6cancelACXDyF">cancel()</a></code> is called. Any tasks created for the <code><a href="../Classes/Request.html">Request</a></code> will have <code><a href="../Classes/Request.html#/s:9Alamofire7RequestC6cancelACXDyF">cancel()</a></code> called on
          them. Unlike <code>resumed</code> or <code>suspended</code>, once in the <code>cancelled</code> state, the <code><a href="../Classes/Request.html">Request</a></code> can no longer
          transition to any other state.</li>
+<li>finished:  Set when all response serialization completion closures have been cleared on the <code><a href="../Classes/Request.html">Request</a></code> and
+         queued on their respective queues.</li>
 </ul>
 
                         <a href="../Classes/Request/State.html" class="slightly-smaller">See more</a>
@@ -666,7 +668,7 @@ handling.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">fileprivate</span><span class="p">(</span><span class="k">set</span><span class="p">)</span> <span class="k">var</span> <span class="nv">state</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request/State.html">State</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">state</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request/State.html">State</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -676,9 +678,9 @@ handling.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7RequestC11isCancelledSbvp"></a>
-                    <a name="//apple_ref/swift/Property/isCancelled" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7RequestC11isCancelledSbvp">isCancelled</a>
+                    <a name="/s:9Alamofire7RequestC13isInitializedSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isInitialized" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7RequestC13isInitializedSbvp">isInitialized</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -686,14 +688,14 @@ handling.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Returns whether <code><a href="../Classes/Request.html#/s:9Alamofire7RequestC5stateAC5StateOvp">state</a></code> is <code>.cancelled</code>.</p>
+                        <p>Returns whether <code><a href="../Classes/Request.html#/s:9Alamofire7RequestC5stateAC5StateOvp">state</a></code> is <code>.initialized</code>.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isCancelled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isInitialized</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -757,9 +759,9 @@ handling.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7RequestC13isInitializedSbvp"></a>
-                    <a name="//apple_ref/swift/Property/isInitialized" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7RequestC13isInitializedSbvp">isInitialized</a>
+                    <a name="/s:9Alamofire7RequestC11isCancelledSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isCancelled" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7RequestC11isCancelledSbvp">isCancelled</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -767,14 +769,41 @@ handling.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Returns whether <code><a href="../Classes/Request.html#/s:9Alamofire7RequestC5stateAC5StateOvp">state</a></code> is <code>.initialized</code>.</p>
+                        <p>Returns whether <code><a href="../Classes/Request.html#/s:9Alamofire7RequestC5stateAC5StateOvp">state</a></code> is <code>.cancelled</code>.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isInitialized</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isCancelled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7RequestC10isFinishedSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isFinished" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7RequestC10isFinishedSbvp">isFinished</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns whether <code><a href="../Classes/Request.html#/s:9Alamofire7RequestC5stateAC5StateOvp">state</a></code> is <code>.finished</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isFinished</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -2441,7 +2470,7 @@ created, as well as the response status code, if a response has been received.</
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-12)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
