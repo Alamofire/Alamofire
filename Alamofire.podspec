@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Alamofire'
-  s.version = '5.0.0-beta.5'
+  s.version = '5.0.0-beta.6'
   s.license = 'MIT'
   s.summary = 'Elegant HTTP Networking in Swift'
   s.homepage = 'https://github.com/Alamofire/Alamofire'
@@ -17,6 +17,6 @@ Pod::Spec.new do |s|
   s.swift_version = '5.0'
 
   s.source_files = 'Source/*.swift'
-  
+
   s.frameworks = 'CFNetwork'
 end
