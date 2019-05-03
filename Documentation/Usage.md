@@ -87,13 +87,13 @@ public extension URLRequest {
 If you need to use an HTTP method that Alamofire's `HTTPMethod` type doesn't support, you can still set the `String` `httpMethod` property on `URLRequest` directly.
 
 
-### Parameter Encoding
+### Passing Parameters
 
-Alamofire supports three types of parameter encoding including: `URL`, `JSON` and `PropertyList`. It can also support any custom encoding that conforms to the `ParameterEncoding` protocol.
+Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder `.
 
-#### URL Encoding
+#### `URLEncodedFormParameterEncoder`
 
-The `URLEncoding` type creates a url-encoded query string to be set as or appended to any existing URL query string or set as the HTTP body of the URL request. Whether the query string is set or appended to any existing URL query string or set as the HTTP body depends on the `Destination` of the encoding. The `Destination` enumeration has three cases:
+The `URLEncodedFormParameterEncoder` type creates a url-encoded query string to be set as or appended to any existing URL query string or set as the HTTP body of the URL request. Whether the query string is set or appended to any existing URL query string or set as the HTTP body depends on the `Destination` of the encoding. The `Destination` enumeration has three cases:
 
 - `.methodDependent` - Applies encoded query string result to existing query string for `GET`, `HEAD` and `DELETE` requests and sets as the HTTP body for requests with any other HTTP method.
 - `.queryString` - Sets or appends encoded query string result to existing query string.
