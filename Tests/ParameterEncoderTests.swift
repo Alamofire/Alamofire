@@ -177,6 +177,19 @@ final class URLEncodedFormParameterEncoderTests: BaseTestCase {
         let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)
         XCTAssertEqual(components?.percentEncodedQuery, "property=property")
     }
+
+    func testThatQueryIsNilWhenEncodableResultsInAnEmptyString() throws {
+        // Given
+        let encoder = URLEncodedFormParameterEncoder(destination: .queryString)
+        let request = URLRequest.makeHTTPBinRequest()
+
+        // When
+        let newRequest = try encoder.encode([String: String](), into: request)
+
+        // Then
+        let components = URLComponents(url: newRequest.url!, resolvingAgainstBaseURL: false)
+        XCTAssertNil(components?.percentEncodedQuery)
+    }
 }
 
 final class URLEncodedFormEncoderTests: BaseTestCase {
