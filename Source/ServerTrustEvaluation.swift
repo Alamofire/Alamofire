@@ -289,8 +289,8 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
         }
 
         let pinnedKeysInServerKeys: Bool = {
-            for serverPublicKey in trust.af.publicKeys as [AnyHashable] {
-                for pinnedPublicKey in keys as [AnyHashable] {
+            for serverPublicKey in trust.af.publicKeys {
+                for pinnedPublicKey in keys {
                     if serverPublicKey == pinnedPublicKey {
                         return true
                     }

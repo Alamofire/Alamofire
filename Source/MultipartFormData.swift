@@ -91,6 +91,9 @@ open class MultipartFormData {
 
     // MARK: - Properties
 
+    /// Default memory threshold used when encoding `MultipartFormData`, in bytes.
+    public static let encodingMemoryThreshold: UInt64 = 10_000_000
+
     /// The `Content-Type` header value containing the boundary used to generate the `multipart/form-data`.
     open lazy var contentType: String = "multipart/form-data; boundary=\(self.boundary)"
 

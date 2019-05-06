@@ -139,6 +139,8 @@ public enum AFError: Error {
         case decodingFailed(error: Error)
         /// Generic serialization failed for an empty response that wasn't type `Empty` but instead the associated type.
         case invalidEmptyResponse(type: String)
+        /// A response serializer was added to the request after the request was already finished.
+        case responseSerializerAddedAfterRequestFinished
     }
 
     /// Underlying reason a server trust evaluation error occured.
@@ -554,6 +556,8 @@ extension AFError.ResponseSerializationFailureReason {
             return "Empty response could not be serialized to type: \(type). Use Empty as the expected type for such responses."
         case .decodingFailed(let error):
             return "Response could not be decoded because of error:\n\(error.localizedDescription)"
+        case .responseSerializerAddedAfterRequestFinished:
+            return "Response serializer was added to the request after it had already finished."
         }
     }
 }

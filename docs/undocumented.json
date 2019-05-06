@@ -142,112 +142,112 @@
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 165,
+      "line": 167,
       "symbol": "AFError.ServerTrustFailureReason.noRequiredEvaluator(host:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 188,
+      "line": 190,
       "symbol": "AFError.sessionDeinitialized",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 189,
+      "line": 191,
       "symbol": "AFError.sessionInvalidated(error:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 190,
+      "line": 192,
       "symbol": "AFError.explicitlyCancelled",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 191,
+      "line": 193,
       "symbol": "AFError.invalidURL(url:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 192,
+      "line": 194,
       "symbol": "AFError.parameterEncodingFailed(reason:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 193,
+      "line": 195,
       "symbol": "AFError.parameterEncoderFailed(reason:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 194,
+      "line": 196,
       "symbol": "AFError.multipartEncodingFailed(reason:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 195,
+      "line": 197,
       "symbol": "AFError.requestAdaptationFailed(error:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 196,
+      "line": 198,
       "symbol": "AFError.responseValidationFailed(reason:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 197,
+      "line": 199,
       "symbol": "AFError.responseSerializationFailed(reason:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 198,
+      "line": 200,
       "symbol": "AFError.serverTrustEvaluationFailed(reason:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 199,
+      "line": 201,
       "symbol": "AFError.requestRetryFailed(retryError:originalError:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 213,
+      "line": 215,
       "symbol": "AFError.isSessionDeinitializedError",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 219,
+      "line": 221,
       "symbol": "AFError.isSessionInvalidatedError",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/AFError.swift",
-      "line": 245,
+      "line": 247,
       "symbol": "AFError.isParameterEncoderError",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
@@ -303,20 +303,6 @@
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/EventMonitor.swift",
-      "line": 252,
-      "symbol": "EventMonitor.request(_:didParseResponse:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/EventMonitor.swift",
-      "line": 253,
-      "symbol": "EventMonitor.request(_:didParseResponse:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/EventMonitor.swift",
       "line": 264,
       "symbol": "EventMonitor.request(_:didParseResponse:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
@@ -331,7 +317,21 @@
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/EventMonitor.swift",
-      "line": 609,
+      "line": 276,
+      "symbol": "EventMonitor.request(_:didParseResponse:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/EventMonitor.swift",
+      "line": 277,
+      "symbol": "EventMonitor.request(_:didParseResponse:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/EventMonitor.swift",
+      "line": 642,
       "symbol": "ClosureEventMonitor.init(queue:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -397,27 +397,6 @@
       "line": 37,
       "symbol": "HTTPMethod.trace",
       "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/MultipartUpload.swift",
-      "line": null,
-      "symbol": "MultipartUpload",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/MultipartUpload.swift",
-      "line": 27,
-      "symbol": "MultipartUpload",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/MultipartUpload.swift",
-      "line": 86,
-      "symbol": "MultipartUpload.createUploadable()",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
@@ -632,245 +611,224 @@
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 42,
+      "line": 44,
       "symbol": "Request.State.cancelled",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 42,
+      "line": 44,
+      "symbol": "Request.State.finished",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
+      "line": 44,
       "symbol": "Request.State.initialized",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 42,
+      "line": 44,
       "symbol": "Request.State.resumed",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 42,
+      "line": 44,
       "symbol": "Request.State.suspended",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 143,
+      "line": 151,
       "symbol": "Request.redirectHandler",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 150,
+      "line": 158,
       "symbol": "Request.cachedResponseHandler",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 701,
+      "line": 784,
       "symbol": "RequestDelegate.sessionConfiguration",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 703,
+      "line": 786,
       "symbol": "RequestDelegate.retryResult(for:dueTo:completion:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 704,
+      "line": 787,
       "symbol": "RequestDelegate.retryRequest(_:withDelay:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 706,
-      "symbol": "RequestDelegate.cancelRequest(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 707,
-      "symbol": "RequestDelegate.cancelDownloadRequest(_:byProducingResumeData:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 708,
-      "symbol": "RequestDelegate.suspendRequest(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 709,
-      "symbol": "RequestDelegate.resumeRequest(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 716,
+      "line": 794,
       "symbol": "DataRequest",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 717,
+      "line": 795,
       "symbol": "DataRequest.convertible",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 720,
+      "line": 798,
       "symbol": "DataRequest.data",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 799,
+      "line": 877,
       "symbol": "DownloadRequest",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 856,
+      "line": 934,
       "symbol": "DownloadRequest.Downloadable",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 857,
+      "line": 935,
       "symbol": "DownloadRequest.Downloadable.request(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 858,
+      "line": 936,
       "symbol": "DownloadRequest.Downloadable.resumeData(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 862,
+      "line": 940,
       "symbol": "DownloadRequest.downloadable",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 874,
+      "line": 952,
       "symbol": "DownloadRequest.resumeData",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 875,
+      "line": 953,
       "symbol": "DownloadRequest.fileURL",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 925,
+      "line": 1003,
       "symbol": "DownloadRequest.task(forResumeData:using:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 973,
+      "line": 1059,
       "symbol": "UploadRequest",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 974,
+      "line": 1060,
       "symbol": "UploadRequest.Uploadable",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 975,
+      "line": 1061,
       "symbol": "UploadRequest.Uploadable.data(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 976,
+      "line": 1062,
       "symbol": "UploadRequest.Uploadable.file(_:shouldRemove:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 977,
+      "line": 1063,
       "symbol": "UploadRequest.Uploadable.stream(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 982,
+      "line": 1068,
       "symbol": "UploadRequest.upload",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 986,
+      "line": 1072,
       "symbol": "UploadRequest.uploadable",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 1060,
+      "line": 1146,
       "symbol": "UploadableConvertible",
       "symbol_kind": "source.lang.swift.decl.protocol",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 1061,
+      "line": 1147,
       "symbol": "UploadableConvertible.createUploadable()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 1065,
+      "line": 1151,
       "symbol": "UploadRequest.Uploadable.createUploadable()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Request.swift",
-      "line": 1070,
+      "line": 1156,
       "symbol": "UploadConvertible",
       "symbol_kind": "source.lang.swift.decl.protocol",
       "warning": "undocumented"
@@ -1059,21 +1017,21 @@
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ResponseSerialization.swift",
-      "line": 569,
+      "line": 573,
       "symbol": "EmptyResponse.emptyValue()",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ResponseSerialization.swift",
-      "line": 574,
+      "line": 578,
       "symbol": "Empty.value",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/ResponseSerialization.swift",
-      "line": 578,
+      "line": 582,
       "symbol": "Empty.emptyValue()",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
@@ -1206,385 +1164,308 @@
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 77,
+      "line": 75,
       "symbol": "Session.init(configuration:delegate:rootQueue:startRequestsImmediately:requestQueue:serializationQueue:interceptor:serverTrustManager:redirectHandler:cachedResponseHandler:eventMonitors:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 104,
+      "line": 102,
       "symbol": "Session.deinit",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 124,
+      "line": 122,
       "symbol": "Session.request(_:method:parameters:encoding:headers:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 153,
+      "line": 151,
       "symbol": "Session.request(_:method:parameters:encoder:headers:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 168,
+      "line": 166,
       "symbol": "Session.request(_:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 183,
+      "line": 181,
       "symbol": "Session.download(_:method:parameters:encoding:headers:interceptor:to:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 199,
+      "line": 197,
       "symbol": "Session.download(_:method:parameters:encoder:headers:interceptor:to:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 215,
+      "line": 213,
       "symbol": "Session.download(_:interceptor:to:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 231,
+      "line": 229,
       "symbol": "Session.download(resumingWith:interceptor:to:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 272,
+      "line": 270,
       "symbol": "Session.upload(_:to:method:headers:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 282,
+      "line": 280,
       "symbol": "Session.upload(_:with:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 288,
+      "line": 286,
       "symbol": "Session.upload(_:to:method:headers:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 298,
+      "line": 296,
       "symbol": "Session.upload(_:with:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 304,
+      "line": 302,
       "symbol": "Session.upload(_:to:method:headers:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 314,
+      "line": 312,
       "symbol": "Session.upload(_:with:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 320,
+      "line": 318,
       "symbol": "Session.upload(multipartFormData:usingThreshold:fileManager:to:method:headers:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 338,
+      "line": 336,
       "symbol": "Session.upload(multipartFormData:usingThreshold:with:interceptor:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 513,
+      "line": 523,
       "symbol": "Session.sessionConfiguration",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 517,
+      "line": 527,
       "symbol": "Session.retryResult(for:dueTo:completion:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 533,
+      "line": 543,
       "symbol": "Session.retryRequest(_:withDelay:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 550,
-      "symbol": "Session.cancelRequest(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 563,
-      "symbol": "Session.cancelDownloadRequest(_:byProducingResumeData:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 580,
-      "symbol": "Session.suspendRequest(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 589,
-      "symbol": "Session.resumeRequest(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 602,
+      "line": 564,
       "symbol": "Session.request(for:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 606,
+      "line": 568,
+      "symbol": "Session.didGatherMetricsForTask(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
+      "line": 572,
       "symbol": "Session.didCompleteTask(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 610,
+      "line": 576,
       "symbol": "Session.credential(for:in:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/Session.swift",
-      "line": 615,
+      "line": 581,
       "symbol": "Session.cancelRequestsForSessionInvalidation(with:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
       "line": null,
       "symbol": "SessionDelegate",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
       "line": null,
       "symbol": "SessionDelegate",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
       "line": null,
       "symbol": "SessionDelegate",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
       "line": null,
       "symbol": "SessionDelegate",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 27,
-      "symbol": "SessionStateProvider",
-      "symbol_kind": "source.lang.swift.decl.protocol",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 28,
-      "symbol": "SessionStateProvider.serverTrustManager",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 29,
-      "symbol": "SessionStateProvider.redirectHandler",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 30,
-      "symbol": "SessionStateProvider.cachedResponseHandler",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 32,
-      "symbol": "SessionStateProvider.request(for:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 33,
-      "symbol": "SessionStateProvider.didCompleteTask(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 34,
-      "symbol": "SessionStateProvider.credential(for:in:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 35,
-      "symbol": "SessionStateProvider.cancelRequestsForSessionInvalidation(with:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 38,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 39,
       "symbol": "SessionDelegate",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 44,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 45,
       "symbol": "SessionDelegate.init(fileManager:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 50,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 51,
       "symbol": "SessionDelegate.urlSession(_:didBecomeInvalidWithError:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 61,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 62,
       "symbol": "SessionDelegate.urlSession(_:task:didReceive:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 120,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 121,
       "symbol": "SessionDelegate.urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 135,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 136,
       "symbol": "SessionDelegate.urlSession(_:task:needNewBodyStream:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 147,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 148,
       "symbol": "SessionDelegate.urlSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 161,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 162,
       "symbol": "SessionDelegate.urlSession(_:task:didFinishCollecting:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 167,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 170,
       "symbol": "SessionDelegate.urlSession(_:task:didCompleteWithError:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 176,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 179,
       "symbol": "SessionDelegate.urlSession(_:taskIsWaitingForConnectivity:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 182,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 185,
       "symbol": "SessionDelegate.urlSession(_:dataTask:didReceive:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 192,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 195,
       "symbol": "SessionDelegate.urlSession(_:dataTask:willCacheResponse:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 207,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 210,
       "symbol": "SessionDelegate.urlSession(_:downloadTask:didResumeAtOffset:expectedTotalBytes:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 224,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 227,
       "symbol": "SessionDelegate.urlSession(_:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionStateProvider.swift",
-      "line": 243,
+      "file": "/Users/cnoon/Programming/GitHub/Alamofire/Alamofire/Source/SessionDelegate.swift",
+      "line": 246,
       "symbol": "SessionDelegate.urlSession(_:downloadTask:didFinishDownloadingTo:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

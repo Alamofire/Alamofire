@@ -220,6 +220,8 @@ extension DownloadRequest {
                                             serializationDuration: 0,
                                             result: result)
 
+            self.eventMonitor?.request(self, didParseResponse: response)
+
             self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
         }
 
@@ -256,6 +258,8 @@ extension DownloadRequest {
                                             metrics: self.metrics,
                                             serializationDuration: (end - start),
                                             result: result)
+
+            self.eventMonitor?.request(self, didParseResponse: response)
 
             guard let serializerError = result.error, let delegate = self.delegate else {
                 self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
