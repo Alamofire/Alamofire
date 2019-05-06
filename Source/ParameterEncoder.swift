@@ -226,24 +226,30 @@ public final class URLEncodedFormEncoder {
 
     /// Configures how `Date` parameters are encoded.
     public enum DateEncoding {
-        /// Encodes the date from `Date` structure.
+        /// Defers encoding to the `Date` type.
         case deferredToDate
-        /// Encodes the date as a UNIX timestamp.
+        /// Encodes dates as seconds since midnight UTC on January 1, 1970.
         case secondsSince1970
-        /// Encodes the date as UNIX millisecond timestamp.
+        /// Encodes dates as milliseconds since midnight UTC on January 1, 1970.
         case millisecondsSince1970
-        /// Encodes the date as an ISO-8601-formatted string (in RFC 3339 format).
+        /// Encodes dates according to the ISO 8601 and RFC3339 standards.
         case iso8601
-        /// Encodes the date as a string formatted by the given formatter.
+        /// Encodes dates using the given `DateFormatter`.
         case formatted(DateFormatter)
-        /// Encodes the date as a custom string formatted by the given closure.
-        case custom((Date) -> String)
+        /// Encodes dates using the given closure.
+        case custom((Date) throws -> String)
+
+        private static let iso8601Formatter: ISO8601DateFormatter = {
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = .withInternetDateTime
+            return formatter
+        }()
 
         /// Encodes the date according to the strategy.
         ///
         /// - Parameter string: The `Date` to encode.
         /// - Returns:          The encoded `String` or `nil` if the date should be encoded as `Encodable` structure.
-        func encode(_ value: Date) -> String? {
+        func encode(_ value: Date) throws -> String? {
             switch self {
             case .deferredToDate:
                 return nil
@@ -252,13 +258,11 @@ public final class URLEncodedFormEncoder {
             case .millisecondsSince1970:
                 return String(value.timeIntervalSince1970 * 1000.0)
             case .iso8601:
-                return ISO8601DateFormatter.string(from: value,
-                                                   timeZone: TimeZone(secondsFromGMT: 0)!,
-                                                   formatOptions: .withInternetDateTime)
+                return DateEncoding.iso8601Formatter.string(from: value)
             case let .formatted(formatter):
                 return formatter.string(from: value)
             case let .custom(closure):
-                return closure(value)
+                return try closure(value)
             }
         }
     }
@@ -725,7 +729,7 @@ extension _URLEncodedFormEncoder.SingleValueContainer: SingleValueEncodingContai
     func encode<T>(_ value: T) throws where T : Encodable {
         switch value {
         case let date as Date:
-            guard let string = dateEncoding.encode(date) else {
+            guard let string = try dateEncoding.encode(date) else {
                 fallthrough
             }
 

@@ -548,6 +548,21 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.value, "date=123.456")
     }
 
+    func testEncoderThrowsErrorWhenCustomDateEncodingFails() {
+        // Given
+        struct DateEncodingError: Error {}
+
+        let encoder = URLEncodedFormEncoder(dateEncoding: .custom({ _ in throw DateEncodingError() }))
+        let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertTrue(result.isFailure)
+        XCTAssertTrue(result.error is DateEncodingError)
+    }
+
     func testThatArraysCanBeEncodedWithoutBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .noBrackets)
