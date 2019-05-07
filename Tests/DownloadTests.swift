@@ -381,6 +381,85 @@ class DownloadResponseTestCase: BaseTestCase {
     }
 }
 
+final class DownloadRequestEventsTestCase: BaseTestCase {
+    func testThatDownloadRequestTriggersAllAppropriateLifetimeEvents() {
+        // Given
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(eventMonitors: [eventMonitor])
+
+        let expect = expectation(description: "request should receive appropriate lifetime events")
+        expect.expectedFulfillmentCount = 14
+
+        var wroteData = false
+
+        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in expect.fulfill() }
+        eventMonitor.requestDidCreateURLRequest = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidCreateTask = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in expect.fulfill() }
+        eventMonitor.downloadTaskDidWriteData = { (_, _, _, _, _) in
+            guard !wroteData else { return }
+
+            wroteData = true
+            expect.fulfill()
+        }
+        eventMonitor.downloadTaskDidFinishDownloadingToURL = { (_, _, _) in expect.fulfill() }
+        eventMonitor.requestDidFinishDownloadingUsingTaskWithResult = { (_, _, _) in expect.fulfill() }
+        eventMonitor.requestDidCreateDestinationURL = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidFinish = { (_) in expect.fulfill() }
+        eventMonitor.requestDidResume = { (_) in expect.fulfill() }
+        eventMonitor.requestDidResumeTask = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidParseDownloadResponse = { (_, _) in expect.fulfill() }
+
+        // When
+        let request = session.download(URLRequest.makeHTTPBinRequest()).response { response in
+            expect.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(request.state, .finished)
+    }
+
+    func testThatCancelledDownloadRequestTriggersAllAppropriateLifetimeEvents() {
+        // Given
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+
+        let expect = expectation(description: "request should receive appropriate lifetime events")
+        expect.expectedFulfillmentCount = 12
+
+        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in expect.fulfill() }
+        eventMonitor.requestDidCreateURLRequest = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidCreateTask = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { (_, _) in expect.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in expect.fulfill() }
+        eventMonitor.requestDidFinish = { (_) in expect.fulfill() }
+        eventMonitor.requestDidResume = { (_) in expect.fulfill() }
+        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
+        eventMonitor.requestDidParseDownloadResponse = { (_, _) in expect.fulfill() }
+
+        // When
+        let request = session.download(URLRequest.makeHTTPBinRequest()).response { response in
+            expect.fulfill()
+        }
+
+        eventMonitor.requestDidResumeTask = { (_, _) in
+            request.cancel()
+            expect.fulfill()
+        }
+
+        request.resume()
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(request.state, .cancelled)
+    }
+}
+
 // MARK: -
 
 class DownloadResumeDataTestCase: BaseTestCase {
@@ -492,10 +571,8 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         var progressValues: [Double] = []
         var response2: DownloadResponse<Data>?
-        let destination = DownloadRequest.suggestedDownloadDestination(options: [.removePreviousFile, .createIntermediateDirectories])
-        // TODO: Added destination because temp file was being deleted very quickly.
-        AF.download(resumingWith: resumeData,
-                           to: destination)
+
+        AF.download(resumingWith: resumeData)
             .downloadProgress { progress in
                 progressValues.append(progress.fractionCompleted)
             }

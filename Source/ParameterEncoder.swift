@@ -80,8 +80,8 @@ open class JSONParameterEncoder: ParameterEncoder {
         do {
             let data = try encoder.encode(parameters)
             request.httpBody = data
-            if request.httpHeaders["Content-Type"] == nil {
-                request.httpHeaders.update(.contentType("application/json"))
+            if request.headers["Content-Type"] == nil {
+                request.headers.update(.contentType("application/json"))
             }
         } catch {
             throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
@@ -167,7 +167,7 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
             let query: String = try AFResult<String> { try encoder.encode(parameters) }
                                 .mapError { AFError.parameterEncoderFailed(reason: .encoderFailed(error: $0)) }.get()
             let newQueryString = [components.percentEncodedQuery, query].compactMap { $0 }.joinedWithAmpersands()
-            components.percentEncodedQuery = newQueryString
+            components.percentEncodedQuery = newQueryString.isEmpty ? nil : newQueryString
 
             guard let newURL = components.url else {
                 throw AFError.parameterEncoderFailed(reason: .missingRequiredComponent(.url))
@@ -175,8 +175,8 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
 
             request.url = newURL
         } else {
-            if request.httpHeaders["Content-Type"] == nil {
-                request.httpHeaders.update(.contentType("application/x-www-form-urlencoded; charset=utf-8"))
+            if request.headers["Content-Type"] == nil {
+                request.headers.update(.contentType("application/x-www-form-urlencoded; charset=utf-8"))
             }
 
             request.httpBody = try AFResult<Data> { try encoder.encode(parameters) }

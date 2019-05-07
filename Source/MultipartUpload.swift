@@ -24,10 +24,7 @@
 
 import Foundation
 
-open class MultipartUpload {
-    /// Default memory threshold used when encoding `MultipartFormData`, in bytes.
-    public static let encodingMemoryThreshold: UInt64 = 10_000_000
-
+final class MultipartUpload {
     lazy var result = AFResult { try build() }
 
     let isInBackgroundSession: Bool
@@ -37,7 +34,7 @@ open class MultipartUpload {
     let fileManager: FileManager
 
     init(isInBackgroundSession: Bool,
-         encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
+         encodingMemoryThreshold: UInt64,
          request: URLRequestConvertible,
          multipartFormData: MultipartFormData) {
         self.isInBackgroundSession = isInBackgroundSession
@@ -79,11 +76,11 @@ open class MultipartUpload {
 }
 
 extension MultipartUpload: UploadConvertible {
-    public func asURLRequest() throws -> URLRequest {
+    func asURLRequest() throws -> URLRequest {
         return try result.get().request
     }
 
-    public func createUploadable() throws -> UploadRequest.Uploadable {
+    func createUploadable() throws -> UploadRequest.Uploadable {
         return try result.get().uploadable
     }
 }

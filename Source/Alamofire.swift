@@ -345,7 +345,7 @@ public enum AF {
     ///
     /// - Returns: The created `UploadRequest`.
     public static func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
-                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
+                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                               fileManager: FileManager = .default,
                               to url: URLConvertible,
                               method: HTTPMethod = .post,
@@ -385,7 +385,7 @@ public enum AF {
     /// - Returns: The `UploadRequest` created.
     @discardableResult
     public static func upload(multipartFormData: MultipartFormData,
-                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
+                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                               with urlRequest: URLRequestConvertible,
                               interceptor: RequestInterceptor? = nil) -> UploadRequest {
         return Session.default.upload(multipartFormData: multipartFormData,
