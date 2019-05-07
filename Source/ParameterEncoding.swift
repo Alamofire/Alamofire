@@ -233,7 +233,9 @@ public struct URLEncoding: ParameterEncoding {
             components += queryComponents(fromKey: key, value: parameters[key]!)
         })
 
-        return components.map { "\($0)=\($1)" }.joined(separator: "&")
+        return components.map({ (key, value) -> String in
+            return key + "=" + value
+        }).joined(separator: "&")
     }
 }
 
