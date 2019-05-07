@@ -485,6 +485,97 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertEqual(result.value, "bool=true")
     }
 
+    func testThatDatesCanBeEncoded() {
+        // Given
+        let encoder = URLEncodedFormEncoder(dateEncoding: .deferredToDate)
+        let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "date=123.456")
+    }
+
+    func testThatDatesCanBeEncodedAsSecondsSince1970() {
+        // Given
+        let encoder = URLEncodedFormEncoder(dateEncoding: .secondsSince1970)
+        let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "date=978307323.456")
+    }
+
+    func testThatDatesCanBeEncodedAsMillisecondsSince1970() {
+        // Given
+        let encoder = URLEncodedFormEncoder(dateEncoding: .millisecondsSince1970)
+        let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "date=978307323456.0")
+    }
+
+    func testThatDatesCanBeEncodedAsISO8601Formatted() {
+        // Given
+        let encoder = URLEncodedFormEncoder(dateEncoding: .iso8601)
+        let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "date=2001-01-01T00%3A02%3A03Z")
+    }
+
+    func testThatDatesCanBeEncodedAsFormatted() {
+        // Given
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+
+        let encoder = URLEncodedFormEncoder(dateEncoding: .formatted(dateFormatter))
+        let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "date=2001-01-01%2000%3A02%3A03.4560")
+    }
+
+    func testThatDatesCanBeEncodedAsCustomFormatted() {
+        // Given
+        let encoder = URLEncodedFormEncoder(dateEncoding: .custom({ "\($0.timeIntervalSinceReferenceDate)" }))
+        let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "date=123.456")
+    }
+
+    func testEncoderThrowsErrorWhenCustomDateEncodingFails() {
+        // Given
+        struct DateEncodingError: Error {}
+
+        let encoder = URLEncodedFormEncoder(dateEncoding: .custom({ _ in throw DateEncodingError() }))
+        let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertTrue(result.isFailure)
+        XCTAssertTrue(result.error is DateEncodingError)
+    }
+
     func testThatArraysCanBeEncodedWithoutBrackets() {
         // Given
         let encoder = URLEncodedFormEncoder(arrayEncoding: .noBrackets)
