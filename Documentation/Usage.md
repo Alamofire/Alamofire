@@ -41,7 +41,7 @@ public static func request(_ urlRequest: URLRequestConvertible,
                            interceptor: RequestInterceptor? = nil) -> DataRequest
 ```
 
-This method creates a `DataRequest` for any type conforming to Alamofire's `URLRequestConvertible` protocol. All of the different parameters from the previous version are incapsulated into that value, which can give rise to very powerful abstractions. This is discussed later in this documentation.
+This method creates a `DataRequest` for any type conforming to Alamofire's `URLRequestConvertible` protocol. All of the different parameters from the previous version are encapsulated in that value, which can give rise to very powerful abstractions. This is discussed later in this documentation.
 
 #### HTTP Methods
 
@@ -93,46 +93,41 @@ Alamofire supports passing any `Encodable` type as the parameters of a request. 
 
 #### `URLEncodedFormParameterEncoder`
 
-The `URLEncodedFormParameterEncoder` type creates a url-encoded query string to be set as or appended to any existing URL query string or set as the HTTP body of the URL request. Whether the query string is set or appended to any existing URL query string or set as the HTTP body depends on the `Destination` of the encoding. The `Destination` enumeration has three cases:
+The `URLEncodedFormParameterEncoder` encodes values into a url-encoded string to be set as or appended to any existing URL query or set as the HTTP body of the request. Controlling where the encoded string is set can be done by setting the `destination` of the encoding. The `URLEncodedFormParameterEncoder.Destination` enumeration has three cases:
 
-- `.methodDependent` - Applies encoded query string result to existing query string for `GET`, `HEAD` and `DELETE` requests and sets as the HTTP body for requests with any other HTTP method.
-- `.queryString` - Sets or appends encoded query string result to existing query string.
-- `.httpBody` - Sets encoded query string result as the HTTP body of the URL request.
+- `.methodDependent` - Applies the encoded query string result to existing query string for `.get`, `.head` and `.delete` requests and sets it as the HTTP body for requests with any other HTTP method.
+- `.queryString` - Sets or appends the encoded string to the query of the request's `URL`.
+- `.httpBody` - Sets the encoded string as the HTTP body of the `URLRequest`.
 
-The `Content-Type` HTTP header field of an encoded request with HTTP body is set to `application/x-www-form-urlencoded; charset=utf-8`. Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
+The `Content-Type` HTTP header of an encoded request with HTTP body is set to `application/x-www-form-urlencoded; charset=utf-8`, if `Content-Type` is not already set.
+
+Internally, `URLEncodedFormParameterEncoder` uses the `URLEncodedFormEncoder` type to perform the actual encoding from `Encodable` type to `String`. This encoder can be used to customize the encoding for various types, including `Bool` using the `BoolEncoding`, `Array` using the `ArrayEncoding, spaces using the `SpaceEncoding`, and `Date` using the `DateEncoding`.
 
 ##### GET Request With URL-Encoded Parameters
 
 ```swift
-let parameters: Parameters = ["foo": "bar"]
+let parameters = ["foo": "bar"]
 
 // All three of these calls are equivalent
-Alamofire.request("https://httpbin.org/get", parameters: parameters) // encoding defaults to `URLEncoding.default`
-Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding.default)
-Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding(destination: .methodDependent))
-
+AF.request("https://httpbin.org/get", parameters: parameters) // encoding defaults to `URLEncoding.default`
+AF.request("https://httpbin.org/get", parameters: parameters, encoder: URLEncodedFormParameterEncoder.default)
+AF.request("https://httpbin.org/get", parameters: parameters, encoder: URLEncodedFormParameterEncoder(destination: .methodDependent))
 // https://httpbin.org/get?foo=bar
 ```
 
 ##### POST Request With URL-Encoded Parameters
 
 ```swift
-let parameters: Parameters = [
-    "foo": "bar",
-    "baz": ["a", 1],
-    "qux": [
-        "x": 1,
-        "y": 2,
-        "z": 3
-    ]
+let parameters: [String: [String]] = [
+    "foo": ["bar"],
+    "baz": ["a", "b"],
+    "qux": ["x", "y", "z"]
 ]
-
 // All three of these calls are equivalent
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.default)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.httpBody)
-
-// HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: URLEncodedFormParameterEncoder.default)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: URLEncodedFormParameterEncoder(destination: .httpBody))
+// HTTP body: "qux[]=x&qux[]=y&qux[]=z&baz[]=a&baz[]=b&foo[]=bar"
 ```
 
 ##### Configuring the Encoding of `Bool` Parameters
@@ -151,6 +146,8 @@ let encoding = URLEncoding(boolEncoding: .literal)
 ```
 
 ##### Configuring the Encoding of `Array` Parameters
+
+Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
 
 The `URLEncoding.ArrayEncoding` enumeration provides the following methods for encoding `Array` parameters:
 
