@@ -101,7 +101,7 @@ The `URLEncodedFormParameterEncoder` encodes values into a url-encoded string to
 
 The `Content-Type` HTTP header of an encoded request with HTTP body is set to `application/x-www-form-urlencoded; charset=utf-8`, if `Content-Type` is not already set.
 
-Internally, `URLEncodedFormParameterEncoder` uses the `URLEncodedFormEncoder` type to perform the actual encoding from `Encodable` type to `String`. This encoder can be used to customize the encoding for various types, including `Bool` using the `BoolEncoding`, `Array` using the `ArrayEncoding, spaces using the `SpaceEncoding`, and `Date` using the `DateEncoding`.
+Internally, `URLEncodedFormParameterEncoder` uses `URLEncodedFormEncoder` to perform the actual encoding from an `Encodable` type to `String`. This encoder can be used to customize the encoding for various types, including `Bool` using the `BoolEncoding`, `Array` using the `ArrayEncoding`, spaces using the `SpaceEncoding`, and `Date` using the `DateEncoding`.
 
 ##### GET Request With URL-Encoded Parameters
 
@@ -130,39 +130,50 @@ AF.request("https://httpbin.org/post", method: .post, parameters: parameters, en
 // HTTP body: "qux[]=x&qux[]=y&qux[]=z&baz[]=a&baz[]=b&foo[]=bar"
 ```
 
+##### Configuring the Encoding of `Array` Parameters
+
+Since there is no published specification for how to encode collection types, by default Alamofire follows the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
+
+The `URLEncodedFormEncoder.ArrayEncoding` enumeration provides the following methods for encoding `Array` parameters:
+
+- `.brackets` - An empty set of square brackets is appended to the key for every value.
+- `.noBrackets` - No brackets are appended. The key is encoded as is.
+
+By default, Alamofire uses the `.brackets` encoding, where `foo = [1, 2]` is encoded as `foo[]=1&foo[]=2`.
+
+Using the `.noBrackets` encoding will encode `foo = [1, 2]` as `foo=1&foo=2`.
+
+You can create your own `URLEncodedFormParameterEncoder` and specify the desired `ArrayEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
+
+```swift
+let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(arrayEncoding: .noBrackets))
+```
+
 ##### Configuring the Encoding of `Bool` Parameters
 
-The `URLEncoding.BoolEncoding` enumeration provides the following methods for encoding `Bool` parameters:
+The `URLEncodedFormEncoder.BoolEncoding` enumeration provides the following methods for encoding `Bool` parameters:
 
 - `.numeric` - Encode `true` as `1` and `false` as `0`.
 - `.literal` - Encode `true` and `false` as string literals.
 
 By default, Alamofire uses the `.numeric` encoding.
 
-You can create your own `URLEncoding` and specify the desired `Bool` encoding in the initializer:
+You can create your own `URLEncodedFormParameterEncoder` and specify the desired `BoolEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
 
 ```swift
-let encoding = URLEncoding(boolEncoding: .literal)
+let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(boolEncoding: .numeric))
 ```
 
-##### Configuring the Encoding of `Array` Parameters
+##### Configuring the Encoding of `Date` Parameters
 
-Since there is no published specification for how to encode collection types, the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
+Given the sheer number of ways to encode a `Date` into a `String`, `DateEncoding` includes the following methods for encoding `Date` parameters:
 
-The `URLEncoding.ArrayEncoding` enumeration provides the following methods for encoding `Array` parameters:
+- 
 
-- `.brackets` - An empty set of square brackets is appended to the key for every value.
-- `.noBrackets` - No brackets are appended. The key is encoded as is.
+##### Configuring the Encoding of Spaces
 
-By default, Alamofire uses the `.brackets` encoding, where `foo=[1,2]` is encoded as `foo[]=1&foo[]=2`.
 
-Using the `.noBrackets` encoding will encode `foo=[1,2]` as `foo=1&foo=2`.
 
-You can create your own `URLEncoding` and specify the desired `Array` encoding in the initializer:
-
-```swift
-let encoding = URLEncoding(arrayEncoding: .noBrackets)
-```
 
 #### JSON Encoding
 
