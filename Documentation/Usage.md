@@ -86,10 +86,43 @@ public extension URLRequest {
 
 If you need to use an HTTP method that Alamofire's `HTTPMethod` type doesn't support, you can still set the `String` `httpMethod` property on `URLRequest` directly.
 
+#### Request Parameters and Parameter Encoders
+
+Alamofire supports sending any `Encodable`-conforming type as the parameters of a request. It also provides two builtin types conforming to the `ParameterEncoder` protocol: `URLFormEndcodedParameterEncoder` and `JSONParameterEncoder`.  
+
+```swift
+struct Login: Encodable {
+    let email: String
+    let password: String
+}
+let login = Login(email: "test@test.test", password: "testPassword")
+AF.request("https://httpbin.org/post",
+           method: .post,
+           parameters: login,
+           encoder: JSONParameterEncoder.default).response { (response) in
+    debugPrint(response)
+}
+```
 
 ### Passing Parameters
 
-Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder `.
+Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder `. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).
+
+```swift
+struct Login: Encodable {
+    let email: String
+    let password: String
+}
+
+let login = Login(email: "test@test.test", password: "testPassword")
+
+AF.request("https://httpbin.org/post",
+           method: .post,
+           parameters: login,
+           encoder: JSONParameterEncoder.default).response { (response) in
+    debugPrint(response)
+}
+```
 
 #### `URLEncodedFormParameterEncoder`
 
@@ -168,76 +201,73 @@ let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(bool
 
 Given the sheer number of ways to encode a `Date` into a `String`, `DateEncoding` includes the following methods for encoding `Date` parameters:
 
-- 
+- `.deferredToDate` - Uses `Date`'s native `Encodable` support.
+- `.secondsSince1970` - Encodes `Date`s as seconds since midnight UTC on January 1, 1970. 
+- `.millisecondsSince1970` - Encodes `Date`s as milliseconds since midnight UTC on January 1, 1970.
+- `.iso8601` - Encodes `Date`s according to the ISO 8601 and RFC3339 standards.
+- `.formatted(DateFormatter)` - Encodes `Date`s using the given `DateFormatter`.
+- `.custom((Date) throws -> String)` - Encodes `Date`s using the given closure.
+
+You can create your own `URLEncodedFormParameterEncoder` and specify the desired `DateEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
+
+```swift
+let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(dateEncoding: .iso8601))
+```
 
 ##### Configuring the Encoding of Spaces
 
+Older form encoders used `+` to encoded spaces and some servers still expect this encoding instead of the modern percent encoding, so Alamofire includes the following methods for encoding spaces:
 
+- `.percentEscaped` - Encodes space characters by applying standard percent escaping. `" "` is encoded as  `"%20"`.
+- `.plusReplaced` - Encodes space character by replacing them with `+`. `" "` is encoded as `"+"`.
 
+You can create your own `URLEncodedFormParameterEncoder` and specify the desired `SpaceEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
 
-#### JSON Encoding
+```swift
+let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(spaceEncoding: .plusReplaced))
+```
 
-The `JSONEncoding` type creates a JSON representation of the parameters object, which is set as the HTTP body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
+#### `JSONParameterEncoder`
+
+`JSONParameterEncoder` encodes `Encodable` values using Swift's `JSONEncoder` and sets the result as the `httpBody` of the `URLRequest`. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
 
 ##### POST Request with JSON-Encoded Parameters
 
 ```swift
-let parameters: Parameters = [
-    "foo": [1,2,3],
-    "bar": [
-        "baz": "qux"
-    ]
+let parameters: [String: [String]] = [
+    "foo": ["bar"],
+    "baz": ["a", "b"],
+    "qux": ["x", "y", "z"]
 ]
 
-// Both calls are equivalent
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding.default)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding(options: []))
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: JSONParameterEncoder.prettyPrinted)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: JSONParameterEncoder.sortedKeys)
 
-// HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
+// HTTP body: {"baz":["a","b"],"foo":["bar"],"qux":["x","y","z"]}
 ```
 
-#### Property List Encoding
+##### Configuring a Custom `JSONEncoder`
 
-The `PropertyListEncoding` uses `PropertyListSerialization` to create a plist representation of the parameters object, according to the associated format and write options values, which is set as the body of the request. The `Content-Type` HTTP header field of an encoded request is set to `application/x-plist`.
-
-#### Custom Encoding
-
-In the event that the provided `ParameterEncoding` types do not meet your needs, you can create your own custom encoding. Here's a quick example of how you could build a custom `JSONStringArrayEncoding` type to encode a JSON string array onto a `Request`.
+You can customize the behavior of `JSONParameterEncoder` by passing it a `JSONEncoder` instance configured to your needs:
 
 ```swift
-struct JSONStringArrayEncoding: ParameterEncoding {
-    private let array: [String]
-
-    init(array: [String]) {
-        self.array = array
-    }
-
-    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
-        var urlRequest = try urlRequest.asURLRequest()
-
-        let data = try JSONSerialization.data(withJSONObject: array, options: [])
-
-        if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        }
-
-        urlRequest.httpBody = data
-
-        return urlRequest
-    }
-}
+let encoder = JSONEncoder()
+encoder.dateEncoding = .iso8601
+encoder.keyEncodingStrategy = `.convertToSnakeCase`
+let parameterEncoder = JSONParameterEncoder(encoder: encoder)
 ```
 
 #### Manual Parameter Encoding of a URLRequest
 
-The `ParameterEncoding` APIs can be used outside of making network requests.
+The `ParameterEncoder` APIs can be used outside of making network requests.
 
 ```swift
 let url = URL(string: "https://httpbin.org/get")!
 var urlRequest = URLRequest(url: url)
 
-let parameters: Parameters = ["foo": "bar"]
-let encodedURLRequest = try URLEncoding.queryString.encode(urlRequest, with: parameters)
+let parameters = ["foo": "bar"]
+let encodedURLRequest = try URLEncodedFormParameterEncoder.default.encode(parameters, into: urlRequest)
 ```
 
 ### HTTP Headers
@@ -264,26 +294,6 @@ The default Alamofire `SessionManager` provides a default set of headers for eve
 - `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
 
 If you need to customize these headers, a custom `URLSessionConfiguration` should be created, the `defaultHTTPHeaders` property updated and the configuration applied to a new `SessionManager` instance.
-
-#### Request Parameters and Parameter Encoders
-
-Alamofire supports sending any `Encodable`-conforming type as the parameters of a request. It also provides two builtin types conforming to the `ParameterEncoder` protocol: `URLFormEndcodedParameterEncoder` and `JSONParameterEncoder`. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader). 
-
-```swift
-struct Login: Encodable {
-    let email: String
-    let password: String
-}
-let login = Login(email: "test@test.test", password: "testPassword")
-AF.request("https://httpbin.org/post",
-           method: .post,
-           parameters: login,
-           encoder: JSONParameterEncoder.default).response { (response) in
-    debugPrint(response)
-}
-```
-
-
 
 ### Response Handling
 
