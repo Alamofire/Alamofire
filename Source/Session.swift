@@ -118,7 +118,7 @@ open class Session {
             return try encoding.encode(request, with: parameters)
         }
     }
-
+    
     open func request(_ url: URLConvertible,
                       method: HTTPMethod = .get,
                       parameters: Parameters? = nil,

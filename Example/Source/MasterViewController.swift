@@ -26,6 +26,7 @@ import Alamofire
 import UIKit
 
 class MasterViewController: UITableViewController {
+    static let session = Session(eventMonitors: [AlamofireSignposts()])
 
     // MARK: - Properties
 
@@ -58,7 +59,7 @@ class MasterViewController: UITableViewController {
                 switch segue.identifier! {
                 case "GET":
                     detailViewController.segueIdentifier = "GET"
-                    return AF.request("https://httpbin.org/get")
+                    return MasterViewController.session.request("https://httpbin.org/get")
                 case "POST":
                     detailViewController.segueIdentifier = "POST"
                     return AF.request("https://httpbin.org/post", method: .post)

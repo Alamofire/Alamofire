@@ -111,10 +111,10 @@ public class Request {
     }
 
     /// Protected `MutableState` value that provides threadsafe access to state values.
-    fileprivate let protectedMutableState: Protector<MutableState> = Protector(MutableState())
+    @Protector fileprivate var protectedMutableState: MutableState = MutableState()
 
     /// `State` of the `Request`.
-    public var state: State { return protectedMutableState.directValue.state }
+    public var state: State { return protectedMutableState.state }
     /// Returns whether `state` is `.initialized`.
     public var isInitialized: Bool { return state == .initialized }
     /// Returns whether `state is `.resumed`.
@@ -222,8 +222,8 @@ public class Request {
 
     /// `Error` returned from Alamofire internally, from the network request directly, or any validators executed.
     fileprivate(set) public var error: Error? {
-        get { return protectedMutableState.directValue.error }
-        set { protectedMutableState.write { $0.error = newValue } }
+        get { return protectedMutableState.error }
+        set { protectedMutableState.error = newValue }
     }
 
     /// Default initializer for the `Request` superclass.

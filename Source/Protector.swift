@@ -28,14 +28,18 @@ import Foundation
 
 /// An `os_unfair_lock` wrapper.
 final class UnfairLock {
-    private var unfairLock = os_unfair_lock()
+    private let _lock = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)
+    
+    deinit {
+        _lock.deallocate()
+    }
 
     fileprivate func lock() {
-        os_unfair_lock_lock(&unfairLock)
+        os_unfair_lock_lock(_lock)
     }
 
     fileprivate func unlock() {
-        os_unfair_lock_unlock(&unfairLock)
+        os_unfair_lock_unlock(_lock)
     }
 
     /// Executes a closure returning a value while acquiring the lock.
@@ -57,9 +61,10 @@ final class UnfairLock {
 }
 
 /// A thread-safe wrapper around a value.
+@propertyDelegate @dynamicMemberLookup
 final class Protector<T> {
     private let lock = UnfairLock()
-    private var value: T
+    var value: T
 
     init(_ value: T) {
         self.value = value
@@ -86,6 +91,15 @@ final class Protector<T> {
     @discardableResult
     func write<U>(_ closure: (inout T) -> U) -> U {
         return lock.around { closure(&self.value) }
+    }
+    
+    init(initialValue: T) {
+        value = initialValue
+    }
+    
+    subscript<Property>(dynamicMember keyPath: WritableKeyPath<T, Property>) -> Property {
+        get { return lock.around { value[keyPath: keyPath] } }
+        set { lock.around { value[keyPath: keyPath] = newValue } }
     }
 }
 

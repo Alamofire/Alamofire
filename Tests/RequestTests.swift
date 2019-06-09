@@ -958,3 +958,52 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
             .filter { $0 != "" && $0 != "\\" }
     }
 }
+
+#if canImport(Combine)
+
+import Combine
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+final class RequestCombineTests: BaseTestCase {
+    func testReceiveDecodable() {
+        // Given
+        let request = URLRequest.makeHTTPBinRequest()
+        let expect = expectation(description: "request should finish")
+        var response: HTTPBinResponse?
+        
+        // When
+        let source: Publishers.Future<HTTPBinResponse, Error> = AF.request(request).futureDecodable()
+        
+        
+        _ = source.sink(receiveCompletion: { _ in expect.fulfill() },
+                    receiveValue: { resp in response = resp })
+        
+        waitForExpectations(timeout: 1)
+        
+        // Then
+        XCTAssertNotNil(response)
+    }
+    
+    func testReceiveDecodable2() {
+        // Given
+        let request = URLRequest.makeHTTPBinRequest()
+        let expect = expectation(description: "request should finish")
+        var response: DataResponse<HTTPBinResponse>?
+        
+        // When
+        let afRequest = AF.request(request)
+        let just = Publishers.Just(afRequest)
+        let connection = just.response(of: HTTPBinResponse.self).sink { networkResponse in
+            response = networkResponse
+            expect.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1)
+        connection.cancel()
+        
+        // Then
+        XCTAssertNotNil(response)
+    }
+}
+
+#endif

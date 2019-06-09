@@ -824,3 +824,27 @@ open class ClosureEventMonitor: EventMonitor {
     }
 
 }
+
+import os.log
+import os.signpost
+
+@available(iOS 12.0, macOS 10.14, *)
+public final class AlamofireSignposts: EventMonitor {
+    let log = OSLog(subsystem: "org.alamofire", category: "Alamofire")
+    
+    public init() { }
+    
+    public func requestDidResume(_ request: Request) {
+        let id = OSSignpostID(log: log, object: request)
+        os_log("Resume", log: log, type: .info)
+        os_log("Other resume.")
+        os_signpost(.begin, log: log, name: "Request", signpostID: id)
+    }
+    
+    public func requestDidFinish(_ request: Request) {
+        let id = OSSignpostID(log: log, object: request)
+        os_log("Finish", log: log, type: .info)
+        os_log("Other finish.")
+        os_signpost(.end, log: log, name: "Request", signpostID: id)
+    }
+}
