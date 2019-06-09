@@ -28,14 +28,24 @@ import Foundation
 
 /// An `os_unfair_lock` wrapper.
 final class UnfairLock {
-    private var unfairLock = os_unfair_lock()
+    private let unfairLock: os_unfair_lock_t
+    
+    init() {
+        unfairLock = .allocate(capacity: 1)
+        unfairLock.initialize(to: os_unfair_lock())
+    }
+    
+    deinit {
+        unfairLock.deinitialize(count: 1)
+        unfairLock.deallocate()
+    }
 
     fileprivate func lock() {
-        os_unfair_lock_lock(&unfairLock)
+        os_unfair_lock_lock(unfairLock)
     }
 
     fileprivate func unlock() {
-        os_unfair_lock_unlock(&unfairLock)
+        os_unfair_lock_unlock(unfairLock)
     }
 
     /// Executes a closure returning a value while acquiring the lock.
