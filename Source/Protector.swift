@@ -143,7 +143,7 @@ extension Protector where T == Request.MutableState {
             return true
         }
     }
-    
+
     /// Perform a closure while locked with the provided `Request.State`.
     ///
     /// - Parameter perform: The closure to perform while locked.
