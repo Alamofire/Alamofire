@@ -96,8 +96,7 @@ public enum AF {
     /// Creates a `DownloadRequest` using `SessionManager.default` to download the contents of the specified `url` to
     /// the provided `destination` using the `method`, `parameters`, `encoding`, and `headers` provided.
     ///
-    /// If `destination` is not specified, the download will remain at the temporary location determined by the
-    /// underlying `URLSession`.
+    /// If `destination` is not specified, the download will be moved to a temporary location determined by Alamofire.
     ///
     /// - Parameters:
     ///   - url:           The `URLConvertible` value.
@@ -129,8 +128,7 @@ public enum AF {
     /// Creates a `DownloadRequest` using `SessionManager.default` to download the contents of the specified `url` to
     /// the provided `destination` using the `method`, encodable `parameters`, `encoder`, and `headers` provided.
     ///
-    /// If `destination` is not specified, the download will remain at the temporary location determined by the
-    /// underlying `URLSession`.
+    /// If `destination` is not specified, the download will be moved to a temporary location determined by Alamofire.
     ///
     /// - Parameters:
     ///   - url:           The `URLConvertible` value.
@@ -316,7 +314,7 @@ public enum AF {
         return Session.default.upload(stream, with: urlRequest, interceptor: interceptor)
     }
 
-    // MARK: MultipartFormData
+    // MARK: - MultipartFormData
 
     /// Encodes `multipartFormData` using `encodingMemoryThreshold` and uploads the result using `SessionManager.default`
     /// with the `url`, `method`, and `headers` provided.
