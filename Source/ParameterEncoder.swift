@@ -200,8 +200,8 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
 /// `DateEncoding` can be used to configure how `Date` values are encoded. By default, the `.deferredToDate`
 /// strategy is used, which formats dates from their structure.
 ///
-/// `SpaceEncoding` can be used to configure how spaces are encoded. Modern encodings use percent replacement (%20),
-/// while older encoding may expect spaces to be replaced with +.
+/// `SpaceEncoding` can be used to configure how spaces are encoded. Modern encodings use percent replacement (`%20`),
+/// while older encodings may expect spaces to be replaced with `+`.
 ///
 /// This type is largely based on Vapor's [`url-encoded-form`](https://github.com/vapor/url-encoded-form) project.
 public final class URLEncodedFormEncoder {
