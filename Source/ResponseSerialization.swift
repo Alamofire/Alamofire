@@ -157,7 +157,7 @@ extension DataRequest {
 
             self.eventMonitor?.request(self, didParseResponse: response)
 
-            guard let serializerError = result.error, let delegate = self.delegate else {
+            guard let serializerError = result.failure, let delegate = self.delegate else {
                 self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
                 return
             }
@@ -261,7 +261,7 @@ extension DownloadRequest {
 
             self.eventMonitor?.request(self, didParseResponse: response)
 
-            guard let serializerError = result.error, let delegate = self.delegate else {
+            guard let serializerError = result.failure, let delegate = self.delegate else {
                 self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
                 return
             }

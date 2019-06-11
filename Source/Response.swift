@@ -45,10 +45,10 @@ public struct DataResponse<Value> {
     public let result: AFResult<Value>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
-    public var value: Value? { return result.value }
+    public var value: Value? { return result.success }
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    public var error: Error? { return result.error }
+    public var error: Error? { return result.failure }
 
     /// Creates a `DataResponse` instance with the specified parameters derviced from the response serialization.
     ///
@@ -227,10 +227,10 @@ public struct DownloadResponse<Value> {
     public let result: AFResult<Value>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
-    public var value: Value? { return result.value }
+    public var value: Value? { return result.success }
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    public var error: Error? { return result.error }
+    public var error: Error? { return result.failure }
 
     /// Creates a `DownloadResponse` instance with the specified parameters derived from response serialization.
     ///
