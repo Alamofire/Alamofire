@@ -1148,25 +1148,7 @@ public class DownloadRequest: Request {
     /// - Returns: The instance.
     @discardableResult
     public override func cancel() -> Self {
-        protectedMutableState.write { (mutableState) in
-            guard mutableState.state.canTransitionTo(.cancelled) else { return }
-
-            mutableState.state = .cancelled
-
-            underlyingQueue.async { self.didCancel() }
-
-            guard let task = mutableState.tasks.last as? URLSessionDownloadTask, task.state != .completed else {
-                underlyingQueue.async { self.finish() }
-                return
-            }
-
-            task.cancel { (resumeData) in
-                self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
-                self.underlyingQueue.async { self.didCancelTask(task) }
-            }
-        }
-
-        return self
+        return cancel(optionallyProducingResumeData: nil)
     }
 
     /// Cancels the instance while producing resume data. Once cancelled, a `DownloadRequest` can no longer be resumed
@@ -1181,6 +1163,14 @@ public class DownloadRequest: Request {
     /// - Returns: The instance.
     @discardableResult
     public func cancel(byProducingResumeData completionHandler: @escaping (_ data: Data?) -> Void) -> Self {
+        return cancel(optionallyProducingResumeData: completionHandler)
+    }
+
+    /// Internal implementation of cancellation that optionally takes a resume data handler.
+    ///
+    /// - Parameter completionHandler: Optional resume data handler.
+    /// - Returns:                     The intance.
+    private func cancel(optionallyProducingResumeData completionHandler: ((_ resumeData: Data?) -> Void)?) -> Self {
         protectedMutableState.write { (mutableState) in
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
 
@@ -1196,7 +1186,7 @@ public class DownloadRequest: Request {
             task.cancel { (resumeData) in
                 self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
                 self.underlyingQueue.async { self.didCancelTask(task) }
-                completionHandler(resumeData)
+                completionHandler?(resumeData)
             }
         }
 
