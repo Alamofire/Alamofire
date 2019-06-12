@@ -24,24 +24,47 @@
 
 import Foundation
 
+/// `Session` creates and manages Alamofire's `Request` types during their lifetimes. It also provides common
+/// functionality for all `Request`s, including queuing, interception, trust management, redirect handling, and response
+/// cache handling.
 open class Session {
+    /// Shared singleton instance used by all `AF.request` APIs. Cannot be modified.
     public static let `default` = Session()
 
-    public let delegate: SessionDelegate
-    public let rootQueue: DispatchQueue
-    public let requestQueue: DispatchQueue
-    public let serializationQueue: DispatchQueue
-    public let interceptor: RequestInterceptor?
-    public let serverTrustManager: ServerTrustManager?
-    public let redirectHandler: RedirectHandler?
-    public let cachedResponseHandler: CachedResponseHandler?
-
+    /// Underlying `URLSession` used to create `URLSessionTasks` for this instance, and for which this instance's
+    /// `delegate` handles `URLSessionDelegate` callbacks.
     public let session: URLSession
-    public let eventMonitor: CompositeEventMonitor
-    public let defaultEventMonitors: [EventMonitor] = [AlamofireNotifications()]
-
-    var requestTaskMap = RequestTaskMap()
+    /// Instance's `SessionDelegate`, which handles the `URLSessionDelegate` methods and `Request` interaction.
+    public let delegate: SessionDelegate
+    /// Root queue for all internal callbacks and state update. **MUST** be a serial queue.
+    public let rootQueue: DispatchQueue
+    /// Value determining whether this instance automatically calls `resume()` on all created `Request`s.
     public let startRequestsImmediately: Bool
+    /// Queue on which `URLRequest`s are created asynchronously. By default this queue uses `rootQueue` as its `target`,
+    /// but a separate queue can be used if request creation is determined to be a bottleneck. Always profile and test
+    /// before introduing an additional queue.
+    public let requestQueue: DispatchQueue
+    /// Queue passed to all `Request`s on which they perform their response serialization. By default this queue uses
+    /// `rootQueue` as its `target` but a separate queue can be used if response serialization is determined to be a
+    /// bottleneck. Always profile and test before introducing an additional queue.
+    public let serializationQueue: DispatchQueue
+    /// `RequestInterceptor` used for all `Request` created by the instance. `RequestInterceptor`s can also be set on a
+    /// per-`Request` basis, in which case the `Request`'s interceptor takes precedence over this value.
+    public let interceptor: RequestInterceptor?
+    /// `ServerTrustManager` instance used to evaluate all trust challenges and provide certificate and key pinning.
+    public let serverTrustManager: ServerTrustManager?
+    /// `RedirectHandler` instance used to provide customization for request redirection.
+    public let redirectHandler: RedirectHandler?
+    /// `CachedResponseHandler` instance used to provide customization of cached response handling.
+    public let cachedResponseHandler: CachedResponseHandler?
+    /// `CompositeEventMonitor` used to compose Alamofire's `defaultEventMonitors` and any passed `EventMonitor`s.
+    public let eventMonitor: CompositeEventMonitor
+    /// `EventMonitor`s included in all instances. Defaults to `[AlamofireNotifications()]`.
+    public let defaultEventMonitors: [EventMonitor] = [AlamofireNotifications()]
+    
+
+    /// Internal map between `Request`s and any `URLSessionTasks` that may be in flight for them.
+    var requestTaskMap = RequestTaskMap()
 
     public init(session: URLSession,
                 delegate: SessionDelegate,
