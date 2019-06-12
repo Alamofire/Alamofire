@@ -219,7 +219,7 @@ open class Session {
                                       eventMonitor: eventMonitor,
                                       interceptor: interceptor,
                                       delegate: self,
-                                      destination: destination)
+                                      destination: destination ?? DownloadRequest.defaultDestination)
 
         perform(request)
 
@@ -235,7 +235,7 @@ open class Session {
                                       eventMonitor: eventMonitor,
                                       interceptor: interceptor,
                                       delegate: self,
-                                      destination: destination)
+                                      destination: destination ?? DownloadRequest.defaultDestination)
 
         perform(request)
 

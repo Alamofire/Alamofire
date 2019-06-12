@@ -254,7 +254,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
             fatalError("URLSessionDownloadTask finished downloading with no response.")
         }
 
-        let (destination, options) = (request.destination ?? DownloadRequest.defaultDestination)(location, response)
+        let (destination, options) = (request.destination)(location, response)
 
         eventMonitor?.request(request, didCreateDestinationURL: destination)
 

@@ -597,6 +597,44 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         progressValues.forEach { XCTAssertGreaterThanOrEqual($0, 0.4) }
     }
+
+    func testThatCancelledDownloadImmediatelyProducesMatchingResumeData() {
+        // Given
+        let expectation = self.expectation(description: "Download should be cancelled")
+        var cancelled = false
+        var receivedResumeData: Data?
+        var response: DownloadResponse<URL?>?
+
+        // When
+        let download = AF.download(urlString)
+        download.downloadProgress { progress in
+            guard !cancelled else { return }
+
+            if progress.fractionCompleted > 0.1 {
+                download.cancel { receivedResumeData = $0 }
+                cancelled = true
+            }
+        }
+        download.response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.fileURL)
+        XCTAssertNotNil(response?.error)
+
+        XCTAssertNotNil(response?.resumeData)
+        XCTAssertNotNil(download.resumeData)
+
+        XCTAssertEqual(response?.resumeData, download.resumeData)
+        XCTAssertEqual(response?.resumeData, receivedResumeData)
+        XCTAssertEqual(download.resumeData, receivedResumeData)
+    }
 }
 
 // MARK: -
