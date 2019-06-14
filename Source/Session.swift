@@ -199,20 +199,22 @@ open class Session {
     /// Create a `DataRequest` from a `URLRequest` created using the passeed components and a `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - url:         `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`.
-    ///   - parameters:  `Parameters` (a.k.a. `[String: Any]) value to be encoded into the `URLRequest`.
-    ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`.
-    ///   - interceptor: `RequestInterceptor` value to be used by the resulting `DataRequest`.
-    /// - Returns: The created `DataRequest`.
-    open func request(_ url: URLConvertible,
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. Defaults to `.get`.
+    ///   - parameters:  `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. Defaults to
+    ///                  `nil`.
+    ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`. Defaults
+    ///                  to `URLEncoding.default`.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. Defaults to `nil`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. Defaults to `nil`.
+    /// - Returns:       The created `DataRequest`.
+    open func request(_ convertible: URLConvertible,
                       method: HTTPMethod = .get,
                       parameters: Parameters? = nil,
                       encoding: ParameterEncoding = URLEncoding.default,
                       headers: HTTPHeaders? = nil,
                       interceptor: RequestInterceptor? = nil) -> DataRequest {
-        let convertible = RequestConvertible(url: url,
+        let convertible = RequestConvertible(url: convertible,
                                              method: method,
                                              parameters: parameters,
                                              encoding: encoding,
@@ -235,13 +237,25 @@ open class Session {
         }
     }
 
-    open func request<Parameters: Encodable>(_ url: URLConvertible,
+    /// Create a `DataRequest` from a `URLRequest` created using the passed components, `Encodable` parameters, and a
+    /// `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. Defaults to `.get`.
+    ///   - parameters:  Value conforming to `Encodable` to be encoded into the `URLRequest`. Defaults to `nil`.
+    ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`. Defaults
+    ///                  to `URLEncodedFormParameterEncoder.default`.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. Defaults to `nil`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. Defaults to `nil`.
+    /// - Returns:       The created `DataREquest`.
+    open func request<Parameters: Encodable>(_ convertible: URLConvertible,
                                              method: HTTPMethod = .get,
                                              parameters: Parameters? = nil,
-                                             encoder: ParameterEncoder = JSONParameterEncoder.default,
+                                             encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                              headers: HTTPHeaders? = nil,
                                              interceptor: RequestInterceptor? = nil) -> DataRequest {
-        let convertible = RequestEncodableConvertible(url: url,
+        let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: parameters,
                                                       encoder: encoder,
@@ -250,6 +264,12 @@ open class Session {
         return request(convertible, interceptor: interceptor)
     }
 
+    /// Create a `DataRequest` from a `URLRequestConvertible` value and a `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. Defaults to `nil`.
+    /// - Returns:       The created `DataRequest`.
     open func request(_ convertible: URLRequestConvertible, interceptor: RequestInterceptor? = nil) -> DataRequest {
         let request = DataRequest(convertible: convertible,
                                   underlyingQueue: rootQueue,
@@ -265,6 +285,21 @@ open class Session {
 
     // MARK: - Download
 
+    /// Create a `DownloadRequest` using a `URLRequest` created using the passed components, a `RequestInterceptor`, and
+    /// a `Destination`.
+    ///
+    /// - Parameters:
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. Defaults to `.get`.
+    ///   - parameters:  `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. Defaults to
+    ///                  `nil`.
+    ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`. Defaults
+    ///                  to `URLEncoding.default`.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. Defaults to `nil`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. Defaults to `nil`.
+    ///   - destination: `DownloadRequest.Destination` closure used to determine how and where the downloaded file
+    ///                  should be moved. `nil` by default.
+    /// - Returns:       The created `DownloadRequest`.
     open func download(_ convertible: URLConvertible,
                        method: HTTPMethod = .get,
                        parameters: Parameters? = nil,
@@ -281,10 +316,24 @@ open class Session {
         return download(convertible, interceptor: interceptor, to: destination)
     }
 
+    /// Create a `DownloadRequest` from a `URLRequest` created using the passed components, `Encodable` parameters, and
+    /// a `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. Defaults to `.get`.
+    ///   - parameters:  Value conforming to `Encodable` to be encoded into the `URLRequest`. Defaults to `nil`.
+    ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`. Defaults
+    ///                  to `URLEncodedFormParameterEncoder.default`.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. Defaults to `nil`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. Defaults to `nil`.
+    ///   - destination: `DownloadRequest.Destination` closure used to determine how and where the downloaded file
+    ///                  should be moved. `nil` by default.
+    /// - Returns:       The created `DownloadRequest`.
     open func download<Parameters: Encodable>(_ convertible: URLConvertible,
                                               method: HTTPMethod = .get,
                                               parameters: Parameters? = nil,
-                                              encoder: ParameterEncoder = JSONParameterEncoder.default,
+                                              encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                               headers: HTTPHeaders? = nil,
                                               interceptor: RequestInterceptor? = nil,
                                               to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
@@ -297,6 +346,14 @@ open class Session {
         return download(convertible, interceptor: interceptor, to: destination)
     }
 
+    /// Create a `DownloadRequest` from a `URLRequestConvertible` value, a `RequestInterceptor`, and a `Destination`.
+    ///
+    /// - Parameters:
+    ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. Defaults to `nil`.
+    ///   - destination: `DownloadRequest.Destination` closure used to determine how and where the downloaded file
+    ///                  should be moved. Defaults to `nil`.
+    /// - Returns:       The created `DownloadRequest`.
     open func download(_ convertible: URLRequestConvertible,
                        interceptor: RequestInterceptor? = nil,
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
@@ -313,6 +370,15 @@ open class Session {
         return request
     }
 
+    /// Create a `DownloadRequest` from resume data created from a previously cancelled `DownloadRequest`, as well as a
+    /// `RequestInterceptor`, and a `Destination`.
+    ///
+    /// - Parameters:
+    ///   - data:        The resume data from a previously cancelled `DownloadRequest` or `URLSessionDownloadTask`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. Defaults to `nil`.
+    ///   - destination: `DownloadRequest.Destination` closure used to determine how and where the downloaded file
+    ///                  should be moved. Defaults to `nil`.
+    /// - Returns:       The created `DownloadRequest`.
     open func download(resumingWith data: Data,
                        interceptor: RequestInterceptor? = nil,
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
