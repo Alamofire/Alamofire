@@ -420,6 +420,15 @@ open class Session {
         }
     }
 
+    /// Create an `UploadRequest` for the given `Data`, `URLRequest` components, and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - data:        The `Data` to upload.
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. Defaults to `.post`.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. Defaults to `nil`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. Defaults to `nil`.
+    /// - Returns:       The created `UploadRequest`.
     open func upload(_ data: Data,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
@@ -430,12 +439,29 @@ open class Session {
         return upload(data, with: convertible, interceptor: interceptor)
     }
 
+    /// Create an `UploadRequest` for the given `Data` using the `URLRequestConvertible` value and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - data:        The `Data` to upload.
+    ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. Defaults to `nil`.
+    /// - Returns: The created `UploadRequest`.
     open func upload(_ data: Data,
                      with convertible: URLRequestConvertible,
                      interceptor: RequestInterceptor? = nil) -> UploadRequest {
         return upload(.data(data), with: convertible, interceptor: interceptor)
     }
 
+    /// Create an `UploadRequest` for the file at the given file `URL`, using a `URLRequest` from the provided
+    /// components and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - fileURL:     The `URL` of the file to upload.
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. Defaults to `.post`.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. Defaults to `nil`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. Defaults to `nil`.
+    /// - Returns:       The created `UploadRequest`.
     open func upload(_ fileURL: URL,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
