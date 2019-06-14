@@ -633,7 +633,7 @@ public class Request {
     /// - Parameters:
     ///   - username:    The username.
     ///   - password:    The password.
-    ///   - persistence: The `URLCredential.Persistence` for the created `URLCredential`.
+    ///   - persistence: The `URLCredential.Persistence` for the created `URLCredential`. Defaults to `.forSession`.
     /// - Returns:       The instance.
     @discardableResult
     public func authenticate(username: String, password: String, persistence: URLCredential.Persistence = .forSession) -> Self {
