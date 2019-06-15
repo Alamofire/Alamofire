@@ -26,7 +26,7 @@ import Foundation
 
 /// Responsible for managing the mapping of `ServerTrustEvaluating` values to given hosts.
 open class ServerTrustManager {
-    /// Determines whether all hosts for this `ServerTrustManager` must be evaluated. Defaults to `true`.
+    /// Determines whether all hosts for this `ServerTrustManager` must be evaluated. `true` by default.
     public let allHostsMustBeEvaluated: Bool
 
     /// The dictionary of policies mapped to a particular host.
@@ -40,8 +40,8 @@ open class ServerTrustManager {
     /// pinning for host3 and disabling evaluation for host4.
     ///
     /// - Parameters:
-    ///   - allHostsMustBeEvaluated: The value determining whether all hosts for this instance must be evaluated.
-    ///                              Defaults to `true`.
+    ///   - allHostsMustBeEvaluated: The value determining whether all hosts for this instance must be evaluated. `true`
+    ///                              by default.
     ///   - evaluators:              A dictionary of evaluators mappend to hosts.
     public init(allHostsMustBeEvaluated: Bool = true, evaluators: [String: ServerTrustEvaluating]) {
         self.allHostsMustBeEvaluated = allHostsMustBeEvaluated
@@ -95,7 +95,7 @@ public final class DefaultTrustEvaluator: ServerTrustEvaluating {
 
     /// Creates a `DefaultTrustEvalutor`.
     ///
-    /// - Parameter validateHost: Determines whether or not the evaluator should validate the host. Defaults to `true`.
+    /// - Parameter validateHost: Determines whether or not the evaluator should validate the host. `true` by default.
     public init(validateHost: Bool = true) {
         self.validateHost = validateHost
     }

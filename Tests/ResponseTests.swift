@@ -317,22 +317,22 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.value?.url, "https://httpbin.org/get")
         XCTAssertNotNil(response?.metrics)
     }
-    
+
     func testThatResponseDecodableWithPassedTypeReturnsSuccessResultWithValidJSON() {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
-        
+
         var response: DataResponse<HTTPBinResponse>?
-        
+
         // When
         AF.request(urlString, parameters: [:]).responseDecodable(of: HTTPBinResponse.self) {
             response = $0
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)

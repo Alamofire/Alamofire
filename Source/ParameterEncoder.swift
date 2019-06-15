@@ -66,7 +66,7 @@ open class JSONParameterEncoder: ParameterEncoder {
 
     /// Creates an instance with the provided `JSONEncoder`.
     ///
-    /// - Parameter encoder: The `JSONEncoder`. Defaults to `JSONEncoder()`.
+    /// - Parameter encoder: The `JSONEncoder`. `JSONEncoder()` by default.
     public init(encoder: JSONEncoder = JSONEncoder()) {
         self.encoder = encoder
     }
@@ -97,13 +97,7 @@ open class JSONParameterEncoder: ParameterEncoder {
 /// If no `Content-Type` header is already set on the provided `URLRequest`s, it will be set to
 /// `application/x-www-form-urlencoded; charset=utf-8`.
 ///
-/// There is no published specification for how to encode collection types. By default, the convention of appending
-/// `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for
-/// nested dictionary values (`foo[bar]=baz`) is used. Optionally, `ArrayEncoding` can be used to omit the
-/// square brackets appended to array keys.
-///
-/// `BoolEncoding` can be used to configure how boolean values are encoded. The default behavior is to encode
-/// `true` as 1 and `false` as 0.
+/// Encoding behavior can be customized by passing an instance of `URLEncodedFormEncoder` to the initializer.
 open class URLEncodedFormParameterEncoder: ParameterEncoder {
     /// Defines where the URL-encoded string should be set for each `URLRequest`.
     public enum Destination {
@@ -140,8 +134,8 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
     /// Creates an instance with the provided `URLEncodedFormEncoder` instance and `Destination` value.
     ///
     /// - Parameters:
-    ///   - encoder:     The `URLEncodedFormEncoder`. Defaults to `URLEncodedFormEncoder()`.
-    ///   - destination: The `Destination`. Defaults to `.methodDependent`.
+    ///   - encoder:     The `URLEncodedFormEncoder`. `URLEncodedFormEncoder()` by default.
+    ///   - destination: The `Destination`. `.methodDependent` by default.
     public init(encoder: URLEncodedFormEncoder = URLEncodedFormEncoder(), destination: Destination = .methodDependent) {
         self.encoder = encoder
         self.destination = destination
@@ -274,6 +268,10 @@ public final class URLEncodedFormEncoder {
         /// No brackets are appended to the key and the key is encoded as is.
         case noBrackets
 
+        /// Encodes the key according to the encoding.
+        ///
+        /// - Parameter key: The `key` to encode.
+        /// - Returns:       The encoded key.
         func encode(_ key: String) -> String {
             switch self {
             case .brackets: return "\(key)[]"
@@ -327,11 +325,11 @@ public final class URLEncodedFormEncoder {
     /// Creates an instance from the supplied parameters.
     ///
     /// - Parameters:
-    ///   - arrayEncoding: The `ArrayEncoding` instance. Defaults to `.brackets`.
-    ///   - boolEncoding:  The `BoolEncoding` instance. Defaults to `.numeric`.
-    ///   - dateEncoding:  The `DateEncoding` instance. Defaults to `.deferredToDate`.
-    ///   - spaceEncoding: The `SpaceEncoding` instance. Defaults to `.percentEscaped`.
-    ///   - allowedCharacters: The `CharacterSet` of allowed (non-escaped) characters. Defaults to `.afURLQueryAllowed`.
+    ///   - arrayEncoding:     The `ArrayEncoding` instance. `.brackets` by default.
+    ///   - boolEncoding:      The `BoolEncoding` instance. `.numeric` by default.
+    ///   - dateEncoding:      The `DateEncoding` instance. `.deferredToDate` by default.
+    ///   - spaceEncoding:     The `SpaceEncoding` instance. `.percentEscaped` by default.
+    ///   - allowedCharacters: The `CharacterSet` of allowed (non-escaped) characters. `.afURLQueryAllowed` by default.
     public init(arrayEncoding: ArrayEncoding = .brackets,
                 boolEncoding: BoolEncoding = .numeric,
                 dateEncoding: DateEncoding = .deferredToDate,

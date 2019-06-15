@@ -237,8 +237,7 @@ public class Request {
     /// Default initializer for the `Request` superclass.
     ///
     /// - Parameters:
-    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. Defaults to a random
-    ///                         `UUID`.
+    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
     ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
     ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. By default targets
     ///                         `underlyingQueue`, but can be passed another queue from a `Session`.
@@ -633,7 +632,7 @@ public class Request {
     /// - Parameters:
     ///   - username:    The username.
     ///   - password:    The password.
-    ///   - persistence: The `URLCredential.Persistence` for the created `URLCredential`. Defaults to `.forSession`.
+    ///   - persistence: The `URLCredential.Persistence` for the created `URLCredential`. `.forSession` by default.
     /// - Returns:       The instance.
     @discardableResult
     public func authenticate(username: String, password: String, persistence: URLCredential.Persistence = .forSession) -> Self {
@@ -658,7 +657,7 @@ public class Request {
     /// - Note: Only the last closure provided is used.
     ///
     /// - Parameters:
-    ///   - queue:   The `DispatchQueue` to execute the closure on. Defaults to `.main`.
+    ///   - queue:   The `DispatchQueue` to execute the closure on. `.main` by default.
     ///   - closure: The closure to be executed periodically as data is read from the server.
     /// - Returns:   The instance.
     @discardableResult
@@ -673,7 +672,7 @@ public class Request {
     /// - Note: Only the last closure provided is used.
     ///
     /// - Parameters:
-    ///   - queue:   The `DispatchQueue` to execute the closure on. Defaults to `.main`.
+    ///   - queue:   The `DispatchQueue` to execute the closure on. `.main` by default.
     ///   - closure: The closure to be executed periodically as data is sent to the server.
     /// - Returns:   The instance.
     @discardableResult
@@ -862,8 +861,7 @@ public class DataRequest: Request {
     /// Creates a `DataRequest` using the provided parameters.
     ///
     /// - Parameters:
-    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. Defaults to a random
-    ///                         `UUID`.
+    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
     ///   - convertible:        `URLRequestConvertible` value used to create `URLRequest`s for this instance.
     ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
     ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. By default targets
@@ -1064,8 +1062,7 @@ public class DownloadRequest: Request {
     /// Creates a `DownloadRequest` using the provided parameters.
     ///
     /// - Parameters:
-    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. Defaults to a random
-    ///                         `UUID`.
+    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
     ///   - downloadable:       `Downloadable` value used to create `URLSessionDownloadTasks` for the instance.
     ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
     ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. By default targets
@@ -1249,8 +1246,7 @@ public class UploadRequest: DataRequest {
     /// Creates an `UploadRequest` using the provided parameters.
     ///
     /// - Parameters:
-    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. Defaults to a random
-    ///                         `UUID`.
+    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
     ///   - convertible:        `UploadConvertible` value used to determine the type of upload to be performed.
     ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
     ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. By default targets
