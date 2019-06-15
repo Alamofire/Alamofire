@@ -55,8 +55,8 @@ open class ServerTrustManager {
     ///
     /// - Parameter host: The host to use when searching for a matching policy.
     /// - Returns:        The `ServerTrustEvaluating` value for the given host if found, `nil` otherwise.
-    /// - Throws: `AFError.serverTrustEvaluationFailed` if `allHostsMustBeEvaluated` is `true` and no matching
-    ///           evaluators are found.
+    /// - Throws:         `AFError.serverTrustEvaluationFailed` if `allHostsMustBeEvaluated` is `true` and no matching
+    ///                   evaluators are found.
     open func serverTrustEvaluator(forHost host: String) throws -> ServerTrustEvaluating? {
         guard let evaluator = evaluators[host] else {
             if allHostsMustBeEvaluated {
@@ -155,11 +155,12 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
     ///
     /// - Parameters:
     ///   - performDefaultValidation:     Determines whether default validation should be performed in addition to
-    ///                                   evaluating the pinned certificates. Defaults to `true`.
+    ///                                   evaluating the pinned certificates. `true` by default.
     ///   - validateHost:                 Determines whether or not the evaluator should validate the host, in addition
     ///                                   to performing the default evaluation, even if `performDefaultValidation` is
-    ///                                   `false`. Defaults to `true`.
-    ///   - options:      The `Options` to use to check the revocation status of the certificate. Defaults to `.any`.
+    ///                                   `false`. `true` by default.
+    ///   - options:                      The `Options` to use to check the revocation status of the certificate. `.any`
+    ///                                   by default.
     public init(performDefaultValidation: Bool = true, validateHost: Bool = true, options: Options = .any) {
         self.performDefaultValidation = performDefaultValidation
         self.validateHost = validateHost
@@ -195,16 +196,16 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
     /// Creates a `PinnedCertificatesTrustEvaluator`.
     ///
     /// - Parameters:
-    ///   - certificates:                 The certificates to use to evalute the trust. Defaults to all `cer`, `crt`,
-    ///                                   `der` certificates in `Bundle.main`.
+    ///   - certificates:                 The certificates to use to evalute the trust. All `cer`, `crt`, and `der`
+    ///                                   certificates in `Bundle.main` by default.
     ///   - acceptSelfSignedCertificates: Adds the provided certificates as anchors for the trust evaulation, allowing
-    ///                                   self-signed certificates to pass. Defaults to `false`. THIS SETTING SHOULD BE
+    ///                                   self-signed certificates to pass. `false` by default. THIS SETTING SHOULD BE
     ///                                   FALSE IN PRODUCTION!
     ///   - performDefaultValidation:     Determines whether default validation should be performed in addition to
-    ///                                   evaluating the pinned certificates. Defaults to `true`.
+    ///                                   evaluating the pinned certificates. `true` by default.
     ///   - validateHost:                 Determines whether or not the evaluator should validate the host, in addition
     ///                                   to performing the default evaluation, even if `performDefaultValidation` is
-    ///                                   `false`. Defaults to `true`.
+    ///                                   `false`. `true` by default.
     public init(certificates: [SecCertificate] = Bundle.main.af.certificates,
                 acceptSelfSignedCertificates: Bool = false,
                 performDefaultValidation: Bool = true,
@@ -263,10 +264,10 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
     ///   - keys:                     The `SecKey`s to use to validate public keys. Defaults to the public keys of all
     ///                               certificates included in the main bundle.
     ///   - performDefaultValidation: Determines whether default validation should be performed in addition to
-    ///                               evaluating the pinned certificates. Defaults to `true`.
+    ///                               evaluating the pinned certificates. `true` by default.
     ///   - validateHost:             Determines whether or not the evaluator should validate the host, in addition to
     ///                               performing the default evaluation, even if `performDefaultValidation` is `false`.
-    ///                               Defaults to `true`.
+    ///                               `true` by default.
     public init(keys: [SecKey] = Bundle.main.af.publicKeys,
                 performDefaultValidation: Bool = true,
                 validateHost: Bool = true) {
@@ -327,7 +328,7 @@ public final class CompositeTrustEvaluator: ServerTrustEvaluating {
 
 /// Disables all evaluation which in turn will always consider any server trust as valid.
 ///
-/// THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!
+/// **THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!**
 public final class DisabledEvaluator: ServerTrustEvaluating {
     public init() { }
 
