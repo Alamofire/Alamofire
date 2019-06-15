@@ -24,6 +24,7 @@
 
 import Foundation
 
+/// Internal type which encapsulates a `MultipartFormData` upload.
 final class MultipartUpload {
     lazy var result = AFResult { try build() }
 
