@@ -1204,6 +1204,7 @@ public class DownloadRequest: Request {
                 }
             } else {
                 task.cancel()
+                self.underlyingQueue.async { self.didCancelTask(task) }
             }
         }
 

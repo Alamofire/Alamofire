@@ -465,6 +465,40 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 class DownloadResumeDataTestCase: BaseTestCase {
     let urlString = "https://upload.wikimedia.org/wikipedia/commons/6/69/NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg"
 
+    func testThatCancelledDownloadRequestDoesNotProduceResumeData() {
+        // Given
+        let expectation = self.expectation(description: "Download should be cancelled")
+        var cancelled = false
+        
+        var response: DownloadResponse<URL?>?
+        
+        // When
+        let download = AF.download(urlString)
+        download.downloadProgress { progress in
+            guard !cancelled else { return }
+            
+            if progress.fractionCompleted > 0.1 {
+                download.cancel()
+                cancelled = true
+            }
+        }
+        download.response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.fileURL)
+        XCTAssertNotNil(response?.error)
+        
+        XCTAssertNil(response?.resumeData)
+        XCTAssertNil(download.resumeData)
+    }
+    
     func testThatCancelledDownloadResponseDataMatchesResumeData() {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")
@@ -478,7 +512,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.1 {
-                download.cancel()
+                download.cancel { _ in }
                 cancelled = true
             }
         }
@@ -514,7 +548,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.1 {
-                download.cancel()
+                download.cancel { _ in }
                 cancelled = true
             }
         }
@@ -551,7 +585,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.4 {
-                download.cancel()
+                download.cancel { _ in }
                 cancelled = true
             }
         }
