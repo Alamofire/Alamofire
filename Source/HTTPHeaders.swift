@@ -317,8 +317,8 @@ public extension HTTPHeaders {
     /// The default set of `HTTPHeaders` used by Alamofire. Includes `Accept-Encoding`, `Accept-Language`, and
     /// `User-Agent`.
     static let `default`: HTTPHeaders = [.defaultAcceptEncoding,
-                                                .defaultAcceptLanguage,
-                                                .defaultUserAgent]
+                                         .defaultAcceptLanguage,
+                                         .defaultUserAgent]
 }
 
 public extension HTTPHeader {
@@ -371,6 +371,8 @@ public extension HTTPHeader {
                         return "tvOS"
                         #elseif os(macOS)
                         return "macOS"
+                        #elseif os(UIKitForMac)
+                        return "UIKitForMac"
                         #elseif os(Linux)
                         return "Linux"
                         #else

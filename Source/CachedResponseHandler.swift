@@ -35,8 +35,8 @@ public protocol CachedResponseHandler {
     ///   3. A `nil` value to prevent the cached response from being stored in the cache.
     ///
     /// - Parameters:
-    ///   - task: The data task whose request resulted in the cached response.
-    ///   - response: The cached response to potentially store in the cache.
+    ///   - task:       The data task whose request resulted in the cached response.
+    ///   - response:   The cached response to potentially store in the cache.
     ///   - completion: The closure to execute containing cached response, a modified response, or `nil`.
     func dataTask(_ task: URLSessionDataTask,
                   willCacheResponse response: CachedURLResponse,
