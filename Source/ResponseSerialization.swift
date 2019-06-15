@@ -46,28 +46,46 @@ public protocol DownloadResponseSerializerProtocol {
 
 /// A serializer that can handle both data and download responses.
 public protocol ResponseSerializer: DataResponseSerializerProtocol & DownloadResponseSerializerProtocol {
+    /// `HTTPMethod`s for which empty response bodies are considered appropriate.
     var emptyRequestMethods: Set<HTTPMethod> { get }
+    /// HTTP response codes for which empty response bodies are considered appropriate.
     var emptyResponseCodes: Set<Int> { get }
 }
 
 extension ResponseSerializer {
+    /// Default `HTTPMethod`s for which empty response bodies are considered appropriate. `[.head]` by default.
     public static var defaultEmptyRequestMethods: Set<HTTPMethod> { return [.head] }
+    /// HTTP response codes for which empty response bodies are considered appropriate. `[204, 205]` by default.
     public static var defaultEmptyResponseCodes: Set<Int> { return [204, 205] }
 
     public var emptyRequestMethods: Set<HTTPMethod> { return Self.defaultEmptyRequestMethods }
     public var emptyResponseCodes: Set<Int> { return Self.defaultEmptyResponseCodes }
 
+    /// Determine whether the `request` allows empty response bodies, if `request` exists.
+    ///
+    /// - Parameter request: `URLRequest` to evaluate.
+    /// - Returns:           `Bool` representing the outcome of the evaluation, or `nil` if `request` was `nil`.
     public func requestAllowsEmptyResponseData(_ request: URLRequest?) -> Bool? {
         return request.flatMap { $0.httpMethod }
                       .flatMap(HTTPMethod.init)
                       .map { emptyRequestMethods.contains($0) }
     }
 
+    /// Determine whether the `response` allows empty response bodies, if `response` exists`.
+    ///
+    /// - Parameter response: `HTTPURLResponse` to evaluate.
+    /// - Returns:            `Bool` representing the outcome of the evaluation, or `nil` if `response` was `nil`.
     public func responseAllowsEmptyResponseData(_ response: HTTPURLResponse?) -> Bool? {
         return response.flatMap { $0.statusCode }
                        .map { emptyResponseCodes.contains($0) }
     }
 
+    /// Evaluate whether `request` and `response` allow empty response bodies.
+    ///
+    /// - Parameters:
+    ///   - request:  `URLRequest` to evaluate.
+    ///   - response: `HTTPURLResponse` to evaluate.
+    /// - Returns:    `true` if `request` or `response` allow empty bodies, `false` otherwise.
     public func emptyResponseAllowed(forRequest request: URLRequest?, response: HTTPURLResponse?) -> Bool {
         return (requestAllowsEmptyResponseData(request) == true) || (responseAllowsEmptyResponseData(response) == true)
     }
@@ -104,7 +122,7 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
@@ -129,7 +147,7 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:              The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default
     ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data.
     ///   - completionHandler:  The code to be executed once the request has finished.
     /// - Returns:              The request.
@@ -201,7 +219,7 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
@@ -231,9 +249,9 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:              The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default.
     ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data
-    ///                         contained in the destination url.
+    ///                         contained in the destination `URL`.
     ///   - completionHandler:  The code to be executed once the request has finished.
     /// - Returns:              The request.
     @discardableResult
@@ -308,7 +326,7 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
@@ -335,9 +353,8 @@ public final class DataResponseSerializer: ResponseSerializer {
     /// Creates an instance using the provided values.
     ///
     /// - Parameters:
-    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. Defaults to
-    ///                          `[204, 205]`.
-    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. Defaults to `[.head]`.
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
     public init(emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) {
         self.emptyResponseCodes = emptyResponseCodes
@@ -363,7 +380,7 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
@@ -398,9 +415,8 @@ public final class StringResponseSerializer: ResponseSerializer {
     /// - Parameters:
     ///   - encoding:            A string encoding. Defaults to `nil`, in which case the encoding will be determined
     ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
-    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. Defaults to
-    ///                          `[204, 205]`.
-    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. Defaults to `[.head]`.
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
     public init(encoding: String.Encoding? = nil,
                 emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) {
@@ -442,7 +458,7 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - encoding:          The string encoding. Defaults to `nil`, in which case the encoding will be determined from
     ///                        the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - completionHandler: A closure to be executed once the request has finished.
@@ -461,7 +477,7 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - encoding:          The string encoding. Defaults to `nil`, in which case the encoding will be determined from
     ///                        the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - completionHandler: A closure to be executed once the request has finished.
@@ -497,10 +513,9 @@ public final class JSONResponseSerializer: ResponseSerializer {
     /// Creates an instance with the provided values.
     ///
     /// - Parameters:
-    ///   - options:             The options to use. Defaults to `.allowFragments`.
-    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. Defaults to
-    ///                          `[204, 205]`.
-    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. Defaults to `[.head]`.
+    ///   - options:             The options to use. `.allowFragments` by default.
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
     public init(options: JSONSerialization.ReadingOptions = .allowFragments,
                 emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods) {
@@ -532,8 +547,8 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
-    ///   - options:           The JSON serialization reading options. Defaults to `.allowFragments`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
+    ///   - options:           The JSON serialization reading options. `.allowFragments` by default.
     ///   - completionHandler: A closure to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
@@ -550,8 +565,8 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
-    ///   - options:           The JSON serialization reading options. Defaults to `.allowFragments`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
+    ///   - options:           The JSON serialization reading options. `.allowFragments` by default.
     ///   - completionHandler: A closure to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
@@ -568,12 +583,13 @@ extension DownloadRequest {
 }
 
 // MARK: - Empty
-/// A protocol for a type representing an empty response. Use `T.emptyValue` to get an instance.
+
+/// Protocol representing an empty response. Use `T.emptyValue()` to get an instance.
 public protocol EmptyResponse {
     static func emptyValue() -> Self
 }
 
-/// A type representing an empty response. Use `Empty.value` to get the instance.
+/// Type representing an empty response. Use `Empty.value` to get the static instance.
 public struct Empty: Decodable {
     public static let value = Empty()
 }
@@ -586,13 +602,13 @@ extension Empty: EmptyResponse {
 
 // MARK: - DataDecoder Protocol
 
-/// Any type which can decode `Data`.
+/// Any type which can decode `Data` into a `Decodable` type.
 public protocol DataDecoder {
     /// Decode `Data` into the provided type.
     ///
     /// - Parameters:
     ///   - type:  The `Type` to be decoded.
-    ///   - data:  The `Data`
+    ///   - data:  The `Data` to be decoded.
     /// - Returns: The decoded value of type `D`.
     /// - Throws:  Any error that occurs during decode.
     func decode<D: Decodable>(_ type: D.Type, from data: Data) throws -> D
@@ -608,7 +624,7 @@ extension JSONDecoder: DataDecoder { }
 /// is considered an error. However, if the response is has a status code valid for empty responses (`204`, `205`), then
 /// the `Empty.value` value is returned.
 public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer {
-    /// The `JSONDecoder` instance used to decode responses.
+    /// The `DataDecoder` instance used to decode responses.
     public let decoder: DataDecoder
     /// HTTP response codes for which empty responses are allowed.
     public let emptyResponseCodes: Set<Int>
@@ -618,10 +634,9 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
     /// Creates an instance using the values provided.
     ///
     /// - Parameters:
-    ///   - decoder:           The `JSONDecoder`. Defaults to a `JSONDecoder()`.
-    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. Defaults to
-    ///                          `[204, 205]`.
-    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. Defaults to `[.head]`.
+    ///   - decoder:             The `DataDecoder`. `JSONDecoder()` by default.
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
     public init(decoder: DataDecoder = JSONDecoder(),
                 emptyResponseCodes: Set<Int> = DecodableResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer.defaultEmptyRequestMethods) {
@@ -657,13 +672,14 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
-    ///   - decoder:           The `DataDecoder` to use to decode the response. Defaults to a `JSONDecoder` with default
-    ///                        settings.
+    ///   - type:              `Decodable` type to decode from response data.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
+    ///   - decoder:           `DataDecoder` to use to decode the response. `JSONDecoder()` by default.
     ///   - completionHandler: A closure to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
-    public func responseDecodable<T: Decodable>(queue: DispatchQueue = .main,
+    public func responseDecodable<T: Decodable>(of type: T.Type = T.self,
+                                                queue: DispatchQueue = .main,
                                                 decoder: DataDecoder = JSONDecoder(),
                                                 completionHandler: @escaping (DataResponse<T>) -> Void) -> Self {
         return response(queue: queue,
