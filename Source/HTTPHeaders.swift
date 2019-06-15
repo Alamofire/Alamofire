@@ -371,8 +371,6 @@ public extension HTTPHeader {
                         return "tvOS"
                         #elseif os(macOS)
                         return "macOS"
-                        #elseif os(UIKitForMac)
-                        return "UIKitForMac"
                         #elseif os(Linux)
                         return "Linux"
                         #else
