@@ -151,6 +151,7 @@ public class Request {
 
     // MARK: Redirect Handling
 
+    /// `RedirectHandler` set on the instance.
     public private(set) var redirectHandler: RedirectHandler? {
         get { return protectedMutableState.directValue.redirectHandler }
         set { protectedMutableState.write { $0.redirectHandler = newValue } }
@@ -158,6 +159,7 @@ public class Request {
 
     // MARK: Cached Response Handling
 
+    /// `CachedResponseHandler` set on the instance.
     public private(set) var cachedResponseHandler: CachedResponseHandler? {
         get { return protectedMutableState.directValue.cachedResponseHandler }
         set { protectedMutableState.write { $0.cachedResponseHandler = newValue } }
@@ -838,9 +840,22 @@ extension Request: CustomDebugStringConvertible {
 
 /// Protocol abstraction for `Request`'s communication back to the `SessionDelegate`.
 public protocol RequestDelegate: AnyObject {
+    /// `URLSessionConfiguration` used to create the underlying `URLSessionTask`s.
     var sessionConfiguration: URLSessionConfiguration { get }
 
+    /// Asynchronously ask the delegate whether a `Request` will be retried.
+    ///
+    /// - Parameters:
+    ///   - request: `Request` which failed.
+    ///   - error: `Error` which produced the failure.
+    ///   - completion: Closure taking the `RetryResult` for evaluation.
     func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
+
+    /// Asynchronously retry the `Request`.
+    ///
+    /// - Parameters:
+    ///   - request:   `Request` which will be retried.
+    ///   - timeDelay: `TimeInterval` after which the retry will be triggered.
     func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?)
 }
 

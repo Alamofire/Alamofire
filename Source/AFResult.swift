@@ -22,6 +22,7 @@
 //  THE SOFTWARE.
 //
 
+/// `Result` that always has an `Error` `Failure` type.
 public typealias AFResult<T> = Result<T, Error>
 
 // MARK: - Internal APIs

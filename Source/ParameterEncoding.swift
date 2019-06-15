@@ -29,14 +29,13 @@ public typealias Parameters = [String: Any]
 
 /// A type used to define how a set of parameters are applied to a `URLRequest`.
 public protocol ParameterEncoding {
-    /// Creates a URL request by encoding parameters and applying them onto an existing request.
+    /// Creates a `URLRequest` by encoding parameters and applying onto the passed request.
     ///
-    /// - parameter urlRequest: The request to have parameters applied.
-    /// - parameter parameters: The parameters to apply.
-    ///
-    /// - throws: An `AFError.parameterEncodingFailed` error if encoding fails.
-    ///
-    /// - returns: The encoded request.
+    /// - Parameters:
+    ///   - urlRequest: `URLRequestConvertible` value onto which parameters will be encoded.
+    ///   - parameters: `Parameters` to encode onto the request.
+    /// - Returns:      The encoded `URLRequest`.
+    /// - Throws:       Any `Error` produced during parameter encoding.
     func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest
 }
 
@@ -62,13 +61,14 @@ public struct URLEncoding: ParameterEncoding {
 
     /// Defines whether the url-encoded query string is applied to the existing query string or HTTP body of the
     /// resulting URL request.
-    ///
-    /// - methodDependent: Applies encoded query string result to existing query string for `GET`, `HEAD` and `DELETE`
-    ///                    requests and sets as the HTTP body for requests with any other HTTP method.
-    /// - queryString:     Sets or appends encoded query string result to existing query string.
-    /// - httpBody:        Sets encoded query string result as the HTTP body of the URL request.
     public enum Destination {
-        case methodDependent, queryString, httpBody
+        /// Applies encoded query string result to existing query string for `GET`, `HEAD` and `DELETE` requests and
+        /// sets as the HTTP body for requests with any other HTTP method.
+        case methodDependent
+        /// Sets or appends encoded query string result to existing query string.
+        case queryString
+        /// Sets encoded query string result as the HTTP body of the URL request.
+        case httpBody
 
         func encodesParametersInURL(for method: HTTPMethod) -> Bool {
             switch self {
@@ -80,12 +80,11 @@ public struct URLEncoding: ParameterEncoding {
     }
 
     /// Configures how `Array` parameters are encoded.
-    ///
-    /// - brackets:        An empty set of square brackets is appended to the key for every value.
-    ///                    This is the default behavior.
-    /// - noBrackets:      No brackets are appended. The key is encoded as is.
     public enum ArrayEncoding {
-        case brackets, noBrackets
+        /// An empty set of square brackets is appended to the key for every value. This is the default behavior.
+        case brackets
+        /// No brackets are appended. The key is encoded as is.
+        case noBrackets
 
         func encode(key: String) -> String {
             switch self {
@@ -98,11 +97,11 @@ public struct URLEncoding: ParameterEncoding {
     }
 
     /// Configures how `Bool` parameters are encoded.
-    ///
-    /// - numeric:         Encode `true` as `1` and `false` as `0`. This is the default behavior.
-    /// - literal:         Encode `true` and `false` as string literals.
     public enum BoolEncoding {
-        case numeric, literal
+        /// Encode `true` as `1` and `false` as `0`. This is the default behavior.
+        case numeric
+        /// Encode `true` and `false` as string literals.
+        case literal
 
         func encode(value: Bool) -> String {
             switch self {
@@ -136,14 +135,16 @@ public struct URLEncoding: ParameterEncoding {
 
     // MARK: Initialization
 
-    /// Creates a `URLEncoding` instance using the specified destination.
+    /// Create an instance using the spcified parameters.
     ///
-    /// - parameter destination: The destination defining where the encoded query string is to be applied.
-    /// - parameter arrayEncoding: The encoding to use for `Array` parameters.
-    /// - parameter boolEncoding: The encoding to use for `Bool` parameters.
-    ///
-    /// - returns: The new `URLEncoding` instance.
-    public init(destination: Destination = .methodDependent, arrayEncoding: ArrayEncoding = .brackets, boolEncoding: BoolEncoding = .numeric) {
+    /// - Parameters:
+    ///   - destination:   `Destination` defining where the encoded query string will be applied. `.methodDependent` by
+    ///                    default.
+    ///   - arrayEncoding: `ArrayEncoding` to use. `.brackets` by default.
+    ///   - boolEncoding:  `BoolEncoding` to use. `.numeric` by default.
+    public init(destination: Destination = .methodDependent,
+                arrayEncoding: ArrayEncoding = .brackets,
+                boolEncoding: BoolEncoding = .numeric) {
         self.destination = destination
         self.arrayEncoding = arrayEncoding
         self.boolEncoding = boolEncoding
@@ -151,14 +152,6 @@ public struct URLEncoding: ParameterEncoding {
 
     // MARK: Encoding
 
-    /// Creates a URL request by encoding parameters and applying them onto an existing request.
-    ///
-    /// - parameter urlRequest: The request to have parameters applied.
-    /// - parameter parameters: The parameters to apply.
-    ///
-    /// - throws: An `Error` if the encoding process encounters an error.
-    ///
-    /// - returns: The encoded request.
     public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
         var urlRequest = try urlRequest.asURLRequest()
 
@@ -185,12 +178,12 @@ public struct URLEncoding: ParameterEncoding {
         return urlRequest
     }
 
-    /// Creates percent-escaped, URL encoded query string components from the given key-value pair using recursion.
+    /// Create a percent-escaped, URL encoded query string components from the given key-value pair recursively.
     ///
-    /// - parameter key:   The key of the query component.
-    /// - parameter value: The value of the query component.
-    ///
-    /// - returns: The percent-escaped, URL encoded query string components.
+    /// - Parameters:
+    ///   - key:   Key of the query component.
+    ///   - value: Value of the query component.
+    /// - Returns: The percent-escaped, URL encoded query string components.
     public func queryComponents(fromKey key: String, value: Any) -> [(String, String)] {
         var components: [(String, String)] = []
 
@@ -217,11 +210,10 @@ public struct URLEncoding: ParameterEncoding {
         return components
     }
 
-    /// Returns a percent-escaped string following RFC 3986 for a query string key or value.
+    /// Create a percent-escaped string following RFC 3986 for a query string key or value.
     ///
-    /// - parameter string: The string to be percent-escaped.
-    ///
-    /// - returns: The percent-escaped string.
+    /// - Parameter string: `String` to be percent-escaped.
+    /// - Returns:          The percent-escaped `String`.
     public func escape(_ string: String) -> String {
         return string.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) ?? string
     }
@@ -256,25 +248,15 @@ public struct JSONEncoding: ParameterEncoding {
 
     // MARK: Initialization
 
-    /// Creates a `JSONEncoding` instance using the specified options.
+    /// Create an instance using the specified `WritingOptions`.
     ///
-    /// - parameter options: The options for writing the parameters as JSON data.
-    ///
-    /// - returns: The new `JSONEncoding` instance.
+    /// - Parameter options: `JSONSerialization.WritingOptions` to use.
     public init(options: JSONSerialization.WritingOptions = []) {
         self.options = options
     }
 
     // MARK: Encoding
 
-    /// Creates a URL request by encoding parameters and applying them onto an existing request.
-    ///
-    /// - parameter urlRequest: The request to have parameters applied.
-    /// - parameter parameters: The parameters to apply.
-    ///
-    /// - throws: An `Error` if the encoding process encounters an error.
-    ///
-    /// - returns: The encoded request.
     public func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
         var urlRequest = try urlRequest.asURLRequest()
 
@@ -295,14 +277,13 @@ public struct JSONEncoding: ParameterEncoding {
         return urlRequest
     }
 
-    /// Creates a URL request by encoding the JSON object and setting the resulting data on the HTTP body.
+    /// Encodes any JSON compatible object into a `URLRequest`.
     ///
-    /// - parameter urlRequest: The request to apply the JSON object to.
-    /// - parameter jsonObject: The JSON object to apply to the request.
-    ///
-    /// - throws: An `Error` if the encoding process encounters an error.
-    ///
-    /// - returns: The encoded request.
+    /// - Parameters:
+    ///   - urlRequest: `URLRequestConvertible` value into which the object will be encoded.
+    ///   - jsonObject: `Any` value (must be JSON compatible` to be encoded into the `URLRequest`. `nil` by default.
+    /// - Returns:      The encoded `URLRequest`.
+    /// - Throws:       Any `Error` produced during encoding.
     public func encode(_ urlRequest: URLRequestConvertible, withJSONObject jsonObject: Any? = nil) throws -> URLRequest {
         var urlRequest = try urlRequest.asURLRequest()
 

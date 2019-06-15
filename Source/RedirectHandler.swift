@@ -51,11 +51,11 @@ public protocol RedirectHandler {
 public struct Redirector {
     /// Defines the behavior of the `Redirector` type.
     public enum Behavior {
-        // Follow the redirect as defined in the response.
+        /// Follow the redirect as defined in the response.
         case follow
-        // Do not follow the redirect defined in the response.
+        /// Do not follow the redirect defined in the response.
         case doNotFollow
-        // Modify the redirect request defined in the response.
+        /// Modify the redirect request defined in the response.
         case modify((URLSessionTask, URLRequest, HTTPURLResponse) -> URLRequest?)
     }
 

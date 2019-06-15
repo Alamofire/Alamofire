@@ -920,24 +920,24 @@ extension Session: RequestDelegate {
 // MARK: - SessionStateProvider
 
 extension Session: SessionStateProvider {
-    public func request(for task: URLSessionTask) -> Request? {
+    func request(for task: URLSessionTask) -> Request? {
         return requestTaskMap[task]
     }
 
-    public func didGatherMetricsForTask(_ task: URLSessionTask) {
+    func didGatherMetricsForTask(_ task: URLSessionTask) {
         requestTaskMap.disassociateIfNecessaryAfterGatheringMetricsForTask(task)
     }
 
-    public func didCompleteTask(_ task: URLSessionTask) {
+    func didCompleteTask(_ task: URLSessionTask) {
         requestTaskMap.disassociateIfNecessaryAfterCompletingTask(task)
     }
 
-    public func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {
+    func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {
         return requestTaskMap[task]?.credential ??
             session.configuration.urlCredentialStorage?.defaultCredential(for: protectionSpace)
     }
 
-    public func cancelRequestsForSessionInvalidation(with error: Error?) {
+    func cancelRequestsForSessionInvalidation(with error: Error?) {
         requestTaskMap.requests.forEach { $0.finish(error: AFError.sessionInvalidated(error: error)) }
     }
 }

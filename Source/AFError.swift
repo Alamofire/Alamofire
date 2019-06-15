@@ -136,6 +136,7 @@ public enum AFError: Error {
                 self.result = result
             }
         }
+        /// No `ServerTrustEvaluator` was found for the associated host.
         case noRequiredEvaluator(host: String)
         /// No certificates were found with which to perform the trust evaluation.
         case noCertificatesFound
@@ -195,13 +196,13 @@ extension Error {
 // MARK: - Error Booleans
 
 extension AFError {
-    // Returns whether the instance is `.sessionDeinitialized`.
+    /// Returns whether the instance is `.sessionDeinitialized`.
     public var isSessionDeinitializedError: Bool {
         if case .sessionDeinitialized = self { return true }
         return false
     }
 
-    // Returns whether the instance is `.sessionInvalidated`.
+    /// Returns whether the instance is `.sessionInvalidated`.
     public var isSessionInvalidatedError: Bool {
         if case .sessionInvalidated = self { return true }
         return false
@@ -227,7 +228,7 @@ extension AFError {
     }
 
     /// Returns whether the instance is `.parameterEncoderFailed`. When `true`, the `underlyingError` property will
-    // contain the associated value.
+    /// contain the associated value.
     public var isParameterEncoderError: Bool {
         if case .parameterEncoderFailed = self { return true }
         return false

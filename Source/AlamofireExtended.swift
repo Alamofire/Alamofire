@@ -34,6 +34,7 @@ public struct AlamofireExtension<ExtendedType> {
 
 /// Protocol describing the `af` extension points for Alamofire extended types.
 public protocol AlamofireExtended {
+    /// Type being extended.
     associatedtype ExtendedType
 
     /// Static Alamofire extension point.

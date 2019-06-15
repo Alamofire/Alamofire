@@ -586,11 +586,15 @@ extension DownloadRequest {
 
 /// Protocol representing an empty response. Use `T.emptyValue()` to get an instance.
 public protocol EmptyResponse {
+    /// Empty value for the conforming type.
+    ///
+    /// - Returns: Value of `Self` to use for empty values.
     static func emptyValue() -> Self
 }
 
 /// Type representing an empty response. Use `Empty.value` to get the static instance.
 public struct Empty: Decodable {
+    /// Static `Empty` instance used for all `Empty` responses.
     public static let value = Empty()
 }
 

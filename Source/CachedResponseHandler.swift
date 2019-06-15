@@ -49,13 +49,12 @@ public protocol CachedResponseHandler {
 /// response.
 public struct ResponseCacher {
     /// Defines the behavior of the `ResponseCacher` type.
-    ///
-    /// - cache:      Stores the cached response in the cache.
-    /// - doNotCache: Prevents the cached response from being stored in the cache.
-    /// - modify:     Modifies the cached response before storing it in the cache.
     public enum Behavior {
+        /// Stores the cached response in the cache.
         case cache
+        /// Prevents the cached response from being stored in the cache.
         case doNotCache
+        /// Modifies the cached response before storing it in the cache.
         case modify((URLSessionDataTask, CachedURLResponse) -> CachedURLResponse?)
     }
 
