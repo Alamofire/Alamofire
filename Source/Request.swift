@@ -1154,8 +1154,8 @@ public class DownloadRequest: Request {
 
     /// Cancels the instance. Once cancelled, a `DownloadRequest` can no longer be resumed or suspended.
     ///
-    /// - Note: This method will produce resume data available on the `resumeData` property. If you wish to immediately
-    ///         capture the resume data, use `cancel(byProducingResumeData:)`.
+    /// - Note: This method will NOT produce resume data. If you wish to cancel and produce resume data, use
+    ///         `cancel(byProducingResumeData:).
     ///
     /// - Returns: The instance.
     @discardableResult
@@ -1172,16 +1172,17 @@ public class DownloadRequest: Request {
     /// - Parameter completionHandler: The completion handler that is called when the download has been successfully
     ///                                cancelled. It is not guaranteed to be called on a particular queue, so you may
     ///                                want use an appropriate queue to perform you work.
-    /// - Returns: The instance.
+    /// - Returns:                     The instance.
     @discardableResult
     public func cancel(byProducingResumeData completionHandler: @escaping (_ data: Data?) -> Void) -> Self {
         return cancel(optionallyProducingResumeData: completionHandler)
     }
 
-    /// Internal implementation of cancellation that optionally takes a resume data handler.
+    /// Internal implementation of cancellation that optionally takes a resume data handler. If no handler is passed,
+    /// cancellation is performed without producing resume data.
     ///
     /// - Parameter completionHandler: Optional resume data handler.
-    /// - Returns:                     The intance.
+    /// - Returns:                     The instance.
     private func cancel(optionallyProducingResumeData completionHandler: ((_ resumeData: Data?) -> Void)?) -> Self {
         protectedMutableState.write { (mutableState) in
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
@@ -1194,11 +1195,15 @@ public class DownloadRequest: Request {
                 underlyingQueue.async { self.finish() }
                 return
             }
-
-            task.cancel { (resumeData) in
-                self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
-                self.underlyingQueue.async { self.didCancelTask(task) }
-                completionHandler?(resumeData)
+            
+            if let completionHandler = completionHandler {
+                task.cancel { (resumeData) in
+                    self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
+                    self.underlyingQueue.async { self.didCancelTask(task) }
+                    completionHandler(resumeData)
+                }
+            } else {
+                task.cancel()
             }
         }
 
