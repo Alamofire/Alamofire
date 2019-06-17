@@ -1195,7 +1195,7 @@ public class DownloadRequest: Request {
                 underlyingQueue.async { self.finish() }
                 return
             }
-            
+
             if let completionHandler = completionHandler {
                 task.cancel { (resumeData) in
                     self.protectedDownloadMutableState.write { $0.resumeData = resumeData }

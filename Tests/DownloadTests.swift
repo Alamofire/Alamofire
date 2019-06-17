@@ -451,7 +451,7 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
         let didCancel = expectation(description: "didCancel should fire")
         let didCancelTask = expectation(description: "didCancelTask should fire")
         let responseHandler = expectation(description: "responseHandler should fire")
-        
+
         eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
         eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
@@ -491,14 +491,14 @@ class DownloadResumeDataTestCase: BaseTestCase {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
-        
+
         var response: DownloadResponse<URL?>?
-        
+
         // When
         let download = AF.download(urlString)
         download.downloadProgress { progress in
             guard !cancelled else { return }
-            
+
             if progress.fractionCompleted > 0.1 {
                 download.cancel()
                 cancelled = true
@@ -508,19 +508,19 @@ class DownloadResumeDataTestCase: BaseTestCase {
             response = resp
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: timeout, handler: nil)
-        
+
         // Then
         XCTAssertNotNil(response?.request)
         XCTAssertNotNil(response?.response)
         XCTAssertNil(response?.fileURL)
         XCTAssertNotNil(response?.error)
-        
+
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(download.resumeData)
     }
-    
+
     func testThatCancelledDownloadResponseDataMatchesResumeData() {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")

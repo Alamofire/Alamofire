@@ -666,7 +666,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let didCreateUploadable = expectation(description: "didCreateUploadable should fire")
         let didParseResponse = expectation(description: "didParseResponse should fire")
         let responseHandler = expectation(description: "responseHandler should fire")
-        
+
         eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
         eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
@@ -677,7 +677,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         eventMonitor.requestDidResumeTask = { (_, _) in didResumeTask.fulfill() }
         eventMonitor.requestDidCreateUploadable = { (_, _) in didCreateUploadable.fulfill() }
         eventMonitor.requestDidParseResponse = { (_, _) in didParseResponse.fulfill() }
-        
+
         // When
         let request = session.upload(Data("PAYLOAD".utf8),
                                      with: URLRequest.makeHTTPBinRequest(path: "post", method: .post)).response { _ in

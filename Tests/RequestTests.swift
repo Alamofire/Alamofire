@@ -590,7 +590,7 @@ class RequestResponseTestCase: BaseTestCase {
         let didCancel = expectation(description: "didCancel should fire")
         let didCancelTask = expectation(description: "didCancelTask should fire")
         let responseHandler = expectation(description: "responseHandler should fire")
-        
+
         eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
         eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
