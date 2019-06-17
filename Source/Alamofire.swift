@@ -61,7 +61,7 @@ public enum AF {
     ///   - url:           The `URLConvertible` value.
     ///   - method:        The `HTTPMethod`, `.get` by default.
     ///   - parameters:    The `Encodable` parameters, `nil` by default.
-    ///   - encoding:      The `ParameterEncoding`, `URLEncodedFormParameterEncoder.default` by default.
+    ///   - encoding:      The `ParameterEncoder`, `URLEncodedFormParameterEncoder.default` by default.
     ///   - headers:       The `HTTPHeaders`, `nil` by default.
     ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
     ///
