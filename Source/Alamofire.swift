@@ -392,6 +392,7 @@ public enum AF {
                               interceptor: RequestInterceptor? = nil) -> UploadRequest {
         return Session.default.upload(multipartFormData: multipartFormData,
                                       usingThreshold: encodingMemoryThreshold,
+                                      fileManager: fileManager,
                                       with: request,
                                       interceptor: interceptor)
     }
