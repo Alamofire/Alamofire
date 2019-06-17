@@ -387,33 +387,45 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
         let eventMonitor = ClosureEventMonitor()
         let session = Session(eventMonitors: [eventMonitor])
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 14
+        let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
+        let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
+        let didCreateTask = expectation(description: "didCreateTask should fire")
+        let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
+        let didComplete = expectation(description: "didComplte should fire")
+        let didWriteData = expectation(description: "didWriteData should fire")
+        let didFinishDownloading = expectation(description: "didFinishDownloading should fire")
+        let didFinishWithResult = expectation(description: "didFinishWithResult should fire")
+        let didCreate = expectation(description: "didCreate should fire")
+        let didFinish = expectation(description: "didFinish should fire")
+        let didResume = expectation(description: "didResume should fire")
+        let didResumeTask = expectation(description: "didResumeTask should fire")
+        let didParseResponse = expectation(description: "didParseResponse should fire")
+        let responseHandler = expectation(description: "responseHandler should fire")
 
         var wroteData = false
 
-        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in expect.fulfill() }
-        eventMonitor.requestDidCreateURLRequest = { (_, _) in expect.fulfill() }
-        eventMonitor.requestDidCreateTask = { (_, _) in expect.fulfill() }
-        eventMonitor.requestDidGatherMetrics = { (_, _) in expect.fulfill() }
-        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in expect.fulfill() }
+        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
+        eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
+        eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { (_, _) in didGatherMetrics.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in didComplete.fulfill() }
         eventMonitor.downloadTaskDidWriteData = { (_, _, _, _, _) in
             guard !wroteData else { return }
 
             wroteData = true
-            expect.fulfill()
+            didWriteData.fulfill()
         }
-        eventMonitor.downloadTaskDidFinishDownloadingToURL = { (_, _, _) in expect.fulfill() }
-        eventMonitor.requestDidFinishDownloadingUsingTaskWithResult = { (_, _, _) in expect.fulfill() }
-        eventMonitor.requestDidCreateDestinationURL = { (_, _) in expect.fulfill() }
-        eventMonitor.requestDidFinish = { (_) in expect.fulfill() }
-        eventMonitor.requestDidResume = { (_) in expect.fulfill() }
-        eventMonitor.requestDidResumeTask = { (_, _) in expect.fulfill() }
-        eventMonitor.requestDidParseDownloadResponse = { (_, _) in expect.fulfill() }
+        eventMonitor.downloadTaskDidFinishDownloadingToURL = { (_, _, _) in didFinishDownloading.fulfill() }
+        eventMonitor.requestDidFinishDownloadingUsingTaskWithResult = { (_, _, _) in didFinishWithResult.fulfill() }
+        eventMonitor.requestDidCreateDestinationURL = { (_, _) in didCreate.fulfill() }
+        eventMonitor.requestDidFinish = { (_) in didFinish.fulfill() }
+        eventMonitor.requestDidResume = { (_) in didResume.fulfill() }
+        eventMonitor.requestDidResumeTask = { (_, _) in didResumeTask.fulfill() }
+        eventMonitor.requestDidParseDownloadResponse = { (_, _) in didParseResponse.fulfill() }
 
         // When
         let request = session.download(URLRequest.makeHTTPBinRequest()).response { response in
-            expect.fulfill()
+            responseHandler.fulfill()
         }
 
         waitForExpectations(timeout: timeout, handler: nil)
@@ -427,28 +439,38 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
         let eventMonitor = ClosureEventMonitor()
         let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
 
-        let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 12
-
-        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in expect.fulfill() }
-        eventMonitor.requestDidCreateURLRequest = { (_, _) in expect.fulfill() }
-        eventMonitor.requestDidCreateTask = { (_, _) in expect.fulfill() }
-        eventMonitor.requestDidGatherMetrics = { (_, _) in expect.fulfill() }
-        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in expect.fulfill() }
-        eventMonitor.requestDidFinish = { (_) in expect.fulfill() }
-        eventMonitor.requestDidResume = { (_) in expect.fulfill() }
-        eventMonitor.requestDidCancel = { _ in expect.fulfill() }
-        eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
-        eventMonitor.requestDidParseDownloadResponse = { (_, _) in expect.fulfill() }
+        let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
+        let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
+        let didCreateTask = expectation(description: "didCreateTask should fire")
+        let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
+        let didComplete = expectation(description: "didComplte should fire")
+        let didFinish = expectation(description: "didFinish should fire")
+        let didResume = expectation(description: "didResume should fire")
+        let didResumeTask = expectation(description: "didResumeTask should fire")
+        let didParseResponse = expectation(description: "didParseResponse should fire")
+        let didCancel = expectation(description: "didCancel should fire")
+        let didCancelTask = expectation(description: "didCancelTask should fire")
+        let responseHandler = expectation(description: "responseHandler should fire")
+        
+        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
+        eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
+        eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { (_, _) in didGatherMetrics.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in didComplete.fulfill() }
+        eventMonitor.requestDidFinish = { (_) in didFinish.fulfill() }
+        eventMonitor.requestDidResume = { (_) in didResume.fulfill() }
+        eventMonitor.requestDidParseDownloadResponse = { (_, _) in didParseResponse.fulfill() }
+        eventMonitor.requestDidCancel = { (_) in didCancel.fulfill() }
+        eventMonitor.requestDidCancelTask = { (_, _) in didCancelTask.fulfill() }
 
         // When
         let request = session.download(URLRequest.makeHTTPBinRequest()).response { response in
-            expect.fulfill()
+            responseHandler.fulfill()
         }
 
         eventMonitor.requestDidResumeTask = { (_, _) in
             request.cancel()
-            expect.fulfill()
+            didResumeTask.fulfill()
         }
 
         request.resume()
