@@ -544,7 +544,7 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `urlSession(_:taskIsWaitingForConnectivity:)` event.
     open var taskIsWaitingForConnectivity: ((URLSession, URLSessionTask) -> Void)?
 
-    /// Closure that recieves the `urlSession(_:dataTask:didReceive:)` event.
+    /// Closure that receives the `urlSession(_:dataTask:didReceive:)` event.
     open var dataTaskDidReceiveData: ((URLSession, URLSessionDataTask, Data) -> Void)?
 
     /// Closure called on the `urlSession(_:dataTask:willCacheResponse:completionHandler:)` event.
