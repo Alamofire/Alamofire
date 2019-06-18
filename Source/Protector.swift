@@ -57,7 +57,7 @@ final class UnfairLock {
         return closure()
     }
 
-    /// Execute a closure while aquiring the lock.
+    /// Execute a closure while acquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
     func around(_ closure: () -> Void) {
