@@ -143,7 +143,7 @@ extension Protector where T == Request.MutableState {
     /// Attempts to transition to the passed `State`.
     ///
     /// - Parameter state: The `State` to attempt transition to.
-    /// - Returns:         Whether the transtion occured.
+    /// - Returns:         Whether the transtion occurred.
     func attemptToTransitionTo(_ state: Request.State) -> Bool {
         return lock.around {
             guard value.state.canTransitionTo(state) else { return false }
