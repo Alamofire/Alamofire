@@ -258,7 +258,7 @@ encoder.keyEncodingStrategy = `.convertToSnakeCase`
 let parameterEncoder = JSONParameterEncoder(encoder: encoder)
 ```
 
-#### Manual Parameter Encoding of a URLRequest
+#### Manual Parameter Encoding of a `URLRequest`
 
 The `ParameterEncoder` APIs can be used outside of making network requests.
 
@@ -272,38 +272,55 @@ let encodedURLRequest = try URLEncodedFormParameterEncoder.default.encode(parame
 
 ### HTTP Headers
 
-Adding a custom HTTP header to a `Request` is supported directly in the global `request` method. This makes it easy to attach HTTP headers to a `Request` that can be constantly changing.
+Alamofire includes its own `HTTPHeaders` type, an order-preserving and case-insensitive representation of HTTP header name / value pairs. The `HTTPHeader` types encapsulate a single name / value pair and provides a variety of static values for common headers.
+
+Adding custom `HTTPHeaders` to a `Request` is as simple as passing a value to one of the `request` methods:
 
 ```swift
 let headers: HTTPHeaders = [
-    "Authorization": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
+    "Authorization": "Basic VXNlcm5hbWU6UGFzc3dvcmQ=",
     "Accept": "application/json"
 ]
 
-Alamofire.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
+AF.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
     debugPrint(response)
 }
 ```
 
-> For HTTP headers that do not change, it is recommended to set them on the `URLSessionConfiguration` so they are automatically applied to any `URLSessionTask` created by the underlying `URLSession`. For more information, see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
+`HTTPHeaders` can also be constructed from an array of `HTTPHeader` values:
 
-The default Alamofire `SessionManager` provides a default set of headers for every `Request`. These include:
+```swift
+let headers: HTTPHeaders = [
+    .authorization(username: "Username", password: "Password"),
+    .accept("application/json")
+]
 
-- `Accept-Encoding`, which defaults to `gzip;q=1.0, compress;q=0.5`, per [RFC 7230 §4.2.3](https://tools.ietf.org/html/rfc7230#section-4.2.3).
+AF.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
+    debugPrint(response)
+}
+```
+
+> For HTTP headers that do not change, it is recommended to set them on the `URLSessionConfiguration` so they are automatically applied to any `URLSessionTask` created by the underlying `URLSession`. For more information, see the [Session Configurations](AdvancedUsage.md#session-manager) section.
+
+The default Alamofire `Session` provides a default set of headers for every `Request`. These include:
+
+- `Accept-Encoding`, which defaults to `br;q=1.0, gzip;q=0.8, deflate;q=0.6`, per [RFC 7230 §4.2.3](https://tools.ietf.org/html/rfc7230#section-4.2.3).
 - `Accept-Language`, which defaults to up to the top 6 preferred languages on the system, formatted like `en;q=1.0`, per [RFC 7231 §5.3.5](https://tools.ietf.org/html/rfc7231#section-5.3.5).
-- `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
+- `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 13.0.0) Alamofire/5.0.0`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
 
-If you need to customize these headers, a custom `URLSessionConfiguration` should be created, the `defaultHTTPHeaders` property updated and the configuration applied to a new `SessionManager` instance.
+If you need to customize these headers, a custom `URLSessionConfiguration` should be created, the `defaultHTTPHeaders` property updated and the configuration applied to a new `Session` instance. Use `URLSessionConfiguration.af.default` to customize your configuration while keeping Alamofire's default headers.
 
 ### Response Handling
 
-Handling the `Response` of a `Request` made in Alamofire involves chaining a response handler onto the `Request`.
+Alamofire's `DataRequest` and `DownloadRequest` both have a corresponding response type: `DataResponse<T>` and `DownloadResponse<T>`. Both of these types are generic to the type serialized from the response. `UploadRequest`, as a subclass of `DataRequest`, uses the same `DataResponse` type.
+
+Handling the `DataResponse` of a `DataRequest` or `UploadRequest` made in Alamofire involves chaining a response handler onto the `DataRequest`:
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
-    print("Request: \(String(describing: response.request))")   // original url request
-    print("Response: \(String(describing: response.response))") // http url response
-    print("Result: \(response.result)")                         // response serialization result
+AF.request("https://httpbin.org/get").responseJSON { response in
+    print("Request: \(String(describing: response.request))")   // original URLRequest
+    print("Response: \(String(describing: response.response))") // HTTPURLResponse
+    print("Result: \(response.result)")                         // response serialization Result
 
     if let json = response.result.value {
         print("JSON: \(json)") // serialized json response
@@ -315,42 +332,45 @@ Alamofire.request("https://httpbin.org/get").responseJSON { response in
 }
 ```
 
-In the above example, the `responseJSON` handler is appended to the `Request` to be executed once the `Request` is complete. Rather than blocking execution to wait for a response from the server, a [callback](https://en.wikipedia.org/wiki/Callback_%28computer_programming%29) in the form of a closure is specified to handle the response once it's received. The result of a request is only available inside the scope of a response closure. Any execution contingent on the response or data received from the server must be done within a response closure.
+In the above example, the `responseJSON` handler is appended to the `DataRequest` to be executed once the `DataRequest` is complete. Rather than blocking execution to wait for a response from the server, a [callback](https://en.wikipedia.org/wiki/Callback_%28computer_programming%29) in the form of a closure is specified to handle the response once it's received. The result of a request is only available inside the scope of a response closure. Any execution contingent on the response or data received from the server must be done within a response closure.
 
 > Networking in Alamofire is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
 
-Alamofire contains five different response handlers by default including:
+Alamofire contains five different data response handlers by default, including:
 
 ```swift
 // Response Handler - Unserialized Response
 func response(
-    queue: DispatchQueue?,
-    completionHandler: @escaping (DefaultDataResponse) -> Void)
+    queue: DispatchQueue = .main, 
+    completionHandler: @escaping (DataResponse<Data?>) -> Void) 
     -> Self
 
 // Response Data Handler - Serialized into Data
 func responseData(
-    queue: DispatchQueue?,
+    queue: DispatchQueue = .main,
     completionHandler: @escaping (DataResponse<Data>) -> Void)
     -> Self
 
 // Response String Handler - Serialized into String
 func responseString(
-    queue: DispatchQueue?,
-    encoding: String.Encoding?,
-    completionHandler: @escaping (DataResponse<String>) -> Void)
+    queue: DispatchQueue = .main,
+    encoding: String.Encoding? = nil,
+    completionHandler: @escaping (DataResponse<String>)-> Void) 
     -> Self
 
 // Response JSON Handler - Serialized into Any
 func responseJSON(
-    queue: DispatchQueue?,
+    queue: DispatchQueue = .main,
+    options: JSONSerialization.ReadingOptions =.allowFragments,
     completionHandler: @escaping (DataResponse<Any>) -> Void)
     -> Self
 
-// Response PropertyList (plist) Handler - Serialized into Any
-func responsePropertyList(
-    queue: DispatchQueue?,
-    completionHandler: @escaping (DataResponse<Any>) -> Void))
+// Response Decodable Handler - Serialized into Decodable Type
+func responseDecodable<T: Decodable>(
+    of type: T.Type = T.self,
+    queue: DispatchQueue = .main,
+    decoder: DataDecoder = JSONDecoder(),
+    completionHandler: @escaping (DataResponse<T>) -> Void) 
     -> Self
 ```
 

@@ -213,6 +213,14 @@ extension HTTPHeader: CustomStringConvertible {
 }
 
 extension HTTPHeader {
+    /// Returns an `Accept` header.
+    ///
+    /// - Parameter value: The `Accept` value.
+    /// - Returns:         The header.
+    public static func accept(_ value: String) -> HTTPHeader {
+        return HTTPHeader(name: "Accept", value: value)
+    }
+    
     /// Returns an `Accept-Charset` header.
     ///
     /// - Parameter value: The `Accept-Charset` value.
@@ -266,7 +274,7 @@ extension HTTPHeader {
     /// Returns an `Authorization` header.
     ///
     /// Alamofire provides built-in methods to produce `Authorization` headers. For a Basic `Authorization` header use
-    /// `HTTPHeader.authorization(username: password:)`. For a Bearer `Authorization` header, use
+    /// `HTTPHeader.authorization(username:password:)`. For a Bearer `Authorization` header, use
     /// `HTTPHeader.authorization(bearerToken:)`.
     ///
     /// - Parameter value: The `Authorization` value.
@@ -285,7 +293,7 @@ extension HTTPHeader {
 
     /// Returns a `Content-Type` header.
     ///
-    /// All Alamofire `ParameterEncoding`s set the `Content-Type` of the request, so it may not be necessary to manually
+    /// All Alamofire `ParameterEncoding`s and `ParamterEncoder`s set the `Content-Type` of the request, so it may not be necessary to manually
     /// set this value.
     ///
     /// - Parameter value: The `Content-Type` value.
