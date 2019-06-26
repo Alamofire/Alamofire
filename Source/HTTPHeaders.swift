@@ -29,10 +29,10 @@ import Foundation
 public struct HTTPHeaders {
     private var headers: [HTTPHeader] = []
 
-    /// Create an empty instance.
+    /// Creates an empty instance.
     public init() { }
 
-    /// Create an instance from an array of `HTTPHeader`s. Duplicate case-insensitive names are collapsed into the last
+    /// Creates an instance from an array of `HTTPHeader`s. Duplicate case-insensitive names are collapsed into the last
     /// name and value encountered.
     public init(_ headers: [HTTPHeader]) {
         self.init()
@@ -40,7 +40,7 @@ public struct HTTPHeaders {
         headers.forEach { update($0) }
     }
 
-    /// Create an instance from a `[String: String]`. Duplicate case-insensitive names are collapsed into the last name
+    /// Creates an instance from a `[String: String]`. Duplicate case-insensitive names are collapsed into the last name
     /// and value encountered.
     public init(_ dictionary: [String: String]) {
         self.init()

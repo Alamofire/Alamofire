@@ -111,7 +111,7 @@ open class MultipartFormData {
 
     // MARK: - Lifecycle
 
-    /// Create an instance.
+    /// Creates an instance.
     ///
     /// - Parameters:
     ///   - fileManager: `FileManager` to use for file operations, if needed.
@@ -276,7 +276,7 @@ open class MultipartFormData {
     ///
     /// - Parameters:
     ///   - stream:   `InputStream` to encode into the instance.
-    ///   - length:   Content length of the stream.
+    ///   - length:   Length, in bytes, of the stream.
     ///   - name:     Name to associate with the stream content in the `Content-Disposition` HTTP header.
     ///   - fileName: Filename to associate with the stream content in the `Content-Disposition` HTTP header.
     ///   - mimeType: MIME type to associate with the stream content in the `Content-Type` HTTP header.
@@ -301,7 +301,7 @@ open class MultipartFormData {
     ///
     /// - Parameters:
     ///   - stream:  `InputStream` to encode into the instance.
-    ///   - length:  Content length of the stream.
+    ///   - length:  Length, in bytes, of the stream.
     ///   - headers: `HTTPHeaders` for the body part.
     public func append(_ stream: InputStream, withLength length: UInt64, headers: HTTPHeaders) {
         let bodyPart = BodyPart(headers: headers, bodyStream: stream, bodyContentLength: length)

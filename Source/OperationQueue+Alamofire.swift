@@ -25,7 +25,7 @@
 import Foundation
 
 extension OperationQueue {
-    /// Create an instance using the provided parameters.
+    /// Creates an instance using the provided parameters.
     ///
     /// - Parameters:
     ///   - qualityOfService:            `QualityOfService` to be applied to the queue. `.default` by default.

@@ -65,10 +65,10 @@ open class Session {
     /// Internal map between `Request`s and any `URLSessionTasks` that may be in flight for them.
     var requestTaskMap = RequestTaskMap()
 
-    /// Create a `Session` from a `URLSession` and other parameters.
+    /// Creates a `Session` from a `URLSession` and other parameters.
     ///
-    /// - Note: If you create a `delegateQueue` for the passed `URLSession`, you must also use that queue's
-    ///         `underlyingQueue` as the `rootQueue` of this instance.
+    /// - Note: When passing a `URLSession`, you must create the `URLSession` with a specific `delegateQueue` value and
+    ///         pass the `delegateQueue`'s `underlyingQueue` as the `rootQueue` parameter of this initializer.
     ///
     /// - Parameters:
     ///   - session:                  Underlying `URLSession` for this instance.
@@ -126,7 +126,7 @@ open class Session {
         delegate.stateProvider = self
     }
 
-    /// Create a `Session` from a `URLSessionConfiguration`. This intializer lets Alamofire handle the creation of the
+    /// Creates a `Session` from a `URLSessionConfiguration`. This intializer lets Alamofire handle the creation of the
     /// underlying `URLSession` and its `delegateQueue`, and is the recommended intiailizer for most uses.
     ///
     /// - Parameters:
@@ -205,7 +205,7 @@ open class Session {
         }
     }
 
-    /// Create a `DataRequest` from a `URLRequest` created using the passeed components and a `RequestInterceptor`.
+    /// Creates a `DataRequest` from a `URLRequest` created using the passeed components and a `RequestInterceptor`.
     ///
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
@@ -245,7 +245,7 @@ open class Session {
         }
     }
 
-    /// Create a `DataRequest` from a `URLRequest` created using the passed components, `Encodable` parameters, and a
+    /// Creates a `DataRequest` from a `URLRequest` created using the passed components, `Encodable` parameters, and a
     /// `RequestInterceptor`.
     ///
     /// - Parameters:
@@ -272,7 +272,7 @@ open class Session {
         return request(convertible, interceptor: interceptor)
     }
 
-    /// Create a `DataRequest` from a `URLRequestConvertible` value and a `RequestInterceptor`.
+    /// Creates a `DataRequest` from a `URLRequestConvertible` value and a `RequestInterceptor`.
     ///
     /// - Parameters:
     ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
@@ -293,8 +293,8 @@ open class Session {
 
     // MARK: - DownloadRequest
 
-    /// Create a `DownloadRequest` using a `URLRequest` created using the passed components, a `RequestInterceptor`, and
-    /// a `Destination`.
+    /// Creates a `DownloadRequest` using a `URLRequest` created using the passed components, `RequestInterceptor`, and
+    /// `Destination`.
     ///
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
@@ -323,7 +323,7 @@ open class Session {
         return download(convertible, interceptor: interceptor, to: destination)
     }
 
-    /// Create a `DownloadRequest` from a `URLRequest` created using the passed components, `Encodable` parameters, and
+    /// Creates a `DownloadRequest` from a `URLRequest` created using the passed components, `Encodable` parameters, and
     /// a `RequestInterceptor`.
     ///
     /// - Parameters:
@@ -353,7 +353,7 @@ open class Session {
         return download(convertible, interceptor: interceptor, to: destination)
     }
 
-    /// Create a `DownloadRequest` from a `URLRequestConvertible` value, a `RequestInterceptor`, and a `Destination`.
+    /// Creates a `DownloadRequest` from a `URLRequestConvertible` value, a `RequestInterceptor`, and a `Destination`.
     ///
     /// - Parameters:
     ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
@@ -377,11 +377,11 @@ open class Session {
         return request
     }
 
-    /// Create a `DownloadRequest` from the `resumeData` produced from a previously cancelled `DownloadRequest`, as well
-    /// as a `RequestInterceptor`, and a `Destination`.
+    /// Creates a `DownloadRequest` from the `resumeData` produced from a previously cancelled `DownloadRequest`, as
+    /// well as a `RequestInterceptor`, and a `Destination`.
     ///
     /// - Note: If `destination` is not specified, the download will be moved to a temporary location determined by
-    ///         Alamofire.
+    ///         Alamofire. The file will not be deleted until the system purges the temporary files.
     ///
     /// - Note: On some versions of all Apple platforms (iOS 10 - 10.2, macOS 10.12 - 10.12.2, tvOS 10 - 10.1, watchOS 3 - 3.1.1),
     /// `resumeData` is broken on background URL session configurations. There's an underlying bug in the `resumeData`
@@ -437,7 +437,7 @@ open class Session {
 
     // MARK: Data
 
-    /// Create an `UploadRequest` for the given `Data`, `URLRequest` components, and `RequestInterceptor`.
+    /// Creates an `UploadRequest` for the given `Data`, `URLRequest` components, and `RequestInterceptor`.
     ///
     /// - Parameters:
     ///   - data:        The `Data` to upload.
@@ -456,7 +456,7 @@ open class Session {
         return upload(data, with: convertible, interceptor: interceptor)
     }
 
-    /// Create an `UploadRequest` for the given `Data` using the `URLRequestConvertible` value and `RequestInterceptor`.
+    /// Creates an `UploadRequest` for the given `Data` using the `URLRequestConvertible` value and `RequestInterceptor`.
     ///
     /// - Parameters:
     ///   - data:        The `Data` to upload.
@@ -471,7 +471,7 @@ open class Session {
 
     // MARK: File
 
-    /// Create an `UploadRequest` for the file at the given file `URL`, using a `URLRequest` from the provided
+    /// Creates an `UploadRequest` for the file at the given file `URL`, using a `URLRequest` from the provided
     /// components and `RequestInterceptor`.
     ///
     /// - Parameters:
@@ -491,7 +491,7 @@ open class Session {
         return upload(fileURL, with: convertible, interceptor: interceptor)
     }
 
-    /// Create an `UploadRequest` for the file at the given file `URL` using the `URLRequestConvertible` value and
+    /// Creates an `UploadRequest` for the file at the given file `URL` using the `URLRequestConvertible` value and
     /// `RequestInterceptor`.
     ///
     /// - Parameters:
@@ -507,7 +507,7 @@ open class Session {
 
     // MARK: InputStream
 
-    /// Create an `UploadRequest` from the `InputStream` provided using a `URLRequest` from the provided components and
+    /// Creates an `UploadRequest` from the `InputStream` provided using a `URLRequest` from the provided components and
     /// `RequestInterceptor`.
     ///
     /// - Parameters:
@@ -527,7 +527,7 @@ open class Session {
         return upload(stream, with: convertible, interceptor: interceptor)
     }
 
-    /// Create an `UploadRequest` from the provided `InputStream` using the `URLRequestConvertible` value and
+    /// Creates an `UploadRequest` from the provided `InputStream` using the `URLRequestConvertible` value and
     /// `RequestInterceptor`.
     ///
     /// - Parameters:
@@ -543,7 +543,7 @@ open class Session {
 
     // MARK: MultipartFormData
 
-    /// Create an `UploadRequest` for the multipart form data built using a closure and sent using the provided
+    /// Creates an `UploadRequest` for the multipart form data built using a closure and sent using the provided
     /// `URLRequest` components and `RequestInterceptor`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
@@ -588,7 +588,7 @@ open class Session {
                       interceptor: interceptor)
     }
 
-    /// Create an `UploadRequest` using a `MultipartFormData` building closure, the provided `URLRequestConvertible`
+    /// Creates an `UploadRequest` using a `MultipartFormData` building closure, the provided `URLRequestConvertible`
     /// value, and a `RequestInterceptor`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
@@ -627,7 +627,7 @@ open class Session {
                       interceptor: interceptor)
     }
 
-    /// Create an `UploadRequest` for the prebuilt `MultipartFormData` value using the provided `URLRequest` components
+    /// Creates an `UploadRequest` for the prebuilt `MultipartFormData` value using the provided `URLRequest` components
     /// and `RequestInterceptor`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
@@ -668,7 +668,7 @@ open class Session {
         return upload(multipartUpload, interceptor: interceptor)
     }
 
-    /// Create an `UploadRequest` for the prebuilt `MultipartFormData` value using the providing `URLRequestConvertible`
+    /// Creates an `UploadRequest` for the prebuilt `MultipartFormData` value using the providing `URLRequestConvertible`
     /// value and `RequestInterceptor`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative

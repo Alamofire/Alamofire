@@ -1000,15 +1000,6 @@ public class DownloadRequest: Request {
     /// Creates a download file destination closure which uses the default file manager to move the temporary file to a
     /// file URL in the first available directory with the specified search path directory and search path domain mask.
     ///
-    /// - parameter directory: The search path directory. `.documentDirectory` by default.
-    /// - parameter domain:    The search path domain mask. `.userDomainMask` by default.
-    ///
-    /// - returns: A download file destination closure.
-
-
-    /// Creates a download file destination closure which uses the default file manager to move the temporary file to a
-    /// file URL in the first available directory with the specified search path directory and search path domain mask.
-    ///
     /// - Parameters:
     ///   - directory: The search path directory. `.documentDirectory` by default.
     ///   - domain:    The search path domain mask. `.userDomainMask` by default.
@@ -1047,7 +1038,7 @@ public class DownloadRequest: Request {
 
     // MARK: Mutable State
 
-    /// Type containing all mutable state for this type.
+    /// Type containing all mutable state for `DownloadRequest` instances.
     private struct DownloadRequestMutableState {
         /// Possible resume `Data` produced when cancelling the instance.
         var resumeData: Data?
@@ -1055,14 +1046,13 @@ public class DownloadRequest: Request {
         var fileURL: URL?
     }
 
-    /// Protected mutable state specific to this type.
+    /// Protected mutable state specific to `DownloadRequest`.
     private let protectedDownloadMutableState: Protector<DownloadRequestMutableState> = Protector(DownloadRequestMutableState())
 
     /// If the download is resumable and eventually cancelled, this value may be used to resume the download using the
     /// `download(resumingWith data:)` API.
     ///
     /// - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
-    ///
     public var resumeData: Data? { return protectedDownloadMutableState.directValue.resumeData }
     /// If the download is successful, the `URL` where the file was downloaded.
     public var fileURL: URL? { return protectedDownloadMutableState.directValue.fileURL }
@@ -1108,14 +1098,16 @@ public class DownloadRequest: Request {
     override func reset() {
         super.reset()
 
-        protectedDownloadMutableState.write { $0.resumeData = nil }
-        protectedDownloadMutableState.write { $0.fileURL = nil }
+        protectedDownloadMutableState.write {
+            $0.resumeData = nil
+            $0.fileURL = nil
+        }
     }
 
     /// Called when a download has finished.
     ///
     /// - Parameters:
-    ///   - task: `URLSessionTask` that finished the download.
+    ///   - task:   `URLSessionTask` that finished the download.
     ///   - result: `AFResult` of the automatic move to `destination`.
     func didFinishDownloading(using task: URLSessionTask, with result: AFResult<URL>) {
         eventMonitor?.request(self, didFinishDownloadingUsing: task, with: result)
@@ -1129,7 +1121,7 @@ public class DownloadRequest: Request {
     /// Updates the `downloadProgress` using the provided values.
     ///
     /// - Parameters:
-    ///   - bytesWritten: Total bytes written so far.
+    ///   - bytesWritten:              Total bytes written so far.
     ///   - totalBytesExpectedToWrite: Total bytes expected to write.
     func updateDownloadProgress(bytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         downloadProgress.totalUnitCount = totalBytesExpectedToWrite
@@ -1171,7 +1163,7 @@ public class DownloadRequest: Request {
     ///
     /// - Parameter completionHandler: The completion handler that is called when the download has been successfully
     ///                                cancelled. It is not guaranteed to be called on a particular queue, so you may
-    ///                                want use an appropriate queue to perform you work.
+    ///                                want use an appropriate queue to perform your work.
     /// - Returns:                     The instance.
     @discardableResult
     public func cancel(byProducingResumeData completionHandler: @escaping (_ data: Data?) -> Void) -> Self {

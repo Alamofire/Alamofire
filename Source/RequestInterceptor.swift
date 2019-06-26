@@ -118,7 +118,7 @@ public typealias RetryHandler = (Request, Session, Error, _ completion: @escapin
 open class Adapter: RequestInterceptor {
     private let adaptHandler: AdaptHandler
 
-    /// Create an instance using the provided closure.
+    /// Creates an instance using the provided closure.
     ///
     /// - Parameter adaptHandler: `AdaptHandler` closure to be executed when handling request adaptation.
     public init(_ adaptHandler: @escaping AdaptHandler) {
@@ -136,7 +136,7 @@ open class Adapter: RequestInterceptor {
 open class Retrier: RequestInterceptor {
     private let retryHandler: RetryHandler
 
-    /// Create an instance using the provided closure.
+    /// Creates an instance using the provided closure.
     ///
     /// - Parameter retryHandler: `RetryHandler` closure to be executed when handling request retry.
     public init(_ retryHandler: @escaping RetryHandler) {
@@ -162,7 +162,7 @@ open class Interceptor: RequestInterceptor {
     /// All `RequestRetrier`s associated with the instance. These retriers will be run one at a time until one triggers retry.
     public let retriers: [RequestRetrier]
 
-    /// Create an instance from `AdaptHandler` and `RetryHandler` closures.
+    /// Creates an instance from `AdaptHandler` and `RetryHandler` closures.
     ///
     /// - Parameters:
     ///   - adaptHandler: `AdaptHandler` closure to be used.
@@ -172,7 +172,7 @@ open class Interceptor: RequestInterceptor {
         self.retriers = [Retrier(retryHandler)]
     }
 
-    /// Create an instance from `RequestAdapter` and `RequestRetrier` values.
+    /// Creates an instance from `RequestAdapter` and `RequestRetrier` values.
     ///
     /// - Parameters:
     ///   - adapter: `RequestAdapter` value to be used.
@@ -182,7 +182,7 @@ open class Interceptor: RequestInterceptor {
         self.retriers = [retrier]
     }
 
-    /// Create an instance from the arrays of `RequestAdapter` and `RequestRetrier` values.
+    /// Creates an instance from the arrays of `RequestAdapter` and `RequestRetrier` values.
     ///
     /// - Parameters:
     ///   - adapters: `RequestAdapter` values to be used.

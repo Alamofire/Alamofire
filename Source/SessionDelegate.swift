@@ -31,7 +31,7 @@ open class SessionDelegate: NSObject {
     weak var stateProvider: SessionStateProvider?
     var eventMonitor: EventMonitor?
 
-    /// Create an instance from the given `FileManager`.
+    /// Creates an instance from the given `FileManager`.
     ///
     /// - Parameter fileManager: `FileManager` to use for underlying file management, such as moving downloaded files.
     ///                          `.default` by default.
@@ -94,7 +94,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         completionHandler(evaluation.disposition, evaluation.credential)
     }
 
-    /// Evaluate the server trust `URLAuthenticationChallenge` received.
+    /// Evaluates the server trust `URLAuthenticationChallenge` received.
     ///
     /// - Parameter challenge: The `URLAuthenticationChallenge`.
     /// - Returns:             The `ChallengeEvaluation`.
@@ -120,7 +120,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         }
     }
 
-    /// Evaluate the HTTP authentication `URLAuthenticationChallenge` received for `task`.
+    /// Evaluates the HTTP authentication `URLAuthenticationChallenge` received for `task`.
     ///
     /// - Parameters:
     ///   - challenge: The `URLAuthenticationChallenge`.

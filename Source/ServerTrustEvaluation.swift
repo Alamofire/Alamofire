@@ -330,7 +330,7 @@ public final class CompositeTrustEvaluator: ServerTrustEvaluating {
 ///
 /// **THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!**
 public final class DisabledEvaluator: ServerTrustEvaluating {
-    /// Create an instance.
+    /// Creates an instance.
     public init() { }
 
     public func evaluate(_ trust: SecTrust, forHost host: String) throws { }

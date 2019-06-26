@@ -29,7 +29,7 @@ public typealias Parameters = [String: Any]
 
 /// A type used to define how a set of parameters are applied to a `URLRequest`.
 public protocol ParameterEncoding {
-    /// Creates a `URLRequest` by encoding parameters and applying onto the passed request.
+    /// Creates a `URLRequest` by encoding parameters and applying them on the passed request.
     ///
     /// - Parameters:
     ///   - urlRequest: `URLRequestConvertible` value onto which parameters will be encoded.
@@ -135,7 +135,7 @@ public struct URLEncoding: ParameterEncoding {
 
     // MARK: Initialization
 
-    /// Create an instance using the spcified parameters.
+    /// Creates an instance using the specified parameters.
     ///
     /// - Parameters:
     ///   - destination:   `Destination` defining where the encoded query string will be applied. `.methodDependent` by
@@ -178,7 +178,7 @@ public struct URLEncoding: ParameterEncoding {
         return urlRequest
     }
 
-    /// Create a percent-escaped, URL encoded query string components from the given key-value pair recursively.
+    /// Creates a percent-escaped, URL encoded query string components from the given key-value pair recursively.
     ///
     /// - Parameters:
     ///   - key:   Key of the query component.
@@ -210,7 +210,7 @@ public struct URLEncoding: ParameterEncoding {
         return components
     }
 
-    /// Create a percent-escaped string following RFC 3986 for a query string key or value.
+    /// Creates a percent-escaped string following RFC 3986 for a query string key or value.
     ///
     /// - Parameter string: `String` to be percent-escaped.
     /// - Returns:          The percent-escaped `String`.
@@ -248,7 +248,7 @@ public struct JSONEncoding: ParameterEncoding {
 
     // MARK: Initialization
 
-    /// Create an instance using the specified `WritingOptions`.
+    /// Creates an instance using the specified `WritingOptions`.
     ///
     /// - Parameter options: `JSONSerialization.WritingOptions` to use.
     public init(options: JSONSerialization.WritingOptions = []) {

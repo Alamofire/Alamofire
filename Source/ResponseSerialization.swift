@@ -28,19 +28,35 @@ import Foundation
 
 /// The type to which all data response serializers must conform in order to serialize a response.
 public protocol DataResponseSerializerProtocol {
-    /// The type of serialized object to be created by this serializer.
+    /// The type of serialized object to be created.
     associatedtype SerializedObject
 
-    /// The function used to serialize the response data in response handlers.
+    /// Serialize the response `Data` into the provided type..
+    ///
+    /// - Parameters:
+    ///   - request:  `URLRequest` which was used to perform the request, if any.
+    ///   - response: `HTTPURLResponse` received from the server, if any.
+    ///   - data:     `Data` returned from the server, if any.
+    ///   - error:    `Error` produced by Alamofire or the underlying `URLSession` during the request.
+    /// - Returns:    The `SerializedObject`.
+    /// - Throws:     Any `Error` produced during serialization.
     func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> SerializedObject
 }
 
 /// The type to which all download response serializers must conform in order to serialize a response.
 public protocol DownloadResponseSerializerProtocol {
-    /// The type of serialized object to be created by this `DownloadResponseSerializerType`.
+    /// The type of serialized object to be created.
     associatedtype SerializedObject
 
-    /// The function used to serialize the downloaded data in response handlers.
+    /// Serialize the downloaded response `Data` from disk into the provided type..
+    ///
+    /// - Parameters:
+    ///   - request:  `URLRequest` which was used to perform the request, if any.
+    ///   - response: `HTTPURLResponse` received from the server, if any.
+    ///   - fileURL:  File `URL` to which the response data was downloaded.
+    ///   - error:    `Error` produced by Alamofire or the underlying `URLSession` during the request.
+    /// - Returns:    The `SerializedObject`.
+    /// - Throws:     Any `Error` produced during serialization.
     func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> SerializedObject
 }
 
@@ -61,7 +77,7 @@ extension ResponseSerializer {
     public var emptyRequestMethods: Set<HTTPMethod> { return Self.defaultEmptyRequestMethods }
     public var emptyResponseCodes: Set<Int> { return Self.defaultEmptyResponseCodes }
 
-    /// Determine whether the `request` allows empty response bodies, if `request` exists.
+    /// Determines whether the `request` allows empty response bodies, if `request` exists.
     ///
     /// - Parameter request: `URLRequest` to evaluate.
     /// - Returns:           `Bool` representing the outcome of the evaluation, or `nil` if `request` was `nil`.
@@ -71,7 +87,7 @@ extension ResponseSerializer {
                       .map { emptyRequestMethods.contains($0) }
     }
 
-    /// Determine whether the `response` allows empty response bodies, if `response` exists`.
+    /// Determines whether the `response` allows empty response bodies, if `response` exists`.
     ///
     /// - Parameter response: `HTTPURLResponse` to evaluate.
     /// - Returns:            `Bool` representing the outcome of the evaluation, or `nil` if `response` was `nil`.
@@ -80,7 +96,7 @@ extension ResponseSerializer {
                        .map { emptyResponseCodes.contains($0) }
     }
 
-    /// Evaluate whether `request` and `response` allow empty response bodies.
+    /// Determines whether `request` and `response` allow empty response bodies.
     ///
     /// - Parameters:
     ///   - request:  `URLRequest` to evaluate.

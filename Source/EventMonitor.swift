@@ -639,7 +639,7 @@ open class ClosureEventMonitor: EventMonitor {
 
     public let queue: DispatchQueue
 
-    /// Create an instance using the provided queue.
+    /// Creates an instance using the provided queue.
     ///
     /// - Parameter queue: `DispatchQueue` on which events will fired. `.main` by default.
     public init(queue: DispatchQueue = .main) {

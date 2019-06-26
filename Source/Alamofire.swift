@@ -317,7 +317,7 @@ public enum AF {
 
     // MARK: MultipartFormData
 
-    /// Create an `UploadRequest` for the multipart form data built using a closure and sent using the provided
+    /// Creates an `UploadRequest` for the multipart form data built using a closure and sent using the provided
     /// `URLRequest` components and `RequestInterceptor`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
@@ -343,6 +343,7 @@ public enum AF {
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///
     /// - Returns:                   The created `UploadRequest`.
     public static func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
                               usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
@@ -360,7 +361,7 @@ public enum AF {
                                       interceptor: interceptor)
     }
 
-    /// Create an `UploadRequest` using a `MultipartFormData` building closure, the provided `URLRequestConvertible`
+    /// Creates an `UploadRequest` using a `MultipartFormData` building closure, the provided `URLRequestConvertible`
     /// value, and a `RequestInterceptor`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
@@ -384,6 +385,7 @@ public enum AF {
     ///                              written to disk before being uploaded.
     ///   - request:                 `URLRequestConvertible` value to be used to create the `URLRequest`.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///
     /// - Returns:                   The created `UploadRequest`.
     public static func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
                               usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
@@ -397,7 +399,7 @@ public enum AF {
                                       interceptor: interceptor)
     }
 
-    /// Create an `UploadRequest` for the prebuilt `MultipartFormData` value using the provided `URLRequest` components
+    /// Creates an `UploadRequest` for the prebuilt `MultipartFormData` value using the provided `URLRequest` components
     /// and `RequestInterceptor`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
@@ -421,6 +423,7 @@ public enum AF {
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///
     /// - Returns:                   The created `UploadRequest`.
     public static func upload(multipartFormData: MultipartFormData,
                               usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
@@ -436,7 +439,7 @@ public enum AF {
                                       interceptor: interceptor)
     }
 
-    /// Create an `UploadRequest` for the prebuilt `MultipartFormData` value using the providing `URLRequestConvertible`
+    /// Creates an `UploadRequest` for the prebuilt `MultipartFormData` value using the providing `URLRequestConvertible`
     /// value and `RequestInterceptor`.
     ///
     /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
@@ -459,6 +462,7 @@ public enum AF {
     ///                              default.
     ///   - request:                 `URLRequestConvertible` value to be used to create the `URLRequest`.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///
     /// - Returns:                   The created `UploadRequest`.
     public static  func upload(multipartFormData: MultipartFormData,
                                usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,

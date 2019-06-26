@@ -162,7 +162,7 @@ public enum AFError: Error {
 
     /// `Session` which issued the `Request` was deinitialized, most likely because its reference went out of scope.
     case sessionDeinitialized
-    /// `Session` was explicitly invalidated, possibly with the associated `Error`.
+    /// `Session` was explicitly invalidated, possibly with the `Error` produced by the underlying `URLSession`.
     case sessionInvalidated(error: Error?)
     /// `Request` was explcitly cancelled.
     case explicitlyCancelled
