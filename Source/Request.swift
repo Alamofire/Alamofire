@@ -605,11 +605,11 @@ public class Request {
     /// Only the last closure provided is used.
     ///
     /// - Parameters:
-    ///   - queue:   The `DispatchQueue` to execute the closure on. Defaults to `.main`.
+    ///   - queue:   The `DispatchQueue` to execute the closure on. Defaults to `progressQueue`.
     ///   - closure: The code to be executed periodically as data is read from the server.
     /// - Returns:   The `Request`.
     @discardableResult
-    public func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
+    public func downloadProgress(queue: DispatchQueue = progressQueue, closure: @escaping ProgressHandler) -> Self {
         protectedMutableState.write { $0.downloadProgressHandler = (handler: closure, queue: queue) }
 
         return self
@@ -620,11 +620,11 @@ public class Request {
     /// Only the last closure provided is used.
     ///
     /// - Parameters:
-    ///   - queue:   The `DispatchQueue` to execute the closure on. Defaults to `.main`.
+    ///   - queue:   The `DispatchQueue` to execute the closure on. Defaults to `progressQueue`.
     ///   - closure: The closure to be executed periodically as data is sent to the server.
     /// - Returns:   The `Request`.
     @discardableResult
-    public func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
+    public func uploadProgress(queue: DispatchQueue = progressQueue, closure: @escaping ProgressHandler) -> Self {
         protectedMutableState.write { $0.uploadProgressHandler = (handler: closure, queue: queue) }
 
         return self
@@ -1154,3 +1154,7 @@ extension UploadRequest.Uploadable: UploadableConvertible {
 }
 
 public protocol UploadConvertible: UploadableConvertible & URLRequestConvertible { }
+
+/// Default queue for all functions with progress handler
+///
+public let progressQueue = DispatchQueue.main

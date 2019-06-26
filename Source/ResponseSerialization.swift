@@ -104,11 +104,11 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - completionHandler: The code to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
-    public func response(queue: DispatchQueue = .main, completionHandler: @escaping (DataResponse<Data?>) -> Void) -> Self {
+    public func response(queue: DispatchQueue = responseQueue, completionHandler: @escaping (DataResponse<Data?>) -> Void) -> Self {
         appendResponseSerializer {
             let result = AFResult(value: self.data, error: self.error)
             let response = DataResponse(request: self.request,
@@ -129,13 +129,13 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:              The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:              The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data.
     ///   - completionHandler:  The code to be executed once the request has finished.
     /// - Returns:              The request.
     @discardableResult
     public func response<Serializer: DataResponseSerializerProtocol>(
-        queue: DispatchQueue = .main,
+        queue: DispatchQueue = responseQueue,
         responseSerializer: Serializer,
         completionHandler: @escaping (DataResponse<Serializer.SerializedObject>) -> Void)
         -> Self
@@ -201,12 +201,12 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - completionHandler: The code to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
     public func response(
-        queue: DispatchQueue = .main,
+        queue: DispatchQueue = responseQueue,
         completionHandler: @escaping (DownloadResponse<URL?>) -> Void)
         -> Self
     {
@@ -231,14 +231,14 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:              The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:              The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data
     ///                         contained in the destination url.
     ///   - completionHandler:  The code to be executed once the request has finished.
     /// - Returns:              The request.
     @discardableResult
     public func response<T: DownloadResponseSerializerProtocol>(
-        queue: DispatchQueue = .main,
+        queue: DispatchQueue = responseQueue,
         responseSerializer: T,
         completionHandler: @escaping (DownloadResponse<T.SerializedObject>) -> Void)
         -> Self
@@ -308,12 +308,12 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - completionHandler: The code to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
     public func responseData(
-        queue: DispatchQueue = .main,
+        queue: DispatchQueue = responseQueue,
         completionHandler: @escaping (DataResponse<Data>) -> Void)
         -> Self
     {
@@ -363,12 +363,12 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - completionHandler: The code to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
     public func responseData(
-        queue: DispatchQueue = .main,
+        queue: DispatchQueue = responseQueue,
         completionHandler: @escaping (DownloadResponse<Data>) -> Void)
         -> Self
     {
@@ -442,13 +442,13 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - encoding:          The string encoding. Defaults to `nil`, in which case the encoding will be determined from
     ///                        the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - completionHandler: A closure to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
-    public func responseString(queue: DispatchQueue = .main,
+    public func responseString(queue: DispatchQueue = responseQueue,
                                encoding: String.Encoding? = nil,
                                completionHandler: @escaping (DataResponse<String>) -> Void) -> Self {
         return response(queue: queue,
@@ -461,14 +461,14 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - encoding:          The string encoding. Defaults to `nil`, in which case the encoding will be determined from
     ///                        the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - completionHandler: A closure to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
     public func responseString(
-        queue: DispatchQueue = .main,
+        queue: DispatchQueue = responseQueue,
         encoding: String.Encoding? = nil,
         completionHandler: @escaping (DownloadResponse<String>) -> Void)
         -> Self
@@ -532,12 +532,12 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - options:           The JSON serialization reading options. Defaults to `.allowFragments`.
     ///   - completionHandler: A closure to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
-    public func responseJSON(queue: DispatchQueue = .main,
+    public func responseJSON(queue: DispatchQueue = responseQueue,
                              options: JSONSerialization.ReadingOptions = .allowFragments,
                              completionHandler: @escaping (DataResponse<Any>) -> Void) -> Self {
         return response(queue: queue,
@@ -550,13 +550,13 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - options:           The JSON serialization reading options. Defaults to `.allowFragments`.
     ///   - completionHandler: A closure to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
     public func responseJSON(
-        queue: DispatchQueue = .main,
+        queue: DispatchQueue = responseQueue,
         options: JSONSerialization.ReadingOptions = .allowFragments,
         completionHandler: @escaping (DownloadResponse<Any>) -> Void)
         -> Self
@@ -657,13 +657,13 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `responseQueue`.
     ///   - decoder:           The `DataDecoder` to use to decode the response. Defaults to a `JSONDecoder` with default
     ///                        settings.
     ///   - completionHandler: A closure to be executed once the request has finished.
     /// - Returns:             The request.
     @discardableResult
-    public func responseDecodable<T: Decodable>(queue: DispatchQueue = .main,
+    public func responseDecodable<T: Decodable>(queue: DispatchQueue = responseQueue,
                                                 decoder: DataDecoder = JSONDecoder(),
                                                 completionHandler: @escaping (DataResponse<T>) -> Void) -> Self {
         return response(queue: queue,
@@ -671,3 +671,7 @@ extension DataRequest {
                         completionHandler: completionHandler)
     }
 }
+
+/// Default queue for all responses
+///
+public let responseQueue = DispatchQueue.main
