@@ -31,6 +31,7 @@ public protocol ParameterEncoder {
     /// - Parameters:
     ///   - parameters: The `Encodable` parameter value.
     ///   - request:    The `URLRequest` into which to encode the parameters.
+    ///
     /// - Returns:      A `URLRequest` with the result of the encoding.
     /// - Throws:       An `Error` when encoding fails. For Alamofire provided encoders, this will be an instance of
     ///                 `AFError.parameterEncoderFailed` with an associated `ParameterEncoderFailureReason`.
@@ -112,6 +113,7 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
         /// Determines whether the URL-encoded string should be applied to the `URLRequest`'s `url`.
         ///
         /// - Parameter method: The `HTTPMethod`.
+        ///
         /// - Returns:          Whether the URL-encoded string should be applied to a `URL`.
         func encodesParametersInURL(for method: HTTPMethod) -> Bool {
             switch self {
@@ -209,6 +211,7 @@ public final class URLEncodedFormEncoder {
         /// Encodes the given `Bool` as a `String`.
         ///
         /// - Parameter value: The `Bool` to encode.
+        ///
         /// - Returns:         The encoded `String`.
         func encode(_ value: Bool) -> String {
             switch self {
@@ -242,6 +245,7 @@ public final class URLEncodedFormEncoder {
         /// Encodes the date according to the strategy.
         ///
         /// - Parameter string: The `Date` to encode.
+        ///
         /// - Returns:          The encoded `String` or `nil` if the date should be encoded as `Encodable` structure.
         func encode(_ value: Date) throws -> String? {
             switch self {
@@ -290,6 +294,7 @@ public final class URLEncodedFormEncoder {
         /// Encodes the string according to the encoding.
         ///
         /// - Parameter string: The `String` to encode.
+        ///
         /// - Returns:          The encoded `String`.
         func encode(_ string: String) -> String {
             switch self {
@@ -355,6 +360,7 @@ public final class URLEncodedFormEncoder {
     /// Encodes the `value` as a URL form encoded `String`.
     ///
     /// - Parameter value: The `Encodable` value.`
+    ///
     /// - Returns:         The encoded `String`.
     /// - Throws:          An `Error` or `EncodingError` instance if encoding fails.
     public func encode(_ value: Encodable) throws -> String {
@@ -376,7 +382,9 @@ public final class URLEncodedFormEncoder {
     /// `.utf8` data.
     ///
     /// - Parameter value: The `Encodable` value.
+    ///
     /// - Returns:         The encoded `Data`.
+    ///
     /// - Throws:          An `Error` or `EncodingError` instance if encoding fails.
     public func encode(_ value: Encodable) throws -> Data {
         let string: String = try encode(value)

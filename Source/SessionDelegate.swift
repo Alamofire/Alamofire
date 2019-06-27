@@ -97,6 +97,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     /// Evaluates the server trust `URLAuthenticationChallenge` received.
     ///
     /// - Parameter challenge: The `URLAuthenticationChallenge`.
+    ///
     /// - Returns:             The `ChallengeEvaluation`.
     func attemptServerTrustAuthentication(with challenge: URLAuthenticationChallenge) -> ChallengeEvaluation {
         let host = challenge.protectionSpace.host
@@ -125,6 +126,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     /// - Parameters:
     ///   - challenge: The `URLAuthenticationChallenge`.
     ///   - task:      The `URLSessionTask` which received the challenge.
+    ///
     /// - Returns:     The `ChallengeEvaluation`.
     func attemptHTTPAuthentication(for challenge: URLAuthenticationChallenge,
                                    belongingTo task: URLSessionTask) -> ChallengeEvaluation {

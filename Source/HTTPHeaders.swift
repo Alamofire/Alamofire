@@ -109,6 +109,7 @@ public struct HTTPHeaders {
     /// Case-insensitively find a header's value by name.
     ///
     /// - Parameter name: The name of the header to search for, case-insensitively.
+    ///
     /// - Returns:        The value of header, if it exists.
     public func value(for name: String) -> String? {
         guard let index = headers.index(of: name) else { return nil }
@@ -227,6 +228,7 @@ extension HTTPHeader {
     /// Use `HTTPHeader.defaultAcceptLanguage`.
     ///
     /// - Parameter value: The `Accept-Language` value.
+    ///
     /// - Returns:         The header.
     public static func acceptLanguage(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Language", value: value)
@@ -238,6 +240,7 @@ extension HTTPHeader {
     /// `HTTPHeader.defaultAcceptEncoding`.
     ///
     /// - Parameter value: The `Accept-Encoding` value.
+    ///
     /// - Returns:         The header
     public static func acceptEncoding(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Encoding", value: value)
@@ -248,6 +251,7 @@ extension HTTPHeader {
     /// - Parameters:
     ///   - username: The username of the header.
     ///   - password: The password of the header.
+    ///
     /// - Returns:    The header.
     public static func authorization(username: String, password: String) -> HTTPHeader {
         let credential = Data("\(username):\(password)".utf8).base64EncodedString()
@@ -258,6 +262,7 @@ extension HTTPHeader {
     /// Returns a `Bearer` `Authorization` header using the `bearerToken` provided
     ///
     /// - Parameter bearerToken: The bearer token.
+    ///
     /// - Returns:               The header.
     public static func authorization(bearerToken: String) -> HTTPHeader {
         return authorization("Bearer \(bearerToken)")
@@ -270,6 +275,7 @@ extension HTTPHeader {
     /// `HTTPHeader.authorization(bearerToken:)`.
     ///
     /// - Parameter value: The `Authorization` value.
+    ///
     /// - Returns:         The header.
     public static func authorization(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Authorization", value: value)
@@ -278,6 +284,7 @@ extension HTTPHeader {
     /// Returns a `Content-Disposition` header.
     ///
     /// - Parameter value: The `Content-Disposition` value.
+    ///
     /// - Returns:         The header.
     public static func contentDisposition(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Content-Disposition", value: value)
@@ -289,6 +296,7 @@ extension HTTPHeader {
     /// set this value.
     ///
     /// - Parameter value: The `Content-Type` value.
+    ///
     /// - Returns:         The header.
     public static func contentType(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Content-Type", value: value)
@@ -297,6 +305,7 @@ extension HTTPHeader {
     /// Returns a `User-Agent` header.
     ///
     /// - Parameter value: The `User-Agent` value.
+    ///
     /// - Returns:         The header.
     public static func userAgent(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "User-Agent", value: value)

@@ -54,6 +54,7 @@ open class ServerTrustManager {
     /// this method and implement more complex mapping implementations such as wildcards.
     ///
     /// - Parameter host: The host to use when searching for a matching policy.
+    ///
     /// - Returns:        The `ServerTrustEvaluating` value for the given host if found, `nil` otherwise.
     /// - Throws:         `AFError.serverTrustEvaluationFailed` if `allHostsMustBeEvaluated` is `true` and no matching
     ///                   evaluators are found.
@@ -80,6 +81,7 @@ public protocol ServerTrustEvaluating {
     /// - Parameters:
     ///   - trust: The `SecTrust` value to evaluate.
     ///   - host:  The host for which to evaluate the `SecTrust` value.
+    ///
     /// - Returns: A `Bool` indicating whether the evaluator considers the `SecTrust` value valid for `host`.
     func evaluate(_ trust: SecTrust, forHost host: String) throws
     #endif
@@ -347,6 +349,7 @@ public extension Array where Element == ServerTrustEvaluating {
     /// - Parameters:
     ///   - trust: The `SecTrust` value to evaluate.
     ///   - host:  The host for which to evaluate the `SecTrust` value.
+    ///
     /// - Returns: Whether or not the evaluator considers the `SecTrust` value valid for `host`.
     func evaluate(_ trust: SecTrust, forHost host: String) throws {
         for evaluator in self {
@@ -377,6 +380,7 @@ public extension AlamofireExtension where ExtendedType: Bundle {
     /// Returns all pathnames for the resources identified by the provided file extensions.
     ///
     /// - Parameter types: The filename extensions locate.
+    ///
     /// - Returns:         All pathnames for the given filename extensions.
     func paths(forResourcesOfTypes types: [String]) -> [String] {
         return Array(Set(types.flatMap { type.paths(forResourcesOfType: $0, inDirectory: nil) }))
@@ -398,6 +402,7 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
     /// Applies a `SecPolicy` to `self`, throwing if it fails.
     ///
     /// - Parameter policy: The `SecPolicy`.
+    ///
     /// - Returns: `self`, with the policy applied.
     /// - Throws: An `AFError.serverTrustEvaluationFailed` instance with a `.policyApplicationFailed` reason.
     func apply(policy: SecPolicy) throws -> SecTrust {
@@ -493,6 +498,7 @@ public extension AlamofireExtension where ExtendedType == SecPolicy {
     /// Creates a `SecPolicy` instance which will validate server certificates and much match the provided hostname.
     ///
     /// - Parameter hostname: The hostname to validate against.
+    ///
     /// - Returns:            The `SecPolicy`.
     static func hostname(_ hostname: String) -> SecPolicy {
         return SecPolicyCreateSSL(true, hostname as CFString)
@@ -501,6 +507,7 @@ public extension AlamofireExtension where ExtendedType == SecPolicy {
     /// Creates a `SecPolicy` which checks the revocation of certificates.
     ///
     /// - Parameter options: The `RevocationTrustEvaluator.Options` for evaluation.
+    ///
     /// - Returns:           The `SecPolicy`.
     /// - Throws:            An `AFError.serverTrustEvaluationFailed` error with reason `.revocationPolicyCreationFailed`
     ///                      if the policy cannot be created.

@@ -169,6 +169,7 @@ extension DataResponse {
     ///     let withMyError = possibleData.mapError { MyError.error($0) }
     ///
     /// - Parameter transform: A closure that takes the error of the instance.
+    ///
     /// - Returns: A `DataResponse` instance containing the result of the transform.
     public func mapError<E: Error>(_ transform: (Error) -> E) -> DataResponse {
         return DataResponse(request: request,
@@ -363,6 +364,7 @@ extension DownloadResponse {
     ///     let withMyError = possibleData.mapError { MyError.error($0) }
     ///
     /// - Parameter transform: A closure that takes the error of the instance.
+    ///
     /// - Returns: A `DownloadResponse` instance containing the result of the transform.
     public func mapError<E: Error>(_ transform: (Error) -> E) -> DownloadResponse {
         return DownloadResponse(

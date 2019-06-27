@@ -38,6 +38,7 @@ public protocol DataResponseSerializerProtocol {
     ///   - response: `HTTPURLResponse` received from the server, if any.
     ///   - data:     `Data` returned from the server, if any.
     ///   - error:    `Error` produced by Alamofire or the underlying `URLSession` during the request.
+    ///
     /// - Returns:    The `SerializedObject`.
     /// - Throws:     Any `Error` produced during serialization.
     func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> SerializedObject
@@ -55,6 +56,7 @@ public protocol DownloadResponseSerializerProtocol {
     ///   - response: `HTTPURLResponse` received from the server, if any.
     ///   - fileURL:  File `URL` to which the response data was downloaded.
     ///   - error:    `Error` produced by Alamofire or the underlying `URLSession` during the request.
+    ///
     /// - Returns:    The `SerializedObject`.
     /// - Throws:     Any `Error` produced during serialization.
     func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> SerializedObject
@@ -80,6 +82,7 @@ extension ResponseSerializer {
     /// Determines whether the `request` allows empty response bodies, if `request` exists.
     ///
     /// - Parameter request: `URLRequest` to evaluate.
+    ///
     /// - Returns:           `Bool` representing the outcome of the evaluation, or `nil` if `request` was `nil`.
     public func requestAllowsEmptyResponseData(_ request: URLRequest?) -> Bool? {
         return request.flatMap { $0.httpMethod }
@@ -90,6 +93,7 @@ extension ResponseSerializer {
     /// Determines whether the `response` allows empty response bodies, if `response` exists`.
     ///
     /// - Parameter response: `HTTPURLResponse` to evaluate.
+    ///
     /// - Returns:            `Bool` representing the outcome of the evaluation, or `nil` if `response` was `nil`.
     public func responseAllowsEmptyResponseData(_ response: HTTPURLResponse?) -> Bool? {
         return response.flatMap { $0.statusCode }
@@ -101,6 +105,7 @@ extension ResponseSerializer {
     /// - Parameters:
     ///   - request:  `URLRequest` to evaluate.
     ///   - response: `HTTPURLResponse` to evaluate.
+    ///
     /// - Returns:    `true` if `request` or `response` allow empty bodies, `false` otherwise.
     public func emptyResponseAllowed(forRequest request: URLRequest?, response: HTTPURLResponse?) -> Bool {
         return (requestAllowsEmptyResponseData(request) == true) || (responseAllowsEmptyResponseData(response) == true)
@@ -140,6 +145,7 @@ extension DataRequest {
     /// - Parameters:
     ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
     public func response(queue: DispatchQueue = .main, completionHandler: @escaping (DataResponse<Data?>) -> Void) -> Self {
@@ -166,6 +172,7 @@ extension DataRequest {
     ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default
     ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data.
     ///   - completionHandler:  The code to be executed once the request has finished.
+    ///
     /// - Returns:              The request.
     @discardableResult
     public func response<Serializer: DataResponseSerializerProtocol>(
@@ -237,6 +244,7 @@ extension DownloadRequest {
     /// - Parameters:
     ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
     public func response(
@@ -269,6 +277,7 @@ extension DownloadRequest {
     ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data
     ///                         contained in the destination `URL`.
     ///   - completionHandler:  The code to be executed once the request has finished.
+    ///
     /// - Returns:              The request.
     @discardableResult
     public func response<T: DownloadResponseSerializerProtocol>(
@@ -344,6 +353,7 @@ extension DataRequest {
     /// - Parameters:
     ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
     public func responseData(
@@ -398,6 +408,7 @@ extension DownloadRequest {
     /// - Parameters:
     ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
     public func responseData(
@@ -478,6 +489,7 @@ extension DataRequest {
     ///   - encoding:          The string encoding. Defaults to `nil`, in which case the encoding will be determined from
     ///                        the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
     public func responseString(queue: DispatchQueue = .main,
@@ -497,6 +509,7 @@ extension DownloadRequest {
     ///   - encoding:          The string encoding. Defaults to `nil`, in which case the encoding will be determined from
     ///                        the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
     public func responseString(
@@ -566,6 +579,7 @@ extension DataRequest {
     ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - options:           The JSON serialization reading options. `.allowFragments` by default.
     ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
     public func responseJSON(queue: DispatchQueue = .main,
@@ -584,6 +598,7 @@ extension DownloadRequest {
     ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - options:           The JSON serialization reading options. `.allowFragments` by default.
     ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
     public func responseJSON(
@@ -629,6 +644,7 @@ public protocol DataDecoder {
     /// - Parameters:
     ///   - type:  The `Type` to be decoded.
     ///   - data:  The `Data` to be decoded.
+    ///
     /// - Returns: The decoded value of type `D`.
     /// - Throws:  Any error that occurs during decode.
     func decode<D: Decodable>(_ type: D.Type, from data: Data) throws -> D
@@ -696,6 +712,7 @@ extension DataRequest {
     ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - decoder:           `DataDecoder` to use to decode the response. `JSONDecoder()` by default.
     ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
     public func responseDecodable<T: Decodable>(of type: T.Type = T.self,

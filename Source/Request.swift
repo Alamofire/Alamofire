@@ -549,6 +549,7 @@ public class Request {
     /// - Parameters:
     ///   - request: `URLRequest` to use to create the `URLSessionTask`.
     ///   - session: `URLSession` which creates the `URLSessionTask`.
+    ///
     /// - Returns:   The `URLSessionTask` created.
     func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
         fatalError("Subclasses must override.")
@@ -635,6 +636,7 @@ public class Request {
     ///   - username:    The username.
     ///   - password:    The password.
     ///   - persistence: The `URLCredential.Persistence` for the created `URLCredential`. `.forSession` by default.
+    ///
     /// - Returns:       The instance.
     @discardableResult
     public func authenticate(username: String, password: String, persistence: URLCredential.Persistence = .forSession) -> Self {
@@ -646,6 +648,7 @@ public class Request {
     /// Associates the provided credential with the instance.
     ///
     /// - Parameter credential: The `URLCredential`.
+    ///
     /// - Returns:              The instance.
     @discardableResult
     public func authenticate(with credential: URLCredential) -> Self {
@@ -661,6 +664,7 @@ public class Request {
     /// - Parameters:
     ///   - queue:   The `DispatchQueue` to execute the closure on. `.main` by default.
     ///   - closure: The closure to be executed periodically as data is read from the server.
+    ///
     /// - Returns:   The instance.
     @discardableResult
     public func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
@@ -676,6 +680,7 @@ public class Request {
     /// - Parameters:
     ///   - queue:   The `DispatchQueue` to execute the closure on. `.main` by default.
     ///   - closure: The closure to be executed periodically as data is sent to the server.
+    ///
     /// - Returns:   The instance.
     @discardableResult
     public func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
@@ -691,6 +696,7 @@ public class Request {
     /// - Note: Overrides any `RedirectHandler` set on the `Session` which produced this `Request`.
     ///
     /// - Parameter handler: The `RedirectHandler`.
+    ///
     /// - Returns:           The instance.
     @discardableResult
     public func redirect(using handler: RedirectHandler) -> Self {
@@ -707,6 +713,7 @@ public class Request {
     /// Sets the cached response handler for the `Request` which will be used when attempting to cache a response.
     ///
     /// - Parameter handler: The `CachedResponseHandler`.
+    ///
     /// - Returns:           The `Request`.
     @discardableResult
     public func cacheResponse(using handler: CachedResponseHandler) -> Self {
@@ -943,6 +950,7 @@ public class DataRequest: Request {
     /// - Note: If validation fails, subsequent calls to response handlers will have an associated error.
     ///
     /// - Parameter validation: `Validation` closure used to validate the response.
+    ///
     /// - Returns:              The instance.
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
@@ -1139,6 +1147,7 @@ public class DownloadRequest: Request {
     /// - Parameters:
     ///   - data:    `Data` used to resume the download.
     ///   - session: `URLSession` used to create the `URLSessionTask`.
+    ///
     /// - Returns:   The `URLSessionTask` created.
     public func task(forResumeData data: Data, using session: URLSession) -> URLSessionTask {
         return session.downloadTask(withResumeData: data)
@@ -1175,6 +1184,7 @@ public class DownloadRequest: Request {
     /// - Parameter completionHandler: The completion handler that is called when the download has been successfully
     ///                                cancelled. It is not guaranteed to be called on a particular queue, so you may
     ///                                want use an appropriate queue to perform your work.
+    ///
     /// - Returns:                     The instance.
     @discardableResult
     public func cancel(byProducingResumeData completionHandler: @escaping (_ data: Data?) -> Void) -> Self {
@@ -1185,6 +1195,7 @@ public class DownloadRequest: Request {
     /// cancellation is performed without producing resume data.
     ///
     /// - Parameter completionHandler: Optional resume data handler.
+    ///
     /// - Returns:                     The instance.
     private func cancel(optionallyProducingResumeData completionHandler: ((_ resumeData: Data?) -> Void)?) -> Self {
         protectedMutableState.write { (mutableState) in
@@ -1219,6 +1230,7 @@ public class DownloadRequest: Request {
     /// - Note: If validation fails, subsequent calls to response handlers will have an associated error.
     ///
     /// - Parameter validation: `Validation` closure to validate the response.
+    ///
     /// - Returns:              The instance.
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
