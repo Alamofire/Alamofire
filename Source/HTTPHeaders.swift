@@ -212,12 +212,12 @@ extension HTTPHeader: CustomStringConvertible {
     }
 }
 
-public extension HTTPHeader {
+extension HTTPHeader {
     /// Returns an `Accept-Charset` header.
     ///
     /// - Parameter value: The `Accept-Charset` value.
     /// - Returns:         The header.
-    static func acceptCharset(_ value: String) -> HTTPHeader {
+    public static func acceptCharset(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Charset", value: value)
     }
 
@@ -228,7 +228,7 @@ public extension HTTPHeader {
     ///
     /// - Parameter value: The `Accept-Language` value.
     /// - Returns:         The header.
-    static func acceptLanguage(_ value: String) -> HTTPHeader {
+    public static func acceptLanguage(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Language", value: value)
     }
 
@@ -239,7 +239,7 @@ public extension HTTPHeader {
     ///
     /// - Parameter value: The `Accept-Encoding` value.
     /// - Returns:         The header
-    static func acceptEncoding(_ value: String) -> HTTPHeader {
+    public static func acceptEncoding(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Encoding", value: value)
     }
 
@@ -249,7 +249,7 @@ public extension HTTPHeader {
     ///   - username: The username of the header.
     ///   - password: The password of the header.
     /// - Returns:    The header.
-    static func authorization(username: String, password: String) -> HTTPHeader {
+    public static func authorization(username: String, password: String) -> HTTPHeader {
         let credential = Data("\(username):\(password)".utf8).base64EncodedString()
 
         return authorization("Basic \(credential)")
@@ -259,7 +259,7 @@ public extension HTTPHeader {
     ///
     /// - Parameter bearerToken: The bearer token.
     /// - Returns:               The header.
-    static func authorization(bearerToken: String) -> HTTPHeader {
+    public static func authorization(bearerToken: String) -> HTTPHeader {
         return authorization("Bearer \(bearerToken)")
     }
 
@@ -271,7 +271,7 @@ public extension HTTPHeader {
     ///
     /// - Parameter value: The `Authorization` value.
     /// - Returns:         The header.
-    static func authorization(_ value: String) -> HTTPHeader {
+    public static func authorization(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Authorization", value: value)
     }
 
@@ -279,7 +279,7 @@ public extension HTTPHeader {
     ///
     /// - Parameter value: The `Content-Disposition` value.
     /// - Returns:         The header.
-    static func contentDisposition(_ value: String) -> HTTPHeader {
+    public static func contentDisposition(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Content-Disposition", value: value)
     }
 
@@ -290,7 +290,7 @@ public extension HTTPHeader {
     ///
     /// - Parameter value: The `Content-Type` value.
     /// - Returns:         The header.
-    static func contentType(_ value: String) -> HTTPHeader {
+    public static func contentType(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Content-Type", value: value)
     }
 
@@ -298,7 +298,7 @@ public extension HTTPHeader {
     ///
     /// - Parameter value: The `User-Agent` value.
     /// - Returns:         The header.
-    static func userAgent(_ value: String) -> HTTPHeader {
+    public static func userAgent(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "User-Agent", value: value)
     }
 }
@@ -321,12 +321,12 @@ public extension HTTPHeaders {
                                          .defaultUserAgent]
 }
 
-public extension HTTPHeader {
+extension HTTPHeader {
     /// Returns Alamofire's default `Accept-Encoding` header, appropriate for the encodings supporte by particular OS
     /// versions.
     ///
     /// See the [Accept-Encoding HTTP header documentation](https://tools.ietf.org/html/rfc7230#section-4.2.3) .
-    static let defaultAcceptEncoding: HTTPHeader = {
+    public static let defaultAcceptEncoding: HTTPHeader = {
         let encodings: [String]
         if #available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
             encodings = ["br", "gzip", "deflate"]
@@ -341,7 +341,7 @@ public extension HTTPHeader {
     /// `preferredLanguages`.
     ///
     /// See the [Accept-Language HTTP header documentation](https://tools.ietf.org/html/rfc7231#section-5.3.5).
-    static let defaultAcceptLanguage: HTTPHeader = {
+    public static let defaultAcceptLanguage: HTTPHeader = {
         .acceptLanguage(Locale.preferredLanguages.prefix(6).qualityEncoded())
     }()
 
@@ -350,7 +350,7 @@ public extension HTTPHeader {
     /// See the [User-Agent header documentation](https://tools.ietf.org/html/rfc7231#section-5.5.3).
     ///
     /// Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 12.0.0) Alamofire/5.0.0`
-    static let defaultUserAgent: HTTPHeader = {
+    public static let defaultUserAgent: HTTPHeader = {
         let userAgent: String = {
             if let info = Bundle.main.infoDictionary {
                 let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
@@ -411,17 +411,17 @@ extension Collection where Element == String {
 
 // MARK: - System Type Extensions
 
-public extension URLRequest {
+extension URLRequest {
     /// Returns `allHTTPHeaderFields` as `HTTPHeaders`.
-    var headers: HTTPHeaders {
+    public var headers: HTTPHeaders {
         get { return allHTTPHeaderFields.map(HTTPHeaders.init) ?? HTTPHeaders() }
         set { allHTTPHeaderFields = newValue.dictionary }
     }
 }
 
-public extension HTTPURLResponse {
+extension HTTPURLResponse {
     /// Returns `allHeaderFields` as `HTTPHeaders`.
-    var headers: HTTPHeaders {
+    public var headers: HTTPHeaders {
         return (allHeaderFields as? [String: String]).map(HTTPHeaders.init) ?? HTTPHeaders()
     }
 }

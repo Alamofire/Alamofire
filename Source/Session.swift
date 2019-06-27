@@ -126,8 +126,10 @@ open class Session {
         delegate.stateProvider = self
     }
 
-    /// Creates a `Session` from a `URLSessionConfiguration`. This intializer lets Alamofire handle the creation of the
-    /// underlying `URLSession` and its `delegateQueue`, and is the recommended intiailizer for most uses.
+    /// Creates a `Session` from a `URLSessionConfiguration`.
+    ///
+    /// - Note: This intializer lets Alamofire handle the creation of the underlying `URLSession` and its
+    ///         `delegateQueue`, and is the recommended intiailizer for most uses.
     ///
     /// - Parameters:
     ///   - configuration:            `URLSessionConfiguration` to be used to create the underlying `URLSession`. Changes

@@ -846,8 +846,8 @@ public protocol RequestDelegate: AnyObject {
     /// Asynchronously ask the delegate whether a `Request` will be retried.
     ///
     /// - Parameters:
-    ///   - request: `Request` which failed.
-    ///   - error: `Error` which produced the failure.
+    ///   - request:    `Request` which failed.
+    ///   - error:      `Error` which produced the failure.
     ///   - completion: Closure taking the `RetryResult` for evaluation.
     func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
 
@@ -1152,7 +1152,18 @@ public class DownloadRequest: Request {
     /// - Returns: The instance.
     @discardableResult
     public override func cancel() -> Self {
-        return cancel(optionallyProducingResumeData: nil)
+        return cancel(producingResumeData: false)
+    }
+
+    /// Cancels the instance, optionally producing resume data. Once cancelled, a `DownloadRequest` can no longer be
+    /// resumed or suspended.
+    ///
+    /// - Note: If `producingResumeData` is `true`, the `resumeData` property will be populated with any resume data, if
+    ///         available.
+    ///
+    /// - Returns: The instance.
+    public func cancel(producingResumeData shouldProduceResumeData: Bool) -> Self {
+        return cancel(optionallyProducingResumeData: (shouldProduceResumeData) ? { _ in } : nil)
     }
 
     /// Cancels the instance while producing resume data. Once cancelled, a `DownloadRequest` can no longer be resumed

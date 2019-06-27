@@ -35,7 +35,7 @@ public enum AFError: Error {
         case jsonEncodingFailed(error: Error)
     }
 
-    /// Underlying reason the `.parameterEncoderFailed` error occured.
+    /// The underlying reason the `.parameterEncoderFailed` error occured.
     public enum ParameterEncoderFailureReason {
         /// Possible missing components.
         public enum RequiredComponent {
