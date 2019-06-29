@@ -1156,7 +1156,7 @@ public class DownloadRequest: Request {
     /// Cancels the instance. Once cancelled, a `DownloadRequest` can no longer be resumed or suspended.
     ///
     /// - Note: This method will NOT produce resume data. If you wish to cancel and produce resume data, use
-    ///         `cancel(byProducingResumeData:).
+    ///         `cancel(producingResumeData:)` or `cancel(byProducingResumeData:)`.
     ///
     /// - Returns: The instance.
     @discardableResult
@@ -1171,6 +1171,7 @@ public class DownloadRequest: Request {
     ///         available.
     ///
     /// - Returns: The instance.
+    @discardableResult
     public func cancel(producingResumeData shouldProduceResumeData: Bool) -> Self {
         return cancel(optionallyProducingResumeData: (shouldProduceResumeData) ? { _ in } : nil)
     }

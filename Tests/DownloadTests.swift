@@ -484,7 +484,7 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 
 // MARK: -
 
-class DownloadResumeDataTestCase: BaseTestCase {
+final class DownloadResumeDataTestCase: BaseTestCase {
     let urlString = "https://upload.wikimedia.org/wikipedia/commons/6/69/NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg"
 
     func testThatCancelledDownloadRequestDoesNotProduceResumeData() {
@@ -534,7 +534,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.1 {
-                download.cancel { _ in }
+                download.cancel(producingResumeData: true)
                 cancelled = true
             }
         }
@@ -570,7 +570,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.1 {
-                download.cancel { _ in }
+                download.cancel(producingResumeData: true)
                 cancelled = true
             }
         }
@@ -607,7 +607,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
             guard !cancelled else { return }
 
             if progress.fractionCompleted > 0.4 {
-                download.cancel { _ in }
+                download.cancel(producingResumeData: true)
                 cancelled = true
             }
         }
@@ -654,7 +654,7 @@ class DownloadResumeDataTestCase: BaseTestCase {
         progressValues.forEach { XCTAssertGreaterThanOrEqual($0, 0.4) }
     }
 
-    func testThatCancelledDownloadImmediatelyProducesMatchingResumeData() {
+    func testThatCancelledDownloadProducesMatchingResumeData() {
         // Given
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
