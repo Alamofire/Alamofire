@@ -22,21 +22,20 @@
 //  THE SOFTWARE.
 //
 
-import Foundation
-
+/// `Result` that always has an `Error` `Failure` type.
 public typealias AFResult<T> = Result<T, Error>
 
 // MARK: - Internal APIs
 
 extension AFResult {
     /// Returns the associated value if the result is a success, `nil` otherwise.
-    var value: Success? {
+    var success: Success? {
         guard case .success(let value) = self else { return nil }
         return value
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    var error: Failure? {
+    var failure: Failure? {
         guard case .failure(let error) = self else { return nil }
         return error
     }

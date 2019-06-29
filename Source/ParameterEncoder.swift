@@ -31,6 +31,7 @@ public protocol ParameterEncoder {
     /// - Parameters:
     ///   - parameters: The `Encodable` parameter value.
     ///   - request:    The `URLRequest` into which to encode the parameters.
+    ///
     /// - Returns:      A `URLRequest` with the result of the encoding.
     /// - Throws:       An `Error` when encoding fails. For Alamofire provided encoders, this will be an instance of
     ///                 `AFError.parameterEncoderFailed` with an associated `ParameterEncoderFailureReason`.
@@ -66,7 +67,7 @@ open class JSONParameterEncoder: ParameterEncoder {
 
     /// Creates an instance with the provided `JSONEncoder`.
     ///
-    /// - Parameter encoder: The `JSONEncoder`. Defaults to `JSONEncoder()`.
+    /// - Parameter encoder: The `JSONEncoder`. `JSONEncoder()` by default.
     public init(encoder: JSONEncoder = JSONEncoder()) {
         self.encoder = encoder
     }
@@ -97,13 +98,7 @@ open class JSONParameterEncoder: ParameterEncoder {
 /// If no `Content-Type` header is already set on the provided `URLRequest`s, it will be set to
 /// `application/x-www-form-urlencoded; charset=utf-8`.
 ///
-/// There is no published specification for how to encode collection types. By default, the convention of appending
-/// `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for
-/// nested dictionary values (`foo[bar]=baz`) is used. Optionally, `ArrayEncoding` can be used to omit the
-/// square brackets appended to array keys.
-///
-/// `BoolEncoding` can be used to configure how boolean values are encoded. The default behavior is to encode
-/// `true` as 1 and `false` as 0.
+/// Encoding behavior can be customized by passing an instance of `URLEncodedFormEncoder` to the initializer.
 open class URLEncodedFormParameterEncoder: ParameterEncoder {
     /// Defines where the URL-encoded string should be set for each `URLRequest`.
     public enum Destination {
@@ -118,6 +113,7 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
         /// Determines whether the URL-encoded string should be applied to the `URLRequest`'s `url`.
         ///
         /// - Parameter method: The `HTTPMethod`.
+        ///
         /// - Returns:          Whether the URL-encoded string should be applied to a `URL`.
         func encodesParametersInURL(for method: HTTPMethod) -> Bool {
             switch self {
@@ -140,8 +136,8 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
     /// Creates an instance with the provided `URLEncodedFormEncoder` instance and `Destination` value.
     ///
     /// - Parameters:
-    ///   - encoder:     The `URLEncodedFormEncoder`. Defaults to `URLEncodedFormEncoder()`.
-    ///   - destination: The `Destination`. Defaults to `.methodDependent`.
+    ///   - encoder:     The `URLEncodedFormEncoder`. `URLEncodedFormEncoder()` by default.
+    ///   - destination: The `Destination`. `.methodDependent` by default.
     public init(encoder: URLEncodedFormEncoder = URLEncodedFormEncoder(), destination: Destination = .methodDependent) {
         self.encoder = encoder
         self.destination = destination
@@ -200,8 +196,8 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
 /// `DateEncoding` can be used to configure how `Date` values are encoded. By default, the `.deferredToDate`
 /// strategy is used, which formats dates from their structure.
 ///
-/// `SpaceEncoding` can be used to configure how spaces are encoded. Modern encodings use percent replacement (%20),
-/// while older encoding may expect spaces to be replaced with +.
+/// `SpaceEncoding` can be used to configure how spaces are encoded. Modern encodings use percent replacement (`%20`),
+/// while older encodings may expect spaces to be replaced with `+`.
 ///
 /// This type is largely based on Vapor's [`url-encoded-form`](https://github.com/vapor/url-encoded-form) project.
 public final class URLEncodedFormEncoder {
@@ -215,6 +211,7 @@ public final class URLEncodedFormEncoder {
         /// Encodes the given `Bool` as a `String`.
         ///
         /// - Parameter value: The `Bool` to encode.
+        ///
         /// - Returns:         The encoded `String`.
         func encode(_ value: Bool) -> String {
             switch self {
@@ -248,6 +245,7 @@ public final class URLEncodedFormEncoder {
         /// Encodes the date according to the strategy.
         ///
         /// - Parameter string: The `Date` to encode.
+        ///
         /// - Returns:          The encoded `String` or `nil` if the date should be encoded as `Encodable` structure.
         func encode(_ value: Date) throws -> String? {
             switch self {
@@ -274,6 +272,10 @@ public final class URLEncodedFormEncoder {
         /// No brackets are appended to the key and the key is encoded as is.
         case noBrackets
 
+        /// Encodes the key according to the encoding.
+        ///
+        /// - Parameter key: The `key` to encode.
+        /// - Returns:       The encoded key.
         func encode(_ key: String) -> String {
             switch self {
             case .brackets: return "\(key)[]"
@@ -292,6 +294,7 @@ public final class URLEncodedFormEncoder {
         /// Encodes the string according to the encoding.
         ///
         /// - Parameter string: The `String` to encode.
+        ///
         /// - Returns:          The encoded `String`.
         func encode(_ string: String) -> String {
             switch self {
@@ -327,11 +330,11 @@ public final class URLEncodedFormEncoder {
     /// Creates an instance from the supplied parameters.
     ///
     /// - Parameters:
-    ///   - arrayEncoding: The `ArrayEncoding` instance. Defaults to `.brackets`.
-    ///   - boolEncoding:  The `BoolEncoding` instance. Defaults to `.numeric`.
-    ///   - dateEncoding:  The `DateEncoding` instance. Defaults to `.deferredToDate`.
-    ///   - spaceEncoding: The `SpaceEncoding` instance. Defaults to `.percentEscaped`.
-    ///   - allowedCharacters: The `CharacterSet` of allowed (non-escaped) characters. Defaults to `.afURLQueryAllowed`.
+    ///   - arrayEncoding:     The `ArrayEncoding` instance. `.brackets` by default.
+    ///   - boolEncoding:      The `BoolEncoding` instance. `.numeric` by default.
+    ///   - dateEncoding:      The `DateEncoding` instance. `.deferredToDate` by default.
+    ///   - spaceEncoding:     The `SpaceEncoding` instance. `.percentEscaped` by default.
+    ///   - allowedCharacters: The `CharacterSet` of allowed (non-escaped) characters. `.afURLQueryAllowed` by default.
     public init(arrayEncoding: ArrayEncoding = .brackets,
                 boolEncoding: BoolEncoding = .numeric,
                 dateEncoding: DateEncoding = .deferredToDate,
@@ -357,6 +360,7 @@ public final class URLEncodedFormEncoder {
     /// Encodes the `value` as a URL form encoded `String`.
     ///
     /// - Parameter value: The `Encodable` value.`
+    ///
     /// - Returns:         The encoded `String`.
     /// - Throws:          An `Error` or `EncodingError` instance if encoding fails.
     public func encode(_ value: Encodable) throws -> String {
@@ -378,7 +382,9 @@ public final class URLEncodedFormEncoder {
     /// `.utf8` data.
     ///
     /// - Parameter value: The `Encodable` value.
+    ///
     /// - Returns:         The encoded `Data`.
+    ///
     /// - Throws:          An `Error` or `EncodingError` instance if encoding fails.
     public func encode(_ value: Encodable) throws -> Data {
         let string: String = try encode(value)

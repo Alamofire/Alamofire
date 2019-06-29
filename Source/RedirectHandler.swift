@@ -50,19 +50,18 @@ public protocol RedirectHandler {
 /// `Redirector` is a convenience `RedirectHandler` making it easy to follow, not follow, or modify a redirect.
 public struct Redirector {
     /// Defines the behavior of the `Redirector` type.
-    ///
-    /// - follow:      Follows the redirect as defined in the response.
-    /// - doNotFollow: Does not follow the redirect defined in the response.
-    /// - modify:      Modifies the redirect request defined in the response.
     public enum Behavior {
+        /// Follow the redirect as defined in the response.
         case follow
+        /// Do not follow the redirect defined in the response.
         case doNotFollow
+        /// Modify the redirect request defined in the response.
         case modify((URLSessionTask, URLRequest, HTTPURLResponse) -> URLRequest?)
     }
 
-    /// Returns a `Redirector` with a follow `Behavior`.
+    /// Returns a `Redirector` with a `.follow` `Behavior`.
     public static let follow = Redirector(behavior: .follow)
-    /// Returns a `Redirector` with a do not follow `Behavior`.
+    /// Returns a `Redirector` with a `.doNotFollow` `Behavior`.
     public static let doNotFollow = Redirector(behavior: .doNotFollow)
 
     /// The `Behavior` of the `Redirector`.

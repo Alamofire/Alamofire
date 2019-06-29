@@ -29,12 +29,12 @@ import Foundation
 /// An `os_unfair_lock` wrapper.
 final class UnfairLock {
     private let unfairLock: os_unfair_lock_t
-    
+
     init() {
         unfairLock = .allocate(capacity: 1)
         unfairLock.initialize(to: os_unfair_lock())
     }
-    
+
     deinit {
         unfairLock.deinitialize(count: 1)
         unfairLock.deallocate()
@@ -51,6 +51,7 @@ final class UnfairLock {
     /// Executes a closure returning a value while acquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
+    ///
     /// - Returns:           The value the closure generated.
     func around<T>(_ closure: () -> T) -> T {
         lock(); defer { unlock() }
@@ -84,6 +85,7 @@ final class Protector<T> {
     /// Synchronously read or transform the contained value.
     ///
     /// - Parameter closure: The closure to execute.
+    ///
     /// - Returns:           The return value of the closure passed.
     func read<U>(_ closure: (T) -> U) -> U {
         return lock.around { closure(self.value) }
@@ -92,6 +94,7 @@ final class Protector<T> {
     /// Synchronously modify the protected value.
     ///
     /// - Parameter closure: The closure to execute.
+    ///
     /// - Returns:           The modified value.
     @discardableResult
     func write<U>(_ closure: (inout T) -> U) -> U {
@@ -143,6 +146,7 @@ extension Protector where T == Request.MutableState {
     /// Attempts to transition to the passed `State`.
     ///
     /// - Parameter state: The `State` to attempt transition to.
+    ///
     /// - Returns:         Whether the transtion occured.
     func attemptToTransitionTo(_ state: Request.State) -> Bool {
         return lock.around {
@@ -153,7 +157,7 @@ extension Protector where T == Request.MutableState {
             return true
         }
     }
-    
+
     /// Perform a closure while locked with the provided `Request.State`.
     ///
     /// - Parameter perform: The closure to perform while locked.

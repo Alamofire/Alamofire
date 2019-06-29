@@ -27,12 +27,12 @@ import Foundation
 
 /// An order-preserving and case-insensitive representation of HTTP headers.
 public struct HTTPHeaders {
-    private var headers = [HTTPHeader]()
+    private var headers: [HTTPHeader] = []
 
-    /// Create an empty instance.
+    /// Creates an empty instance.
     public init() { }
 
-    /// Create an instance from an array of `HTTPHeader`s. Duplicate case-insensitive names are collapsed into the last
+    /// Creates an instance from an array of `HTTPHeader`s. Duplicate case-insensitive names are collapsed into the last
     /// name and value encountered.
     public init(_ headers: [HTTPHeader]) {
         self.init()
@@ -40,7 +40,7 @@ public struct HTTPHeaders {
         headers.forEach { update($0) }
     }
 
-    /// Create an instance from a `[String: String]`. Duplicate case-insensitive names are collapsed into the last name
+    /// Creates an instance from a `[String: String]`. Duplicate case-insensitive names are collapsed into the last name
     /// and value encountered.
     public init(_ dictionary: [String: String]) {
         self.init()
@@ -109,6 +109,7 @@ public struct HTTPHeaders {
     /// Case-insensitively find a header's value by name.
     ///
     /// - Parameter name: The name of the header to search for, case-insensitively.
+    ///
     /// - Returns:        The value of header, if it exists.
     public func value(for name: String) -> String? {
         guard let index = headers.index(of: name) else { return nil }
@@ -227,6 +228,7 @@ extension HTTPHeader {
     /// Use `HTTPHeader.defaultAcceptLanguage`.
     ///
     /// - Parameter value: The `Accept-Language` value.
+    ///
     /// - Returns:         The header.
     public static func acceptLanguage(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Language", value: value)
@@ -238,6 +240,7 @@ extension HTTPHeader {
     /// `HTTPHeader.defaultAcceptEncoding`.
     ///
     /// - Parameter value: The `Accept-Encoding` value.
+    ///
     /// - Returns:         The header
     public static func acceptEncoding(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept-Encoding", value: value)
@@ -248,6 +251,7 @@ extension HTTPHeader {
     /// - Parameters:
     ///   - username: The username of the header.
     ///   - password: The password of the header.
+    ///
     /// - Returns:    The header.
     public static func authorization(username: String, password: String) -> HTTPHeader {
         let credential = Data("\(username):\(password)".utf8).base64EncodedString()
@@ -258,6 +262,7 @@ extension HTTPHeader {
     /// Returns a `Bearer` `Authorization` header using the `bearerToken` provided
     ///
     /// - Parameter bearerToken: The bearer token.
+    ///
     /// - Returns:               The header.
     public static func authorization(bearerToken: String) -> HTTPHeader {
         return authorization("Bearer \(bearerToken)")
@@ -270,6 +275,7 @@ extension HTTPHeader {
     /// `HTTPHeader.authorization(bearerToken:)`.
     ///
     /// - Parameter value: The `Authorization` value.
+    ///
     /// - Returns:         The header.
     public static func authorization(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Authorization", value: value)
@@ -278,6 +284,7 @@ extension HTTPHeader {
     /// Returns a `Content-Disposition` header.
     ///
     /// - Parameter value: The `Content-Disposition` value.
+    ///
     /// - Returns:         The header.
     public static func contentDisposition(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Content-Disposition", value: value)
@@ -289,6 +296,7 @@ extension HTTPHeader {
     /// set this value.
     ///
     /// - Parameter value: The `Content-Type` value.
+    ///
     /// - Returns:         The header.
     public static func contentType(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Content-Type", value: value)
@@ -297,6 +305,7 @@ extension HTTPHeader {
     /// Returns a `User-Agent` header.
     ///
     /// - Parameter value: The `User-Agent` value.
+    ///
     /// - Returns:         The header.
     public static func userAgent(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "User-Agent", value: value)
@@ -313,12 +322,12 @@ extension Array where Element == HTTPHeader {
 
 // MARK: - Defaults
 
-extension HTTPHeaders {
+public extension HTTPHeaders {
     /// The default set of `HTTPHeaders` used by Alamofire. Includes `Accept-Encoding`, `Accept-Language`, and
     /// `User-Agent`.
-    public static let `default`: HTTPHeaders = [.defaultAcceptEncoding,
-                                                .defaultAcceptLanguage,
-                                                .defaultUserAgent]
+    static let `default`: HTTPHeaders = [.defaultAcceptEncoding,
+                                         .defaultAcceptLanguage,
+                                         .defaultUserAgent]
 }
 
 extension HTTPHeader {
@@ -334,7 +343,7 @@ extension HTTPHeader {
             encodings = ["gzip", "deflate"]
         }
 
-        return .acceptEncoding(encodings.qualityEncoded)
+        return .acceptEncoding(encodings.qualityEncoded())
     }()
 
     /// Returns Alamofire's default `Accept-Language` header, generated by querying `Locale` for the user's
@@ -342,7 +351,7 @@ extension HTTPHeader {
     ///
     /// See the [Accept-Language HTTP header documentation](https://tools.ietf.org/html/rfc7231#section-5.3.5).
     public static let defaultAcceptLanguage: HTTPHeader = {
-        .acceptLanguage(Locale.preferredLanguages.prefix(6).qualityEncoded)
+        .acceptLanguage(Locale.preferredLanguages.prefix(6).qualityEncoded())
     }()
 
     /// Returns Alamofire's default `User-Agent` header.
@@ -401,7 +410,7 @@ extension HTTPHeader {
 }
 
 extension Collection where Element == String {
-    var qualityEncoded: String {
+    func qualityEncoded() -> String {
         return enumerated().map { (index, encoding) in
             let quality = 1.0 - (Double(index) * 0.1)
             return "\(encoding);q=\(quality)"
@@ -426,9 +435,9 @@ extension HTTPURLResponse {
     }
 }
 
-extension URLSessionConfiguration {
+public extension URLSessionConfiguration {
     /// Returns `httpAdditionalHeaders` as `HTTPHeaders`.
-    public var headers: HTTPHeaders {
+    var headers: HTTPHeaders {
         get { return (httpAdditionalHeaders as? [String: String]).map(HTTPHeaders.init) ?? HTTPHeaders() }
         set { httpAdditionalHeaders = newValue.dictionary }
     }
