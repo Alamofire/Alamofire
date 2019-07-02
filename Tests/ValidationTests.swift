@@ -353,7 +353,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
             override func download(
                 _ convertible: URLRequestConvertible,
                 interceptor: RequestInterceptor? = nil,
-                to destination: DownloadRequest.Destination? = nil)
+                to destination: DownloadRequest.Destination?)
                 -> DownloadRequest
             {
                 let request = MockDownloadRequest(downloadable: .request(convertible),
@@ -361,7 +361,8 @@ class ContentTypeValidationTestCase: BaseTestCase {
                                                   serializationQueue: serializationQueue,
                                                   eventMonitor: eventMonitor,
                                                   interceptor: interceptor,
-                                                  delegate: self
+                                                  delegate: self,
+                                                  destination: destination ?? MockDownloadRequest.defaultDestination
                 )
 
                 perform(request)

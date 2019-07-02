@@ -26,7 +26,7 @@ import Foundation
 
 /// Responsible for managing the mapping of `ServerTrustEvaluating` values to given hosts.
 open class ServerTrustManager {
-    /// Determines whether all hosts for this `ServerTrustManager` must be evaluated. Defaults to `true`.
+    /// Determines whether all hosts for this `ServerTrustManager` must be evaluated. `true` by default.
     public let allHostsMustBeEvaluated: Bool
 
     /// The dictionary of policies mapped to a particular host.
@@ -40,8 +40,8 @@ open class ServerTrustManager {
     /// pinning for host3 and disabling evaluation for host4.
     ///
     /// - Parameters:
-    ///   - allHostsMustBeEvaluated: The value determining whether all hosts for this instance must be evaluated.
-    ///                              Defaults to `true`.
+    ///   - allHostsMustBeEvaluated: The value determining whether all hosts for this instance must be evaluated. `true`
+    ///                              by default.
     ///   - evaluators:              A dictionary of evaluators mappend to hosts.
     public init(allHostsMustBeEvaluated: Bool = true, evaluators: [String: ServerTrustEvaluating]) {
         self.allHostsMustBeEvaluated = allHostsMustBeEvaluated
@@ -54,9 +54,10 @@ open class ServerTrustManager {
     /// this method and implement more complex mapping implementations such as wildcards.
     ///
     /// - Parameter host: The host to use when searching for a matching policy.
+    ///
     /// - Returns:        The `ServerTrustEvaluating` value for the given host if found, `nil` otherwise.
-    /// - Throws: `AFError.serverTrustEvaluationFailed` if `allHostsMustBeEvaluated` is `true` and no matching
-    ///           evaluators are found.
+    /// - Throws:         `AFError.serverTrustEvaluationFailed` if `allHostsMustBeEvaluated` is `true` and no matching
+    ///                   evaluators are found.
     open func serverTrustEvaluator(forHost host: String) throws -> ServerTrustEvaluating? {
         guard let evaluator = evaluators[host] else {
             if allHostsMustBeEvaluated {
@@ -80,6 +81,7 @@ public protocol ServerTrustEvaluating {
     /// - Parameters:
     ///   - trust: The `SecTrust` value to evaluate.
     ///   - host:  The host for which to evaluate the `SecTrust` value.
+    ///
     /// - Returns: A `Bool` indicating whether the evaluator considers the `SecTrust` value valid for `host`.
     func evaluate(_ trust: SecTrust, forHost host: String) throws
     #endif
@@ -95,7 +97,7 @@ public final class DefaultTrustEvaluator: ServerTrustEvaluating {
 
     /// Creates a `DefaultTrustEvalutor`.
     ///
-    /// - Parameter validateHost: Determines whether or not the evaluator should validate the host. Defaults to `true`.
+    /// - Parameter validateHost: Determines whether or not the evaluator should validate the host. `true` by default.
     public init(validateHost: Bool = true) {
         self.validateHost = validateHost
     }
@@ -155,11 +157,12 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
     ///
     /// - Parameters:
     ///   - performDefaultValidation:     Determines whether default validation should be performed in addition to
-    ///                                   evaluating the pinned certificates. Defaults to `true`.
+    ///                                   evaluating the pinned certificates. `true` by default.
     ///   - validateHost:                 Determines whether or not the evaluator should validate the host, in addition
     ///                                   to performing the default evaluation, even if `performDefaultValidation` is
-    ///                                   `false`. Defaults to `true`.
-    ///   - options:      The `Options` to use to check the revocation status of the certificate. Defaults to `.any`.
+    ///                                   `false`. `true` by default.
+    ///   - options:                      The `Options` to use to check the revocation status of the certificate. `.any`
+    ///                                   by default.
     public init(performDefaultValidation: Bool = true, validateHost: Bool = true, options: Options = .any) {
         self.performDefaultValidation = performDefaultValidation
         self.validateHost = validateHost
@@ -195,16 +198,16 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
     /// Creates a `PinnedCertificatesTrustEvaluator`.
     ///
     /// - Parameters:
-    ///   - certificates:                 The certificates to use to evalute the trust. Defaults to all `cer`, `crt`,
-    ///                                   `der` certificates in `Bundle.main`.
+    ///   - certificates:                 The certificates to use to evalute the trust. All `cer`, `crt`, and `der`
+    ///                                   certificates in `Bundle.main` by default.
     ///   - acceptSelfSignedCertificates: Adds the provided certificates as anchors for the trust evaulation, allowing
-    ///                                   self-signed certificates to pass. Defaults to `false`. THIS SETTING SHOULD BE
+    ///                                   self-signed certificates to pass. `false` by default. THIS SETTING SHOULD BE
     ///                                   FALSE IN PRODUCTION!
     ///   - performDefaultValidation:     Determines whether default validation should be performed in addition to
-    ///                                   evaluating the pinned certificates. Defaults to `true`.
+    ///                                   evaluating the pinned certificates. `true` by default.
     ///   - validateHost:                 Determines whether or not the evaluator should validate the host, in addition
     ///                                   to performing the default evaluation, even if `performDefaultValidation` is
-    ///                                   `false`. Defaults to `true`.
+    ///                                   `false`. `true` by default.
     public init(certificates: [SecCertificate] = Bundle.main.af.certificates,
                 acceptSelfSignedCertificates: Bool = false,
                 performDefaultValidation: Bool = true,
@@ -263,10 +266,10 @@ public final class PublicKeysTrustEvaluator: ServerTrustEvaluating {
     ///   - keys:                     The `SecKey`s to use to validate public keys. Defaults to the public keys of all
     ///                               certificates included in the main bundle.
     ///   - performDefaultValidation: Determines whether default validation should be performed in addition to
-    ///                               evaluating the pinned certificates. Defaults to `true`.
+    ///                               evaluating the pinned certificates. `true` by default.
     ///   - validateHost:             Determines whether or not the evaluator should validate the host, in addition to
     ///                               performing the default evaluation, even if `performDefaultValidation` is `false`.
-    ///                               Defaults to `true`.
+    ///                               `true` by default.
     public init(keys: [SecKey] = Bundle.main.af.publicKeys,
                 performDefaultValidation: Bool = true,
                 validateHost: Bool = true) {
@@ -327,8 +330,9 @@ public final class CompositeTrustEvaluator: ServerTrustEvaluating {
 
 /// Disables all evaluation which in turn will always consider any server trust as valid.
 ///
-/// THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!
+/// **THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!**
 public final class DisabledEvaluator: ServerTrustEvaluating {
+    /// Creates an instance.
     public init() { }
 
     public func evaluate(_ trust: SecTrust, forHost host: String) throws { }
@@ -345,6 +349,7 @@ public extension Array where Element == ServerTrustEvaluating {
     /// - Parameters:
     ///   - trust: The `SecTrust` value to evaluate.
     ///   - host:  The host for which to evaluate the `SecTrust` value.
+    ///
     /// - Returns: Whether or not the evaluator considers the `SecTrust` value valid for `host`.
     func evaluate(_ trust: SecTrust, forHost host: String) throws {
         for evaluator in self {
@@ -375,6 +380,7 @@ public extension AlamofireExtension where ExtendedType: Bundle {
     /// Returns all pathnames for the resources identified by the provided file extensions.
     ///
     /// - Parameter types: The filename extensions locate.
+    ///
     /// - Returns:         All pathnames for the given filename extensions.
     func paths(forResourcesOfTypes types: [String]) -> [String] {
         return Array(Set(types.flatMap { type.paths(forResourcesOfType: $0, inDirectory: nil) }))
@@ -396,6 +402,7 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
     /// Applies a `SecPolicy` to `self`, throwing if it fails.
     ///
     /// - Parameter policy: The `SecPolicy`.
+    ///
     /// - Returns: `self`, with the policy applied.
     /// - Throws: An `AFError.serverTrustEvaluationFailed` instance with a `.policyApplicationFailed` reason.
     func apply(policy: SecPolicy) throws -> SecTrust {
@@ -491,6 +498,7 @@ public extension AlamofireExtension where ExtendedType == SecPolicy {
     /// Creates a `SecPolicy` instance which will validate server certificates and much match the provided hostname.
     ///
     /// - Parameter hostname: The hostname to validate against.
+    ///
     /// - Returns:            The `SecPolicy`.
     static func hostname(_ hostname: String) -> SecPolicy {
         return SecPolicyCreateSSL(true, hostname as CFString)
@@ -499,6 +507,7 @@ public extension AlamofireExtension where ExtendedType == SecPolicy {
     /// Creates a `SecPolicy` which checks the revocation of certificates.
     ///
     /// - Parameter options: The `RevocationTrustEvaluator.Options` for evaluation.
+    ///
     /// - Returns:           The `SecPolicy`.
     /// - Throws:            An `AFError.serverTrustEvaluationFailed` error with reason `.revocationPolicyCreationFailed`
     ///                      if the policy cannot be created.

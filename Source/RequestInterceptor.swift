@@ -37,10 +37,15 @@ public protocol RequestAdapter {
 
 // MARK: -
 
+/// Outcome of determination whether retry is necessary.
 public enum RetryResult {
+    /// Retry should be attempted immediately.
     case retry
+    /// Retry should be attempted after the associated `TimeInterval`.
     case retryWithDelay(TimeInterval)
+    /// Do not retry.
     case doNotRetry
+    /// Do not retry due to the associated `Error`.
     case doNotRetryWithError(Error)
 }
 
@@ -74,16 +79,17 @@ public protocol RequestRetrier {
     /// to be retried. The one requirement is that the completion closure is called to ensure the request is properly
     /// cleaned up after.
     ///
-    /// - parameter request:    The `Request` that failed due to the encountered error.
-    /// - parameter session:    The `Session` the request was executed on.
-    /// - parameter error:      The `Error` encountered when executing the request.
-    /// - parameter completion: The completion closure to be executed when retry decision has been determined.
+    /// - Parameters:
+    ///   - request:    `Request` that failed due to the provided `Error`.
+    ///   - session:    `Session` that produced the `Request`.
+    ///   - error:      `Error` encountered while executing the `Request`.
+    ///   - completion: Completion closure to be executed when a retry decision has been deterined.
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
 }
 
 // MARK: -
 
-/// A type that intercepts requests to potentially adapt and retry them.
+/// Type that provides both `RequestAdapter` and `RequestRetrier` functionality.
 public protocol RequestInterceptor: RequestAdapter, RequestRetrier {}
 
 extension RequestInterceptor {
@@ -101,14 +107,20 @@ extension RequestInterceptor {
     }
 }
 
+/// `RequestAdapter` closure definition.
 public typealias AdaptHandler = (URLRequest, Session, _ completion: @escaping (AFResult<URLRequest>) -> Void) -> Void
+/// `RequestRetrier` closure definition.
 public typealias RetryHandler = (Request, Session, Error, _ completion: @escaping (RetryResult) -> Void) -> Void
 
 // MARK: -
 
+/// Closure-based `RequestAdapter`.
 open class Adapter: RequestInterceptor {
     private let adaptHandler: AdaptHandler
 
+    /// Creates an instance using the provided closure.
+    ///
+    /// - Parameter adaptHandler: `AdaptHandler` closure to be executed when handling request adaptation.
     public init(_ adaptHandler: @escaping AdaptHandler) {
         self.adaptHandler = adaptHandler
     }
@@ -120,9 +132,13 @@ open class Adapter: RequestInterceptor {
 
 // MARK: -
 
+/// Closure-based `RequestRetrier`.
 open class Retrier: RequestInterceptor {
     private let retryHandler: RetryHandler
 
+    /// Creates an instance using the provided closure.
+    ///
+    /// - Parameter retryHandler: `RetryHandler` closure to be executed when handling request retry.
     public init(_ retryHandler: @escaping RetryHandler) {
         self.retryHandler = retryHandler
     }
@@ -139,20 +155,38 @@ open class Retrier: RequestInterceptor {
 
 // MARK: -
 
+/// `RequestInterceptor` which can use multiple `RequestAdapter` and `RequestRetrier` values.
 open class Interceptor: RequestInterceptor {
+    /// All `RequestAdapter`s associated with the instance. These adapters will be run until one fails.
     public let adapters: [RequestAdapter]
+    /// All `RequestRetrier`s associated with the instance. These retriers will be run one at a time until one triggers retry.
     public let retriers: [RequestRetrier]
 
+    /// Creates an instance from `AdaptHandler` and `RetryHandler` closures.
+    ///
+    /// - Parameters:
+    ///   - adaptHandler: `AdaptHandler` closure to be used.
+    ///   - retryHandler: `RetryHandler` closure to be used.
     public init(adaptHandler: @escaping AdaptHandler, retryHandler: @escaping RetryHandler) {
         self.adapters = [Adapter(adaptHandler)]
         self.retriers = [Retrier(retryHandler)]
     }
 
+    /// Creates an instance from `RequestAdapter` and `RequestRetrier` values.
+    ///
+    /// - Parameters:
+    ///   - adapter: `RequestAdapter` value to be used.
+    ///   - retrier: `RequestRetrier` value to be used.
     public init(adapter: RequestAdapter, retrier: RequestRetrier) {
         self.adapters = [adapter]
         self.retriers = [retrier]
     }
 
+    /// Creates an instance from the arrays of `RequestAdapter` and `RequestRetrier` values.
+    ///
+    /// - Parameters:
+    ///   - adapters: `RequestAdapter` values to be used.
+    ///   - retriers: `RequestRetrier` values to be used.
     public init(adapters: [RequestAdapter] = [], retriers: [RequestRetrier] = []) {
         self.adapters = adapters
         self.retriers = retriers

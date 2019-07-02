@@ -45,10 +45,10 @@ public struct DataResponse<Value> {
     public let result: AFResult<Value>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
-    public var value: Value? { return result.value }
+    public var value: Value? { return result.success }
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    public var error: Error? { return result.error }
+    public var error: Error? { return result.failure }
 
     /// Creates a `DataResponse` instance with the specified parameters derviced from the response serialization.
     ///
@@ -169,6 +169,7 @@ extension DataResponse {
     ///     let withMyError = possibleData.mapError { MyError.error($0) }
     ///
     /// - Parameter transform: A closure that takes the error of the instance.
+    ///
     /// - Returns: A `DataResponse` instance containing the result of the transform.
     public func mapError<E: Error>(_ transform: (Error) -> E) -> DataResponse {
         return DataResponse(request: request,
@@ -227,10 +228,10 @@ public struct DownloadResponse<Value> {
     public let result: AFResult<Value>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
-    public var value: Value? { return result.value }
+    public var value: Value? { return result.success }
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    public var error: Error? { return result.error }
+    public var error: Error? { return result.failure }
 
     /// Creates a `DownloadResponse` instance with the specified parameters derived from response serialization.
     ///
@@ -363,6 +364,7 @@ extension DownloadResponse {
     ///     let withMyError = possibleData.mapError { MyError.error($0) }
     ///
     /// - Parameter transform: A closure that takes the error of the instance.
+    ///
     /// - Returns: A `DownloadResponse` instance containing the result of the transform.
     public func mapError<E: Error>(_ transform: (Error) -> E) -> DownloadResponse {
         return DownloadResponse(

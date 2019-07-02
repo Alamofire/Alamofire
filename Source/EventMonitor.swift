@@ -27,7 +27,7 @@ import Foundation
 /// Protocol outlining the lifetime events inside Alamofire. It includes both events received from the various
 /// `URLSession` delegate protocols as well as various events from the lifetime of `Request` and its subclasses.
 public protocol EventMonitor {
-    /// The `DispatchQueue` onto which Alamofire's root `CompositeEventMonitor` will dispatch events. Defaults to `.main`.
+    /// The `DispatchQueue` onto which Alamofire's root `CompositeEventMonitor` will dispatch events. `.main` by default.
     var queue: DispatchQueue { get }
 
     // MARK: - URLSession Events
@@ -196,7 +196,7 @@ public protocol EventMonitor {
 }
 
 extension EventMonitor {
-    /// The default queue on which `CompositeEventMonitor`s will call the `EventMonitor` methods. Defaults to `.main`.
+    /// The default queue on which `CompositeEventMonitor`s will call the `EventMonitor` methods. `.main` by default.
     public var queue: DispatchQueue { return .main }
 
     // MARK: Default Implementations
@@ -639,6 +639,9 @@ open class ClosureEventMonitor: EventMonitor {
 
     public let queue: DispatchQueue
 
+    /// Creates an instance using the provided queue.
+    ///
+    /// - Parameter queue: `DispatchQueue` on which events will fired. `.main` by default.
     public init(queue: DispatchQueue = .main) {
         self.queue = queue
     }

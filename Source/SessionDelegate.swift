@@ -24,6 +24,23 @@
 
 import Foundation
 
+/// Class which implements the various `URLSessionDelegate` methods to connect various Alamofire features.
+open class SessionDelegate: NSObject {
+    private let fileManager: FileManager
+
+    weak var stateProvider: SessionStateProvider?
+    var eventMonitor: EventMonitor?
+
+    /// Creates an instance from the given `FileManager`.
+    ///
+    /// - Parameter fileManager: `FileManager` to use for underlying file management, such as moving downloaded files.
+    ///                          `.default` by default.
+    public init(fileManager: FileManager = .default) {
+        self.fileManager = fileManager
+    }
+}
+
+/// Type which provides various `Session` state values.
 protocol SessionStateProvider: AnyObject {
     var serverTrustManager: ServerTrustManager? { get }
     var redirectHandler: RedirectHandler? { get }
@@ -36,16 +53,7 @@ protocol SessionStateProvider: AnyObject {
     func cancelRequestsForSessionInvalidation(with error: Error?)
 }
 
-open class SessionDelegate: NSObject {
-    private let fileManager: FileManager
-
-    weak var stateProvider: SessionStateProvider?
-    var eventMonitor: EventMonitor?
-
-    public init(fileManager: FileManager = .default) {
-        self.fileManager = fileManager
-    }
-}
+// MARK: URLSessionDelegate
 
 extension SessionDelegate: URLSessionDelegate {
     open func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
@@ -54,6 +62,8 @@ extension SessionDelegate: URLSessionDelegate {
         stateProvider?.cancelRequestsForSessionInvalidation(with: error)
     }
 }
+
+// MARK: URLSessionTaskDelegate
 
 extension SessionDelegate: URLSessionTaskDelegate {
     /// Result of a `URLAuthenticationChallenge` evaluation.
@@ -72,6 +82,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest:
             evaluation = attemptHTTPAuthentication(for: challenge, belongingTo: task)
         // case NSURLAuthenticationMethodClientCertificate:
+        // Alamofire doesn't currently support client certificate validation.
         default:
             evaluation = (.performDefaultHandling, nil, nil)
         }
@@ -83,6 +94,11 @@ extension SessionDelegate: URLSessionTaskDelegate {
         completionHandler(evaluation.disposition, evaluation.credential)
     }
 
+    /// Evaluates the server trust `URLAuthenticationChallenge` received.
+    ///
+    /// - Parameter challenge: The `URLAuthenticationChallenge`.
+    ///
+    /// - Returns:             The `ChallengeEvaluation`.
     func attemptServerTrustAuthentication(with challenge: URLAuthenticationChallenge) -> ChallengeEvaluation {
         let host = challenge.protectionSpace.host
 
@@ -105,6 +121,13 @@ extension SessionDelegate: URLSessionTaskDelegate {
         }
     }
 
+    /// Evaluates the HTTP authentication `URLAuthenticationChallenge` received for `task`.
+    ///
+    /// - Parameters:
+    ///   - challenge: The `URLAuthenticationChallenge`.
+    ///   - task:      The `URLSessionTask` which received the challenge.
+    ///
+    /// - Returns:     The `ChallengeEvaluation`.
     func attemptHTTPAuthentication(for challenge: URLAuthenticationChallenge,
                                    belongingTo task: URLSessionTask) -> ChallengeEvaluation {
         guard challenge.previousFailureCount == 0 else {
@@ -181,6 +204,8 @@ extension SessionDelegate: URLSessionTaskDelegate {
     }
 }
 
+// MARK: URLSessionDataDelegate
+
 extension SessionDelegate: URLSessionDataDelegate {
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
@@ -205,6 +230,8 @@ extension SessionDelegate: URLSessionDataDelegate {
         }
     }
 }
+
+// MARK: URLSessionDownloadDelegate
 
 extension SessionDelegate: URLSessionDownloadDelegate {
     open func urlSession(_ session: URLSession,
@@ -254,7 +281,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
             fatalError("URLSessionDownloadTask finished downloading with no response.")
         }
 
-        let (destination, options) = (request.destination ?? DownloadRequest.defaultDestination)(location, response)
+        let (destination, options) = (request.destination)(location, response)
 
         eventMonitor?.request(request, didCreateDestinationURL: destination)
 
