@@ -798,7 +798,7 @@ open class Session {
     func performSetupOperations(for request: Request, convertible: URLRequestConvertible) {
         do {
             let initialRequest = try convertible.asURLRequest()
-            rootQueue.async { request.didCreateURLRequest(initialRequest) }
+            rootQueue.async { request.didCreateInitialURLRequest(initialRequest) }
 
             guard !request.isCancelled else { return }
 
@@ -827,6 +827,8 @@ open class Session {
     // MARK: - Task Handling
 
     func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
+        request.didCreateURLRequest(urlRequest)
+
         guard !request.isCancelled else { return }
 
         let task = request.task(for: urlRequest, using: session)

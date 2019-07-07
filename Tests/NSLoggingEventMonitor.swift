@@ -100,8 +100,8 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("URLSession: \(session), downloadTask: \(downloadTask), didFinishDownloadingTo: \(location)")
     }
 
-    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
-        NSLog("Request: \(request) didCreateURLRequest: \(urlRequest)")
+    public func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {
+        NSLog("Request: \(request) didCreateInitialURLRequest: \(urlRequest)")
     }
 
     public func request(_ request: Request, didFailToCreateURLRequestWithError error: Error) {
@@ -114,6 +114,10 @@ public final class NSLoggingEventMonitor: EventMonitor {
 
     public func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error) {
         NSLog("Request: \(request) didFailToAdaptURLRequest \(initialRequest) withError \(error)")
+    }
+
+    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
+        NSLog("Request: \(request) didCreateURLRequest: \(urlRequest)")
     }
 
     public func request(_ request: Request, didCreateTask task: URLSessionTask) {

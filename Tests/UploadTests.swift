@@ -656,6 +656,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let session = Session(eventMonitors: [eventMonitor])
 
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
+        let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
         let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
@@ -668,6 +669,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let responseHandler = expectation(description: "responseHandler should fire")
 
         eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
+        eventMonitor.requestDidCreateInitialURLRequest = { (_, _) in didCreateInitialURLRequest.fulfill() }
         eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
         eventMonitor.requestDidGatherMetrics = { (_, _) in didGatherMetrics.fulfill() }
@@ -696,6 +698,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
 
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
+        let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
         let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
@@ -710,6 +713,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let responseHandler = expectation(description: "responseHandler should fire")
 
         eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
+        eventMonitor.requestDidCreateInitialURLRequest = { (_, _) in didCreateInitialURLRequest.fulfill() }
         eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
         eventMonitor.requestDidGatherMetrics = { (_, _) in didGatherMetrics.fulfill() }
