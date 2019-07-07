@@ -117,7 +117,7 @@ public protocol EventMonitor {
     /// Event called when a `Request` fails due to an error created by Alamofire. e.g. When certificat pinning fails.
     func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error)
 
-    /// Event called when a `Request`'s task completes, possibly with an error. A `Request` may recieve this event
+    /// Event called when a `Request`'s task completes, possibly with an error. A `Request` may receive this event
     /// multiple times if it is retried.
     func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?)
 
@@ -544,7 +544,7 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `urlSession(_:taskIsWaitingForConnectivity:)` event.
     open var taskIsWaitingForConnectivity: ((URLSession, URLSessionTask) -> Void)?
 
-    /// Closure that recieves the `urlSession(_:dataTask:didReceive:)` event.
+    /// Closure that receives the `urlSession(_:dataTask:didReceive:)` event.
     open var dataTaskDidReceiveData: ((URLSession, URLSessionDataTask, Data) -> Void)?
 
     /// Closure called on the `urlSession(_:dataTask:willCacheResponse:completionHandler:)` event.

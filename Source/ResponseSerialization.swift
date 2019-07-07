@@ -367,7 +367,7 @@ extension DataRequest {
     }
 }
 
-/// A `ResponseSerializer` that performs minimal reponse checking and returns any response data as-is. By default, a
+/// A `ResponseSerializer` that performs minimal response checking and returns any response data as-is. By default, a
 /// request returning `nil` or no data is considered an error. However, if the response is has a status code valid for
 /// empty responses (`204`, `205`), then an empty `Data` value is returned.
 public final class DataResponseSerializer: ResponseSerializer {

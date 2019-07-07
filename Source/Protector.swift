@@ -58,7 +58,7 @@ final class UnfairLock {
         return closure()
     }
 
-    /// Execute a closure while aquiring the lock.
+    /// Execute a closure while acquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
     func around(_ closure: () -> Void) {
@@ -147,7 +147,7 @@ extension Protector where T == Request.MutableState {
     ///
     /// - Parameter state: The `State` to attempt transition to.
     ///
-    /// - Returns:         Whether the transtion occured.
+    /// - Returns:         Whether the transtion occurred.
     func attemptToTransitionTo(_ state: Request.State) -> Bool {
         return lock.around {
             guard value.state.canTransitionTo(state) else { return false }

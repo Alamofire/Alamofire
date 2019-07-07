@@ -936,11 +936,11 @@ public class DataRequest: Request {
 
     /// Called to updated the `downloadProgress` of the instance.
     func updateDownloadProgress() {
-        let totalBytesRecieved = Int64(data?.count ?? 0)
+        let totalBytesReceived = Int64(data?.count ?? 0)
         let totalBytesExpected = task?.response?.expectedContentLength ?? NSURLSessionTransferSizeUnknown
 
         downloadProgress.totalUnitCount = totalBytesExpected
-        downloadProgress.completedUnitCount = totalBytesRecieved
+        downloadProgress.completedUnitCount = totalBytesReceived
 
         downloadProgressHandler?.queue.async { self.downloadProgressHandler?.handler(self.downloadProgress) }
     }

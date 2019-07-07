@@ -35,7 +35,7 @@ public enum AFError: Error {
         case jsonEncodingFailed(error: Error)
     }
 
-    /// The underlying reason the `.parameterEncoderFailed` error occured.
+    /// The underlying reason the `.parameterEncoderFailed` error occurred.
     public enum ParameterEncoderFailureReason {
         /// Possible missing components.
         public enum RequiredComponent {
@@ -115,7 +115,7 @@ public enum AFError: Error {
         case responseSerializerAddedAfterRequestFinished
     }
 
-    /// Underlying reason a server trust evaluation error occured.
+    /// Underlying reason a server trust evaluation error occurred.
     public enum ServerTrustFailureReason {
         /// The output of a server trust evaluation.
         public struct Output {

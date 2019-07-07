@@ -179,7 +179,7 @@ Released on 2018-12-06. All issues associated with this milestone can be found u
   - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2629](https://github.com/Alamofire/Alamofire/pull/2629).
 - Support for `Encodable` parameter types with `JSONParameterEncoder` and `URLEncodedFormParameterEncoder`.
   - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2637](https://github.com/Alamofire/Alamofire/pull/2637).
-- Customizable empty reponse handling in response serializers.
+- Customizable empty response handling in response serializers.
   - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2639](https://github.com/Alamofire/Alamofire/pull/2639).
 - `EventMonitor` protocol, to tap in to internal Alamofire lifetime events.
   - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
