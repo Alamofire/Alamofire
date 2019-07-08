@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-import Alamofire
+@testable import Alamofire
 import Foundation
 import XCTest
 
@@ -435,7 +435,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
         AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.flatMap { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the flatMap function
-                return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
+                return .success(((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid")
             }
 
             expectation.fulfill()
@@ -463,8 +463,10 @@ class ResponseFlatMapTestCase: BaseTestCase {
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp.flatMap { json in
-                throw TransformError()
+            response = resp.flatMap { _ in
+                .init {
+                    throw TransformError()
+                }
             }
 
             expectation.fulfill()
@@ -496,7 +498,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp.flatMap { _ in "ignored" }
+            response = resp.flatMap { _ in .success("ignored") }
             expectation.fulfill()
         }
 
@@ -520,7 +522,7 @@ enum TestError: Error {
 enum TransformationError: Error {
     case error
 
-    func alwaysFails() throws -> TestError {
+    func alwaysFails<T>() throws -> T {
         throw TransformationError.error
     }
 }
@@ -590,7 +592,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
 
         // When
         AF.request(urlString).responseData { resp in
-            response = resp.flatMapError { TestError.error(error: $0) }
+            response = resp.flatMapError { .failure(TestError.error(error: $0)) }
             expectation.fulfill()
         }
 
@@ -613,7 +615,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
 
         // When
         AF.request(urlString).responseData { resp in
-            response = resp.flatMapError { _ in try TransformationError.error.alwaysFails() }
+            response = resp.flatMapError { _ in .init{ try TransformationError.error.alwaysFails() } }
             expectation.fulfill()
         }
 
@@ -643,7 +645,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
 
         // When
         AF.request(urlString).responseData { resp in
-            response = resp.flatMapError { TestError.error(error: $0) }
+            response = resp.flatMapError { .failure(TestError.error(error: $0)) }
             expectation.fulfill()
         }
 

@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-import Alamofire
+@testable import Alamofire
 import Foundation
 
 public final class NSLoggingEventMonitor: EventMonitor {
@@ -196,7 +196,7 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("Request: \(request), didProvideInputStream: \(stream)")
     }
 
-    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: AFResult<URL>) {
+    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, Error>) {
         NSLog("Request: \(request), didFinishDownloadingUsing: \(task), withResult: \(result)")
     }
 

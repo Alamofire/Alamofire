@@ -1,5 +1,5 @@
 //
-//  AFResult+Alamofire.swift
+//  Result+Alamofire.swift
 //
 //  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -22,26 +22,47 @@
 //  THE SOFTWARE.
 //
 
-import Alamofire
-import Foundation
+// MARK: - Internal APIs
 
-extension AFResult {
-    var isSuccess: Bool {
-        guard case .success = self else { return false }
-        return true
-    }
-
-    var isFailure: Bool {
-        return !isSuccess
-    }
-
+extension Result {
+    /// Returns the associated value if the result is a success, `nil` otherwise.
     var value: Success? {
         guard case .success(let value) = self else { return nil }
         return value
     }
 
+    /// Returns the associated error value if the result is a failure, `nil` otherwise.
     var error: Failure? {
         guard case .failure(let error) = self else { return nil }
         return error
+    }
+
+    /// Returns `true` if the result is a success.
+    var isSuccess: Bool {
+        switch self {
+        case .success: return true
+        case .failure: return false
+        }
+    }
+
+    /// Returns `true` if the result is a failure.
+    var isFailure: Bool {
+        switch self {
+        case .failure: return true
+        case .success: return false
+        }
+    }
+
+    /// Initializes a `Result` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
+    ///
+    /// - Parameters:
+    ///   - value: A value.
+    ///   - error: An `Error`.
+    init(value: @autoclosure () -> Success, error: Failure?) {
+        if let error = error {
+            self = .failure(error)
+        } else {
+            self = .success(value())
+        }
     }
 }

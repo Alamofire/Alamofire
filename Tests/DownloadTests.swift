@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-import Alamofire
+@testable import Alamofire
 import Foundation
 import XCTest
 
@@ -765,7 +765,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.flatMap { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the map function
-                return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
+                return .success(((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid")
             }
 
             expectation.fulfill()
@@ -795,7 +795,9 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.flatMap { json in
-                throw TransformError()
+                .init(catching: {
+                    throw TransformError()
+                })
             }
 
             expectation.fulfill()
@@ -826,7 +828,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
 
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp.flatMap { _ in "ignored" }
+            response = resp.flatMap { _ in .success("ignored") }
             expectation.fulfill()
         }
 
@@ -912,7 +914,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
 
         // When
         AF.download(urlString).responseData { resp in
-            response = resp.flatMapError { TestError.error(error: $0) }
+            response = resp.flatMapError { .failure(TestError.error(error: $0)) }
             expectation.fulfill()
         }
 
@@ -937,7 +939,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
 
         // When
         AF.download(urlString).responseData { resp in
-            response = resp.flatMapError { _ in try TransformationError.error.alwaysFails() }
+            response = resp.flatMapError { _ in .init { try TransformationError.error.alwaysFails() } }
             expectation.fulfill()
         }
 
@@ -969,7 +971,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
 
         // When
         AF.download(urlString).responseData { resp in
-            response = resp.flatMapError { TestError.error(error: $0) }
+            response = resp.flatMapError { .failure(TestError.error(error: $0)) }
             expectation.fulfill()
         }
 

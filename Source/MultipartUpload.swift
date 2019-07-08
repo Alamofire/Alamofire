@@ -26,7 +26,7 @@ import Foundation
 
 /// Internal type which encapsulates a `MultipartFormData` upload.
 final class MultipartUpload {
-    lazy var result = AFResult { try build() }
+    lazy var result = Result { try build() }
 
     let isInBackgroundSession: Bool
     let multipartFormData: MultipartFormData

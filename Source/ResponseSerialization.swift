@@ -150,7 +150,7 @@ extension DataRequest {
     @discardableResult
     public func response(queue: DispatchQueue = .main, completionHandler: @escaping (DataResponse<Data?>) -> Void) -> Self {
         appendResponseSerializer {
-            let result = AFResult(value: self.data, error: self.error)
+            let result = Result(value: self.data, error: self.error)
             let response = DataResponse(request: self.request,
                                         response: self.response,
                                         data: self.data,
@@ -183,7 +183,7 @@ extension DataRequest {
     {
         appendResponseSerializer {
             let start = CFAbsoluteTimeGetCurrent()
-            let result = AFResult { try responseSerializer.serialize(request: self.request,
+            let result = Result { try responseSerializer.serialize(request: self.request,
                                                                    response: self.response,
                                                                    data: self.data,
                                                                    error: self.error) }
@@ -198,7 +198,7 @@ extension DataRequest {
 
             self.eventMonitor?.request(self, didParseResponse: response)
 
-            guard let serializerError = result.failure, let delegate = self.delegate else {
+            guard let serializerError = result.error, let delegate = self.delegate else {
                 self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
                 return
             }
@@ -217,7 +217,7 @@ extension DataRequest {
                     didComplete = { completionHandler(response) }
 
                 case .doNotRetryWithError(let retryError):
-                    let result = AFResult<Serializer.SerializedObject>.failure(retryError)
+                    let result = Result<Serializer.SerializedObject, Error>.failure(retryError)
 
                     let response = DataResponse(request: self.request,
                                                 response: self.response,
@@ -253,7 +253,7 @@ extension DownloadRequest {
         -> Self
     {
         appendResponseSerializer {
-            let result = AFResult(value: self.fileURL , error: self.error)
+            let result = Result(value: self.fileURL , error: self.error)
             let response = DownloadResponse(request: self.request,
                                             response: self.response,
                                             fileURL: self.fileURL,
@@ -288,7 +288,7 @@ extension DownloadRequest {
     {
         appendResponseSerializer {
             let start = CFAbsoluteTimeGetCurrent()
-            let result = AFResult { try responseSerializer.serializeDownload(request: self.request,
+            let result = Result { try responseSerializer.serializeDownload(request: self.request,
                                                                            response: self.response,
                                                                            fileURL: self.fileURL,
                                                                            error: self.error) }
@@ -304,7 +304,7 @@ extension DownloadRequest {
 
             self.eventMonitor?.request(self, didParseResponse: response)
 
-            guard let serializerError = result.failure, let delegate = self.delegate else {
+            guard let serializerError = result.error, let delegate = self.delegate else {
                 self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
                 return
             }
@@ -323,7 +323,7 @@ extension DownloadRequest {
                     didComplete = { completionHandler(response) }
 
                 case .doNotRetryWithError(let retryError):
-                    let result = AFResult<T.SerializedObject>.failure(retryError)
+                    let result = Result<T.SerializedObject, Error>.failure(retryError)
 
                     let response = DownloadResponse(request: self.request,
                                                     response: self.response,
