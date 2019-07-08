@@ -285,12 +285,7 @@ public class Request {
 
         eventMonitor?.request(self, didFailToCreateURLRequestWithError: error)
 
-        protectedMutableState.write { mutableState in
-            guard let cURLHandler = mutableState.cURLHandler else { return }
-
-            self.underlyingQueue.async { cURLHandler(self.cURLRepresentation()) }
-            mutableState.cURLHandler = nil
-        }
+        callCURLHandlerIfNecessary()
 
         retryOrFinish(error: error)
     }
@@ -318,16 +313,10 @@ public class Request {
 
         eventMonitor?.request(self, didFailToAdaptURLRequest: request, withError: error)
 
-        protectedMutableState.write { mutableState in
-            guard let cURLHandler = mutableState.cURLHandler else { return }
-
-            self.underlyingQueue.async { cURLHandler(self.cURLRepresentation()) }
-            mutableState.cURLHandler = nil
-        }
+        callCURLHandlerIfNecessary()
 
         retryOrFinish(error: error)
     }
-
 
     /// Final `URLRequest` has been created for the instance.
     ///
@@ -335,10 +324,15 @@ public class Request {
     func didCreateURLRequest(_ request: URLRequest) {
         eventMonitor?.request(self, didCreateURLRequest: request)
 
+        callCURLHandlerIfNecessary()
+    }
+
+    /// Asynchronously calls any stored `cURLHandler` and then removes it from `mutableState`.
+    private func callCURLHandlerIfNecessary() {
         protectedMutableState.write { mutableState in
             guard let cURLHandler = mutableState.cURLHandler else { return }
 
-            self.underlyingQueue.async { cURLHandler(self.cURLRepresentation()) }
+            self.underlyingQueue.async { cURLHandler(self.cURLDescription()) }
             mutableState.cURLHandler = nil
         }
     }
@@ -761,7 +755,7 @@ public class Request {
 
     /// Sets a handler to be called when the cURL description of the request is available.
     ///
-    /// - Note: Attempting to set the cURL handler more than once is a logic error and will crash.
+    /// - Note: When waiting for a `Request`'s `URLRequest` to be created, only the last `handler` will be called.
     ///
     /// - Parameter handler: Closure to be called when the cURL description is available.
     ///
@@ -770,9 +764,8 @@ public class Request {
     public func cURLDescription(calling handler: @escaping (String) -> Void) -> Self {
         protectedMutableState.write { mutableState in
             if mutableState.requests.last != nil {
-                underlyingQueue.async { handler(self.cURLRepresentation()) }
+                underlyingQueue.async { handler(self.cURLDescription()) }
             } else {
-                precondition(mutableState.cURLHandler == nil, "cURL handler has already been set.")
                 mutableState.cURLHandler = handler
             }
         }
@@ -820,7 +813,7 @@ extension Request {
     /// cURL representation of the instance.
     ///
     /// - Returns: The cURL equivalent of the instance.
-    func cURLRepresentation() -> String {
+    public func cURLDescription() -> String {
         guard
             let request = lastRequest,
             let url = request.url,

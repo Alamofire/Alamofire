@@ -783,6 +783,64 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?.last, "\"\(urlString)\"")
     }
 
+    func testGETRequestCURLDescriptionSynchronous() {
+        // Given
+        let urlString = "https://httpbin.org/get"
+        let expectation = self.expectation(description: "request should complete")
+        var components: [String]?
+        var syncComponents: [String]?
+
+        // When
+        let request = manager.request(urlString)
+        request.cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            syncComponents = self.cURLCommandComponents(from:request.cURLDescription())
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertTrue(components?.contains("-X") == true)
+        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components, syncComponents)
+    }
+
+    func testGETRequestCURLDescriptionCanBeRequestedManyTimes() {
+        // Given
+        let urlString = "https://httpbin.org/get"
+        let expectation = self.expectation(description: "request should complete")
+        var components: [String]?
+        var secondComponents: [String]?
+
+        // When
+        let request = manager.request(urlString)
+        request.cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            request.cURLDescription {
+                secondComponents = self.cURLCommandComponents(from: $0)
+                expectation.fulfill()
+            }
+        }
+        // Trigger the overwrite behavior.
+        request.cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            request.cURLDescription {
+                secondComponents = self.cURLCommandComponents(from: $0)
+                expectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertTrue(components?.contains("-X") == true)
+        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components, secondComponents)
+    }
+
     func testGETRequestWithCustomHeaderCURLDescription() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -992,15 +1050,8 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(cURLDescription, "debugDescription should not crash")
     }
-//
-//    // MARK: Test Helper Methods
-//
-//    private func cURLCommandComponents(for request: Request) -> [String] {
-//        let whitespaceCharacterSet = CharacterSet.whitespacesAndNewlines
-//        return request.debugDescription
-//            .components(separatedBy: whitespaceCharacterSet)
-//            .filter { $0 != "" && $0 != "\\" }
-//    }
+
+    // MARK: Test Helper Methods
 
     private func cURLCommandComponents(from cURLString: String) -> [String] {
         return cURLString.components(separatedBy: .whitespacesAndNewlines)
