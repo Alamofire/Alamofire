@@ -442,7 +442,7 @@ public class Request {
             mutableState.responseSerializers.append(closure)
 
             if mutableState.state == .finished {
-                mutableState.error = AFError.responseSerializationFailed(reason: .responseSerializerAddedAfterRequestFinished)
+                mutableState.state = .resumed
             }
 
             if mutableState.responseSerializerProcessingFinished {
