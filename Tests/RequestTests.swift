@@ -652,15 +652,16 @@ class RequestResponseTestCase: BaseTestCase {
         XCTAssertEqual(response2?.error?.asAFError?.isExplicitlyCancelledError, true)
     }
 
-    func testThatAppendingResponseSerializerToCompletedRequestCallsCompletion() {
+    func testThatAppendingResponseSerializerToCompletedRequestInsideCompletionResumesRequest() {
         // Given
         let session = Session()
 
         var response1: DataResponse<Any>?
         var response2: DataResponse<Any>?
+        var response3: DataResponse<Any>?
 
         let expect = expectation(description: "both response serializer completions should be called")
-        expect.expectedFulfillmentCount = 2
+        expect.expectedFulfillmentCount = 3
 
         // When
         let request = session.request(URLRequest.makeHTTPBinRequest())
@@ -672,6 +673,11 @@ class RequestResponseTestCase: BaseTestCase {
             request.responseJSON { resp in
                 response2 = resp
                 expect.fulfill()
+
+                request.responseJSON { resp in
+                    response3 = resp
+                    expect.fulfill()
+                }
             }
         }
 
@@ -679,7 +685,36 @@ class RequestResponseTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(response1?.value)
-        XCTAssertEqual(response2?.error?.asAFError?.isResponseSerializerAddedAfterRequestFinished, true)
+        XCTAssertNotNil(response2?.value)
+        XCTAssertNotNil(response3?.value)
+    }
+
+    func testThatAppendingResponseSerializerToCompletedRequestOutsideCompletionResumesRequest() {
+        // Given
+        let session = Session()
+        let request = session.request(URLRequest.makeHTTPBinRequest())
+
+        var response1: DataResponse<Any>?
+        var response2: DataResponse<Any>?
+        var response3: DataResponse<Any>?
+
+        // When
+        let expect1 = expectation(description: "response serializer 1 completion should be called")
+        request.responseJSON { response1 = $0; expect1.fulfill() }
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        let expect2 = expectation(description: "response serializer 2 completion should be called")
+        request.responseJSON { response2 = $0; expect2.fulfill() }
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        let expect3 = expectation(description: "response serializer 3 completion should be called")
+        request.responseJSON { response3 = $0; expect3.fulfill() }
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response1?.value)
+        XCTAssertNotNil(response2?.value)
+        XCTAssertNotNil(response3?.value)
     }
 }
 
