@@ -532,7 +532,7 @@ class RequestResponseTestCase: BaseTestCase {
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         let didReceiveData = expectation(description: "didReceiveData should fire")
         let willCacheResponse = expectation(description: "willCacheResponse should fire")
-        let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
+        let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
         let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
         let didComplete = expectation(description: "didComplete should fire")
@@ -553,7 +553,7 @@ class RequestResponseTestCase: BaseTestCase {
             didReceiveData.fulfill()
         }
         eventMonitor.dataTaskWillCacheResponse = { (_, _, _) in willCacheResponse.fulfill() }
-        eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
+        eventMonitor.requestDidCreateInitialURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
         eventMonitor.requestDidGatherMetrics = { (_, _) in didGatherMetrics.fulfill() }
         eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in didComplete.fulfill() }
@@ -579,7 +579,7 @@ class RequestResponseTestCase: BaseTestCase {
         let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
 
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
-        let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
+        let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
         let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
         let didComplete = expectation(description: "didComplete should fire")
@@ -592,7 +592,7 @@ class RequestResponseTestCase: BaseTestCase {
         let responseHandler = expectation(description: "responseHandler should fire")
 
         eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
-        eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
+        eventMonitor.requestDidCreateInitialURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
         eventMonitor.requestDidGatherMetrics = { (_, _) in didGatherMetrics.fulfill() }
         eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in didComplete.fulfill() }
@@ -747,7 +747,7 @@ class RequestDescriptionTestCase: BaseTestCase {
 
 // MARK: -
 
-class RequestDebugDescriptionTestCase: BaseTestCase {
+final class RequestCURLDescriptionTestCase: BaseTestCase {
     // MARK: Properties
 
     let manager: Session = {
@@ -798,86 +798,157 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
     // MARK: Tests
 
-    func testGETRequestDebugDescription() {
+    func testGETRequestCURLDescription() {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should complete")
+        var components: [String]?
 
         // When
-        let request = manager.request(urlString).response { _ in expectation.fulfill() }
+        manager.request(urlString).cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            expectation.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let components = cURLCommandComponents(for: request)
-
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
-        XCTAssertTrue(components.contains("-X"))
-        XCTAssertEqual(components.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertTrue(components?.contains("-X") == true)
+        XCTAssertEqual(components?.last, "\"\(urlString)\"")
     }
 
-    func testGETRequestWithJSONHeaderDebugDescription() {
+    func testGETRequestCURLDescriptionSynchronous() {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should complete")
+        var components: [String]?
+        var syncComponents: [String]?
 
         // When
-        let headers: HTTPHeaders = [ "X-Custom-Header": "{\"key\": \"value\"}" ]
-        let request = manager.request(urlString, headers: headers).response { _ in expectation.fulfill() }
+        let request = manager.request(urlString)
+        request.cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            syncComponents = self.cURLCommandComponents(from:request.cURLDescription())
+            expectation.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertNotNil(request.debugDescription.range(of: "-H \"X-Custom-Header: {\\\"key\\\": \\\"value\\\"}\""))
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertTrue(components?.contains("-X") == true)
+        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components, syncComponents)
+    }
+
+    func testGETRequestCURLDescriptionCanBeRequestedManyTimes() {
+        // Given
+        let urlString = "https://httpbin.org/get"
+        let expectation = self.expectation(description: "request should complete")
+        var components: [String]?
+        var secondComponents: [String]?
+
+        // When
+        let request = manager.request(urlString)
+        request.cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            request.cURLDescription {
+                secondComponents = self.cURLCommandComponents(from: $0)
+                expectation.fulfill()
+            }
+        }
+        // Trigger the overwrite behavior.
+        request.cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            request.cURLDescription {
+                secondComponents = self.cURLCommandComponents(from: $0)
+                expectation.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertTrue(components?.contains("-X") == true)
+        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components, secondComponents)
+    }
+
+    func testGETRequestWithCustomHeaderCURLDescription() {
+        // Given
+        let urlString = "https://httpbin.org/get"
+        let expectation = self.expectation(description: "request should complete")
+        var cURLDescription: String?
+
+        // When
+        let headers: HTTPHeaders = ["X-Custom-Header": "{\"key\": \"value\"}"]
+        manager.request(urlString, headers: headers).cURLDescription {
+            cURLDescription = $0
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(cURLDescription?.range(of: "-H \"X-Custom-Header: {\\\"key\\\": \\\"value\\\"}\""))
     }
 
     func testGETRequestWithDuplicateHeadersDebugDescription() {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should complete")
+        var cURLDescription: String?
+        var components: [String]?
 
         // When
-        let headers: HTTPHeaders = [ "Accept-Language": "en-GB" ]
-        let request = managerWithAcceptLanguageHeader.request(urlString, headers: headers).response { _ in expectation.fulfill() }
+        let headers: HTTPHeaders = ["Accept-Language": "en-GB"]
+        managerWithAcceptLanguageHeader.request(urlString, headers: headers).cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            cURLDescription = $0
+            expectation.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let components = cURLCommandComponents(for: request)
-
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
-        XCTAssertTrue(components.contains("-X"))
-        XCTAssertEqual(components.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertTrue(components?.contains("-X") == true)
+        XCTAssertEqual(components?.last, "\"\(urlString)\"")
 
-        let tokens = request.debugDescription.components(separatedBy: "Accept-Language:")
-        XCTAssertTrue(tokens.count == 2, "command should contain a single Accept-Language header")
+        let acceptLanguageCount = components?.filter { $0.contains("Accept-Language") }.count
+        XCTAssertEqual(acceptLanguageCount, 1, "command should contain a single Accept-Language header")
 
-        XCTAssertNotNil(request.debugDescription.range(of: "-H \"Accept-Language: en-GB\""))
+        XCTAssertNotNil(cURLDescription?.range(of: "-H \"Accept-Language: en-GB\""))
     }
 
-    func testPOSTRequestDebugDescription() {
+    func testPOSTRequestCURLDescription() {
         // Given
         let urlString = "https://httpbin.org/post"
         let expectation = self.expectation(description: "request should complete")
-
+        var components: [String]?
 
         // When
-        let request = manager.request(urlString, method: .post).response { _ in expectation.fulfill() }
+        manager.request(urlString, method: .post).cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            expectation.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let components = cURLCommandComponents(for: request)
-
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
-        XCTAssertEqual(components[3..<5], ["-X", "POST"])
-        XCTAssertEqual(components.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertEqual(components?[3..<5], ["-X", "POST"])
+        XCTAssertEqual(components?.last, "\"\(urlString)\"")
     }
 
-    func testPOSTRequestWithJSONParametersDebugDescription() {
+    func testPOSTRequestWithJSONParametersCURLDescription() {
         // Given
         let urlString = "https://httpbin.org/post"
         let expectation = self.expectation(description: "request should complete")
+        var cURLDescription: String?
+        var components: [String]?
 
         let parameters = [
             "foo": "bar",
@@ -886,28 +957,28 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         ]
 
         // When
-        let request = manager.request(urlString, method: .post, parameters: parameters, encoding: JSONEncoding.default).response {
-            _ in expectation.fulfill()
+        manager.request(urlString, method: .post, parameters: parameters, encoding: JSONEncoding.default).cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            cURLDescription = $0
+            expectation.fulfill()
         }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let components = cURLCommandComponents(for: request)
-
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
-        XCTAssertEqual(components[3..<5], ["-X", "POST"])
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertEqual(components?[3..<5], ["-X", "POST"])
 
-        XCTAssertNotNil(request.debugDescription.range(of: "-H \"Content-Type: application/json\""))
-        XCTAssertNotNil(request.debugDescription.range(of: "-d \"{"))
-        XCTAssertNotNil(request.debugDescription.range(of: "\\\"f'oo\\\":\\\"ba'r\\\""))
-        XCTAssertNotNil(request.debugDescription.range(of: "\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\""))
-        XCTAssertNotNil(request.debugDescription.range(of: "\\\"foo\\\":\\\"bar\\"))
+        XCTAssertNotNil(cURLDescription?.range(of: "-H \"Content-Type: application/json\""))
+        XCTAssertNotNil(cURLDescription?.range(of: "-d \"{"))
+        XCTAssertNotNil(cURLDescription?.range(of: "\\\"f'oo\\\":\\\"ba'r\\\""))
+        XCTAssertNotNil(cURLDescription?.range(of: "\\\"fo\\\\\\\"o\\\":\\\"b\\\\\\\"ar\\\""))
+        XCTAssertNotNil(cURLDescription?.range(of: "\\\"foo\\\":\\\"bar\\"))
 
-        XCTAssertEqual(components.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?.last, "\"\(urlString)\"")
     }
 
-    func testPOSTRequestWithCookieDebugDescription() {
+    func testPOSTRequestWithCookieCURLDescription() {
         // Given
         let urlString = "https://httpbin.org/post"
 
@@ -921,23 +992,24 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let cookie = HTTPCookie(properties: properties)!
         let cookieManager = managerWithCookie(cookie)
         let expectation = self.expectation(description: "request should complete")
-
+        var components: [String]?
 
         // When
-        let request = cookieManager.request(urlString, method: .post).response { _ in expectation.fulfill() }
+        cookieManager.request(urlString, method: .post).cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            expectation.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let components = cURLCommandComponents(for: request)
-
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
-        XCTAssertEqual(components[3..<5], ["-X", "POST"])
-        XCTAssertEqual(components.last, "\"\(urlString)\"")
-        XCTAssertEqual(components[5..<6], ["-b"])
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertEqual(components?[3..<5], ["-X", "POST"])
+        XCTAssertEqual(components?.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?[5..<6], ["-b"])
     }
 
-    func testPOSTRequestWithCookiesDisabledDebugDescription() {
+    func testPOSTRequestWithCookiesDisabledCURLDescriptionHasNoCookies() {
         // Given
         let urlString = "https://httpbin.org/post"
 
@@ -950,67 +1022,74 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
 
         let cookie = HTTPCookie(properties: properties)!
         managerDisallowingCookies.session.configuration.httpCookieStorage?.setCookie(cookie)
+        let expectation = self.expectation(description: "request should complete")
+        var components: [String]?
 
         // When
-        let request = managerDisallowingCookies.request(urlString, method: .post)
-        let components = cURLCommandComponents(for: request)
+        managerDisallowingCookies.request(urlString, method: .post).cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        let cookieComponents = components.filter { $0 == "-b" }
-        XCTAssertTrue(cookieComponents.isEmpty)
+        let cookieComponents = components?.filter { $0 == "-b" }
+        XCTAssertTrue(cookieComponents?.isEmpty == true)
     }
 
-    func testMultipartFormDataRequestWithDuplicateHeadersDebugDescription() {
+    func testMultipartFormDataRequestWithDuplicateHeadersCURLDescriptionHasOneContentTypeHeader() {
         // Given
         let urlString = "https://httpbin.org/post"
         let japaneseData = Data("日本語".utf8)
         let expectation = self.expectation(description: "multipart form data encoding should succeed")
+        var cURLDescription: String?
+        var components: [String]?
 
         // When
-        let request = managerWithContentTypeHeader.upload(multipartFormData: { (data) in
+        managerWithContentTypeHeader.upload(multipartFormData: { (data) in
             data.append(japaneseData, withName: "japanese")
-        }, to: urlString)
-            .response { _ in
-                expectation.fulfill()
-            }
+        }, to: urlString).cURLDescription {
+            components = self.cURLCommandComponents(from: $0)
+            cURLDescription = $0
+            expectation.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let components = cURLCommandComponents(for: request)
-
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
-        XCTAssertTrue(components.contains("-X"))
-        XCTAssertEqual(components.last, "\"\(urlString)\"")
+        XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
+        XCTAssertTrue(components?.contains("-X") == true)
+        XCTAssertEqual(components?.last, "\"\(urlString)\"")
 
-        let tokens = request.debugDescription.components(separatedBy: "Content-Type:")
-        XCTAssertTrue(tokens.count == 2, "command should contain a single Content-Type header")
+        let contentTypeCount = components?.filter { $0.contains("Content-Type") }.count
+        XCTAssertEqual(contentTypeCount, 1, "command should contain a single Content-Type header")
 
-        XCTAssertNotNil(request.debugDescription.range(of: "-H \"Content-Type: multipart/form-data;"))
+        XCTAssertNotNil(cURLDescription?.range(of: "-H \"Content-Type: multipart/form-data;"))
     }
 
     func testThatRequestWithInvalidURLDebugDescription() {
         // Given
         let urlString = "invalid_url"
         let expectation = self.expectation(description: "request should complete")
+        var cURLDescription: String?
 
         // When
-        let request = manager.request(urlString).response { _ in expectation.fulfill() }
+        manager.request(urlString).cURLDescription {
+            cURLDescription = $0
+            expectation.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let debugDescription = request.debugDescription
-
         // Then
-        XCTAssertNotNil(debugDescription, "debugDescription should not crash")
+        XCTAssertNotNil(cURLDescription, "debugDescription should not crash")
     }
 
     // MARK: Test Helper Methods
 
-    private func cURLCommandComponents(for request: Request) -> [String] {
-        let whitespaceCharacterSet = CharacterSet.whitespacesAndNewlines
-        return request.debugDescription
-            .components(separatedBy: whitespaceCharacterSet)
-            .filter { $0 != "" && $0 != "\\" }
+    private func cURLCommandComponents(from cURLString: String) -> [String] {
+        return cURLString.components(separatedBy: .whitespacesAndNewlines)
+                         .filter { $0 != "" && $0 != "\\" }
     }
 }

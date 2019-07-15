@@ -92,6 +92,8 @@ public class Request {
         var redirectHandler: RedirectHandler?
         /// `CachedResponseHandler` provided to handle response caching.
         var cachedResponseHandler: CachedResponseHandler?
+        /// Closure called when the `Request` is able to create a cURL description of itself.
+        var cURLHandler: ((String) -> Void)?
         /// Response serialization closures that handle response parsing.
         var responseSerializers: [() -> Void] = []
         /// Response serialization completion closures executed once all response serializers are complete.
@@ -263,13 +265,14 @@ public class Request {
     // MARK: - Internal Event API
     // All API must be called from underlyingQueue.
 
-    /// Called when a `URLRequest` has been created on behalf of the instance.
+    /// Called when a initial `URLRequest` has been created on behalf of the instance. If a `RequestAdapter` is active,
+    /// the `URLRequest` will be adapted before being issued.
     ///
-    /// - Parameter request: `URLRequest` created.
-    func didCreateURLRequest(_ request: URLRequest) {
+    /// - Parameter request: The `URLRequest` created.
+    func didCreateInitialURLRequest(_ request: URLRequest) {
         protectedMutableState.write { $0.requests.append(request) }
 
-        eventMonitor?.request(self, didCreateURLRequest: request)
+        eventMonitor?.request(self, didCreateInitialURLRequest: request)
     }
 
     /// Called when initial `URLRequest` creation has failed, typically through a `URLRequestConvertible`.
@@ -281,6 +284,8 @@ public class Request {
         self.error = error
 
         eventMonitor?.request(self, didFailToCreateURLRequestWithError: error)
+
+        callCURLHandlerIfNecessary()
 
         retryOrFinish(error: error)
     }
@@ -308,7 +313,28 @@ public class Request {
 
         eventMonitor?.request(self, didFailToAdaptURLRequest: request, withError: error)
 
+        callCURLHandlerIfNecessary()
+
         retryOrFinish(error: error)
+    }
+
+    /// Final `URLRequest` has been created for the instance.
+    ///
+    /// - Parameter request: The `URLRequest` created.
+    func didCreateURLRequest(_ request: URLRequest) {
+        eventMonitor?.request(self, didCreateURLRequest: request)
+
+        callCURLHandlerIfNecessary()
+    }
+
+    /// Asynchronously calls any stored `cURLHandler` and then removes it from `mutableState`.
+    private func callCURLHandlerIfNecessary() {
+        protectedMutableState.write { mutableState in
+            guard let cURLHandler = mutableState.cURLHandler else { return }
+
+            self.underlyingQueue.async { cURLHandler(self.cURLDescription()) }
+            mutableState.cURLHandler = nil
+        }
     }
 
     /// Called when a `URLSessionTask` is created on behalf of the instance.
@@ -693,7 +719,7 @@ public class Request {
 
     /// Sets the redirect handler for the instance which will be used if a redirect response is encountered.
     ///
-    /// - Note: Overrides any `RedirectHandler` set on the `Session` which produced this `Request`.
+    /// - Note: Attempting to set the redirect handler more than once is a logic error and will crash.
     ///
     /// - Parameter handler: The `RedirectHandler`.
     ///
@@ -701,7 +727,7 @@ public class Request {
     @discardableResult
     public func redirect(using handler: RedirectHandler) -> Self {
         protectedMutableState.write { mutableState in
-            precondition(mutableState.redirectHandler == nil, "Redirect handler has already been set")
+            precondition(mutableState.redirectHandler == nil, "Redirect handler has already been set.")
             mutableState.redirectHandler = handler
         }
 
@@ -712,14 +738,36 @@ public class Request {
 
     /// Sets the cached response handler for the `Request` which will be used when attempting to cache a response.
     ///
+    /// - Note: Attempting to set the cache handler more than once is a logic error and will crash.
+    ///
     /// - Parameter handler: The `CachedResponseHandler`.
     ///
-    /// - Returns:           The `Request`.
+    /// - Returns:           The instance.
     @discardableResult
     public func cacheResponse(using handler: CachedResponseHandler) -> Self {
         protectedMutableState.write { mutableState in
-            precondition(mutableState.cachedResponseHandler == nil, "Cached response handler has already been set")
+            precondition(mutableState.cachedResponseHandler == nil, "Cached response handler has already been set.")
             mutableState.cachedResponseHandler = handler
+        }
+
+        return self
+    }
+
+    /// Sets a handler to be called when the cURL description of the request is available.
+    ///
+    /// - Note: When waiting for a `Request`'s `URLRequest` to be created, only the last `handler` will be called.
+    ///
+    /// - Parameter handler: Closure to be called when the cURL description is available.
+    ///
+    /// - Returns:           The instance.
+    @discardableResult
+    public func cURLDescription(calling handler: @escaping (String) -> Void) -> Self {
+        protectedMutableState.write { mutableState in
+            if mutableState.requests.last != nil {
+                underlyingQueue.async { handler(self.cURLDescription()) }
+            } else {
+                mutableState.cURLHandler = handler
+            }
         }
 
         return self
@@ -761,16 +809,11 @@ extension Request: CustomStringConvertible {
     }
 }
 
-extension Request: CustomDebugStringConvertible {
-    /// A textual representation of this instance in the form of a cURL command.
-    public var debugDescription: String {
-        return cURLRepresentation()
-    }
-
+extension Request {
     /// cURL representation of the instance.
     ///
     /// - Returns: The cURL equivalent of the instance.
-    func cURLRepresentation() -> String {
+    public func cURLDescription() -> String {
         guard
             let request = lastRequest,
             let url = request.url,
