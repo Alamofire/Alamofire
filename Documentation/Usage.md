@@ -13,7 +13,7 @@ Alamofire.request("https://httpbin.org/get")
 Handling the `Response` of a `Request` made in Alamofire involves chaining a response handler onto the `Request`.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
+AF.request("https://httpbin.org/get").responseJSON { response in
     print("Request: \(String(describing: response.request))")   // original url request
     print("Response: \(String(describing: response.response))") // http url response
     print("Result: \(response.result)")                         // response serialization result
@@ -76,7 +76,7 @@ None of the response handlers perform any validation of the `HTTPURLResponse` it
 The `response` handler does NOT evaluate any of the response data. It merely forwards on all information directly from the URL session delegate. It is the Alamofire equivalent of using `cURL` to execute a `Request`.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").response { response in
+AF.request("https://httpbin.org/get").response { response in
     print("Request: \(response.request)")
     print("Response: \(response.response)")
     print("Error: \(response.error)")
@@ -94,7 +94,7 @@ Alamofire.request("https://httpbin.org/get").response { response in
 The `responseData` handler uses the `responseDataSerializer` (the object that serializes the server data into some other type) to extract the `Data` returned by the server. If no errors occur and `Data` is returned, the response `AFResult` will be a `.success` and the `value` will be of type `Data`.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseData { response in
+AF.request("https://httpbin.org/get").responseData { response in
     debugPrint("All Response Info: \(response)")
 
     if let data = response.result.value, let utf8Text = String(data: data, encoding: .utf8) {
@@ -108,7 +108,7 @@ Alamofire.request("https://httpbin.org/get").responseData { response in
 The `responseString` handler uses the `responseStringSerializer` to convert the `Data` returned by the server into a `String` with the specified encoding. If no errors occur and the server data is successfully serialized into a `String`, the response `AFResult` will be a `.success` and the `value` will be of type `String`.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseString { response in
+AF.request("https://httpbin.org/get").responseString { response in
     print("Success: \(response.result.isSuccess)")
     print("Response String: \(response.result.value)")
 }
@@ -121,7 +121,7 @@ Alamofire.request("https://httpbin.org/get").responseString { response in
 The `responseJSON` handler uses the `responseJSONSerializer` to convert the `Data` returned by the server into an `Any` type using the specified `JSONSerialization.ReadingOptions`. If no errors occur and the server data is successfully serialized into a JSON object, the response `AFResult` will be a `.success` and the `value` will be of type `Any`.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
+AF.request("https://httpbin.org/get").responseJSON { response in
     debugPrint(response)
 
     if let json = response.result.value {
@@ -137,7 +137,7 @@ Alamofire.request("https://httpbin.org/get").responseJSON { response in
 Response handlers can even be chained:
 
 ```swift
-Alamofire.request("https://httpbin.org/get")
+AF.request("https://httpbin.org/get")
     .responseString { response in
         print("Response String: \(response.result.value)")
     }
@@ -155,7 +155,7 @@ Response handlers by default are executed on the main dispatch queue. However, a
 ```swift
 let utilityQueue = DispatchQueue.global(qos: .utility)
 
-Alamofire.request("https://httpbin.org/get").responseJSON(queue: utilityQueue) { response in
+AF.request("https://httpbin.org/get").responseJSON(queue: utilityQueue) { response in
     print("Executing response handler on utility queue")
 }
 ```
@@ -167,7 +167,7 @@ By default, Alamofire treats any completed request to be successful, regardless 
 #### Manual Validation
 
 ```swift
-Alamofire.request("https://httpbin.org/get")
+AF.request("https://httpbin.org/get")
     .validate(statusCode: 200..<300)
     .validate(contentType: ["application/json"])
     .responseData { response in
@@ -185,7 +185,7 @@ Alamofire.request("https://httpbin.org/get")
 Automatically validates status code within `200..<300` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").validate().responseJSON { response in
+AF.request("https://httpbin.org/get").validate().responseJSON { response in
     switch response.result {
     case .success:
         print("Validation Successful")
@@ -219,17 +219,17 @@ public enum HTTPMethod: String {
 }
 ```
 
-These values can be passed as the `method` argument to the `Alamofire.request` API:
+These values can be passed as the `method` argument to the `AF.request` API:
 
 ```swift
-Alamofire.request("https://httpbin.org/get") // method defaults to `.get`
+AF.request("https://httpbin.org/get") // method defaults to `.get`
 
-Alamofire.request("https://httpbin.org/post", method: .post)
-Alamofire.request("https://httpbin.org/put", method: .put)
-Alamofire.request("https://httpbin.org/delete", method: .delete)
+AF.request("https://httpbin.org/post", method: .post)
+AF.request("https://httpbin.org/put", method: .put)
+AF.request("https://httpbin.org/delete", method: .delete)
 ```
 
-> The `Alamofire.request` method parameter defaults to `.get`.
+> The `AF.request` method parameter defaults to `.get`.
 
 ### Parameter Encoding
 
@@ -251,9 +251,9 @@ The `Content-Type` HTTP header field of an encoded request with HTTP body is set
 let parameters: Parameters = ["foo": "bar"]
 
 // All three of these calls are equivalent
-Alamofire.request("https://httpbin.org/get", parameters: parameters) // encoding defaults to `URLEncoding.default`
-Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding.default)
-Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding(destination: .methodDependent))
+AF.request("https://httpbin.org/get", parameters: parameters) // encoding defaults to `URLEncoding.default`
+AF.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding.default)
+AF.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding(destination: .methodDependent))
 
 // https://httpbin.org/get?foo=bar
 ```
@@ -272,9 +272,9 @@ let parameters: Parameters = [
 ]
 
 // All three of these calls are equivalent
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.default)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.httpBody)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.default)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.httpBody)
 
 // HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
 ```
@@ -326,8 +326,8 @@ let parameters: Parameters = [
 ]
 
 // Both calls are equivalent
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding.default)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding(options: []))
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding.default)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding(options: []))
 
 // HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
 ```
@@ -386,7 +386,7 @@ let headers: HTTPHeaders = [
     "Accept": "application/json"
 ]
 
-Alamofire.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
+AF.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
     debugPrint(response)
 }
 ```
@@ -420,7 +420,7 @@ The `authenticate` method on a `Request` will automatically provide a `URLCreden
 let user = "user"
 let password = "password"
 
-Alamofire.request("https://httpbin.org/basic-auth/\(user)/\(password)")
+AF.request("https://httpbin.org/basic-auth/\(user)/\(password)")
     .authenticate(user: user, password: password)
     .responseJSON { response in
         debugPrint(response)
@@ -439,7 +439,7 @@ if let authorizationHeader = Request.authorizationHeader(user: user, password: p
     headers[authorizationHeader.key] = authorizationHeader.value
 }
 
-Alamofire.request("https://httpbin.org/basic-auth/user/password", headers: headers)
+AF.request("https://httpbin.org/basic-auth/user/password", headers: headers)
     .responseJSON { response in
         debugPrint(response)
     }
@@ -453,7 +453,7 @@ let password = "password"
 
 let credential = URLCredential(user: user, password: password, persistence: .forSession)
 
-Alamofire.request("https://httpbin.org/basic-auth/\(user)/\(password)")
+AF.request("https://httpbin.org/basic-auth/\(user)/\(password)")
     .authenticate(usingCredential: credential)
     .responseJSON { response in
         debugPrint(response)
@@ -464,19 +464,19 @@ Alamofire.request("https://httpbin.org/basic-auth/\(user)/\(password)")
 
 ### Downloading Data to a File
 
-Requests made in Alamofire that fetch data from a server can download the data in-memory or on-disk. The `Alamofire.request` APIs used in all the examples so far always downloads the server data in-memory. This is great for smaller payloads because it's more efficient, but really bad for larger payloads because the download could run your entire application out-of-memory. Because of this, you can also use the `Alamofire.download` APIs to download the server data to a temporary file on-disk.
+Requests made in Alamofire that fetch data from a server can download the data in-memory or on-disk. The `AF.request` APIs used in all the examples so far always downloads the server data in-memory. This is great for smaller payloads because it's more efficient, but really bad for larger payloads because the download could run your entire application out-of-memory. Because of this, you can also use the `AF.download` APIs to download the server data to a temporary file on-disk.
 
 > This will only work on `macOS` as is. Other platforms don't allow access to the filesystem outside of your app's sandbox. To download files on other platforms, see the [Download File Destination](#download-file-destination) section.
 
 ```swift
-Alamofire.download("https://httpbin.org/image/png").responseData { response in
+AF.download("https://httpbin.org/image/png").responseData { response in
     if let data = response.result.value {
         let image = UIImage(data: data)
     }
 }
 ```
 
-> The `Alamofire.download` APIs should also be used if you need to download data while your app is in the background. For more information, please see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
+> The `AF.download` APIs should also be used if you need to download data while your app is in the background. For more information, please see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
 
 #### Download File Destination
 
@@ -493,7 +493,7 @@ let destination: DownloadRequest.DownloadFileDestination = { _, _ in
     return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
 }
 
-Alamofire.download(urlString, to: destination).response { response in
+AF.download(urlString, to: destination).response { response in
     print(response)
 
     if response.error == nil, let imagePath = response.destinationURL?.path {
@@ -506,7 +506,7 @@ You can also use the suggested download destination API.
 
 ```swift
 let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
-Alamofire.download("https://httpbin.org/image/png", to: destination)
+AF.download("https://httpbin.org/image/png", to: destination)
 ```
 
 #### Download Progress
@@ -514,7 +514,7 @@ Alamofire.download("https://httpbin.org/image/png", to: destination)
 Many times it can be helpful to report download progress to the user. Any `DownloadRequest` can report download progress using the `downloadProgress` API.
 
 ```swift
-Alamofire.download("https://httpbin.org/image/png")
+AF.download("https://httpbin.org/image/png")
     .downloadProgress { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
@@ -530,7 +530,7 @@ The `downloadProgress` API also takes a `queue` parameter which defines which `D
 ```swift
 let utilityQueue = DispatchQueue.global(qos: .utility)
 
-Alamofire.download("https://httpbin.org/image/png")
+AF.download("https://httpbin.org/image/png")
     .downloadProgress(queue: utilityQueue) { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
@@ -565,9 +565,9 @@ class ImageRequestor {
         let request: DownloadRequest
 
         if let resumeData = resumeData {
-            request = Alamofire.download(resumingWith: resumeData)
+            request = AF.download(resumingWith: resumeData)
         } else {
-            request = Alamofire.download("https://httpbin.org/image/png")
+            request = AF.download("https://httpbin.org/image/png")
         }
 
         request.responseData { response in
@@ -584,16 +584,16 @@ class ImageRequestor {
 
 ### Uploading Data to a Server
 
-When sending relatively small amounts of data to a server using JSON or URL encoded parameters, the `Alamofire.request` APIs are usually sufficient. If you need to send much larger amounts of data from a file URL or an `InputStream`, then the `Alamofire.upload` APIs are what you want to use.
+When sending relatively small amounts of data to a server using JSON or URL encoded parameters, the `AF.request` APIs are usually sufficient. If you need to send much larger amounts of data from a file URL or an `InputStream`, then the `AF.upload` APIs are what you want to use.
 
-> The `Alamofire.upload` APIs should also be used if you need to upload data while your app is in the background. For more information, please see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
+> The `AF.upload` APIs should also be used if you need to upload data while your app is in the background. For more information, please see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
 
 #### Uploading Data
 
 ```swift
 let imageData = UIImagePNGRepresentation(image)!
 
-Alamofire.upload(imageData, to: "https://httpbin.org/post").responseJSON { response in
+AF.upload(imageData, to: "https://httpbin.org/post").responseJSON { response in
     debugPrint(response)
 }
 ```
@@ -603,7 +603,7 @@ Alamofire.upload(imageData, to: "https://httpbin.org/post").responseJSON { respo
 ```swift
 let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
 
-Alamofire.upload(fileURL, to: "https://httpbin.org/post").responseJSON { response in
+AF.upload(fileURL, to: "https://httpbin.org/post").responseJSON { response in
     debugPrint(response)
 }
 ```
@@ -611,7 +611,7 @@ Alamofire.upload(fileURL, to: "https://httpbin.org/post").responseJSON { respons
 #### Uploading Multipart Form Data
 
 ```swift
-Alamofire.upload(
+AF.upload(
     multipartFormData: { multipartFormData in
         multipartFormData.append(unicornImageURL, withName: "unicorn")
         multipartFormData.append(rainbowImageURL, withName: "rainbow")
@@ -637,7 +637,7 @@ While your user is waiting for their upload to complete, sometimes it can be han
 ```swift
 let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
 
-Alamofire.upload(fileURL, to: "https://httpbin.org/post")
+AF.upload(fileURL, to: "https://httpbin.org/post")
     .uploadProgress { progress in // main queue by default
         print("Upload Progress: \(progress.fractionCompleted)")
     }
@@ -656,7 +656,7 @@ Alamofire.upload(fileURL, to: "https://httpbin.org/post")
 Alamofire collects timings throughout the lifecycle of a `Request` and creates a `Timeline` object exposed as a property on all response types.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
+AF.request("https://httpbin.org/get").responseJSON { response in
     print(response.timeline)
 }
 ```
@@ -673,7 +673,7 @@ The above reports the following `Timeline` info:
 In iOS and tvOS 10 and macOS 10.12, Apple introduced the new [URLSessionTaskMetrics](https://developer.apple.com/reference/foundation/urlsessiontaskmetrics) APIs. The task metrics encapsulate some fantastic statistical information about the request and response execution. The API is very similar to the `Timeline`, but provides many more statistics that Alamofire doesn't have access to compute. The metrics can be accessed through any response type.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
+AF.request("https://httpbin.org/get").responseJSON { response in
     print(response.metrics)
 }
 ```
@@ -681,7 +681,7 @@ Alamofire.request("https://httpbin.org/get").responseJSON { response in
 It's important to note that these APIs are only available on iOS and tvOS 10 and macOS 10.12. Therefore, depending on your deployment target, you may need to use these inside availability checks:
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
+AF.request("https://httpbin.org/get").responseJSON { response in
     if #available(iOS 10.0, *) {
         print(response.metrics)
     }
@@ -695,7 +695,7 @@ Debugging platform issues can be frustrating. Thankfully, Alamofire `Request` ob
 #### CustomStringConvertible
 
 ```swift
-let request = Alamofire.request("https://httpbin.org/ip")
+let request = AF.request("https://httpbin.org/ip")
 
 print(request)
 // GET https://httpbin.org/ip (200)
@@ -704,7 +704,7 @@ print(request)
 #### CustomDebugStringConvertible
 
 ```swift
-let request = Alamofire.request("https://httpbin.org/get", parameters: ["foo": "bar"])
+let request = AF.request("https://httpbin.org/get", parameters: ["foo": "bar"])
 debugPrint(request)
 ```
 
