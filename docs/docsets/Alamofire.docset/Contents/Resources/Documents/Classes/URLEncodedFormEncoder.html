@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -420,8 +421,11 @@ square brackets appended to array keys.</p>
 <p><code>BoolEncoding</code> can be used to configure how <code>Bool</code> values are encoded. The default behavior is to encode
 <code>true</code> as 1 and <code>false</code> as 0.</p>
 
-<p><code>SpaceEncoding</code> can be used to configure how spaces are encoded. Modern encodings use percent replacement (%20),
-while older encoding may expect spaces to be replaced with +.</p>
+<p><code>DateEncoding</code> can be used to configure how <code>Date</code> values are encoded. By default, the <code>.deferredToDate</code>
+strategy is used, which formats dates from their structure.</p>
+
+<p><code>SpaceEncoding</code> can be used to configure how spaces are encoded. Modern encodings use percent replacement (<code>%20</code>),
+while older encodings may expect spaces to be replaced with <code>+</code>.</p>
 
 <p>This type is largely based on Vapor&rsquo;s <a href="https://github.com/vapor/url-encoded-form"><code>url-encoded-form</code></a> project.</p>
 
@@ -435,6 +439,34 @@ while older encoding may expect spaces to be replaced with +.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC13ArrayEncodingO"></a>
+                    <a name="//apple_ref/swift/Enum/ArrayEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC13ArrayEncodingO">ArrayEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Encoding to use for <code>Array</code> values.</p>
+
+                        <a href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ArrayEncoding</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire21URLEncodedFormEncoderC12BoolEncodingO"></a>
                     <a name="//apple_ref/swift/Enum/BoolEncoding" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC12BoolEncodingO">BoolEncoding</a>
@@ -445,7 +477,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Configures how <code>Bool</code> parameters are encoded.</p>
+                        <p>Encoding to use for <code>Bool</code> values.</p>
 
                         <a href="../Classes/URLEncodedFormEncoder/BoolEncoding.html" class="slightly-smaller">See more</a>
                       </div>
@@ -463,9 +495,9 @@ while older encoding may expect spaces to be replaced with +.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire21URLEncodedFormEncoderC13ArrayEncodingO"></a>
-                    <a name="//apple_ref/swift/Enum/ArrayEncoding" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC13ArrayEncodingO">ArrayEncoding</a>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC12DataEncodingO"></a>
+                    <a name="//apple_ref/swift/Enum/DataEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC12DataEncodingO">DataEncoding</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -473,15 +505,74 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Configures how <code>Array</code> parameters are encoded.</p>
+                        <p>Encoding to use for <code>Data</code> values.</p>
 
-                        <a href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html" class="slightly-smaller">See more</a>
+                        <a href="../Classes/URLEncodedFormEncoder/DataEncoding.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ArrayEncoding</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">DataEncoding</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC12DateEncodingO"></a>
+                    <a name="//apple_ref/swift/Enum/DateEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC12DateEncodingO">DateEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Encoding to use for <code>Date</code> values.</p>
+
+                        <a href="../Classes/URLEncodedFormEncoder/DateEncoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">DateEncoding</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC11KeyEncodingO"></a>
+                    <a name="//apple_ref/swift/Enum/KeyEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC11KeyEncodingO">KeyEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Encoding to use for keys.</p>
+
+<p>This type is derived from <a href="https://github.com/apple/swift/blob/6aa313b8dd5f05135f7f878eccc1db6f9fbe34ff/stdlib/public/Darwin/Foundation/JSONEncoder.swift#L128"><code>JSONEncoder</code>&lsquo;s <code>KeyEncodingStrategy</code></a>
+and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCoder/Encoder/XMLEncoder.swift#L102"><code>XMLEncoder</code>s <code>KeyEncodingStrategy</code></a>.</p>
+
+                        <a href="../Classes/URLEncodedFormEncoder/KeyEncoding.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">KeyEncoding</span></code></pre>
 
                         </div>
                       </div>
@@ -501,7 +592,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Configures how spaces are encoded.</p>
+                        <p>Encoding to use for spaces.</p>
 
                         <a href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html" class="slightly-smaller">See more</a>
                       </div>
@@ -601,6 +692,87 @@ while older encoding may expect spaces to be replaced with +.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC12dataEncodingAC04DataF0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/dataEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC12dataEncodingAC04DataF0Ovp">dataEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>THe <code><a href="../Classes/URLEncodedFormEncoder/DataEncoding.html">DataEncoding</a></code> to use.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">dataEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/DataEncoding.html">DataEncoding</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC12dateEncodingAC04DateF0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/dateEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC12dateEncodingAC04DateF0Ovp">dateEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code><a href="../Classes/URLEncodedFormEncoder/DateEncoding.html">DateEncoding</a></code> to use.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">dateEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/DateEncoding.html">DateEncoding</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC11keyEncodingAC03KeyF0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/keyEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC11keyEncodingAC03KeyF0Ovp">keyEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code><a href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">KeyEncoding</a></code> to use.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">keyEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">KeyEncoding</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire21URLEncodedFormEncoderC13spaceEncodingAC05SpaceF0Ovp"></a>
                     <a name="//apple_ref/swift/Property/spaceEncoding" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC13spaceEncodingAC05SpaceF0Ovp">spaceEncoding</a>
@@ -638,7 +810,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The <code>CharacterSet</code> of allowed characters.</p>
+                        <p>The <code>CharacterSet</code> of allowed (non-escaped) characters.</p>
 
                       </div>
                       <div class="declaration">
@@ -655,9 +827,9 @@ while older encoding may expect spaces to be replaced with +.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire21URLEncodedFormEncoderC13arrayEncoding04boolF005spaceF017allowedCharactersA2C05ArrayF0O_AC04BoolF0OAC05SpaceF0O10Foundation12CharacterSetVtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(arrayEncoding:boolEncoding:spaceEncoding:allowedCharacters:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC13arrayEncoding04boolF005spaceF017allowedCharactersA2C05ArrayF0O_AC04BoolF0OAC05SpaceF0O10Foundation12CharacterSetVtcfc">init(arrayEncoding:boolEncoding:spaceEncoding:allowedCharacters:)</a>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC13arrayEncoding04boolF004dataF004dateF003keyF005spaceF017allowedCharactersA2C05ArrayF0O_AC04BoolF0OAC04DataF0OAC04DateF0OAC03KeyF0OAC05SpaceF0O10Foundation12CharacterSetVtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(arrayEncoding:boolEncoding:dataEncoding:dateEncoding:keyEncoding:spaceEncoding:allowedCharacters:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC13arrayEncoding04boolF004dataF004dateF003keyF005spaceF017allowedCharactersA2C05ArrayF0O_AC04BoolF0OAC04DataF0OAC04DateF0OAC03KeyF0OAC05SpaceF0O10Foundation12CharacterSetVtcfc">init(arrayEncoding:boolEncoding:dataEncoding:dateEncoding:keyEncoding:spaceEncoding:allowedCharacters:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -674,6 +846,9 @@ while older encoding may expect spaces to be replaced with +.</p>
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">arrayEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">ArrayEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">brackets</span><span class="p">,</span>
             <span class="nv">boolEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">BoolEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">numeric</span><span class="p">,</span>
+            <span class="nv">dataEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/DataEncoding.html">DataEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">base64</span><span class="p">,</span>
+            <span class="nv">dateEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/DateEncoding.html">DateEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">deferredToDate</span><span class="p">,</span>
+            <span class="nv">keyEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">KeyEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">useDefaultKeys</span><span class="p">,</span>
             <span class="nv">spaceEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">SpaceEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">percentEscaped</span><span class="p">,</span>
             <span class="nv">allowedCharacters</span><span class="p">:</span> <span class="kt">CharacterSet</span> <span class="o">=</span> <span class="o">.</span><span class="n">afURLQueryAllowed</span><span class="p">)</span></code></pre>
 
@@ -691,7 +866,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">ArrayEncoding</a></code> instance. Defaults to <code>.brackets</code>.</p>
+                                  <p>The <code><a href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">ArrayEncoding</a></code> to use. <code>.brackets</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -703,7 +878,43 @@ while older encoding may expect spaces to be replaced with +.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">BoolEncoding</a></code> instance. Defaults to <code>.numeric</code>.</p>
+                                  <p>The <code><a href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">BoolEncoding</a></code> to use. <code>.numeric</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dataEncoding</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Classes/URLEncodedFormEncoder/DataEncoding.html">DataEncoding</a></code> to use. <code>.base64</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dateEncoding</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Classes/URLEncodedFormEncoder/DateEncoding.html">DateEncoding</a></code> to use. <code>.deferredToDate</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>keyEncoding</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code><a href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">KeyEncoding</a></code> to use. <code>.useDefaultKeys</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -715,7 +926,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">SpaceEncoding</a></code> instance. Defaults to <code>.percentEscaped</code>.</p>
+                                  <p>The <code><a href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">SpaceEncoding</a></code> to use. <code>.percentEscaped</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -727,7 +938,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code>CharacterSet</code> of allowed (non-escaped) characters. Defaults to <code>.afURLQueryAllowed</code>.</p>
+                                  <p>The <code>CharacterSet</code> of allowed (non-escaped) characters. <code>.afURLQueryAllowed</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -753,7 +964,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                         <p>Encodes the <code>value</code> as a URL form encoded <code>String</code>.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    An <code><a href="../Classes/URLEncodedFormEncoder/Error.html">Error</a></code> or <code>EncodingError</code> instance if encoding fails.
+    <p>An <code><a href="../Classes/URLEncodedFormEncoder/Error.html">Error</a></code> or <code>EncodingError</code> instance if encoding fails.</p>
 
 </div>
 
@@ -809,7 +1020,7 @@ while older encoding may expect spaces to be replaced with +.</p>
 <code>.utf8</code> data.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    An <code><a href="../Classes/URLEncodedFormEncoder/Error.html">Error</a></code> or <code>EncodingError</code> instance if encoding fails.
+    <p>An <code><a href="../Classes/URLEncodedFormEncoder/Error.html">Error</a></code> or <code>EncodingError</code> instance if encoding fails.</p>
 
 </div>
 
@@ -856,8 +1067,8 @@ while older encoding may expect spaces to be replaced with +.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

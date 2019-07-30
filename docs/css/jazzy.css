@@ -63,6 +63,10 @@ a {
   a:hover, a:focus {
     outline: 0;
     text-decoration: underline; }
+  a.discouraged {
+    text-decoration: line-through; }
+    a.discouraged:hover, a.discouraged:focus {
+      text-decoration: underline line-through; }
 
 table {
   background: #fff;
@@ -225,7 +229,7 @@ pre code {
   .item a[name]:before {
     content: "";
     display: block; }
-  .item .token {
+  .item .token, .item .direct-link {
     padding-left: 3px;
     margin-left: 0px;
     font-size: 1rem; }
@@ -287,9 +291,9 @@ pre code {
   .language .aside-title {
     color: #4183c4; }
 
-.aside-warning {
+.aside-warning, .aside-deprecated, .aside-unavailable {
   border-left: 5px solid #ff6666; }
-  .aside-warning .aside-title {
+  .aside-warning .aside-title, .aside-deprecated .aside-title, .aside-unavailable .aside-title {
     color: #ff0000; }
 
 .graybox {

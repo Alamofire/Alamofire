@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -532,7 +533,7 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code>JSONEncoding</code> instance using the specified options.</p>
+                        <p>Creates an instance using the specified <code>WritingOptions</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -555,16 +556,12 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                               </td>
                               <td>
                                 <div>
-                                  <p>The options for writing the parameters as JSON data.</p>
+                                  <p><code>JSONSerialization.WritingOptions</code> to use.</p>
                                 </div>
                               </td>
                             </tr>
                           </tbody>
                         </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The new <code>JSONEncoding</code> instance.</p>
                       </div>
                     </section>
                   </div>
@@ -583,9 +580,9 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire12JSONEncodingV6encode_4with10Foundation10URLRequestVAA0F11Convertible_p_SDySSypGSgtKF"></a>
+                    <a name="/s:9Alamofire17ParameterEncodingP6encode_4with10Foundation10URLRequestVAA0G11Convertible_p_SDySSypGSgtKF"></a>
                     <a name="//apple_ref/swift/Method/encode(_:with:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12JSONEncodingV6encode_4with10Foundation10URLRequestVAA0F11Convertible_p_SDySSypGSgtKF">encode(_:with:)</a>
+                    <a class="token" href="#/s:9Alamofire17ParameterEncodingP6encode_4with10Foundation10URLRequestVAA0G11Convertible_p_SDySSypGSgtKF">encode(_:with:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -593,13 +590,7 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a URL request by encoding parameters and applying them onto an existing request.</p>
-<div class="aside aside-throws">
-    <p class="aside-title">Throws</p>
-    <p>An <code>Error</code> if the encoding process encounters an error.</p>
-
-</div>
-
+                        
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -608,41 +599,6 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">encode</span><span class="p">(</span><span class="n">_</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span> <span class="n">with</span> <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">URLRequest</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>urlRequest</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The request to have parameters applied.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>parameters</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The parameters to apply.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The encoded request.</p>
                       </div>
                     </section>
                   </div>
@@ -660,10 +616,10 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a URL request by encoding the JSON object and setting the resulting data on the HTTP body.</p>
+                        <p>Encodes any JSON compatible object into a <code>URLRequest</code>.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    <p>An <code>Error</code> if the encoding process encounters an error.</p>
+    <p>Any <code>Error</code> produced during encoding.</p>
 
 </div>
 
@@ -688,7 +644,7 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                               </td>
                               <td>
                                 <div>
-                                  <p>The request to apply the JSON object to.</p>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value into which the object will be encoded.</p>
                                 </div>
                               </td>
                             </tr>
@@ -700,7 +656,7 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                               </td>
                               <td>
                                 <div>
-                                  <p>The JSON object to apply to the request.</p>
+                                  <p><code>Any</code> value (must be JSON compatible<code>to be encoded into the</code>URLRequest<code>.</code>nil` by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -709,7 +665,7 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>The encoded request.</p>
+                        <p>The encoded <code>URLRequest</code>.</p>
                       </div>
                     </section>
                   </div>
@@ -722,8 +678,8 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

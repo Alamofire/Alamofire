@@ -23,7 +23,7 @@
         <a class="header-link" href="index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -669,13 +670,7 @@ on the <code>Destination</code> set.</p>
 <p>If no <code>Content-Type</code> header is already set on the provided <code>URLRequest</code>s, it will be set to
 <code>application/x-www-form-urlencoded; charset=utf-8</code>.</p>
 
-<p>There is no published specification for how to encode collection types. By default, the convention of appending
-<code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending the key surrounded by square brackets for
-nested dictionary values (<code>foo[bar]=baz</code>) is used. Optionally, <code>ArrayEncoding</code> can be used to omit the
-square brackets appended to array keys.</p>
-
-<p><code>BoolEncoding</code> can be used to configure how boolean values are encoded. The default behavior is to encode
-<code>true</code> as 1 and <code>false</code> as 0.</p>
+<p>Encoding behavior can be customized by passing an instance of <code><a href="Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a></code> to the initializer.</p>
 
                         <a href="Classes/URLEncodedFormParameterEncoder.html" class="slightly-smaller">See more</a>
                       </div>
@@ -684,47 +679,6 @@ square brackets appended to array keys.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">URLEncodedFormParameterEncoder</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ParameterEncoder.html">ParameterEncoder</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire21URLEncodedFormEncoderC"></a>
-                    <a name="//apple_ref/swift/Class/URLEncodedFormEncoder" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC">URLEncodedFormEncoder</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>An object that encodes instances into URL-encoded query strings.</p>
-
-<p>There is no published specification for how to encode collection types. By default, the convention of appending
-<code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending the key surrounded by square brackets for
-nested dictionary values (<code>foo[bar]=baz</code>) is used. Optionally, <code>ArrayEncoding</code> can be used to omit the
-square brackets appended to array keys.</p>
-
-<p><code>BoolEncoding</code> can be used to configure how <code>Bool</code> values are encoded. The default behavior is to encode
-<code>true</code> as 1 and <code>false</code> as 0.</p>
-
-<p><code>SpaceEncoding</code> can be used to configure how spaces are encoded. Modern encodings use percent replacement (%20),
-while older encoding may expect spaces to be replaced with +.</p>
-
-<p>This type is largely based on Vapor&rsquo;s <a href="https://github.com/vapor/url-encoded-form"><code>url-encoded-form</code></a> project.</p>
-
-                        <a href="Classes/URLEncodedFormEncoder.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">URLEncodedFormEncoder</span></code></pre>
 
                         </div>
                       </div>
@@ -755,7 +709,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="Classes/Request.html">Request</a></code> subclass which handles in-memory <code>Data</code> download using <code>URLSessionDataTask</code>.</p>
 
                         <a href="Classes/DataRequest.html" class="slightly-smaller">See more</a>
                       </div>
@@ -770,6 +724,17 @@ while older encoding may expect spaces to be replaced with +.</p>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/DownloadRequest"></a>
+                <a name="//apple_ref/swift/Section/DownloadRequest" class="dashAnchor"></a>
+                <a href="#/DownloadRequest">
+                  <h3 class="section-name">DownloadRequest</h3>
+                </a>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -783,7 +748,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="Classes/Request.html">Request</a></code> subclass which downloads <code>Data</code> to a file on disk using <code>URLSessionDownloadTask</code>.</p>
 
                         <a href="Classes/DownloadRequest.html" class="slightly-smaller">See more</a>
                       </div>
@@ -798,6 +763,17 @@ while older encoding may expect spaces to be replaced with +.</p>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/UploadRequest"></a>
+                <a name="//apple_ref/swift/Section/UploadRequest" class="dashAnchor"></a>
+                <a href="#/UploadRequest">
+                  <h3 class="section-name">UploadRequest</h3>
+                </a>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -811,7 +787,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="Classes/DataRequest.html">DataRequest</a></code> subclass which handles <code>Data</code> upload from memory, file, or stream using <code>URLSessionUploadTask</code>.</p>
 
                         <a href="Classes/UploadRequest.html" class="slightly-smaller">See more</a>
                       </div>
@@ -843,7 +819,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Closure-based <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code>.</p>
 
                         <a href="Classes/Adapter.html" class="slightly-smaller">See more</a>
                       </div>
@@ -875,7 +851,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Closure-based <code><a href="Protocols/RequestRetrier.html">RequestRetrier</a></code>.</p>
 
                         <a href="Classes/Retrier.html" class="slightly-smaller">See more</a>
                       </div>
@@ -907,7 +883,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="Protocols/RequestInterceptor.html">RequestInterceptor</a></code> which can use multiple <code><a href="Protocols/RequestAdapter.html">RequestAdapter</a></code> and <code><a href="Protocols/RequestRetrier.html">RequestRetrier</a></code> values.</p>
 
                         <a href="Classes/Interceptor.html" class="slightly-smaller">See more</a>
                       </div>
@@ -946,7 +922,7 @@ while older encoding may expect spaces to be replaced with +.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A <code><a href="Protocols/ResponseSerializer.html">ResponseSerializer</a></code> that performs minimal reponse checking and returns any response data as-is. By default, a
+                        <p>A <code><a href="Protocols/ResponseSerializer.html">ResponseSerializer</a></code> that performs minimal response checking and returns any response data as-is. By default, a
 request returning <code>nil</code> or no data is considered an error. However, if the response is has a status code valid for
 empty responses (<code>204</code>, <code>205</code>), then an empty <code>Data</code> value is returned.</p>
 
@@ -1367,7 +1343,7 @@ evaluators consider it valid.</p>
                       <div class="abstract">
                         <p>Disables all evaluation which in turn will always consider any server trust as valid.</p>
 
-<p>THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!</p>
+<p><strong>THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!</strong></p>
 
                         <a href="Classes/DisabledEvaluator.html" class="slightly-smaller">See more</a>
                       </div>
@@ -1399,7 +1375,9 @@ evaluators consider it valid.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code>Session</code> creates and manages Alamofire&rsquo;s <code><a href="Classes/Request.html">Request</a></code> types during their lifetimes. It also provides common
+functionality for all <code><a href="Classes/Request.html">Request</a></code>s, including queuing, interception, trust management, redirect handling, and response
+cache handling.</p>
 
                         <a href="Classes/Session.html" class="slightly-smaller">See more</a>
                       </div>
@@ -1431,7 +1409,7 @@ evaluators consider it valid.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Class which implements the various <code>URLSessionDelegate</code> methods to connect various Alamofire features.</p>
 
                         <a href="Classes/SessionDelegate.html" class="slightly-smaller">See more</a>
                       </div>
@@ -1448,14 +1426,62 @@ evaluators consider it valid.</p>
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC"></a>
+                    <a name="//apple_ref/swift/Class/URLEncodedFormEncoder" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC">URLEncodedFormEncoder</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An object that encodes instances into URL-encoded query strings.</p>
+
+<p>There is no published specification for how to encode collection types. By default, the convention of appending
+<code>[]</code> to the key for array values (<code>foo[]=1&amp;foo[]=2</code>), and appending the key surrounded by square brackets for
+nested dictionary values (<code>foo[bar]=baz</code>) is used. Optionally, <code>ArrayEncoding</code> can be used to omit the
+square brackets appended to array keys.</p>
+
+<p><code>BoolEncoding</code> can be used to configure how <code>Bool</code> values are encoded. The default behavior is to encode
+<code>true</code> as 1 and <code>false</code> as 0.</p>
+
+<p><code>DateEncoding</code> can be used to configure how <code>Date</code> values are encoded. By default, the <code>.deferredToDate</code>
+strategy is used, which formats dates from their structure.</p>
+
+<p><code>SpaceEncoding</code> can be used to configure how spaces are encoded. Modern encodings use percent replacement (<code>%20</code>),
+while older encodings may expect spaces to be replaced with <code>+</code>.</p>
+
+<p>This type is largely based on Vapor&rsquo;s <a href="https://github.com/vapor/url-encoded-form"><code>url-encoded-form</code></a> project.</p>
+
+                        <a href="Classes/URLEncodedFormEncoder.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">URLEncodedFormEncoder</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
         </section>
 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

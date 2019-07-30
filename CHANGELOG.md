@@ -3,8 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4) | [5.0.0-beta.5](#500-beta5) | [5.0.0-beta.6](#500-beta6)
-
+- `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4) | [5.0.0-beta.5](#500-beta5) | [5.0.0-beta.6](#500-beta6) | [5.0.0-beta.7](#500-beta7)
 #### 4.x Releases
 - `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481)
 - `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471) | [4.7.2](#472) | [4.7.3](#473)
@@ -37,6 +36,27 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.0.0-beta.7](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.7)
+Released on 2019-07-29. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/57?closed=1). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
+
+#### Added
+- `URLEncodedFormEncoder.DataEncoding` and `URLEncodedFormEncoder.KeyEncoding` to customize the encoding of `Data` and `CodingKeys` in `URLEncodedFormEncoder`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2858](https://github.com/Alamofire/Alamofire/pull/2858).
+- Asynchronous `cURLDescription` method to produce `cURL` commands for `Request`s which are in the process of creating their initial `URLRequest`.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2863](https://github.com/Alamofire/Alamofire/pull/2863).
+
+#### Updated
+- All inline API documentation. 
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2845](https://github.com/Alamofire/Alamofire/pull/2845).
+- Handling of response serializers appended after a `Request` has completed. This no longer produces an error but will instead trigger the normal `Request` lifetime methods.
+  - Updated by [Christian Noon](https://github.com/cnoon) in Pull Request [#2862](https://github.com/Alamofire/Alamofire/pull/2862).
+
+#### Fixed
+- Empty parameters being encoded as an empty `String` instead of `nil` by `URLEncodedFormEncoder`.
+  - Fixed by [David Barry](https://github.com/DavidBarry) in Pull Request [#2818](https://github.com/Alamofire/Alamofire/pull/2818).
+- Handling of `os_unfair_lock` to prevent rare crash.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2836](https://github.com/Alamofire/Alamofire/pull/2836).
 
 ## [5.0.0-beta.6](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-beta.6)
 Released on 2019-04-23. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/56?closed=1). **Note:** Alamofire will not be following semantic versioning during the beta process. There may be breaking changes until 5.0.0 is released.
