@@ -23,7 +23,7 @@
         <a class="header-link" href="../../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -410,33 +411,7 @@
 
                 </div>
               </div>
-            <p>The underlying reason the multipart encoding error occurred.</p>
-
-<ul>
-<li>bodyPartURLInvalid:                   The <code>fileURL</code> provided for reading an encodable body part isn&rsquo;t a
-                                    file URL.</li>
-<li>bodyPartFilenameInvalid:              The filename of the <code>fileURL</code> provided has either an empty
-                                    <code>lastPathComponent</code> or `pathExtension.</li>
-<li>bodyPartFileNotReachable:             The file at the <code>fileURL</code> provided was not reachable.</li>
-<li>bodyPartFileNotReachableWithError:    Attempting to check the reachability of the <code>fileURL</code> provided threw
-                                    an error.</li>
-<li>bodyPartFileIsDirectory:              The file at the <code>fileURL</code> provided is actually a directory.</li>
-<li>bodyPartFileSizeNotAvailable:         The size of the file at the <code>fileURL</code> provided was not returned by
-                                    the system.</li>
-<li>bodyPartFileSizeQueryFailedWithError: The attempt to find the size of the file at the <code>fileURL</code> provided
-                                    threw an error.</li>
-<li>bodyPartInputStreamCreationFailed:    An <code>InputStream</code> could not be created for the provided <code>fileURL</code>.</li>
-<li>outputStreamCreationFailed:           An <code>OutputStream</code> could not be created when attempting to write the
-                                    encoded data to disk.</li>
-<li>outputStreamFileAlreadyExists:        The encoded body data could not be writtent disk because a file
-                                    already exists at the provided <code>fileURL</code>.</li>
-<li>outputStreamURLInvalid:               The <code>fileURL</code> provided for writing the encoded body data to disk is
-                                    not a file URL.</li>
-<li>outputStreamWriteFailed:              The attempt to write the encoded body data to disk failed with an
-                                    underlying error.</li>
-<li>inputStreamReadFailed:                The attempt to read an encoded body part <code>InputStream</code> failed with
-                                    underlying system error.</li>
-</ul>
+            <p>The underlying reason the <code>.multipartEncodingFailed</code> error occurred.</p>
 
           </div>
         </section>
@@ -458,7 +433,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The <code>fileURL</code> provided for reading an encodable body part isn&rsquo;t a file <code>URL</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -485,7 +460,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The filename of the <code>fileURL</code> provided has either an empty <code>lastPathComponent</code> or `pathExtension.</p>
 
                       </div>
                       <div class="declaration">
@@ -512,7 +487,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The file at the <code>fileURL</code> provided was not reachable.</p>
 
                       </div>
                       <div class="declaration">
@@ -539,7 +514,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Attempting to check the reachability of the <code>fileURL</code> provided threw an error.</p>
 
                       </div>
                       <div class="declaration">
@@ -566,7 +541,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The file at the <code>fileURL</code> provided is actually a directory.</p>
 
                       </div>
                       <div class="declaration">
@@ -593,7 +568,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The size of the file at the <code>fileURL</code> provided was not returned by the system.</p>
 
                       </div>
                       <div class="declaration">
@@ -620,7 +595,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The attempt to find the size of the file at the <code>fileURL</code> provided threw an error.</p>
 
                       </div>
                       <div class="declaration">
@@ -647,7 +622,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>An <code>InputStream</code> could not be created for the provided <code>fileURL</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -674,7 +649,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>An <code>OutputStream</code> could not be created when attempting to write the encoded data to disk.</p>
 
                       </div>
                       <div class="declaration">
@@ -701,7 +676,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The encoded body data could not be written to disk because a file already exists at the provided <code>fileURL</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -728,7 +703,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The <code>fileURL</code> provided for writing the encoded body data to disk is not a file <code>URL</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -755,7 +730,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The attempt to write the encoded body data to disk failed with an underlying error.</p>
 
                       </div>
                       <div class="declaration">
@@ -782,7 +757,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The attempt to read an encoded body part <code>InputStream</code> failed with underlying system error.</p>
 
                       </div>
                       <div class="declaration">
@@ -804,8 +779,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

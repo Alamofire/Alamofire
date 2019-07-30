@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -410,7 +411,7 @@
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p><code><a href="../Classes/Request.html">Request</a></code> subclass which handles in-memory <code>Data</code> download using <code>URLSessionDataTask</code>.</p>
 
           </div>
         </section>
@@ -432,7 +433,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value used to create <code>URLRequest</code>s for this instance.</p>
 
                       </div>
                       <div class="declaration">
@@ -459,7 +460,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code>Data</code> read from the server so far.</p>
 
                       </div>
                       <div class="declaration">
@@ -487,8 +488,11 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Validates the request, using the specified closure.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>If validation fails, subsequent calls to response handlers will have an associated error.</p>
 
-<p>If validation fails, subsequent calls to response handlers will have an associated error.</p>
+</div>
 
                       </div>
                       <div class="declaration">
@@ -512,7 +516,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>A closure to validate the request.</p>
+                                  <p><code><a href="../Classes/DataRequest.html#/s:9Alamofire11DataRequestC10Validationa">Validation</a></code> closure used to validate the response.</p>
                                 </div>
                               </td>
                             </tr>
@@ -521,7 +525,7 @@
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>The request.</p>
+                        <p>The instance.</p>
                       </div>
                     </section>
                   </div>
@@ -574,7 +578,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -641,7 +645,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default</p>
                                 </div>
                               </td>
                             </tr>
@@ -730,7 +734,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -806,7 +810,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -895,7 +899,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -907,7 +911,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The JSON serialization reading options. Defaults to <code>.allowFragments</code>.</p>
+                                  <p>The JSON serialization reading options. <code>.allowFragments</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -947,9 +951,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11DataRequestC17responseDecodable5queue7decoder17completionHandlerACXDSo012OS_dispatch_F0C_AA0B7Decoder_pyAA0B8ResponseVyxGctSeRzlF"></a>
-                    <a name="//apple_ref/swift/Method/responseDecodable(queue:decoder:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11DataRequestC17responseDecodable5queue7decoder17completionHandlerACXDSo012OS_dispatch_F0C_AA0B7Decoder_pyAA0B8ResponseVyxGctSeRzlF">responseDecodable(queue:decoder:completionHandler:)</a>
+                    <a name="/s:9Alamofire11DataRequestC17responseDecodable2of5queue7decoder17completionHandlerACXDxm_So012OS_dispatch_G0CAA0B7Decoder_pyAA0B8ResponseVyxGctSeRzlF"></a>
+                    <a name="//apple_ref/swift/Method/responseDecodable(of:queue:decoder:completionHandler:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire11DataRequestC17responseDecodable2of5queue7decoder17completionHandlerACXDxm_So012OS_dispatch_G0CAA0B7Decoder_pyAA0B8ResponseVyxGctSeRzlF">responseDecodable(of:queue:decoder:completionHandler:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -965,7 +969,8 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="n">responseDecodable</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="n">responseDecodable</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">of</span> <span class="nv">type</span><span class="p">:</span> <span class="kt">T</span><span class="o">.</span><span class="k">Type</span> <span class="o">=</span> <span class="kt">T</span><span class="o">.</span><span class="k">self</span><span class="p">,</span>
+                                            <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
                                             <span class="nv">decoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataDecoder.html">DataDecoder</a></span> <span class="o">=</span> <span class="kt">JSONDecoder</span><span class="p">(),</span>
                                             <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Structs/DataResponse.html">DataResponse</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
 
@@ -978,12 +983,24 @@
                             <tr>
                               <td>
                                 <code>
+                                <em>type</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>Decodable</code> type to decode from response data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>queue</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -995,8 +1012,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code> to use to decode the response. Defaults to a <code>JSONDecoder</code> with default
-               settings.</p>
+                                  <p><code><a href="../Protocols/DataDecoder.html">DataDecoder</a></code> to use to decode the response. <code>JSONDecoder()</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1203,8 +1219,8 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

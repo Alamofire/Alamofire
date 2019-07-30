@@ -23,7 +23,7 @@
         <a class="header-link" href="../../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -413,19 +414,6 @@
             <p>State of the <code><a href="../../Classes/Request.html">Request</a></code>, with managed transitions between states set when calling <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC6resumeACXDyF">resume()</a></code>, <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC7suspendACXDyF">suspend()</a></code>, or
 <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC6cancelACXDyF">cancel()</a></code> on the <code><a href="../../Classes/Request.html">Request</a></code>.</p>
 
-<ul>
-<li>initialized: Initial state of the <code><a href="../../Classes/Request.html">Request</a></code>.</li>
-<li>resumed:   Set when <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC6resumeACXDyF">resume()</a></code> is called. Any tasks created for the <code><a href="../../Classes/Request.html">Request</a></code> will have <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC6resumeACXDyF">resume()</a></code> called on
-         them in this state.</li>
-<li>suspended: Set when <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC7suspendACXDyF">suspend()</a></code> is called. Any tasks created for the <code><a href="../../Classes/Request.html">Request</a></code> will have <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC7suspendACXDyF">suspend()</a></code> called on
-         them in this state.</li>
-<li>cancelled: Set when <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC6cancelACXDyF">cancel()</a></code> is called. Any tasks created for the <code><a href="../../Classes/Request.html">Request</a></code> will have <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC6cancelACXDyF">cancel()</a></code> called on
-         them. Unlike <code>resumed</code> or <code>suspended</code>, once in the <code>cancelled</code> state, the <code><a href="../../Classes/Request.html">Request</a></code> can no longer
-         transition to any other state.</li>
-<li>finished:  Set when all response serialization completion closures have been cleared on the <code><a href="../../Classes/Request.html">Request</a></code> and
-         queued on their respective queues.</li>
-</ul>
-
           </div>
         </section>
 
@@ -446,7 +434,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Initial state of the <code><a href="../../Classes/Request.html">Request</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -473,7 +461,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code>State</code> set when <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC6resumeACXDyF">resume()</a></code> is called. Any tasks created for the <code><a href="../../Classes/Request.html">Request</a></code> will have <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC6resumeACXDyF">resume()</a></code> called on
+them in this state.</p>
 
                       </div>
                       <div class="declaration">
@@ -500,7 +489,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code>State</code> set when <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC7suspendACXDyF">suspend()</a></code> is called. Any tasks created for the <code><a href="../../Classes/Request.html">Request</a></code> will have <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC7suspendACXDyF">suspend()</a></code> called on
+them in this state.</p>
 
                       </div>
                       <div class="declaration">
@@ -527,7 +517,9 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code>State</code> set when <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC6cancelACXDyF">cancel()</a></code> is called. Any tasks created for the <code><a href="../../Classes/Request.html">Request</a></code> will have <code><a href="../../Classes/Request.html#/s:9Alamofire7RequestC6cancelACXDyF">cancel()</a></code> called on
+them. Unlike <code><a href="../../Classes/Request/State.html#/s:9Alamofire7RequestC5StateO7resumedyA2EmF">resumed</a></code> or <code><a href="../../Classes/Request/State.html#/s:9Alamofire7RequestC5StateO9suspendedyA2EmF">suspended</a></code>, once in the <code>cancelled</code> state, the <code><a href="../../Classes/Request.html">Request</a></code> can no longer transition
+to any other state.</p>
 
                       </div>
                       <div class="declaration">
@@ -554,7 +546,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code>State</code> set when all response serialization completion closures have been cleared on the <code><a href="../../Classes/Request.html">Request</a></code> and
+enqueued on their respective queues.</p>
 
                       </div>
                       <div class="declaration">
@@ -576,8 +569,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
