@@ -150,17 +150,22 @@ extension DataRequest {
     @discardableResult
     public func response(queue: DispatchQueue = .main, completionHandler: @escaping (DataResponse<Data?>) -> Void) -> Self {
         appendResponseSerializer {
+            // Start work that should be on the serialization queue.
             let result = AFResult(value: self.data, error: self.error)
-            let response = DataResponse(request: self.request,
-                                        response: self.response,
-                                        data: self.data,
-                                        metrics: self.metrics,
-                                        serializationDuration: 0,
-                                        result: result)
+            // End work that should be on the serialization queue.
 
-            self.eventMonitor?.request(self, didParseResponse: response)
+            self.underlyingQueue.async {
+                let response = DataResponse(request: self.request,
+                                            response: self.response,
+                                            data: self.data,
+                                            metrics: self.metrics,
+                                            serializationDuration: 0,
+                                            result: result)
 
-            self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+                self.eventMonitor?.request(self, didParseResponse: response)
+
+                self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+            }
         }
 
         return self
@@ -182,54 +187,58 @@ extension DataRequest {
         -> Self
     {
         appendResponseSerializer {
+            // Start work that should be on the serialization queue.
             let start = CFAbsoluteTimeGetCurrent()
             let result = AFResult { try responseSerializer.serialize(request: self.request,
-                                                                   response: self.response,
-                                                                   data: self.data,
-                                                                   error: self.error) }
+                                                                     response: self.response,
+                                                                     data: self.data,
+                                                                     error: self.error) }
             let end = CFAbsoluteTimeGetCurrent()
+            // End work that should be on the serialization queue.
 
-            let response = DataResponse(request: self.request,
-                                        response: self.response,
-                                        data: self.data,
-                                        metrics: self.metrics,
-                                        serializationDuration: (end - start),
-                                        result: result)
+            self.underlyingQueue.async {
+                let response = DataResponse(request: self.request,
+                                            response: self.response,
+                                            data: self.data,
+                                            metrics: self.metrics,
+                                            serializationDuration: (end - start),
+                                            result: result)
 
-            self.eventMonitor?.request(self, didParseResponse: response)
+                self.eventMonitor?.request(self, didParseResponse: response)
 
-            guard let serializerError = result.failure, let delegate = self.delegate else {
-                self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
-                return
-            }
-
-            delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
-                var didComplete: (() -> Void)?
-
-                defer {
-                    if let didComplete = didComplete {
-                        self.responseSerializerDidComplete { queue.async { didComplete() } }
-                    }
+                guard let serializerError = result.failure, let delegate = self.delegate else {
+                    self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+                    return
                 }
 
-                switch retryResult {
-                case .doNotRetry:
-                    didComplete = { completionHandler(response) }
+                delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
+                    var didComplete: (() -> Void)?
 
-                case .doNotRetryWithError(let retryError):
-                    let result = AFResult<Serializer.SerializedObject>.failure(retryError)
+                    defer {
+                        if let didComplete = didComplete {
+                            self.responseSerializerDidComplete { queue.async { didComplete() } }
+                        }
+                    }
 
-                    let response = DataResponse(request: self.request,
-                                                response: self.response,
-                                                data: self.data,
-                                                metrics: self.metrics,
-                                                serializationDuration: (end - start),
-                                                result: result)
+                    switch retryResult {
+                    case .doNotRetry:
+                        didComplete = { completionHandler(response) }
 
-                    didComplete = { completionHandler(response) }
+                    case .doNotRetryWithError(let retryError):
+                        let result = AFResult<Serializer.SerializedObject>.failure(retryError)
 
-                case .retry, .retryWithDelay:
-                    delegate.retryRequest(self, withDelay: retryResult.delay)
+                        let response = DataResponse(request: self.request,
+                                                    response: self.response,
+                                                    data: self.data,
+                                                    metrics: self.metrics,
+                                                    serializationDuration: (end - start),
+                                                    result: result)
+
+                        didComplete = { completionHandler(response) }
+
+                    case .retry, .retryWithDelay:
+                        delegate.retryRequest(self, withDelay: retryResult.delay)
+                    }
                 }
             }
         }
@@ -253,18 +262,23 @@ extension DownloadRequest {
         -> Self
     {
         appendResponseSerializer {
+            // Start work that should be on the serilization queue.
             let result = AFResult(value: self.fileURL , error: self.error)
-            let response = DownloadResponse(request: self.request,
-                                            response: self.response,
-                                            fileURL: self.fileURL,
-                                            resumeData: self.resumeData,
-                                            metrics: self.metrics,
-                                            serializationDuration: 0,
-                                            result: result)
+            // End work that should be on the serialization queue.
 
-            self.eventMonitor?.request(self, didParseResponse: response)
+            self.underlyingQueue.async {
+                let response = DownloadResponse(request: self.request,
+                                                response: self.response,
+                                                fileURL: self.fileURL,
+                                                resumeData: self.resumeData,
+                                                metrics: self.metrics,
+                                                serializationDuration: 0,
+                                                result: result)
 
-            self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+                self.eventMonitor?.request(self, didParseResponse: response)
+
+                self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+            }
         }
 
         return self
@@ -287,56 +301,60 @@ extension DownloadRequest {
         -> Self
     {
         appendResponseSerializer {
+            // Start work that should be on the serialization queue.
             let start = CFAbsoluteTimeGetCurrent()
             let result = AFResult { try responseSerializer.serializeDownload(request: self.request,
-                                                                           response: self.response,
-                                                                           fileURL: self.fileURL,
-                                                                           error: self.error) }
+                                                                             response: self.response,
+                                                                             fileURL: self.fileURL,
+                                                                             error: self.error) }
             let end = CFAbsoluteTimeGetCurrent()
+            // End work that should be on the serialization queue.
 
-            let response = DownloadResponse(request: self.request,
-                                            response: self.response,
-                                            fileURL: self.fileURL,
-                                            resumeData: self.resumeData,
-                                            metrics: self.metrics,
-                                            serializationDuration: (end - start),
-                                            result: result)
+            self.underlyingQueue.async {
+                let response = DownloadResponse(request: self.request,
+                                                response: self.response,
+                                                fileURL: self.fileURL,
+                                                resumeData: self.resumeData,
+                                                metrics: self.metrics,
+                                                serializationDuration: (end - start),
+                                                result: result)
 
-            self.eventMonitor?.request(self, didParseResponse: response)
+                self.eventMonitor?.request(self, didParseResponse: response)
 
-            guard let serializerError = result.failure, let delegate = self.delegate else {
-                self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
-                return
-            }
-
-            delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
-                var didComplete: (() -> Void)?
-
-                defer {
-                    if let didComplete = didComplete {
-                        self.responseSerializerDidComplete { queue.async { didComplete() } }
-                    }
+                guard let serializerError = result.failure, let delegate = self.delegate else {
+                    self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+                    return
                 }
 
-                switch retryResult {
-                case .doNotRetry:
-                    didComplete = { completionHandler(response) }
+                delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
+                    var didComplete: (() -> Void)?
 
-                case .doNotRetryWithError(let retryError):
-                    let result = AFResult<T.SerializedObject>.failure(retryError)
+                    defer {
+                        if let didComplete = didComplete {
+                            self.responseSerializerDidComplete { queue.async { didComplete() } }
+                        }
+                    }
 
-                    let response = DownloadResponse(request: self.request,
-                                                    response: self.response,
-                                                    fileURL: self.fileURL,
-                                                    resumeData: self.resumeData,
-                                                    metrics: self.metrics,
-                                                    serializationDuration: (end - start),
-                                                    result: result)
+                    switch retryResult {
+                    case .doNotRetry:
+                        didComplete = { completionHandler(response) }
 
-                    didComplete = { completionHandler(response) }
+                    case .doNotRetryWithError(let retryError):
+                        let result = AFResult<T.SerializedObject>.failure(retryError)
 
-                case .retry, .retryWithDelay:
-                    delegate.retryRequest(self, withDelay: retryResult.delay)
+                        let response = DownloadResponse(request: self.request,
+                                                        response: self.response,
+                                                        fileURL: self.fileURL,
+                                                        resumeData: self.resumeData,
+                                                        metrics: self.metrics,
+                                                        serializationDuration: (end - start),
+                                                        result: result)
+
+                        didComplete = { completionHandler(response) }
+
+                    case .retry, .retryWithDelay:
+                        delegate.retryRequest(self, withDelay: retryResult.delay)
+                    }
                 }
             }
         }
