@@ -26,7 +26,7 @@ import Alamofire
 import Foundation
 import XCTest
 
-class RequestResponseTestCase: BaseTestCase {
+final class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -181,12 +181,32 @@ class RequestResponseTestCase: BaseTestCase {
         }
     }
 
-    // MARK: Serialization Queue
+    // MARK: Queues
 
     func testThatResponseSerializationWorksWithSerializationQueue() {
         // Given
-        let queue = DispatchQueue(label: "org.alamofire.serializationQueue")
+        let queue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
         let manager = Session(serializationQueue: queue)
+        let expectation = self.expectation(description: "request should complete")
+        var response: DataResponse<Any>?
+
+        // When
+        manager.request("https://httpbin.org/get").responseJSON { (resp) in
+            response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(response?.result.isSuccess, true)
+    }
+
+    func testThatRequestsWorksWithRequestAndSerializationQueue() {
+        // Given
+        let requestQueue = DispatchQueue(label: "org.alamofire.testRequestQueue")
+        let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
+        let manager = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
         let expectation = self.expectation(description: "request should complete")
         var response: DataResponse<Any>?
 
@@ -829,7 +849,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         let request = manager.request(urlString)
         request.cURLDescription {
             components = self.cURLCommandComponents(from: $0)
-            syncComponents = self.cURLCommandComponents(from:request.cURLDescription())
+            syncComponents = self.cURLCommandComponents(from: request.cURLDescription())
             expectation.fulfill()
         }
 
