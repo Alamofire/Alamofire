@@ -777,6 +777,7 @@ public class Request {
 
     /// Final cleanup step executed when the instance finishes response serialization.
     open func cleanup() {
+        delegate?.cleanup(after: self)
         // No-op: override in subclass
     }
 }
@@ -892,6 +893,11 @@ extension Request {
 public protocol RequestDelegate: AnyObject {
     /// `URLSessionConfiguration` used to create the underlying `URLSessionTask`s.
     var sessionConfiguration: URLSessionConfiguration { get }
+
+    /// Notifies the delegate the `Request` has reached a point where it needs cleanup.
+    ///
+    /// - Parameter request: The `Request` to cleanup after.
+    func cleanup(after request: Request)
 
     /// Asynchronously ask the delegate whether a `Request` will be retried.
     ///

@@ -64,6 +64,8 @@ open class Session {
 
     /// Internal map between `Request`s and any `URLSessionTasks` that may be in flight for them.
     var requestTaskMap = RequestTaskMap()
+    /// Set of currently active `Request`s.
+    var activeRequests: Set<Request> = []
 
     /// Creates a `Session` from a `URLSession` and other parameters.
     ///
@@ -190,6 +192,22 @@ open class Session {
     deinit {
         finishRequestsForDeinit()
         session.invalidateAndCancel()
+    }
+
+    // MARK: - Cancellation
+
+    /// Cancel all active `Request`s, optionally calling a completion handler when complete.
+    ///
+    /// - Note: This is an asynchronous operation and does not block the creation of future `Request`s. Cancelled
+    ///         `Request`s may not cancel immediately due internal work, and may not cancel at all if they are close to
+    ///         completion when cancelled.
+    ///
+    /// - Parameter completion: Closure to be called when all `Request`s have been cancelled.
+    public func cancelAllRequests(completion: (() -> Void)? = nil) {
+        rootQueue.async {
+            self.activeRequests.forEach { $0.cancel() }
+            completion?()
+        }
     }
 
     // MARK: - DataRequest
@@ -750,11 +768,17 @@ open class Session {
 
     // MARK: Perform
 
+
+    /// Perform `Request`.
+    ///
+    /// - Note: Called during retry.
+    ///
+    /// - Parameter request: The `Request` to perform.
     func perform(_ request: Request) {
         switch request {
-        case let r as DataRequest: perform(r)
-        case let r as UploadRequest: perform(r)
-        case let r as DownloadRequest: perform(r)
+        case let r as DataRequest: self.perform(r)
+        case let r as UploadRequest: self.perform(r)
+        case let r as DownloadRequest: self.perform(r)
         default: fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
         }
     }
@@ -763,6 +787,8 @@ open class Session {
         requestQueue.async {
             guard !request.isCancelled else { return }
 
+            self.activeRequests.insert(request)
+
             self.performSetupOperations(for: request, convertible: request.convertible)
         }
     }
@@ -770,6 +796,8 @@ open class Session {
     func perform(_ request: UploadRequest) {
         requestQueue.async {
             guard !request.isCancelled else { return }
+
+            self.activeRequests.insert(request)
 
             do {
                 let uploadable = try request.upload.createUploadable()
@@ -785,6 +813,8 @@ open class Session {
     func perform(_ request: DownloadRequest) {
         requestQueue.async {
             guard !request.isCancelled else { return }
+
+            self.activeRequests.insert(request)
 
             switch request.downloadable {
             case let .request(convertible):
@@ -902,6 +932,10 @@ open class Session {
 extension Session: RequestDelegate {
     public var sessionConfiguration: URLSessionConfiguration {
         return session.configuration
+    }
+
+    public func cleanup(after request: Request) {
+        activeRequests.remove(request)
     }
 
     public func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
