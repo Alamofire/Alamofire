@@ -264,6 +264,10 @@ public struct JSONEncoding: ParameterEncoding {
         var urlRequest = try urlRequest.asURLRequest()
 
         guard let parameters = parameters else { return urlRequest }
+        // swift NSURLSession sends the 'Content-Length' header but not the message body for other methods; `httpBody` will hang up the remote session or make the packet confused in the server
+        guard "POST" == ( urlRequest.httpMethod?.uppercased() ?? "") else {
+            throw AFError.ParameterEncoderFailureReason.missingRequiredComponent(.httpMethod(rawValue: "POST"))
+        }
 
         do {
             let data = try JSONSerialization.data(withJSONObject: parameters, options: options)
@@ -290,9 +294,14 @@ public struct JSONEncoding: ParameterEncoding {
     /// - Throws:       Any `Error` produced during encoding.
     public func encode(_ urlRequest: URLRequestConvertible, withJSONObject jsonObject: Any? = nil) throws -> URLRequest {
         var urlRequest = try urlRequest.asURLRequest()
-
+        
+        
         guard let jsonObject = jsonObject else { return urlRequest }
-
+        // swift NSURLSession sends the 'Content-Length' header but not the message body for other methods; `httpBody` will hang up the remote session or make the packet confused in the server
+        guard "POST" == ( urlRequest.httpMethod?.uppercased() ?? "") else {
+            throw AFError.ParameterEncoderFailureReason.missingRequiredComponent(.httpMethod(rawValue: "POST"))
+        }
+        
         do {
             let data = try JSONSerialization.data(withJSONObject: jsonObject, options: options)
 
