@@ -893,6 +893,7 @@ open class Session {
                 task.suspend()
                 rootQueue.async { request.didSuspendTask(task) }
             case (_, .cancelled):
+                task.resume()
                 task.cancel()
                 rootQueue.async { request.didCancelTask(task) }
             case (_, .finished):

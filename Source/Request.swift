@@ -604,6 +604,7 @@ public class Request {
                 return
             }
 
+            task.resume()
             task.cancel()
             underlyingQueue.async { self.didCancelTask(task) }
         }
@@ -776,7 +777,7 @@ public class Request {
     // MARK: Cleanup
 
     /// Final cleanup step executed when the instance finishes response serialization.
-    open func cleanup() {
+    func cleanup() {
         delegate?.cleanup(after: self)
         // No-op: override in subclass
     }
