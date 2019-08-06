@@ -199,7 +199,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = FailingOptionalStruct(testedContainer: .keyed)
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertTrue(result.isFailure)
@@ -211,7 +211,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = FailingOptionalStruct(testedContainer: .unkeyed)
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertTrue(result.isFailure)
@@ -223,7 +223,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["a": "a"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=a")
@@ -235,7 +235,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["a": 1.0]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1.0")
@@ -247,7 +247,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: Float] = ["a": 1.0]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1.0")
@@ -259,7 +259,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: Int8] = ["a": 1]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1")
@@ -271,7 +271,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: Int16] = ["a": 1]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1")
@@ -283,7 +283,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: Int32] = ["a": 1]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1")
@@ -295,7 +295,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: Int64] = ["a": 1]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1")
@@ -307,7 +307,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: UInt] = ["a": 1]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1")
@@ -319,7 +319,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: UInt8] = ["a": 1]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1")
@@ -331,7 +331,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: UInt16] = ["a": 1]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1")
@@ -343,7 +343,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: UInt32] = ["a": 1]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1")
@@ -355,7 +355,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: UInt64] = ["a": 1]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a=1")
@@ -367,7 +367,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["a": ["b": "b"]]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "a%5Bb%5D=b")
@@ -379,7 +379,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = EncodableStruct()
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         let expected = "four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&three=1&one=one&two=2&five%5Ba%5D=a&six%5Ba%5D%5Bb%5D=b&seven%5Ba%5D=a"
@@ -392,7 +392,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ManuallyEncodableStruct()
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         let expected = "root%5B%5D%5B%5D=1&root%5B%5D%5B%5D=2&root%5B%5D%5B%5D=3&root%5B%5D%5Ba%5D%5Bstring%5D=string&root%5B%5D%5B%5D%5B%5D=1&root%5B%5D%5B%5D%5B%5D=2&root%5B%5D%5B%5D%5B%5D=3"
@@ -405,7 +405,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = EncodableSuperclass()
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertQueryEqual(result.value, "two=2&one=one&three=1")
@@ -417,7 +417,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = EncodableSubclass()
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         let expected = "four%5B%5D=1&four%5B%5D=2&four%5B%5D=3&two=2&five%5Ba%5D=a&five%5Bb%5D=b&three=1&one=one"
@@ -430,7 +430,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ManuallyEncodableSubclass()
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         let expected = "five%5Ba%5D=a&five%5Bb%5D=b&four%5Bfour%5D=one&four%5Bfive%5D=2"
@@ -443,7 +443,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = [1]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertFalse(result.isSuccess)
@@ -455,7 +455,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = "string"
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertFalse(result.isSuccess)
@@ -467,7 +467,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters: [String: String?] = ["string": nil]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertFalse(result.isSuccess)
@@ -479,7 +479,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["array": [1, 2]]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertQueryEqual(result.value, "array=1&array=2")
@@ -491,7 +491,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["bool": true]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "bool=true")
@@ -503,7 +503,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["data": Data("data".utf8)]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "data=ZGF0YQ%3D%3D")
@@ -517,7 +517,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["data": Data("data".utf8)]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertTrue(result.isFailure)
@@ -530,7 +530,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "date=123.456")
@@ -542,7 +542,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "date=978307323.456")
@@ -554,7 +554,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "date=978307323456.0")
@@ -566,7 +566,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "date=2001-01-01T00%3A02%3A03Z")
@@ -582,7 +582,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "date=2001-01-01%2000%3A02%3A03.4560")
@@ -594,7 +594,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "date=123.456")
@@ -608,7 +608,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertTrue(result.isFailure)
@@ -621,7 +621,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let paramters = ["oneTwoThree": "oneTwoThree"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(paramters) }
+        let result = Result<String, Error> { try encoder.encode(paramters) }
 
         // Then
         XCTAssertEqual(result.value, "one_two_three=oneTwoThree")
@@ -633,7 +633,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let paramters = ["oneTwoThree": "oneTwoThree"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(paramters) }
+        let result = Result<String, Error> { try encoder.encode(paramters) }
 
         // Then
         XCTAssertEqual(result.value, "one-two-three=oneTwoThree")
@@ -645,7 +645,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let paramters = ["oneTwoThree": "oneTwoThree"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(paramters) }
+        let result = Result<String, Error> { try encoder.encode(paramters) }
 
         // Then
         XCTAssertEqual(result.value, "OneTwoThree=oneTwoThree")
@@ -657,7 +657,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let paramters = ["oneTwoThree": "oneTwoThree"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(paramters) }
+        let result = Result<String, Error> { try encoder.encode(paramters) }
 
         // Then
         XCTAssertEqual(result.value, "onetwothree=oneTwoThree")
@@ -669,7 +669,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let paramters = ["oneTwoThree": "oneTwoThree"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(paramters) }
+        let result = Result<String, Error> { try encoder.encode(paramters) }
 
         // Then
         XCTAssertEqual(result.value, "ONETWOTHREE=oneTwoThree")
@@ -681,7 +681,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let paramters = ["oneTwoThree": "oneTwoThree"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(paramters) }
+        let result = Result<String, Error> { try encoder.encode(paramters) }
 
         // Then
         XCTAssertEqual(result.value, "A=oneTwoThree")
@@ -693,7 +693,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["spaces": "replace with spaces"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "spaces=replace+with+spaces")
@@ -707,7 +707,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["allowed": "?/"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "allowed=%3F%2F")
@@ -721,7 +721,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
                           "numbers": "0123456789"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertQueryEqual(result.value,
@@ -736,7 +736,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["reserved": "\(generalDelimiters)\(subDelimiters)"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "reserved=%3A%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D")
@@ -748,7 +748,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["illegal": " \"#%<>[]\\^`{}|"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "illegal=%20%22%23%25%3C%3E%5B%5D%5C%5E%60%7B%7D%7C")
@@ -760,7 +760,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["foo&bar": "baz&qux", "foobar": "bazqux"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertQueryEqual(result.value, "foobar=bazqux&foo%26bar=baz%26qux")
@@ -772,7 +772,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["?foo?": "?bar?"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "?foo?=?bar?")
@@ -784,7 +784,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["foo": "/bar/baz/qux"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "foo=/bar/baz/qux")
@@ -796,7 +796,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = [" foo ": " bar "]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "%20foo%20=%20bar%20")
@@ -808,7 +808,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["+foo+": "+bar+"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "%2Bfoo%2B=%2Bbar%2B")
@@ -820,7 +820,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["percent%": "%25"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         XCTAssertEqual(result.value, "percent%25=%2525")
@@ -837,7 +837,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         ]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         let expectedParameterValues = [
@@ -856,7 +856,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         let parameters = ["chinese": String(repeating: "一二三四五六七八九十", count: repeatedCount)]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
         let escaped = String(repeating: "%E4%B8%80%E4%BA%8C%E4%B8%89%E5%9B%9B%E4%BA%94%E5%85%AD%E4%B8%83%E5%85%AB%E4%B9%9D%E5%8D%81",

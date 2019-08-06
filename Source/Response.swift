@@ -42,7 +42,7 @@ public struct DataResponse<Value> {
     public let serializationDuration: TimeInterval
 
     /// The result of response serialization.
-    public let result: AFResult<Value>
+    public let result: Result<Value, Error>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
     public var value: Value? { return result.success }
@@ -58,13 +58,13 @@ public struct DataResponse<Value> {
     ///   - data:                  The `Data` returned by the server.
     ///   - metrics:               The `URLSessionTaskMetrics` of the serialized response.
     ///   - serializationDuration: The duration taken by serialization.
-    ///   - result:                The `AFResult` of response serialization.
+    ///   - result:                The `Result` of response serialization.
     public init(request: URLRequest?,
                 response: HTTPURLResponse?,
                 data: Data?,
                 metrics: URLSessionTaskMetrics?,
                 serializationDuration: TimeInterval,
-                result: AFResult<Value>) {
+                result: Result<Value, Error>) {
         self.request = request
         self.response = response
         self.data = data
@@ -225,7 +225,7 @@ public struct DownloadResponse<Value> {
     public let serializationDuration: TimeInterval
 
     /// The result of response serialization.
-    public let result: AFResult<Value>
+    public let result: Result<Value, Error>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
     public var value: Value? { return result.success }
@@ -243,7 +243,7 @@ public struct DownloadResponse<Value> {
     ///   - resumeData:            The resume `Data` generated if the request was cancelled.
     ///   - metrics:               The `URLSessionTaskMetrics` of the serialized response.
     ///   - serializationDuration: The duration taken by serialization.
-    ///   - result:                The `AFResult` of response serialization.
+    ///   - result:                The `Result` of response serialization.
     public init(
         request: URLRequest?,
         response: HTTPURLResponse?,
@@ -251,7 +251,7 @@ public struct DownloadResponse<Value> {
         resumeData: Data?,
         metrics: URLSessionTaskMetrics?,
         serializationDuration: TimeInterval,
-        result: AFResult<Value>)
+        result: Result<Value, Error>)
     {
         self.request = request
         self.response = response

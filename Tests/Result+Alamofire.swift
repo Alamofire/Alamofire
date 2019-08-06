@@ -1,5 +1,5 @@
 //
-//  AFResult+Alamofire.swift
+//  Result+Alamofire.swift
 //
 //  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -22,10 +22,9 @@
 //  THE SOFTWARE.
 //
 
-import Alamofire
 import Foundation
 
-extension AFResult {
+extension Result {
     var isSuccess: Bool {
         guard case .success = self else { return false }
         return true

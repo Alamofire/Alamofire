@@ -179,7 +179,7 @@ public protocol EventMonitor {
     // MARK: DownloadRequest Events
 
     /// Event called when a `DownloadRequest`'s `URLSessionDownloadTask` finishes and the temporary file has been moved.
-    func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: AFResult<URL>)
+    func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, Error>)
 
     /// Event called when a `DownloadRequest`'s `Destination` closure is called and creates the destination URL the
     /// downloaded file will be moved to.
@@ -271,7 +271,7 @@ extension EventMonitor {
     public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) { }
     public func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: Error) { }
     public func request(_ request: UploadRequest, didProvideInputStream stream: InputStream) { }
-    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: AFResult<URL>) { }
+    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, Error>) { }
     public func request(_ request: DownloadRequest, didCreateDestinationURL url: URL) { }
     public func request(_ request: DownloadRequest,
                         didValidateRequest urlRequest: URLRequest?,
@@ -498,7 +498,7 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.request(request, didProvideInputStream: stream) }
     }
 
-    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: AFResult<URL>) {
+    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, Error>) {
         performEvent { $0.request(request, didFinishDownloadingUsing: task, with: result) }
     }
 
@@ -638,7 +638,7 @@ open class ClosureEventMonitor: EventMonitor {
     open var requestDidProvideInputStream: ((UploadRequest, InputStream) -> Void)?
 
     /// Closure called on the `request(_:didFinishDownloadingUsing:with:)` event.
-    open var requestDidFinishDownloadingUsingTaskWithResult: ((DownloadRequest, URLSessionTask, AFResult<URL>) -> Void)?
+    open var requestDidFinishDownloadingUsingTaskWithResult: ((DownloadRequest, URLSessionTask, Result<URL, Error>) -> Void)?
 
     /// Closure called on the `request(_:didCreateDestinationURL:)` event.
     open var requestDidCreateDestinationURL: ((DownloadRequest, URL) -> Void)?
@@ -818,7 +818,7 @@ open class ClosureEventMonitor: EventMonitor {
         requestDidProvideInputStream?(request, stream)
     }
 
-    open func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: AFResult<URL>) {
+    open func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, Error>) {
         requestDidFinishDownloadingUsingTaskWithResult?(request, task, result)
     }
 
