@@ -73,7 +73,7 @@ class BaseTestCase: XCTestCase {
     ///   - queue: The `DispatchQueue` on which to run the assertions.
     ///   - assertions: Closure containing assertions to run
     func assert(on queue: DispatchQueue, assertions: @escaping () -> Void) {
-        let expect = expectation(description: "all assertsion are complete")
+        let expect = expectation(description: "all assertions are complete")
 
         queue.async {
             assertions()

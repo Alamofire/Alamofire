@@ -1546,15 +1546,16 @@ final class SessionTestCase: BaseTestCase {
 final class SessionCancellationTestCase: BaseTestCase {
     func testThatAutomaticallyResumedRequestsCanBeMassCancelled() {
         // Given
+        let count = 100
         let session = Session()
-        let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
         var responses: [DataResponse<Data?>] = []
         let completion = expectation(description: "all requests should finish")
-        completion.expectedFulfillmentCount = 25
+        completion.expectedFulfillmentCount = count
         let cancellation = expectation(description: "cancel all requests should be called")
 
         // When
-        for _ in 1...25 {
+        for _ in 1...count {
+            let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
             session.request(request).response { (response) in
                 responses.append(response)
                 completion.fulfill()
@@ -1569,22 +1570,23 @@ final class SessionCancellationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(responses.allSatisfy { $0.error?.asAFError?.isExplicitlyCancelledError == true })
         assert(on: session.rootQueue) {
-            XCTAssertTrue(session.requestTaskMap.isEmpty)
-            XCTAssertTrue(session.activeRequests.isEmpty)
+            XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
+            XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
         }
     }
 
     func testThatManuallyResumedRequestsCanBeMassCancelled() {
         // Given
+        let count = 100
         let session = Session(startRequestsImmediately: false)
         let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
         var responses: [DataResponse<Data?>] = []
         let completion = expectation(description: "all requests should finish")
-        completion.expectedFulfillmentCount = 25
+        completion.expectedFulfillmentCount = count
         let cancellation = expectation(description: "cancel all requests should be called")
 
         // When
-        for _ in 1...25 {
+        for _ in 1...count {
             session.request(request).response { (response) in
                 responses.append(response)
                 completion.fulfill()
@@ -1599,8 +1601,53 @@ final class SessionCancellationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(responses.allSatisfy { $0.error?.asAFError?.isExplicitlyCancelledError == true })
         assert(on: session.rootQueue) {
-            XCTAssertTrue(session.requestTaskMap.isEmpty)
-            XCTAssertTrue(session.activeRequests.isEmpty)
+            XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
+            XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
+        }
+    }
+
+    func testThatRetriedRequestsCanBeMassCancelled() {
+        // Given
+        final class OnceRetrier: RequestInterceptor {
+            private var hasRetried = false
+
+            func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+                completion(hasRetried ? .doNotRetry : .retry)
+                hasRetried = true
+            }
+        }
+        let monitor = ClosureEventMonitor()
+        let session = Session(interceptor: OnceRetrier(), eventMonitors: [monitor])
+        let request = URLRequest.makeHTTPBinRequest(path: "status/401")
+        let completion = expectation(description: "all requests should finish")
+        let cancellation = expectation(description: "cancel all requests should be called")
+        let createTask = expectation(description: "should create task twice")
+        createTask.expectedFulfillmentCount = 2
+        monitor.requestDidCreateTask = { (_, _) in
+            createTask.fulfill()
+        }
+        // Cancel when retry starts.
+        monitor.requestIsRetrying = { _ in
+            session.cancelAllRequests {
+                cancellation.fulfill()
+            }
+        }
+
+        var received: DataResponse<Data?>?
+
+        // When
+        session.request(request).validate().response { (response) in
+            received = response
+            completion.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(received?.error?.asAFError?.isExplicitlyCancelledError == true)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
+            XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
         }
     }
 }

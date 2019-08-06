@@ -604,6 +604,7 @@ public class Request {
                 return
             }
 
+            // Resume to ensure metrics are gathered.
             task.resume()
             task.cancel()
             underlyingQueue.async { self.didCancelTask(task) }
@@ -1262,12 +1263,16 @@ public class DownloadRequest: Request {
             }
 
             if let completionHandler = completionHandler {
+                // Resume to ensure metrics are gathered.
+                task.resume()
                 task.cancel { (resumeData) in
                     self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
                     self.underlyingQueue.async { self.didCancelTask(task) }
                     completionHandler(resumeData)
                 }
             } else {
+                // Resume to ensure metrics are gathered.
+                task.resume()
                 task.cancel()
                 self.underlyingQueue.async { self.didCancelTask(task) }
             }
