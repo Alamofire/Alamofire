@@ -134,7 +134,7 @@ The `URLEncodedFormParameterEncoder` encodes values into a url-encoded string to
 
 The `Content-Type` HTTP header of an encoded request with HTTP body is set to `application/x-www-form-urlencoded; charset=utf-8`, if `Content-Type` is not already set.
 
-Internally, `URLEncodedFormParameterEncoder` uses `URLEncodedFormEncoder` to perform the actual encoding from an `Encodable` type to `String`. This encoder can be used to customize the encoding for various types, including `Bool` using the `BoolEncoding`, `Array` using the `ArrayEncoding`, spaces using the `SpaceEncoding`, and `Date` using the `DateEncoding`.
+Internally, `URLEncodedFormParameterEncoder` uses `URLEncodedFormEncoder` to perform the actual encoding from an `Encodable` type to a URL encoded form `String`. This encoder can be used to customize the encoding for various types, including `Array` using the `ArrayEncoding`, `Bool` using the `BoolEncoding`, `Data` using the `DataEncoding`, `Date` using the `DateEncoding`, coding keys using the `KeyEncoding`, and spaces using the `SpaceEncoding`.
 
 ##### GET Request With URL-Encoded Parameters
 
@@ -197,6 +197,20 @@ You can create your own `URLEncodedFormParameterEncoder` and specify the desired
 let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(boolEncoding: .numeric))
 ```
 
+##### Configuring the Encoding of `Data` Parameters
+
+`DataEncoding` includes the following methods for encoding `Data` parameters:
+
+- `.deferredToData` - Uses `Data`'s native `Encodable` support.
+- `.base64` - Encodes `Data` as a Base 64 encoded `String`. This is the default.
+- `.custom((Data) -> throws -> String)` - Encodes `Data` using the given closure.
+
+You can create your own `URLEncodedFormParameterEncoder` and specify the desired `DataEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
+
+```swift
+let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(dataEncoding: .base64))
+```
+
 ##### Configuring the Encoding of `Date` Parameters
 
 Given the sheer number of ways to encode a `Date` into a `String`, `DateEncoding` includes the following methods for encoding `Date` parameters:
@@ -214,12 +228,29 @@ You can create your own `URLEncodedFormParameterEncoder` and specify the desired
 let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(dateEncoding: .iso8601))
 ```
 
+##### Configuring the Encoding of Coding Keys
+
+Due to the variety of parameter key styles, `KeyEncoding` provides the following methods to customize key encoding from keys in `lowerCamelCase`:
+
+- `.convertToSnakeCase` - Converts keys to snake case: `oneTwoThree` becomes `one_two_three`.
+- `.convertToKebabCase` - Converts keys to kebab case: `oneTwoThree` becomes `one-two-three`.
+- `.capitalized` - Capitalizes the first letter only, a.k.a `UpperCamelCase`: `oneTwoThree` becomes `OneTwoThree`.
+- `.uppercased` - Uppercases all letters: `oneTwoThree` becomes `ONETWOTHREE`.
+- `.lowercased` - Lowercases all letters: `oneTwoThree` becomes `onetwothree`.
+- `.custom((String) -> String)` - Encodes keys using the given closure.
+
+You can create your own `URLEncodedFormParameterEncoder` and specify the desired `KeyEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
+
+```swift
+let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(keyEncoding: .convertToSnakeCase))
+```
+
 ##### Configuring the Encoding of Spaces
 
-Older form encoders used `+` to encoded spaces and some servers still expect this encoding instead of the modern percent encoding, so Alamofire includes the following methods for encoding spaces:
+Older form encoders used `+` to encode spaces and some servers still expect this encoding instead of the modern percent encoding, so Alamofire includes the following methods for encoding spaces:
 
 - `.percentEscaped` - Encodes space characters by applying standard percent escaping. `" "` is encoded as  `"%20"`.
-- `.plusReplaced` - Encodes space character by replacing them with `+`. `" "` is encoded as `"+"`.
+- `.plusReplaced` - Encodes space characters by replacing them with `+`. `" "` is encoded as `"+"`.
 
 You can create your own `URLEncodedFormParameterEncoder` and specify the desired `SpaceEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
 
@@ -260,7 +291,7 @@ let parameterEncoder = JSONParameterEncoder(encoder: encoder)
 
 #### Manual Parameter Encoding of a `URLRequest`
 
-The `ParameterEncoder` APIs can be used outside of making network requests.
+The `ParameterEncoder` APIs can also be used outside of Alamofire by encoding parameters directly in `URLRequest`s.
 
 ```swift
 let url = URL(string: "https://httpbin.org/get")!
@@ -310,6 +341,41 @@ The default Alamofire `Session` provides a default set of headers for every `Req
 
 If you need to customize these headers, a custom `URLSessionConfiguration` should be created, the `defaultHTTPHeaders` property updated and the configuration applied to a new `Session` instance. Use `URLSessionConfiguration.af.default` to customize your configuration while keeping Alamofire's default headers.
 
+### Response Validation
+
+By default, Alamofire treats any completed request to be successful, regardless of the content of the response. Calling `validate()` before a response handler causes an error to be generated if the response had an unacceptable status code or MIME type.
+
+#### Automatic Validation
+
+Automatically validates status code within `200..<300` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
+
+```swift
+AF.request("https://httpbin.org/get").validate().responseJSON { response in
+    switch response.result {
+    case .success:
+        print("Validation Successful")
+    case let .failure(error):
+        print(error)
+    }
+}
+```
+
+#### Manual Validation
+
+```swift
+AF.request("https://httpbin.org/get")
+    .validate(statusCode: 200..<300)
+    .validate(contentType: ["application/json"])
+    .responseData { response in
+        switch response.result {
+        case .success:
+            print("Validation Successful")
+        case let .failure(error):
+            print(error)
+        }
+    }
+```
+
 ### Response Handling
 
 Alamofire's `DataRequest` and `DownloadRequest` both have a corresponding response type: `DataResponse<T>` and `DownloadResponse<T>`. Both of these types are generic to the type serialized from the response. `UploadRequest`, as a subclass of `DataRequest`, uses the same `DataResponse` type.
@@ -318,31 +384,42 @@ Handling the `DataResponse` of a `DataRequest` or `UploadRequest` made in Alamof
 
 ```swift
 AF.request("https://httpbin.org/get").responseJSON { response in
-    print("Request: \(String(describing: response.request))")   // original URLRequest
-    print("Response: \(String(describing: response.response))") // HTTPURLResponse
-    print("Result: \(response.result)")                         // response serialization Result
+    print("Request: \(response.request)")   // Original or adapted URLRequest.
+    print("Response: \(response.response)") // Returned HTTPURLResponse.
+    print("Result: \(response.result)")     // Result of response serialization.
 
-    if let json = response.result.value {
-        print("JSON: \(json)") // serialized json response
+    switch response.result {
+    case let .success(value): 
+        print("JSON: \(json)") // Response serialized using JSONSerialization.
+    case let .failure(error):
+        print("Request failed: \(error)")
     }
 
-    if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
-        print("Data: \(utf8Text)") // original server data as UTF8 string
+    // Display response data as a String.
+    if let data = response.data {
+        print("Data: \(String(decoding: data, as: UTF8.self)")
     }
 }
 ```
 
-In the above example, the `responseJSON` handler is appended to the `DataRequest` to be executed once the `DataRequest` is complete. Rather than blocking execution to wait for a response from the server, a [callback](https://en.wikipedia.org/wiki/Callback_%28computer_programming%29) in the form of a closure is specified to handle the response once it's received. The result of a request is only available inside the scope of a response closure. Any execution contingent on the response or data received from the server must be done within a response closure.
+In the above example, the `responseJSON` handler is added to the `DataRequest` to be executed once the `DataRequest` is complete. Rather than blocking execution to wait for a response from the server, a [callback](https://en.wikipedia.org/wiki/Callback_%28computer_programming%29) in the form of a closure is specified to handle the response once it's received. The result of a request is only available inside the scope of a response closure. Any execution contingent on the response or data received from the server must be done within a response closure.
 
 > Networking in Alamofire is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
 
-Alamofire contains five different data response handlers by default, including:
+Alamofire contains six different data response handlers by default, including:
 
 ```swift
 // Response Handler - Unserialized Response
 func response(
     queue: DispatchQueue = .main, 
     completionHandler: @escaping (DataResponse<Data?>) -> Void) 
+    -> Self
+
+// Response Serializer Handler - Serialize using the passed Serializer
+func response<Serializer: DataResponseSerializerProtocol>(
+    queue: DispatchQueue = .main,
+    responseSerializer: Serializer,
+    completionHandler: @escaping (DataResponse<Serializer.SerializedObject>) -> Void)
     -> Self
 
 // Response Data Handler - Serialized into Data
@@ -355,7 +432,7 @@ func responseData(
 func responseString(
     queue: DispatchQueue = .main,
     encoding: String.Encoding? = nil,
-    completionHandler: @escaping (DataResponse<String>)-> Void) 
+    completionHandler: @escaping (DataResponse<String>) -> Void) 
     -> Self
 
 // Response JSON Handler - Serialized into Any
@@ -383,41 +460,42 @@ None of the response handlers perform any validation of the `HTTPURLResponse` it
 The `response` handler does NOT evaluate any of the response data. It merely forwards on all information directly from the URL session delegate. It is the Alamofire equivalent of using `cURL` to execute a `Request`.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").response { response in
-    print("Request: \(response.request)")
-    print("Response: \(response.response)")
-    print("Error: \(response.error)")
+AF.request("https://httpbin.org/get").response { response in
+    debugPrint("Response: \(response)")
 
-    if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
-    	print("Data: \(utf8Text)")
+    if let data = response.data {
+        print("Data: \(String(decoding: data, as: UTF8.self)")
     }
 }
 ```
 
-> We strongly encourage you to leverage the other response serializers taking advantage of `Response` and `AFResult` types.
+> We strongly encourage you to leverage the other response serializers taking advantage of `Response` and `Result` types.
 
 #### Response Data Handler
 
-The `responseData` handler uses the `responseDataSerializer` (the object that serializes the server data into some other type) to extract the `Data` returned by the server. If no errors occur and `Data` is returned, the response `AFResult` will be a `.success` and the `value` will be of type `Data`.
+The `responseData` handler uses a `DataResponseSerializer`  to extract and validate the `Data` returned by the server. If no errors occur and `Data` is returned, the response `Result` will be a `.success` and the `value` will be the `Data` returned from the server.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseData { response in
-    debugPrint("All Response Info: \(response)")
+AF.request("https://httpbin.org/get").responseData { response in
+    debugPrint("Response: \(response)")
 
-    if let data = response.result.value, let utf8Text = String(data: data, encoding: .utf8) {
-    	print("Data: \(utf8Text)")
+    if let data = response.data {
+        print("Data: \(String(decoding: data, as: UTF8.self)")
     }
 }
 ```
 
 #### Response String Handler
 
-The `responseString` handler uses the `responseStringSerializer` to convert the `Data` returned by the server into a `String` with the specified encoding. If no errors occur and the server data is successfully serialized into a `String`, the response `AFResult` will be a `.success` and the `value` will be of type `String`.
+The `responseString` handler uses a `StringResponseSerializer` to convert the `Data` returned by the server into a `String` with the specified encoding. If no errors occur and the server data is successfully serialized into a `String`, the response `Result` will be a `.success` and the `value` will be of type `String`.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseString { response in
-    print("Success: \(response.result.isSuccess)")
-    print("Response String: \(response.result.value)")
+AF.request("https://httpbin.org/get").responseString { response in
+    debugPrint("Response: \(response)")
+
+    if let string = response.value {
+        print("String: \(string)")
+    }
 }
 ```
 
@@ -425,19 +503,37 @@ Alamofire.request("https://httpbin.org/get").responseString { response in
 
 #### Response JSON Handler
 
-The `responseJSON` handler uses the `responseJSONSerializer` to convert the `Data` returned by the server into an `Any` type using the specified `JSONSerialization.ReadingOptions`. If no errors occur and the server data is successfully serialized into a JSON object, the response `AFResult` will be a `.success` and the `value` will be of type `Any`.
+The `responseJSON` handler uses a `JSONResponseSerializer` to convert the `Data` returned by the server into an `Any` type using the specified `JSONSerialization.ReadingOptions`. If no errors occur and the server data is successfully serialized into a JSON object, the response `AFResult` will be a `.success` and the `value` will be of type `Any`.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
-    debugPrint(response)
+AF.request("https://httpbin.org/get").responseJSON { response in
+    debugPrint("Response: \(response)")
 
-    if let json = response.result.value {
+    if let json = response.value {
         print("JSON: \(json)")
     }
 }
 ```
 
-> All JSON serialization is handled by the `JSONSerialization` API in the `Foundation` framework.
+> JSON serialization in `responseJSON` is handled by the `JSONSerialization` API from the `Foundation` framework.
+
+#### Response `Decodable` Handler
+
+The `responseDecodable` handler uses a `DecodableResponseSerializer` to convert the `Data` returned by the server into the passed `Decodable` type using the specified `DataDecoder` (a protocol abstraction for `Decoder`s which can decode from `Data`). If no errors occur and the server data is successfully decoded into a value, the response `Result` will be a `.success` and the `value` will be of the passed type.
+
+```swift
+struct HTTPBinResponse: Decodable { let url: String }
+
+AF.request("https://httpbin.org/get").responseDecodable(of: HTTPBinResponse.self) { response in
+    debugPrint("Response: \(response)")
+
+    if let json = response.value) {
+        print("JSON: \(json)")
+    }
+}
+```
+
+> JSON serialization in `responseJSON` is handled by the `JSONSerialization` API from the `Foundation` framework.
 
 #### Chained Response Handlers
 
@@ -446,10 +542,10 @@ Response handlers can even be chained:
 ```swift
 Alamofire.request("https://httpbin.org/get")
     .responseString { response in
-        print("Response String: \(response.result.value)")
+        print("Response String: \(response.value)")
     }
     .responseJSON { response in
-        print("Response JSON: \(response.result.value)")
+        print("Response JSON: \(response.value)")
     }
 ```
 
@@ -457,62 +553,27 @@ Alamofire.request("https://httpbin.org/get")
 
 #### Response Handler Queue
 
-Response handlers by default are executed on the main dispatch queue. However, a custom dispatch queue can be provided instead.
+Closures passed to response handlers are executed on the main queue by default, but a specific `DispatchQueue` can passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed on a background queue.
 
 ```swift
 let utilityQueue = DispatchQueue.global(qos: .utility)
 
-Alamofire.request("https://httpbin.org/get").responseJSON(queue: utilityQueue) { response in
-    print("Executing response handler on utility queue")
-}
-```
-
-### Response Validation
-
-By default, Alamofire treats any completed request to be successful, regardless of the content of the response. Calling `validate` before a response handler causes an error to be generated if the response had an unacceptable status code or MIME type.
-
-#### Manual Validation
-
-```swift
-Alamofire.request("https://httpbin.org/get")
-    .validate(statusCode: 200..<300)
-    .validate(contentType: ["application/json"])
-    .responseData { response in
-        switch response.result {
-        case .success:
-            print("Validation Successful")
-        case .failure(let error):
-            print(error)
-        }
-    }
-```
-
-#### Automatic Validation
-
-Automatically validates status code within `200..<300` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
-
-```swift
-Alamofire.request("https://httpbin.org/get").validate().responseJSON { response in
-    switch response.result {
-    case .success:
-        print("Validation Successful")
-    case .failure(let error):
-        print(error)
-    }
+AF.request("https://httpbin.org/get").responseJSON(queue: utilityQueue) { response in
+    print("Executed on utility queue.")
 }
 ```
 
 ### Response Caching
 
-Response Caching is handled on the system framework level by [`URLCache`](https://developer.apple.com/reference/foundation/urlcache). It provides a composite in-memory and on-disk cache and lets you manipulate the sizes of both the in-memory and on-disk portions.
+Response caching is handled on the system framework level by [`URLCache`](https://developer.apple.com/reference/foundation/urlcache). It provides a composite in-memory and on-disk cache and lets you manipulate the sizes of both the in-memory and on-disk portions.
 
-> By default, Alamofire leverages the shared `URLCache`. In order to customize it, see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
-
-
+> By default, Alamofire leverages the `URLCache.shared` instance. In order to customize the `URLCache` instance used, see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
 
 ### Authentication
 
 Authentication is handled on the system framework level by [`URLCredential`](https://developer.apple.com/reference/foundation/nsurlcredential) and [`URLAuthenticationChallenge`](https://developer.apple.com/reference/foundation/urlauthenticationchallenge).
+
+> These authentication APIs are for servers which prompt for authorization, not general use with APIs which require an `Authenticate`  or equivalent header.
 
 **Supported Authentication Schemes**
 
@@ -523,38 +584,20 @@ Authentication is handled on the system framework level by [`URLCredential`](htt
 
 #### HTTP Basic Authentication
 
-The `authenticate` method on a `Request` will automatically provide a `URLCredential` to a `URLAuthenticationChallenge` when appropriate:
+The `authenticate` method on a `Request` will automatically provide a `URLCredential` when challenged with a `URLAuthenticationChallenge` when appropriate:
 
 ```swift
 let user = "user"
 let password = "password"
 
-Alamofire.request("https://httpbin.org/basic-auth/\(user)/\(password)")
-    .authenticate(user: user, password: password)
+AF.request("https://httpbin.org/basic-auth/\(user)/\(password)")
+    .authenticate(username: user, password: password)
     .responseJSON { response in
         debugPrint(response)
     }
 ```
 
-Depending upon your server implementation, an `Authorization` header may also be appropriate:
-
-```swift
-let user = "user"
-let password = "password"
-
-var headers: HTTPHeaders = [:]
-
-if let authorizationHeader = Request.authorizationHeader(user: user, password: password) {
-    headers[authorizationHeader.key] = authorizationHeader.value
-}
-
-Alamofire.request("https://httpbin.org/basic-auth/user/password", headers: headers)
-    .responseJSON { response in
-        debugPrint(response)
-    }
-```
-
-#### Authentication with URLCredential
+#### Authentication with `URLCredential`
 
 ```swift
 let user = "user"
@@ -570,6 +613,22 @@ Alamofire.request("https://httpbin.org/basic-auth/\(user)/\(password)")
 ```
 
 > It is important to note that when using a `URLCredential` for authentication, the underlying `URLSession` will actually end up making two requests if a challenge is issued by the server. The first request will not include the credential which "may" trigger a challenge from the server. The challenge is then received by Alamofire, the credential is appended and the request is retried by the underlying `URLSession`.
+
+#### Manual Authentication
+
+If you are communicating with an API that always requires an `Authenticate` or similar header without prompting, it can be added manually:
+
+```swift
+let user = "user"
+let password = "password"
+
+let headers: HTTPHeaders = [.authenticate(username: user, password: password)]
+
+AF.request("https://httpbin.org/basic-auth/user/password", headers: headers)
+    .responseJSON { response in
+        debugPrint(response)
+    }
+```
 
 ### Downloading Data to a File
 
