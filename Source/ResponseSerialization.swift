@@ -189,10 +189,15 @@ extension DataRequest {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
             let start = CFAbsoluteTimeGetCurrent()
-            let result = Result<Serializer.SerializedObject, Error> { try responseSerializer.serialize(request: self.request,
-                                                                     response: self.response,
-                                                                     data: self.data,
-                                                                     error: self.error) }
+            let result = Result<Serializer.SerializedObject, Error> {
+                try responseSerializer.serialize(
+                    request: self.request,
+                    response: self.response,
+                    data: self.data,
+                    error: self.error
+                )
+            }
+            
             let end = CFAbsoluteTimeGetCurrent()
             // End work that should be on the serialization queue.
 
@@ -303,10 +308,14 @@ extension DownloadRequest {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
             let start = CFAbsoluteTimeGetCurrent()
-            let result = Result<T.SerializedObject, Error> { try responseSerializer.serializeDownload(request: self.request,
-                                                                             response: self.response,
-                                                                             fileURL: self.fileURL,
-                                                                             error: self.error) }
+            let result = Result<T.SerializedObject, Error> {
+                try responseSerializer.serializeDownload(
+                    request: self.request,
+                    response: self.response,
+                    fileURL: self.fileURL,
+                    error: self.error
+                )
+            }
             let end = CFAbsoluteTimeGetCurrent()
             // End work that should be on the serialization queue.
 
