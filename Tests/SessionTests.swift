@@ -26,7 +26,7 @@
 import Foundation
 import XCTest
 
-class SessionTestCase: BaseTestCase {
+final class SessionTestCase: BaseTestCase {
 
     // MARK: Helper Types
 
@@ -895,7 +895,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
     }
 
     func testThatSessionCallsRequestRetrierThenSessionRetrierWhenRequestEncountersError() {
@@ -929,7 +932,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(requestHandler.retryCount, 4)
         XCTAssertEqual(request.retryCount, 2)
         XCTAssertEqual(response?.result.isSuccess, false)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
     }
 
     func testThatSessionCallsRequestRetrierWhenRequestInitiallyEncountersAdaptError() {
@@ -960,7 +966,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
     }
 
     func testThatSessionCallsRequestRetrierWhenDownloadInitiallyEncountersAdaptError() {
@@ -996,7 +1005,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
     }
 
     func testThatSessionCallsRequestRetrierWhenUploadInitiallyEncountersAdaptError() {
@@ -1025,7 +1037,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCalledCount, 1)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
     }
 
     func testThatSessionCallsAdapterWhenRequestIsRetried() {
@@ -1055,7 +1070,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
     }
 
     func testThatSessionReturnsRequestAdaptationErrorWhenRequestIsRetried() {
@@ -1085,7 +1103,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
 
         if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isRequestAdaptationError)
@@ -1123,7 +1144,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
 
         if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isRequestAdaptationError)
@@ -1160,7 +1184,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 0)
         XCTAssertEqual(request.retryCount, 0)
         XCTAssertEqual(response?.result.isSuccess, false)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
 
         if let error = response?.result.error?.asAFError {
             XCTAssertTrue(error.isRequestRetryError)
@@ -1199,7 +1226,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 0)
         XCTAssertEqual(request.retryCount, 0)
         XCTAssertEqual(response?.result.isSuccess, false)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
 
         if let error = response?.error?.asAFError {
             XCTAssertTrue(error.isResponseSerializationError)
@@ -1244,7 +1274,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 0)
         XCTAssertEqual(json1Response?.result.isSuccess, false)
         XCTAssertEqual(json2Response?.result.isSuccess, false)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
 
         let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
         XCTAssertEqual(errors.count, 2)
@@ -1295,7 +1328,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(json1Response?.result.isSuccess, false)
         XCTAssertEqual(json2Response?.result.isSuccess, false)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
 
         let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
         XCTAssertEqual(errors.count, 2)
@@ -1347,7 +1383,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(json1Response?.result.isSuccess, false)
         XCTAssertEqual(json2Response?.result.isSuccess, false)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
 
         let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
         XCTAssertEqual(errors.count, 2)
@@ -1399,7 +1438,10 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(json1Response?.result.isSuccess, false)
         XCTAssertEqual(json2Response?.result.isSuccess, false)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
 
         let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
         XCTAssertEqual(errors.count, 2)
@@ -1469,8 +1511,11 @@ class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 0)
         XCTAssertEqual(request.retryCount, 0)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertTrue(session.requestTaskMap.isEmpty)
         XCTAssertEqual(completionCallCount, 1)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty)
+            XCTAssertTrue(session.activeRequests.isEmpty)
+        }
     }
 
     // MARK: Tests - Request State
@@ -1498,7 +1543,118 @@ class SessionTestCase: BaseTestCase {
 
 // MARK: -
 
-class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
+final class SessionCancellationTestCase: BaseTestCase {
+    func testThatAutomaticallyResumedRequestsCanBeMassCancelled() {
+        // Given
+        let count = 100
+        let session = Session()
+        var responses: [DataResponse<Data?>] = []
+        let completion = expectation(description: "all requests should finish")
+        completion.expectedFulfillmentCount = count
+        let cancellation = expectation(description: "cancel all requests should be called")
+
+        // When
+        for _ in 1...count {
+            let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
+            session.request(request).response { (response) in
+                responses.append(response)
+                completion.fulfill()
+            }
+        }
+        session.cancelAllRequests {
+            cancellation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(responses.allSatisfy { $0.error?.asAFError?.isExplicitlyCancelledError == true })
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
+            XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
+        }
+    }
+
+    func testThatManuallyResumedRequestsCanBeMassCancelled() {
+        // Given
+        let count = 100
+        let session = Session(startRequestsImmediately: false)
+        let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
+        var responses: [DataResponse<Data?>] = []
+        let completion = expectation(description: "all requests should finish")
+        completion.expectedFulfillmentCount = count
+        let cancellation = expectation(description: "cancel all requests should be called")
+
+        // When
+        for _ in 1...count {
+            session.request(request).response { (response) in
+                responses.append(response)
+                completion.fulfill()
+            }
+        }
+        session.cancelAllRequests {
+            cancellation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(responses.allSatisfy { $0.error?.asAFError?.isExplicitlyCancelledError == true })
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
+            XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
+        }
+    }
+
+    func testThatRetriedRequestsCanBeMassCancelled() {
+        // Given
+        final class OnceRetrier: RequestInterceptor {
+            private var hasRetried = false
+
+            func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+                completion(hasRetried ? .doNotRetry : .retry)
+                hasRetried = true
+            }
+        }
+        let monitor = ClosureEventMonitor()
+        let session = Session(interceptor: OnceRetrier(), eventMonitors: [monitor])
+        let request = URLRequest.makeHTTPBinRequest(path: "status/401")
+        let completion = expectation(description: "all requests should finish")
+        let cancellation = expectation(description: "cancel all requests should be called")
+        let createTask = expectation(description: "should create task twice")
+        createTask.expectedFulfillmentCount = 2
+        monitor.requestDidCreateTask = { (_, _) in
+            createTask.fulfill()
+        }
+        // Cancel when retry starts.
+        monitor.requestIsRetrying = { _ in
+            session.cancelAllRequests {
+                cancellation.fulfill()
+            }
+        }
+
+        var received: DataResponse<Data?>?
+
+        // When
+        session.request(request).validate().response { (response) in
+            received = response
+            completion.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(received?.error?.asAFError?.isExplicitlyCancelledError == true)
+        assert(on: session.rootQueue) {
+            XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
+            XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
+        }
+    }
+}
+
+// MARK: -
+
+final class SessionConfigurationHeadersTestCase: BaseTestCase {
     enum ConfigurationType {
         case `default`, ephemeral, background
     }

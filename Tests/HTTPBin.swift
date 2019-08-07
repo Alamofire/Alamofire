@@ -39,10 +39,14 @@ extension URL {
 extension URLRequest {
     static func makeHTTPBinRequest(path: String = "get",
                                    method: HTTPMethod = .get,
-                                   headers: HTTPHeaders = .init()) -> URLRequest {
+                                   headers: HTTPHeaders = .init(),
+                                   timeout: TimeInterval = 60,
+                                   cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy) -> URLRequest {
         var request = URLRequest(url: .makeHTTPBinURL(path: path))
         request.httpMethod = method.rawValue
         request.headers = headers
+        request.timeoutInterval = timeout
+        request.cachePolicy = cachePolicy
 
         return request
     }

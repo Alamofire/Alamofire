@@ -604,6 +604,8 @@ public class Request {
                 return
             }
 
+            // Resume to ensure metrics are gathered.
+            task.resume()
             task.cancel()
             underlyingQueue.async { self.didCancelTask(task) }
         }
@@ -776,7 +778,8 @@ public class Request {
     // MARK: Cleanup
 
     /// Final cleanup step executed when the instance finishes response serialization.
-    open func cleanup() {
+    func cleanup() {
+        delegate?.cleanup(after: self)
         // No-op: override in subclass
     }
 }
@@ -892,6 +895,11 @@ extension Request {
 public protocol RequestDelegate: AnyObject {
     /// `URLSessionConfiguration` used to create the underlying `URLSessionTask`s.
     var sessionConfiguration: URLSessionConfiguration { get }
+
+    /// Notifies the delegate the `Request` has reached a point where it needs cleanup.
+    ///
+    /// - Parameter request: The `Request` to cleanup after.
+    func cleanup(after request: Request)
 
     /// Asynchronously ask the delegate whether a `Request` will be retried.
     ///
@@ -1255,12 +1263,16 @@ public class DownloadRequest: Request {
             }
 
             if let completionHandler = completionHandler {
+                // Resume to ensure metrics are gathered.
+                task.resume()
                 task.cancel { (resumeData) in
                     self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
                     self.underlyingQueue.async { self.didCancelTask(task) }
                     completionHandler(resumeData)
                 }
             } else {
+                // Resume to ensure metrics are gathered.
+                task.resume()
                 task.cancel()
                 self.underlyingQueue.async { self.didCancelTask(task) }
             }
