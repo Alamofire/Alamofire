@@ -202,11 +202,13 @@ open class Session {
     ///         `Request`s may not cancel immediately due internal work, and may not cancel at all if they are close to
     ///         completion when cancelled.
     ///
-    /// - Parameter completion: Closure to be called when all `Request`s have been cancelled.
-    public func cancelAllRequests(completion: (() -> Void)? = nil) {
+    /// - Parameters:
+    ///   - queue:      `DispatchQueue` on which the completion handler is run. `.main` by default.
+    ///   - completion: Closure to be called when all `Request`s have been cancelled.
+    public func cancelAllRequests(completingOnQueue queue: DispatchQueue = .main, completion: (() -> Void)? = nil) {
         rootQueue.async {
             self.activeRequests.forEach { $0.cancel() }
-            completion?()
+            queue.async { completion?() }
         }
     }
 
@@ -776,9 +778,9 @@ open class Session {
     /// - Parameter request: The `Request` to perform.
     func perform(_ request: Request) {
         switch request {
-        case let r as DataRequest: self.perform(r)
-        case let r as UploadRequest: self.perform(r)
-        case let r as DownloadRequest: self.perform(r)
+        case let r as DataRequest: perform(r)
+        case let r as UploadRequest: perform(r)
+        case let r as DownloadRequest: perform(r)
         default: fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
         }
     }
