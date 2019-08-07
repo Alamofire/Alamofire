@@ -266,7 +266,7 @@ public struct JSONEncoding: ParameterEncoding {
         guard let parameters = parameters else { return urlRequest }
         // swift NSURLSession sends the 'Content-Length' header but not the message body for other methods; `httpBody` will hang up the remote session or make the packet confused in the server
         guard "POST" == ( urlRequest.httpMethod?.uppercased() ?? "") else {
-            throw AFError.ParameterEncoderFailureReason.missingRequiredComponent(.httpMethod(rawValue: "POST"))
+            throw AFError.parameterEncoderFailed(reason: .missingRequiredComponent(.httpMethod(rawValue: "POST")))
         }
 
         do {
@@ -299,7 +299,7 @@ public struct JSONEncoding: ParameterEncoding {
         guard let jsonObject = jsonObject else { return urlRequest }
         // swift NSURLSession sends the 'Content-Length' header but not the message body for other methods; `httpBody` will hang up the remote session or make the packet confused in the server
         guard "POST" == ( urlRequest.httpMethod?.uppercased() ?? "") else {
-            throw AFError.ParameterEncoderFailureReason.missingRequiredComponent(.httpMethod(rawValue: "POST"))
+            throw AFError.parameterEncoderFailed(reason: .missingRequiredComponent(.httpMethod(rawValue: "POST")))
         }
         
         do {
