@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -436,12 +437,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The <code>DispatchQueue</code> onto which Alamofire&rsquo;s root <code><a href="../Classes/CompositeEventMonitor.html">CompositeEventMonitor</a></code> will dispatch events. Defaults to <code>.main</code>.</p>
+                        <p>The <code>DispatchQueue</code> onto which Alamofire&rsquo;s root <code><a href="../Classes/CompositeEventMonitor.html">CompositeEventMonitor</a></code> will dispatch events. <code>.main</code> by default.</p>
 
                       </div>
                       <h4>Default Implementation</h4>
                       <div class="default_impl abstract">
-                        <p>The default queue on which <code>CompositeEventMonitor</code>s will call the <code>EventMonitor</code> methods. Defaults to <code>.main</code>.</p>
+                        <p>The default queue on which <code>CompositeEventMonitor</code>s will call the <code>EventMonitor</code> methods. <code>.main</code> by default.</p>
 
                       </div>
                       <div class="declaration">
@@ -956,9 +957,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF"></a>
-                    <a name="//apple_ref/swift/Method/request(_:didCreateURLRequest:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF">request(_:didCreateURLRequest:)</a>
+                    <a name="/s:9Alamofire12EventMonitorP7request_26didCreateInitialURLRequestyAA7RequestC_10Foundation0H0VtF"></a>
+                    <a name="//apple_ref/swift/Method/request(_:didCreateInitialURLRequest:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_26didCreateInitialURLRequestyAA7RequestC_10Foundation0H0VtF">request(_:didCreateInitialURLRequest:)</a>
                     </code>
                       <span class="declaration-note">
                         Default implementation
@@ -969,7 +970,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Event called when a <code>URLRequest</code> is first created for a <code><a href="../Classes/Request.html">Request</a></code>.</p>
+                        <p>Event called when a <code>URLRequest</code> is first created for a <code><a href="../Classes/Request.html">Request</a></code>. If a <code><a href="../Protocols/RequestAdapter.html">RequestAdapter</a></code> is active, the
+<code>URLRequest</code> will be adapted before being issued.</p>
 
                       </div>
                       <h4>Default Implementation</h4>
@@ -980,7 +982,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="n">didCreateURLRequest</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="n">didCreateInitialURLRequest</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1083,6 +1085,40 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="n">didFailToAdaptURLRequest</span> <span class="nv">initialRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span> <span class="n">withError</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF"></a>
+                    <a name="//apple_ref/swift/Method/request(_:didCreateURLRequest:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF">request(_:didCreateURLRequest:)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Default implementation
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Event called when a final <code>URLRequest</code> is created for a <code><a href="../Classes/Request.html">Request</a></code>.</p>
+
+                      </div>
+                      <h4>Default Implementation</h4>
+                      <div class="default_impl abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="n">didCreateURLRequest</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1207,7 +1243,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Event called when a <code><a href="../Classes/Request.html">Request</a></code>&lsquo;s task completes, possibly with an error. A <code><a href="../Classes/Request.html">Request</a></code> may recieve this event
+                        <p>Event called when a <code><a href="../Classes/Request.html">Request</a></code>&lsquo;s task completes, possibly with an error. A <code><a href="../Classes/Request.html">Request</a></code> may receive this event
 multiple times if it is retried.</p>
 
                       </div>
@@ -1898,8 +1934,8 @@ downloaded file will be moved to.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

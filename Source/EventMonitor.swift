@@ -27,7 +27,7 @@ import Foundation
 /// Protocol outlining the lifetime events inside Alamofire. It includes both events received from the various
 /// `URLSession` delegate protocols as well as various events from the lifetime of `Request` and its subclasses.
 public protocol EventMonitor {
-    /// The `DispatchQueue` onto which Alamofire's root `CompositeEventMonitor` will dispatch events. Defaults to `.main`.
+    /// The `DispatchQueue` onto which Alamofire's root `CompositeEventMonitor` will dispatch events. `.main` by default.
     var queue: DispatchQueue { get }
 
     // MARK: - URLSession Events
@@ -96,8 +96,9 @@ public protocol EventMonitor {
 
     // MARK: - Request Events
 
-    /// Event called when a `URLRequest` is first created for a `Request`.
-    func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest)
+    /// Event called when a `URLRequest` is first created for a `Request`. If a `RequestAdapter` is active, the
+    /// `URLRequest` will be adapted before being issued.
+    func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest)
 
     /// Event called when the attempt to create a `URLRequest` from a `Request`'s original `URLRequestConvertible` value fails.
     func request(_ request: Request, didFailToCreateURLRequestWithError error: Error)
@@ -108,6 +109,9 @@ public protocol EventMonitor {
     /// Event called when a `RequestAdapter` fails to adapt the `Request`'s initial `URLRequest`.
     func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error)
 
+    /// Event called when a final `URLRequest` is created for a `Request`.
+    func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest)
+
     /// Event called when a `URLSessionTask` subclass instance is created for a `Request`.
     func request(_ request: Request, didCreateTask task: URLSessionTask)
 
@@ -117,7 +121,7 @@ public protocol EventMonitor {
     /// Event called when a `Request` fails due to an error created by Alamofire. e.g. When certificat pinning fails.
     func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error)
 
-    /// Event called when a `Request`'s task completes, possibly with an error. A `Request` may recieve this event
+    /// Event called when a `Request`'s task completes, possibly with an error. A `Request` may receive this event
     /// multiple times if it is retried.
     func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?)
 
@@ -196,7 +200,7 @@ public protocol EventMonitor {
 }
 
 extension EventMonitor {
-    /// The default queue on which `CompositeEventMonitor`s will call the `EventMonitor` methods. Defaults to `.main`.
+    /// The default queue on which `CompositeEventMonitor`s will call the `EventMonitor` methods. `.main` by default.
     public var queue: DispatchQueue { return .main }
 
     // MARK: Default Implementations
@@ -236,7 +240,7 @@ extension EventMonitor {
     public func urlSession(_ session: URLSession,
                            downloadTask: URLSessionDownloadTask,
                            didFinishDownloadingTo location: URL) { }
-    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) { }
+    public func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) { }
     public func request(_ request: Request, didFailToCreateURLRequestWithError error: Error) { }
     public func request(_ request: Request,
                         didAdaptInitialRequest initialRequest: URLRequest,
@@ -244,6 +248,7 @@ extension EventMonitor {
     public func request(_ request: Request,
                         didFailToAdaptURLRequest initialRequest: URLRequest,
                         withError error: Error) { }
+    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) { }
     public func request(_ request: Request, didCreateTask task: URLSessionTask) { }
     public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) { }
     public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error) { }
@@ -392,8 +397,8 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location) }
     }
 
-    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
-        performEvent { $0.request(request, didCreateURLRequest: urlRequest) }
+    public func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {
+        performEvent { $0.request(request, didCreateInitialURLRequest: urlRequest) }
     }
 
     public func request(_ request: Request, didFailToCreateURLRequestWithError error: Error) {
@@ -406,6 +411,10 @@ public final class CompositeEventMonitor: EventMonitor {
 
     public func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error) {
         performEvent { $0.request(request, didFailToAdaptURLRequest: initialRequest, withError: error) }
+    }
+
+    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
+        performEvent { $0.request(request, didCreateURLRequest: urlRequest) }
     }
 
     public func request(_ request: Request, didCreateTask task: URLSessionTask) {
@@ -544,7 +553,7 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `urlSession(_:taskIsWaitingForConnectivity:)` event.
     open var taskIsWaitingForConnectivity: ((URLSession, URLSessionTask) -> Void)?
 
-    /// Closure that recieves the `urlSession(_:dataTask:didReceive:)` event.
+    /// Closure that receives the `urlSession(_:dataTask:didReceive:)` event.
     open var dataTaskDidReceiveData: ((URLSession, URLSessionDataTask, Data) -> Void)?
 
     /// Closure called on the `urlSession(_:dataTask:willCacheResponse:completionHandler:)` event.
@@ -562,8 +571,8 @@ open class ClosureEventMonitor: EventMonitor {
 
     // MARK: - Request Events
 
-    /// Closure called on the `request(_:didCreateURLRequest:)` event.
-    open var requestDidCreateURLRequest: ((Request, URLRequest) -> Void)?
+    /// Closure called on the `request(_:didCreateInitialURLRequest:)` event.
+    open var requestDidCreateInitialURLRequest: ((Request, URLRequest) -> Void)?
 
     /// Closure called on the `request(_:didFailToCreateURLRequestWithError:)` event.
     open var requestDidFailToCreateURLRequestWithError: ((Request, Error) -> Void)?
@@ -573,6 +582,9 @@ open class ClosureEventMonitor: EventMonitor {
 
     /// Closure called on the `request(_:didFailToAdaptURLRequest:withError:)` event.
     open var requestDidFailToAdaptURLRequestWithError: ((Request, URLRequest, Error) -> Void)?
+
+    /// Closure called on the `request(_:didCreateURLRequest:)` event.
+    open var requestDidCreateURLRequest: ((Request, URLRequest) -> Void)?
 
     /// Closure called on the `request(_:didCreateTask:)` event.
     open var requestDidCreateTask: ((Request, URLSessionTask) -> Void)?
@@ -639,6 +651,9 @@ open class ClosureEventMonitor: EventMonitor {
 
     public let queue: DispatchQueue
 
+    /// Creates an instance using the provided queue.
+    ///
+    /// - Parameter queue: `DispatchQueue` on which events will fired. `.main` by default.
     public init(queue: DispatchQueue = .main) {
         self.queue = queue
     }
@@ -711,8 +726,8 @@ open class ClosureEventMonitor: EventMonitor {
 
     // MARK: Request Events
 
-    open func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
-        requestDidCreateURLRequest?(request, urlRequest)
+    open func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {
+        requestDidCreateInitialURLRequest?(request, urlRequest)
     }
 
     open func request(_ request: Request, didFailToCreateURLRequestWithError error: Error) {
@@ -725,6 +740,10 @@ open class ClosureEventMonitor: EventMonitor {
 
     open func request(_ request: Request, didFailToAdaptURLRequest initialRequest: URLRequest, withError error: Error) {
         requestDidFailToAdaptURLRequestWithError?(request, initialRequest, error)
+    }
+
+    open func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {
+        requestDidCreateURLRequest?(request, urlRequest)
     }
 
     open func request(_ request: Request, didCreateTask task: URLSessionTask) {

@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -410,7 +411,9 @@
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p><code>Session</code> creates and manages Alamofire&rsquo;s <code><a href="../Classes/Request.html">Request</a></code> types during their lifetimes. It also provides common
+functionality for all <code><a href="../Classes/Request.html">Request</a></code>s, including queuing, interception, trust management, redirect handling, and response
+cache handling.</p>
 
           </div>
         </section>
@@ -432,7 +435,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Shared singleton instance used by all <code>AF.request</code> APIs. Cannot be modified.</p>
 
                       </div>
                       <div class="declaration">
@@ -440,6 +443,34 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">let</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">Session</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7SessionC7sessionSo12NSURLSessionCvp"></a>
+                    <a name="//apple_ref/swift/Property/session" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC7sessionSo12NSURLSessionCvp">session</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Underlying <code>URLSession</code> used to create <code>URLSessionTasks</code> for this instance, and for which this instance&rsquo;s
+<code><a href="../Classes/Session.html#/s:9Alamofire7SessionC8delegateAA0B8DelegateCvp">delegate</a></code> handles <code>URLSessionDelegate</code> callbacks.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span></code></pre>
 
                         </div>
                       </div>
@@ -459,7 +490,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Instance&rsquo;s <code><a href="../Classes/SessionDelegate.html">SessionDelegate</a></code>, which handles the <code>URLSessionDelegate</code> methods and <code><a href="../Classes/Request.html">Request</a></code> interaction.</p>
 
                       </div>
                       <div class="declaration">
@@ -486,7 +517,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Root <code>DispatchQueue</code> for all internal callbacks and state update. <strong>MUST</strong> be a serial queue.</p>
 
                       </div>
                       <div class="declaration">
@@ -494,6 +525,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">rootQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7SessionC24startRequestsImmediatelySbvp"></a>
+                    <a name="//apple_ref/swift/Property/startRequestsImmediately" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC24startRequestsImmediatelySbvp">startRequestsImmediately</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Value determining whether this instance automatically calls <code>resume()</code> on all created <code><a href="../Classes/Request.html">Request</a></code>s.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">startRequestsImmediately</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
@@ -513,7 +571,9 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code>DispatchQueue</code> on which <code>URLRequest</code>s are created asynchronously. By default this queue uses <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC9rootQueueSo17OS_dispatch_queueCvp">rootQueue</a></code> as its
+<code>target</code>, but a separate queue can be used if request creation is determined to be a bottleneck. Always profile
+and test before introduing an additional queue.</p>
 
                       </div>
                       <div class="declaration">
@@ -540,7 +600,9 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code>DispatchQueue</code> passed to all <code><a href="../Classes/Request.html">Request</a></code>s on which they perform their response serialization. By default this
+queue uses <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC9rootQueueSo17OS_dispatch_queueCvp">rootQueue</a></code> as its <code>target</code> but a separate queue can be used if response serialization is determined
+to be a bottleneck. Always profile and test before introducing an additional queue.</p>
 
                       </div>
                       <div class="declaration">
@@ -567,7 +629,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> used for all <code><a href="../Classes/Request.html">Request</a></code> created by the instance. <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>s can also be set on a
+per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which case the <code><a href="../Classes/Request.html">Request</a></code>&lsquo;s interceptor takes precedence over this value.</p>
 
                       </div>
                       <div class="declaration">
@@ -594,7 +657,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="../Classes/ServerTrustManager.html">ServerTrustManager</a></code> instance used to evaluate all trust challenges and provide certificate and key pinning.</p>
 
                       </div>
                       <div class="declaration">
@@ -621,7 +684,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="../Protocols/RedirectHandler.html">RedirectHandler</a></code> instance used to provide customization for request redirection.</p>
 
                       </div>
                       <div class="declaration">
@@ -648,7 +711,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a></code> instance used to provide customization of cached response handling.</p>
 
                       </div>
                       <div class="declaration">
@@ -656,33 +719,6 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">cachedResponseHandler</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a></span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionC7sessionSo12NSURLSessionCvp"></a>
-                    <a name="//apple_ref/swift/Property/session" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC7sessionSo12NSURLSessionCvp">session</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span></code></pre>
 
                         </div>
                       </div>
@@ -702,7 +738,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="../Classes/CompositeEventMonitor.html">CompositeEventMonitor</a></code> used to compose Alamofire&rsquo;s <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC20defaultEventMonitorsSayAA0D7Monitor_pGvp">defaultEventMonitors</a></code> and any passed <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code>s.</p>
 
                       </div>
                       <div class="declaration">
@@ -729,7 +765,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code>s included in all instances. <code>[AlamofireNotifications()]</code> by default.</p>
 
                       </div>
                       <div class="declaration">
@@ -737,33 +773,6 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">defaultEventMonitors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Protocols/EventMonitor.html">EventMonitor</a></span><span class="p">]</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionC24startRequestsImmediatelySbvp"></a>
-                    <a name="//apple_ref/swift/Property/startRequestsImmediately" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC24startRequestsImmediatelySbvp">startRequestsImmediately</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">startRequestsImmediately</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
@@ -783,7 +792,13 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a <code>Session</code> from a <code>URLSession</code> and other parameters.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>When passing a <code>URLSession</code>, you must create the <code>URLSession</code> with a specific <code>delegateQueue</code> value and
+    pass the <code>delegateQueue</code>&lsquo;s <code>underlyingQueue</code> as the <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC9rootQueueSo17OS_dispatch_queueCvp">rootQueue</a></code> parameter of this initializer.</p>
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -804,6 +819,160 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>session</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Underlying <code>URLSession</code> for this instance.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>delegate</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/SessionDelegate.html">SessionDelegate</a></code> that handles <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7sessionSo12NSURLSessionCvp">session</a></code>&lsquo;s delegate callbacks as well as <code><a href="../Classes/Request.html">Request</a></code>
+                      interaction.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>rootQueue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Root <code>DispatchQueue</code> for all internal callbacks and state updats. <strong>MUST</strong> be a
+                      serial queue.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>startRequestsImmediately</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Determines whether this instance will automatically start all <code><a href="../Classes/Request.html">Request</a></code>s. <code>true</code>
+                      by default. If set to <code>false</code>, all <code><a href="../Classes/Request.html">Request</a></code>s created must have <code>.resume()</code> called.
+                      on them for them to start.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>requestQueue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which to perform <code>URLRequest</code> creation. By default this queue
+                      will use the <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC9rootQueueSo17OS_dispatch_queueCvp">rootQueue</a></code> as its <code>target</code>. A separate queue can be used if it&rsquo;s
+                      determined request creation is a bottleneck, but that should only be done after
+                      careful testing and profiling. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>serializationQueue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which to perform all response serialization. By default this
+                      queue will use the <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC9rootQueueSo17OS_dispatch_queueCvp">rootQueue</a></code> as its <code>target</code>. A separate queue can be used if
+                      it&rsquo;s determined response serialization is a bottleneck, but that should only be
+                      done after careful testing and profiling. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> to be used for all <code><a href="../Classes/Request.html">Request</a></code>s created by this instance. <code>nil</code>
+                      by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>serverTrustManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/ServerTrustManager.html">ServerTrustManager</a></code> to be used for all trust evaluations by this instance. <code>nil</code>
+                      by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>redirectHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RedirectHandler.html">RedirectHandler</a></code> to be used by all <code><a href="../Classes/Request.html">Request</a></code>s created by this instance. <code>nil</code> by
+                      default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>cachedResponseHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a></code> to be used by all <code><a href="../Classes/Request.html">Request</a></code>s created by this instance.
+                      <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>eventMonitors</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Additional <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code>s used by the instance. Alamofire always adds a
+                      <code><a href="../Classes/AlamofireNotifications.html">AlamofireNotifications</a></code> <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code> to the array passed here. <code>[]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -820,7 +989,13 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a <code>Session</code> from a <code>URLSessionConfiguration</code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>This intializer lets Alamofire handle the creation of the underlying <code>URLSession</code> and its
+    <code>delegateQueue</code>, and is the recommended intiailizer for most uses.</p>
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -829,7 +1004,7 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="n">convenience</span> <span class="nf">init</span><span class="p">(</span><span class="nv">configuration</span><span class="p">:</span> <span class="kt">URLSessionConfiguration</span> <span class="o">=</span> <span class="kt">URLSessionConfiguration</span><span class="o">.</span><span class="n">af</span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                         <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Classes/SessionDelegate.html">SessionDelegate</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/SessionDelegate.html">SessionDelegate</a></span><span class="p">(),</span>
-                        <span class="nv">rootQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="s">"org.alamofire.sessionManager.rootQueue"</span><span class="p">),</span>
+                        <span class="nv">rootQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="s">"org.alamofire.session.rootQueue"</span><span class="p">),</span>
                         <span class="nv">startRequestsImmediately</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
                         <span class="nv">requestQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                         <span class="nv">serializationQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -841,32 +1016,161 @@
 
                         </div>
                       </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionCfd"></a>
-                    <a name="//apple_ref/swift/Method/deinit" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionCfd">deinit</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">deinit</span></code></pre>
-
-                        </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>configuration</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>URLSessionConfiguration</code> to be used to create the underlying <code>URLSession</code>. Changes
+                      to this value after being passed to this initializer will have no effect.
+                      <code>URLSessionConfiguration.af.default</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>delegate</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/SessionDelegate.html">SessionDelegate</a></code> that handles <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7sessionSo12NSURLSessionCvp">session</a></code>&lsquo;s delegate callbacks as well as <code><a href="../Classes/Request.html">Request</a></code>
+                      interaction. <code>SessionDelegate()</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>rootQueue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Root <code>DispatchQueue</code> for all internal callbacks and state updats. <strong>MUST</strong> be a
+                      serial queue. <code>DispatchQueue(label: &quot;org.alamofire.session.rootQueue&quot;)</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>startRequestsImmediately</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Determines whether this instance will automatically start all <code><a href="../Classes/Request.html">Request</a></code>s. <code>true</code>
+                      by default. If set to <code>false</code>, all <code><a href="../Classes/Request.html">Request</a></code>s created must have <code>.resume()</code> called.
+                      on them for them to start.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>requestQueue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which to perform <code>URLRequest</code> creation. By default this queue
+                      will use the <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC9rootQueueSo17OS_dispatch_queueCvp">rootQueue</a></code> as its <code>target</code>. A separate queue can be used if it&rsquo;s
+                      determined request creation is a bottleneck, but that should only be done after
+                      careful testing and profiling. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>serializationQueue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which to perform all response serialization. By default this
+                      queue will use the <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC9rootQueueSo17OS_dispatch_queueCvp">rootQueue</a></code> as its <code>target</code>. A separate queue can be used if
+                      it&rsquo;s determined response serialization is a bottleneck, but that should only be
+                      done after careful testing and profiling. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> to be used for all <code><a href="../Classes/Request.html">Request</a></code>s created by this instance. <code>nil</code>
+                      by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>serverTrustManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/ServerTrustManager.html">ServerTrustManager</a></code> to be used for all trust evaluations by this instance. <code>nil</code>
+                      by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>redirectHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RedirectHandler.html">RedirectHandler</a></code> to be used by all <code><a href="../Classes/Request.html">Request</a></code>s created by this instance. <code>nil</code> by
+                      default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>cachedResponseHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/CachedResponseHandler.html">CachedResponseHandler</a></code> to be used by all <code><a href="../Classes/Request.html">Request</a></code>s created by this instance.
+                      <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>eventMonitors</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Additional <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code>s used by the instance. Alamofire always adds a
+                      <code><a href="../Classes/AlamofireNotifications.html">AlamofireNotifications</a></code> <code><a href="../Protocols/EventMonitor.html">EventMonitor</a></code> to the array passed here. <code>[]</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -875,10 +1179,10 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Request"></a>
-                <a name="//apple_ref/swift/Section/Request" class="dashAnchor"></a>
-                <a href="#/Request">
-                  <h3 class="section-name">Request</h3>
+                <a name="/DataRequest"></a>
+                <a name="//apple_ref/swift/Section/DataRequest" class="dashAnchor"></a>
+                <a href="#/DataRequest">
+                  <h3 class="section-name">DataRequest</h3>
                 </a>
               </div>
               <ul class="item-container">
@@ -895,14 +1199,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> from a <code>URLRequest</code> created using the passeed components and a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">url</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
                   <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
                   <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                   <span class="nv">encoding</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/URLEncoding.html">URLEncoding</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
@@ -910,6 +1214,90 @@
                   <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataRequest.html">DataRequest</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parameters</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></code> (a.k.a. <code>[String: Any]</code>) value to be encoded into the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encoding</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></code> to be used to encode the <code>parameters</code> value into the <code>URLRequest</code>.
+         <code><a href="../Structs/URLEncoding.html#/s:9Alamofire11URLEncodingV7defaultACvpZ">URLEncoding.default</a></code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/DataRequest.html">DataRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -927,21 +1315,106 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> from a <code>URLRequest</code> created using the passed components, <code>Encodable</code> parameters, and a
+<code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">:</span> <span class="kt">Encodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">url</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">:</span> <span class="kt">Encodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
                                          <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
                                          <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                                         <span class="nv">encoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/JSONParameterEncoder.html">JSONParameterEncoder</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
+                                         <span class="nv">encoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/URLEncodedFormParameterEncoder.html">URLEncodedFormParameterEncoder</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                                          <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                          <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DataRequest.html">DataRequest</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parameters</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Value conforming to <code>Encodable</code> to be encoded into the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encoder</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></code> to be used to encode the <code>parameters</code> value into the <code>URLRequest</code>.
+         <code><a href="../Classes/URLEncodedFormParameterEncoder.html#/s:9Alamofire30URLEncodedFormParameterEncoderC7defaultACvpZ">URLEncodedFormParameterEncoder.default</a></code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/DataRequest.html">DataRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -959,7 +1432,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> from a <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value and a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -970,6 +1443,41 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/DataRequest.html">DataRequest</a></code>.</p>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -977,10 +1485,10 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Download"></a>
-                <a name="//apple_ref/swift/Section/Download" class="dashAnchor"></a>
-                <a href="#/Download">
-                  <h3 class="section-name">Download</h3>
+                <a name="/DownloadRequest"></a>
+                <a name="//apple_ref/swift/Section/DownloadRequest" class="dashAnchor"></a>
+                <a href="#/DownloadRequest">
+                  <h3 class="section-name">DownloadRequest</h3>
                 </a>
               </div>
               <ul class="item-container">
@@ -997,7 +1505,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> using a <code>URLRequest</code> created using the passed components, <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>, and
+<code>Destination</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1013,6 +1522,103 @@
                    <span class="n">to</span> <span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span><span class="o">.</span><span class="kt">Destination</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parameters</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></code> (a.k.a. <code>[String: Any]</code>) value to be encoded into the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encoding</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></code> to be used to encode the <code>parameters</code> value into the <code>URLRequest</code>. Defaults
+         to <code><a href="../Structs/URLEncoding.html#/s:9Alamofire11URLEncodingV7defaultACvpZ">URLEncoding.default</a></code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>destination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the downloaded file
+         should be moved. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -1030,7 +1636,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> from a <code>URLRequest</code> created using the passed components, <code>Encodable</code> parameters, and
+a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1040,12 +1647,109 @@
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="n">download</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">:</span> <span class="kt">Encodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
                                           <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
                                           <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                                          <span class="nv">encoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/JSONParameterEncoder.html">JSONParameterEncoder</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
+                                          <span class="nv">encoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/URLEncodedFormParameterEncoder.html">URLEncodedFormParameterEncoder</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                                           <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                           <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                           <span class="n">to</span> <span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span><span class="o">.</span><span class="kt">Destination</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parameters</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Value conforming to <code>Encodable</code> to be encoded into the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encoder</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></code> to be used to encode the <code>parameters</code> value into the <code>URLRequest</code>. Defaults
+         to <code><a href="../Classes/URLEncodedFormParameterEncoder.html#/s:9Alamofire30URLEncodedFormParameterEncoderC7defaultACvpZ">URLEncodedFormParameterEncoder.default</a></code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>destination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the downloaded file
+         should be moved. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -1063,7 +1767,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> from a <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value, a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>, and a <code>Destination</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1075,6 +1779,54 @@
                    <span class="n">to</span> <span class="nv">destination</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span><span class="o">.</span><span class="kt">Destination</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/DownloadRequest.html">DownloadRequest</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>destination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the downloaded file
+         should be moved. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -1092,7 +1844,22 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> from the <code>resumeData</code> produced from a previously cancelled <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code>, as
+well as a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>, and a <code>Destination</code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>If <code>destination</code> is not specified, the download will be moved to a temporary location determined by
+    Alamofire. The file will not be deleted until the system purges the temporary files.</p>
+
+</div>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>On some versions of all Apple platforms (iOS 10 - 10.2, macOS 10.12 - 10.12.2, tvOS 10 - 10.1, watchOS 3 - 3.1.1),
+<code>resumeData</code> is broken on background URL session configurations. There&rsquo;s an underlying bug in the <code>resumeData</code>
+generation logic where the data is written incorrectly and will always fail to resume the download. For more
+information about the bug and possible workarounds, please refer to the <a href="http://stackoverflow.com/a/39347461/1342462">this Stack Overflow post</a>.</p>
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -1105,6 +1872,54 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>data</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The resume data from a previously cancelled <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> or <code>URLSessionDownloadTask</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>destination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">DownloadRequest.Destination</a></code> closure used to determine how and where the downloaded file
+         should be moved. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code>.</p>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -1112,10 +1927,10 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Upload"></a>
-                <a name="//apple_ref/swift/Section/Upload" class="dashAnchor"></a>
-                <a href="#/Upload">
-                  <h3 class="section-name">Upload</h3>
+                <a name="/Data"></a>
+                <a name="//apple_ref/swift/Section/Data" class="dashAnchor"></a>
+                <a href="#/Data">
+                  <h3 class="section-name">Data</h3>
                 </a>
               </div>
               <ul class="item-container">
@@ -1132,7 +1947,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the given <code>Data</code>, <code>URLRequest</code> components, and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1146,6 +1961,77 @@
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>data</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>Data</code> to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -1163,7 +2049,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the given <code>Data</code> using the <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1176,9 +2062,67 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>data</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>Data</code> to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+                      </div>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/File"></a>
+                <a name="//apple_ref/swift/Section/File" class="dashAnchor"></a>
+                <a href="#/File">
+                  <h3 class="section-name">File</h3>
+                </a>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1192,7 +2136,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the file at the given file <code>URL</code>, using a <code>URLRequest</code> from the provided
+components and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1206,6 +2151,77 @@
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileURL</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>URL</code> of the file to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -1223,7 +2239,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the file at the given file <code>URL</code> using the <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value and
+<code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1236,9 +2253,67 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileURL</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>URL</code> of the file to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+                      </div>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/InputStream"></a>
+                <a name="//apple_ref/swift/Section/InputStream" class="dashAnchor"></a>
+                <a href="#/InputStream">
+                  <h3 class="section-name">InputStream</h3>
+                </a>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1252,7 +2327,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> from the <code>InputStream</code> provided using a <code>URLRequest</code> from the provided components and
+<code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1266,6 +2342,77 @@
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>stream</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>InputStream</code> that provides the data to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -1283,7 +2430,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> from the provided <code>InputStream</code> using the <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value and
+<code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1296,9 +2444,67 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>stream</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>InputStream</code> that provides the data to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+                      </div>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/MultipartFormData"></a>
+                <a name="//apple_ref/swift/Section/MultipartFormData" class="dashAnchor"></a>
+                <a href="#/MultipartFormData">
+                  <h3 class="section-name">MultipartFormData</h3>
+                </a>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1312,7 +2518,21 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the multipart form data built using a closure and sent using the provided
+<code>URLRequest</code> components and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
+
+<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
+payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+used for larger payloads such as video content.</p>
+
+<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
+or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
+encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+technique was used.</p>
 
                       </div>
                       <div class="declaration">
@@ -1328,6 +2548,351 @@
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>multipartFormData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encodingMemoryThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> to be used if the form data exceeds the memory threshold and is
+                     written to disk before being uploaded.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>convertible</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold11fileManager4with11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VSo06NSFileJ0CAA21URLRequestConvertible_pAA0N11Interceptor_pSgtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:fileManager:with:interceptor:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold11fileManager4with11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VSo06NSFileJ0CAA21URLRequestConvertible_pAA0N11Interceptor_pSgtF">upload(multipartFormData:usingThreshold:fileManager:with:interceptor:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using a <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure, the provided <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code>
+value, and a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
+
+<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
+payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+used for larger payloads such as video content.</p>
+
+<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
+or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
+encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+technique was used.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">,</span>
+                 <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
+                 <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>multipartFormData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encodingMemoryThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> to be used if the form data exceeds the memory threshold and is
+                     written to disk before being uploaded.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold2to6method7headers11interceptorAA13UploadRequestCAA09MultiparteF0C_s6UInt64VAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0N11Interceptor_pSgtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:to:method:headers:interceptor:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold2to6method7headers11interceptorAA13UploadRequestCAA09MultiparteF0C_s6UInt64VAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0N11Interceptor_pSgtF">upload(multipartFormData:usingThreshold:to:method:headers:interceptor:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the prebuilt <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> value using the provided <code>URLRequest</code> components
+and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
+
+<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
+payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+used for larger payloads such as video content.</p>
+
+<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
+or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
+encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+technique was used.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">,</span>
+                 <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
+                 <span class="n">to</span> <span class="nv">url</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
+                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
+                 <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>multipartFormData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> instance to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encodingMemoryThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>url</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -1345,7 +2910,21 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the prebuilt <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> value using the providing <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code>
+value and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
+
+<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
+payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+used for larger payloads such as video content.</p>
+
+<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
+or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
+encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+technique was used.</p>
 
                       </div>
                       <div class="declaration">
@@ -1358,6 +2937,67 @@
                  <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>multipartFormData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> instance to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encodingMemoryThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by
+                     default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -1376,9 +3016,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC20sessionConfigurationSo012NSURLSessionD0Cvp"></a>
+                    <a name="/s:9Alamofire15RequestDelegateP20sessionConfigurationSo012NSURLSessionE0Cvp"></a>
                     <a name="//apple_ref/swift/Property/sessionConfiguration" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC20sessionConfigurationSo012NSURLSessionD0Cvp">sessionConfiguration</a>
+                    <a class="token" href="#/s:9Alamofire15RequestDelegateP20sessionConfigurationSo012NSURLSessionE0Cvp">sessionConfiguration</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1386,8 +3026,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -1403,9 +3042,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC11retryResult3for5dueTo10completionyAA7RequestC_s5Error_pyAA05RetryD0OctF"></a>
+                    <a name="/s:9Alamofire15RequestDelegateP11retryResult3for5dueTo10completionyAA0B0C_s5Error_pyAA05RetryE0OctF"></a>
                     <a name="//apple_ref/swift/Method/retryResult(for:dueTo:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC11retryResult3for5dueTo10completionyAA7RequestC_s5Error_pyAA05RetryD0OctF">retryResult(for:dueTo:completion:)</a>
+                    <a class="token" href="#/s:9Alamofire15RequestDelegateP11retryResult3for5dueTo10completionyAA0B0C_s5Error_pyAA05RetryE0OctF">retryResult(for:dueTo:completion:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1413,8 +3052,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -1430,9 +3068,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC12retryRequest_9withDelayyAA0D0C_SdSgtF"></a>
+                    <a name="/s:9Alamofire15RequestDelegateP05retryB0_9withDelayyAA0B0C_SdSgtF"></a>
                     <a name="//apple_ref/swift/Method/retryRequest(_:withDelay:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC12retryRequest_9withDelayyAA0D0C_SdSgtF">retryRequest(_:withDelay:)</a>
+                    <a class="token" href="#/s:9Alamofire15RequestDelegateP05retryB0_9withDelayyAA0B0C_SdSgtF">retryRequest(_:withDelay:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1440,8 +3078,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -1456,160 +3093,14 @@
                 </li>
               </ul>
             </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/SessionStateProvider"></a>
-                <a name="//apple_ref/swift/Section/SessionStateProvider" class="dashAnchor"></a>
-                <a href="#/SessionStateProvider">
-                  <h3 class="section-name">SessionStateProvider</h3>
-                </a>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionC7request3forAA7RequestCSgSo16NSURLSessionTaskC_tF"></a>
-                    <a name="//apple_ref/swift/Method/request(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC7request3forAA7RequestCSgSo16NSURLSessionTaskC_tF">request(for:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="k">for</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionC23didGatherMetricsForTaskyySo012NSURLSessionG0CF"></a>
-                    <a name="//apple_ref/swift/Method/didGatherMetricsForTask(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC23didGatherMetricsForTaskyySo012NSURLSessionG0CF">didGatherMetricsForTask(_:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">didGatherMetricsForTask</span><span class="p">(</span><span class="n">_</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionC15didCompleteTaskyySo012NSURLSessionE0CF"></a>
-                    <a name="//apple_ref/swift/Method/didCompleteTask(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC15didCompleteTaskyySo012NSURLSessionE0CF">didCompleteTask(_:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">didCompleteTask</span><span class="p">(</span><span class="n">_</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionC10credential3for2inSo15NSURLCredentialCSgSo16NSURLSessionTaskC_So20NSURLProtectionSpaceCtF"></a>
-                    <a name="//apple_ref/swift/Method/credential(for:in:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC10credential3for2inSo15NSURLCredentialCSgSo16NSURLSessionTaskC_So20NSURLProtectionSpaceCtF">credential(for:in:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">credential</span><span class="p">(</span><span class="k">for</span> <span class="nv">task</span><span class="p">:</span> <span class="kt">URLSessionTask</span><span class="p">,</span> <span class="k">in</span> <span class="nv">protectionSpace</span><span class="p">:</span> <span class="kt">URLProtectionSpace</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">URLCredential</span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionC017cancelRequestsForB12Invalidation4withys5Error_pSg_tF"></a>
-                    <a name="//apple_ref/swift/Method/cancelRequestsForSessionInvalidation(with:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC017cancelRequestsForB12Invalidation4withys5Error_pSg_tF">cancelRequestsForSessionInvalidation(with:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">cancelRequestsForSessionInvalidation</span><span class="p">(</span><span class="n">with</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </div>
         </section>
 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

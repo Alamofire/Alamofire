@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -648,7 +649,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Closure that recieves the <code><a href="../Classes/ClosureEventMonitor.html#/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0C10Foundation0K0VtF">urlSession(_:dataTask:didReceive:)</a></code> event.</p>
+                        <p>Closure that receives the <code><a href="../Classes/ClosureEventMonitor.html#/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0C10Foundation0K0VtF">urlSession(_:dataTask:didReceive:)</a></code> event.</p>
 
                       </div>
                       <div class="declaration">
@@ -785,9 +786,9 @@ event.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire19ClosureEventMonitorC26requestDidCreateURLRequestyAA7RequestC_10Foundation0H0VtcSgvp"></a>
-                    <a name="//apple_ref/swift/Property/requestDidCreateURLRequest" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire19ClosureEventMonitorC26requestDidCreateURLRequestyAA7RequestC_10Foundation0H0VtcSgvp">requestDidCreateURLRequest</a>
+                    <a name="/s:9Alamofire19ClosureEventMonitorC33requestDidCreateInitialURLRequestyAA7RequestC_10Foundation0I0VtcSgvp"></a>
+                    <a name="//apple_ref/swift/Property/requestDidCreateInitialURLRequest" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire19ClosureEventMonitorC33requestDidCreateInitialURLRequestyAA7RequestC_10Foundation0I0VtcSgvp">requestDidCreateInitialURLRequest</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -795,14 +796,14 @@ event.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Closure called on the <code><a href="../Classes/ClosureEventMonitor.html#/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF">request(_:didCreateURLRequest:)</a></code> event.</p>
+                        <p>Closure called on the <code><a href="../Classes/ClosureEventMonitor.html#/s:9Alamofire12EventMonitorP7request_26didCreateInitialURLRequestyAA7RequestC_10Foundation0H0VtF">request(_:didCreateInitialURLRequest:)</a></code> event.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">requestDidCreateURLRequest</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="kt">URLRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">requestDidCreateInitialURLRequest</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="kt">URLRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
 
                         </div>
                       </div>
@@ -884,6 +885,33 @@ event.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">requestDidFailToAdaptURLRequestWithError</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="kt">URLRequest</span><span class="p">,</span> <span class="kt">Error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire19ClosureEventMonitorC26requestDidCreateURLRequestyAA7RequestC_10Foundation0H0VtcSgvp"></a>
+                    <a name="//apple_ref/swift/Property/requestDidCreateURLRequest" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire19ClosureEventMonitorC26requestDidCreateURLRequestyAA7RequestC_10Foundation0H0VtcSgvp">requestDidCreateURLRequest</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Closure called on the <code><a href="../Classes/ClosureEventMonitor.html#/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF">request(_:didCreateURLRequest:)</a></code> event.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">requestDidCreateURLRequest</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="kt">URLRequest</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
 
                         </div>
                       </div>
@@ -1496,7 +1524,7 @@ event.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates an instance using the provided queue.</p>
 
                       </div>
                       <div class="declaration">
@@ -1506,6 +1534,25 @@ event.</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">)</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which events will fired. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -1877,9 +1924,9 @@ event.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF"></a>
-                    <a name="//apple_ref/swift/Method/request(_:didCreateURLRequest:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF">request(_:didCreateURLRequest:)</a>
+                    <a name="/s:9Alamofire12EventMonitorP7request_26didCreateInitialURLRequestyAA7RequestC_10Foundation0H0VtF"></a>
+                    <a name="//apple_ref/swift/Method/request(_:didCreateInitialURLRequest:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_26didCreateInitialURLRequestyAA7RequestC_10Foundation0H0VtF">request(_:didCreateInitialURLRequest:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1893,7 +1940,7 @@ event.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="n">didCreateURLRequest</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="n">didCreateInitialURLRequest</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1972,6 +2019,32 @@ event.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="n">didFailToAdaptURLRequest</span> <span class="nv">initialRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">,</span> <span class="n">withError</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF"></a>
+                    <a name="//apple_ref/swift/Method/request(_:didCreateURLRequest:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF">request(_:didCreateURLRequest:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="n">didCreateURLRequest</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -2540,8 +2613,8 @@ event.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

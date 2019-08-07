@@ -138,6 +138,10 @@
 		31F9683C20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */; };
 		31F9683D20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */; };
 		31F9683E20BB70290009606F /* NSLoggingEventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */; };
+		31FB2F8722C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */; };
+		31FB2F8822C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */; };
+		31FB2F8922C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */; };
+		31FB2F8A22C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */; };
 		4C0CB631220BC70300604EDC /* RequestInterceptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0CB630220BC70300604EDC /* RequestInterceptorTests.swift */; };
 		4C0CB632220BC70300604EDC /* RequestInterceptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0CB630220BC70300604EDC /* RequestInterceptorTests.swift */; };
 		4C0CB633220BC70300604EDC /* RequestInterceptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C0CB630220BC70300604EDC /* RequestInterceptorTests.swift */; };
@@ -378,6 +382,7 @@
 		31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AFError+AlamofireTests.swift"; sourceTree = "<group>"; };
 		31F5085C20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionConfiguration+Alamofire.swift"; sourceTree = "<group>"; };
 		31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSLoggingEventMonitor.swift; sourceTree = "<group>"; };
+		31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncodedFormEncoder.swift; sourceTree = "<group>"; };
 		4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseSerializationTests.swift; sourceTree = "<group>"; };
 		4C0CB630220BC70300604EDC /* RequestInterceptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestInterceptorTests.swift; sourceTree = "<group>"; };
 		4C0CB640220CA89400604EDC /* URLRequest+Alamofire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLRequest+Alamofire.swift"; sourceTree = "<group>"; };
@@ -734,6 +739,7 @@
 				4CDE2C451AF89FF300BABAE5 /* ResponseSerialization.swift */,
 				4C256A1921F1449C00AD5D87 /* RetryPolicy.swift */,
 				4C811F8C1B51856D00E0F59A /* ServerTrustEvaluation.swift */,
+				31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */,
 				4CDE2C421AF89F0900BABAE5 /* Validation.swift */,
 			);
 			name = Features;
@@ -1302,6 +1308,7 @@
 				4C0CB648220CA8A400604EDC /* RedirectHandler.swift in Sources */,
 				4CF6270E1BA7CBF60011A099 /* MultipartFormData.swift in Sources */,
 				4CB9282B1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
+				31FB2F8922C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */,
 				4C0CB643220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4CF6270F1BA7CBF60011A099 /* ResponseSerialization.swift in Sources */,
 				4C256A0821EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
@@ -1374,6 +1381,7 @@
 				4C0CB647220CA8A400604EDC /* RedirectHandler.swift in Sources */,
 				4CB9282A1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
 				4DD67C251A5C590000ED2280 /* Alamofire.swift in Sources */,
+				31FB2F8822C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */,
 				4C0CB642220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
 				4C256A0721EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
@@ -1412,6 +1420,7 @@
 				4C0CB649220CA8A400604EDC /* RedirectHandler.swift in Sources */,
 				E4202FD21B667AA100C997FB /* ResponseSerialization.swift in Sources */,
 				4CB9282C1C66BFBC00CE5F08 /* Notifications.swift in Sources */,
+				31FB2F8A22C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */,
 				4C0CB644220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4CEC605B1B745C9100E684F4 /* AFResult.swift in Sources */,
 				4C256A0921EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
@@ -1450,6 +1459,7 @@
 				4C0CB646220CA8A400604EDC /* RedirectHandler.swift in Sources */,
 				F897FF4119AA800700AB5182 /* Alamofire.swift in Sources */,
 				4C23EB431B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
+				31FB2F8722C828D8007FD6D5 /* URLEncodedFormEncoder.swift in Sources */,
 				4C0CB641220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4C811F8D1B51856D00E0F59A /* ServerTrustEvaluation.swift in Sources */,
 				4C256A0621EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,

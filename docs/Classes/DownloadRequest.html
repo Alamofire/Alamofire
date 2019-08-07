@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -410,7 +411,7 @@
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p><code><a href="../Classes/Request.html">Request</a></code> subclass which downloads <code>Data</code> to a file on disk using <code>URLSessionDownloadTask</code>.</p>
 
           </div>
         </section>
@@ -432,8 +433,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A collection of options to be executed prior to moving a downloaded file from the temporary URL to the
-destination URL.</p>
+                        <p>A set of options to be executed prior to moving a downloaded file from the temporary <code>URL</code> to the destination
+<code>URL</code>.</p>
 
                         <a href="../Classes/DownloadRequest/Options.html" class="slightly-smaller">See more</a>
                       </div>
@@ -448,6 +449,17 @@ destination URL.</p>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Destination"></a>
+                <a name="//apple_ref/swift/Section/Destination" class="dashAnchor"></a>
+                <a href="#/Destination">
+                  <h3 class="section-name">Destination</h3>
+                </a>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -482,9 +494,9 @@ the options defining how the file should be moved.</p>
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Destination"></a>
+                <a name="/Destination2"></a>
                 <a name="//apple_ref/swift/Section/Destination" class="dashAnchor"></a>
-                <a href="#/Destination">
+                <a href="#/Destination2">
                   <h3 class="section-name">Destination</h3>
                 </a>
               </div>
@@ -544,12 +556,25 @@ file URL in the first available directory with the specified search path directo
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/DownloadRequest/Options.html">DownloadRequest.Options</a></code> used when moving the downloaded file to its destination. None by
+       default.</p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>A download file destination closure.</p>
+                        <p>The <code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC11Destinationa">Destination</a></code> closure.</p>
                       </div>
                     </section>
                   </div>
@@ -567,7 +592,7 @@ file URL in the first available directory with the specified search path directo
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Type describing the source used to create the underlying <code>URLSessionDownloadTask</code>.</p>
 
                         <a href="../Classes/DownloadRequest/Downloadable.html" class="slightly-smaller">See more</a>
                       </div>
@@ -576,6 +601,77 @@ file URL in the first available directory with the specified search path directo
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Downloadable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Mutable%20State"></a>
+                <a name="//apple_ref/swift/Section/Mutable State" class="dashAnchor"></a>
+                <a href="#/Mutable%20State">
+                  <h3 class="section-name">Mutable State</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire15DownloadRequestC10resumeData10Foundation0E0VSgvp"></a>
+                    <a name="//apple_ref/swift/Property/resumeData" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC10resumeData10Foundation0E0VSgvp">resumeData</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If the download is resumable and eventually cancelled, this value may be used to resume the download using the
+<code>download(resumingWith data:)</code> API.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    For more information about <code>resumeData</code>, see <a href="https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel">Apple&rsquo;s documentation</a>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">resumeData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire15DownloadRequestC7fileURL10Foundation0E0VSgvp"></a>
+                    <a name="//apple_ref/swift/Property/fileURL" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC7fileURL10Foundation0E0VSgvp">fileURL</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If the download is successful, the <code>URL</code> where the file was downloaded.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">fileURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -606,7 +702,7 @@ file URL in the first available directory with the specified search path directo
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p><code><a href="../Classes/DownloadRequest/Downloadable.html">Downloadable</a></code> value used for this instance.</p>
 
                       </div>
                       <div class="declaration">
@@ -620,82 +716,6 @@ file URL in the first available directory with the specified search path directo
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Updated%20State"></a>
-                <a name="//apple_ref/swift/Section/Updated State" class="dashAnchor"></a>
-                <a href="#/Updated%20State">
-                  <h3 class="section-name">Updated State</h3>
-                </a>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire15DownloadRequestC10resumeData10Foundation0E0VSgvp"></a>
-                    <a name="//apple_ref/swift/Property/resumeData" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC10resumeData10Foundation0E0VSgvp">resumeData</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">resumeData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire15DownloadRequestC7fileURL10Foundation0E0VSgvp"></a>
-                    <a name="//apple_ref/swift/Property/fileURL" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC7fileURL10Foundation0E0VSgvp">fileURL</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">fileURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Init"></a>
-                <a name="//apple_ref/swift/Section/Init" class="dashAnchor"></a>
-                <a href="#/Init">
-                  <h3 class="section-name">Init</h3>
-                </a>
-              </div>
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -709,7 +729,7 @@ file URL in the first available directory with the specified search path directo
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates a <code>URLSessionTask</code> from the provided resume data.</p>
 
                       </div>
                       <div class="declaration">
@@ -719,6 +739,41 @@ file URL in the first available directory with the specified search path directo
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">task</span><span class="p">(</span><span class="n">forResumeData</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span> <span class="n">using</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">URLSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">URLSessionTask</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>data</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>Data</code> used to resume the download.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>session</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>URLSession</code> used to create the <code>URLSessionTask</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The <code>URLSessionTask</code> created.</p>
                       </div>
                     </section>
                   </div>
@@ -736,7 +791,14 @@ file URL in the first available directory with the specified search path directo
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Cancels the instance. Once cancelled, a <code>DownloadRequest</code> can no longer be resumed or suspended.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>This method will NOT produce resume data. If you wish to cancel and produce resume data, use
+    <code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC6cancel19producingResumeDataACXDSb_tF">cancel(producingResumeData:)</a></code> or <code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC6cancel21byProducingResumeDataACXDy10Foundation0H0VSgc_tF">cancel(byProducingResumeData:)</a></code>.</p>
+
+</div>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -746,6 +808,109 @@ file URL in the first available directory with the specified search path directo
 <span class="kd">public</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">cancel</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire15DownloadRequestC6cancel19producingResumeDataACXDSb_tF"></a>
+                    <a name="//apple_ref/swift/Method/cancel(producingResumeData:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC6cancel19producingResumeDataACXDSb_tF">cancel(producingResumeData:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Cancels the instance, optionally producing resume data. Once cancelled, a <code>DownloadRequest</code> can no longer be
+resumed or suspended.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>If <code>producingResumeData</code> is <code>true</code>, the <code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC10resumeData10Foundation0E0VSgvp">resumeData</a></code> property will be populated with any resume data, if
+    available.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">cancel</span><span class="p">(</span><span class="n">producingResumeData</span> <span class="nv">shouldProduceResumeData</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire15DownloadRequestC6cancel21byProducingResumeDataACXDy10Foundation0H0VSgc_tF"></a>
+                    <a name="//apple_ref/swift/Method/cancel(byProducingResumeData:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC6cancel21byProducingResumeDataACXDy10Foundation0H0VSgc_tF">cancel(byProducingResumeData:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Cancels the instance while producing resume data. Once cancelled, a <code>DownloadRequest</code> can no longer be resumed
+or suspended.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>The resume data passed to the completion handler will also be available on the instance&rsquo;s <code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC10resumeData10Foundation0E0VSgvp">resumeData</a></code>
+    property.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">cancel</span><span class="p">(</span><span class="n">byProducingResumeData</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="n">_</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">Self</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completionHandler</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The completion handler that is called when the download has been successfully
+                           cancelled. It is not guaranteed to be called on a particular queue, so you may
+                           want use an appropriate queue to perform your work.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The instance.</p>
                       </div>
                     </section>
                   </div>
@@ -764,8 +929,11 @@ file URL in the first available directory with the specified search path directo
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Validates the request, using the specified closure.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>If validation fails, subsequent calls to response handlers will have an associated error.</p>
 
-<p>If validation fails, subsequent calls to response handlers will have an associated error.</p>
+</div>
 
                       </div>
                       <div class="declaration">
@@ -789,7 +957,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>A closure to validate the request.</p>
+                                  <p><code><a href="../Classes/DownloadRequest.html#/s:9Alamofire15DownloadRequestC10Validationa">Validation</a></code> closure to validate the response.</p>
                                 </div>
                               </td>
                             </tr>
@@ -798,7 +966,7 @@ file URL in the first available directory with the specified search path directo
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>The request.</p>
+                        <p>The instance.</p>
                       </div>
                     </section>
                   </div>
@@ -854,7 +1022,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -921,7 +1089,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -934,7 +1102,7 @@ file URL in the first available directory with the specified search path directo
                               <td>
                                 <div>
                                   <p>The response serializer responsible for serializing the request, response, and data
-                contained in the destination url.</p>
+                contained in the destination <code>URL</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1011,7 +1179,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1089,7 +1257,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1180,7 +1348,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The queue on which the completion handler is dispatched. Defaults to <code>.main</code>.</p>
+                                  <p>The queue on which the completion handler is dispatched. <code>.main</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1192,7 +1360,7 @@ file URL in the first available directory with the specified search path directo
                               </td>
                               <td>
                                 <div>
-                                  <p>The JSON serialization reading options. Defaults to <code>.allowFragments</code>.</p>
+                                  <p>The JSON serialization reading options. <code>.allowFragments</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1399,8 +1567,8 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

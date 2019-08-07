@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -439,12 +440,6 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                       <div class="abstract">
                         <p>Defines the various states of network reachability.</p>
 
-<ul>
-<li>unknown:      It is unknown whether the network is reachable.</li>
-<li>notReachable: The network is not reachable.</li>
-<li>reachable:    The network is reachable.</li>
-</ul>
-
                         <a href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
@@ -472,11 +467,6 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Defines the various connection types detected by reachability flags.</p>
-
-<ul>
-<li>ethernetOrWiFi: The connection type is either over Ethernet or WiFi.</li>
-<li>wwan:           The connection type is a WWAN connection.</li>
-</ul>
 
                         <a href="../Classes/NetworkReachabilityManager/ConnectionType.html" class="slightly-smaller">See more</a>
                       </div>
@@ -705,7 +695,7 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Flags of the current reachability type, if any.</p>
 
                       </div>
                       <div class="declaration">
@@ -732,7 +722,7 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Reachability flags of the previous reachability state.</p>
 
                       </div>
                       <div class="declaration">
@@ -770,7 +760,7 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code>NetworkReachabilityManager</code> instance with the specified host.</p>
+                        <p>Creates an instance with the specified host.</p>
 
                       </div>
                       <div class="declaration">
@@ -793,16 +783,12 @@ network reachability status.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The host used to evaluate network reachability.</p>
+                                  <p>Host used to evaluate network reachability. Must not include the scheme (i.e. <code>https</code>).</p>
                                 </div>
                               </td>
                             </tr>
                           </tbody>
                         </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The new <code>NetworkReachabilityManager</code> instance.</p>
                       </div>
                     </section>
                   </div>
@@ -820,7 +806,7 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code>NetworkReachabilityManager</code> instance that monitors the address 0.0.0.0.</p>
+                        <p>Creates an instance that monitors the address 0.0.0.0.</p>
 
 <p>Reachability treats the 0.0.0.0 address as a special token that causes it to monitor the general routing
 status of the device, both IPv4 and IPv6.</p>
@@ -831,37 +817,6 @@ status of the device, both IPv4 and IPv6.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="n">convenience</span> <span class="nf">init</span><span class="p">?()</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The new <code>NetworkReachabilityManager</code> instance.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerCfd"></a>
-                    <a name="//apple_ref/swift/Method/deinit" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerCfd">deinit</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">deinit</span></code></pre>
 
                         </div>
                       </div>
@@ -946,8 +901,8 @@ status of the device, both IPv4 and IPv6.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

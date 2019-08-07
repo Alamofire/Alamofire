@@ -1,5 +1,5 @@
 source "https://rubygems.org"
 
-gem "cocoapods", "~> 1.6"
+gem "cocoapods"
 gem "xcpretty"
 gem "jazzy"

@@ -26,29 +26,16 @@ import Foundation
 
 /// `AFError` is the error type returned by Alamofire. It encompasses a few different types of errors, each with
 /// their own associated reasons.
-///
-/// - explicitlyCancelled:         Returned when a `Request` is explicitly cancelled.
-/// - invalidURL:                  Returned when a `URLConvertible` type fails to create a valid `URL`.
-/// - parameterEncodingFailed:     Returned when a parameter encoding object throws an error during the encoding process.
-/// - parameterEncoderFailed:      Returned when a parameter encoder throws an error during the encoding process.
-/// - multipartEncodingFailed:     Returned when some step in the multipart encoding process fails.
-/// - requestAdaptationFailed:     Returned when a `RequestAdapter` throws an error during request adaptation.
-/// - responseValidationFailed:    Returned when a `validate()` call fails.
-/// - responseSerializationFailed: Returned when a response serializer throws an error in the serialization process.
-/// - serverTrustEvaluationFailed: Returned when a `ServerTrustEvaluating` instance fails during the server trust evaluation process.
-/// - requestRetryFailed:          Returned when a `RequestRetrier` throws an error during the request retry process.
 public enum AFError: Error {
-    /// The underlying reason the parameter encoding error occurred.
-    ///
-    /// - missingURL:                 The URL request did not have a URL to encode.
-    /// - jsonEncodingFailed:         JSON serialization failed with an underlying system error during the
-    ///                               encoding process.
+    /// The underlying reason the `.parameterEncodingFailed` error occurred.
     public enum ParameterEncodingFailureReason {
+        /// The `URLRequest` did not have a `URL` to encode.
         case missingURL
+        /// JSON serialization failed with an underlying system error during the encoding process.
         case jsonEncodingFailed(error: Error)
     }
 
-    /// Underlying reason the parameter encoder error occured.
+    /// The underlying reason the `.parameterEncoderFailed` error occurred.
     public enum ParameterEncoderFailureReason {
         /// Possible missing components.
         public enum RequiredComponent {
@@ -63,63 +50,48 @@ public enum AFError: Error {
         case encoderFailed(error: Error)
     }
 
-    /// The underlying reason the multipart encoding error occurred.
-    ///
-    /// - bodyPartURLInvalid:                   The `fileURL` provided for reading an encodable body part isn't a
-    ///                                         file URL.
-    /// - bodyPartFilenameInvalid:              The filename of the `fileURL` provided has either an empty
-    ///                                         `lastPathComponent` or `pathExtension.
-    /// - bodyPartFileNotReachable:             The file at the `fileURL` provided was not reachable.
-    /// - bodyPartFileNotReachableWithError:    Attempting to check the reachability of the `fileURL` provided threw
-    ///                                         an error.
-    /// - bodyPartFileIsDirectory:              The file at the `fileURL` provided is actually a directory.
-    /// - bodyPartFileSizeNotAvailable:         The size of the file at the `fileURL` provided was not returned by
-    ///                                         the system.
-    /// - bodyPartFileSizeQueryFailedWithError: The attempt to find the size of the file at the `fileURL` provided
-    ///                                         threw an error.
-    /// - bodyPartInputStreamCreationFailed:    An `InputStream` could not be created for the provided `fileURL`.
-    /// - outputStreamCreationFailed:           An `OutputStream` could not be created when attempting to write the
-    ///                                         encoded data to disk.
-    /// - outputStreamFileAlreadyExists:        The encoded body data could not be writtent disk because a file
-    ///                                         already exists at the provided `fileURL`.
-    /// - outputStreamURLInvalid:               The `fileURL` provided for writing the encoded body data to disk is
-    ///                                         not a file URL.
-    /// - outputStreamWriteFailed:              The attempt to write the encoded body data to disk failed with an
-    ///                                         underlying error.
-    /// - inputStreamReadFailed:                The attempt to read an encoded body part `InputStream` failed with
-    ///                                         underlying system error.
+    /// The underlying reason the `.multipartEncodingFailed` error occurred.
     public enum MultipartEncodingFailureReason {
+        /// The `fileURL` provided for reading an encodable body part isn't a file `URL`.
         case bodyPartURLInvalid(url: URL)
+        /// The filename of the `fileURL` provided has either an empty `lastPathComponent` or `pathExtension.
         case bodyPartFilenameInvalid(in: URL)
+        /// The file at the `fileURL` provided was not reachable.
         case bodyPartFileNotReachable(at: URL)
+        /// Attempting to check the reachability of the `fileURL` provided threw an error.
         case bodyPartFileNotReachableWithError(atURL: URL, error: Error)
+        /// The file at the `fileURL` provided is actually a directory.
         case bodyPartFileIsDirectory(at: URL)
+        /// The size of the file at the `fileURL` provided was not returned by the system.
         case bodyPartFileSizeNotAvailable(at: URL)
+        /// The attempt to find the size of the file at the `fileURL` provided threw an error.
         case bodyPartFileSizeQueryFailedWithError(forURL: URL, error: Error)
+        /// An `InputStream` could not be created for the provided `fileURL`.
         case bodyPartInputStreamCreationFailed(for: URL)
-
+        /// An `OutputStream` could not be created when attempting to write the encoded data to disk.
         case outputStreamCreationFailed(for: URL)
+        /// The encoded body data could not be written to disk because a file already exists at the provided `fileURL`.
         case outputStreamFileAlreadyExists(at: URL)
+        /// The `fileURL` provided for writing the encoded body data to disk is not a file `URL`.
         case outputStreamURLInvalid(url: URL)
+        /// The attempt to write the encoded body data to disk failed with an underlying error.
         case outputStreamWriteFailed(error: Error)
-
+        /// The attempt to read an encoded body part `InputStream` failed with underlying system error.
         case inputStreamReadFailed(error: Error)
     }
 
-    /// The underlying reason the response validation error occurred.
-    ///
-    /// - dataFileNil:             The data file containing the server response did not exist.
-    /// - dataFileReadFailed:      The data file containing the server response could not be read.
-    /// - missingContentType:      The response did not contain a `Content-Type` and the `acceptableContentTypes`
-    ///                            provided did not contain wildcard type.
-    /// - unacceptableContentType: The response `Content-Type` did not match any type in the provided
-    ///                            `acceptableContentTypes`.
-    /// - unacceptableStatusCode:  The response status code was not acceptable.
+    /// The underlying reason the `.responseValidationFailed` error occurred.
     public enum ResponseValidationFailureReason {
+        /// The data file containing the server response did not exist.
         case dataFileNil
+        /// The data file containing the server response at the associated `URL` could not be read.
         case dataFileReadFailed(at: URL)
+        /// The response did not contain a `Content-Type` and the `acceptableContentTypes` provided did not contain a
+        /// wildcard type.
         case missingContentType(acceptableContentTypes: [String])
+        /// The response `Content-Type` did not match any type in the provided `acceptableContentTypes`.
         case unacceptableContentType(acceptableContentTypes: [String], responseContentType: String)
+        /// The response status code was not acceptable.
         case unacceptableStatusCode(code: Int)
     }
 
@@ -139,11 +111,9 @@ public enum AFError: Error {
         case decodingFailed(error: Error)
         /// Generic serialization failed for an empty response that wasn't type `Empty` but instead the associated type.
         case invalidEmptyResponse(type: String)
-        /// A response serializer was added to the request after the request was already finished.
-        case responseSerializerAddedAfterRequestFinished
     }
 
-    /// Underlying reason a server trust evaluation error occured.
+    /// Underlying reason a server trust evaluation error occurred.
     public enum ServerTrustFailureReason {
         /// The output of a server trust evaluation.
         public struct Output {
@@ -164,6 +134,7 @@ public enum AFError: Error {
                 self.result = result
             }
         }
+        /// No `ServerTrustEvaluator` was found for the associated host.
         case noRequiredEvaluator(host: String)
         /// No certificates were found with which to perform the trust evaluation.
         case noCertificatesFound
@@ -187,17 +158,29 @@ public enum AFError: Error {
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
     }
 
+    /// `Session` which issued the `Request` was deinitialized, most likely because its reference went out of scope.
     case sessionDeinitialized
+    /// `Session` was explicitly invalidated, possibly with the `Error` produced by the underlying `URLSession`.
     case sessionInvalidated(error: Error?)
+    /// `Request` was explcitly cancelled.
     case explicitlyCancelled
+    /// `URLConvertible` type failed to create a valid `URL`.
     case invalidURL(url: URLConvertible)
+    /// `ParameterEncoding` threw an error during the encoding process.
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
+    /// `ParameterEncoder` threw an error while running the encoder.
     case parameterEncoderFailed(reason: ParameterEncoderFailureReason)
+    /// Multipart form encoding failed.
     case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
+    /// `RequestAdapter` failed threw an error during adaptation.
     case requestAdaptationFailed(error: Error)
+    /// Response validation failed.
     case responseValidationFailed(reason: ResponseValidationFailureReason)
+    /// Response serialization failued.
     case responseSerializationFailed(reason: ResponseSerializationFailureReason)
+    /// `ServerTrustEvaluating` instance threw an error during trust evaluation.
     case serverTrustEvaluationFailed(reason: ServerTrustFailureReason)
+    /// `RequestRetrier` threw an error during the request retry process.
     case requestRetryFailed(retryError: Error, originalError: Error)
 }
 
@@ -211,13 +194,13 @@ extension Error {
 // MARK: - Error Booleans
 
 extension AFError {
-    // Returns whether the instance is `.sessionDeinitialized`.
+    /// Returns whether the instance is `.sessionDeinitialized`.
     public var isSessionDeinitializedError: Bool {
         if case .sessionDeinitialized = self { return true }
         return false
     }
 
-    // Returns whether the instance is `.sessionInvalidated`.
+    /// Returns whether the instance is `.sessionInvalidated`.
     public var isSessionInvalidatedError: Bool {
         if case .sessionInvalidated = self { return true }
         return false
@@ -243,7 +226,7 @@ extension AFError {
     }
 
     /// Returns whether the instance is `.parameterEncoderFailed`. When `true`, the `underlyingError` property will
-    // contain the associated value.
+    /// contain the associated value.
     public var isParameterEncoderError: Bool {
         if case .parameterEncoderFailed = self { return true }
         return false
@@ -556,8 +539,6 @@ extension AFError.ResponseSerializationFailureReason {
             return "Empty response could not be serialized to type: \(type). Use Empty as the expected type for such responses."
         case .decodingFailed(let error):
             return "Response could not be decoded because of error:\n\(error.localizedDescription)"
-        case .responseSerializerAddedAfterRequestFinished:
-            return "Response serializer was added to the request after it had already finished."
         }
     }
 }

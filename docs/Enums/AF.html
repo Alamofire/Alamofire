@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (77% documented)
+         (98% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -162,10 +162,19 @@
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder.html">URLEncodedFormEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">– BoolEncoding</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">– ArrayEncoding</a>
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DataEncoding.html">– DataEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/DateEncoding.html">– DateEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/KeyEncoding.html">– KeyEncoding</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/URLEncodedFormEncoder/SpaceEncoding.html">– SpaceEncoding</a>
@@ -254,14 +263,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/URLSessionConfiguration.html">URLSessionConfiguration</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Functions.html#/s:9Alamofire2eeoiySbAA26NetworkReachabilityManagerC0cD6StatusO_AFtF">==(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -439,7 +440,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> using <code>SessionManager.default</code> to retrive the contents of the specified <code>url</code>
+                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to retrive the contents of the specified <code>url</code>
 using the <code>method</code>, <code>parameters</code>, <code>encoding</code>, and <code>headers</code> provided.</p>
 
                       </div>
@@ -555,7 +556,7 @@ using the <code>method</code>, <code>parameters</code>, <code>encoding</code>, a
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> using <code>SessionManager.default</code> to retrive the contents of the specified <code>url</code>
+                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to retrive the contents of the specified <code>url</code>
 using the <code>method</code>, <code>parameters</code>, <code>encoding</code>, and <code>headers</code> provided.</p>
 
                       </div>
@@ -620,7 +621,7 @@ using the <code>method</code>, <code>parameters</code>, <code>encoding</code>, a
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></code>, <code><a href="../Classes/URLEncodedFormParameterEncoder.html#/s:9Alamofire30URLEncodedFormParameterEncoderC7defaultACvpZ">URLEncodedFormParameterEncoder.default</a></code> by default.</p>
+                                  <p>The <code><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></code>, <code><a href="../Classes/URLEncodedFormParameterEncoder.html#/s:9Alamofire30URLEncodedFormParameterEncoderC7defaultACvpZ">URLEncodedFormParameterEncoder.default</a></code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -671,7 +672,7 @@ using the <code>method</code>, <code>parameters</code>, <code>encoding</code>, a
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> using <code>SessionManager.default</code> to execute the specified <code>urlRequest</code>.</p>
+                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to execute the specified <code>urlRequest</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -744,11 +745,10 @@ using the <code>method</code>, <code>parameters</code>, <code>encoding</code>, a
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> using <code>SessionManager.default</code> to download the contents of the specified <code>url</code> to
+                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to download the contents of the specified <code>url</code> to
 the provided <code>destination</code> using the <code>method</code>, <code>parameters</code>, <code>encoding</code>, and <code>headers</code> provided.</p>
 
-<p>If <code>destination</code> is not specified, the download will remain at the temporary location determined by the
-underlying <code>URLSession</code>.</p>
+<p>If <code>destination</code> is not specified, the download will be moved to a temporary location determined by Alamofire.</p>
 
                       </div>
                       <div class="declaration">
@@ -877,11 +877,14 @@ underlying <code>URLSession</code>.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> using <code>SessionManager.default</code> to download the contents of the specified <code>url</code> to
-the provided <code>destination</code> using the <code>method</code>, encodable <code>parameters</code>, <code>encoder</code>, and <code>headers</code> provided.</p>
+                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to download the contents of the specified <code>url</code> to the
+provided <code>destination</code> using the <code>method</code>, encodable <code>parameters</code>, <code>encoder</code>, and <code>headers</code> provided.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>If <code>destination</code> is not specified, the download will be moved to a temporary location determined by
+    Alamofire.</p>
 
-<p>If <code>destination</code> is not specified, the download will remain at the temporary location determined by the
-underlying <code>URLSession</code>.</p>
+</div>
 
                       </div>
                       <div class="declaration">
@@ -1021,7 +1024,7 @@ underlying <code>URLSession</code>.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> using <code>SessionManager.default</code> to execute the specified <code>urlRequest</code> and download
+                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to execute the specified <code>urlRequest</code> and download
 the result to the provided <code>destination</code>.</p>
 
                       </div>
@@ -1110,16 +1113,22 @@ the result to the provided <code>destination</code>.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> using the <code>SessionManager.default</code> from the <code>resumeData</code> produced from a previous
+                        <p>Creates a <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> using the <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> from the <code>resumeData</code> produced from a previous
 <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code> cancellation to retrieve the contents of the original request and save them to the <code>destination</code>.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>If <code>destination</code> is not specified, the download will be moved to a temporary location determined by
+    Alamofire.</p>
 
-<p>If <code>destination</code> is not specified, the contents will remain in the temporary location determined by the
-underlying URL session.</p>
-
-<p>On some versions of all Apple platforms (iOS 10 - 10.2, macOS 10.12 - 10.12.2, tvOS 10 - 10.1, watchOS 3 - 3.1.1),
+</div>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>On some versions of all Apple platforms (iOS 10 - 10.2, macOS 10.12 - 10.12.2, tvOS 10 - 10.1, watchOS 3 - 3.1.1),
 <code>resumeData</code> is broken on background URL session configurations. There&rsquo;s an underlying bug in the <code>resumeData</code>
 generation logic where the data is written incorrectly and will always fail to resume the download. For more
 information about the bug and possible workarounds, please refer to the <a href="http://stackoverflow.com/a/39347461/1342462">this Stack Overflow post</a>.</p>
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -1209,7 +1218,7 @@ information about the bug and possible workarounds, please refer to the <a href=
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using <code>SessionManager.default</code> to upload the contents of the <code>fileURL</code> specified
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to upload the contents of the <code>fileURL</code> specified
 using the <code>url</code>, <code>method</code> and <code>headers</code> provided.</p>
 
                       </div>
@@ -1312,7 +1321,7 @@ using the <code>url</code>, <code>method</code> and <code>headers</code> provide
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using the <code>SessionManager.default</code> to upload the contents of the <code>fileURL</code> specificed
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using the <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to upload the contents of the <code>fileURL</code> specificed
 using the <code>urlRequest</code> provided.</p>
 
                       </div>
@@ -1400,7 +1409,7 @@ using the <code>urlRequest</code> provided.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using <code>SessionManager.default</code> to upload the contents of the <code>data</code> specified using
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to upload the contents of the <code>data</code> specified using
 the <code>url</code>, <code>method</code> and <code>headers</code> provided.</p>
 
                       </div>
@@ -1515,8 +1524,8 @@ the <code>url</code>, <code>method</code> and <code>headers</code> provided.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using <code>SessionManager.default</code> to upload the contents of the <code>data</code> specified using
-the <code>urlRequest</code> provided.</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to upload the contents of the <code>data</code> specified using the
+<code>urlRequest</code> provided.</p>
 
                       </div>
                       <div class="declaration">
@@ -1603,8 +1612,8 @@ the <code>urlRequest</code> provided.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using <code>SessionManager.default</code> to upload the content provided by the <code>stream</code>
-specified using the <code>url</code>, <code>method</code> and <code>headers</code> provided.</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to upload the content provided by the <code>stream</code> specified
+using the <code>url</code>, <code>method</code> and <code>headers</code> provided.</p>
 
                       </div>
                       <div class="declaration">
@@ -1706,7 +1715,7 @@ specified using the <code>url</code>, <code>method</code> and <code>headers</cod
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using <code>SessionManager.default</code> to upload the content provided by the <code>stream</code>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">Session.default</a></code> to upload the content provided by the <code>stream</code>
 specified using the <code>urlRequest</code> specified.</p>
 
                       </div>
@@ -1794,8 +1803,8 @@ specified using the <code>urlRequest</code> specified.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Encodes <code>multipartFormData</code> using <code>encodingMemoryThreshold</code> and uploads the result using <code>SessionManager.default</code>
-with the <code>url</code>, <code>method</code>, and <code>headers</code> provided.</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the multipart form data built using a closure and sent using the provided
+<code>URLRequest</code> components and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
 <p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
 payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
@@ -1837,7 +1846,7 @@ technique was used.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The closure used to append body parts to the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>.</p>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1849,7 +1858,8 @@ technique was used.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The encoding memory threshold in bytes. <code>10_000_000</code> bytes by default.</p>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1861,19 +1871,20 @@ technique was used.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code>FileManager</code> instance to use to manage streaming and encoding.</p>
+                                  <p><code>FileManager</code> to be used if the form data exceeds the memory threshold and is
+                     written to disk before being uploaded.</p>
                                 </div>
                               </td>
                             </tr>
                             <tr>
                               <td>
                                 <code>
-                                <em>url</em>
+                                <em>convertible</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value.</p>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1885,7 +1896,7 @@ technique was used.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code>, <code>.post</code> by default.</p>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1897,7 +1908,7 @@ technique was used.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code>, <code>nil</code> by default.</p>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1909,7 +1920,255 @@ technique was used.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>, <code>nil</code> by default.</p>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold11fileManager4with11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VSo06NSFileJ0CAA21URLRequestConvertible_pAA0N11Interceptor_pSgtFZ"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:fileManager:with:interceptor:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold11fileManager4with11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VSo06NSFileJ0CAA21URLRequestConvertible_pAA0N11Interceptor_pSgtFZ">upload(multipartFormData:usingThreshold:fileManager:with:interceptor:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using a <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure, the provided <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code>
+value, and a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
+
+<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
+payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+used for larger payloads such as video content.</p>
+
+<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
+or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
+encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+technique was used.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">,</span>
+                          <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
+                          <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
+                          <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
+                          <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>multipartFormData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encodingMemoryThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> to be used if the form data exceeds the memory threshold and is
+                     written to disk before being uploaded.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold2to6method7headers11interceptorAA13UploadRequestCAA09MultiparteF0C_s6UInt64VAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0N11Interceptor_pSgtFZ"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:to:method:headers:interceptor:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire2AFO6upload17multipartFormData14usingThreshold2to6method7headers11interceptorAA13UploadRequestCAA09MultiparteF0C_s6UInt64VAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0N11Interceptor_pSgtFZ">upload(multipartFormData:usingThreshold:to:method:headers:interceptor:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the prebuilt <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> value using the provided <code>URLRequest</code> components
+and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
+
+<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
+payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+used for larger payloads such as video content.</p>
+
+<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
+or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
+encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+technique was used.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">,</span>
+                          <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
+                          <span class="n">to</span> <span class="nv">url</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
+                          <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
+                          <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                          <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>multipartFormData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> instance to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encodingMemoryThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>url</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1936,8 +2195,8 @@ technique was used.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Encodes <code>multipartFormData</code> using <code>encodingMemoryThreshold</code> and uploads the result using <code>SessionManager.default</code>
-using the <code>urlRequest</code> provided.</p>
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the prebuilt <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> value using the providing <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code>
+value and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
 <p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
 payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
@@ -1957,11 +2216,10 @@ technique was used.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">,</span>
-                          <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
-                          <span class="n">with</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
-                          <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span>  <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">,</span>
+                           <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
+                           <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
+                           <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1977,7 +2235,7 @@ technique was used.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The closure used to append body parts to the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>.</p>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> instance to upload.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1989,19 +2247,21 @@ technique was used.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The encoding memory threshold in bytes. <code>10_000_000</code> bytes by default.</p>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by
+                     default.</p>
                                 </div>
                               </td>
                             </tr>
                             <tr>
                               <td>
                                 <code>
-                                <em>urlRequest</em>
+                                <em>request</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value.</p>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2013,7 +2273,7 @@ technique was used.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>, <code>nil</code> by default.</p>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2022,7 +2282,7 @@ technique was used.</p>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>The <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> created.</p>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
                       </div>
                     </section>
                   </div>
@@ -2035,8 +2295,8 @@ technique was used.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-04-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

@@ -294,7 +294,7 @@ class ResponseJSONTestCase: BaseTestCase {
 }
 
 class ResponseJSONDecodableTestCase: BaseTestCase {
-    func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
+    func testThatResponseDecodableReturnsSuccessResultWithValidJSON() {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
@@ -304,6 +304,30 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         // When
         AF.request(urlString, parameters: [:]).responseDecodable { (resp: DataResponse<HTTPBinResponse>) in
             response = resp
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertEqual(response?.result.value?.url, "https://httpbin.org/get")
+        XCTAssertNotNil(response?.metrics)
+    }
+
+    func testThatResponseDecodableWithPassedTypeReturnsSuccessResultWithValidJSON() {
+        // Given
+        let urlString = "https://httpbin.org/get"
+        let expectation = self.expectation(description: "request should succeed")
+
+        var response: DataResponse<HTTPBinResponse>?
+
+        // When
+        AF.request(urlString, parameters: [:]).responseDecodable(of: HTTPBinResponse.self) {
+            response = $0
             expectation.fulfill()
         }
 

@@ -473,6 +473,18 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertFalse(result.isSuccess)
     }
 
+    func testThatArraysCanBeEncodedWithoutBrackets() {
+        // Given
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .noBrackets)
+        let parameters = ["array": [1, 2]]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertQueryEqual(result.value, "array=1&array=2")
+    }
+
     func testThatBoolsCanBeLiteralEncoded() {
         // Given
         let encoder = URLEncodedFormEncoder(boolEncoding: .literal)
@@ -483,6 +495,33 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(result.value, "bool=true")
+    }
+
+    func testThatDataCanBeEncoded() {
+        // Given
+        let encoder = URLEncodedFormEncoder()
+        let parameters = ["data": Data("data".utf8)]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.value, "data=ZGF0YQ%3D%3D")
+    }
+
+    func testThatCustomDataEncodingFailsWhenErrorIsThrown() {
+        // Given
+        struct DataEncodingError: Error {}
+
+        let encoder = URLEncodedFormEncoder(dataEncoding: .custom({ _ in throw DataEncodingError() }))
+        let parameters = ["data": Data("data".utf8)]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertTrue(result.isFailure)
+        XCTAssertTrue(result.error is DataEncodingError)
     }
 
     func testThatDatesCanBeEncoded() {
@@ -576,16 +615,76 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         XCTAssertTrue(result.error is DateEncodingError)
     }
 
-    func testThatArraysCanBeEncodedWithoutBrackets() {
+    func testThatKeysCanBeEncodedIntoSnakeCase() {
         // Given
-        let encoder = URLEncodedFormEncoder(arrayEncoding: .noBrackets)
-        let parameters = ["array": [1, 2]]
+        let encoder = URLEncodedFormEncoder(keyEncoding: .convertToSnakeCase)
+        let paramters = ["oneTwoThree": "oneTwoThree"]
 
         // When
-        let result = AFResult<String> { try encoder.encode(parameters) }
+        let result = AFResult<String> { try encoder.encode(paramters) }
 
         // Then
-        XCTAssertQueryEqual(result.value, "array=1&array=2")
+        XCTAssertEqual(result.value, "one_two_three=oneTwoThree")
+    }
+
+    func testThatKeysCanBeEncodedIntoKebabCase() {
+        // Given
+        let encoder = URLEncodedFormEncoder(keyEncoding: .convertToKebabCase)
+        let paramters = ["oneTwoThree": "oneTwoThree"]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(paramters) }
+
+        // Then
+        XCTAssertEqual(result.value, "one-two-three=oneTwoThree")
+    }
+
+    func testThatKeysCanBeEncodedIntoACapitalizedString() {
+        // Given
+        let encoder = URLEncodedFormEncoder(keyEncoding: .capitalized)
+        let paramters = ["oneTwoThree": "oneTwoThree"]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(paramters) }
+
+        // Then
+        XCTAssertEqual(result.value, "OneTwoThree=oneTwoThree")
+    }
+
+    func testThatKeysCanBeEncodedIntoALowercasedString() {
+        // Given
+        let encoder = URLEncodedFormEncoder(keyEncoding: .lowercased)
+        let paramters = ["oneTwoThree": "oneTwoThree"]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(paramters) }
+
+        // Then
+        XCTAssertEqual(result.value, "onetwothree=oneTwoThree")
+    }
+
+    func testThatKeysCanBeEncodedIntoAnUppercasedString() {
+        // Given
+        let encoder = URLEncodedFormEncoder(keyEncoding: .uppercased)
+        let paramters = ["oneTwoThree": "oneTwoThree"]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(paramters) }
+
+        // Then
+        XCTAssertEqual(result.value, "ONETWOTHREE=oneTwoThree")
+    }
+
+    func testThatKeysCanBeCustomEncoded() {
+        // Given
+        let encoder = URLEncodedFormEncoder(keyEncoding: .custom({ _ in "A" }))
+        let paramters = ["oneTwoThree": "oneTwoThree"]
+
+        // When
+        let result = AFResult<String> { try encoder.encode(paramters) }
+
+        // Then
+        XCTAssertEqual(result.value, "A=oneTwoThree")
     }
 
     func testThatSpacesCanBeEncodedAsPluses() {
