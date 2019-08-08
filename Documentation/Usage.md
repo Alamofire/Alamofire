@@ -285,7 +285,7 @@ You can customize the behavior of `JSONParameterEncoder` by passing it a `JSONEn
 ```swift
 let encoder = JSONEncoder()
 encoder.dateEncoding = .iso8601
-encoder.keyEncodingStrategy = `.convertToSnakeCase`
+encoder.keyEncodingStrategy = .convertToSnakeCase
 let parameterEncoder = JSONParameterEncoder(encoder: encoder)
 ```
 
@@ -298,7 +298,8 @@ let url = URL(string: "https://httpbin.org/get")!
 var urlRequest = URLRequest(url: url)
 
 let parameters = ["foo": "bar"]
-let encodedURLRequest = try URLEncodedFormParameterEncoder.default.encode(parameters, into: urlRequest)
+let encodedURLRequest = try URLEncodedFormParameterEncoder.default.encode(parameters, 
+                                                                          into: urlRequest)
 ```
 
 ### HTTP Headers
