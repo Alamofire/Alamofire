@@ -86,7 +86,7 @@ public extension URLRequest {
 
 If you need to use an HTTP method that Alamofire's `HTTPMethod` type doesn't support, you can still set the `String` `httpMethod` property on `URLRequest` directly.
 
-#### Request Parameters and Parameter Encoders
+### Request Parameters and Parameter Encoders
 
 Alamofire supports sending any `Encodable`-conforming type as the parameters of a request. It also provides two builtin types conforming to the `ParameterEncoder` protocol: `URLFormEndcodedParameterEncoder` and `JSONParameterEncoder`.  
 
@@ -104,7 +104,7 @@ AF.request("https://httpbin.org/post",
 }
 ```
 
-### Passing Parameters
+#### Passing Parameters
 
 Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder `. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).
 
@@ -124,7 +124,7 @@ AF.request("https://httpbin.org/post",
 }
 ```
 
-#### `URLEncodedFormParameterEncoder`
+##### `URLEncodedFormParameterEncoder`
 
 The `URLEncodedFormParameterEncoder` encodes values into a url-encoded string to be set as or appended to any existing URL query or set as the HTTP body of the request. Controlling where the encoded string is set can be done by setting the `destination` of the encoding. The `URLEncodedFormParameterEncoder.Destination` enumeration has three cases:
 
