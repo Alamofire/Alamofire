@@ -828,7 +828,7 @@ $ curl -v \
 -X GET \
 -H "Accept-Language: en;q=1.0" \
 -H "Accept-Encoding: br;q=1.0, gzip;q=0.9, deflate;q=0.8" \
--H "User-Agent: Alamofire5Demo/1.0 (com.jonshier.Alamofire5Demo; build:1; iOS 13.0.0) Alamofire/1.0" \
+-H "User-Agent: Demo/1.0 (com.demo.Demo; build:1; iOS 13.0.0) Alamofire/1.0" \
 "https://httpbin.org/get"
 ```
 

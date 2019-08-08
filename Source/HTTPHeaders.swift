@@ -300,7 +300,7 @@ extension HTTPHeader {
 
     /// Returns a `Content-Type` header.
     ///
-    /// All Alamofire `ParameterEncoding`s and `ParamterEncoder`s set the `Content-Type` of the request, so it may not be necessary to manually
+    /// All Alamofire `ParameterEncoding`s and `ParameterEncoder`s set the `Content-Type` of the request, so it may not be necessary to manually
     /// set this value.
     ///
     /// - Parameter value: The `Content-Type` value.
