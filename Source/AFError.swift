@@ -172,6 +172,8 @@ public enum AFError: Error {
     case parameterEncoderFailed(reason: ParameterEncoderFailureReason)
     /// Multipart form encoding failed.
     case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
+    /// `POST` method required with `httpBody`
+    case postMethodRequiredWithHttpBody
     /// `RequestAdapter` failed threw an error during adaptation.
     case requestAdaptationFailed(error: Error)
     /// Response validation failed.
@@ -444,6 +446,8 @@ extension AFError: LocalizedError {
             return reason.localizedDescription
         case .multipartEncodingFailed(let reason):
             return reason.localizedDescription
+        case .postMethodRequiredWithHttpBody:
+            return "`POST` method required with Http Body"
         case .requestAdaptationFailed(let error):
             return "Request adaption failed with error: \(error.localizedDescription)"
         case .responseValidationFailed(let reason):

@@ -797,7 +797,13 @@ open class Session {
 
     func performSetupOperations(for request: Request, convertible: URLRequestConvertible) {
         do {
+            
             let initialRequest = try convertible.asURLRequest()
+            if let method = initialRequest.httpMethod, method.uppercased() != "POST", initialRequest.httpBody?.count ?? 0 > 0 || initialRequest.httpBodyStream != nil {
+                // swift NSURLSession sends the 'Content-Length' header but not the message body for other methods; `httpBody` will hang up the remote session or make the packet confused in the server
+                rootQueue.async { request.didFailToCreateURLRequest(with: AFError.postMethodRequiredWithHttpBody) }
+                return
+            }
             rootQueue.async { request.didCreateInitialURLRequest(initialRequest) }
 
             guard !request.isCancelled else { return }
