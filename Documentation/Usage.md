@@ -1,8 +1,6 @@
 # Using Alamofire
 
---
-
-### Introduction
+## Introduction
 Alamofire provides an elegant and composable interface to HTTP network requests. It does not implement its own HTTP networking functionality. Instead it builds on top of Apple's [URL Loading System](https://developer.apple.com/documentation/foundation/url_loading_system/) provided by the Foundation framework. At the core of the system is [`URLSession`](https://developer.apple.com/documentation/foundation/urlsession) and the [`URLSessionTask`](https://developer.apple.com/documentation/foundation/urlsessiontask) subclasses. Alamofire wraps these APIs, and many others, in an easier to use interface and provides a variety of functionality necessary for modern application development using HTTP networking. However, it's important to know where many of Alamofire's core behaviors come from, so familiarity with the URL Loading System is important. Ultimately, the networking features of Alamofire are limited by the capabilities of that system, and the behaviors and best practices should always be remembered and observed.
 
 Additionally, networking in Alamofire (and the URL Loading System in general) is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
@@ -10,7 +8,7 @@ Additionally, networking in Alamofire (and the URL Loading System in general) is
 #### Aside: The `AF` Namespace
 Previous versions of Alamofire's documentation used examples like `Alamofire.request()`. This API, while it appeared to require the `Alamofire` prefix, in fact worked fine without it. The `request` method and other functions were available globally in any file with `import Alamofire`. Starting in Alamofire 5, this functionality has been moved out of the global [namespace](https://en.wikipedia.org/wiki/Namespace) and into the `AF` enumeration, which acts as a namespace. This allows Alamofire to offer the same convenience functionality while not having to pollute the global namespace every time Alamofire is used. Similarly, types extended by Alamofire will use a `.af.` extension prefix to separate the functionality Alamofire offers from other extensions.
 
-### Making Requests
+## Making Requests
 Alamofire provides a variety of convenient methods for making HTTP requests. At the simplest level, just provide a `String` that can be converted into a `URL`:
 
 ```swift
@@ -43,7 +41,7 @@ public static func request(_ urlRequest: URLRequestConvertible,
 
 This method creates a `DataRequest` for any type conforming to Alamofire's `URLRequestConvertible` protocol. All of the different parameters from the previous version are encapsulated in that value, which can give rise to very powerful abstractions. This is discussed later in this documentation.
 
-#### HTTP Methods
+### HTTP Methods
 
 The `HTTPMethod` enumeration lists the HTTP methods defined in [RFC 7231 §4.3](https://tools.ietf.org/html/rfc7231#section-4.3):
 
@@ -289,7 +287,7 @@ encoder.keyEncodingStrategy = `.convertToSnakeCase`
 let parameterEncoder = JSONParameterEncoder(encoder: encoder)
 ```
 
-#### Manual Parameter Encoding of a `URLRequest`
+##### Manual Parameter Encoding of a `URLRequest`
 
 The `ParameterEncoder` APIs can also be used outside of Alamofire by encoding parameters directly in `URLRequest`s.
 
