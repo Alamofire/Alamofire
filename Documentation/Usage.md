@@ -606,8 +606,8 @@ let password = "password"
 
 let credential = URLCredential(user: user, password: password, persistence: .forSession)
 
-Alamofire.request("https://httpbin.org/basic-auth/\(user)/\(password)")
-    .authenticate(usingCredential: credential)
+AF.request("https://httpbin.org/basic-auth/\(user)/\(password)")
+    .authenticate(with: credential)
     .responseJSON { response in
         debugPrint(response)
     }
