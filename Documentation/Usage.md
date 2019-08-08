@@ -567,7 +567,7 @@ AF.request("https://httpbin.org/get").responseJSON(queue: utilityQueue) { respon
 
 Response caching is handled on the system framework level by [`URLCache`](https://developer.apple.com/reference/foundation/urlcache). It provides a composite in-memory and on-disk cache and lets you manipulate the sizes of both the in-memory and on-disk portions.
 
-> By default, Alamofire leverages the `URLCache.shared` instance. In order to customize the `URLCache` instance used, see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
+> By default, Alamofire leverages the `URLCache.shared` instance. In order to customize the `URLCache` instance used, see the [Session Configuration](AdvancedUsage.md#session-manager) section.
 
 ### Authentication
 
@@ -630,51 +630,52 @@ AF.request("https://httpbin.org/basic-auth/user/password", headers: headers)
     }
 ```
 
+However, headers that must be part of all requests are often better handled as part of a custom [`URLSessionConfiguration`](AdvancedUsage.md#session-manager), or by using a [`RequestAdapter`](AdvancedUsage.md#request-adapter).
+
 ### Downloading Data to a File
 
-Requests made in Alamofire that fetch data from a server can download the data in-memory or on-disk. The `Alamofire.request` APIs used in all the examples so far always downloads the server data in-memory. This is great for smaller payloads because it's more efficient, but really bad for larger payloads because the download could run your entire application out-of-memory. Because of this, you can also use the `Alamofire.download` APIs to download the server data to a temporary file on-disk.
-
-> This will only work on `macOS` as is. Other platforms don't allow access to the filesystem outside of your app's sandbox. To download files on other platforms, see the [Download File Destination](#download-file-destination) section.
+In addition to fetching data into memory, Alamofire also provides the `Session.download`, `DownloadRequest`, and `DownloadResponse<T>` APIs to facilitate downloading to disk. While downloading into memory works great for small payloads like most JSON API responses, downloading larger assets like images and videos should be done to disk, to avoid memory issues with your application.
 
 ```swift
-Alamofire.download("https://httpbin.org/image/png").responseData { response in
-    if let data = response.result.value {
+AF.download("https://httpbin.org/image/png").responseData { response in
+    if let data = response.value {
         let image = UIImage(data: data)
     }
 }
 ```
 
-> The `Alamofire.download` APIs should also be used if you need to download data while your app is in the background. For more information, please see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
+> `DownloadRequest` has most of the same `response` handlers that `DataRequest` does. However, since it downloads data to disk, serializing the response involves reading from disk, and may also involve reading large amounts of data into memory. It's important to keep these facts in mind when architecting your download handling.
 
 #### Download File Destination
 
-You can also provide a `DownloadFileDestination` closure to move the file from the temporary directory to a final destination. Before the temporary file is actually moved to the `destinationURL`, the `DownloadOptions` specified in the closure will be executed. The two currently supported `DownloadOptions` are:
+All downloaded data is initially stored in the system temporary directory. It will eventually be deleted by the system at some point in the future, so if it's something that needs to live longer, it's important to move the file somewhere else.
+
+You can provide a `Destination` closure to move the file from the temporary directory to a final destination. Before the temporary file is actually moved to the `destinationURL`, the `Options` specified in the closure will be executed. The two currently supported `Options` are:
 
 - `.createIntermediateDirectories` - Creates intermediate directories for the destination URL if specified.
 - `.removePreviousFile` - Removes a previous file from the destination URL if specified.
 
 ```swift
-let destination: DownloadRequest.DownloadFileDestination = { _, _ in
+let destination: DownloadRequest.Destination = { _, _ in
     let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-    let fileURL = documentsURL.appendingPathComponent("pig.png")
-
+    let fileURL = documentsURL.appendingPathComponent("image.png")
     return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
 }
 
-Alamofire.download(urlString, to: destination).response { response in
-    print(response)
+AF.download("https://httpbin.org/image/png", to: destination).response { response in
+    debugPrint(response)
 
-    if response.error == nil, let imagePath = response.destinationURL?.path {
+    if response.error == nil, let imagePath = response.fileURL?.path {
         let image = UIImage(contentsOfFile: imagePath)
     }
 }
 ```
 
-You can also use the suggested download destination API.
+You can also use the suggested download destination API:
 
 ```swift
 let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
-Alamofire.download("https://httpbin.org/image/png", to: destination)
+AF.download("https://httpbin.org/image/png", to: destination)
 ```
 
 #### Download Progress
@@ -682,86 +683,74 @@ Alamofire.download("https://httpbin.org/image/png", to: destination)
 Many times it can be helpful to report download progress to the user. Any `DownloadRequest` can report download progress using the `downloadProgress` API.
 
 ```swift
-Alamofire.download("https://httpbin.org/image/png")
+AF.download("https://httpbin.org/image/png")
     .downloadProgress { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
     .responseData { response in
-        if let data = response.result.value {
+        if let data = response.value {
             let image = UIImage(data: data)
         }
     }
 ```
 
-The `downloadProgress` API also takes a `queue` parameter which defines which `DispatchQueue` the download progress closure should be called on.
+> `URLSession`'s, and therefore Alamofire's, progress reporting APIs only work if the server properly returns a `Content-Length` header that can be used to calculate the progress. Without that header, progress will stay at `0.0` until the download completes, at which point the progress will jump to `1.0`.
+
+The `downloadProgress` API can also take a `queue` parameter which defines which `DispatchQueue` the download progress closure should be called on.
 
 ```swift
 let utilityQueue = DispatchQueue.global(qos: .utility)
 
-Alamofire.download("https://httpbin.org/image/png")
+AF.download("https://httpbin.org/image/png")
     .downloadProgress(queue: utilityQueue) { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
     .responseData { response in
-        if let data = response.result.value {
+        if let data = response.value {
             let image = UIImage(data: data)
         }
     }
 ```
 
-#### Resuming a Download
+#### Canceling and Resuming a Download
 
-If a `DownloadRequest` is cancelled or interrupted, the underlying URL session may generate resume data for the active `DownloadRequest`. If this happens, the resume data can be re-used to restart the `DownloadRequest` where it left off. The resume data can be accessed through the download response, then reused when trying to restart the request.
+In addition to the `cancel()` API that all `Request` classes have, `DownloadRequest`s can also produce resume data, which can be used to later resume a download. There are two forms of this API: `cancel(producingResumeData: Bool)`, which allows control over whether resume data is produced, but only makes it available on the `DownloadResponse`; and `cancel(byProducingResumeData: (_ resumeData: Data?) -> Void)`, which performs the same actions but makes the resume data available in the completion handler.
 
-> **IMPORTANT:** On some versions of all Apple platforms (iOS 10 - 10.2, macOS 10.12 - 10.12.2, tvOS 10 - 10.1, watchOS 3 - 3.1.1), `resumeData` is broken on background URL session configurations. There's an underlying bug in the `resumeData` generation logic where the data is written incorrectly and will always fail to resume the download. For more information about the bug and possible workarounds, please see this [Stack Overflow post](https://stackoverflow.com/a/39347461/1342462).
+If a `DownloadRequest` is cancelled or interrupted, the underlying `URLSessionDownloadTask` may generate resume data. If this happens, the resume data can be re-used to restart the `DownloadRequest` where it left off. 
+
+> **IMPORTANT:** On some versions of all Apple platforms (iOS 10 - 10.2, macOS 10.12 - 10.12.2, tvOS 10 - 10.1, watchOS 3 - 3.1.1), `resumeData` is broken on background `URLSessionConfiguration`s. There's an underlying bug in the `resumeData` generation logic where the data is written incorrectly and will always fail to resume the download. For more information about the bug and possible workarounds, please see this [Stack Overflow post](https://stackoverflow.com/a/39347461/1342462).
 
 ```swift
-class ImageRequestor {
-    private var resumeData: Data?
-    private var image: UIImage?
+var resumeData: Data!
 
-    func fetchImage(completion: (UIImage?) -> Void) {
-        guard image == nil else { completion(image) ; return }
+let download = AF.download("https://httpbin.org/image/png").responseData { response in
+    if let data = response.value {
+        let image = UIImage(data: data)
+    }
+}
 
-        let destination: DownloadRequest.DownloadFileDestination = { _, _ in
-            let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fileURL = documentsURL.appendingPathComponent("pig.png")
+// download.cancel(producingResumeData: true) // Makes resumeData available in response only.
+download.cancel { (data) in
+    resumeData = data
+}
 
-            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
-        }
-
-        let request: DownloadRequest
-
-        if let resumeData = resumeData {
-            request = Alamofire.download(resumingWith: resumeData)
-        } else {
-            request = Alamofire.download("https://httpbin.org/image/png")
-        }
-
-        request.responseData { response in
-            switch response.result {
-            case .success(let data):
-                self.image = UIImage(data: data)
-            case .failure:
-                self.resumeData = response.resumeData
-            }
-        }
+AF.download(resumingWith: resumeData).responseData { response in
+    if let data = response.value {
+        let image = UIImage(data: data)
     }
 }
 ```
 
 ### Uploading Data to a Server
 
-When sending relatively small amounts of data to a server using JSON or URL encoded parameters, the `Alamofire.request` APIs are usually sufficient. If you need to send much larger amounts of data from a file URL or an `InputStream`, then the `Alamofire.upload` APIs are what you want to use.
-
-> The `Alamofire.upload` APIs should also be used if you need to upload data while your app is in the background. For more information, please see the [Session Manager Configurations](AdvancedUsage.md#session-manager) section.
+When sending relatively small amounts of data to a server using JSON or URL encoded parameters, the `request()` APIs are usually sufficient. If you need to send much larger amounts of data from a file `URL` or an `InputStream`, then the `upload()` APIs are what you want to use.
 
 #### Uploading Data
 
 ```swift
-let imageData = UIImagePNGRepresentation(image)!
+let data = Data("data".utf8)
 
-Alamofire.upload(imageData, to: "https://httpbin.org/post").responseJSON { response in
+AF.upload(data, to: "https://httpbin.org/post").responseJSON { response in
     debugPrint(response)
 }
 ```
@@ -771,7 +760,7 @@ Alamofire.upload(imageData, to: "https://httpbin.org/post").responseJSON { respo
 ```swift
 let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
 
-Alamofire.upload(fileURL, to: "https://httpbin.org/post").responseJSON { response in
+AF.upload(fileURL, to: "https://httpbin.org/post").responseJSON { response in
     debugPrint(response)
 }
 ```
@@ -779,23 +768,12 @@ Alamofire.upload(fileURL, to: "https://httpbin.org/post").responseJSON { respons
 #### Uploading Multipart Form Data
 
 ```swift
-Alamofire.upload(
-    multipartFormData: { multipartFormData in
-        multipartFormData.append(unicornImageURL, withName: "unicorn")
-        multipartFormData.append(rainbowImageURL, withName: "rainbow")
-    },
-    to: "https://httpbin.org/post",
-    encodingCompletion: { encodingResult in
-    	switch encodingResult {
-    	case .success(let upload, _, _):
-            upload.responseJSON { response in
-                debugPrint(response)
-            }
-    	case .failure(let encodingError):
-    	    print(encodingError)
-    	}
-    }
-)
+AF.upload(multipartFormData: { (multipartFormData) in
+    multipartFormData.append(Data("one".utf8), withName: "one")
+    multipartFormData.append(Data("two".utf8), withName: "two")
+}, to: "https://httpbin.org/post").responseJSON { (response) in
+    debugPrint(response)
+}
 ```
 
 #### Upload Progress
@@ -805,11 +783,11 @@ While your user is waiting for their upload to complete, sometimes it can be han
 ```swift
 let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
 
-Alamofire.upload(fileURL, to: "https://httpbin.org/post")
-    .uploadProgress { progress in // main queue by default
+AF.upload(fileURL, to: "https://httpbin.org/post")
+    .uploadProgress { progress in
         print("Upload Progress: \(progress.fractionCompleted)")
     }
-    .downloadProgress { progress in // main queue by default
+    .downloadProgress { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
     .responseJSON { response in
@@ -819,71 +797,39 @@ Alamofire.upload(fileURL, to: "https://httpbin.org/post")
 
 ### Statistical Metrics
 
-#### Timeline
+#### `URLSessionTaskMetrics`
 
-Alamofire collects timings throughout the lifecycle of a `Request` and creates a `Timeline` object exposed as a property on all response types.
-
-```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
-    print(response.timeline)
-}
-```
-
-The above reports the following `Timeline` info:
-
-- `Latency`: 0.428 seconds
-- `Request Duration`: 0.428 seconds
-- `Serialization Duration`: 0.001 seconds
-- `Total Duration`: 0.429 seconds
-
-#### URL Session Task Metrics
-
-In iOS and tvOS 10 and macOS 10.12, Apple introduced the new [URLSessionTaskMetrics](https://developer.apple.com/reference/foundation/urlsessiontaskmetrics) APIs. The task metrics encapsulate some fantastic statistical information about the request and response execution. The API is very similar to the `Timeline`, but provides many more statistics that Alamofire doesn't have access to compute. The metrics can be accessed through any response type.
+Alamofire gathers `URLSessionTaskMetrics` for every `Request`. `URLSessionTaskMetrics` encapsulate some fantastic statistical information about the underlying network connection and request and response timing.
 
 ```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
-    print(response.metrics)
-}
-```
-
-It's important to note that these APIs are only available on iOS and tvOS 10 and macOS 10.12. Therefore, depending on your deployment target, you may need to use these inside availability checks:
-
-```swift
-Alamofire.request("https://httpbin.org/get").responseJSON { response in
-    if #available(iOS 10.0, *) {
-        print(response.metrics)
-    }
+AF.request("https://httpbin.org/get").responseJSON { response in
+    debugPrint(response.metrics)
 }
 ```
 
 ### cURL Command Output
 
-Debugging platform issues can be frustrating. Thankfully, Alamofire `Request` objects conform to both the `CustomStringConvertible` and `CustomDebugStringConvertible` protocols to provide some VERY helpful debugging tools.
-
-#### CustomStringConvertible
+Debugging platform issues can be frustrating. Thankfully, Alamofire `Request` can produce the equivalent cURL command for easy debugging. Due to the asynchronous nature of Alamofire's `Request` creation, this API has both synchronous and asynchronous versions. To get the cURL command as soon as possible, you can chain the `cURLDescription` onto a request:
 
 ```swift
-let request = Alamofire.request("https://httpbin.org/ip")
-
-print(request)
-// GET https://httpbin.org/ip (200)
+AF.request("https://httpbin.org/get")
+    .cURLDescription { description in
+        print(description)
+    }
+    .responseJSON { response in
+        debugPrint(response.metrics)
+    }
 ```
 
-#### CustomDebugStringConvertible
-
-```swift
-let request = Alamofire.request("https://httpbin.org/get", parameters: ["foo": "bar"])
-debugPrint(request)
-```
-
-Outputs:
+This should produce:
 
 ```bash
-$ curl -i \
-    -H "User-Agent: Alamofire/4.0.0" \
-    -H "Accept-Encoding: gzip;q=1.0, compress;q=0.5" \
-    -H "Accept-Language: en;q=1.0,fr;q=0.9,de;q=0.8,zh-Hans;q=0.7,zh-Hant;q=0.6,ja;q=0.5" \
-    "https://httpbin.org/get?foo=bar"
+$ curl -v \
+-X GET \
+-H "Accept-Language: en;q=1.0" \
+-H "Accept-Encoding: br;q=1.0, gzip;q=0.9, deflate;q=0.8" \
+-H "User-Agent: Alamofire5Demo/1.0 (com.jonshier.Alamofire5Demo; build:1; iOS 13.0.0) Alamofire/1.0" \
+"https://httpbin.org/get"
 ```
 
 ---
