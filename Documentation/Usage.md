@@ -21,12 +21,14 @@ AF.request("https://httpbin.org/get").response { (response) in
 This is actually one form of the two top-level Alamofire APIs for making requests. Its full definition looks like this:
 
 ```swift
-public static func request<Parameters: Encodable>(_ url: URLConvertible,
-                                                  method: HTTPMethod = .get,
-                                                  parameters: Parameters? = nil,
-                                                  encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
-                                                  headers: HTTPHeaders? = nil,
-                                                  interceptor: RequestInterceptor? = nil) -> DataRequest
+public static func request<Parameters: Encodable>(
+    _ url: URLConvertible,
+    method: HTTPMethod = .get,
+    parameters: Parameters? = nil,
+    encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+    headers: HTTPHeaders? = nil,
+    interceptor: RequestInterceptor? = nil
+) -> DataRequest
 ```
 This method allows the composition of requests from individual components, such as the `method` and `headers`, while also allowing per-request `RequestInterceptor`s and `Encodable` parameters.
 
