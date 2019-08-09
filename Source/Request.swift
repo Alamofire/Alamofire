@@ -1167,8 +1167,8 @@ public class DownloadRequest: Request {
     ///
     /// - Parameters:
     ///   - task:   `URLSessionTask` that finished the download.
-    ///   - result: `AFResult` of the automatic move to `destination`.
-    func didFinishDownloading(using task: URLSessionTask, with result: AFResult<URL>) {
+    ///   - result: `Result` of the automatic move to `destination`.
+    func didFinishDownloading(using task: URLSessionTask, with result: Result<URL, Error>) {
         eventMonitor?.request(self, didFinishDownloadingUsing: task, with: result)
 
         switch result {

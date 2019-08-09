@@ -386,7 +386,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -402,7 +402,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let serverTrustPolicy = DefaultTrustEvaluator(validateHost: false)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -416,7 +416,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -430,7 +430,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -444,7 +444,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -460,7 +460,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -476,7 +476,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
         let serverTrustPolicy = DefaultTrustEvaluator(validateHost: true)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -490,7 +490,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -504,7 +504,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -518,7 +518,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -532,7 +532,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -556,7 +556,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -572,7 +572,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let serverTrustPolicy = RevocationTrustEvaluator(validateHost: false)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -586,7 +586,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -600,7 +600,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -614,7 +614,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -630,7 +630,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -646,7 +646,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
         let serverTrustPolicy = RevocationTrustEvaluator()
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -660,7 +660,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -674,7 +674,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -688,7 +688,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -702,7 +702,7 @@ class ServerTrustPolicyPerformRevokedEvaluationTestCase: ServerTrustPolicyTestCa
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -725,7 +725,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
                                                                  validateHost: false)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -741,7 +741,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
                                                                  validateHost: false)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -757,7 +757,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
                                                                  validateHost: false)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -775,7 +775,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -789,7 +789,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -803,7 +803,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -817,7 +817,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, validateHost: false)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -833,7 +833,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, acceptSelfSignedCertificates: true)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -847,7 +847,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, acceptSelfSignedCertificates: true)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -861,7 +861,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates, acceptSelfSignedCertificates: true)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -879,7 +879,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -893,7 +893,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -907,7 +907,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -921,7 +921,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = PinnedCertificatesTrustEvaluator(certificates: certificates)
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -941,7 +941,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -959,7 +959,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -977,7 +977,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -995,7 +995,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -1013,7 +1013,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -1031,7 +1031,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1049,7 +1049,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1067,7 +1067,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1093,7 +1093,7 @@ class ServerTrustPolicyPinCertificatesTestCase: ServerTrustPolicyTestCase {
         )
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1115,7 +1115,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1130,7 +1130,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1145,7 +1145,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1160,7 +1160,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -1175,7 +1175,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1192,7 +1192,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1207,7 +1207,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1222,7 +1222,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1237,7 +1237,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -1252,7 +1252,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1271,7 +1271,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1288,7 +1288,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -1305,7 +1305,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1322,7 +1322,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1339,7 +1339,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1356,7 +1356,7 @@ class ServerTrustPolicyPinPublicKeysTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1373,7 +1373,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = DisabledEvaluator()
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1386,7 +1386,7 @@ class ServerTrustPolicyDisableEvaluationTestCase: ServerTrustPolicyTestCase {
         let serverTrustPolicy = DisabledEvaluator()
 
         // When
-        let result = AFResult { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try serverTrustPolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1406,7 +1406,7 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try compositePolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try compositePolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertTrue(result.isSuccess, "server trust should pass evaluation")
@@ -1424,7 +1424,7 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
         let compositePolicy = CompositeTrustEvaluator(evaluators: [defaultPolicy, revocationPolicy])
 
         // When
-        let result = AFResult { try compositePolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try compositePolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
@@ -1440,7 +1440,7 @@ class ServerTrustPolicyCompositeTestCase: ServerTrustPolicyTestCase {
 
         // When
         setRootCertificateAsLoneAnchorCertificateForTrust(serverTrust)
-        let result = AFResult { try compositePolicy.evaluate(serverTrust, forHost: host) }
+        let result = Result { try compositePolicy.evaluate(serverTrust, forHost: host) }
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")

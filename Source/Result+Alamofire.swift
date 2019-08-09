@@ -1,5 +1,5 @@
 //
-//  AFResult.swift
+//  Result+Alamofire.swift
 //
 //  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -22,12 +22,14 @@
 //  THE SOFTWARE.
 //
 
+import Foundation
+
 /// `Result` that always has an `Error` `Failure` type.
 public typealias AFResult<T> = Result<T, Error>
 
 // MARK: - Internal APIs
 
-extension AFResult {
+extension Result {
     /// Returns the associated value if the result is a success, `nil` otherwise.
     var success: Success? {
         guard case .success(let value) = self else { return nil }
@@ -40,7 +42,7 @@ extension AFResult {
         return error
     }
 
-    /// Initializes an `AFResult` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
+    /// Initializes a `Result` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
     ///
     /// - Parameters:
     ///   - value: A value.
@@ -53,20 +55,20 @@ extension AFResult {
         }
     }
 
-    /// Evaluates the specified closure when the `AFResult` is a success, passing the unwrapped value as a parameter.
+    /// Evaluates the specified closure when the `Result` is a success, passing the unwrapped value as a parameter.
     ///
     /// Use the `flatMap` method with a closure that may throw an error. For example:
     ///
-    ///     let possibleData: AFResult<Data> = .success(Data(...))
+    ///     let possibleData: Result<Data, Error> = .success(Data(...))
     ///     let possibleObject = possibleData.flatMap {
     ///         try JSONSerialization.jsonObject(with: $0)
     ///     }
     ///
     /// - parameter transform: A closure that takes the success value of the instance.
     ///
-    /// - returns: An `AFResult` containing the result of the given closure. If this instance is a failure, returns the
+    /// - returns: A `Result` containing the result of the given closure. If this instance is a failure, returns the
     ///            same failure.
-    func flatMap<T>(_ transform: (Success) throws -> T) -> AFResult<T> {
+    func flatMap<T>(_ transform: (Success) throws -> T) -> Result<T, Error> {
         switch self {
         case .success(let value):
             do {
@@ -79,20 +81,20 @@ extension AFResult {
         }
     }
 
-    /// Evaluates the specified closure when the `AFResult` is a failure, passing the unwrapped error as a parameter.
+    /// Evaluates the specified closure when the `Result` is a failure, passing the unwrapped error as a parameter.
     ///
     /// Use the `flatMapError` function with a closure that may throw an error. For example:
     ///
-    ///     let possibleData: AFResult<Data> = .success(Data(...))
+    ///     let possibleData: Result<Data, Error> = .success(Data(...))
     ///     let possibleObject = possibleData.flatMapError {
     ///         try someFailableFunction(taking: $0)
     ///     }
     ///
     /// - Parameter transform: A throwing closure that takes the error of the instance.
     ///
-    /// - Returns: An `AFResult` instance containing the result of the transform. If this instance is a success, returns
+    /// - Returns: A `Result` instance containing the result of the transform. If this instance is a success, returns
     ///            the same success.
-    func flatMapError<T: Error>(_ transform: (Failure) throws -> T) -> AFResult<Success> {
+    func flatMapError<T: Error>(_ transform: (Failure) throws -> T) -> Result<Success, Error> {
         switch self {
         case .failure(let error):
             do {

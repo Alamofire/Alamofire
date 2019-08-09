@@ -41,10 +41,10 @@ final class SessionTestCase: BaseTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
             adaptedCount += 1
 
-            let result: AFResult<URLRequest> = AFResult {
+            let result: Result<URLRequest, Error> = Result {
                 guard !throwsError else { throw AFError.invalidURL(url: "") }
 
                 var urlRequest = urlRequest
@@ -68,10 +68,10 @@ final class SessionTestCase: BaseTestCase {
             self.throwsError = throwsError
         }
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
             adaptedCount += 1
 
-            let result: AFResult<URLRequest> = AFResult {
+            let result: Result<URLRequest, Error> = Result {
                 guard !throwsError else { throw AFError.invalidURL(url: "") }
 
                 var urlRequest = urlRequest
@@ -102,10 +102,10 @@ final class SessionTestCase: BaseTestCase {
         var shouldRetry = true
         var retryDelay: TimeInterval?
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
             adaptCalledCount += 1
 
-            let result: AFResult<URLRequest> = AFResult {
+            let result: Result<URLRequest, Error> = Result {
                 if throwsErrorOnFirstAdapt {
                     throwsErrorOnFirstAdapt = false
                     throw AFError.invalidURL(url: "/adapt/error/1")
@@ -168,10 +168,10 @@ final class SessionTestCase: BaseTestCase {
         var retryCount = 0
         var retryErrors: [Error] = []
 
-        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
+        func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
             adaptCalledCount += 1
 
-            let result: AFResult<URLRequest> = AFResult {
+            let result: Result<URLRequest, Error> = Result {
                 adaptedCount += 1
 
                 if adaptedCount == 1 { throw AFError.invalidURL(url: "") }
