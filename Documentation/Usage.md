@@ -548,11 +548,11 @@ Alamofire.request("https://httpbin.org/get")
     }
 ```
 
-> It is important to note that using multiple response handlers on the same `Request` requires the server data to be serialized multiple times. Once for each response handler.
+> It is important to note that using multiple response handlers on the same `Request` requires the server data to be serialized multiple times, once for each response handler.
 
 #### Response Handler Queue
 
-Closures passed to response handlers are executed on the main queue by default, but a specific `DispatchQueue` can passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed on a background queue.
+Closures passed to response handlers are executed on the `.main` queue by default, but a specific `DispatchQueue` can passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed on a background queue.
 
 ```swift
 let utilityQueue = DispatchQueue.global(qos: .utility)
