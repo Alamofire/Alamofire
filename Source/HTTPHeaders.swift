@@ -221,7 +221,7 @@ extension HTTPHeader {
     public static func accept(_ value: String) -> HTTPHeader {
         return HTTPHeader(name: "Accept", value: value)
     }
-    
+
     /// Returns an `Accept-Charset` header.
     ///
     /// - Parameter value: The `Accept-Charset` value.
