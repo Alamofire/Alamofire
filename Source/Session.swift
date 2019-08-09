@@ -42,7 +42,7 @@ open class Session {
     public let startRequestsImmediately: Bool
     /// `DispatchQueue` on which `URLRequest`s are created asynchronously. By default this queue uses `rootQueue` as its
     /// `target`, but a separate queue can be used if request creation is determined to be a bottleneck. Always profile
-    /// and test before introduing an additional queue.
+    /// and test before introducing an additional queue.
     public let requestQueue: DispatchQueue
     /// `DispatchQueue` passed to all `Request`s on which they perform their response serialization. By default this
     /// queue uses `rootQueue` as its `target` but a separate queue can be used if response serialization is determined
@@ -76,7 +76,7 @@ open class Session {
     ///   - session:                  Underlying `URLSession` for this instance.
     ///   - delegate:                 `SessionDelegate` that handles `session`'s delegate callbacks as well as `Request`
     ///                               interaction.
-    ///   - rootQueue:                Root `DispatchQueue` for all internal callbacks and state updats. **MUST** be a
+    ///   - rootQueue:                Root `DispatchQueue` for all internal callbacks and state updates. **MUST** be a
     ///                               serial queue.
     ///   - startRequestsImmediately: Determines whether this instance will automatically start all `Request`s. `true`
     ///                               by default. If set to `false`, all `Request`s created must have `.resume()` called.
@@ -130,8 +130,8 @@ open class Session {
 
     /// Creates a `Session` from a `URLSessionConfiguration`.
     ///
-    /// - Note: This intializer lets Alamofire handle the creation of the underlying `URLSession` and its
-    ///         `delegateQueue`, and is the recommended intiailizer for most uses.
+    /// - Note: This initializer lets Alamofire handle the creation of the underlying `URLSession` and its
+    ///         `delegateQueue`, and is the recommended initializer for most uses.
     ///
     /// - Parameters:
     ///   - configuration:            `URLSessionConfiguration` to be used to create the underlying `URLSession`. Changes
@@ -139,7 +139,7 @@ open class Session {
     ///                               `URLSessionConfiguration.af.default` by default.
     ///   - delegate:                 `SessionDelegate` that handles `session`'s delegate callbacks as well as `Request`
     ///                               interaction. `SessionDelegate()` by default.
-    ///   - rootQueue:                Root `DispatchQueue` for all internal callbacks and state updats. **MUST** be a
+    ///   - rootQueue:                Root `DispatchQueue` for all internal callbacks and state updates. **MUST** be a
     ///                               serial queue. `DispatchQueue(label: "org.alamofire.session.rootQueue")` by default.
     ///   - startRequestsImmediately: Determines whether this instance will automatically start all `Request`s. `true`
     ///                               by default. If set to `false`, all `Request`s created must have `.resume()` called.
@@ -227,7 +227,7 @@ open class Session {
         }
     }
 
-    /// Creates a `DataRequest` from a `URLRequest` created using the passeed components and a `RequestInterceptor`.
+    /// Creates a `DataRequest` from a `URLRequest` created using the passed components and a `RequestInterceptor`.
     ///
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
@@ -274,7 +274,7 @@ open class Session {
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - parameters:  Value conforming to `Encodable` to be encoded into the `URLRequest`. `nil` by default.
+    ///   - parameters:  `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
     ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`.
     ///                  `URLEncodedFormParameterEncoder.default` by default.
     ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.

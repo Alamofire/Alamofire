@@ -28,8 +28,8 @@ import Foundation
 public enum AF {
     // MARK: - Data Request
 
-    /// Creates a `DataRequest` using `Session.default` to retrive the contents of the specified `url`
-    /// using the `method`, `parameters`, `encoding`, and `headers` provided.
+    /// Creates a `DataRequest` using `Session.default` to retrieve the contents of the specified `url` using the
+    /// `method`, `parameters`, `encoding`, and `headers` provided.
     ///
     /// - Parameters:
     ///   - url:           The `URLConvertible` value.
@@ -54,8 +54,8 @@ public enum AF {
                                        interceptor: interceptor)
     }
 
-    /// Creates a `DataRequest` using `Session.default` to retrive the contents of the specified `url`
-    /// using the `method`, `parameters`, `encoding`, and `headers` provided.
+    /// Creates a `DataRequest` using `Session.default` to retrieve the contents of the specified `url` using the
+    /// `method`, `parameters`, `encoding`, and `headers` provided.
     ///
     /// - Parameters:
     ///   - url:           The `URLConvertible` value.
