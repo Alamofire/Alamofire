@@ -197,7 +197,7 @@ extension DataRequest {
                     error: self.error
                 )
             }
-            
+
             let end = CFAbsoluteTimeGetCurrent()
             // End work that should be on the serialization queue.
 

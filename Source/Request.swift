@@ -1330,6 +1330,10 @@ public class UploadRequest: DataRequest {
     /// The `UploadableConvertible` value used to produce the `Uploadable` value for this instance.
     public let upload: UploadableConvertible
 
+    /// `FileManager` used to perform cleanup tasks, including the removal of multipart form encoded payloads written
+    /// to disk.
+    public let fileManager: FileManager
+
     // MARK: Mutable State
 
     /// `Uploadable` value used by the instance.
@@ -1352,8 +1356,10 @@ public class UploadRequest: DataRequest {
          serializationQueue: DispatchQueue,
          eventMonitor: EventMonitor?,
          interceptor: RequestInterceptor?,
+         fileManager: FileManager,
          delegate: RequestDelegate) {
         self.upload = convertible
+        self.fileManager = fileManager
 
         super.init(id: id,
                    convertible: convertible,
@@ -1416,7 +1422,7 @@ public class UploadRequest: DataRequest {
     }
 
     public override func cleanup() {
-        super.cleanup()
+        defer { super.cleanup() }
 
         guard
             let uploadable = self.uploadable,
@@ -1424,8 +1430,7 @@ public class UploadRequest: DataRequest {
             shouldRemove
         else { return }
 
-        // TODO: Abstract file manager
-        try? FileManager.default.removeItem(at: url)
+        try? fileManager.removeItem(at: url)
     }
 }
 

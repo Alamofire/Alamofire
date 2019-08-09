@@ -465,8 +465,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                             multipartFormData.append(frenchData, withName: "french")
                             multipartFormData.append(japaneseData, withName: "japanese")
                         },
-                        usingThreshold: 0,
-                        to: urlString).response { resp in
+                        to: urlString,
+                        usingThreshold: 0).response { resp in
                             response = resp
                             expectation.fulfill()
                         }
@@ -498,8 +498,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                             multipartFormData.append(uploadData, withName: "upload_data")
                             formData = multipartFormData
                         },
-                        usingThreshold: 0,
-                        to: urlString).response { resp in
+                        to: urlString,
+                        usingThreshold: 0).response { resp in
                             response = resp
                             expectation.fulfill()
                         }
@@ -600,8 +600,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 multipartFormData.append(loremData1, withName: "lorem1")
                 multipartFormData.append(loremData2, withName: "lorem2")
             },
-            usingThreshold: streamFromDisk ? 0 : 100_000_000,
-            to: urlString)
+            to: urlString,
+            usingThreshold: streamFromDisk ? 0 : 100_000_000)
             .uploadProgress { progress in
                 uploadProgressValues.append(progress.fractionCompleted)
             }
@@ -611,7 +611,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             .response { resp in
                 response = resp
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
