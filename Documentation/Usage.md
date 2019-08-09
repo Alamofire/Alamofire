@@ -534,8 +534,6 @@ AF.request("https://httpbin.org/get").responseDecodable(of: HTTPBinResponse.self
 }
 ```
 
-> JSON serialization in `responseJSON` is handled by the `JSONSerialization` API from the `Foundation` framework.
-
 #### Chained Response Handlers
 
 Response handlers can even be chained:
