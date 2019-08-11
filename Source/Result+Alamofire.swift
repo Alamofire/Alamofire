@@ -57,10 +57,10 @@ extension Result {
 
     /// Evaluates the specified closure when the `Result` is a success, passing the unwrapped value as a parameter.
     ///
-    /// Use the `flatMap` method with a closure that may throw an error. For example:
+    /// Use the `tryMap` method with a closure that may throw an error. For example:
     ///
     ///     let possibleData: Result<Data, Error> = .success(Data(...))
-    ///     let possibleObject = possibleData.flatMap {
+    ///     let possibleObject = possibleData.tryMap {
     ///         try JSONSerialization.jsonObject(with: $0)
     ///     }
     ///
@@ -68,7 +68,7 @@ extension Result {
     ///
     /// - returns: A `Result` containing the result of the given closure. If this instance is a failure, returns the
     ///            same failure.
-    func flatMap<T>(_ transform: (Success) throws -> T) -> Result<T, Error> {
+    func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> Result<NewSuccess, Error> {
         switch self {
         case .success(let value):
             do {
@@ -83,10 +83,10 @@ extension Result {
 
     /// Evaluates the specified closure when the `Result` is a failure, passing the unwrapped error as a parameter.
     ///
-    /// Use the `flatMapError` function with a closure that may throw an error. For example:
+    /// Use the `tryMapError` function with a closure that may throw an error. For example:
     ///
     ///     let possibleData: Result<Data, Error> = .success(Data(...))
-    ///     let possibleObject = possibleData.flatMapError {
+    ///     let possibleObject = possibleData.tryMapError {
     ///         try someFailableFunction(taking: $0)
     ///     }
     ///
@@ -94,7 +94,7 @@ extension Result {
     ///
     /// - Returns: A `Result` instance containing the result of the transform. If this instance is a success, returns
     ///            the same success.
-    func flatMapError<T: Error>(_ transform: (Failure) throws -> T) -> Result<Success, Error> {
+    func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> Result<Success, Error> {
         switch self {
         case .failure(let error):
             do {

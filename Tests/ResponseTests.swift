@@ -433,7 +433,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp.flatMap { json in
+            response = resp.tryMap { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the flatMap function
                 return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
             }
@@ -463,7 +463,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp.flatMap { json in
+            response = resp.tryMap { json in
                 throw TransformError()
             }
 
@@ -496,7 +496,7 @@ class ResponseFlatMapTestCase: BaseTestCase {
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp.flatMap { _ in "ignored" }
+            response = resp.tryMap { _ in "ignored" }
             expectation.fulfill()
         }
 
@@ -590,7 +590,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
 
         // When
         AF.request(urlString).responseData { resp in
-            response = resp.flatMapError { TestError.error(error: $0) }
+            response = resp.tryMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
 
@@ -613,7 +613,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
 
         // When
         AF.request(urlString).responseData { resp in
-            response = resp.flatMapError { _ in try TransformationError.error.alwaysFails() }
+            response = resp.tryMapError { _ in try TransformationError.error.alwaysFails() }
             expectation.fulfill()
         }
 
@@ -643,7 +643,7 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
 
         // When
         AF.request(urlString).responseData { resp in
-            response = resp.flatMapError { TestError.error(error: $0) }
+            response = resp.tryMapError { TestError.error(error: $0) }
             expectation.fulfill()
         }
 

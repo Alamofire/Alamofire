@@ -25,7 +25,7 @@
 import Foundation
 
 /// Used to store all data associated with a serialized response of a data or upload request.
-public struct DataResponse<Value> {
+public struct DataResponse<Success> {
     /// The URL request sent to the server.
     public let request: URLRequest?
 
@@ -42,10 +42,10 @@ public struct DataResponse<Value> {
     public let serializationDuration: TimeInterval
 
     /// The result of response serialization.
-    public let result: Result<Value, Error>
+    public let result: Result<Success, Error>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
-    public var value: Value? { return result.success }
+    public var value: Success? { return result.success }
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
     public var error: Error? { return result.failure }
@@ -64,7 +64,7 @@ public struct DataResponse<Value> {
                 data: Data?,
                 metrics: URLSessionTaskMetrics?,
                 serializationDuration: TimeInterval,
-                result: Result<Value, Error>) {
+                result: Result<Success, Error>) {
         self.request = request
         self.response = response
         self.data = data
@@ -129,22 +129,24 @@ extension DataResponse {
     ///
     /// - returns: A `DataResponse` whose result wraps the value returned by the given closure. If this instance's
     ///            result is a failure, returns a response wrapping the same failure.
-    public func map<T>(_ transform: (Value) -> T) -> DataResponse<T> {
-        return DataResponse<T>(request: request,
-                               response: self.response,
-                               data: data,
-                               metrics: metrics,
-                               serializationDuration: serializationDuration,
-                               result: result.map(transform))
+    public func map<NewSuccess>(_ transform: (Success) -> NewSuccess) -> DataResponse<NewSuccess> {
+        return DataResponse<NewSuccess>(
+            request: request,
+            response: self.response,
+            data: data,
+            metrics: metrics,
+            serializationDuration: serializationDuration,
+            result: result.map(transform)
+        )
     }
 
     /// Evaluates the given closure when the result of this `DataResponse` is a success, passing the unwrapped result
     /// value as a parameter.
     ///
-    /// Use the `flatMap` method with a closure that may throw an error. For example:
+    /// Use the `tryMap` method with a closure that may throw an error. For example:
     ///
     ///     let possibleData: DataResponse<Data> = ...
-    ///     let possibleObject = possibleData.flatMap {
+    ///     let possibleObject = possibleData.tryMap {
     ///         try JSONSerialization.jsonObject(with: $0)
     ///     }
     ///
@@ -152,13 +154,15 @@ extension DataResponse {
     ///
     /// - returns: A success or failure `DataResponse` depending on the result of the given closure. If this instance's
     ///            result is a failure, returns the same failure.
-    public func flatMap<T>(_ transform: (Value) throws -> T) -> DataResponse<T> {
-        return DataResponse<T>(request: request,
-                               response: self.response,
-                               data: data,
-                               metrics: metrics,
-                               serializationDuration: serializationDuration,
-                               result: result.flatMap(transform))
+    public func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> DataResponse<NewSuccess> {
+        return DataResponse<NewSuccess>(
+            request: request,
+            response: self.response,
+            data: data,
+            metrics: metrics,
+            serializationDuration: serializationDuration,
+            result: result.tryMap(transform)
+        )
     }
 
     /// Evaluates the specified closure when the `DataResponse` is a failure, passing the unwrapped error as a parameter.
@@ -171,41 +175,45 @@ extension DataResponse {
     /// - Parameter transform: A closure that takes the error of the instance.
     ///
     /// - Returns: A `DataResponse` instance containing the result of the transform.
-    public func mapError<E: Error>(_ transform: (Error) -> E) -> DataResponse {
-        return DataResponse(request: request,
-                            response: self.response,
-                            data: data,
-                            metrics: metrics,
-                            serializationDuration: serializationDuration,
-                            result: result.mapError(transform))
+    public func mapError<NewFailure: Error>(_ transform: (Error) -> NewFailure) -> DataResponse<Success> {
+        return DataResponse<Success>(
+            request: request,
+            response: self.response,
+            data: data,
+            metrics: metrics,
+            serializationDuration: serializationDuration,
+            result: result.mapError(transform)
+        )
     }
 
     /// Evaluates the specified closure when the `DataResponse` is a failure, passing the unwrapped error as a parameter.
     ///
-    /// Use the `flatMapError` function with a closure that may throw an error. For example:
+    /// Use the `tryMapError` function with a closure that may throw an error. For example:
     ///
     ///     let possibleData: DataResponse<Data> = ...
-    ///     let possibleObject = possibleData.flatMapError {
+    ///     let possibleObject = possibleData.tryMapError {
     ///         try someFailableFunction(taking: $0)
     ///     }
     ///
     /// - Parameter transform: A throwing closure that takes the error of the instance.
     ///
     /// - Returns: A `DataResponse` instance containing the result of the transform.
-    public func flatMapError<E: Error>(_ transform: (Error) throws -> E) -> DataResponse {
-        return DataResponse(request: request,
-                            response: self.response,
-                            data: data,
-                            metrics: metrics,
-                            serializationDuration: serializationDuration,
-                            result: result.flatMapError(transform))
+    public func tryMapError<NewFailure: Error>(_ transform: (Error) throws -> NewFailure) -> DataResponse<Success> {
+        return DataResponse<Success>(
+            request: request,
+            response: self.response,
+            data: data,
+            metrics: metrics,
+            serializationDuration: serializationDuration,
+            result: result.tryMapError(transform)
+        )
     }
 }
 
 // MARK: -
 
 /// Used to store all data associated with a serialized response of a download request.
-public struct DownloadResponse<Value> {
+public struct DownloadResponse<Success> {
     /// The URL request sent to the server.
     public let request: URLRequest?
 
@@ -225,10 +233,10 @@ public struct DownloadResponse<Value> {
     public let serializationDuration: TimeInterval
 
     /// The result of response serialization.
-    public let result: Result<Value, Error>
+    public let result: Result<Success, Error>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
-    public var value: Value? { return result.success }
+    public var value: Success? { return result.success }
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
     public var error: Error? { return result.failure }
@@ -251,7 +259,7 @@ public struct DownloadResponse<Value> {
         resumeData: Data?,
         metrics: URLSessionTaskMetrics?,
         serializationDuration: TimeInterval,
-        result: Result<Value, Error>)
+        result: Result<Success, Error>)
     {
         self.request = request
         self.response = response
@@ -318,8 +326,8 @@ extension DownloadResponse {
     ///
     /// - returns: A `DownloadResponse` whose result wraps the value returned by the given closure. If this instance's
     ///            result is a failure, returns a response wrapping the same failure.
-    public func map<T>(_ transform: (Value) -> T) -> DownloadResponse<T> {
-        return DownloadResponse<T>(
+    public func map<NewSuccess>(_ transform: (Success) -> NewSuccess) -> DownloadResponse<NewSuccess> {
+        return DownloadResponse<NewSuccess>(
             request: request,
             response: response,
             fileURL: fileURL,
@@ -333,10 +341,10 @@ extension DownloadResponse {
     /// Evaluates the given closure when the result of this `DownloadResponse` is a success, passing the unwrapped
     /// result value as a parameter.
     ///
-    /// Use the `flatMap` method with a closure that may throw an error. For example:
+    /// Use the `tryMap` method with a closure that may throw an error. For example:
     ///
     ///     let possibleData: DownloadResponse<Data> = ...
-    ///     let possibleObject = possibleData.flatMap {
+    ///     let possibleObject = possibleData.tryMap {
     ///         try JSONSerialization.jsonObject(with: $0)
     ///     }
     ///
@@ -344,15 +352,15 @@ extension DownloadResponse {
     ///
     /// - returns: A success or failure `DownloadResponse` depending on the result of the given closure. If this
     /// instance's result is a failure, returns the same failure.
-    public func flatMap<T>(_ transform: (Value) throws -> T) -> DownloadResponse<T> {
-        return DownloadResponse<T>(
+    public func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> DownloadResponse<NewSuccess> {
+        return DownloadResponse<NewSuccess>(
             request: request,
             response: response,
             fileURL: fileURL,
             resumeData: resumeData,
             metrics: metrics,
             serializationDuration: serializationDuration,
-            result: result.flatMap(transform)
+            result: result.tryMap(transform)
         )
     }
 
@@ -366,8 +374,8 @@ extension DownloadResponse {
     /// - Parameter transform: A closure that takes the error of the instance.
     ///
     /// - Returns: A `DownloadResponse` instance containing the result of the transform.
-    public func mapError<E: Error>(_ transform: (Error) -> E) -> DownloadResponse {
-        return DownloadResponse(
+    public func mapError<NewFailure: Error>(_ transform: (Error) -> NewFailure) -> DownloadResponse {
+        return DownloadResponse<Success>(
             request: request,
             response: response,
             fileURL: fileURL,
@@ -380,25 +388,25 @@ extension DownloadResponse {
 
     /// Evaluates the specified closure when the `DownloadResponse` is a failure, passing the unwrapped error as a parameter.
     ///
-    /// Use the `flatMapError` function with a closure that may throw an error. For example:
+    /// Use the `tryMapError` function with a closure that may throw an error. For example:
     ///
     ///     let possibleData: DownloadResponse<Data> = ...
-    ///     let possibleObject = possibleData.flatMapError {
+    ///     let possibleObject = possibleData.tryMapError {
     ///         try someFailableFunction(taking: $0)
     ///     }
     ///
     /// - Parameter transform: A throwing closure that takes the error of the instance.
     ///
     /// - Returns: A `DownloadResponse` instance containing the result of the transform.
-    public func flatMapError<E: Error>(_ transform: (Error) throws -> E) -> DownloadResponse {
-        return DownloadResponse(
+    public func tryMapError<NewFailure: Error>(_ transform: (Error) throws -> NewFailure) -> DownloadResponse {
+        return DownloadResponse<Success>(
             request: request,
             response: response,
             fileURL: fileURL,
             resumeData: resumeData,
             metrics: metrics,
             serializationDuration: serializationDuration,
-            result: result.flatMapError(transform)
+            result: result.tryMapError(transform)
         )
     }
 }
