@@ -22,7 +22,8 @@
 //  THE SOFTWARE.
 //
 
-/// HTTP method definitions.
+/// Type representing HTTP methods. Raw `String` value is stored and compared case-sensitively, so
+/// `HTTPMethod.get != HTTPMethod(rawValue: "get")`.
 ///
 /// See https://tools.ietf.org/html/rfc7231#section-4.3
 public struct HTTPMethod: RawRepresentable, Equatable, Hashable {
@@ -46,11 +47,8 @@ public struct HTTPMethod: RawRepresentable, Equatable, Hashable {
     public static let trace = HTTPMethod(rawValue: "TRACE")
 
     public let rawValue: String
-    
-    /// Creates a new instance with the `uppercased()` version of the specified `rawValue`.
-    /// 
-    /// - Parameter rawValue: The raw `String` value, stored `uppercased`.
+
     public init(rawValue: String) {
-        self.rawValue = rawValue.uppercased()
+        self.rawValue = rawValue
     }
 }
