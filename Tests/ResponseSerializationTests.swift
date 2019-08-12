@@ -119,10 +119,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-
-        if let data = result.value {
-            XCTAssertEqual(data.count, 0)
-        }
+        XCTAssertEqual(result.value?.count, 0)
     }
 
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
@@ -138,10 +135,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-
-        if let data = result.value {
-            XCTAssertEqual(data.count, 0)
-        }
+        XCTAssertEqual(result.value?.count, 0)
     }
 
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
@@ -157,10 +151,38 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
+        XCTAssertEqual(result.value?.count, 0)
+    }
 
-        if let data = result.value {
-            XCTAssertEqual(data.count, 0)
-        }
+    func testThatDataResponseSerializerProperlyCallsSuccessfulDataPreprocessor() {
+        // Given
+        let preprocessor: ResponseSerializer.DataPreprocessor =  { data in data.dropFirst() }
+        let serializer = DataResponseSerializer(dataPreprocessor: preprocessor)
+        let data = Data("abcd".utf8)
+
+        // When
+        let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertEqual(result.value, Data("bcd".utf8))
+        XCTAssertNil(result.error)
+    }
+
+    func testThatDataResponseSerializerProperlyReceivesErrorFromFailingDataPreprocessor() {
+        // Given
+        struct Error: Swift.Error { }
+        let preprocessor: ResponseSerializer.DataPreprocessor = { _ in throw Error() }
+        let serializer = DataResponseSerializer(dataPreprocessor: preprocessor)
+        let data = Data("abcd".utf8)
+
+        // When
+        let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isFailure)
+        XCTAssertNil(result.value)
+        XCTAssertNotNil(result.error)
     }
 
     // MARK: StringResponseSerializer
@@ -338,10 +360,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-
-        if let string = result.value {
-            XCTAssertEqual(string, "")
-        }
+        XCTAssertEqual(result.value, "")
     }
 
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
@@ -357,10 +376,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-
-        if let string = result.value {
-            XCTAssertEqual(string, "")
-        }
+        XCTAssertEqual(result.value, "")
     }
 
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
@@ -376,10 +392,38 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
+        XCTAssertEqual(result.value, "")
+    }
 
-        if let string = result.value {
-            XCTAssertEqual(string, "")
-        }
+    func testThatStringResponseSerializerProperlyCallsSuccessfulDataPreprocessor() {
+        // Given
+        let preprocessor: ResponseSerializer.DataPreprocessor =  { data in data.dropFirst() }
+        let serializer = StringResponseSerializer(dataPreprocessor: preprocessor)
+        let data = Data("abcd".utf8)
+
+        // When
+        let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertEqual(result.value, "bcd")
+        XCTAssertNil(result.error)
+    }
+
+    func testThatStringResponseSerializerProperlyReceivesErrorFromFailingDataPreprocessor() {
+        // Given
+        struct Error: Swift.Error { }
+        let preprocessor: ResponseSerializer.DataPreprocessor = { _ in throw Error() }
+        let serializer = StringResponseSerializer(dataPreprocessor: preprocessor)
+        let data = Data("abcd".utf8)
+
+        // When
+        let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isFailure)
+        XCTAssertNil(result.value)
+        XCTAssertNotNil(result.error)
     }
 
     // MARK: JSONResponseSerializer
@@ -509,12 +553,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-
-        if let json = result.value as? NSNull {
-            XCTAssertEqual(json, NSNull())
-        } else {
-            XCTFail("json should not be nil")
-        }
+        XCTAssertEqual(result.value as? NSNull, NSNull())
     }
 
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
@@ -530,12 +569,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-
-        if let json = result.value as? NSNull {
-            XCTAssertEqual(json, NSNull())
-        } else {
-            XCTFail("json should not be nil")
-        }
+        XCTAssertEqual(result.value as? NSNull, NSNull())
     }
 
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
@@ -551,12 +585,38 @@ final class DataResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
+        XCTAssertEqual(result.value as? NSNull, NSNull())
+    }
 
-        if let json = result.value as? NSNull {
-            XCTAssertEqual(json, NSNull())
-        } else {
-            XCTFail("json should not be nil")
-        }
+    func testThatJSONResponseSerializerProperlyCallsSuccessfulDataPreprocessor() {
+        // Given
+        let preprocessor: ResponseSerializer.DataPreprocessor =  { data in data.dropFirst() }
+        let serializer = JSONResponseSerializer(dataPreprocessor: preprocessor)
+        let data = Data("1\"abcd\"".utf8)
+
+        // When
+        let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertEqual(result.value as? String, "abcd")
+        XCTAssertNil(result.error)
+    }
+
+    func testThatJSONResponseSerializerProperlyReceivesErrorFromFailingDataPreprocessor() {
+        // Given
+        struct Error: Swift.Error { }
+        let preprocessor: ResponseSerializer.DataPreprocessor = { _ in throw Error() }
+        let serializer = JSONResponseSerializer(dataPreprocessor: preprocessor)
+        let data = Data("1\"abcd\"".utf8)
+
+        // When
+        let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isFailure)
+        XCTAssertNil(result.value)
+        XCTAssertNotNil(result.error)
     }
 }
 
@@ -792,6 +852,37 @@ final class DecodableResponseSerializerTests: BaseTestCase {
             XCTFail("error should not be nil")
         }
     }
+
+    func testThatDecodableResponseSerializerProperlyCallsSuccessfulDataPreprocessor() {
+        // Given
+        let preprocessor: ResponseSerializer.DataPreprocessor =  { data in data.dropFirst() }
+        let serializer = DecodableResponseSerializer<DecodableValue>(dataPreprocessor: preprocessor)
+        let data = Data("1{\"string\":\"string\"}".utf8)
+
+        // When
+        let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isSuccess)
+        XCTAssertEqual(result.value?.string, "string")
+        XCTAssertNil(result.error)
+    }
+
+    func testThatDecodableResponseSerializerProperlyReceivesErrorFromFailingDataPreprocessor() {
+        // Given
+        struct Error: Swift.Error { }
+        let preprocessor: ResponseSerializer.DataPreprocessor = { _ in throw Error() }
+        let serializer = DecodableResponseSerializer<DecodableValue>(dataPreprocessor: preprocessor)
+        let data = Data("1{\"string\":\"string\"}".utf8)
+
+        // When
+        let result = Result { try serializer.serialize(request: nil, response: nil, data: data, error: nil) }
+
+        // Then
+        XCTAssertTrue(result.isFailure)
+        XCTAssertNil(result.value)
+        XCTAssertNotNil(result.error)
+    }
 }
 
 // MARK: -
@@ -935,12 +1026,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-
-        if let data = result.value {
-            XCTAssertEqual(data.count, 0)
-        } else {
-            XCTFail("data should not be nil")
-        }
+        XCTAssertEqual(result.value?.count, 0)
     }
 
     // MARK: Tests - String Response Serializer
@@ -1135,10 +1221,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertTrue(result.isSuccess)
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
-
-        if let string = result.value {
-            XCTAssertEqual(string, "")
-        }
+        XCTAssertEqual(result.value, "")
     }
 
     // MARK: Tests - JSON Response Serializer
@@ -1285,9 +1368,7 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
         XCTAssertNotNil(result.value)
         XCTAssertNil(result.error)
 
-        if let json = result.value as? NSNull {
-            XCTAssertEqual(json, NSNull())
-        }
+        XCTAssertEqual(result.value as? NSNull, NSNull())
     }
 }
 
