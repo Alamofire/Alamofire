@@ -162,7 +162,7 @@ public enum AFError: Error {
     case sessionDeinitialized
     /// `Session` was explicitly invalidated, possibly with the `Error` produced by the underlying `URLSession`.
     case sessionInvalidated(error: Error?)
-    /// `Request` was explcitly cancelled.
+    /// `Request` was explicitly cancelled.
     case explicitlyCancelled
     /// `URLConvertible` type failed to create a valid `URL`.
     case invalidURL(url: URLConvertible)

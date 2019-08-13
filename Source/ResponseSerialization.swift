@@ -80,20 +80,24 @@ public protocol DataPreprocessor {
 }
 
 /// `DataPreprocessor` that returns passed `Data` without any transform.
-struct Passthrough: DataPreprocessor {
-    func preprocess(_ data: Data) throws -> Data { return data }
+public struct PassthroughPreprocessor: DataPreprocessor {
+    public init() { }
+
+    public func preprocess(_ data: Data) throws -> Data { return data }
 }
 
 /// `DataPreprocessor` that trims Google's typical `)]}',\n` XSSI JSON header.
-struct XSSI: DataPreprocessor {
-    func preprocess(_ data: Data) throws -> Data {
+public struct GoogleXSSIPreprocessor: DataPreprocessor {
+    public init() { }
+
+    public func preprocess(_ data: Data) throws -> Data {
         return (data.prefix(6) == Data(")]}',\n".utf8)) ? data.dropFirst(6) : data
     }
 }
 
 extension ResponseSerializer {
-    /// Default `DataPreprocessor` that merely passes `Data` through.
-    public static var defaultDataPreprocessor: DataPreprocessor { return Passthrough() }
+    /// Default `DataPreprocessor`. `PassthroughPreprocessor` by default.
+    public static var defaultDataPreprocessor: DataPreprocessor { return PassthroughPreprocessor() }
     /// Default `HTTPMethod`s for which empty response bodies are considered appropriate. `[.head]` by default.
     public static var defaultEmptyRequestMethods: Set<HTTPMethod> { return [.head] }
     /// HTTP response codes for which empty response bodies are considered appropriate. `[204, 205]` by default.
