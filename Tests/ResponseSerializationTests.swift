@@ -1278,7 +1278,7 @@ final class DataPreprocessorSerializationTests: BaseTestCase {
             return data.dropFirst()
         }
     }
-    
+
     struct Throwing: DataPreprocessor {
         struct Error: Swift.Error { }
 
@@ -1286,7 +1286,7 @@ final class DataPreprocessorSerializationTests: BaseTestCase {
             throw Error()
         }
     }
-    
+
     func testThatDataResponseSerializerProperlyCallsSuccessfulDataPreprocessor() {
         // Given
         let preprocessor = DropFirst()
@@ -1316,7 +1316,7 @@ final class DataPreprocessorSerializationTests: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
     }
-    
+
     func testThatStringResponseSerializerProperlyCallsSuccessfulDataPreprocessor() {
         // Given
         let preprocessor = DropFirst()
@@ -1346,7 +1346,7 @@ final class DataPreprocessorSerializationTests: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
     }
-    
+
     func testThatJSONResponseSerializerProperlyCallsSuccessfulDataPreprocessor() {
         // Given
         let preprocessor = DropFirst()
@@ -1376,7 +1376,7 @@ final class DataPreprocessorSerializationTests: BaseTestCase {
         XCTAssertNil(result.value)
         XCTAssertNotNil(result.error)
     }
-    
+
     func testThatDecodableResponseSerializerProperlyCallsSuccessfulDataPreprocessor() {
         // Given
         let preprocessor = DropFirst()
