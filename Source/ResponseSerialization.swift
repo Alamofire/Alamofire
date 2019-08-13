@@ -64,8 +64,6 @@ public protocol DownloadResponseSerializerProtocol {
 
 /// A serializer that can handle both data and download responses.
 public protocol ResponseSerializer: DataResponseSerializerProtocol & DownloadResponseSerializerProtocol {
-    /// Closure type used to prepare `Data` for serialization.
-    typealias DataPreprocessor = (Data) throws -> Data
     /// `DataPreprocessor` closure used to prepare incoming `Data` for serialization.
     var dataPreprocessor: DataPreprocessor { get }
     /// `HTTPMethod`s for which empty response bodies are considered appropriate.
@@ -74,9 +72,28 @@ public protocol ResponseSerializer: DataResponseSerializerProtocol & DownloadRes
     var emptyResponseCodes: Set<Int> { get }
 }
 
+/// Type used to preprocess `Data` before it handled by a serializer.
+public protocol DataPreprocessor {
+    /// Process           `Data` before it's handled by a serializer.
+    /// - Parameter data: The raw `Data` to process.
+    func preprocess(_ data: Data) throws -> Data
+}
+
+/// `DataPreprocessor` that returns passed `Data` without any transform.
+struct Passthrough: DataPreprocessor {
+    func preprocess(_ data: Data) throws -> Data { return data }
+}
+
+/// `DataPreprocessor` that trims Google's typical `)]}',\n` XSSI JSON header.
+struct XSSI: DataPreprocessor {
+    func preprocess(_ data: Data) throws -> Data {
+        return (data.prefix(6) == Data(")]}',\n".utf8)) ? data.dropFirst(6) : data
+    }
+}
+
 extension ResponseSerializer {
     /// Default `DataPreprocessor` that merely passes `Data` through.
-    public static var defaultDataPreprocessor: DataPreprocessor { return { $0 } }
+    public static var defaultDataPreprocessor: DataPreprocessor { return Passthrough() }
     /// Default `HTTPMethod`s for which empty response bodies are considered appropriate. `[.head]` by default.
     public static var defaultEmptyRequestMethods: Set<HTTPMethod> { return [.head] }
     /// HTTP response codes for which empty response bodies are considered appropriate. `[204, 205]` by default.
@@ -274,7 +291,7 @@ extension DownloadRequest {
         -> Self
     {
         appendResponseSerializer {
-            // Start work that should be on the serilization queue.
+            // Start work that should be on the serialization queue.
             let result = Result<URL?, Error>(value: self.fileURL , error: self.error)
             // End work that should be on the serialization queue.
 
@@ -412,10 +429,10 @@ public final class DataResponseSerializer: ResponseSerializer {
     /// Creates an instance using the provided values.
     ///
     /// - Parameters:
-    ///   - dataPreprocessor:    `DataPreprocessor` closure used to prepare the received `Data` for serialization.
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
     ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
-    public init(dataPreprocessor: @escaping DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+    public init(dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                 emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) {
         self.dataPreprocessor = dataPreprocessor
@@ -434,7 +451,7 @@ public final class DataResponseSerializer: ResponseSerializer {
             return Data()
         }
 
-        data = try dataPreprocessor(data)
+        data = try dataPreprocessor.preprocess(data)
 
         return data
     }
@@ -477,12 +494,12 @@ public final class StringResponseSerializer: ResponseSerializer {
     /// Creates an instance with the provided values.
     ///
     /// - Parameters:
-    ///   - dataPreprocessor:    `DataPreprocessor` closure used to prepare the received `Data` for serialization.
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
     ///   - encoding:            A string encoding. Defaults to `nil`, in which case the encoding will be determined
     ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
-    public init(dataPreprocessor: @escaping DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+    public init(dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
                 encoding: String.Encoding? = nil,
                 emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) {
@@ -503,7 +520,7 @@ public final class StringResponseSerializer: ResponseSerializer {
             return ""
         }
 
-        data = try dataPreprocessor(data)
+        data = try dataPreprocessor.preprocess(data)
 
         var convertedEncoding = encoding
 
@@ -583,11 +600,11 @@ public final class JSONResponseSerializer: ResponseSerializer {
     /// Creates an instance with the provided values.
     ///
     /// - Parameters:
-    ///   - dataPreprocessor:    `DataPreprocessor` closure used to prepare the received `Data` for serialization.
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
     ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
     ///   - options:             The options to use. `.allowFragments` by default.
-    public init(dataPreprocessor: @escaping DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
+    public init(dataPreprocessor: DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
                 emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
                 options: JSONSerialization.ReadingOptions = .allowFragments) {
@@ -608,7 +625,7 @@ public final class JSONResponseSerializer: ResponseSerializer {
             return NSNull()
         }
 
-        data = try dataPreprocessor(data)
+        data = try dataPreprocessor.preprocess(data)
 
         do {
             return try JSONSerialization.jsonObject(with: data, options: options)
@@ -715,11 +732,11 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
     /// Creates an instance using the values provided.
     ///
     /// - Parameters:
-    ///   - dataPreprocessor:    `DataPreprocessor` closure used to prepare the received `Data` for serialization.
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
     ///   - decoder:             The `DataDecoder`. `JSONDecoder()` by default.
     ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
     ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
-    public init(dataPreprocessor: @escaping DataPreprocessor = DecodableResponseSerializer.defaultDataPreprocessor,
+    public init(dataPreprocessor: DataPreprocessor = DecodableResponseSerializer.defaultDataPreprocessor,
                 decoder: DataDecoder = JSONDecoder(),
                 emptyResponseCodes: Set<Int> = DecodableResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer.defaultEmptyRequestMethods) {
@@ -744,7 +761,7 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
             return emptyValue
         }
 
-        data = try dataPreprocessor(data)
+        data = try dataPreprocessor.preprocess(data)
 
         do {
             return try decoder.decode(T.self, from: data)
