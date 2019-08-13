@@ -153,7 +153,7 @@ open class URLEncodedFormParameterEncoder: ParameterEncoder {
             throw AFError.parameterEncoderFailed(reason: .missingRequiredComponent(.url))
         }
 
-        guard let rawMethod = request.httpMethod, let method = HTTPMethod(rawValue: rawMethod) else {
+        guard let method = request.method else {
             let rawValue = request.httpMethod ?? "nil"
             throw AFError.parameterEncoderFailed(reason: .missingRequiredComponent(.httpMethod(rawValue: rawValue)))
         }
