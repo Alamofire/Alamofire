@@ -64,7 +64,7 @@ public protocol DownloadResponseSerializerProtocol {
 
 /// A serializer that can handle both data and download responses.
 public protocol ResponseSerializer: DataResponseSerializerProtocol & DownloadResponseSerializerProtocol {
-    /// `DataPreprocessor` closure used to prepare incoming `Data` for serialization.
+    /// `DataPreprocessor` used to prepare incoming `Data` for serialization.
     var dataPreprocessor: DataPreprocessor { get }
     /// `HTTPMethod`s for which empty response bodies are considered appropriate.
     var emptyRequestMethods: Set<HTTPMethod> { get }
