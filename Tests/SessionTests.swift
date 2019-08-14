@@ -1650,6 +1650,57 @@ final class SessionCancellationTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
         }
     }
+
+    func testThatGETRequestsWithBodyDataAreConsideredInvalid() {
+        // Given
+        let session = Session()
+        var request = URLRequest.makeHTTPBinRequest()
+        request.httpBody = Data("invalid".utf8)
+        let expect = expectation(description: "request should complete")
+        var response: DataResponse<HTTPBinResponse>?
+
+        // When
+        session.request(request).responseDecodable(of: HTTPBinResponse.self) { resp in
+            response = resp
+            expect.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.asAFError?.isBodyDataInGETRequest, true)
+    }
+
+    func testThatAdaptedGETRequestsWithBodyDataAreConsideredInvalid() {
+        // Given
+        struct InvalidAdapter: RequestInterceptor {
+            func adapt(_ urlRequest: URLRequest,
+                       for session: Session,
+                       completion: @escaping (Result<URLRequest, Error>) -> Void) {
+                var request = urlRequest
+                request.httpBody = Data("invalid".utf8)
+
+                completion(.success(request))
+            }
+        }
+        let session = Session(interceptor: InvalidAdapter())
+        let request = URLRequest.makeHTTPBinRequest()
+        let expect = expectation(description: "request should complete")
+        var response: DataResponse<HTTPBinResponse>?
+
+        // When
+        session.request(request).responseDecodable(of: HTTPBinResponse.self) { resp in
+            response = resp
+            expect.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.asAFError?.underlyingError?.asAFError?.isBodyDataInGETRequest, true)
+    }
 }
 
 // MARK: -

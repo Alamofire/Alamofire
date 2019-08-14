@@ -168,6 +168,13 @@ extension AFError {
         if case let .responseValidationFailed(reason) = self, reason.isUnacceptableStatusCode { return true }
         return false
     }
+
+    // URLRequestValidationFailure
+
+    var isBodyDataInGETRequest: Bool {
+        if case let .urlRequestValidationFailed(reason) = self, reason.isBodyDataInGETRequest { return true }
+        return false
+    }
 }
 
 // MARK: -
@@ -371,6 +378,13 @@ extension AFError.ServerTrustFailureReason {
 
     var isPublicKeyPinningFailed: Bool {
         if case .publicKeyPinningFailed = self { return true }
+        return false
+    }
+}
+
+extension AFError.URLRequestValidationFailureReason {
+    var isBodyDataInGETRequest: Bool {
+        if case .bodyDataInGETRequest = self { return true }
         return false
     }
 }

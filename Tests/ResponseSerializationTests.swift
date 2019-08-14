@@ -1413,34 +1413,34 @@ final class DataPreprocessorTests: BaseTestCase {
         // Given
         let preprocessor = PassthroughPreprocessor()
         let data = Data("data".utf8)
-        
+
         // When
         let result = Result { try preprocessor.preprocess(data) }
-        
+
         // Then
         XCTAssertEqual(data, result.value, "Preprocessed data should equal original data.")
     }
-    
+
     func testThatGoogleXSSIPreprocessorProperlyPreprocessesData() {
         // Given
         let preprocessor = GoogleXSSIPreprocessor()
         let data = Data(")]}',\nabcd".utf8)
-        
+
         // When
         let result = Result { try preprocessor.preprocess(data) }
-        
+
         // Then
         XCTAssertEqual(result.value.map { String(decoding: $0, as: UTF8.self) }, "abcd")
     }
-    
+
     func testThatGoogleXSSIPreprocessorDoesNotChangeDataIfPrefixDoesNotMatch() {
         // Given
         let preprocessor = GoogleXSSIPreprocessor()
         let data = Data("abcd".utf8)
-        
+
         // When
         let result = Result { try preprocessor.preprocess(data) }
-        
+
         // Then
         XCTAssertEqual(result.value.map { String(decoding: $0, as: UTF8.self) }, "abcd")
     }

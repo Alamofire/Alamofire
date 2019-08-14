@@ -27,29 +27,6 @@ import Foundation
 /// `AFError` is the error type returned by Alamofire. It encompasses a few different types of errors, each with
 /// their own associated reasons.
 public enum AFError: Error {
-    /// The underlying reason the `.parameterEncodingFailed` error occurred.
-    public enum ParameterEncodingFailureReason {
-        /// The `URLRequest` did not have a `URL` to encode.
-        case missingURL
-        /// JSON serialization failed with an underlying system error during the encoding process.
-        case jsonEncodingFailed(error: Error)
-    }
-
-    /// The underlying reason the `.parameterEncoderFailed` error occurred.
-    public enum ParameterEncoderFailureReason {
-        /// Possible missing components.
-        public enum RequiredComponent {
-            /// The `URL` was missing or unable to be extracted from the passed `URLRequest` or during encoding.
-            case url
-            /// The `HTTPMethod` could not be extracted from the passed `URLRequest`.
-            case httpMethod(rawValue: String)
-        }
-        /// A `RequiredComponent` was missing during encoding.
-        case missingRequiredComponent(RequiredComponent)
-        /// The underlying encoder failed with the associated error.
-        case encoderFailed(error: Error)
-    }
-
     /// The underlying reason the `.multipartEncodingFailed` error occurred.
     public enum MultipartEncodingFailureReason {
         /// The `fileURL` provided for reading an encodable body part isn't a file `URL`.
@@ -78,6 +55,29 @@ public enum AFError: Error {
         case outputStreamWriteFailed(error: Error)
         /// The attempt to read an encoded body part `InputStream` failed with underlying system error.
         case inputStreamReadFailed(error: Error)
+    }
+
+    /// The underlying reason the `.parameterEncodingFailed` error occurred.
+    public enum ParameterEncodingFailureReason {
+        /// The `URLRequest` did not have a `URL` to encode.
+        case missingURL
+        /// JSON serialization failed with an underlying system error during the encoding process.
+        case jsonEncodingFailed(error: Error)
+    }
+
+    /// The underlying reason the `.parameterEncoderFailed` error occurred.
+    public enum ParameterEncoderFailureReason {
+        /// Possible missing components.
+        public enum RequiredComponent {
+            /// The `URL` was missing or unable to be extracted from the passed `URLRequest` or during encoding.
+            case url
+            /// The `HTTPMethod` could not be extracted from the passed `URLRequest`.
+            case httpMethod(rawValue: String)
+        }
+        /// A `RequiredComponent` was missing during encoding.
+        case missingRequiredComponent(RequiredComponent)
+        /// The underlying encoder failed with the associated error.
+        case encoderFailed(error: Error)
     }
 
     /// The underlying reason the `.responseValidationFailed` error occurred.
@@ -158,30 +158,37 @@ public enum AFError: Error {
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
     }
 
-    /// `Session` which issued the `Request` was deinitialized, most likely because its reference went out of scope.
-    case sessionDeinitialized
-    /// `Session` was explicitly invalidated, possibly with the `Error` produced by the underlying `URLSession`.
-    case sessionInvalidated(error: Error?)
+    /// The underlying reason the `.urlRequestValidationFailed`
+    public enum URLRequestValidationFailureReason {
+        case bodyDataInGETRequest(Data)
+    }
+
     /// `Request` was explicitly cancelled.
     case explicitlyCancelled
     /// `URLConvertible` type failed to create a valid `URL`.
     case invalidURL(url: URLConvertible)
+    /// Multipart form encoding failed.
+    case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
     /// `ParameterEncoding` threw an error during the encoding process.
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
     /// `ParameterEncoder` threw an error while running the encoder.
     case parameterEncoderFailed(reason: ParameterEncoderFailureReason)
-    /// Multipart form encoding failed.
-    case multipartEncodingFailed(reason: MultipartEncodingFailureReason)
     /// `RequestAdapter` failed threw an error during adaptation.
     case requestAdaptationFailed(error: Error)
+    /// `RequestRetrier` threw an error during the request retry process.
+    case requestRetryFailed(retryError: Error, originalError: Error)
     /// Response validation failed.
     case responseValidationFailed(reason: ResponseValidationFailureReason)
-    /// Response serialization failued.
+    /// Response serialization failed.
     case responseSerializationFailed(reason: ResponseSerializationFailureReason)
     /// `ServerTrustEvaluating` instance threw an error during trust evaluation.
     case serverTrustEvaluationFailed(reason: ServerTrustFailureReason)
-    /// `RequestRetrier` threw an error during the request retry process.
-    case requestRetryFailed(retryError: Error, originalError: Error)
+    /// `Session` which issued the `Request` was deinitialized, most likely because its reference went out of scope.
+    case sessionDeinitialized
+    /// `Session` was explicitly invalidated, possibly with the `Error` produced by the underlying `URLSession`.
+    case sessionInvalidated(error: Error?)
+    /// `URLRequest` failed validation.
+    case urlRequestValidationFailed(reason: URLRequestValidationFailureReason)
 }
 
 extension Error {
@@ -427,13 +434,6 @@ extension AFError.ServerTrustFailureReason {
 extension AFError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .sessionDeinitialized:
-            return """
-                   Session was invalidated without error, so it was likely deinitialized unexpectedly. \
-                   Be sure to retain a reference to your Session for the duration of your requests.
-                   """
-        case .sessionInvalidated(let error):
-            return "Session was invalidated with error: \(error?.localizedDescription ?? "No description.")"
         case .explicitlyCancelled:
             return "Request explicitly cancelled."
         case .invalidURL(let url):
@@ -450,13 +450,22 @@ extension AFError: LocalizedError {
             return reason.localizedDescription
         case .responseSerializationFailed(let reason):
             return reason.localizedDescription
-        case .serverTrustEvaluationFailed:
-            return "Server trust evaluation failed."
         case .requestRetryFailed(let retryError, let originalError):
             return """
                    Request retry failed with retry error: \(retryError.localizedDescription), \
                    original error: \(originalError.localizedDescription)
                    """
+        case .sessionDeinitialized:
+            return """
+                   Session was invalidated without error, so it was likely deinitialized unexpectedly. \
+                   Be sure to retain a reference to your Session for the duration of your requests.
+                   """
+        case .sessionInvalidated(let error):
+            return "Session was invalidated with error: \(error?.localizedDescription ?? "No description.")"
+        case .serverTrustEvaluationFailed:
+            return "Server trust evaluation failed."
+        case let .urlRequestValidationFailed(reason):
+            return "URLRequest validation failed due to reason: \(reason.localizedDescription)"
         }
     }
 }
@@ -591,6 +600,18 @@ extension AFError.ServerTrustFailureReason {
             return "Certificate pinning failed for host \(host)."
         case let .publicKeyPinningFailed(host, _, _, _):
             return "Public key pinning failed for host \(host)."
+        }
+    }
+}
+
+extension AFError.URLRequestValidationFailureReason {
+    var localizedDescription: String {
+        switch self {
+        case let .bodyDataInGETRequest(data):
+            return """
+            Invalid URLRequest with a GET method that had body data:
+            \(String(decoding: data, as: UTF8.self))
+            """
         }
     }
 }
