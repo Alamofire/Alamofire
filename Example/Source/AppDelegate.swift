@@ -30,8 +30,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     // MARK: - Properties
 
     var window: UIWindow?
+   
 
-    // MARK: - UIApplicationDelegate
+    // MARK: - UIApplicationDelegate method
 
     func application(
         _ application: UIApplication,
