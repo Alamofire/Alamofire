@@ -90,7 +90,7 @@ class MasterViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 3 && indexPath.row == 0 {
-            print("Reachability Status: \(reachability.networkReachabilityStatus)")
+            print("Reachability Status: \(reachability.status)")
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
@@ -98,12 +98,10 @@ class MasterViewController: UITableViewController {
     // MARK: - Private - Reachability
 
     private func monitorReachability() {
-        reachability = NetworkReachabilityManager(host: "www.apple.com")
+        reachability = NetworkReachabilityManager()
 
-        reachability.listener = { status in
+        reachability.startListening { status in
             print("Reachability Status Changed: \(status)")
         }
-
-        reachability.startListening()
     }
 }
