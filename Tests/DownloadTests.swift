@@ -83,7 +83,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = self.expectation(description: "Download request should download data to file: \(urlString)")
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         AF.download(urlString, to: destination)
@@ -120,7 +120,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = self.expectation(description: "Cancelled download request should not download data to file")
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         AF.download(urlString, to: destination)
@@ -146,7 +146,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
 
         var progressValues: [Double] = []
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         AF.download(urlString)
@@ -189,7 +189,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = self.expectation(description: "Download request should download data to file")
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         AF.download(urlString, parameters: parameters, to: destination)
@@ -227,7 +227,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         AF.download(urlString, headers: headers, to: destination)
@@ -262,7 +262,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let fileURL = testDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
 
         let expectation = self.expectation(description: "Download request should download data but fail to move file")
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
@@ -292,7 +292,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let fileURL = testDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.createIntermediateDirectories])})
@@ -321,7 +321,7 @@ class DownloadResponseTestCase: BaseTestCase {
             try "random_data".write(to: fileURL, atomically: true, encoding: .utf8)
 
             let expectation = self.expectation(description: "Download should complete but fail to move file")
-            var response: DownloadResponse<URL?>?
+            var response: DownloadResponse<URL?, Error>?
 
             // When
             AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
@@ -359,7 +359,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let fileURL = directoryURL.appendingPathComponent("test_output.json")
 
         let expectation = self.expectation(description: "Download should complete and move file to URL: \(fileURL)")
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile, .createIntermediateDirectories])})
@@ -496,7 +496,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
 
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         let download = AF.download(urlString)
@@ -530,7 +530,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
 
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         let download = AF.download(urlString)
@@ -566,7 +566,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
 
-        var response: DownloadResponse<Any>?
+        var response: DownloadResponse<Any, Error>?
 
         // When
         let download = AF.download(urlString)
@@ -603,7 +603,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation1 = self.expectation(description: "Download should be cancelled")
         var cancelled = false
 
-        var response1: DownloadResponse<Data>?
+        var response1: DownloadResponse<Data, Error>?
 
         // When
         let download = AF.download(urlString)
@@ -630,7 +630,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation2 = self.expectation(description: "Download should complete")
 
         var progressValues: [Double] = []
-        var response2: DownloadResponse<Data>?
+        var response2: DownloadResponse<Data, Error>?
 
         AF.download(resumingWith: resumeData)
             .downloadProgress { progress in
@@ -663,7 +663,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
         var receivedResumeData: Data?
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         let download = AF.download(urlString)
@@ -705,7 +705,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DownloadResponse<String>?
+        var response: DownloadResponse<String, Error>?
 
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -734,7 +734,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: DownloadResponse<String>?
+        var response: DownloadResponse<String, Error>?
 
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -763,7 +763,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DownloadResponse<String>?
+        var response: DownloadResponse<String, Error>?
 
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -794,7 +794,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DownloadResponse<String>?
+        var response: DownloadResponse<String, Error>?
 
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -826,7 +826,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: DownloadResponse<String>?
+        var response: DownloadResponse<String, Error>?
 
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -853,7 +853,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should not succeed")
 
-        var response: DownloadResponse<Any>?
+        var response: DownloadResponse<Any, Error>?
 
         // When
         AF.download(urlString).responseJSON { resp in
@@ -884,7 +884,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DownloadResponse<Data>?
+        var response: DownloadResponse<Data, Error>?
 
         // When
         AF.download(urlString).responseData { resp in
@@ -912,7 +912,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DownloadResponse<Data>?
+        var response: DownloadResponse<Data, Error>?
 
         // When
         AF.download(urlString).responseData { resp in
@@ -937,7 +937,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail")
 
-        var response: DownloadResponse<Data>?
+        var response: DownloadResponse<Data, Error>?
 
         // When
         AF.download(urlString).responseData { resp in
@@ -969,7 +969,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail")
 
-        var response: DownloadResponse<Data>?
+        var response: DownloadResponse<Data, Error>?
 
         // When
         AF.download(urlString).responseData { resp in

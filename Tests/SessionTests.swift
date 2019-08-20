@@ -321,9 +321,9 @@ final class SessionTestCase: BaseTestCase {
         let brotliExpectation = expectation(description: "brotli request should complete")
         let gzipExpectation = expectation(description: "gzip request should complete")
         let deflateExpectation = expectation(description: "deflate request should complete")
-        var brotliResponse: DataResponse<Any>?
-        var gzipResponse: DataResponse<Any>?
-        var deflateResponse: DataResponse<Any>?
+        var brotliResponse: DataResponse<Any, Error>?
+        var gzipResponse: DataResponse<Any, Error>?
+        var deflateResponse: DataResponse<Any, Error>?
 
         // When
         AF.request(brotliURL).responseJSON { response in
@@ -391,7 +391,7 @@ final class SessionTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "\(url)")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         let request = session.request(urlRequest)
@@ -423,7 +423,7 @@ final class SessionTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "\(url)")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         let request = session.request(urlRequest)
@@ -457,7 +457,7 @@ final class SessionTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "\(url)")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         let request = session.request(urlRequest)
@@ -530,7 +530,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
         let expectation = self.expectation(description: "Request should fail with error")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         session.request("https://httpbin.org/get/äëïöü").response { resp in
@@ -559,7 +559,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
         let expectation = self.expectation(description: "Download should fail with error")
 
-        var response: DownloadResponse<URL?>?
+        var response: DownloadResponse<URL?, Error>?
 
         // When
         session.download("https://httpbin.org/get/äëïöü").response { resp in
@@ -589,7 +589,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
         let expectation = self.expectation(description: "Upload should fail with error")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         session.upload(Data(), to: "https://httpbin.org/get/äëïöü").response { resp in
@@ -618,7 +618,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
         let expectation = self.expectation(description: "Upload should fail with error")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         session.upload(URL(fileURLWithPath: "/invalid"), to: "https://httpbin.org/get/äëïöü").response { resp in
@@ -647,7 +647,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
         let expectation = self.expectation(description: "Upload should fail with error")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         session.upload(InputStream(data: Data()), to: "https://httpbin.org/get/äëïöü").response { resp in
@@ -876,7 +876,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password", interceptor: handler)
@@ -909,7 +909,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: sessionHandler)
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password", interceptor: requestHandler)
@@ -948,7 +948,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         session.request("https://httpbin.org/basic-auth/user/password", interceptor: handler)
@@ -982,7 +982,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DownloadResponse<Any>?
+        var response: DownloadResponse<Any, Error>?
 
         let destination: DownloadRequest.Destination = { _, _ in
             let fileURL = self.testDirectoryURL.appendingPathComponent("test-output.json")
@@ -1017,7 +1017,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         let uploadData = Data("upload data".utf8)
 
@@ -1051,7 +1051,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: handler)
 
         let expectation = self.expectation(description: "request should eventually succeed")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password")
@@ -1084,7 +1084,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password")
@@ -1125,7 +1125,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password")
@@ -1165,7 +1165,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password")
@@ -1207,7 +1207,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
@@ -1247,10 +1247,10 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let json1Expectation = self.expectation(description: "request should eventually fail")
-        var json1Response: DataResponse<Any>?
+        var json1Response: DataResponse<Any, Error>?
 
         let json2Expectation = self.expectation(description: "request should eventually fail")
-        var json2Response: DataResponse<Any>?
+        var json2Response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
@@ -1301,10 +1301,10 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let json1Expectation = self.expectation(description: "request should eventually fail")
-        var json1Response: DataResponse<Any>?
+        var json1Response: DataResponse<Any, Error>?
 
         let json2Expectation = self.expectation(description: "request should eventually fail")
-        var json2Response: DataResponse<Any>?
+        var json2Response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
@@ -1356,10 +1356,10 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let json1Expectation = self.expectation(description: "request should eventually fail")
-        var json1Response: DataResponse<Any>?
+        var json1Response: DataResponse<Any, Error>?
 
         let json2Expectation = self.expectation(description: "request should eventually fail")
-        var json2Response: DataResponse<Any>?
+        var json2Response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
@@ -1411,10 +1411,10 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let json1Expectation = self.expectation(description: "request should eventually fail")
-        var json1Response: DownloadResponse<Any>?
+        var json1Response: DownloadResponse<Any, Error>?
 
         let json2Expectation = self.expectation(description: "request should eventually fail")
-        var json2Response: DownloadResponse<Any>?
+        var json2Response: DownloadResponse<Any, Error>?
 
         // When
         let request = session.download("https://httpbin.org/image/jpeg", interceptor: handler)
@@ -1486,7 +1486,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should complete")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
         var completionCallCount = 0
 
         // When
@@ -1525,7 +1525,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should complete")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         let request = session.request("https://httpbin.org/get").responseJSON { resp in
@@ -1548,7 +1548,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         // Given
         let count = 100
         let session = Session()
-        var responses: [DataResponse<Data?>] = []
+        var responses: [DataResponse<Data?, Error>] = []
         let completion = expectation(description: "all requests should finish")
         completion.expectedFulfillmentCount = count
         let cancellation = expectation(description: "cancel all requests should be called")
@@ -1580,7 +1580,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         let count = 100
         let session = Session(startRequestsImmediately: false)
         let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
-        var responses: [DataResponse<Data?>] = []
+        var responses: [DataResponse<Data?, Error>] = []
         let completion = expectation(description: "all requests should finish")
         completion.expectedFulfillmentCount = count
         let cancellation = expectation(description: "cancel all requests should be called")
@@ -1633,7 +1633,7 @@ final class SessionCancellationTestCase: BaseTestCase {
             }
         }
 
-        var received: DataResponse<Data?>?
+        var received: DataResponse<Data?, Error>?
 
         // When
         session.request(request).validate().response { (response) in
@@ -1657,7 +1657,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         var request = URLRequest.makeHTTPBinRequest()
         request.httpBody = Data("invalid".utf8)
         let expect = expectation(description: "request should complete")
-        var response: DataResponse<HTTPBinResponse>?
+        var response: DataResponse<HTTPBinResponse, Error>?
 
         // When
         session.request(request).responseDecodable(of: HTTPBinResponse.self) { resp in
@@ -1687,7 +1687,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         let session = Session(interceptor: InvalidAdapter())
         let request = URLRequest.makeHTTPBinRequest()
         let expect = expectation(description: "request should complete")
-        var response: DataResponse<HTTPBinResponse>?
+        var response: DataResponse<HTTPBinResponse, Error>?
 
         // When
         session.request(request).responseDecodable(of: HTTPBinResponse.self) { resp in
@@ -1754,7 +1754,7 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should complete successfully")
 
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         session.request("https://httpbin.org/headers")

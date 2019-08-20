@@ -25,7 +25,7 @@
 import Foundation
 
 /// Used to store all data associated with a serialized response of a data or upload request.
-public struct DataResponse<Success> {
+public struct DataResponse<Success, Failure: Error> {
     /// The URL request sent to the server.
     public let request: URLRequest?
 
@@ -42,13 +42,13 @@ public struct DataResponse<Success> {
     public let serializationDuration: TimeInterval
 
     /// The result of response serialization.
-    public let result: Result<Success, Error>
+    public let result: Result<Success, Failure>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
     public var value: Success? { return result.success }
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    public var error: Error? { return result.failure }
+    public var error: Failure? { return result.failure }
 
     /// Creates a `DataResponse` instance with the specified parameters derviced from the response serialization.
     ///
@@ -64,7 +64,7 @@ public struct DataResponse<Success> {
                 data: Data?,
                 metrics: URLSessionTaskMetrics?,
                 serializationDuration: TimeInterval,
-                result: Result<Success, Error>) {
+                result: Result<Success, Failure>) {
         self.request = request
         self.response = response
         self.data = data
@@ -129,8 +129,8 @@ extension DataResponse {
     ///
     /// - returns: A `DataResponse` whose result wraps the value returned by the given closure. If this instance's
     ///            result is a failure, returns a response wrapping the same failure.
-    public func map<NewSuccess>(_ transform: (Success) -> NewSuccess) -> DataResponse<NewSuccess> {
-        return DataResponse<NewSuccess>(
+    public func map<NewSuccess>(_ transform: (Success) -> NewSuccess) -> DataResponse<NewSuccess, Failure> {
+        return DataResponse<NewSuccess, Failure>(
             request: request,
             response: self.response,
             data: data,
@@ -154,8 +154,8 @@ extension DataResponse {
     ///
     /// - returns: A success or failure `DataResponse` depending on the result of the given closure. If this instance's
     ///            result is a failure, returns the same failure.
-    public func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> DataResponse<NewSuccess> {
-        return DataResponse<NewSuccess>(
+    public func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> DataResponse<NewSuccess, Error> {
+        return DataResponse<NewSuccess, Error>(
             request: request,
             response: self.response,
             data: data,
@@ -175,8 +175,8 @@ extension DataResponse {
     /// - Parameter transform: A closure that takes the error of the instance.
     ///
     /// - Returns: A `DataResponse` instance containing the result of the transform.
-    public func mapError<NewFailure: Error>(_ transform: (Error) -> NewFailure) -> DataResponse<Success> {
-        return DataResponse<Success>(
+    public func mapError<NewFailure: Error>(_ transform: (Error) -> NewFailure) -> DataResponse<Success, NewFailure> {
+        return DataResponse<Success, NewFailure>(
             request: request,
             response: self.response,
             data: data,
@@ -198,8 +198,8 @@ extension DataResponse {
     /// - Parameter transform: A throwing closure that takes the error of the instance.
     ///
     /// - Returns: A `DataResponse` instance containing the result of the transform.
-    public func tryMapError<NewFailure: Error>(_ transform: (Error) throws -> NewFailure) -> DataResponse<Success> {
-        return DataResponse<Success>(
+    public func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> DataResponse<Success, Error> {
+        return DataResponse<Success, Error>(
             request: request,
             response: self.response,
             data: data,
@@ -213,7 +213,7 @@ extension DataResponse {
 // MARK: -
 
 /// Used to store all data associated with a serialized response of a download request.
-public struct DownloadResponse<Success> {
+public struct DownloadResponse<Success, Failure: Error> {
     /// The URL request sent to the server.
     public let request: URLRequest?
 
@@ -233,13 +233,13 @@ public struct DownloadResponse<Success> {
     public let serializationDuration: TimeInterval
 
     /// The result of response serialization.
-    public let result: Result<Success, Error>
+    public let result: Result<Success, Failure>
 
     /// Returns the associated value of the result if it is a success, `nil` otherwise.
     public var value: Success? { return result.success }
 
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
-    public var error: Error? { return result.failure }
+    public var error: Failure? { return result.failure }
 
     /// Creates a `DownloadResponse` instance with the specified parameters derived from response serialization.
     ///
@@ -259,7 +259,7 @@ public struct DownloadResponse<Success> {
         resumeData: Data?,
         metrics: URLSessionTaskMetrics?,
         serializationDuration: TimeInterval,
-        result: Result<Success, Error>)
+        result: Result<Success, Failure>)
     {
         self.request = request
         self.response = response
@@ -326,8 +326,8 @@ extension DownloadResponse {
     ///
     /// - returns: A `DownloadResponse` whose result wraps the value returned by the given closure. If this instance's
     ///            result is a failure, returns a response wrapping the same failure.
-    public func map<NewSuccess>(_ transform: (Success) -> NewSuccess) -> DownloadResponse<NewSuccess> {
-        return DownloadResponse<NewSuccess>(
+    public func map<NewSuccess>(_ transform: (Success) -> NewSuccess) -> DownloadResponse<NewSuccess, Failure> {
+        return DownloadResponse<NewSuccess, Failure>(
             request: request,
             response: response,
             fileURL: fileURL,
@@ -352,8 +352,8 @@ extension DownloadResponse {
     ///
     /// - returns: A success or failure `DownloadResponse` depending on the result of the given closure. If this
     /// instance's result is a failure, returns the same failure.
-    public func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> DownloadResponse<NewSuccess> {
-        return DownloadResponse<NewSuccess>(
+    public func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> DownloadResponse<NewSuccess, Error> {
+        return DownloadResponse<NewSuccess, Error>(
             request: request,
             response: response,
             fileURL: fileURL,
@@ -374,8 +374,8 @@ extension DownloadResponse {
     /// - Parameter transform: A closure that takes the error of the instance.
     ///
     /// - Returns: A `DownloadResponse` instance containing the result of the transform.
-    public func mapError<NewFailure: Error>(_ transform: (Error) -> NewFailure) -> DownloadResponse {
-        return DownloadResponse<Success>(
+    public func mapError<NewFailure: Error>(_ transform: (Failure) -> NewFailure) -> DownloadResponse<Success, NewFailure> {
+        return DownloadResponse<Success, NewFailure>(
             request: request,
             response: response,
             fileURL: fileURL,
@@ -398,8 +398,8 @@ extension DownloadResponse {
     /// - Parameter transform: A throwing closure that takes the error of the instance.
     ///
     /// - Returns: A `DownloadResponse` instance containing the result of the transform.
-    public func tryMapError<NewFailure: Error>(_ transform: (Error) throws -> NewFailure) -> DownloadResponse {
-        return DownloadResponse<Success>(
+    public func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> DownloadResponse<Success, Error> {
+        return DownloadResponse<Success, Error>(
             request: request,
             response: response,
             fileURL: fileURL,
