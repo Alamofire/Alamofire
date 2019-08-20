@@ -63,6 +63,8 @@ public enum AFError: Error {
         case missingURL
         /// JSON serialization failed with an underlying system error during the encoding process.
         case jsonEncodingFailed(error: Error)
+        /// Custom encoding failed
+        case customEncodingFailed(error: Error)
     }
 
     /// The underlying reason the `.parameterEncoderFailed` error occurred.
@@ -93,6 +95,8 @@ public enum AFError: Error {
         case unacceptableContentType(acceptableContentTypes: [String], responseContentType: String)
         /// The response status code was not acceptable.
         case unacceptableStatusCode(code: Int)
+        /// Custom validation failed
+        case customValidationFailed(error: Error)
     }
 
     /// The underlying reason the response serialization error occurred.
@@ -109,6 +113,8 @@ public enum AFError: Error {
         case jsonSerializationFailed(error: Error)
         /// A `DataDecoder` failed to decode the response due to the associated `Error`.
         case decodingFailed(error: Error)
+        /// A custom response serializer failed due to the associated `Error`.
+        case customSerializationFailed(error: Error)
         /// Generic serialization failed for an empty response that wasn't type `Empty` but instead the associated type.
         case invalidEmptyResponse(type: String)
     }
@@ -156,11 +162,15 @@ public enum AFError: Error {
         case certificatePinningFailed(host: String, trust: SecTrust, pinnedCertificates: [SecCertificate], serverCertificates: [SecCertificate])
         /// Public key pinning failed.
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
+        /// Custom evaluation failed.
+        case customEvaluationFailed(error: Error)
+        
     }
 
     /// The underlying reason the `.urlRequestValidationFailed`
     public enum URLRequestValidationFailureReason {
         case bodyDataInGETRequest(Data)
+        case customValidationFailed(error: Error)
     }
 
     /// `Request` was explicitly cancelled.
@@ -173,10 +183,10 @@ public enum AFError: Error {
     case parameterEncodingFailed(reason: ParameterEncodingFailureReason)
     /// `ParameterEncoder` threw an error while running the encoder.
     case parameterEncoderFailed(reason: ParameterEncoderFailureReason)
-    /// `RequestAdapter` failed threw an error during adaptation.
+    /// `RequestAdapter` threw an error during adaptation.
     case requestAdaptationFailed(error: Error)
     /// `RequestRetrier` threw an error during the request retry process.
-    case requestRetryFailed(retryError: Error, originalError: Error)
+    case requestRetryFailed(retryError: Error, originalError: Error?)
     /// Response validation failed.
     case responseValidationFailed(reason: ResponseValidationFailureReason)
     /// Response serialization failed.
@@ -189,6 +199,14 @@ public enum AFError: Error {
     case sessionInvalidated(error: Error?)
     /// `URLRequest` failed validation.
     case urlRequestValidationFailed(reason: URLRequestValidationFailureReason)
+    ///  `UploadableConvertible` threw an error in `createUploadable()`
+    case createUploadableFailed(error: Error)
+    ///  `URLRequestConvertible` threw an error in `asURLRequest()`
+    case createURLRequestFailed(error: Error)
+    /// `SessionDelegate` threw an error while attempting to move downloaded file to destination URL
+    case moveDownloadFailed(error: Error, destination: URL)
+    /// `URLSessionTask` completed with error
+    case sessionTaskFailed(error: Error)
 }
 
 extension Error {
@@ -254,7 +272,7 @@ extension AFError {
     }
 
     /// Returns whether the instance is `.responseValidationFailed`. When `true`, the `acceptableContentTypes`,
-    /// `responseContentType`, and `responseCode` properties will contain the associated values.
+    /// `responseContentType`,  `responseCode`, and `underlyingError` properties will contain the associated values.
     public var isResponseValidationError: Bool {
         if case .responseValidationFailed = self { return true }
         return false
@@ -267,7 +285,8 @@ extension AFError {
         return false
     }
 
-    /// Returns whether the instance is `.serverTrustEvaluationFailed`.
+    /// Returns whether the instance is `.serverTrustEvaluationFailed`. When `true`, the `underlyingError` property will
+    /// contain the associated value.
     public var isServerTrustEvaluationError: Bool {
         if case .serverTrustEvaluationFailed = self { return true }
         return false
@@ -279,6 +298,34 @@ extension AFError {
         if case .requestRetryFailed = self { return true }
         return false
     }
+    
+    /// Returns whether the instance is `createUploadableFailed`. When `true`, the `underlyingError` property will
+    /// contain the associated value.
+    public var isCreateUploadableError: Bool {
+        if case .createUploadableFailed = self { return true }
+        return false
+    }
+    
+    /// Returns whether the instance is `createURLRequestFailed`. When `true`, the `underlyingError` property will
+    /// contain the associated value.
+    public var isCreateURLRequestError: Bool {
+        if case .createURLRequestFailed = self { return true }
+        return false
+    }
+    
+    /// Returns whether the instance is `moveDownloadFailed`. When `true`, the `destination` and `underlyingError` properties will
+    /// contain the associated values.
+    public var isMoveDownloadError: Bool {
+        if case .moveDownloadFailed = self { return true }
+        return false
+    }
+    /// Returns whether the instance is `createURLRequestFailed`. When `true`, the `underlyingError` property will
+    /// contain the associated value.
+    public var isSessionTaskError: Bool {
+        if case .sessionTaskFailed = self { return true }
+        return false
+    }
+    
 }
 
 // MARK: - Convenience Properties
@@ -313,8 +360,22 @@ extension AFError {
             return error
         case .responseSerializationFailed(let reason):
             return reason.underlyingError
+        case .urlRequestValidationFailed(let reason):
+            return reason.underlyingError
+        case .responseValidationFailed(let reason):
+            return reason.underlyingError
+        case .serverTrustEvaluationFailed(let reason):
+            return reason.underlyingError
         case .requestRetryFailed(let retryError, _):
             return retryError
+        case .createUploadableFailed(let error):
+            return error
+        case .createURLRequestFailed(let error):
+            return error
+        case .moveDownloadFailed(let error, _):
+            return error
+        case .sessionTaskFailed(let error):
+            return error
         default:
             return nil
         }
@@ -343,12 +404,22 @@ extension AFError {
         guard case .responseSerializationFailed(let reason) = self else { return nil }
         return reason.failedStringEncoding
     }
+    
+    public var destination: URL? {
+        guard case .moveDownloadFailed(_, let destination) = self else { return nil }
+        return destination
+    }
 }
 
 extension AFError.ParameterEncodingFailureReason {
     var underlyingError: Error? {
-        guard case .jsonEncodingFailed(let error) = self else { return nil }
-        return error
+        switch self {
+        case let .jsonEncodingFailed(error),
+             let .customEncodingFailed(error):
+            return error
+        default:
+            return nil
+        }
     }
 }
 
@@ -384,6 +455,13 @@ extension AFError.MultipartEncodingFailureReason {
     }
 }
 
+extension AFError.URLRequestValidationFailureReason {
+    var underlyingError: Error? {
+        guard case let .customValidationFailed(error) = self else { return nil }
+        return error
+    }
+}
+
 extension AFError.ResponseValidationFailureReason {
     var acceptableContentTypes: [String]? {
         switch self {
@@ -403,6 +481,11 @@ extension AFError.ResponseValidationFailureReason {
         guard case .unacceptableStatusCode(let code) = self else { return nil }
         return code
     }
+    
+    var underlyingError: Error? {
+        guard case let .customValidationFailed(error) = self else { return nil }
+        return error
+    }
 }
 
 extension AFError.ResponseSerializationFailureReason {
@@ -412,8 +495,12 @@ extension AFError.ResponseSerializationFailureReason {
     }
 
     var underlyingError: Error? {
-        guard case .jsonSerializationFailed(let error) = self else { return nil }
-        return error
+        switch self {
+        case let .jsonSerializationFailed(error),
+             let .customSerializationFailed(error):
+            return error
+        default: return nil
+        }
     }
 }
 
@@ -426,6 +513,10 @@ extension AFError.ServerTrustFailureReason {
             return output
         default: return nil
         }
+    }
+    var underlyingError: Error? {
+        guard case .customEvaluationFailed(let error) = self else { return nil }
+        return error
     }
 }
 
@@ -452,8 +543,8 @@ extension AFError: LocalizedError {
             return reason.localizedDescription
         case .requestRetryFailed(let retryError, let originalError):
             return """
-                   Request retry failed with retry error: \(retryError.localizedDescription), \
-                   original error: \(originalError.localizedDescription)
+                   Request retry failed with retry error: \(retryError.localizedDescription),\
+                   \(originalError.map{ " original error: \($0.localizedDescription)" } ?? "")
                    """
         case .sessionDeinitialized:
             return """
@@ -466,6 +557,14 @@ extension AFError: LocalizedError {
             return "Server trust evaluation failed."
         case let .urlRequestValidationFailed(reason):
             return "URLRequest validation failed due to reason: \(reason.localizedDescription)"
+        case let .createUploadableFailed(error):
+            return "Creating uploadable failed with error: \(error.localizedDescription)"
+        case let .createURLRequestFailed(error):
+            return "Creating URLRequest failed with error: \(error.localizedDescription)"
+        case let .moveDownloadFailed(error, destination):
+            return "Moving download to \(destination) failed with error: \(error.localizedDescription)"
+        case let .sessionTaskFailed(error):
+            return "URLSessionTask failed with error: \(error.localizedDescription)"
         }
     }
 }
@@ -477,6 +576,8 @@ extension AFError.ParameterEncodingFailureReason {
             return "URL request to encode was missing a URL"
         case .jsonEncodingFailed(let error):
             return "JSON could not be encoded because of error:\n\(error.localizedDescription)"
+        case .customEncodingFailed(let error):
+            return "Custom parameter encoder failed with error: \(error.localizedDescription)"
         }
     }
 }
@@ -548,6 +649,8 @@ extension AFError.ResponseSerializationFailureReason {
             return "Empty response could not be serialized to type: \(type). Use Empty as the expected type for such responses."
         case .decodingFailed(let error):
             return "Response could not be decoded because of error:\n\(error.localizedDescription)"
+        case .customSerializationFailed(let error):
+            return "Custom response could not be serialized because of error:\n\(error.localizedDescription)"
         }
     }
 }
@@ -571,6 +674,8 @@ extension AFError.ResponseValidationFailureReason {
             )
         case .unacceptableStatusCode(let code):
             return "Response status code was unacceptable: \(code)."
+        case .customValidationFailed(let error):
+            return "Custom response validation failed with error: \(error.localizedDescription)"
         }
     }
 }
@@ -600,6 +705,8 @@ extension AFError.ServerTrustFailureReason {
             return "Certificate pinning failed for host \(host)."
         case let .publicKeyPinningFailed(host, _, _, _):
             return "Public key pinning failed for host \(host)."
+        case let .customEvaluationFailed(error):
+            return "Custom evaluation failed with error: \(error.localizedDescription)"
         }
     }
 }
@@ -612,6 +719,75 @@ extension AFError.URLRequestValidationFailureReason {
             Invalid URLRequest with a GET method that had body data:
             \(String(decoding: data, as: UTF8.self))
             """
+        case let .customValidationFailed(error):
+            return "Custom URLRequest validation failed with error: \(error.localizedDescription)"
+        }
+    }
+}
+
+extension AFError {
+    
+    init(responseSerializationError error: Error) {
+        if case let AFError.responseSerializationFailed(reason) = error {
+            self = .responseSerializationFailed(reason: reason)
+        } else {
+            self = .responseSerializationFailed(reason: .customSerializationFailed(error: error))
+        }
+    }
+    
+    init(createUploadableError error: Error) {
+        if case let AFError.createUploadableFailed(underlyingError) = error {
+            self = .createUploadableFailed(error: underlyingError)
+        } else {
+            self = .createUploadableFailed(error: error)
+        }
+    }
+    
+    init(createURLRequestError error: Error) {
+        if case let AFError.createURLRequestFailed(underlyingError) = error {
+            self = .createURLRequestFailed(error: underlyingError)
+        } else {
+            self = .createURLRequestFailed(error: error)
+        }
+    }
+    
+    init(urlRequestValidationError error: Error) {
+        if case let AFError.urlRequestValidationFailed(reason) = error {
+            self = .urlRequestValidationFailed(reason: reason)
+        } else {
+            self = .urlRequestValidationFailed(reason: .customValidationFailed(error: error))
+        }
+    }
+    
+    init(responseValidationError error: Error) {
+        if case let AFError.responseValidationFailed(reason) = error {
+            self = .responseValidationFailed(reason: reason)
+        } else {
+            self = .responseValidationFailed(reason: .customValidationFailed(error: error))
+        }
+    }
+    
+    init(requestAdaptationError error: Error) {
+        if case let AFError.requestAdaptationFailed(underlyingError) = error {
+            self = .requestAdaptationFailed(error: underlyingError)
+        } else {
+            self = .requestAdaptationFailed(error: error)
+        }
+    }
+    
+    init(serverTrustError error: Error) {
+        if case let AFError.serverTrustEvaluationFailed(reason) = error {
+            self = .serverTrustEvaluationFailed(reason: reason)
+        } else {
+            self = .serverTrustEvaluationFailed(reason: .customEvaluationFailed(error: error))
+        }
+    }
+    
+    init(requestRetryError error: Error) {
+        if case let AFError.requestRetryFailed(retryError, originalError) = error {
+            self = .requestRetryFailed(retryError: retryError, originalError: originalError)
+        } else {
+            self = .requestRetryFailed(retryError: error, originalError: nil)
         }
     }
 }

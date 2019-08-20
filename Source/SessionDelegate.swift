@@ -67,7 +67,7 @@ extension SessionDelegate: URLSessionDelegate {
 
 extension SessionDelegate: URLSessionTaskDelegate {
     /// Result of a `URLAuthenticationChallenge` evaluation.
-    typealias ChallengeEvaluation = (disposition: URLSession.AuthChallengeDisposition, credential: URLCredential?, error: Error?)
+    typealias ChallengeEvaluation = (disposition: URLSession.AuthChallengeDisposition, credential: URLCredential?, error: AFError?)
 
     open func urlSession(_ session: URLSession,
                          task: URLSessionTask,
@@ -117,7 +117,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
             return (.useCredential, URLCredential(trust: trust), nil)
         } catch {
-            return (.cancelAuthenticationChallenge, nil, error)
+            return (.cancelAuthenticationChallenge, nil, AFError(serverTrustError: error))
         }
     }
 
@@ -193,7 +193,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)
 
-        stateProvider?.request(for: task)?.didCompleteTask(task, with: error)
+        stateProvider?.request(for: task)?.didCompleteTask(task, with: error.map{ (error as? AFError) ?? AFError.sessionTaskFailed(error: $0) })
 
         stateProvider?.didCompleteTask(task)
     }
@@ -299,7 +299,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
 
             request.didFinishDownloading(using: downloadTask, with: .success(destination))
         } catch {
-            request.didFinishDownloading(using: downloadTask, with: .failure(error))
+            request.didFinishDownloading(using: downloadTask, with: .failure(AFError.moveDownloadFailed(error: error, destination: destination)))
         }
     }
 }
