@@ -631,7 +631,7 @@ class ResponseTryMapErrorTestCase: BaseTestCase {
             XCTFail("tryMapError should catch the transformation error")
         }
 
-        XCTAssertNotNil(response?.metrics)
+        XCTAssertNotNil(response.metrics)
     }
 
     func testThatTryMapErrorTransformsError() {
