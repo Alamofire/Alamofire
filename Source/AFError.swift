@@ -214,6 +214,11 @@ extension Error {
     public var asAFError: AFError? {
         return self as? AFError
     }
+    
+    /// Casts the instance as `AFError` or returns `defaultAFError`
+    func afError(or defaultAFError: @autoclosure () -> AFError) -> AFError {
+        return self as? AFError ?? defaultAFError()
+    }
 }
 
 // MARK: - Error Booleans
@@ -721,73 +726,6 @@ extension AFError.URLRequestValidationFailureReason {
             """
         case let .customValidationFailed(error):
             return "Custom URLRequest validation failed with error: \(error.localizedDescription)"
-        }
-    }
-}
-
-extension AFError {
-    
-    init(responseSerializationError error: Error) {
-        if case let AFError.responseSerializationFailed(reason) = error {
-            self = .responseSerializationFailed(reason: reason)
-        } else {
-            self = .responseSerializationFailed(reason: .customSerializationFailed(error: error))
-        }
-    }
-    
-    init(createUploadableError error: Error) {
-        if case let AFError.createUploadableFailed(underlyingError) = error {
-            self = .createUploadableFailed(error: underlyingError)
-        } else {
-            self = .createUploadableFailed(error: error)
-        }
-    }
-    
-    init(createURLRequestError error: Error) {
-        if case let AFError.createURLRequestFailed(underlyingError) = error {
-            self = .createURLRequestFailed(error: underlyingError)
-        } else {
-            self = .createURLRequestFailed(error: error)
-        }
-    }
-    
-    init(urlRequestValidationError error: Error) {
-        if case let AFError.urlRequestValidationFailed(reason) = error {
-            self = .urlRequestValidationFailed(reason: reason)
-        } else {
-            self = .urlRequestValidationFailed(reason: .customValidationFailed(error: error))
-        }
-    }
-    
-    init(responseValidationError error: Error) {
-        if case let AFError.responseValidationFailed(reason) = error {
-            self = .responseValidationFailed(reason: reason)
-        } else {
-            self = .responseValidationFailed(reason: .customValidationFailed(error: error))
-        }
-    }
-    
-    init(requestAdaptationError error: Error) {
-        if case let AFError.requestAdaptationFailed(underlyingError) = error {
-            self = .requestAdaptationFailed(error: underlyingError)
-        } else {
-            self = .requestAdaptationFailed(error: error)
-        }
-    }
-    
-    init(serverTrustError error: Error) {
-        if case let AFError.serverTrustEvaluationFailed(reason) = error {
-            self = .serverTrustEvaluationFailed(reason: reason)
-        } else {
-            self = .serverTrustEvaluationFailed(reason: .customEvaluationFailed(error: error))
-        }
-    }
-    
-    init(requestRetryError error: Error) {
-        if case let AFError.requestRetryFailed(retryError, originalError) = error {
-            self = .requestRetryFailed(retryError: retryError, originalError: originalError)
-        } else {
-            self = .requestRetryFailed(retryError: error, originalError: nil)
         }
     }
 }

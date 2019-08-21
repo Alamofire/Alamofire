@@ -224,7 +224,9 @@ extension DataRequest {
                     data: self.data,
                     error: self.error
                 )
-            }.mapError { AFError(responseSerializationError: $0) }
+            }.mapError { error in
+                error.afError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+            }
 
             let end = CFAbsoluteTimeGetCurrent()
             // End work that should be on the serialization queue.
@@ -258,7 +260,7 @@ extension DataRequest {
                         didComplete = { completionHandler(response) }
 
                     case .doNotRetryWithError(let retryError):
-                        let result: Result<Serializer.SerializedObject, AFError> = .failure(AFError(requestRetryError: retryError))
+                        let result: Result<Serializer.SerializedObject, AFError> = .failure(retryError.afError(or: .requestRetryFailed(retryError: retryError, originalError: nil)))
 
                         let response = DataResponse(request: self.request,
                                                     response: self.response,
@@ -343,7 +345,9 @@ extension DownloadRequest {
                     fileURL: self.fileURL,
                     error: self.error
                 )
-            }.mapError { AFError(responseSerializationError: $0) }
+            }.mapError { error in
+                error.afError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+            }
             let end = CFAbsoluteTimeGetCurrent()
             // End work that should be on the serialization queue.
 
@@ -377,7 +381,7 @@ extension DownloadRequest {
                         didComplete = { completionHandler(response) }
 
                     case .doNotRetryWithError(let retryError):
-                        let result: Result<T.SerializedObject, AFError> = .failure(AFError(requestRetryError: retryError))
+                        let result: Result<T.SerializedObject, AFError> = .failure(retryError.afError(or: .requestRetryFailed(retryError: retryError, originalError: nil)))
 
                         let response = DownloadResponse(request: self.request,
                                                         response: self.response,

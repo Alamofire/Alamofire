@@ -838,7 +838,7 @@ open class Session {
 
                 self.performSetupOperations(for: request, convertible: request.convertible)
             } catch {
-                self.rootQueue.async { request.didFailToCreateUploadable(with: AFError(createUploadableError: error)) }
+                self.rootQueue.async { request.didFailToCreateUploadable(with: error.afError(or: .createUploadableFailed(error: error))) }
             }
         }
     }
@@ -865,14 +865,14 @@ open class Session {
         do {
             initialRequest = try convertible.asURLRequest()
         } catch {
-            rootQueue.async { request.didFailToCreateURLRequest(with: AFError(createURLRequestError: error)) }
+            rootQueue.async { request.didFailToCreateURLRequest(with: error.afError(or: .createURLRequestFailed(error: error))) }
             return
         }
         
         do {
             try initialRequest.validate()
         } catch {
-            rootQueue.async { request.didFailToCreateURLRequest(with: AFError(urlRequestValidationError: error)) }
+            rootQueue.async { request.didFailToCreateURLRequest(with: error.afError(or: .urlRequestValidationFailed(reason: .customValidationFailed(error: error)))) }
             return
         }
         
@@ -896,7 +896,7 @@ open class Session {
                     self.didCreateURLRequest(adaptedRequest, for: request)
                 }
             } catch {
-                self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: AFError(requestAdaptationError: error)) }
+                self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: error.afError(or: .requestAdaptationFailed(error: error))) }
             }
         }
     }

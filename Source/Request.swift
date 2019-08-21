@@ -442,8 +442,8 @@ public class Request {
             switch retryResult {
             case .doNotRetry:
                 self.finish()
-            case .doNotRetryWithError(let error):
-                self.finish(error: AFError(requestRetryError: error))
+            case .doNotRetryWithError(let retryError):
+                self.finish(error: retryError.afError(or: .requestRetryFailed(retryError: retryError, originalError: nil)))
             case .retry, .retryWithDelay:
                 delegate.retryRequest(self, withDelay: retryResult.delay)
             }

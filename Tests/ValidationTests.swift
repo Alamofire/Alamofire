@@ -756,7 +756,7 @@ class AutomaticValidationTestCase: BaseTestCase {
 
 private enum ValidationError: Error {
     case missingData, missingFile, fileReadFailed
-    var error: AFError { return AFError(responseValidationError: self) }
+    var error: AFError { return .responseValidationFailed(reason: .customValidationFailed(error: self)) }
 }
 
 extension DataRequest {
@@ -768,7 +768,7 @@ extension DataRequest {
     }
 
     func validate(with error: Error) -> Self {
-        return validate { _, _, _ in .failure(AFError(responseValidationError: error)) }
+        return validate { _, _, _ in .failure(error as? AFError ?? .responseValidationFailed(reason: .customValidationFailed(error: error))) }
     }
 }
 
@@ -789,7 +789,7 @@ extension DownloadRequest {
     }
 
     func validate(with error: Error) -> Self {
-        return validate { (_, _, _) in .failure(AFError(responseValidationError: error)) }
+        return validate { _, _, _ in .failure(error as? AFError ?? .responseValidationFailed(reason: .customValidationFailed(error: error))) }
     }
 }
 

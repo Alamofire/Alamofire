@@ -668,8 +668,8 @@ final class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(response1?.error?.underlyingError?.asAFError?.isExplicitlyCancelledError, true)
-        XCTAssertEqual(response2?.error?.underlyingError?.asAFError?.isExplicitlyCancelledError, true)
+        XCTAssertEqual(response1?.error?.isExplicitlyCancelledError, true)
+        XCTAssertEqual(response2?.error?.isExplicitlyCancelledError, true)
     }
 
     func testThatAppendingResponseSerializerToCompletedRequestInsideCompletionResumesRequest() {

@@ -117,7 +117,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
             return (.useCredential, URLCredential(trust: trust), nil)
         } catch {
-            return (.cancelAuthenticationChallenge, nil, AFError(serverTrustError: error))
+            return (.cancelAuthenticationChallenge, nil, error.afError(or: .serverTrustEvaluationFailed(reason: .customEvaluationFailed(error: error))))
         }
     }
 
@@ -193,7 +193,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)
 
-        stateProvider?.request(for: task)?.didCompleteTask(task, with: error.map{ (error as? AFError) ?? AFError.sessionTaskFailed(error: $0) })
+        stateProvider?.request(for: task)?.didCompleteTask(task, with: error?.afError(or: .sessionTaskFailed(error: error!)))
 
         stateProvider?.didCompleteTask(task)
     }

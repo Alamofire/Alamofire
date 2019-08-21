@@ -859,8 +859,8 @@ final class SessionTestCase: BaseTestCase {
         // Then
         for request in requests {
             if let error = request.error {
-                XCTAssertTrue(error.isRequestAdaptationError)
-                XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
+                XCTAssertTrue(error.isInvalidURLError)
+                XCTAssertEqual(error.urlConvertible as? String, "")
             } else {
                 XCTFail("error should not be nil")
             }
@@ -1109,8 +1109,8 @@ final class SessionTestCase: BaseTestCase {
         }
 
         if let error = response?.result.error {
-            XCTAssertTrue(error.isRequestAdaptationError)
-            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "/adapt/error/2")
         } else {
             XCTFail("error should not be nil")
         }
@@ -1150,8 +1150,8 @@ final class SessionTestCase: BaseTestCase {
         }
 
         if let error = response?.result.error {
-            XCTAssertTrue(error.isRequestAdaptationError)
-            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.urlConvertible as? String, "/adapt/error/2")
         } else {
             XCTFail("error should not be nil")
         }
@@ -1392,8 +1392,8 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(errors.count, 2)
 
         for error in errors {
-            XCTAssertTrue(error.isRequestAdaptationError)
-            XCTAssertEqual(error.localizedDescription, "Request adaption failed with error: URL is not valid: /adapt/error/2")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.localizedDescription, "URL is not valid: /adapt/error/2")
         }
     }
 
@@ -1447,8 +1447,8 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(errors.count, 2)
 
         for error in errors {
-            XCTAssertTrue(error.isRequestAdaptationError)
-            XCTAssertEqual(error.localizedDescription, "Request adaption failed with error: URL is not valid: /adapt/error/2")
+            XCTAssertTrue(error.isInvalidURLError)
+            XCTAssertEqual(error.localizedDescription, "URL is not valid: /adapt/error/2")
         }
     }
 
@@ -1699,7 +1699,7 @@ final class SessionCancellationTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.underlyingError?.asAFError?.isBodyDataInGETRequest, true)
+        XCTAssertEqual(response?.error?.isBodyDataInGETRequest, true)
     }
 }
 
