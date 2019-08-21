@@ -27,7 +27,7 @@
 import Foundation
 import SystemConfiguration
 
-/// The `NetworkReachabilityManager` class listens for reachability changes of hosts and addresses for both WWAN and
+/// The `NetworkReachabilityManager` class listens for reachability changes of hosts and addresses for both cellular and
 /// WiFi network interfaces.
 ///
 /// Reachability can be used to determine background information about why a network operation failed, or to retry
@@ -48,9 +48,7 @@ open class NetworkReachabilityManager {
 
             var networkStatus: NetworkReachabilityStatus = .reachable(.ethernetOrWiFi)
 
-            #if os(iOS)
-                if flags.isCellular { networkStatus = .reachable(.cellular) }
-            #endif
+            if flags.isCellular { networkStatus = .reachable(.cellular) }
 
             self = networkStatus
         }
@@ -68,12 +66,19 @@ open class NetworkReachabilityManager {
     /// network reachability status.
     public typealias Listener = (NetworkReachabilityStatus) -> Void
 
+    /// Default `NetworkReachabilityManager` for the zero address and a `listenerQueue` of `.main`.
+    public static let `default` = NetworkReachabilityManager()
+
     // MARK: - Properties
 
     /// Whether the network is currently reachable.
     open var isReachable: Bool { return isReachableOnCellular || isReachableOnEthernetOrWiFi }
 
     /// Whether the network is currently reachable over the WWAN interface.
+    ///
+    /// - Note: Using this property to decide whether to make a high or low bandwidth request is not recommended.
+    ///         Instead, set the `allowsCellularAccess` on any `URLRequest`s being issued.
+    ///
     open var isReachableOnCellular: Bool { return status == .reachable(.cellular) }
 
     /// Whether the network is currently reachable over Ethernet or WiFi interface.
@@ -94,9 +99,7 @@ open class NetworkReachabilityManager {
 
     /// The current network reachability status.
     open var status: NetworkReachabilityStatus {
-        guard let flags = flags else { return .unknown }
-
-        return NetworkReachabilityStatus(flags)
+        return flags.map(NetworkReachabilityStatus.init) ?? .unknown
     }
 
     /// A closure executed when the network reachability status changes.
@@ -105,14 +108,14 @@ open class NetworkReachabilityManager {
     /// Reachability flags of the previous reachability state.
     private var previousStatus: NetworkReachabilityStatus?
 
-    /// `SCNetworkReachibility` instance providing notifications.
+    /// `SCNetworkReachability` instance providing notifications.
     private let reachability: SCNetworkReachability
 
     // MARK: - Initialization
 
     /// Creates an instance with the specified host.
     ///
-    /// - Note: This value should *not* contain a scheme, just the hostname.
+    /// - Note: The `host` value must *not* contain a scheme, just the hostname.
     ///
     /// - Parameters:
     ///   - host:          Host used to evaluate network reachability. Must *not* include the scheme (e.g. `https`).
@@ -151,6 +154,8 @@ open class NetworkReachabilityManager {
     // MARK: - Listening
 
     /// Starts listening for changes in network reachability status.
+    ///
+    /// - Note: Stops and removes any existing listener.
     ///
     /// - Returns: `true` if listening was started successfully, `false` otherwise.
     @discardableResult
@@ -195,8 +200,8 @@ open class NetworkReachabilityManager {
     // MARK: - Internal - Listener Notification
 
     func notifyListener(_ flags: SCNetworkReachabilityFlags) {
-        print(flags.description)
         let newStatus = NetworkReachabilityStatus(flags)
+
         guard previousStatus != newStatus else { return }
 
         previousStatus = newStatus
@@ -215,62 +220,28 @@ extension SCNetworkReachabilityFlags {
     var canConnectAutomatically: Bool { return contains(.connectionOnDemand) || contains(.connectionOnTraffic) }
     var canConnectWithoutUserInteraction: Bool { return canConnectAutomatically && !contains(.interventionRequired) }
     var isActuallyReachable: Bool { return isReachable && (!isConnectionRequired || canConnectWithoutUserInteraction) }
-    #if os(iOS)
-    var isCellular: Bool { return contains(.isWWAN) }
-    #endif
-}
-
-extension SCNetworkReachabilityFlags {
-    var isOnWWANFlagSet: Bool {
-        #if os(iOS)
+    var isCellular: Bool {
+        #if os(iOS) || os(tvOS)
         return contains(.isWWAN)
         #else
         return false
         #endif
     }
-    var isReachableFlagSet: Bool {
-        return contains(.reachable)
-    }
-    var isConnectionRequiredFlagSet: Bool {
-        return contains(.connectionRequired)
-    }
-    var isInterventionRequiredFlagSet: Bool {
-        return contains(.interventionRequired)
-    }
-    var isConnectionOnTrafficFlagSet: Bool {
-        return contains(.connectionOnTraffic)
-    }
-    var isConnectionOnDemandFlagSet: Bool {
-        return contains(.connectionOnDemand)
-    }
-    var isConnectionOnTrafficOrDemandFlagSet: Bool {
-        return !intersection([.connectionOnTraffic, .connectionOnDemand]).isEmpty
-    }
-    var isTransientConnectionFlagSet: Bool {
-        return contains(.transientConnection)
-    }
-    var isLocalAddressFlagSet: Bool {
-        return contains(.isLocalAddress)
-    }
-    var isDirectFlagSet: Bool {
-        return contains(.isDirect)
-    }
-    var isConnectionRequiredAndTransientFlagSet: Bool {
-        return intersection([.connectionRequired, .transientConnection]) == [.connectionRequired, .transientConnection]
-    }
 
-    var description: String {
-        let W = isOnWWANFlagSet ? "W" : "-"
-        let R = isReachableFlagSet ? "R" : "-"
-        let c = isConnectionRequiredFlagSet ? "c" : "-"
-        let t = isTransientConnectionFlagSet ? "t" : "-"
-        let i = isInterventionRequiredFlagSet ? "i" : "-"
-        let C = isConnectionOnTrafficFlagSet ? "C" : "-"
-        let D = isConnectionOnDemandFlagSet ? "D" : "-"
-        let l = isLocalAddressFlagSet ? "l" : "-"
-        let d = isDirectFlagSet ? "d" : "-"
+    /// Human readable `String` for all states, to help with debugging.
+    var readableDescription: String {
+        let W = isCellular ? "W" : "-"
+        let R = isReachable ? "R" : "-"
+        let c = isConnectionRequired ? "c" : "-"
+        let t = contains(.transientConnection) ? "t" : "-"
+        let i = contains(.interventionRequired) ? "i" : "-"
+        let C = contains(.connectionOnTraffic) ? "C" : "-"
+        let D = contains(.connectionOnDemand) ? "D" : "-"
+        let l = contains(.isLocalAddress) ? "l" : "-"
+        let d = contains(.isDirect) ? "d" : "-"
+        let a = contains(.connectionAutomatic) ? "a" : "-"
 
-        return "\(W)\(R) \(c)\(t)\(i)\(C)\(D)\(l)\(d)"
+        return "\(W)\(R) \(c)\(t)\(i)\(C)\(D)\(l)\(d)\(a)"
     }
 }
 
