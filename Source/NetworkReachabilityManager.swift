@@ -84,9 +84,6 @@ open class NetworkReachabilityManager {
     /// Whether the network is currently reachable over Ethernet or WiFi interface.
     open var isReachableOnEthernetOrWiFi: Bool { return status == .reachable(.ethernetOrWiFi) }
 
-    /// `DispatchQueue` on which listeners will be called. `.main` by default.
-    public let listenerQueue: DispatchQueue
-
     /// `DispatchQueue` on which reachability will update.
     public let reachabilityQueue = DispatchQueue(label: "org.alamofire.reachabilityQueue")
 
@@ -104,6 +101,9 @@ open class NetworkReachabilityManager {
 
     /// A closure executed when the network reachability status changes.
     private var listener: Listener?
+    
+    /// `DispatchQueue` on which listeners will be called.
+    private var listenerQueue: DispatchQueue?
 
     /// Reachability flags of the previous reachability state.
     private var previousStatus: NetworkReachabilityStatus?
@@ -119,31 +119,27 @@ open class NetworkReachabilityManager {
     ///
     /// - Parameters:
     ///   - host:          Host used to evaluate network reachability. Must *not* include the scheme (e.g. `https`).
-    ///   - listenerQueue: `DispatchQueue` on which listeners will be called. `.main` by default.
-    public convenience init?(host: String, listenerQueue: DispatchQueue = .main) {
+    public convenience init?(host: String) {
         guard let reachability = SCNetworkReachabilityCreateWithName(nil, host) else { return nil }
 
-        self.init(reachability: reachability, listenerQueue: listenerQueue)
+        self.init(reachability: reachability)
     }
 
     /// Creates an instance that monitors the address 0.0.0.0.
     ///
     /// Reachability treats the 0.0.0.0 address as a special token that causes it to monitor the general routing
     /// status of the device, both IPv4 and IPv6.
-    ///
-    /// - Parameter listenerQueue: `DispatchQueue` on which listeners will be called. `.main` by default.
-    public convenience init?(listenerQueue: DispatchQueue = .main) {
+    public convenience init?() {
         var zero = sockaddr()
         zero.sa_len = UInt8(MemoryLayout<sockaddr>.size)
         zero.sa_family = sa_family_t(AF_INET)
 
         guard let reachability = SCNetworkReachabilityCreateWithAddress(nil, &zero) else { return nil }
 
-        self.init(reachability: reachability, listenerQueue: listenerQueue)
+        self.init(reachability: reachability)
     }
 
-    private init(reachability: SCNetworkReachability, listenerQueue: DispatchQueue = .main) {
-        self.listenerQueue = listenerQueue
+    private init(reachability: SCNetworkReachability) {
         self.reachability = reachability
     }
 
@@ -157,11 +153,17 @@ open class NetworkReachabilityManager {
     ///
     /// - Note: Stops and removes any existing listener.
     ///
+    /// - Parameters:
+    ///   - queue:    `DispatchQueue` on which to call the `listener` closure. `.main` by default.
+    ///   - listener: `Listener` closure called when reachability changes.
+    ///
     /// - Returns: `true` if listening was started successfully, `false` otherwise.
     @discardableResult
-    open func startListening(onUpdatePerforming listener: @escaping Listener) -> Bool {
+    open func startListening(onQueue queue: DispatchQueue = .main,
+                             onUpdatePerforming listener: @escaping Listener) -> Bool {
         stopListening()
 
+        listenerQueue = queue
         self.listener = listener
 
         var context = SCNetworkReachabilityContext(version: 0,
@@ -194,6 +196,7 @@ open class NetworkReachabilityManager {
         SCNetworkReachabilitySetCallback(reachability, nil, nil)
         SCNetworkReachabilitySetDispatchQueue(reachability, nil)
         previousStatus = nil
+        listenerQueue = nil
         listener = nil
     }
 
@@ -206,7 +209,7 @@ open class NetworkReachabilityManager {
 
         previousStatus = newStatus
 
-        listenerQueue.async { self.listener?(newStatus) }
+        listenerQueue?.async { self.listener?(newStatus) }
     }
 }
 
