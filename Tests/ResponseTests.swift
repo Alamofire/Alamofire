@@ -32,7 +32,7 @@ class ResponseTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).response { resp in
@@ -55,7 +55,7 @@ class ResponseTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).response { resp in
@@ -82,7 +82,7 @@ class ResponseDataTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<Data>?
+        var response: DataResponse<Data, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
@@ -106,7 +106,7 @@ class ResponseDataTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: DataResponse<Data>?
+        var response: DataResponse<Data, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
@@ -133,7 +133,7 @@ class ResponseStringTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<String>?
+        var response: DataResponse<String, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseString { resp in
@@ -157,7 +157,7 @@ class ResponseStringTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: DataResponse<String>?
+        var response: DataResponse<String, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseString { resp in
@@ -184,7 +184,7 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -208,7 +208,7 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail")
 
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -231,7 +231,7 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -264,7 +264,7 @@ class ResponseJSONTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/post"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         AF.request(urlString, method: .post, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -299,10 +299,10 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<HTTPBinResponse>?
+        var response: DataResponse<HTTPBinResponse, Error>?
 
         // When
-        AF.request(urlString, parameters: [:]).responseDecodable { (resp: DataResponse<HTTPBinResponse>) in
+        AF.request(urlString, parameters: [:]).responseDecodable { (resp: DataResponse<HTTPBinResponse, Error>) in
             response = resp
             expectation.fulfill()
         }
@@ -323,7 +323,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<HTTPBinResponse>?
+        var response: DataResponse<HTTPBinResponse, Error>?
 
         // When
         AF.request(urlString, parameters: [:]).responseDecodable(of: HTTPBinResponse.self) {
@@ -347,10 +347,10 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail")
 
-        var response: DataResponse<HTTPBinResponse>?
+        var response: DataResponse<HTTPBinResponse, Error>?
 
         // When
-        AF.request(urlString, parameters: [:]).responseDecodable { (resp: DataResponse<HTTPBinResponse>) in
+        AF.request(urlString, parameters: [:]).responseDecodable { (resp: DataResponse<HTTPBinResponse, Error>) in
             response = resp
             expectation.fulfill()
         }
@@ -374,7 +374,7 @@ class ResponseMapTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<String>?
+        var response: DataResponse<String, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -402,7 +402,7 @@ class ResponseMapTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: DataResponse<String>?
+        var response: DataResponse<String, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
@@ -423,18 +423,18 @@ class ResponseMapTestCase: BaseTestCase {
 
 // MARK: -
 
-class ResponseFlatMapTestCase: BaseTestCase {
-    func testThatFlatMapTransformsSuccessValue() {
+class ResponseTryMapTestCase: BaseTestCase {
+    func testThatTryMapTransformsSuccessValue() {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<String>?
+        var response: DataResponse<String, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.tryMap { json in
-                // json["args"]["foo"] is "bar": use this invariant to test the flatMap function
+                // json["args"]["foo"] is "bar": use this invariant to test the tryMap function
                 return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
             }
 
@@ -452,14 +452,14 @@ class ResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
-    func testThatFlatMapCatchesTransformationError() {
+    func testThatTryMapCatchesTransformationError() {
         // Given
         struct TransformError: Error {}
 
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<String>?
+        var response: DataResponse<String, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
@@ -481,18 +481,18 @@ class ResponseFlatMapTestCase: BaseTestCase {
         if let error = response?.result.error {
             XCTAssertTrue(error is TransformError)
         } else {
-            XCTFail("flatMap should catch the transformation error")
+            XCTFail("tryMap should catch the transformation error")
         }
 
         XCTAssertNotNil(response?.metrics)
     }
 
-    func testThatFlatMapPreservesFailureError() {
+    func testThatTryMapPreservesFailureError() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: DataResponse<String>?
+        var response: DataResponse<String, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
@@ -531,7 +531,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should not succeed")
 
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, TestError>?
 
         // When
         AF.request(urlString).responseJSON { resp in
@@ -549,7 +549,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
-        guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
+        guard let error = response?.error, case .error = error else { XCTFail(); return }
 
         XCTAssertNotNil(response?.metrics)
     }
@@ -559,7 +559,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<Data>?
+        var response: DataResponse<Data, TestError>?
 
         // When
         AF.request(urlString).responseData { resp in
@@ -580,13 +580,13 @@ class ResponseMapErrorTestCase: BaseTestCase {
 
 // MARK: -
 
-class ResponseFlatMapErrorTestCase: BaseTestCase {
-    func testThatFlatMapErrorPreservesSuccessValue() {
+class ResponseTryMapErrorTestCase: BaseTestCase {
+    func testThatTryMapErrorPreservesSuccessValue() {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<Data>?
+        var response: DataResponse<Data, Error>?
 
         // When
         AF.request(urlString).responseData { resp in
@@ -604,12 +604,12 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
-    func testThatFlatMapErrorCatchesTransformationError() {
+    func testThatTryMapErrorCatchesTransformationError() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail")
 
-        var response: DataResponse<Data>?
+        var response: DataResponse<Data, Error>?
 
         // When
         AF.request(urlString).responseData { resp in
@@ -628,18 +628,18 @@ class ResponseFlatMapErrorTestCase: BaseTestCase {
         if let error = response?.result.error {
             XCTAssertTrue(error is TransformationError)
         } else {
-            XCTFail("flatMapError should catch the transformation error")
+            XCTFail("tryMapError should catch the transformation error")
         }
 
         XCTAssertNotNil(response?.metrics)
     }
 
-    func testThatFlatMapErrorTransformsError() {
+    func testThatTryMapErrorTransformsError() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail")
 
-        var response: DataResponse<Data>?
+        var response: DataResponse<Data, Error>?
 
         // When
         AF.request(urlString).responseData { resp in

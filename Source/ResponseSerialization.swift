@@ -176,7 +176,7 @@ extension DataRequest {
     ///
     /// - Returns:             The request.
     @discardableResult
-    public func response(queue: DispatchQueue = .main, completionHandler: @escaping (DataResponse<Data?>) -> Void) -> Self {
+    public func response(queue: DispatchQueue = .main, completionHandler: @escaping (DataResponse<Data?, Error>) -> Void) -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
             let result = Result<Data?, Error>(value: self.data, error: self.error)
@@ -211,7 +211,7 @@ extension DataRequest {
     public func response<Serializer: DataResponseSerializerProtocol>(
         queue: DispatchQueue = .main,
         responseSerializer: Serializer,
-        completionHandler: @escaping (DataResponse<Serializer.SerializedObject>) -> Void)
+        completionHandler: @escaping (DataResponse<Serializer.SerializedObject, Error>) -> Void)
         -> Self
     {
         appendResponseSerializer {
@@ -291,7 +291,7 @@ extension DownloadRequest {
     @discardableResult
     public func response(
         queue: DispatchQueue = .main,
-        completionHandler: @escaping (DownloadResponse<URL?>) -> Void)
+        completionHandler: @escaping (DownloadResponse<URL?, Error>) -> Void)
         -> Self
     {
         appendResponseSerializer {
@@ -330,7 +330,7 @@ extension DownloadRequest {
     public func response<T: DownloadResponseSerializerProtocol>(
         queue: DispatchQueue = .main,
         responseSerializer: T,
-        completionHandler: @escaping (DownloadResponse<T.SerializedObject>) -> Void)
+        completionHandler: @escaping (DownloadResponse<T.SerializedObject, Error>) -> Void)
         -> Self
     {
         appendResponseSerializer {
@@ -413,7 +413,7 @@ extension DataRequest {
     @discardableResult
     public func responseData(
         queue: DispatchQueue = .main,
-        completionHandler: @escaping (DataResponse<Data>) -> Void)
+        completionHandler: @escaping (DataResponse<Data, Error>) -> Void)
         -> Self
     {
         return response(queue: queue,
@@ -472,7 +472,7 @@ extension DownloadRequest {
     @discardableResult
     public func responseData(
         queue: DispatchQueue = .main,
-        completionHandler: @escaping (DownloadResponse<Data>) -> Void)
+        completionHandler: @escaping (DownloadResponse<Data, Error>) -> Void)
         -> Self
     {
         return response(
@@ -557,7 +557,7 @@ extension DataRequest {
     @discardableResult
     public func responseString(queue: DispatchQueue = .main,
                                encoding: String.Encoding? = nil,
-                               completionHandler: @escaping (DataResponse<String>) -> Void) -> Self {
+                               completionHandler: @escaping (DataResponse<String, Error>) -> Void) -> Self {
         return response(queue: queue,
                         responseSerializer: StringResponseSerializer(encoding: encoding),
                         completionHandler: completionHandler)
@@ -578,7 +578,7 @@ extension DownloadRequest {
     public func responseString(
         queue: DispatchQueue = .main,
         encoding: String.Encoding? = nil,
-        completionHandler: @escaping (DownloadResponse<String>) -> Void)
+        completionHandler: @escaping (DownloadResponse<String, Error>) -> Void)
         -> Self
     {
         return response(
@@ -651,7 +651,7 @@ extension DataRequest {
     @discardableResult
     public func responseJSON(queue: DispatchQueue = .main,
                              options: JSONSerialization.ReadingOptions = .allowFragments,
-                             completionHandler: @escaping (DataResponse<Any>) -> Void) -> Self {
+                             completionHandler: @escaping (DataResponse<Any, Error>) -> Void) -> Self {
         return response(queue: queue,
                         responseSerializer: JSONResponseSerializer(options: options),
                         completionHandler: completionHandler)
@@ -671,7 +671,7 @@ extension DownloadRequest {
     public func responseJSON(
         queue: DispatchQueue = .main,
         options: JSONSerialization.ReadingOptions = .allowFragments,
-        completionHandler: @escaping (DownloadResponse<Any>) -> Void)
+        completionHandler: @escaping (DownloadResponse<Any, Error>) -> Void)
         -> Self
     {
         return response(queue: queue,
@@ -789,7 +789,7 @@ extension DataRequest {
     public func responseDecodable<T: Decodable>(of type: T.Type = T.self,
                                                 queue: DispatchQueue = .main,
                                                 decoder: DataDecoder = JSONDecoder(),
-                                                completionHandler: @escaping (DataResponse<T>) -> Void) -> Self {
+                                                completionHandler: @escaping (DataResponse<T, Error>) -> Void) -> Self {
         return response(queue: queue,
                         responseSerializer: DecodableResponseSerializer(decoder: decoder),
                         completionHandler: completionHandler)

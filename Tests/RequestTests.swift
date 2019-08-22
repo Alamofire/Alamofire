@@ -31,7 +31,7 @@ final class RequestResponseTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "GET request should succeed: \(urlString)")
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"])
@@ -57,7 +57,7 @@ final class RequestResponseTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
 
         var progressValues: [Double] = []
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, Error>?
 
         // When
         AF.request(urlString)
@@ -103,7 +103,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         AF.request(urlString, method: .post, parameters: parameters)
@@ -155,7 +155,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         AF.request(urlString, method: .post, parameters: parameters)
@@ -188,7 +188,7 @@ final class RequestResponseTestCase: BaseTestCase {
         let queue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
         let manager = Session(serializationQueue: queue)
         let expectation = self.expectation(description: "request should complete")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         manager.request("https://httpbin.org/get").responseJSON { (resp) in
@@ -208,7 +208,7 @@ final class RequestResponseTestCase: BaseTestCase {
         let serializationQueue = DispatchQueue(label: "org.alamofire.testSerializationQueue")
         let manager = Session(requestQueue: requestQueue, serializationQueue: serializationQueue)
         let expectation = self.expectation(description: "request should complete")
-        var response: DataResponse<Any>?
+        var response: DataResponse<Any, Error>?
 
         // When
         manager.request("https://httpbin.org/get").responseJSON { (resp) in
@@ -228,11 +228,11 @@ final class RequestResponseTestCase: BaseTestCase {
         // Given
         let parameters = HTTPBinParameters(property: "one")
         let expect = expectation(description: "request should complete")
-        var receivedResponse: DataResponse<HTTPBinResponse>?
+        var receivedResponse: DataResponse<HTTPBinResponse, Error>?
 
         // When
         AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default)
-          .responseDecodable { (response: DataResponse<HTTPBinResponse>) in
+          .responseDecodable { (response: DataResponse<HTTPBinResponse, Error>) in
               receivedResponse = response
               expect.fulfill()
           }
@@ -247,11 +247,11 @@ final class RequestResponseTestCase: BaseTestCase {
         // Given
         let parameters = HTTPBinParameters(property: "one")
         let expect = expectation(description: "request should complete")
-        var receivedResponse: DataResponse<HTTPBinResponse>?
+        var receivedResponse: DataResponse<HTTPBinResponse, Error>?
 
         // When
         AF.request("https://httpbin.org/get", method: .get, parameters: parameters)
-          .responseDecodable { (response: DataResponse<HTTPBinResponse>) in
+          .responseDecodable { (response: DataResponse<HTTPBinResponse, Error>) in
               receivedResponse = response
               expect.fulfill()
           }
@@ -266,11 +266,11 @@ final class RequestResponseTestCase: BaseTestCase {
         // Given
         let parameters = HTTPBinParameters(property: "one")
         let expect = expectation(description: "request should complete")
-        var receivedResponse: DataResponse<HTTPBinResponse>?
+        var receivedResponse: DataResponse<HTTPBinResponse, Error>?
 
         // When
         AF.request("https://httpbin.org/post", method: .post, parameters: parameters)
-            .responseDecodable { (response: DataResponse<HTTPBinResponse>) in
+            .responseDecodable { (response: DataResponse<HTTPBinResponse, Error>) in
                 receivedResponse = response
                 expect.fulfill()
         }
@@ -644,8 +644,8 @@ final class RequestResponseTestCase: BaseTestCase {
         // Given
         let session = Session()
 
-        var response1: DataResponse<Any>?
-        var response2: DataResponse<Any>?
+        var response1: DataResponse<Any, Error>?
+        var response2: DataResponse<Any, Error>?
 
         let expect = expectation(description: "both response serializer completions should be called")
         expect.expectedFulfillmentCount = 2
@@ -676,9 +676,9 @@ final class RequestResponseTestCase: BaseTestCase {
         // Given
         let session = Session()
 
-        var response1: DataResponse<Any>?
-        var response2: DataResponse<Any>?
-        var response3: DataResponse<Any>?
+        var response1: DataResponse<Any, Error>?
+        var response2: DataResponse<Any, Error>?
+        var response3: DataResponse<Any, Error>?
 
         let expect = expectation(description: "both response serializer completions should be called")
         expect.expectedFulfillmentCount = 3
@@ -714,9 +714,9 @@ final class RequestResponseTestCase: BaseTestCase {
         let session = Session()
         let request = session.request(URLRequest.makeHTTPBinRequest())
 
-        var response1: DataResponse<Any>?
-        var response2: DataResponse<Any>?
-        var response3: DataResponse<Any>?
+        var response1: DataResponse<Any, Error>?
+        var response2: DataResponse<Any, Error>?
+        var response3: DataResponse<Any, Error>?
 
         // When
         let expect1 = expectation(description: "response serializer 1 completion should be called")
