@@ -225,7 +225,7 @@ extension DataRequest {
                     error: self.error
                 )
             }.mapError { error in
-                error.afError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+                error.asAFError(default: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             }
 
             let end = CFAbsoluteTimeGetCurrent()
@@ -346,7 +346,7 @@ extension DownloadRequest {
                     error: self.error
                 )
             }.mapError { error in
-                error.afError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+                error.asAFError(default: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             }
             let end = CFAbsoluteTimeGetCurrent()
             // End work that should be on the serialization queue.
