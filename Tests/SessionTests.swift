@@ -1288,7 +1288,7 @@ final class SessionTestCase: BaseTestCase {
 
             if case let .requestRetryFailed(retryError, originalError) = error {
                 XCTAssertEqual(try retryError.asAFError?.urlConvertible?.asURL().absoluteString, "/invalid/url/\(index + 1)")
-                XCTAssertEqual(originalError?.localizedDescription.starts(with: "JSON could not be serialized"), true)
+                XCTAssertTrue(originalError.localizedDescription.starts(with: "JSON could not be serialized"))
             } else {
                 XCTFail("Error failure reason should be response serialization failure")
             }

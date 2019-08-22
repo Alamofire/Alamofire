@@ -443,7 +443,7 @@ public class Request {
             case .doNotRetry:
                 self.finish()
             case .doNotRetryWithError(let retryError):
-                self.finish(error: retryError.afError(or: .requestRetryFailed(retryError: retryError, originalError: nil)))
+                self.finish(error: retryError)
             case .retry, .retryWithDelay:
                 delegate.retryRequest(self, withDelay: retryResult.delay)
             }

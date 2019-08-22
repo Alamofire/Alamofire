@@ -185,7 +185,7 @@ public enum AFError: Error {
     /// `RequestAdapter` threw an error during adaptation.
     case requestAdaptationFailed(error: Error)
     /// `RequestRetrier` threw an error during the request retry process.
-    case requestRetryFailed(retryError: Error, originalError: Error?)
+    case requestRetryFailed(retryError: Error, originalError: Error)
     /// Response validation failed.
     case responseValidationFailed(reason: ResponseValidationFailureReason)
     /// Response serialization failed.
@@ -539,7 +539,7 @@ extension AFError: LocalizedError {
         case .requestRetryFailed(let retryError, let originalError):
             return """
                    Request retry failed with retry error: \(retryError.localizedDescription),\
-                   \(originalError.map{ " original error: \($0.localizedDescription)" } ?? "")
+                   original error: \(originalError.localizedDescription)
                    """
         case .sessionDeinitialized:
             return """

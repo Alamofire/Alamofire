@@ -29,6 +29,12 @@ import XCTest
 fileprivate struct MockError: Error {}
 fileprivate struct RetryError: Error {}
 
+extension RetryResult {
+    fileprivate init(doNotRetryWithError error: Error) {
+        self = .doNotRetryWithError(.requestRetryFailed(retryError: error, originalError: error))
+    }
+}
+
 // MARK: -
 
 final class RetryResultTestCase: BaseTestCase {
@@ -37,7 +43,7 @@ final class RetryResultTestCase: BaseTestCase {
         let retry = RetryResult.retry
         let retryWithDelay = RetryResult.retryWithDelay(1.0)
         let doNotRetry = RetryResult.doNotRetry
-        let doNotRetryWithError = RetryResult.doNotRetryWithError(MockError())
+        let doNotRetryWithError = RetryResult(doNotRetryWithError: MockError())
 
         // Then
         XCTAssertTrue(retry.retryRequired)
@@ -51,7 +57,7 @@ final class RetryResultTestCase: BaseTestCase {
         let retry = RetryResult.retry
         let retryWithDelay = RetryResult.retryWithDelay(1.0)
         let doNotRetry = RetryResult.doNotRetry
-        let doNotRetryWithError = RetryResult.doNotRetryWithError(MockError())
+        let doNotRetryWithError = RetryResult(doNotRetryWithError: MockError())
 
         // Then
         XCTAssertEqual(retry.delay, nil)
@@ -65,13 +71,13 @@ final class RetryResultTestCase: BaseTestCase {
         let retry = RetryResult.retry
         let retryWithDelay = RetryResult.retryWithDelay(1.0)
         let doNotRetry = RetryResult.doNotRetry
-        let doNotRetryWithError = RetryResult.doNotRetryWithError(MockError())
+        let doNotRetryWithError = RetryResult(doNotRetryWithError: MockError())
 
         // Then
         XCTAssertNil(retry.error)
         XCTAssertNil(retryWithDelay.error)
         XCTAssertNil(doNotRetry.error)
-        XCTAssertTrue(doNotRetryWithError.error is MockError)
+        XCTAssertTrue(doNotRetryWithError.error?.asAFError?.underlyingError is MockError)
     }
 }
 
@@ -484,7 +490,7 @@ final class InterceptorTestCase: BaseTestCase {
 
         var retrier2Called = false
 
-        let retrier1 = Retrier { _, _, _, completion in completion(.doNotRetryWithError(RetryError())) }
+        let retrier1 = Retrier { _, _, _, completion in completion(RetryResult(doNotRetryWithError: RetryError())) }
         let retrier2 = Retrier { _, _, _, completion in retrier2Called = true; completion(.doNotRetry) }
         let interceptor = Interceptor(retriers: [retrier1, retrier2])
 
@@ -494,7 +500,7 @@ final class InterceptorTestCase: BaseTestCase {
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
 
         // Then
-        XCTAssertEqual(result, .doNotRetryWithError(RetryError()))
+        XCTAssertEqual(result, RetryResult(doNotRetryWithError: RetryError()))
         XCTAssertTrue(result.error is RetryError)
         XCTAssertFalse(retrier2Called)
     }
