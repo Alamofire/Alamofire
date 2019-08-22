@@ -299,7 +299,7 @@ extension SessionDelegate: URLSessionDownloadDelegate {
 
             request.didFinishDownloading(using: downloadTask, with: .success(destination))
         } catch {
-            request.didFinishDownloading(using: downloadTask, with: .failure(AFError.moveDownloadFailed(error: error, destination: destination)))
+            request.didFinishDownloading(using: downloadTask, with: .failure(AFError.downloadedFileMoveFailed(error: error, destination: destination)))
         }
     }
 }
