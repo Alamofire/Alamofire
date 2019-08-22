@@ -859,9 +859,9 @@ open class Session {
     }
 
     func performSetupOperations(for request: Request, convertible: URLRequestConvertible) {
-        
+
         let initialRequest: URLRequest
-        
+
         do {
             initialRequest = try convertible.asURLRequest()
             try initialRequest.validate()
@@ -869,21 +869,21 @@ open class Session {
             rootQueue.async { request.didFailToCreateURLRequest(with: error.afError(or: .createURLRequestFailed(error: error))) }
             return
         }
-        
+
         rootQueue.async { request.didCreateInitialURLRequest(initialRequest) }
-        
+
         guard !request.isCancelled else { return }
-        
+
         guard let adapter = adapter(for: request) else {
             rootQueue.async { self.didCreateURLRequest(initialRequest, for: request) }
             return
         }
-        
+
         adapter.adapt(initialRequest, for: self) { result in
             do {
                 let adaptedRequest = try result.get()
                 try adaptedRequest.validate()
-                
+
                 self.rootQueue.async {
                     request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
                     self.didCreateURLRequest(adaptedRequest, for: request)

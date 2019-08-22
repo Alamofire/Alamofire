@@ -164,7 +164,7 @@ public enum AFError: Error {
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
         /// Custom server trust evaluation failed due to the associated `Error`.
         case customEvaluationFailed(error: Error)
-        
+
     }
 
     /// The underlying reason the `.urlRequestValidationFailed`
@@ -213,7 +213,7 @@ extension Error {
     public var asAFError: AFError? {
         return self as? AFError
     }
-    
+
     /// Casts the instance as `AFError` or returns `defaultAFError`
     func afError(or defaultAFError: @autoclosure () -> AFError) -> AFError {
         return self as? AFError ?? defaultAFError()
@@ -302,21 +302,21 @@ extension AFError {
         if case .requestRetryFailed = self { return true }
         return false
     }
-    
+
     /// Returns whether the instance is `createUploadableFailed`. When `true`, the `underlyingError` property will
     /// contain the associated value.
     public var isCreateUploadableError: Bool {
         if case .createUploadableFailed = self { return true }
         return false
     }
-    
+
     /// Returns whether the instance is `createURLRequestFailed`. When `true`, the `underlyingError` property will
     /// contain the associated value.
     public var isCreateURLRequestError: Bool {
         if case .createURLRequestFailed = self { return true }
         return false
     }
-    
+
     /// Returns whether the instance is `moveDownloadFailed`. When `true`, the `destination` and `underlyingError` properties will
     /// contain the associated values.
     public var isMoveDownloadError: Bool {
@@ -329,7 +329,7 @@ extension AFError {
         if case .sessionTaskFailed = self { return true }
         return false
     }
-    
+
 }
 
 // MARK: - Convenience Properties
@@ -406,7 +406,7 @@ extension AFError {
         guard case .responseSerializationFailed(let reason) = self else { return nil }
         return reason.failedStringEncoding
     }
-    
+
     public var destination: URL? {
         guard case .downloadedFileMoveFailed(_, let destination) = self else { return nil }
         return destination
@@ -476,7 +476,7 @@ extension AFError.ResponseValidationFailureReason {
         guard case .unacceptableStatusCode(let code) = self else { return nil }
         return code
     }
-    
+
     var underlyingError: Error? {
         guard case let .customValidationFailed(error) = self else { return nil }
         return error
