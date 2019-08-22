@@ -767,7 +767,7 @@ extension DataRequest {
     }
 
     func validate(with error: Error) -> Self {
-        return validate { _, _, _ in .failure(error as? AFError ?? .responseValidationFailed(reason: .customValidationFailed(error: error))) }
+        return validate { _, _, _ in .failure(error) }
     }
 }
 
