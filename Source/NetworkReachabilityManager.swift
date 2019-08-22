@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //
 
-#if !os(watchOS)
+#if !(os(watchOS) || os(Linux))
 
 import Foundation
 import SystemConfiguration
@@ -74,7 +74,7 @@ open class NetworkReachabilityManager {
     /// Whether the network is currently reachable.
     open var isReachable: Bool { return isReachableOnCellular || isReachableOnEthernetOrWiFi }
 
-    /// Whether the network is currently reachable over the WWAN interface.
+    /// Whether the network is currently reachable over the cellular interface.
     ///
     /// - Note: Using this property to decide whether to make a high or low bandwidth request is not recommended.
     ///         Instead, set the `allowsCellularAccess` on any `URLRequest`s being issued.
@@ -105,11 +105,11 @@ open class NetworkReachabilityManager {
     /// `DispatchQueue` on which listeners will be called.
     private var listenerQueue: DispatchQueue?
 
-    /// Reachability flags of the previous reachability state.
-    private var previousStatus: NetworkReachabilityStatus?
-
     /// `SCNetworkReachability` instance providing notifications.
     private let reachability: SCNetworkReachability
+    
+    /// Protected storage for the previous status.
+    private let previousStatus = Protector<NetworkReachabilityStatus?>(nil)
 
     // MARK: - Initialization
 
@@ -195,21 +195,28 @@ open class NetworkReachabilityManager {
     open func stopListening() {
         SCNetworkReachabilitySetCallback(reachability, nil, nil)
         SCNetworkReachabilitySetDispatchQueue(reachability, nil)
-        previousStatus = nil
+        previousStatus.write { $0 = nil }
         listenerQueue = nil
         listener = nil
     }
 
     // MARK: - Internal - Listener Notification
-
+    
+    /// Calls the `listener` closure of the `listenerQueue` if the computed status hasn't changed.
+    ///
+    /// - Note: Should only be called from the `reachabilityQueue`.
+    ///
+    /// - Parameter flags: `SCNetworkReachabilityFlags` to use to calculate the status.
     func notifyListener(_ flags: SCNetworkReachabilityFlags) {
         let newStatus = NetworkReachabilityStatus(flags)
 
-        guard previousStatus != newStatus else { return }
-
-        previousStatus = newStatus
-
-        listenerQueue?.async { self.listener?(newStatus) }
+        previousStatus.write { previousStatus in
+            guard previousStatus != newStatus else { return }
+            
+            previousStatus = newStatus
+            
+            listenerQueue?.async { self.listener?(newStatus) }
+        }
     }
 }
 
@@ -247,5 +254,4 @@ extension SCNetworkReachabilityFlags {
         return "\(W)\(R) \(c)\(t)\(i)\(C)\(D)\(l)\(d)\(a)"
     }
 }
-
 #endif

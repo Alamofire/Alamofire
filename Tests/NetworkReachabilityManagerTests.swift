@@ -80,12 +80,6 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
         XCTAssertEqual(manager?.isReachableOnEthernetOrWiFi, true)
     }
 
-    func testMany() {
-        for _ in 0..<100 {
-            testThatZeroManagerCanBeProperlyRestarted()
-        }
-    }
-
     func testThatZeroManagerCanBeProperlyRestarted() {
         // Given
         let manager = NetworkReachabilityManager()
