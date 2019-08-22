@@ -63,7 +63,7 @@ public enum AFError: Error {
         case missingURL
         /// JSON serialization failed with an underlying system error during the encoding process.
         case jsonEncodingFailed(error: Error)
-        /// Custom encoding failed
+        /// Custom parameter encoding failed due to the associated `Error`.
         case customEncodingFailed(error: Error)
     }
 
@@ -95,7 +95,7 @@ public enum AFError: Error {
         case unacceptableContentType(acceptableContentTypes: [String], responseContentType: String)
         /// The response status code was not acceptable.
         case unacceptableStatusCode(code: Int)
-        /// Custom validation failed
+        /// Custom response validation failed due to the associated `Error`.
         case customValidationFailed(error: Error)
     }
 
@@ -162,7 +162,7 @@ public enum AFError: Error {
         case certificatePinningFailed(host: String, trust: SecTrust, pinnedCertificates: [SecCertificate], serverCertificates: [SecCertificate])
         /// Public key pinning failed.
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
-        /// Custom evaluation failed.
+        /// Custom server trust evaluation failed due to the associated `Error`.
         case customEvaluationFailed(error: Error)
         
     }
