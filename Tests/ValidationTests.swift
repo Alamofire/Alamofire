@@ -756,13 +756,12 @@ class AutomaticValidationTestCase: BaseTestCase {
 
 private enum ValidationError: Error {
     case missingData, missingFile, fileReadFailed
-    var error: AFError { return .responseValidationFailed(reason: .customValidationFailed(error: self)) }
 }
 
 extension DataRequest {
     func validateDataExists() -> Self {
         return validate { request, response, data in
-            guard data != nil else { return .failure(ValidationError.missingData.error) }
+            guard data != nil else { return .failure(ValidationError.missingData) }
             return .success(Void())
         }
     }
@@ -777,19 +776,19 @@ extension DownloadRequest {
         return validate { (request, response, _) in
             let fileURL = self.fileURL
 
-            guard let validFileURL = fileURL else { return .failure(ValidationError.missingFile.error) }
+            guard let validFileURL = fileURL else { return .failure(ValidationError.missingFile) }
 
             do {
                 let _ = try Data(contentsOf: validFileURL)
                 return .success(Void())
             } catch {
-                return .failure(ValidationError.fileReadFailed.error)
+                return .failure(ValidationError.fileReadFailed)
             }
         }
     }
 
     func validate(with error: Error) -> Self {
-        return validate { _, _, _ in .failure(error as? AFError ?? .responseValidationFailed(reason: .customValidationFailed(error: error))) }
+        return validate { _, _, _ in .failure(error) }
     }
 }
 
@@ -809,7 +808,7 @@ class CustomValidationTestCase: BaseTestCase {
         // When
         AF.request(urlString)
             .validate { request, response, data in
-                guard data != nil else { return .failure(ValidationError.missingData.error) }
+                guard data != nil else { return .failure(ValidationError.missingData) }
                 return .success(Void())
             }
             .response { resp in
@@ -819,13 +818,13 @@ class CustomValidationTestCase: BaseTestCase {
 
         AF.download(urlString)
             .validate { (request, response, fileURL) in
-                guard let fileURL = fileURL else { return .failure(ValidationError.missingFile.error) }
+                guard let fileURL = fileURL else { return .failure(ValidationError.missingFile) }
 
                 do {
                     _ = try Data(contentsOf: fileURL)
                     return .success(Void())
                 } catch {
-                    return .failure(ValidationError.fileReadFailed.error)
+                    return .failure(ValidationError.fileReadFailed)
                 }
             }
             .response { resp in
@@ -852,16 +851,16 @@ class CustomValidationTestCase: BaseTestCase {
 
         // When
         AF.request(urlString)
-            .validate { _, _, _ in .failure(ValidationError.missingData.error) }
-            .validate { _, _, _ in .failure(ValidationError.missingFile.error) } // should be ignored
+            .validate { _, _, _ in .failure(ValidationError.missingData) }
+            .validate { _, _, _ in .failure(ValidationError.missingFile) } // should be ignored
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
             }
 
         AF.download(urlString)
-            .validate { (_, _, _) in .failure(ValidationError.missingFile.error) }
-            .validate { (_, _, _) in .failure(ValidationError.fileReadFailed.error) } // should be ignored
+            .validate { (_, _, _) in .failure(ValidationError.missingFile) }
+            .validate { (_, _, _) in .failure(ValidationError.fileReadFailed) } // should be ignored
             .response { resp in
                 downloadError = resp.error
                 expectation2.fulfill()
