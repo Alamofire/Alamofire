@@ -501,7 +501,7 @@ final class InterceptorTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(result, RetryResult(doNotRetryWithError: RetryError()))
-        XCTAssertTrue(result.error is RetryError)
+        XCTAssertTrue(result.error?.underlyingError is RetryError)
         XCTAssertFalse(retrier2Called)
     }
 }

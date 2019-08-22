@@ -64,7 +64,7 @@ extension RetryResult {
         }
     }
 
-    var error: Error? {
+    var error: AFError? {
         guard case .doNotRetryWithError(let error) = self else { return nil }
         return error
     }

@@ -990,8 +990,7 @@ extension Session: RequestDelegate {
             self.rootQueue.async {
                 guard let retryResultError = retryResult.error else { completion(retryResult); return }
 
-                let retryError = AFError.requestRetryFailed(retryError: retryResultError, originalError: error)
-                completion(.doNotRetryWithError(retryError))
+                completion(.doNotRetryWithError(retryResultError))
             }
         }
     }
