@@ -46,7 +46,7 @@ public enum RetryResult {
     /// Do not retry.
     case doNotRetry
     /// Do not retry due to the associated `AFError`.
-    case doNotRetryWithError(AFError)
+    case doNotRetryWithError(Error)
 }
 
 extension RetryResult {
@@ -64,7 +64,7 @@ extension RetryResult {
         }
     }
 
-    var error: AFError? {
+    var error: Error? {
         guard case .doNotRetryWithError(let error) = self else { return nil }
         return error
     }

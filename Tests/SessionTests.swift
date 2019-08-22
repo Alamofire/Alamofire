@@ -1190,8 +1190,8 @@ final class SessionTestCase: BaseTestCase {
         }
 
         if let error = response?.result.error {
-            XCTAssertTrue(error.isInvalidURLError)
-            XCTAssertEqual(error.urlConvertible as? String, "/invalid/url/2")
+            XCTAssertTrue(error.isRequestRetryError)
+            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/invalid/url/2")
         } else {
             XCTFail("error should not be nil")
         }
@@ -1279,13 +1279,19 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error }
+        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
         XCTAssertEqual(errors.count, 2)
-
+        
         for (index, error) in errors.enumerated() {
-            XCTAssertTrue(error.isInvalidURLError)
-            XCTAssertEqual(error.localizedDescription.starts(with: "URL is not valid"), true)
-            XCTAssertEqual(try error.urlConvertible?.asURL().absoluteString, "/invalid/url/\(index + 1)")
+            XCTAssertTrue(error.isRequestRetryError)
+            XCTAssertEqual(error.localizedDescription.starts(with: "Request retry failed with retry error"), true)
+            
+            if case let .requestRetryFailed(retryError, originalError) = error {
+                XCTAssertEqual(try retryError.asAFError?.urlConvertible?.asURL().absoluteString, "/invalid/url/\(index + 1)")
+                XCTAssertTrue(originalError.localizedDescription.starts(with: "JSON could not be serialized"))
+            } else {
+                XCTFail("Error failure reason should be response serialization failure")
+            }
         }
     }
 
