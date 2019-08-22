@@ -872,7 +872,7 @@ open class Session {
         do {
             try initialRequest.validate()
         } catch {
-            rootQueue.async { request.didFailToCreateURLRequest(with: error.afError(or: .urlRequestValidationFailed(reason: .customValidationFailed(error: error)))) }
+            rootQueue.async { request.didFailToCreateURLRequest(with: error as! AFError) }
             return
         }
         

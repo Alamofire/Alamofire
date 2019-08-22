@@ -170,7 +170,6 @@ public enum AFError: Error {
     /// The underlying reason the `.urlRequestValidationFailed`
     public enum URLRequestValidationFailureReason {
         case bodyDataInGETRequest(Data)
-        case customValidationFailed(error: Error)
     }
 
     /// `Request` was explicitly cancelled.
@@ -365,8 +364,6 @@ extension AFError {
             return error
         case .responseSerializationFailed(let reason):
             return reason.underlyingError
-        case .urlRequestValidationFailed(let reason):
-            return reason.underlyingError
         case .responseValidationFailed(let reason):
             return reason.underlyingError
         case .serverTrustEvaluationFailed(let reason):
@@ -457,13 +454,6 @@ extension AFError.MultipartEncodingFailureReason {
         default:
             return nil
         }
-    }
-}
-
-extension AFError.URLRequestValidationFailureReason {
-    var underlyingError: Error? {
-        guard case let .customValidationFailed(error) = self else { return nil }
-        return error
     }
 }
 
@@ -724,8 +714,6 @@ extension AFError.URLRequestValidationFailureReason {
             Invalid URLRequest with a GET method that had body data:
             \(String(decoding: data, as: UTF8.self))
             """
-        case let .customValidationFailed(error):
-            return "Custom URLRequest validation failed with error: \(error.localizedDescription)"
         }
     }
 }
