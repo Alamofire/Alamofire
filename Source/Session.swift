@@ -864,15 +864,9 @@ open class Session {
         
         do {
             initialRequest = try convertible.asURLRequest()
-        } catch {
-            rootQueue.async { request.didFailToCreateURLRequest(with: error.afError(or: .createURLRequestFailed(error: error))) }
-            return
-        }
-        
-        do {
             try initialRequest.validate()
         } catch {
-            rootQueue.async { request.didFailToCreateURLRequest(with: error as! AFError) }
+            rootQueue.async { request.didFailToCreateURLRequest(with: error.afError(or: .createURLRequestFailed(error: error))) }
             return
         }
         
@@ -886,7 +880,6 @@ open class Session {
         }
         
         adapter.adapt(initialRequest, for: self) { result in
-            
             do {
                 let adaptedRequest = try result.get()
                 try adaptedRequest.validate()
