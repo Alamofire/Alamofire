@@ -549,7 +549,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
-        guard let error = response?.error, case TestError.error = error else { XCTFail(); return }
+        guard let error = response?.error, case .error = error else { XCTFail(); return }
 
         XCTAssertNotNil(response?.metrics)
     }

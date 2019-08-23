@@ -484,7 +484,7 @@ final class InterceptorTestCase: BaseTestCase {
 
         var retrier2Called = false
 
-        let retrier1 = Retrier { _, _, _, completion in completion(RetryResult.doNotRetryWithError(RetryError())) }
+        let retrier1 = Retrier { _, _, _, completion in completion(.doNotRetryWithError(RetryError())) }
         let retrier2 = Retrier { _, _, _, completion in retrier2Called = true; completion(.doNotRetry) }
         let interceptor = Interceptor(retriers: [retrier1, retrier2])
 
