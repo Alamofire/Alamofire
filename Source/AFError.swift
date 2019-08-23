@@ -317,9 +317,9 @@ extension AFError {
         return false
     }
 
-    /// Returns whether the instance is `moveDownloadFailed`. When `true`, the `destination` and `underlyingError` properties will
+    /// Returns whether the instance is `downloadedFileMoveFailed`. When `true`, the `destination` and `underlyingError` properties will
     /// contain the associated values.
-    public var isMoveDownloadError: Bool {
+    public var isDownloadedFileMoveError: Bool {
         if case .downloadedFileMoveFailed = self { return true }
         return false
     }
