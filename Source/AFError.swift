@@ -638,7 +638,7 @@ extension AFError: LocalizedError {
             return reason.localizedDescription
         case .requestRetryFailed(let retryError, let originalError):
             return """
-                   Request retry failed with retry error: \(retryError.localizedDescription),\
+                   Request retry failed with retry error: \(retryError.localizedDescription), \
                    original error: \(originalError.localizedDescription)
                    """
         case .sessionDeinitialized:
@@ -653,11 +653,11 @@ extension AFError: LocalizedError {
         case .urlRequestValidationFailed(let reason):
             return "URLRequest validation failed due to reason: \(reason.localizedDescription)"
         case .createUploadableFailed(let error):
-            return "Creating uploadable failed with error: \(error.localizedDescription)"
+            return "Uploadable creation failed with error: \(error.localizedDescription)"
         case .createURLRequestFailed(let error):
-            return "Creating URLRequest failed with error: \(error.localizedDescription)"
+            return "URLRequest creation failed with error: \(error.localizedDescription)"
         case .downloadedFileMoveFailed(let error, let destination):
-            return "Moving download to \(destination) failed with error: \(error.localizedDescription)"
+            return "Moving downloaded file to \(destination) failed with error: \(error.localizedDescription)"
         case .sessionTaskFailed(let error):
             return "URLSessionTask failed with error: \(error.localizedDescription)"
         }
@@ -745,7 +745,7 @@ extension AFError.ResponseSerializationFailureReason {
         case .decodingFailed(let error):
             return "Response could not be decoded because of error:\n\(error.localizedDescription)"
         case .customSerializationFailed(let error):
-            return "Custom response could not be serialized because of error:\n\(error.localizedDescription)"
+            return "Custom response serializer failed with error:\n\(error.localizedDescription)"
         }
     }
 }
@@ -801,7 +801,7 @@ extension AFError.ServerTrustFailureReason {
         case .publicKeyPinningFailed(let host, _, _, _):
             return "Public key pinning failed for host \(host)."
         case .customEvaluationFailed(let error):
-            return "Custom evaluation failed with error: \(error.localizedDescription)"
+            return "Custom trust evaluation failed with error: \(error.localizedDescription)"
         }
     }
 }
