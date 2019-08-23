@@ -888,7 +888,7 @@ open class Session {
                     self.didCreateURLRequest(adaptedRequest, for: request)
                 }
             } catch {
-                self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: error.asAFError(or: .requestAdaptationFailed(error: error))) }
+                self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: .requestAdaptationFailed(error: error)) }
             }
         }
     }
