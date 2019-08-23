@@ -859,7 +859,6 @@ open class Session {
     }
 
     func performSetupOperations(for request: Request, convertible: URLRequestConvertible) {
-
         let initialRequest: URLRequest
 
         do {
@@ -989,6 +988,7 @@ extension Session: RequestDelegate {
         retrier.retry(request, for: self, dueTo: error) { retryResult in
             self.rootQueue.async {
                 guard let retryResultError = retryResult.error else { completion(retryResult); return }
+
                 let retryError = AFError.requestRetryFailed(retryError: retryResultError, originalError: error)
                 completion(.doNotRetryWithError(retryError))
             }
