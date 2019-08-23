@@ -225,7 +225,7 @@ extension DataRequest {
                     error: self.error
                 )
             }.mapError { error in
-                error.asAFError(default: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+                error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             }
 
             let end = CFAbsoluteTimeGetCurrent()
@@ -260,7 +260,7 @@ extension DataRequest {
                         didComplete = { completionHandler(response) }
 
                     case .doNotRetryWithError(let retryError):
-                        let result: Result<Serializer.SerializedObject, AFError> = .failure(retryError.asAFError(default: .requestRetryFailed(retryError: retryError, originalError: serializerError)))
+                        let result: Result<Serializer.SerializedObject, AFError> = .failure(retryError.asAFError(or: .requestRetryFailed(retryError: retryError, originalError: serializerError)))
 
                         let response = DataResponse(request: self.request,
                                                     response: self.response,
@@ -346,7 +346,7 @@ extension DownloadRequest {
                     error: self.error
                 )
             }.mapError { error in
-                error.asAFError(default: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+                error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             }
             let end = CFAbsoluteTimeGetCurrent()
             // End work that should be on the serialization queue.
@@ -381,7 +381,7 @@ extension DownloadRequest {
                         didComplete = { completionHandler(response) }
 
                     case .doNotRetryWithError(let retryError):
-                        let result: Result<T.SerializedObject, AFError> = .failure(retryError.asAFError(default: .requestRetryFailed(retryError: retryError, originalError: serializerError)))
+                        let result: Result<T.SerializedObject, AFError> = .failure(retryError.asAFError(or: .requestRetryFailed(retryError: retryError, originalError: serializerError)))
 
                         let response = DownloadResponse(request: self.request,
                                                         response: self.response,

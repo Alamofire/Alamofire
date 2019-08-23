@@ -1015,7 +1015,7 @@ public class DataRequest: Request {
 
             let result = validation(self.request, response, self.data)
 
-            if case .failure(let error) = result { self.error = error.asAFError(default: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
+            if case .failure(let error) = result { self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
 
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,
@@ -1300,7 +1300,7 @@ public class DownloadRequest: Request {
 
             let result = validation(self.request, response, self.fileURL)
 
-            if case .failure(let error) = result { self.error = error.asAFError(default: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
+            if case .failure(let error) = result { self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
 
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,

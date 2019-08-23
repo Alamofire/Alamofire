@@ -215,7 +215,7 @@ extension Error {
     }
 
     /// Casts the instance as `AFError` or returns `defaultAFError`
-    func asAFError(default defaultAFError: @autoclosure () -> AFError) -> AFError {
+    func asAFError(or defaultAFError: @autoclosure () -> AFError) -> AFError {
         return self as? AFError ?? defaultAFError()
     }
 }

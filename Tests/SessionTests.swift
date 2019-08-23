@@ -1281,11 +1281,11 @@ final class SessionTestCase: BaseTestCase {
 
         let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
         XCTAssertEqual(errors.count, 2)
-        
+
         for (index, error) in errors.enumerated() {
             XCTAssertTrue(error.isRequestRetryError)
             XCTAssertEqual(error.localizedDescription.starts(with: "Request retry failed with retry error"), true)
-            
+
             if case let .requestRetryFailed(retryError, originalError) = error {
                 XCTAssertEqual(try retryError.asAFError?.urlConvertible?.asURL().absoluteString, "/invalid/url/\(index + 1)")
                 XCTAssertTrue(originalError.localizedDescription.starts(with: "JSON could not be serialized"))
