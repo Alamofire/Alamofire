@@ -302,7 +302,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         var response: DataResponse<HTTPBinResponse, AFError>?
 
         // When
-        AF.request(urlString, parameters: [:]).responseDecodable { (resp: DataResponse<HTTPBinResponse, AFError>) in
+        AF.request(urlString, parameters: [:]).responseDecodable(of: HTTPBinResponse.self) { resp in
             response = resp
             expectation.fulfill()
         }
@@ -350,7 +350,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         var response: DataResponse<HTTPBinResponse, AFError>?
 
         // When
-        AF.request(urlString, parameters: [:]).responseDecodable { (resp: DataResponse<HTTPBinResponse, AFError>) in
+        AF.request(urlString, parameters: [:]).responseDecodable(of: HTTPBinResponse.self) { resp in
             response = resp
             expectation.fulfill()
         }
