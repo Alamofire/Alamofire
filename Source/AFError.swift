@@ -198,13 +198,13 @@ public enum AFError: Error {
     case sessionInvalidated(error: Error?)
     /// `URLRequest` failed validation.
     case urlRequestValidationFailed(reason: URLRequestValidationFailureReason)
-    ///  `UploadableConvertible` threw an error in `createUploadable()`
+    ///  `UploadableConvertible` threw an error in `createUploadable()`.
     case createUploadableFailed(error: Error)
-    ///  `URLRequestConvertible` threw an error in `asURLRequest()`
+    ///  `URLRequestConvertible` threw an error in `asURLRequest()`.
     case createURLRequestFailed(error: Error)
-    /// `SessionDelegate` threw an error while attempting to move downloaded file to destination URL
+    /// `SessionDelegate` threw an error while attempting to move downloaded file to destination URL.
     case downloadedFileMoveFailed(error: Error, destination: URL)
-    /// `URLSessionTask` completed with error
+    /// `URLSessionTask` completed with error.
     case sessionTaskFailed(error: Error)
 }
 
