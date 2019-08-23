@@ -260,7 +260,7 @@ extension DataRequest {
                         didComplete = { completionHandler(response) }
 
                     case .doNotRetryWithError(let retryError):
-                        let result: Result<Serializer.SerializedObject, AFError> = .failure(retryError.asAFError(or: .requestRetryFailed(retryError: retryError, originalError: serializerError)))
+                        let result: Result<Serializer.SerializedObject, AFError> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
 
                         let response = DataResponse(request: self.request,
                                                     response: self.response,
@@ -381,7 +381,7 @@ extension DownloadRequest {
                         didComplete = { completionHandler(response) }
 
                     case .doNotRetryWithError(let retryError):
-                        let result: Result<T.SerializedObject, AFError> = .failure(retryError.asAFError(or: .requestRetryFailed(retryError: retryError, originalError: serializerError)))
+                        let result: Result<T.SerializedObject, AFError> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
 
                         let response = DownloadResponse(request: self.request,
                                                         response: self.response,

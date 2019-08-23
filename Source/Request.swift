@@ -443,10 +443,7 @@ public class Request {
             case .doNotRetry:
                 self.finish()
             case .doNotRetryWithError(let retryError):
-                guard let retryError = retryError.asAFError else {
-                    fatalError("Received retryError was not already AFError")
-                }
-                self.finish(error: retryError)
+                self.finish(error: retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
             case .retry, .retryWithDelay:
                 delegate.retryRequest(self, withDelay: retryResult.delay)
             }

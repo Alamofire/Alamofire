@@ -214,6 +214,14 @@ extension Error {
         return self as? AFError
     }
 
+    /// Returns the instance cast as an `AFError`. If casting fails, a `fatalError` with the specified `message` is thrown.
+    public func asAFError(orFailWith message: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) -> AFError {
+        guard let afError = self as? AFError else {
+            fatalError(message(), file: file, line: line)
+        }
+        return afError
+    }
+
     /// Casts the instance as `AFError` or returns `defaultAFError`
     func asAFError(or defaultAFError: @autoclosure () -> AFError) -> AFError {
         return self as? AFError ?? defaultAFError()
