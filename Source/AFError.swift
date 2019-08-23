@@ -203,7 +203,7 @@ public enum AFError: Error {
     ///  `URLRequestConvertible` threw an error in `asURLRequest()`.
     case createURLRequestFailed(error: Error)
     /// `SessionDelegate` threw an error while attempting to move downloaded file to destination URL.
-    case downloadedFileMoveFailed(error: Error, destination: URL)
+    case downloadedFileMoveFailed(error: Error, source: URL, destination: URL)
     /// `URLSessionTask` completed with error.
     case sessionTaskFailed(error: Error)
 }
@@ -383,7 +383,7 @@ extension AFError {
             return error
         case .createURLRequestFailed(let error):
             return error
-        case .downloadedFileMoveFailed(let error, _):
+        case .downloadedFileMoveFailed(let error, _, _):
             return error
         case .sessionTaskFailed(let error):
             return error
@@ -418,8 +418,15 @@ extension AFError {
         return reason.failedStringEncoding
     }
 
-    public var destination: URL? {
-        guard case .downloadedFileMoveFailed(_, let destination) = self else { return nil }
+    /// The `source` URL of a `.downloadedFileMoveFailed` error.
+    public var sourceURL: URL? {
+        guard case .downloadedFileMoveFailed(_, let source, _) = self else { return nil }
+        return source
+    }
+
+    /// The `destination` URL of a `.downloadedFileMoveFailed` error.
+    public var destinationURL: URL? {
+        guard case .downloadedFileMoveFailed(_, _, let destination) = self else { return nil }
         return destination
     }
 }
@@ -664,8 +671,13 @@ extension AFError: LocalizedError {
             return "Uploadable creation failed with error: \(error.localizedDescription)"
         case .createURLRequestFailed(let error):
             return "URLRequest creation failed with error: \(error.localizedDescription)"
-        case .downloadedFileMoveFailed(let error, let destination):
-            return "Moving downloaded file to \(destination) failed with error: \(error.localizedDescription)"
+        case .downloadedFileMoveFailed(let error, let source, let destination):
+            return """
+                   Moving downloaded file failed
+                   from: \(source)
+                   to: \(destination)
+                   error: \(error.localizedDescription)
+                   """
         case .sessionTaskFailed(let error):
             return "URLSessionTask failed with error: \(error.localizedDescription)"
         }
