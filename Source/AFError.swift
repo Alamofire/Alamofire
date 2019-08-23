@@ -329,7 +329,6 @@ extension AFError {
         if case .sessionTaskFailed = self { return true }
         return false
     }
-
 }
 
 // MARK: - Convenience Properties
@@ -352,24 +351,26 @@ extension AFError {
     /// `.responseSerializationFailed`, `.requestRetryFailed` errors.
     public var underlyingError: Error? {
         switch self {
-        case .sessionInvalidated(let error):
-            return error
+        case .multipartEncodingFailed(let reason):
+            return reason.underlyingError
         case .parameterEncodingFailed(let reason):
             return reason.underlyingError
         case .parameterEncoderFailed(let reason):
             return reason.underlyingError
-        case .multipartEncodingFailed(let reason):
-            return reason.underlyingError
         case .requestAdaptationFailed(let error):
             return error
-        case .responseSerializationFailed(let reason):
-            return reason.underlyingError
+        case .requestRetryFailed(let retryError, _):
+            return retryError
         case .responseValidationFailed(let reason):
+            return reason.underlyingError
+        case .responseSerializationFailed(let reason):
             return reason.underlyingError
         case .serverTrustEvaluationFailed(let reason):
             return reason.underlyingError
-        case .requestRetryFailed(let retryError, _):
-            return retryError
+        case .sessionInvalidated(let error):
+            return error
+        case .urlRequestValidationFailed(let reason):
+            return reason.underlyingError
         case .createUploadableFailed(let error):
             return error
         case .createURLRequestFailed(let error):
@@ -378,7 +379,9 @@ extension AFError {
             return error
         case .sessionTaskFailed(let error):
             return error
-        default:
+        case .explicitlyCancelled,
+             .invalidURL(_),
+             .sessionDeinitialized:
             return nil
         }
     }
@@ -416,10 +419,10 @@ extension AFError {
 extension AFError.ParameterEncodingFailureReason {
     var underlyingError: Error? {
         switch self {
-        case let .jsonEncodingFailed(error),
-             let .customEncodingFailed(error):
+        case .jsonEncodingFailed(let error),
+             .customEncodingFailed(let error):
             return error
-        default:
+        case .missingURL:
             return nil
         }
     }
@@ -427,31 +430,52 @@ extension AFError.ParameterEncodingFailureReason {
 
 extension AFError.ParameterEncoderFailureReason {
     var underlyingError: Error? {
-        guard case .encoderFailed(let error) = self else { return nil }
-        return error
+        switch self {
+        case .encoderFailed(let error):
+            return error
+        case .missingRequiredComponent(_):
+            return nil
+        }
     }
 }
 
 extension AFError.MultipartEncodingFailureReason {
     var url: URL? {
         switch self {
-        case .bodyPartURLInvalid(let url), .bodyPartFilenameInvalid(let url), .bodyPartFileNotReachable(let url),
-             .bodyPartFileIsDirectory(let url), .bodyPartFileSizeNotAvailable(let url),
-             .bodyPartInputStreamCreationFailed(let url), .outputStreamCreationFailed(let url),
-             .outputStreamFileAlreadyExists(let url), .outputStreamURLInvalid(let url),
-             .bodyPartFileNotReachableWithError(let url, _), .bodyPartFileSizeQueryFailedWithError(let url, _):
+        case .bodyPartURLInvalid(let url),
+             .bodyPartFilenameInvalid(let url),
+             .bodyPartFileNotReachable(let url),
+             .bodyPartFileIsDirectory(let url),
+             .bodyPartFileSizeNotAvailable(let url),
+             .bodyPartInputStreamCreationFailed(let url),
+             .outputStreamCreationFailed(let url),
+             .outputStreamFileAlreadyExists(let url),
+             .outputStreamURLInvalid(let url),
+             .bodyPartFileNotReachableWithError(let url, _),
+             .bodyPartFileSizeQueryFailedWithError(let url, _):
             return url
-        default:
+        case .outputStreamWriteFailed(_),
+             .inputStreamReadFailed(_):
             return nil
         }
     }
 
     var underlyingError: Error? {
         switch self {
-        case .bodyPartFileNotReachableWithError(_, let error), .bodyPartFileSizeQueryFailedWithError(_, let error),
-             .outputStreamWriteFailed(let error), .inputStreamReadFailed(let error):
+        case .bodyPartFileNotReachableWithError(_, let error),
+             .bodyPartFileSizeQueryFailedWithError(_, let error),
+             .outputStreamWriteFailed(let error),
+             .inputStreamReadFailed(let error):
             return error
-        default:
+        case .bodyPartURLInvalid(_),
+             .bodyPartFilenameInvalid(_),
+             .bodyPartFileNotReachable(_),
+             .bodyPartFileIsDirectory(_),
+             .bodyPartFileSizeNotAvailable(_),
+             .bodyPartInputStreamCreationFailed(_),
+             .outputStreamCreationFailed(_),
+             .outputStreamFileAlreadyExists(_),
+             .outputStreamURLInvalid(_):
             return nil
         }
     }
@@ -460,41 +484,85 @@ extension AFError.MultipartEncodingFailureReason {
 extension AFError.ResponseValidationFailureReason {
     var acceptableContentTypes: [String]? {
         switch self {
-        case .missingContentType(let types), .unacceptableContentType(let types, _):
+        case .missingContentType(let types),
+             .unacceptableContentType(let types, _):
             return types
-        default:
+        case .dataFileNil,
+             .dataFileReadFailed(_),
+             .unacceptableStatusCode(_),
+             .customValidationFailed(_):
             return nil
         }
     }
 
     var responseContentType: String? {
-        guard case .unacceptableContentType(_, let responseType) = self else { return nil }
-        return responseType
+        switch self {
+        case .unacceptableContentType(_, let responseType):
+            return responseType
+        case .dataFileNil,
+             .dataFileReadFailed(_),
+             .missingContentType(_),
+             .unacceptableStatusCode(_),
+             .customValidationFailed(_):
+            return nil
+        }
     }
 
     var responseCode: Int? {
-        guard case .unacceptableStatusCode(let code) = self else { return nil }
-        return code
+        switch self {
+        case .unacceptableStatusCode(let code):
+            return code
+        case .dataFileNil,
+             .dataFileReadFailed(_),
+             .missingContentType(_),
+             .unacceptableContentType(_, _),
+             .customValidationFailed(_):
+            return nil
+        }
     }
 
     var underlyingError: Error? {
-        guard case let .customValidationFailed(error) = self else { return nil }
-        return error
+        switch self {
+        case .customValidationFailed(let error):
+            return error
+        case .dataFileNil,
+             .dataFileReadFailed(_),
+             .missingContentType(_),
+             .unacceptableContentType(_, _),
+             .unacceptableStatusCode(_):
+            return nil
+        }
     }
 }
 
 extension AFError.ResponseSerializationFailureReason {
     var failedStringEncoding: String.Encoding? {
-        guard case .stringSerializationFailed(let encoding) = self else { return nil }
-        return encoding
+        switch self {
+        case .stringSerializationFailed(let encoding):
+            return encoding
+        case .inputDataNilOrZeroLength,
+             .inputFileNil,
+             .inputFileReadFailed(_),
+             .jsonSerializationFailed(_),
+             .decodingFailed(_),
+             .customSerializationFailed(_),
+             .invalidEmptyResponse(_):
+            return nil
+        }
     }
 
     var underlyingError: Error? {
         switch self {
-        case let .jsonSerializationFailed(error),
-             let .customSerializationFailed(error):
+        case .jsonSerializationFailed(let error),
+             .decodingFailed(let error),
+             .customSerializationFailed(let error):
             return error
-        default: return nil
+        case .inputDataNilOrZeroLength,
+             .inputFileNil,
+             .inputFileReadFailed(_),
+             .stringSerializationFailed(_),
+             .invalidEmptyResponse(_):
+            return nil
         }
     }
 }
@@ -502,16 +570,48 @@ extension AFError.ResponseSerializationFailureReason {
 extension AFError.ServerTrustFailureReason {
     var output: AFError.ServerTrustFailureReason.Output? {
         switch self {
-        case let .defaultEvaluationFailed(output),
-             let .hostValidationFailed(output),
-             let .revocationCheckFailed(output, _):
+        case .defaultEvaluationFailed(let output),
+             .hostValidationFailed(let output),
+             .revocationCheckFailed(let output, _):
             return output
-        default: return nil
+        case .noRequiredEvaluator(_),
+             .noCertificatesFound,
+             .noPublicKeysFound,
+             .policyApplicationFailed(_, _, _),
+             .settingAnchorCertificatesFailed(_, _),
+             .revocationPolicyCreationFailed,
+             .certificatePinningFailed(_, _, _, _),
+             .publicKeyPinningFailed(_, _, _, _),
+             .customEvaluationFailed(_):
+            return nil
         }
     }
     var underlyingError: Error? {
-        guard case .customEvaluationFailed(let error) = self else { return nil }
-        return error
+        switch self {
+        case .customEvaluationFailed(let error):
+            return error
+        case .noRequiredEvaluator(_),
+             .noCertificatesFound,
+             .noPublicKeysFound,
+             .policyApplicationFailed(_, _, _),
+             .settingAnchorCertificatesFailed(_, _),
+             .revocationPolicyCreationFailed,
+             .defaultEvaluationFailed(_),
+             .hostValidationFailed(_),
+             .revocationCheckFailed(_, _),
+             .certificatePinningFailed(_, _, _, _),
+             .publicKeyPinningFailed(_, _, _, _):
+            return nil
+        }
+    }
+}
+
+extension AFError.URLRequestValidationFailureReason {
+    var underlyingError: Error? {
+        switch self {
+        case .bodyDataInGETRequest(_):
+            return nil
+        }
     }
 }
 
@@ -550,15 +650,15 @@ extension AFError: LocalizedError {
             return "Session was invalidated with error: \(error?.localizedDescription ?? "No description.")"
         case .serverTrustEvaluationFailed:
             return "Server trust evaluation failed."
-        case let .urlRequestValidationFailed(reason):
+        case .urlRequestValidationFailed(let reason):
             return "URLRequest validation failed due to reason: \(reason.localizedDescription)"
-        case let .createUploadableFailed(error):
+        case .createUploadableFailed(let error):
             return "Creating uploadable failed with error: \(error.localizedDescription)"
-        case let .createURLRequestFailed(error):
+        case .createURLRequestFailed(let error):
             return "Creating URLRequest failed with error: \(error.localizedDescription)"
-        case let .downloadedFileMoveFailed(error, destination):
+        case .downloadedFileMoveFailed(let error, let destination):
             return "Moving download to \(destination) failed with error: \(error.localizedDescription)"
-        case let .sessionTaskFailed(error):
+        case .sessionTaskFailed(let error):
             return "URLSessionTask failed with error: \(error.localizedDescription)"
         }
     }
@@ -678,7 +778,7 @@ extension AFError.ResponseValidationFailureReason {
 extension AFError.ServerTrustFailureReason {
     var localizedDescription: String {
         switch self {
-        case let .noRequiredEvaluator(host):
+        case .noRequiredEvaluator(let host):
             return "A ServerTrustEvaluating value is required for host \(host) but none was found."
         case .noCertificatesFound:
             return "No certificates were found or provided for evaluation."
@@ -690,17 +790,17 @@ extension AFError.ServerTrustFailureReason {
             return "Attempting to set the provided certificates as anchor certificates failed."
         case .revocationPolicyCreationFailed:
             return "Attempting to create a revocation policy failed."
-        case let .defaultEvaluationFailed(output):
+        case .defaultEvaluationFailed(let output):
             return "Default evaluation failed for host \(output.host)."
-        case let .hostValidationFailed(output):
+        case .hostValidationFailed(let output):
             return "Host validation failed for host \(output.host)."
-        case let .revocationCheckFailed(output, _):
+        case .revocationCheckFailed(let output, _):
             return "Revocation check failed for host \(output.host)."
-        case let .certificatePinningFailed(host, _, _, _):
+        case .certificatePinningFailed(let host, _, _, _):
             return "Certificate pinning failed for host \(host)."
-        case let .publicKeyPinningFailed(host, _, _, _):
+        case .publicKeyPinningFailed(let host, _, _, _):
             return "Public key pinning failed for host \(host)."
-        case let .customEvaluationFailed(error):
+        case .customEvaluationFailed(let error):
             return "Custom evaluation failed with error: \(error.localizedDescription)"
         }
     }
@@ -709,7 +809,7 @@ extension AFError.ServerTrustFailureReason {
 extension AFError.URLRequestValidationFailureReason {
     var localizedDescription: String {
         switch self {
-        case let .bodyDataInGETRequest(data):
+        case .bodyDataInGETRequest(let data):
             return """
             Invalid URLRequest with a GET method that had body data:
             \(String(decoding: data, as: UTF8.self))
