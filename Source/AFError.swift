@@ -173,6 +173,12 @@ public enum AFError: Error {
         case bodyDataInGETRequest(Data)
     }
 
+    ///  `UploadableConvertible` threw an error in `createUploadable()`.
+    case createUploadableFailed(error: Error)
+    ///  `URLRequestConvertible` threw an error in `asURLRequest()`.
+    case createURLRequestFailed(error: Error)
+    /// `SessionDelegate` threw an error while attempting to move downloaded file to destination URL.
+    case downloadedFileMoveFailed(error: Error, source: URL, destination: URL)
     /// `Request` was explicitly cancelled.
     case explicitlyCancelled
     /// `URLConvertible` type failed to create a valid `URL`.
@@ -197,16 +203,10 @@ public enum AFError: Error {
     case sessionDeinitialized
     /// `Session` was explicitly invalidated, possibly with the `Error` produced by the underlying `URLSession`.
     case sessionInvalidated(error: Error?)
-    /// `URLRequest` failed validation.
-    case urlRequestValidationFailed(reason: URLRequestValidationFailureReason)
-    ///  `UploadableConvertible` threw an error in `createUploadable()`.
-    case createUploadableFailed(error: Error)
-    ///  `URLRequestConvertible` threw an error in `asURLRequest()`.
-    case createURLRequestFailed(error: Error)
-    /// `SessionDelegate` threw an error while attempting to move downloaded file to destination URL.
-    case downloadedFileMoveFailed(error: Error, source: URL, destination: URL)
     /// `URLSessionTask` completed with error.
     case sessionTaskFailed(error: Error)
+    /// `URLRequest` failed validation.
+    case urlRequestValidationFailed(reason: URLRequestValidationFailureReason)
 }
 
 extension Error {
