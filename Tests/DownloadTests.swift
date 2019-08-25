@@ -83,7 +83,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = self.expectation(description: "Download request should download data to file: \(urlString)")
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         AF.download(urlString, to: destination)
@@ -120,7 +120,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = self.expectation(description: "Cancelled download request should not download data to file")
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         AF.download(urlString, to: destination)
@@ -146,7 +146,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
 
         var progressValues: [Double] = []
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         AF.download(urlString)
@@ -189,7 +189,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = self.expectation(description: "Download request should download data to file")
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         AF.download(urlString, parameters: parameters, to: destination)
@@ -227,7 +227,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let destination: DownloadRequest.Destination = { _, _ in (fileURL, []) }
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         AF.download(urlString, headers: headers, to: destination)
@@ -262,7 +262,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let fileURL = testDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
 
         let expectation = self.expectation(description: "Download request should download data but fail to move file")
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
@@ -280,7 +280,7 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error as? CocoaError {
+        if let error = response?.error?.underlyingError as? CocoaError {
             XCTAssertEqual(error.code, .fileNoSuchFile)
         } else {
             XCTFail("error should not be nil")
@@ -292,7 +292,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let fileURL = testDirectoryURL.appendingPathComponent("some/random/folder/test_output.json")
 
         let expectation = self.expectation(description: "Download request should download data to file: \(fileURL)")
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.createIntermediateDirectories])})
@@ -321,7 +321,7 @@ class DownloadResponseTestCase: BaseTestCase {
             try "random_data".write(to: fileURL, atomically: true, encoding: .utf8)
 
             let expectation = self.expectation(description: "Download should complete but fail to move file")
-            var response: DownloadResponse<URL?, Error>?
+            var response: DownloadResponse<URL?, AFError>?
 
             // When
             AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
@@ -341,7 +341,7 @@ class DownloadResponseTestCase: BaseTestCase {
             XCTAssertNil(response?.resumeData)
             XCTAssertNotNil(response?.error)
 
-            if let error = response?.error as? CocoaError {
+            if let error = response?.error?.underlyingError as? CocoaError {
                 XCTAssertEqual(error.code, .fileWriteFileExists)
             } else {
                 XCTFail("error should not be nil")
@@ -359,7 +359,7 @@ class DownloadResponseTestCase: BaseTestCase {
         let fileURL = directoryURL.appendingPathComponent("test_output.json")
 
         let expectation = self.expectation(description: "Download should complete and move file to URL: \(fileURL)")
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile, .createIntermediateDirectories])})
@@ -496,7 +496,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
 
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         let download = AF.download(urlString)
@@ -530,7 +530,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
 
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         let download = AF.download(urlString)
@@ -566,7 +566,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
 
-        var response: DownloadResponse<Any, Error>?
+        var response: DownloadResponse<Any, AFError>?
 
         // When
         let download = AF.download(urlString)
@@ -603,7 +603,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation1 = self.expectation(description: "Download should be cancelled")
         var cancelled = false
 
-        var response1: DownloadResponse<Data, Error>?
+        var response1: DownloadResponse<Data, AFError>?
 
         // When
         let download = AF.download(urlString)
@@ -630,7 +630,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation2 = self.expectation(description: "Download should complete")
 
         var progressValues: [Double] = []
-        var response2: DownloadResponse<Data, Error>?
+        var response2: DownloadResponse<Data, AFError>?
 
         AF.download(resumingWith: resumeData)
             .downloadProgress { progress in
@@ -663,7 +663,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Download should be cancelled")
         var cancelled = false
         var receivedResumeData: Data?
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         let download = AF.download(urlString)
@@ -705,7 +705,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DownloadResponse<String, Error>?
+        var response: DownloadResponse<String, AFError>?
 
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -734,7 +734,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
 
-        var response: DownloadResponse<String, Error>?
+        var response: DownloadResponse<String, AFError>?
 
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
@@ -757,8 +757,8 @@ class DownloadResponseMapTestCase: BaseTestCase {
 
 // MARK: -
 
-class DownloadResponseFlatMapTestCase: BaseTestCase {
-    func testThatFlatMapTransformsSuccessValue() {
+class DownloadResponseTryMapTestCase: BaseTestCase {
+    func testThatTryMapTransformsSuccessValue() {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
@@ -787,7 +787,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
-    func testThatFlatMapCatchesTransformationError() {
+    func testThatTryMapCatchesTransformationError() {
         // Given
         struct TransformError: Error {}
 
@@ -821,7 +821,7 @@ class DownloadResponseFlatMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
-    func testThatFlatMapPreservesFailureError() {
+    func testThatTryMapPreservesFailureError() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail with 404")
@@ -853,7 +853,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should not succeed")
 
-        var response: DownloadResponse<Any, Error>?
+        var response: DownloadResponse<Any, TestError>?
 
         // When
         AF.download(urlString).responseJSON { resp in
@@ -874,7 +874,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.result.isFailure, true)
 
-        guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
+        guard let error = response?.error, case TestError.error = error else { XCTFail(); return }
 
         XCTAssertNotNil(response?.metrics)
     }
@@ -884,7 +884,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
 
-        var response: DownloadResponse<Data, Error>?
+        var response: DownloadResponse<Data, TestError>?
 
         // When
         AF.download(urlString).responseData { resp in
@@ -906,8 +906,8 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
 
 // MARK: -
 
-class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
-    func testThatFlatMapErrorPreservesSuccessValue() {
+class DownloadResponseTryMapErrorTestCase: BaseTestCase {
+    func testThatTryMapErrorPreservesSuccessValue() {
         // Given
         let urlString = "https://httpbin.org/get"
         let expectation = self.expectation(description: "request should succeed")
@@ -932,7 +932,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
-    func testThatFlatMapErrorCatchesTransformationError() {
+    func testThatTryMapErrorCatchesTransformationError() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail")
@@ -964,7 +964,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
-    func testThatFlatMapErrorTransformsError() {
+    func testThatTryMapErrorTransformsError() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
         let expectation = self.expectation(description: "request should fail")
@@ -986,7 +986,7 @@ class DownloadResponseFlatMapErrorTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.result.isFailure, true)
-        guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
+        guard let error = response?.error, case TestError.error = error else { XCTFail(); return }
 
         XCTAssertNotNil(response?.metrics)
     }

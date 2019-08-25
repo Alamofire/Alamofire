@@ -111,8 +111,8 @@ public class Request {
         var metrics: [URLSessionTaskMetrics] = []
         /// Number of times any retriers provided retried the `Request`.
         var retryCount = 0
-        /// Final `Error` for the `Request`, whether from various internal Alamofire calls or as a result of a `task`.
-        var error: Error?
+        /// Final `AFError` for the `Request`, whether from various internal Alamofire calls or as a result of a `task`.
+        var error: AFError?
     }
 
     /// Protected `MutableState` value that provides threadsafe access to state values.
@@ -233,7 +233,7 @@ public class Request {
     // MARK: Error
 
     /// `Error` returned from Alamofire internally, from the network request directly, or any validators executed.
-    fileprivate(set) public var error: Error? {
+    fileprivate(set) public var error: AFError? {
         get { return protectedMutableState.directValue.error }
         set { protectedMutableState.write { $0.error = newValue } }
     }
@@ -279,8 +279,8 @@ public class Request {
     ///
     /// - Note: Triggers retry.
     ///
-    /// - Parameter error: `Error` thrown from the failed creation.
-    func didFailToCreateURLRequest(with error: Error) {
+    /// - Parameter error: `AFError` thrown from the failed creation.
+    func didFailToCreateURLRequest(with error: AFError) {
         self.error = error
 
         eventMonitor?.request(self, didFailToCreateURLRequestWithError: error)
@@ -307,8 +307,8 @@ public class Request {
     ///
     /// - Parameters:
     ///   - request: The `URLRequest` the adapter was called with.
-    ///   - error:   The `Error` returned by the `RequestAdapter`.
-    func didFailToAdaptURLRequest(_ request: URLRequest, withError error: Error) {
+    ///   - error:   The `AFError` returned by the `RequestAdapter`.
+    func didFailToAdaptURLRequest(_ request: URLRequest, withError error: AFError) {
         self.error = error
 
         eventMonitor?.request(self, didFailToAdaptURLRequest: request, withError: error)
@@ -397,8 +397,8 @@ public class Request {
     ///
     /// - Parameters:
     ///   - task:  The `URLSessionTask` which failed.
-    ///   - error: The early failure `Error`.
-    func didFailTask(_ task: URLSessionTask, earlyWithError error: Error) {
+    ///   - error: The early failure `AFError`.
+    func didFailTask(_ task: URLSessionTask, earlyWithError error: AFError) {
         self.error = error
 
         // Task will still complete, so didCompleteTask(_:with:) will handle retry.
@@ -411,9 +411,9 @@ public class Request {
     ///
     /// - Parameters:
     ///   - task:  The `URLSessionTask` which completed.
-    ///   - error: The `Error` `task` may have completed with. If `error` has already been set on the instance, this
+    ///   - error: The `AFError` `task` may have completed with. If `error` has already been set on the instance, this
     ///            value is ignored.
-    func didCompleteTask(_ task: URLSessionTask, with error: Error?) {
+    func didCompleteTask(_ task: URLSessionTask, with error: AFError?) {
         self.error = self.error ?? error
         protectedValidators.directValue.forEach { $0() }
 
@@ -434,14 +434,16 @@ public class Request {
     /// Called to determine whether retry will be triggered for the particular error, or whether the instance should
     /// call `finish()`.
     ///
-    /// - Parameter error: The possible `Error` which may trigger retry.
-    func retryOrFinish(error: Error?) {
+    /// - Parameter error: The possible `AFError` which may trigger retry.
+    func retryOrFinish(error: AFError?) {
         guard let error = error, let delegate = delegate else { finish(); return }
 
         delegate.retryResult(for: self, dueTo: error) { retryResult in
             switch retryResult {
-            case .doNotRetry, .doNotRetryWithError:
-                self.finish(error: retryResult.error)
+            case .doNotRetry:
+                self.finish()
+            case .doNotRetryWithError(let retryError):
+                self.finish(error: retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
             case .retry, .retryWithDelay:
                 delegate.retryRequest(self, withDelay: retryResult.delay)
             }
@@ -451,7 +453,7 @@ public class Request {
     /// Finishes this `Request` and starts the response serializers.
     ///
     /// - Parameter error: The possible `Error` with which the instance will finish.
-    func finish(error: Error? = nil) {
+    func finish(error: AFError? = nil) {
         if let error = error { self.error = error }
 
         // Start response handlers
@@ -907,7 +909,7 @@ public protocol RequestDelegate: AnyObject {
     ///   - request:    `Request` which failed.
     ///   - error:      `Error` which produced the failure.
     ///   - completion: Closure taking the `RetryResult` for evaluation.
-    func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
+    func retryResult(for request: Request, dueTo error: AFError, completion: @escaping (RetryResult) -> Void)
 
     /// Asynchronously retry the `Request`.
     ///
@@ -1010,7 +1012,7 @@ public class DataRequest: Request {
 
             let result = validation(self.request, response, self.data)
 
-            if case .failure(let error) = result { self.error = error }
+            if case .failure(let error) = result { self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
 
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,
@@ -1168,7 +1170,7 @@ public class DownloadRequest: Request {
     /// - Parameters:
     ///   - task:   `URLSessionTask` that finished the download.
     ///   - result: `Result` of the automatic move to `destination`.
-    func didFinishDownloading(using task: URLSessionTask, with result: Result<URL, Error>) {
+    func didFinishDownloading(using task: URLSessionTask, with result: Result<URL, AFError>) {
         eventMonitor?.request(self, didFinishDownloadingUsing: task, with: result)
 
         switch result {
@@ -1295,7 +1297,7 @@ public class DownloadRequest: Request {
 
             let result = validation(self.request, response, self.fileURL)
 
-            if case .failure(let error) = result { self.error = error }
+            if case .failure(let error) = result { self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
 
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,
@@ -1381,8 +1383,8 @@ public class UploadRequest: DataRequest {
 
     /// Called when the `Uploadable` value could not be created.
     ///
-    /// - Parameter error: `Error` produced by the failure.
-    func didFailToCreateUploadable(with error: Error) {
+    /// - Parameter error: `AFError` produced by the failure.
+    func didFailToCreateUploadable(with error: AFError) {
         self.error = error
 
         eventMonitor?.request(self, didFailToCreateUploadableWithError: error)

@@ -45,7 +45,7 @@ public enum RetryResult {
     case retryWithDelay(TimeInterval)
     /// Do not retry.
     case doNotRetry
-    /// Do not retry due to the associated `Error`.
+    /// Do not retry due to the associated `AFError`.
     case doNotRetryWithError(Error)
 }
 

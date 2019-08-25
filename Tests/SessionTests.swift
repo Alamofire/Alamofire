@@ -321,9 +321,9 @@ final class SessionTestCase: BaseTestCase {
         let brotliExpectation = expectation(description: "brotli request should complete")
         let gzipExpectation = expectation(description: "gzip request should complete")
         let deflateExpectation = expectation(description: "deflate request should complete")
-        var brotliResponse: DataResponse<Any, Error>?
-        var gzipResponse: DataResponse<Any, Error>?
-        var deflateResponse: DataResponse<Any, Error>?
+        var brotliResponse: DataResponse<Any, AFError>?
+        var gzipResponse: DataResponse<Any, AFError>?
+        var deflateResponse: DataResponse<Any, AFError>?
 
         // When
         AF.request(brotliURL).responseJSON { response in
@@ -391,7 +391,7 @@ final class SessionTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "\(url)")
 
-        var response: DataResponse<Data?, Error>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         let request = session.request(urlRequest)
@@ -408,7 +408,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertTrue(request.isCancelled)
         XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling || request.task?.state == .completed))
 
-        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else {
+        guard let error = request.error, case .explicitlyCancelled = error else {
             XCTFail("Request should have an .explicitlyCancelled error.")
             return
         }
@@ -423,7 +423,7 @@ final class SessionTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "\(url)")
 
-        var response: DataResponse<Data?, Error>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         let request = session.request(urlRequest)
@@ -442,7 +442,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertTrue(request.isCancelled)
         XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling || request.task?.state == .completed))
 
-        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else {
+        guard let error = request.error, case .explicitlyCancelled = error else {
             XCTFail("Request should have an .explicitlyCancelled error.")
             return
         }
@@ -457,7 +457,7 @@ final class SessionTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "\(url)")
 
-        var response: DataResponse<Data?, Error>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         let request = session.request(urlRequest)
@@ -475,7 +475,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertTrue(request.isCancelled)
         XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling || request.task?.state == .completed))
 
-        guard let error = request.error?.asAFError, case .explicitlyCancelled = error else {
+        guard let error = request.error, case .explicitlyCancelled = error else {
             XCTFail("Request should have an .explicitlyCancelled error.")
             return
         }
@@ -530,7 +530,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
         let expectation = self.expectation(description: "Request should fail with error")
 
-        var response: DataResponse<Data?, Error>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         session.request("https://httpbin.org/get/äëïöü").response { resp in
@@ -546,7 +546,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error?.asAFError {
+        if let error = response?.error {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
@@ -559,7 +559,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
         let expectation = self.expectation(description: "Download should fail with error")
 
-        var response: DownloadResponse<URL?, Error>?
+        var response: DownloadResponse<URL?, AFError>?
 
         // When
         session.download("https://httpbin.org/get/äëïöü").response { resp in
@@ -576,7 +576,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error?.asAFError {
+        if let error = response?.error {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
@@ -589,7 +589,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
         let expectation = self.expectation(description: "Upload should fail with error")
 
-        var response: DataResponse<Data?, Error>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         session.upload(Data(), to: "https://httpbin.org/get/äëïöü").response { resp in
@@ -605,7 +605,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error?.asAFError {
+        if let error = response?.error {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
@@ -618,7 +618,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
         let expectation = self.expectation(description: "Upload should fail with error")
 
-        var response: DataResponse<Data?, Error>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         session.upload(URL(fileURLWithPath: "/invalid"), to: "https://httpbin.org/get/äëïöü").response { resp in
@@ -634,7 +634,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error?.asAFError {
+        if let error = response?.error {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
@@ -647,7 +647,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
         let expectation = self.expectation(description: "Upload should fail with error")
 
-        var response: DataResponse<Data?, Error>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         session.upload(InputStream(data: Data()), to: "https://httpbin.org/get/äëïöü").response { resp in
@@ -663,7 +663,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
 
-        if let error = response?.error?.asAFError {
+        if let error = response?.error {
             XCTAssertTrue(error.isInvalidURLError)
             XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
         } else {
@@ -858,7 +858,7 @@ final class SessionTestCase: BaseTestCase {
 
         // Then
         for request in requests {
-            if let error = request.error?.asAFError {
+            if let error = request.error {
                 XCTAssertTrue(error.isRequestAdaptationError)
                 XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
             } else {
@@ -876,7 +876,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password", interceptor: handler)
@@ -909,7 +909,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: sessionHandler)
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password", interceptor: requestHandler)
@@ -948,7 +948,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         session.request("https://httpbin.org/basic-auth/user/password", interceptor: handler)
@@ -982,7 +982,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DownloadResponse<Any, Error>?
+        var response: DownloadResponse<Any, AFError>?
 
         let destination: DownloadRequest.Destination = { _, _ in
             let fileURL = self.testDirectoryURL.appendingPathComponent("test-output.json")
@@ -1017,7 +1017,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         let uploadData = Data("upload data".utf8)
 
@@ -1051,7 +1051,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: handler)
 
         let expectation = self.expectation(description: "request should eventually succeed")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password")
@@ -1084,7 +1084,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password")
@@ -1108,7 +1108,7 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        if let error = response?.result.error?.asAFError {
+        if let error = response?.result.error {
             XCTAssertTrue(error.isRequestAdaptationError)
             XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         } else {
@@ -1125,7 +1125,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password")
@@ -1149,7 +1149,7 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        if let error = response?.result.error?.asAFError {
+        if let error = response?.result.error {
             XCTAssertTrue(error.isRequestAdaptationError)
             XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         } else {
@@ -1165,7 +1165,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(interceptor: handler)
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/basic-auth/user/password")
@@ -1189,7 +1189,7 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        if let error = response?.result.error?.asAFError {
+        if let error = response?.result.error {
             XCTAssertTrue(error.isRequestRetryError)
             XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/invalid/url/2")
         } else {
@@ -1207,7 +1207,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should eventually fail")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
@@ -1231,7 +1231,7 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        if let error = response?.error?.asAFError {
+        if let error = response?.error {
             XCTAssertTrue(error.isResponseSerializationError)
             XCTAssertTrue(error.localizedDescription.starts(with: "JSON could not be serialized"))
         } else {
@@ -1247,10 +1247,10 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let json1Expectation = self.expectation(description: "request should eventually fail")
-        var json1Response: DataResponse<Any, Error>?
+        var json1Response: DataResponse<Any, AFError>?
 
         let json2Expectation = self.expectation(description: "request should eventually fail")
-        var json2Response: DataResponse<Any, Error>?
+        var json2Response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
@@ -1301,10 +1301,10 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let json1Expectation = self.expectation(description: "request should eventually fail")
-        var json1Response: DataResponse<Any, Error>?
+        var json1Response: DataResponse<Any, AFError>?
 
         let json2Expectation = self.expectation(description: "request should eventually fail")
-        var json2Response: DataResponse<Any, Error>?
+        var json2Response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
@@ -1333,7 +1333,7 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
+        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error }
         XCTAssertEqual(errors.count, 2)
 
         for error in errors {
@@ -1356,10 +1356,10 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let json1Expectation = self.expectation(description: "request should eventually fail")
-        var json1Response: DataResponse<Any, Error>?
+        var json1Response: DataResponse<Any, AFError>?
 
         let json2Expectation = self.expectation(description: "request should eventually fail")
-        var json2Response: DataResponse<Any, Error>?
+        var json2Response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/image/jpeg", interceptor: handler)
@@ -1388,7 +1388,7 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
+        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error }
         XCTAssertEqual(errors.count, 2)
 
         for error in errors {
@@ -1411,10 +1411,10 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let json1Expectation = self.expectation(description: "request should eventually fail")
-        var json1Response: DownloadResponse<Any, Error>?
+        var json1Response: DownloadResponse<Any, AFError>?
 
         let json2Expectation = self.expectation(description: "request should eventually fail")
-        var json2Response: DownloadResponse<Any, Error>?
+        var json2Response: DownloadResponse<Any, AFError>?
 
         // When
         let request = session.download("https://httpbin.org/image/jpeg", interceptor: handler)
@@ -1443,7 +1443,7 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
+        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error }
         XCTAssertEqual(errors.count, 2)
 
         for error in errors {
@@ -1462,7 +1462,7 @@ final class SessionTestCase: BaseTestCase {
             invalidationExpectation.fulfill()
         }
         var session: Session? = Session(startRequestsImmediately: false, eventMonitors: [events])
-        var error: Error?
+        var error: AFError?
         let requestExpectation = expectation(description: "request should complete")
 
         // When
@@ -1475,7 +1475,7 @@ final class SessionTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        assertErrorIsAFError(error) { XCTAssertTrue($0.isSessionDeinitializedError) }
+        XCTAssertEqual(error?.isSessionDeinitializedError, true)
     }
 
     // MARK: Tests - Request Cancellation
@@ -1486,7 +1486,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should complete")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
         var completionCallCount = 0
 
         // When
@@ -1525,7 +1525,7 @@ final class SessionTestCase: BaseTestCase {
         let session = Session()
 
         let expectation = self.expectation(description: "request should complete")
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         let request = session.request("https://httpbin.org/get").responseJSON { resp in
@@ -1548,7 +1548,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         // Given
         let count = 100
         let session = Session()
-        var responses: [DataResponse<Data?, Error>] = []
+        var responses: [DataResponse<Data?, AFError>] = []
         let completion = expectation(description: "all requests should finish")
         completion.expectedFulfillmentCount = count
         let cancellation = expectation(description: "cancel all requests should be called")
@@ -1568,7 +1568,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertTrue(responses.allSatisfy { $0.error?.asAFError?.isExplicitlyCancelledError == true })
+        XCTAssertTrue(responses.allSatisfy { $0.error?.isExplicitlyCancelledError == true })
         assert(on: session.rootQueue) {
             XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
             XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
@@ -1580,7 +1580,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         let count = 100
         let session = Session(startRequestsImmediately: false)
         let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
-        var responses: [DataResponse<Data?, Error>] = []
+        var responses: [DataResponse<Data?, AFError>] = []
         let completion = expectation(description: "all requests should finish")
         completion.expectedFulfillmentCount = count
         let cancellation = expectation(description: "cancel all requests should be called")
@@ -1599,7 +1599,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertTrue(responses.allSatisfy { $0.error?.asAFError?.isExplicitlyCancelledError == true })
+        XCTAssertTrue(responses.allSatisfy { $0.error?.isExplicitlyCancelledError == true })
         assert(on: session.rootQueue) {
             XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
             XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
@@ -1633,7 +1633,7 @@ final class SessionCancellationTestCase: BaseTestCase {
             }
         }
 
-        var received: DataResponse<Data?, Error>?
+        var received: DataResponse<Data?, AFError>?
 
         // When
         session.request(request).validate().response { (response) in
@@ -1644,7 +1644,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertTrue(received?.error?.asAFError?.isExplicitlyCancelledError == true)
+        XCTAssertTrue(received?.error?.isExplicitlyCancelledError == true)
         assert(on: session.rootQueue) {
             XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
             XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
@@ -1657,7 +1657,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         var request = URLRequest.makeHTTPBinRequest()
         request.httpBody = Data("invalid".utf8)
         let expect = expectation(description: "request should complete")
-        var response: DataResponse<HTTPBinResponse, Error>?
+        var response: DataResponse<HTTPBinResponse, AFError>?
 
         // When
         session.request(request).responseDecodable(of: HTTPBinResponse.self) { resp in
@@ -1669,7 +1669,7 @@ final class SessionCancellationTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.asAFError?.isBodyDataInGETRequest, true)
+        XCTAssertEqual(response?.error?.isBodyDataInGETRequest, true)
     }
 
     func testThatAdaptedGETRequestsWithBodyDataAreConsideredInvalid() {
@@ -1687,7 +1687,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         let session = Session(interceptor: InvalidAdapter())
         let request = URLRequest.makeHTTPBinRequest()
         let expect = expectation(description: "request should complete")
-        var response: DataResponse<HTTPBinResponse, Error>?
+        var response: DataResponse<HTTPBinResponse, AFError>?
 
         // When
         session.request(request).responseDecodable(of: HTTPBinResponse.self) { resp in
@@ -1699,7 +1699,7 @@ final class SessionCancellationTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertEqual(response?.error?.asAFError?.underlyingError?.asAFError?.isBodyDataInGETRequest, true)
+        XCTAssertEqual(response?.error?.underlyingError?.asAFError?.isBodyDataInGETRequest, true)
     }
 }
 
@@ -1754,7 +1754,7 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should complete successfully")
 
-        var response: DataResponse<Any, Error>?
+        var response: DataResponse<Any, AFError>?
 
         // When
         session.request("https://httpbin.org/headers")

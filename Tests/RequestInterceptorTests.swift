@@ -494,7 +494,7 @@ final class InterceptorTestCase: BaseTestCase {
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
 
         // Then
-        XCTAssertEqual(result, .doNotRetryWithError(RetryError()))
+        XCTAssertEqual(result, RetryResult.doNotRetryWithError(RetryError()))
         XCTAssertTrue(result.error is RetryError)
         XCTAssertFalse(retrier2Called)
     }
