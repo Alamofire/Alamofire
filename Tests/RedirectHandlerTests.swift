@@ -27,7 +27,6 @@ import Foundation
 import XCTest
 
 final class RedirectHandlerTestCase: BaseTestCase {
-
     // MARK: - Properties
 
     private var redirectURLString: String { return "https://www.apple.com/" }

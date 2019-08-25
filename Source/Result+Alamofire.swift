@@ -32,13 +32,13 @@ public typealias AFResult<T> = Result<T, Error>
 extension Result {
     /// Returns the associated value if the result is a success, `nil` otherwise.
     var success: Success? {
-        guard case .success(let value) = self else { return nil }
+        guard case let .success(value) = self else { return nil }
         return value
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
     var failure: Failure? {
-        guard case .failure(let error) = self else { return nil }
+        guard case let .failure(error) = self else { return nil }
         return error
     }
 
@@ -70,13 +70,13 @@ extension Result {
     ///            same failure.
     func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> Result<NewSuccess, Error> {
         switch self {
-        case .success(let value):
+        case let .success(value):
             do {
                 return try .success(transform(value))
             } catch {
                 return .failure(error)
             }
-        case .failure(let error):
+        case let .failure(error):
             return .failure(error)
         }
     }
@@ -96,13 +96,13 @@ extension Result {
     ///            the same success.
     func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> Result<Success, Error> {
         switch self {
-        case .failure(let error):
+        case let .failure(error):
             do {
                 return try .failure(transform(error))
             } catch {
                 return .failure(error)
             }
-        case .success(let value):
+        case let .success(value):
             return .success(value)
         }
     }

@@ -65,10 +65,10 @@ final class JSONParameterEncoderTests: BaseTestCase {
 
         // Then
         let expected = """
-                    {
-                      "property" : "property"
-                    }
-                    """
+        {
+          "property" : "property"
+        }
+        """
         XCTAssertEqual(newRequest.httpBody?.asString, expected)
     }
 
@@ -82,8 +82,8 @@ final class JSONParameterEncoderTests: BaseTestCase {
 
         // Then
         let expected = """
-                    {"property":"property"}
-                    """
+        {"property":"property"}
+        """
         XCTAssertEqual(encoded.httpBody?.asString, expected)
     }
 
@@ -97,10 +97,10 @@ final class JSONParameterEncoderTests: BaseTestCase {
 
         // Then
         let expected = """
-                    {
-                      "property" : "property"
-                    }
-                    """
+        {
+          "property" : "property"
+        }
+        """
         XCTAssertEqual(encoded.httpBody?.asString, expected)
     }
 }
@@ -117,8 +117,8 @@ final class SortedKeysJSONParameterEncoderTests: BaseTestCase {
 
         // Then
         let expected = """
-                    {"a":"a","p":"p","z":"z"}
-                    """
+        {"a":"a","p":"p","z":"z"}
+        """
         XCTAssertEqual(encoded.httpBody?.asString, expected)
     }
 }
@@ -513,7 +513,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Given
         struct DataEncodingError: Error {}
 
-        let encoder = URLEncodedFormEncoder(dataEncoding: .custom({ _ in throw DataEncodingError() }))
+        let encoder = URLEncodedFormEncoder(dataEncoding: .custom { _ in throw DataEncodingError() })
         let parameters = ["data": Data("data".utf8)]
 
         // When
@@ -590,7 +590,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
     func testThatDatesCanBeEncodedAsCustomFormatted() {
         // Given
-        let encoder = URLEncodedFormEncoder(dateEncoding: .custom({ "\($0.timeIntervalSinceReferenceDate)" }))
+        let encoder = URLEncodedFormEncoder(dateEncoding: .custom { "\($0.timeIntervalSinceReferenceDate)" })
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
 
         // When
@@ -604,7 +604,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Given
         struct DateEncodingError: Error {}
 
-        let encoder = URLEncodedFormEncoder(dateEncoding: .custom({ _ in throw DateEncodingError() }))
+        let encoder = URLEncodedFormEncoder(dateEncoding: .custom { _ in throw DateEncodingError() })
         let parameters = ["date": Date(timeIntervalSinceReferenceDate: 123.456)]
 
         // When
@@ -677,7 +677,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
     func testThatKeysCanBeCustomEncoded() {
         // Given
-        let encoder = URLEncodedFormEncoder(keyEncoding: .custom({ _ in "A" }))
+        let encoder = URLEncodedFormEncoder(keyEncoding: .custom { _ in "A" })
         let paramters = ["oneTwoThree": "oneTwoThree"]
 
         // When
@@ -725,7 +725,7 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
 
         // Then
         XCTAssertQueryEqual(result.value,
-                       "uppercase=ABCDEFGHIJKLMNOPQRSTUVWXYZ&numbers=0123456789&lowercase=abcdefghijklmnopqrstuvwxyz")
+                            "uppercase=ABCDEFGHIJKLMNOPQRSTUVWXYZ&numbers=0123456789&lowercase=abcdefghijklmnopqrstuvwxyz")
     }
 
     func testThatReseredCharactersArePercentEscaped() {
@@ -829,30 +829,26 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
     func testThatNonLatinCharactersArePercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
-        let parameters = [
-            "french": "français",
-            "japanese": "日本語",
-            "arabic": "العربية",
-            "emoji": "😃"
-        ]
+        let parameters = ["french": "français",
+                          "japanese": "日本語",
+                          "arabic": "العربية",
+                          "emoji": "😃"]
 
         // When
         let result = Result<String, Error> { try encoder.encode(parameters) }
 
         // Then
-        let expectedParameterValues = [
-            "arabic=%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9",
-            "japanese=%E6%97%A5%E6%9C%AC%E8%AA%9E",
-            "french=fran%C3%A7ais",
-            "emoji=%F0%9F%98%83"
-        ].joined(separator: "&")
+        let expectedParameterValues = ["arabic=%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9",
+                                       "japanese=%E6%97%A5%E6%9C%AC%E8%AA%9E",
+                                       "french=fran%C3%A7ais",
+                                       "emoji=%F0%9F%98%83"].joined(separator: "&")
         XCTAssertQueryEqual(result.value, expectedParameterValues)
     }
 
     func testStringWithThousandsOfChineseCharactersIsPercentEscaped() {
         // Given
         let encoder = URLEncodedFormEncoder()
-        let repeatedCount = 2_000
+        let repeatedCount = 2000
         let parameters = ["chinese": String(repeating: "一二三四五六七八九十", count: repeatedCount)]
 
         // When

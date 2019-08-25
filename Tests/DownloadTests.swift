@@ -33,7 +33,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         let expectation = self.expectation(description: "download should complete")
 
         // When
-        let request = AF.download(urlString).response { (resp) in
+        let request = AF.download(urlString).response { _ in
             expectation.fulfill()
         }
 
@@ -53,7 +53,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         let expectation = self.expectation(description: "download should complete")
 
         // When
-        let request = AF.download(urlString, headers: headers).response { (resp) in
+        let request = AF.download(urlString, headers: headers).response { _ in
             expectation.fulfill()
         }
 
@@ -211,8 +211,7 @@ class DownloadResponseTestCase: BaseTestCase {
             let data = try? Data(contentsOf: fileURL),
             let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
             let json = jsonObject as? [String: Any],
-            let args = json["args"] as? [String: String]
-        {
+            let args = json["args"] as? [String: String] {
             XCTAssertEqual(args["foo"], "bar")
         } else {
             XCTFail("args parameter in JSON should not be nil")
@@ -249,8 +248,7 @@ class DownloadResponseTestCase: BaseTestCase {
             let data = try? Data(contentsOf: fileURL),
             let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
             let json = jsonObject as? [String: Any],
-            let headers = json["headers"] as? [String: String]
-        {
+            let headers = json["headers"] as? [String: String] {
             XCTAssertEqual(headers["Authorization"], "123456")
         } else {
             XCTFail("headers parameter in JSON should not be nil")
@@ -265,7 +263,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
+        AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, []) })
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -295,7 +293,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.createIntermediateDirectories])})
+        AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.createIntermediateDirectories]) })
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -324,7 +322,7 @@ class DownloadResponseTestCase: BaseTestCase {
             var response: DownloadResponse<URL?, AFError>?
 
             // When
-            AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [])})
+            AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, []) })
                 .response { resp in
                     response = resp
                     expectation.fulfill()
@@ -362,7 +360,7 @@ class DownloadResponseTestCase: BaseTestCase {
         var response: DownloadResponse<URL?, AFError>?
 
         // When
-        AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile, .createIntermediateDirectories])})
+        AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, [.removePreviousFile, .createIntermediateDirectories]) })
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -405,28 +403,28 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 
         var wroteData = false
 
-        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
-        eventMonitor.requestDidCreateInitialURLRequest = { (_, _) in didCreateInitialURLRequest.fulfill() }
-        eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
-        eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
-        eventMonitor.requestDidGatherMetrics = { (_, _) in didGatherMetrics.fulfill() }
-        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in didComplete.fulfill() }
-        eventMonitor.downloadTaskDidWriteData = { (_, _, _, _, _) in
+        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateInitialURLRequest.fulfill() }
+        eventMonitor.requestDidCreateURLRequest = { _, _ in didCreateURLRequest.fulfill() }
+        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
+        eventMonitor.downloadTaskDidWriteData = { _, _, _, _, _ in
             guard !wroteData else { return }
 
             wroteData = true
             didWriteData.fulfill()
         }
-        eventMonitor.downloadTaskDidFinishDownloadingToURL = { (_, _, _) in didFinishDownloading.fulfill() }
-        eventMonitor.requestDidFinishDownloadingUsingTaskWithResult = { (_, _, _) in didFinishWithResult.fulfill() }
-        eventMonitor.requestDidCreateDestinationURL = { (_, _) in didCreate.fulfill() }
-        eventMonitor.requestDidFinish = { (_) in didFinish.fulfill() }
-        eventMonitor.requestDidResume = { (_) in didResume.fulfill() }
-        eventMonitor.requestDidResumeTask = { (_, _) in didResumeTask.fulfill() }
-        eventMonitor.requestDidParseDownloadResponse = { (_, _) in didParseResponse.fulfill() }
+        eventMonitor.downloadTaskDidFinishDownloadingToURL = { _, _, _ in didFinishDownloading.fulfill() }
+        eventMonitor.requestDidFinishDownloadingUsingTaskWithResult = { _, _, _ in didFinishWithResult.fulfill() }
+        eventMonitor.requestDidCreateDestinationURL = { _, _ in didCreate.fulfill() }
+        eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
+        eventMonitor.requestDidResume = { _ in didResume.fulfill() }
+        eventMonitor.requestDidResumeTask = { _, _ in didResumeTask.fulfill() }
+        eventMonitor.requestDidParseDownloadResponse = { _, _ in didParseResponse.fulfill() }
 
         // When
-        let request = session.download(URLRequest.makeHTTPBinRequest()).response { response in
+        let request = session.download(URLRequest.makeHTTPBinRequest()).response { _ in
             responseHandler.fulfill()
         }
 
@@ -455,24 +453,24 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
         let didCancelTask = expectation(description: "didCancelTask should fire")
         let responseHandler = expectation(description: "responseHandler should fire")
 
-        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
-        eventMonitor.requestDidCreateInitialURLRequest = { (_, _) in didCreateInitialURLRequest.fulfill() }
-        eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
-        eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
-        eventMonitor.requestDidGatherMetrics = { (_, _) in didGatherMetrics.fulfill() }
-        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in didComplete.fulfill() }
-        eventMonitor.requestDidFinish = { (_) in didFinish.fulfill() }
-        eventMonitor.requestDidResume = { (_) in didResume.fulfill() }
-        eventMonitor.requestDidParseDownloadResponse = { (_, _) in didParseResponse.fulfill() }
-        eventMonitor.requestDidCancel = { (_) in didCancel.fulfill() }
-        eventMonitor.requestDidCancelTask = { (_, _) in didCancelTask.fulfill() }
+        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateInitialURLRequest.fulfill() }
+        eventMonitor.requestDidCreateURLRequest = { _, _ in didCreateURLRequest.fulfill() }
+        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
+        eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
+        eventMonitor.requestDidResume = { _ in didResume.fulfill() }
+        eventMonitor.requestDidParseDownloadResponse = { _, _ in didParseResponse.fulfill() }
+        eventMonitor.requestDidCancel = { _ in didCancel.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in didCancelTask.fulfill() }
 
         // When
-        let request = session.download(URLRequest.makeHTTPBinRequest()).response { response in
+        let request = session.download(URLRequest.makeHTTPBinRequest()).response { _ in
             responseHandler.fulfill()
         }
 
-        eventMonitor.requestDidResumeTask = { (_, _) in
+        eventMonitor.requestDidResumeTask = { _, _ in
             request.cancel()
             didResumeTask.fulfill()
         }
@@ -600,7 +598,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
     func testThatCancelledDownloadCanBeResumedWithResumeData() {
         // Given
-        let expectation1 = self.expectation(description: "Download should be cancelled")
+        let expectation1 = expectation(description: "Download should be cancelled")
         var cancelled = false
 
         var response1: DownloadResponse<Data, AFError>?
@@ -627,7 +625,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
             return
         }
 
-        let expectation2 = self.expectation(description: "Download should complete")
+        let expectation2 = expectation(description: "Download should complete")
 
         var progressValues: [Double] = []
         var response2: DownloadResponse<Data, AFError>?
@@ -711,7 +709,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.map { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the map function
-                return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
+                ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
             }
 
             expectation.fulfill()
@@ -769,7 +767,7 @@ class DownloadResponseTryMapTestCase: BaseTestCase {
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.tryMap { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the map function
-                return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
+                ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
             }
 
             expectation.fulfill()
@@ -798,7 +796,7 @@ class DownloadResponseTryMapTestCase: BaseTestCase {
 
         // When
         AF.download(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
-            response = resp.tryMap { json in
+            response = resp.tryMap { _ in
                 throw TransformError()
             }
 
@@ -858,7 +856,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         // When
         AF.download(urlString).responseJSON { resp in
             response = resp.mapError { error in
-                return TestError.error(error: error)
+                TestError.error(error: error)
             }
 
             expectation.fulfill()

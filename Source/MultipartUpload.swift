@@ -41,7 +41,7 @@ final class MultipartUpload {
         self.isInBackgroundSession = isInBackgroundSession
         self.encodingMemoryThreshold = encodingMemoryThreshold
         self.request = request
-        self.fileManager =  multipartFormData.fileManager
+        fileManager = multipartFormData.fileManager
         self.multipartFormData = multipartFormData
     }
 

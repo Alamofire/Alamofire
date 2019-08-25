@@ -27,7 +27,6 @@ import Foundation
 import XCTest
 
 class BaseRetryPolicyTestCase: BaseTestCase {
-
     // MARK: Helper Types
 
     class StubRequest: DataRequest {
@@ -40,24 +39,20 @@ class BaseRetryPolicyTestCase: BaseTestCase {
         init(_ url: URL, method: HTTPMethod, response: HTTPURLResponse?, session: Session) {
             mockedResponse = response
 
-            let request = Session.RequestConvertible(
-                url: url,
-                method: method,
-                parameters: nil,
-                encoding: URLEncoding.default,
-                headers: nil
-            )
+            let request = Session.RequestConvertible(url: url,
+                                                     method: method,
+                                                     parameters: nil,
+                                                     encoding: URLEncoding.default,
+                                                     headers: nil)
 
             urlRequest = try! request.asURLRequest()
 
-            super.init(
-                convertible: request,
-                underlyingQueue: session.rootQueue,
-                serializationQueue: session.serializationQueue,
-                eventMonitor: session.eventMonitor,
-                interceptor: nil,
-                delegate: session
-            )
+            super.init(convertible: request,
+                       underlyingQueue: session.rootQueue,
+                       serializationQueue: session.serializationQueue,
+                       eventMonitor: session.eventMonitor,
+                       interceptor: nil,
+                       delegate: session)
         }
     }
 
@@ -76,59 +71,55 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 
     let retryableStatusCodes: Set<Int> = [408, 500, 502, 503, 504]
 
-    let retryableErrorCodes: Set<URLError.Code> = [
-        .backgroundSessionInUseByAnotherProcess,
-        .backgroundSessionWasDisconnected,
-        .badServerResponse,
-        .callIsActive,
-        .cannotConnectToHost,
-        .cannotFindHost,
-        .cannotLoadFromNetwork,
-        .dataNotAllowed,
-        .dnsLookupFailed,
-        .downloadDecodingFailedMidStream,
-        .downloadDecodingFailedToComplete,
-        .internationalRoamingOff,
-        .networkConnectionLost,
-        .notConnectedToInternet,
-        .secureConnectionFailed,
-        .serverCertificateHasBadDate,
-        .serverCertificateNotYetValid,
-        .timedOut
-    ]
+    let retryableErrorCodes: Set<URLError.Code> = [.backgroundSessionInUseByAnotherProcess,
+                                                   .backgroundSessionWasDisconnected,
+                                                   .badServerResponse,
+                                                   .callIsActive,
+                                                   .cannotConnectToHost,
+                                                   .cannotFindHost,
+                                                   .cannotLoadFromNetwork,
+                                                   .dataNotAllowed,
+                                                   .dnsLookupFailed,
+                                                   .downloadDecodingFailedMidStream,
+                                                   .downloadDecodingFailedToComplete,
+                                                   .internationalRoamingOff,
+                                                   .networkConnectionLost,
+                                                   .notConnectedToInternet,
+                                                   .secureConnectionFailed,
+                                                   .serverCertificateHasBadDate,
+                                                   .serverCertificateNotYetValid,
+                                                   .timedOut]
 
-    let nonRetryableErrorCodes: Set<URLError.Code> = [
-        .appTransportSecurityRequiresSecureConnection,
-        .backgroundSessionRequiresSharedContainer,
-        .badURL,
-        .cancelled,
-        .cannotCloseFile,
-        .cannotCreateFile,
-        .cannotDecodeContentData,
-        .cannotDecodeRawData,
-        .cannotMoveFile,
-        .cannotOpenFile,
-        .cannotParseResponse,
-        .cannotRemoveFile,
-        .cannotWriteToFile,
-        .clientCertificateRejected,
-        .clientCertificateRequired,
-        .dataLengthExceedsMaximum,
-        .fileDoesNotExist,
-        .fileIsDirectory,
-        .httpTooManyRedirects,
-        .noPermissionsToReadFile,
-        .redirectToNonExistentLocation,
-        .requestBodyStreamExhausted,
-        .resourceUnavailable,
-        .serverCertificateHasUnknownRoot,
-        .serverCertificateUntrusted,
-        .unknown,
-        .unsupportedURL,
-        .userAuthenticationRequired,
-        .userCancelledAuthentication,
-        .zeroByteResource
-    ]
+    let nonRetryableErrorCodes: Set<URLError.Code> = [.appTransportSecurityRequiresSecureConnection,
+                                                      .backgroundSessionRequiresSharedContainer,
+                                                      .badURL,
+                                                      .cancelled,
+                                                      .cannotCloseFile,
+                                                      .cannotCreateFile,
+                                                      .cannotDecodeContentData,
+                                                      .cannotDecodeRawData,
+                                                      .cannotMoveFile,
+                                                      .cannotOpenFile,
+                                                      .cannotParseResponse,
+                                                      .cannotRemoveFile,
+                                                      .cannotWriteToFile,
+                                                      .clientCertificateRejected,
+                                                      .clientCertificateRequired,
+                                                      .dataLengthExceedsMaximum,
+                                                      .fileDoesNotExist,
+                                                      .fileIsDirectory,
+                                                      .httpTooManyRedirects,
+                                                      .noPermissionsToReadFile,
+                                                      .redirectToNonExistentLocation,
+                                                      .requestBodyStreamExhausted,
+                                                      .resourceUnavailable,
+                                                      .serverCertificateHasUnknownRoot,
+                                                      .serverCertificateUntrusted,
+                                                      .unknown,
+                                                      .unsupportedURL,
+                                                      .userAuthenticationRequired,
+                                                      .userCancelledAuthentication,
+                                                      .zeroByteResource]
 
     var errorCodes: Set<URLError.Code> {
         return retryableErrorCodes.union(nonRetryableErrorCodes)
@@ -138,7 +129,6 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 // MARK: -
 
 class RetryPolicyTestCase: BaseRetryPolicyTestCase {
-
     // MARK: Tests - Retry
 
     func testThatRetryPolicyRetriesRequestsBelowRetryLimit() {
@@ -272,10 +262,8 @@ class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         let retryPolicy = RetryPolicy()
         let request = self.request(method: .get)
 
-        let errors: [Error] = [
-            resourceUnavailableError,
-            unknownError
-        ]
+        let errors: [Error] = [resourceUnavailableError,
+                               unknownError]
 
         var results: [RetryResult] = []
 
@@ -385,12 +373,10 @@ class ConnectionLostRetryPolicyTestCase: BaseRetryPolicyTestCase {
 
     func testThatConnectionLostRetryPolicyCanBeInitializedWithCustomValues() {
         // Given, When
-        let retryPolicy = ConnectionLostRetryPolicy(
-            retryLimit: 3,
-            exponentialBackoffBase: 4,
-            exponentialBackoffScale: 0.25,
-            retryableHTTPMethods: [.delete, .get]
-        )
+        let retryPolicy = ConnectionLostRetryPolicy(retryLimit: 3,
+                                                    exponentialBackoffBase: 4,
+                                                    exponentialBackoffScale: 0.25,
+                                                    retryableHTTPMethods: [.delete, .get])
 
         // Then
         XCTAssertEqual(retryPolicy.retryLimit, 3)

@@ -27,7 +27,6 @@ import Foundation
 import XCTest
 
 final class DataResponseSerializationTestCase: BaseTestCase {
-
     // MARK: Properties
 
     private let error = AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
@@ -667,7 +666,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
         XCTAssertNil(result.error)
     }
 
-   func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyTypeAndEmptyResponseStatusCode() {
+    func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyTypeAndEmptyResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
         let response = HTTPURLResponse(statusCode: 204)
@@ -764,7 +763,6 @@ final class DecodableResponseSerializerTests: BaseTestCase {
 // MARK: -
 
 final class DownloadResponseSerializationTestCase: BaseTestCase {
-
     // MARK: Properties
 
     private let error = AFError.responseSerializationFailed(reason: .inputFileNil)
@@ -1260,7 +1258,7 @@ final class CustomResponseSerializerTests: BaseTestCase {
         var data: Data?
 
         // When
-        AF.request(URLRequest.makeHTTPBinRequest()).response(responseSerializer: serializer) { (response) in
+        AF.request(URLRequest.makeHTTPBinRequest()).response(responseSerializer: serializer) { response in
             data = response.data
             expectation.fulfill()
         }
@@ -1280,7 +1278,7 @@ final class DataPreprocessorSerializationTests: BaseTestCase {
     }
 
     struct Throwing: DataPreprocessor {
-        struct Error: Swift.Error { }
+        struct Error: Swift.Error {}
 
         func preprocess(_ data: Data) throws -> Data {
             throw Error()

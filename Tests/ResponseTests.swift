@@ -251,8 +251,7 @@ class ResponseJSONTestCase: BaseTestCase {
 
         if
             let responseDictionary = response?.result.value as? [String: Any],
-            let args = responseDictionary["args"] as? [String: String]
-        {
+            let args = responseDictionary["args"] as? [String: String] {
             XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
         } else {
             XCTFail("args should not be nil")
@@ -284,8 +283,7 @@ class ResponseJSONTestCase: BaseTestCase {
 
         if
             let responseDictionary = response?.result.value as? [String: Any],
-            let form = responseDictionary["form"] as? [String: String]
-        {
+            let form = responseDictionary["form"] as? [String: String] {
             XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
         } else {
             XCTFail("form should not be nil")
@@ -380,7 +378,7 @@ class ResponseMapTestCase: BaseTestCase {
         AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.map { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the map function
-                return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
+                ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
             }
 
             expectation.fulfill()
@@ -435,7 +433,7 @@ class ResponseTryMapTestCase: BaseTestCase {
         AF.request(urlString, parameters: ["foo": "bar"]).responseJSON { resp in
             response = resp.tryMap { json in
                 // json["args"]["foo"] is "bar": use this invariant to test the tryMap function
-                return ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
+                ((json as? [String: Any])?["args"] as? [String: Any])?["foo"] as? String ?? "invalid"
             }
 
             expectation.fulfill()
@@ -463,7 +461,7 @@ class ResponseTryMapTestCase: BaseTestCase {
 
         // When
         AF.request(urlString, parameters: ["foo": "bar"]).responseData { resp in
-            response = resp.tryMap { json in
+            response = resp.tryMap { _ in
                 throw TransformError()
             }
 
@@ -536,7 +534,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
         // When
         AF.request(urlString).responseJSON { resp in
             response = resp.mapError { error in
-                return TestError.error(error: error)
+                TestError.error(error: error)
             }
 
             expectation.fulfill()

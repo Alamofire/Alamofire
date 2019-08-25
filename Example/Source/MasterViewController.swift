@@ -26,12 +26,11 @@ import Alamofire
 import UIKit
 
 class MasterViewController: UITableViewController {
-
     // MARK: - Properties
 
-    @IBOutlet weak var titleImageView: UIImageView!
+    @IBOutlet var titleImageView: UIImageView!
 
-    var detailViewController: DetailViewController? = nil
+    var detailViewController: DetailViewController?
     var objects = NSMutableArray()
 
     private var reachability: NetworkReachabilityManager!
@@ -52,8 +51,7 @@ class MasterViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if
             let navigationController = segue.destination as? UINavigationController,
-            let detailViewController = navigationController.topViewController as? DetailViewController
-        {
+            let detailViewController = navigationController.topViewController as? DetailViewController {
             func requestForSegue(_ segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier! {
                 case "GET":
@@ -70,10 +68,8 @@ class MasterViewController: UITableViewController {
                     return AF.request("https://httpbin.org/delete", method: .delete)
                 case "DOWNLOAD":
                     detailViewController.segueIdentifier = "DOWNLOAD"
-                    let destination = DownloadRequest.suggestedDownloadDestination(
-                        for: .cachesDirectory,
-                        in: .userDomainMask
-                    )
+                    let destination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory,
+                                                                                   in: .userDomainMask)
                     return AF.download("https://httpbin.org/stream/1", to: destination)
                 default:
                     return nil
