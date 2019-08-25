@@ -22,12 +22,12 @@
 //  THE SOFTWARE.
 //
 
-#if !os(watchOS)
+#if !(os(watchOS) || os(Linux))
 
 import Foundation
 import SystemConfiguration
 
-/// The `NetworkReachabilityManager` class listens for reachability changes of hosts and addresses for both WWAN and
+/// The `NetworkReachabilityManager` class listens for reachability changes of hosts and addresses for both cellular and
 /// WiFi network interfaces.
 ///
 /// Reachability can be used to determine background information about why a network operation failed, or to retry
@@ -42,65 +42,86 @@ open class NetworkReachabilityManager {
         case notReachable
         /// The network is reachable on the associated `ConnectionType`.
         case reachable(ConnectionType)
-    }
 
-    /// Defines the various connection types detected by reachability flags.
-    public enum ConnectionType {
-        /// The connection type is either over Ethernet or WiFi.
-        case ethernetOrWiFi
-        /// The connection type is a WWAN connection.
-        case wwan
+        init(_ flags: SCNetworkReachabilityFlags) {
+            guard flags.isActuallyReachable else { self = .notReachable; return }
+
+            var networkStatus: NetworkReachabilityStatus = .reachable(.ethernetOrWiFi)
+
+            if flags.isCellular { networkStatus = .reachable(.cellular) }
+
+            self = networkStatus
+        }
+
+        /// Defines the various connection types detected by reachability flags.
+        public enum ConnectionType {
+            /// The connection type is either over Ethernet or WiFi.
+            case ethernetOrWiFi
+            /// The connection type is a cellular connection.
+            case cellular
+        }
     }
 
     /// A closure executed when the network reachability status changes. The closure takes a single argument: the
     /// network reachability status.
     public typealias Listener = (NetworkReachabilityStatus) -> Void
 
+    /// Default `NetworkReachabilityManager` for the zero address and a `listenerQueue` of `.main`.
+    public static let `default` = NetworkReachabilityManager()
+
     // MARK: - Properties
 
     /// Whether the network is currently reachable.
-    open var isReachable: Bool { return isReachableOnWWAN || isReachableOnEthernetOrWiFi }
+    open var isReachable: Bool { return isReachableOnCellular || isReachableOnEthernetOrWiFi }
 
-    /// Whether the network is currently reachable over the WWAN interface.
-    open var isReachableOnWWAN: Bool { return networkReachabilityStatus == .reachable(.wwan) }
+    /// Whether the network is currently reachable over the cellular interface.
+    ///
+    /// - Note: Using this property to decide whether to make a high or low bandwidth request is not recommended.
+    ///         Instead, set the `allowsCellularAccess` on any `URLRequest`s being issued.
+    ///
+    open var isReachableOnCellular: Bool { return status == .reachable(.cellular) }
 
     /// Whether the network is currently reachable over Ethernet or WiFi interface.
-    open var isReachableOnEthernetOrWiFi: Bool { return networkReachabilityStatus == .reachable(.ethernetOrWiFi) }
+    open var isReachableOnEthernetOrWiFi: Bool { return status == .reachable(.ethernetOrWiFi) }
 
-    /// The current network reachability status.
-    open var networkReachabilityStatus: NetworkReachabilityStatus {
-        guard let flags = self.flags else { return .unknown }
-        return networkReachabilityStatusForFlags(flags)
-    }
-
-    /// The dispatch queue to execute the `listener` closure on.
-    open var listenerQueue: DispatchQueue = DispatchQueue.main
-
-    /// A closure executed when the network reachability status changes.
-    open var listener: Listener?
+    /// `DispatchQueue` on which reachability will update.
+    public let reachabilityQueue = DispatchQueue(label: "org.alamofire.reachabilityQueue")
 
     /// Flags of the current reachability type, if any.
     open var flags: SCNetworkReachabilityFlags? {
         var flags = SCNetworkReachabilityFlags()
 
-        if SCNetworkReachabilityGetFlags(reachability, &flags) {
-            return flags
-        }
-
-        return nil
+        return (SCNetworkReachabilityGetFlags(reachability, &flags)) ? flags : nil
     }
 
+    /// The current network reachability status.
+    open var status: NetworkReachabilityStatus {
+        return flags.map(NetworkReachabilityStatus.init) ?? .unknown
+    }
+
+    /// A closure executed when the network reachability status changes.
+    private var listener: Listener?
+    
+    /// `DispatchQueue` on which listeners will be called.
+    private var listenerQueue: DispatchQueue?
+
+    /// `SCNetworkReachability` instance providing notifications.
     private let reachability: SCNetworkReachability
-    /// Reachability flags of the previous reachability state.
-    open var previousFlags: SCNetworkReachabilityFlags
+    
+    /// Protected storage for the previous status.
+    private let previousStatus = Protector<NetworkReachabilityStatus?>(nil)
 
     // MARK: - Initialization
 
     /// Creates an instance with the specified host.
     ///
-    /// - Parameter host: Host used to evaluate network reachability. Must not include the scheme (i.e. `https`).
+    /// - Note: The `host` value must *not* contain a scheme, just the hostname.
+    ///
+    /// - Parameters:
+    ///   - host:          Host used to evaluate network reachability. Must *not* include the scheme (e.g. `https`).
     public convenience init?(host: String) {
         guard let reachability = SCNetworkReachabilityCreateWithName(nil, host) else { return nil }
+
         self.init(reachability: reachability)
     }
 
@@ -109,24 +130,17 @@ open class NetworkReachabilityManager {
     /// Reachability treats the 0.0.0.0 address as a special token that causes it to monitor the general routing
     /// status of the device, both IPv4 and IPv6.
     public convenience init?() {
-        var address = sockaddr_in()
-        address.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
-        address.sin_family = sa_family_t(AF_INET)
+        var zero = sockaddr()
+        zero.sa_len = UInt8(MemoryLayout<sockaddr>.size)
+        zero.sa_family = sa_family_t(AF_INET)
 
-        guard let reachability = withUnsafePointer(to: &address, { pointer in
-            return pointer.withMemoryRebound(to: sockaddr.self, capacity: MemoryLayout<sockaddr>.size) {
-                return SCNetworkReachabilityCreateWithAddress(nil, $0)
-            }
-        }) else { return nil }
+        guard let reachability = SCNetworkReachabilityCreateWithAddress(nil, &zero) else { return nil }
 
         self.init(reachability: reachability)
     }
 
     private init(reachability: SCNetworkReachability) {
         self.reachability = reachability
-
-        // Set the previous flags to an unreserved value to represent unknown status
-        self.previousFlags = SCNetworkReachabilityFlags(rawValue: 1 << 30)
     }
 
     deinit {
@@ -137,87 +151,107 @@ open class NetworkReachabilityManager {
 
     /// Starts listening for changes in network reachability status.
     ///
+    /// - Note: Stops and removes any existing listener.
+    ///
+    /// - Parameters:
+    ///   - queue:    `DispatchQueue` on which to call the `listener` closure. `.main` by default.
+    ///   - listener: `Listener` closure called when reachability changes.
+    ///
     /// - Returns: `true` if listening was started successfully, `false` otherwise.
     @discardableResult
-    open func startListening() -> Bool {
-        var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
-        context.info = Unmanaged.passUnretained(self).toOpaque()
+    open func startListening(onQueue queue: DispatchQueue = .main,
+                             onUpdatePerforming listener: @escaping Listener) -> Bool {
+        stopListening()
 
-        let callbackEnabled = SCNetworkReachabilitySetCallback(
-            reachability,
-            { (_, flags, info) in
-                let reachability = Unmanaged<NetworkReachabilityManager>.fromOpaque(info!).takeUnretainedValue()
-                reachability.notifyListener(flags)
-            },
-            &context
-        )
+        listenerQueue = queue
+        self.listener = listener
 
-        let queueEnabled = SCNetworkReachabilitySetDispatchQueue(reachability, listenerQueue)
+        var context = SCNetworkReachabilityContext(version: 0,
+                                                   info: Unmanaged.passRetained(self).toOpaque(),
+                                                   retain: nil,
+                                                   release: nil,
+                                                   copyDescription: nil)
+        let callback: SCNetworkReachabilityCallBack = { (target, flags, info) in
+            guard let info = info else { return }
 
-        listenerQueue.async {
-            guard let flags = self.flags else { return }
-            self.notifyListener(flags)
+            let instance = Unmanaged<NetworkReachabilityManager>.fromOpaque(info).takeUnretainedValue()
+            instance.notifyListener(flags)
         }
 
-        return callbackEnabled && queueEnabled
+        let queueAdded = SCNetworkReachabilitySetDispatchQueue(reachability, reachabilityQueue)
+        let callbackAdded = SCNetworkReachabilitySetCallback(reachability, callback, &context)
+
+        // Manually call listener to give initial state, since the framework may not.
+        if let currentFlags = flags {
+            reachabilityQueue.async {
+                self.notifyListener(currentFlags)
+            }
+        }
+
+        return callbackAdded && queueAdded
     }
 
     /// Stops listening for changes in network reachability status.
     open func stopListening() {
         SCNetworkReachabilitySetCallback(reachability, nil, nil)
         SCNetworkReachabilitySetDispatchQueue(reachability, nil)
+        previousStatus.write { $0 = nil }
+        listenerQueue = nil
+        listener = nil
     }
 
     // MARK: - Internal - Listener Notification
-
+    
+    /// Calls the `listener` closure of the `listenerQueue` if the computed status hasn't changed.
+    ///
+    /// - Note: Should only be called from the `reachabilityQueue`.
+    ///
+    /// - Parameter flags: `SCNetworkReachabilityFlags` to use to calculate the status.
     func notifyListener(_ flags: SCNetworkReachabilityFlags) {
-        guard previousFlags != flags else { return }
-        previousFlags = flags
+        let newStatus = NetworkReachabilityStatus(flags)
 
-        listener?(networkReachabilityStatusForFlags(flags))
-    }
-
-    // MARK: - Internal - Network Reachability Status
-
-    func networkReachabilityStatusForFlags(_ flags: SCNetworkReachabilityFlags) -> NetworkReachabilityStatus {
-        guard isNetworkReachable(with: flags) else { return .notReachable }
-
-        var networkStatus: NetworkReachabilityStatus = .reachable(.ethernetOrWiFi)
-
-    #if os(iOS)
-        if flags.contains(.isWWAN) { networkStatus = .reachable(.wwan) }
-    #endif
-
-        return networkStatus
-    }
-
-    func isNetworkReachable(with flags: SCNetworkReachabilityFlags) -> Bool {
-        let isReachable = flags.contains(.reachable)
-        let needsConnection = flags.contains(.connectionRequired)
-        let canConnectAutomatically = flags.contains(.connectionOnDemand) || flags.contains(.connectionOnTraffic)
-        let canConnectWithoutUserInteraction = canConnectAutomatically && !flags.contains(.interventionRequired)
-
-        return isReachable && (!needsConnection || canConnectWithoutUserInteraction)
+        previousStatus.write { previousStatus in
+            guard previousStatus != newStatus else { return }
+            
+            previousStatus = newStatus
+            
+            listenerQueue?.async { self.listener?(newStatus) }
+        }
     }
 }
 
 // MARK: -
 
-extension NetworkReachabilityManager.NetworkReachabilityStatus: Equatable {
-    public static func ==(
-        lhs: NetworkReachabilityManager.NetworkReachabilityStatus,
-        rhs: NetworkReachabilityManager.NetworkReachabilityStatus)
-        -> Bool
-    {
-        switch (lhs, rhs) {
-        case (.unknown, .unknown), (.notReachable, .notReachable):
-            return true
-        case let (.reachable(lhsConnectionType), .reachable(rhsConnectionType)):
-            return lhsConnectionType == rhsConnectionType
-        default:
-            return false
-        }
+extension NetworkReachabilityManager.NetworkReachabilityStatus: Equatable { }
+
+extension SCNetworkReachabilityFlags {
+    var isReachable: Bool { return contains(.reachable) }
+    var isConnectionRequired: Bool { return contains(.connectionRequired) }
+    var canConnectAutomatically: Bool { return contains(.connectionOnDemand) || contains(.connectionOnTraffic) }
+    var canConnectWithoutUserInteraction: Bool { return canConnectAutomatically && !contains(.interventionRequired) }
+    var isActuallyReachable: Bool { return isReachable && (!isConnectionRequired || canConnectWithoutUserInteraction) }
+    var isCellular: Bool {
+        #if os(iOS) || os(tvOS)
+        return contains(.isWWAN)
+        #else
+        return false
+        #endif
+    }
+
+    /// Human readable `String` for all states, to help with debugging.
+    var readableDescription: String {
+        let W = isCellular ? "W" : "-"
+        let R = isReachable ? "R" : "-"
+        let c = isConnectionRequired ? "c" : "-"
+        let t = contains(.transientConnection) ? "t" : "-"
+        let i = contains(.interventionRequired) ? "i" : "-"
+        let C = contains(.connectionOnTraffic) ? "C" : "-"
+        let D = contains(.connectionOnDemand) ? "D" : "-"
+        let l = contains(.isLocalAddress) ? "l" : "-"
+        let d = contains(.isDirect) ? "d" : "-"
+        let a = contains(.connectionAutomatic) ? "a" : "-"
+
+        return "\(W)\(R) \(c)\(t)\(i)\(C)\(D)\(l)\(d)\(a)"
     }
 }
-
 #endif

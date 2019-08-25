@@ -83,7 +83,7 @@ public protocol RequestRetrier {
     ///   - request:    `Request` that failed due to the provided `Error`.
     ///   - session:    `Session` that produced the `Request`.
     ///   - error:      `Error` encountered while executing the `Request`.
-    ///   - completion: Completion closure to be executed when a retry decision has been deterined.
+    ///   - completion: Completion closure to be executed when a retry decision has been determined.
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
 }
 
