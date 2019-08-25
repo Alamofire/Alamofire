@@ -170,6 +170,7 @@ public enum AFError: Error {
 
     /// The underlying reason the `.urlRequestValidationFailed`
     public enum URLRequestValidationFailureReason {
+        /// URLRequest with GET method had body data.
         case bodyDataInGETRequest(Data)
     }
 
