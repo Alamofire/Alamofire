@@ -932,10 +932,8 @@ open class Session {
                 task.suspend()
                 rootQueue.async { request.didSuspendTask(task) }
             case (_, .cancelled):
-                // Resume to ensure metrics are gathered.
-                task.resume()
-                task.cancel()
-                rootQueue.async { request.didCancelTask(task) }
+                // Do nothing
+                break
             case (_, .finished):
                 // Do nothing
                 break
