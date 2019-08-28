@@ -526,7 +526,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     }
 
 #if os(macOS)
-    func testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
+    func disabled_testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
         let manager: Session = {
             let identifier = "org.alamofire.uploadtests.\(UUID().uuidString)"

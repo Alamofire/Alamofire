@@ -1669,7 +1669,7 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
         executeAuthorizationHeaderTest(for: .ephemeral)
     }
 #if os(macOS)
-    func testThatBackgroundConfigurationHeadersAreSentWithRequest() {
+    func disabled_testThatBackgroundConfigurationHeadersAreSentWithRequest() {
         // Given, When, Then
         executeAuthorizationHeaderTest(for: .background)
     }
