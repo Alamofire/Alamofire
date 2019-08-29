@@ -86,9 +86,11 @@ class CacheTestCase: BaseTestCase {
 
         urlCache = {
             let capacity = 50 * 1024 * 1024 // MBs
-            let urlCache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
-
-            return urlCache
+            if #available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
+                return URLCache(memoryCapacity: capacity, diskCapacity: capacity)
+            } else {
+                return URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
+            }
         }()
 
         manager = {
