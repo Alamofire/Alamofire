@@ -6,10 +6,10 @@ Alamofire provides an elegant and composable interface to HTTP network requests.
 Additionally, networking in Alamofire (and the URL Loading System in general) is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
 
 #### Aside: The `AF` Namespace
-Previous versions of Alamofire's documentation used examples like `Alamofire.request()`. This API, while it appeared to require the `Alamofire` prefix, in fact worked fine without it. The `request` method and other functions were available globally in any file with `import Alamofire`. Starting in Alamofire 5, this functionality has been moved out of the global [namespace](https://en.wikipedia.org/wiki/Namespace) and into the `AF` enumeration, which acts as a namespace. This allows Alamofire to offer the same convenience functionality while not having to pollute the global namespace every time Alamofire is used. Similarly, types extended by Alamofire will use a `.af.` extension prefix to separate the functionality Alamofire offers from other extensions.
+Previous versions of Alamofire's documentation used examples like `Alamofire.request()`. This API, while it appeared to require the `Alamofire` prefix, in fact worked fine without it. The `request` method and other functions were available globally in any file with `import Alamofire`. Starting in Alamofire 5, this functionality has been moved out of the global [namespace](https://en.wikipedia.org/wiki/Namespace) and into the `AF` enum, which acts as a namespace. This allows Alamofire to offer the same convenience functionality while not having to pollute the global namespace every time Alamofire is used. Similarly, types extended by Alamofire will use an `.af.` extension prefix to separate the functionality Alamofire offers from other extensions.
 
 ## Making Requests
-Alamofire provides a variety of convenient methods for making HTTP requests. At the simplest level, just provide a `String` that can be converted into a `URL`:
+Alamofire provides a variety of convenient methods for making HTTP requests. At the simplest, just provide a `String` that can be converted into a `URL`:
 
 ```swift
 AF.request("https://httpbin.org/get").response { (response) in
@@ -18,46 +18,50 @@ AF.request("https://httpbin.org/get").response { (response) in
 ```
 > All examples require `import Alamofire` somewhere in the source file.
 
-This is actually one form of the two top-level Alamofire APIs for making requests. Its full definition looks like this:
+This is actually one form of the two top-level APIs on Alamofire's `Session` type for making requests. Its full definition looks like this:
 
 ```swift
-public static func request<Parameters: Encodable>(
-    _ url: URLConvertible,
-    method: HTTPMethod = .get,
-    parameters: Parameters? = nil,
-    encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
-    headers: HTTPHeaders? = nil,
-    interceptor: RequestInterceptor? = nil
-) -> DataRequest
+open func request<Parameters: Encodable>(_ convertible: URLConvertible,
+                                         method: HTTPMethod = .get,
+                                         parameters: Parameters? = nil,
+                                         encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                         headers: HTTPHeaders? = nil,
+                                         interceptor: RequestInterceptor? = nil) -> DataRequest
 ```
-This method allows the composition of requests from individual components, such as the `method` and `headers`, while also allowing per-request `RequestInterceptor`s and `Encodable` parameters.
+This method creates a `DataRequest` while allowing the composition of requests from individual components, such as the `method` and `headers`, while also allowing per-request `RequestInterceptor`s and `Encodable` parameters.
 
-> There are additional methods that allow you to make requests using `Parameters` dictionaries. This API is no longer recommended and will eventually be deprecated and removed from Alamofire.
+> There are additional methods that allow you to make requests using `Parameters` dictionaries and `ParameterEncoding` types. This API is no longer recommended and will eventually be deprecated and removed from Alamofire.
 
 The second version of this API is much simpler:
 
 ```swift
-public static func request(_ urlRequest: URLRequestConvertible, 
-                           interceptor: RequestInterceptor? = nil) -> DataRequest
+open func request(_ urlRequest: URLRequestConvertible, 
+                  interceptor: RequestInterceptor? = nil) -> DataRequest
 ```
 
-This method creates a `DataRequest` for any type conforming to Alamofire's `URLRequestConvertible` protocol. All of the different parameters from the previous version are encapsulated in that value, which can give rise to very powerful abstractions. This is discussed later in this documentation.
+This method creates a `DataRequest` for any type conforming to Alamofire's `URLRequestConvertible` protocol. All of the different parameters from the previous version are encapsulated in that value, which can give rise to very powerful abstractions. This is discussed in our [Advanced Usage](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md) documentation.
 
 ### HTTP Methods
 
-The `HTTPMethod` enumeration lists the HTTP methods defined in [RFC 7231 §4.3](https://tools.ietf.org/html/rfc7231#section-4.3):
+The `HTTPMethod` type lists the HTTP methods defined in [RFC 7231 §4.3](https://tools.ietf.org/html/rfc7231#section-4.3):
 
 ```swift
-public enum HTTPMethod: String {
-    case connect = "CONNECT"
-    case delete  = "DELETE"
-    case get     = "GET"
-    case head    = "HEAD"
-    case options = "OPTIONS"
-    case patch   = "PATCH"
-    case post    = "POST"
-    case put     = "PUT"
-    case trace   = "TRACE"
+public struct HTTPMethod: RawRepresentable, Equatable, Hashable {
+    public static let connect = HTTPMethod(rawValue: "CONNECT")
+    public static let delete = HTTPMethod(rawValue: "DELETE")
+    public static let get = HTTPMethod(rawValue: "GET")
+    public static let head = HTTPMethod(rawValue: "HEAD")
+    public static let options = HTTPMethod(rawValue: "OPTIONS")
+    public static let patch = HTTPMethod(rawValue: "PATCH")
+    public static let post = HTTPMethod(rawValue: "POST")
+    public static let put = HTTPMethod(rawValue: "PUT")
+    public static let trace = HTTPMethod(rawValue: "TRACE")
+
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
 }
 ```
 
@@ -70,7 +74,7 @@ AF.request("https://httpbin.org/put", method: .put)
 AF.request("https://httpbin.org/delete", method: .delete)
 ```
 
-It's important to remember that the different HTTP methods may have different semantics and require different parameter encodings depending on what the server expects. For instance, passing body data in a `GET` requests can cause timeouts or other errors when communicating with servers that don't support that configuration.
+It's important to remember that the different HTTP methods may have different semantics and require different parameter encodings depending on what the server expects. For instance, passing body data in a `GET` request is not supported by `URLSession` or Alamofire and will return an error.
 
 Alamofire also offers an extension on `URLRequest` to bridge the `httpMethod` property that returns a `String` to an `HTTPMethod` value:
 
@@ -84,25 +88,15 @@ public extension URLRequest {
 }
 ```
 
-If you need to use an HTTP method that Alamofire's `HTTPMethod` type doesn't support, you can still set the `String` `httpMethod` property on `URLRequest` directly.
-
-### Request Parameters and Parameter Encoders
-
-Alamofire supports sending any `Encodable`-conforming type as the parameters of a request. It also provides two builtin types conforming to the `ParameterEncoder` protocol: `URLFormEndcodedParameterEncoder` and `JSONParameterEncoder`.  
+If you need to use an HTTP method that Alamofire's `HTTPMethod` type doesn't support, you can extend the type to add your custom values:
 
 ```swift
-struct Login: Encodable {
-    let email: String
-    let password: String
-}
-let login = Login(email: "test@test.test", password: "testPassword")
-AF.request("https://httpbin.org/post",
-           method: .post,
-           parameters: login,
-           encoder: JSONParameterEncoder.default).response { (response) in
-    debugPrint(response)
+extension HTTPMethod {
+    static let custom = HTTPMethod(rawValue: "CUSTOM")
 }
 ```
+
+### Request Parameters and Parameter Encoders
 
 #### Passing Parameters
 
@@ -260,7 +254,7 @@ let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(spac
 
 #### `JSONParameterEncoder`
 
-`JSONParameterEncoder` encodes `Encodable` values using Swift's `JSONEncoder` and sets the result as the `httpBody` of the `URLRequest`. The `Content-Type` HTTP header field of an encoded request is set to `application/json`.
+`JSONParameterEncoder` encodes `Encodable` values using Swift's `JSONEncoder` and sets the result as the `httpBody` of the `URLRequest`. The `Content-Type` HTTP header field of an encoded request is set to `application/json` if not already set.
 
 ##### POST Request with JSON-Encoded Parameters
 
@@ -348,16 +342,11 @@ By default, Alamofire treats any completed request to be successful, regardless 
 
 #### Automatic Validation
 
-Automatically validates status code within `200..<300` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
+`validate()` automatically validates that status codes are within the `200..<300` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
 
 ```swift
 AF.request("https://httpbin.org/get").validate().responseJSON { response in
-    switch response.result {
-    case .success:
-        print("Validation Successful")
-    case let .failure(error):
-        print(error)
-    }
+    debugPrint(response)
 }
 ```
 
@@ -379,27 +368,13 @@ AF.request("https://httpbin.org/get")
 
 ### Response Handling
 
-Alamofire's `DataRequest` and `DownloadRequest` both have a corresponding response type: `DataResponse<T>` and `DownloadResponse<T>`. Both of these types are generic to the type serialized from the response. `UploadRequest`, as a subclass of `DataRequest`, uses the same `DataResponse` type.
+Alamofire's `DataRequest` and `DownloadRequest` both have a corresponding response type: `DataResponse<Success, Failure: Error>` and `DownloadResponse<Success, Failure: Error>`. Both of these types are generic to the type serialized from the response as well as the error type returned. By default, all response values will produce the `AFError` error type (i.e. `DataResponse<Success, AFError>`). Alamofire uses the simpler `AFDataResponse<Success>` and `AFDownloadResponse<Success>`, which always have `AFError` error types. `UploadRequest`, as a subclass of `DataRequest`, uses the same `DataResponse`.
 
-Handling the `DataResponse` of a `DataRequest` or `UploadRequest` made in Alamofire involves chaining a response handler onto the `DataRequest`:
+Handling the `DataResponse` of a `DataRequest` or `UploadRequest` made in Alamofire involves chaining a response handler like `responseJSON` onto the `DataRequest`:
 
 ```swift
 AF.request("https://httpbin.org/get").responseJSON { response in
-    print("Request: \(response.request)")   // Original or adapted URLRequest.
-    print("Response: \(response.response)") // Returned HTTPURLResponse.
-    print("Result: \(response.result)")     // Result of response serialization.
-
-    switch response.result {
-    case let .success(value): 
-        print("JSON: \(json)") // Response serialized using JSONSerialization.
-    case let .failure(error):
-        print("Request failed: \(error)")
-    }
-
-    // Display response data as a String.
-    if let data = response.data {
-        print("Data: \(String(decoding: data, as: UTF8.self)")
-    }
+    debugPrint(response)
 }
 ```
 
