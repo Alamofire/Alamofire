@@ -206,7 +206,13 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 
     private func session(using handler: CachedResponseHandler? = nil) -> Session {
         let configuration = URLSessionConfiguration.alamofireDefault
-        configuration.urlCache = URLCache(memoryCapacity: 100_000_000, diskCapacity: 100_000_000, diskPath: UUID().uuidString)
+        let capacity = 100_000_000
+        let cache: URLCache
+        if #available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
+            cache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, directory: UUID().uuidString)
+        } else {
+            cache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: UUID().uuidString)
+        }
 
         return Session(configuration: configuration, cachedResponseHandler: handler)
     }
