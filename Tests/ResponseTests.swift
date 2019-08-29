@@ -53,7 +53,7 @@ class ResponseTestCase: BaseTestCase {
     func testThatResponseReturnsFailureResultWithOptionalDataAndError() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
-        let expectation = self.expectation(description: "request should fail with 404")
+        let expectation = self.expectation(description: "request should fail with invalid hostname error")
 
         var response: DataResponse<Data?, AFError>?
 
@@ -70,6 +70,8 @@ class ResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
+        XCTAssertEqual(response?.error?.isSessionTaskError, true)
+        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .cannotFindHost)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -121,6 +123,8 @@ class ResponseDataTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.isSessionTaskError, true)
+        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .cannotFindHost)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -172,6 +176,8 @@ class ResponseStringTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.isSessionTaskError, true)
+        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .cannotFindHost)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -223,6 +229,8 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.isSessionTaskError, true)
+        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .cannotFindHost)
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -250,7 +258,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
 
         if
-            let responseDictionary = response?.result.value as? [String: Any],
+            let responseDictionary = response?.result.success as? [String: Any],
             let args = responseDictionary["args"] as? [String: String] {
             XCTAssertEqual(args, ["foo": "bar"], "args should match parameters")
         } else {
@@ -282,7 +290,7 @@ class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
 
         if
-            let responseDictionary = response?.result.value as? [String: Any],
+            let responseDictionary = response?.result.success as? [String: Any],
             let form = responseDictionary["form"] as? [String: String] {
             XCTAssertEqual(form, ["foo": "bar"], "form should match parameters")
         } else {
@@ -312,7 +320,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertEqual(response?.result.value?.url, "https://httpbin.org/get")
+        XCTAssertEqual(response?.result.success?.url, "https://httpbin.org/get")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -336,7 +344,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertEqual(response?.result.value?.url, "https://httpbin.org/get")
+        XCTAssertEqual(response?.result.success?.url, "https://httpbin.org/get")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -360,6 +368,8 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.isSessionTaskError, true)
+        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .cannotFindHost)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -391,7 +401,7 @@ class ResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertEqual(response?.result.value, "bar")
+        XCTAssertEqual(response?.result.success, "bar")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -415,6 +425,8 @@ class ResponseMapTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.isSessionTaskError, true)
+        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .cannotFindHost)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -446,7 +458,7 @@ class ResponseTryMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
-        XCTAssertEqual(response?.result.value, "bar")
+        XCTAssertEqual(response?.result.success, "bar")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -476,7 +488,7 @@ class ResponseTryMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
-        if let error = response?.result.error {
+        if let error = response?.result.failure {
             XCTAssertTrue(error is TransformError)
         } else {
             XCTFail("tryMap should catch the transformation error")
@@ -505,6 +517,8 @@ class ResponseTryMapTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.asAFError?.isSessionTaskError, true)
+        XCTAssertEqual((response?.error?.asAFError?.underlyingError as? URLError)?.code, .cannotFindHost)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -623,7 +637,7 @@ class ResponseTryMapErrorTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
-        if let error = response?.result.error {
+        if let error = response?.result.failure {
             XCTAssertTrue(error is TransformationError)
         } else {
             XCTFail("tryMapError should catch the transformation error")
@@ -653,7 +667,12 @@ class ResponseTryMapErrorTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
 
-        guard let error = response?.error as? TestError, case .error = error else { XCTFail(); return }
+        guard let error = response?.error as? TestError,
+            case let .error(underlyingError) = error
+        else { XCTFail(); return }
+
+        XCTAssertEqual(underlyingError.asAFError?.isSessionTaskError, true)
+        XCTAssertEqual((underlyingError.asAFError?.underlyingError as? URLError)?.code, .cannotFindHost)
 
         XCTAssertNotNil(response?.metrics)
     }

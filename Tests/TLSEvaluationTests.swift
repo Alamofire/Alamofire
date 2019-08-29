@@ -44,7 +44,7 @@ private struct TestCertificates {
 
 // MARK: -
 
-class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
+final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     private let expiredURLString = "https://expired.badssl.com/"
     private let expiredHost = "expired.badssl.com"
 
@@ -69,7 +69,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Given
         let expectation = self.expectation(description: "\(expiredURLString)")
         let manager = Session(configuration: configuration)
-        var error: Error?
+        var error: AFError?
 
         // When
         manager.request(expiredURLString)
@@ -82,10 +82,9 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error)
-
-        if let error = error?.asAFError?.underlyingError as? URLError {
+        if let error = error?.underlyingError as? URLError {
             XCTAssertEqual(error.code, .serverCertificateUntrusted)
-        } else if let error = error?.asAFError?.underlyingError as NSError? {
+        } else if let error = error?.underlyingError as NSError? {
             XCTAssertEqual(error.domain, kCFErrorDomainCFNetwork as String)
             XCTAssertEqual(error.code, Int(CFNetworkErrors.cfErrorHTTPSProxyConnectionFailure.rawValue))
         } else {
@@ -130,7 +129,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = self.expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: AFError?
 
         // When
         manager.request(expiredURLString)
@@ -143,11 +142,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-
-        if let error = error?.asAFError {
-            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
+        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
+        if case let .serverTrustEvaluationFailed(reason) = error {
+            XCTAssertTrue(reason.isHostValidationFailed, "should be .hostValidationFailed")
         } else {
-            XCTFail("error should be an AFError")
+            XCTFail("error should be .serverTrustEvaluationFailed")
         }
     }
 
@@ -195,7 +194,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = self.expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: AFError?
 
         // When
         manager.request(expiredURLString)
@@ -208,11 +207,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-
-        if let error = error?.asAFError {
-            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
+        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
+        if case let .serverTrustEvaluationFailed(reason) = error {
+            XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
         } else {
-            XCTFail("error should be an AFError")
+            XCTFail("error should be .serverTrustEvaluationFailed")
         }
     }
 
@@ -226,7 +225,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = self.expectation(description: "\(revokedURLString)")
-        var error: Error?
+        var error: AFError?
 
         // When
         manager.request(revokedURLString)
@@ -239,11 +238,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-
-        if let error = error?.asAFError {
-            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
+        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
+        if case let .serverTrustEvaluationFailed(reason) = error {
+            XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
         } else {
-            XCTFail("error should be an AFError")
+            XCTFail("error should be .serverTrustEvaluationFailed")
         }
     }
 
@@ -258,7 +257,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = self.expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: AFError?
 
         // When
         manager.request(expiredURLString)
@@ -271,11 +270,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-
-        if let error = error?.asAFError {
-            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
+        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
+        if case let .serverTrustEvaluationFailed(reason) = error {
+            XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
         } else {
-            XCTFail("error should be an AFError")
+            XCTFail("error should be .serverTrustEvaluationFailed")
         }
     }
 
@@ -292,7 +291,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = self.expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: AFError?
 
         // When
         manager.request(expiredURLString)
@@ -305,11 +304,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-
-        if let error = error?.asAFError {
-            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
+        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
+        if case let .serverTrustEvaluationFailed(reason) = error {
+            XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
         } else {
-            XCTFail("error should be an AFError")
+            XCTFail("error should be .serverTrustEvaluationFailed")
         }
     }
 
@@ -400,7 +399,7 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
                               serverTrustManager: ServerTrustManager(evaluators: evaluators))
 
         let expectation = self.expectation(description: "\(expiredURLString)")
-        var error: Error?
+        var error: AFError?
 
         // When
         manager.request(expiredURLString)
@@ -413,11 +412,11 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-
-        if let error = error?.asAFError {
-            XCTAssertTrue(error.isServerTrustEvaluationError, "should be .certificatePinningFailed")
+        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
+        if case let .serverTrustEvaluationFailed(reason) = error {
+            XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
         } else {
-            XCTFail("error should be an AFError")
+            XCTFail("error should be .serverTrustEvaluationFailed")
         }
     }
 

@@ -793,14 +793,8 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = encodingError?.asAFError {
-            XCTAssertTrue(error.isBodyPartFilenameInvalid)
-
-            let expectedFailureReason = "The URL provided does not have a valid filename: \(fileURL)"
-            XCTAssertEqual(error.localizedDescription, expectedFailureReason, "failure reason does not match expected value")
-        } else {
-            XCTFail("Error should be AFError.")
-        }
+        XCTAssertEqual(encodingError?.asAFError?.isBodyPartFilenameInvalid, true)
+        XCTAssertEqual(encodingError?.asAFError?.url, fileURL)
     }
 
     func testThatAppendingFileBodyPartThatIsNotFileURLReturnsError() {
@@ -820,15 +814,8 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
-
-        if let error = encodingError?.asAFError {
-            XCTAssertTrue(error.isBodyPartURLInvalid)
-
-            let expectedFailureReason = "The URL provided is not a file URL: \(fileURL)"
-            XCTAssertEqual(error.localizedDescription, expectedFailureReason, "error failure reason does not match expected value")
-        } else {
-            XCTFail("Error should be AFError.")
-        }
+        XCTAssertEqual(encodingError?.asAFError?.isBodyPartURLInvalid, true)
+        XCTAssertEqual(encodingError?.asAFError?.url, fileURL)
     }
 
     func testThatAppendingFileBodyPartThatIsNotReachableReturnsError() {
@@ -850,11 +837,8 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
 
-        if let error = encodingError?.asAFError {
-            XCTAssertTrue(error.isBodyPartFileNotReachableWithError)
-        } else {
-            XCTFail("Error should be AFError.")
-        }
+        XCTAssertEqual(encodingError?.asAFError?.isBodyPartFileNotReachableWithError, true)
+        XCTAssertEqual(encodingError?.asAFError?.url, fileURL)
     }
 
     func testThatAppendingFileBodyPartThatIsDirectoryReturnsError() {
@@ -874,15 +858,8 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
-
-        if let error = encodingError?.asAFError {
-            XCTAssertTrue(error.isBodyPartFileIsDirectory)
-
-            let expectedFailureReason = "The URL provided is a directory: \(directoryURL)"
-            XCTAssertEqual(error.localizedDescription, expectedFailureReason, "error failure reason does not match expected value")
-        } else {
-            XCTFail("Error should be AFError.")
-        }
+        XCTAssertEqual(encodingError?.asAFError?.isBodyPartFileIsDirectory, true)
+        XCTAssertEqual(encodingError?.asAFError?.url, directoryURL)
     }
 
     func testThatWritingEncodedDataToExistingFileURLFails() {
@@ -913,10 +890,7 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
         // Then
         XCTAssertNil(writerError, "writer error should be nil")
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
-
-        if let encodingError = encodingError?.asAFError {
-            XCTAssertTrue(encodingError.isOutputStreamFileAlreadyExists)
-        }
+        XCTAssertEqual(encodingError?.asAFError?.isOutputStreamFileAlreadyExists, true)
     }
 
     func testThatWritingEncodedDataToBadURLFails() {
@@ -938,9 +912,6 @@ class MultipartFormDataFailureTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(encodingError, "encoding error should not be nil")
-
-        if let encodingError = encodingError?.asAFError {
-            XCTAssertTrue(encodingError.isOutputStreamURLInvalid)
-        }
+        XCTAssertEqual(encodingError?.asAFError?.isOutputStreamURLInvalid, true)
     }
 }

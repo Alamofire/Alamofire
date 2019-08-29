@@ -503,9 +503,7 @@ class ServerTrustPolicyPerformDefaultEvaluationTestCase: ServerTrustPolicyTestCa
 
         // Then
         XCTAssertFalse(result.isSuccess, "server trust should not pass evaluation")
-        assertErrorIsAFError(result.error) { error in
-            XCTAssertTrue(error.isServerTrustEvaluationError)
-        }
+        XCTAssertEqual(result.failure?.asAFError?.isServerTrustEvaluationError, true)
     }
 }
 

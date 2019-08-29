@@ -34,12 +34,12 @@ extension Result {
         return !isSuccess
     }
 
-    var value: Success? {
+    var success: Success? {
         guard case let .success(value) = self else { return nil }
         return value
     }
 
-    var error: Failure? {
+    var failure: Failure? {
         guard case let .failure(error) = self else { return nil }
         return error
     }
