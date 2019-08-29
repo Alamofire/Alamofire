@@ -33,7 +33,6 @@ class ParameterEncodingTestCase: BaseTestCase {
 // MARK: -
 
 class URLParameterEncodingTestCase: ParameterEncodingTestCase {
-
     // MARK: Properties
 
     let encoding = URLEncoding.default
@@ -290,23 +289,21 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
         do {
             // Given
             let encoding = URLEncoding(boolEncoding: .literal)
-            let parameters: [String: Any] = [
-                // Must still encode to numbers
+            let parameters: [String: Any] = [// Must still encode to numbers
                 "a": 1,
-                "b": 0,
-                "c": 1.0,
-                "d": 0.0,
-                "e": NSNumber(value: 1),
-                "f": NSNumber(value: 0),
-                "g": NSNumber(value: 1.0),
-                "h": NSNumber(value: 0.0),
-
+                                             "b": 0,
+                                             "c": 1.0,
+                                             "d": 0.0,
+                                             "e": NSNumber(value: 1),
+                                             "f": NSNumber(value: 0),
+                                             "g": NSNumber(value: 1.0),
+                                             "h": NSNumber(value: 0.0),
+                                             
                 // Must encode to literals
                 "i": true,
-                "j": false,
-                "k": NSNumber(value: true),
-                "l": NSNumber(value: false)
-            ]
+                                             "j": false,
+                                             "k": NSNumber(value: true),
+                                             "l": NSNumber(value: false)]
 
             // When
             let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
@@ -509,23 +506,19 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testURLParameterEncodeStringKeyNonLatinStringValueParameter() {
         do {
             // Given
-            let parameters = [
-                "french": "français",
-                "japanese": "日本語",
-                "arabic": "العربية",
-                "emoji": "😃"
-            ]
+            let parameters = ["french": "français",
+                              "japanese": "日本語",
+                              "arabic": "العربية",
+                              "emoji": "😃"]
 
             // When
             let urlRequest = try encoding.encode(self.urlRequest, with: parameters)
 
             // Then
-            let expectedParameterValues = [
-                "arabic=%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9",
-                "emoji=%F0%9F%98%83",
-                "french=fran%C3%A7ais",
-                "japanese=%E6%97%A5%E6%9C%AC%E8%AA%9E"
-            ]
+            let expectedParameterValues = ["arabic=%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9",
+                                           "emoji=%F0%9F%98%83",
+                                           "french=fran%C3%A7ais",
+                                           "japanese=%E6%97%A5%E6%9C%AC%E8%AA%9E"]
 
             let expectedQuery = expectedParameterValues.joined(separator: "&")
             XCTAssertEqual(urlRequest.url?.query, expectedQuery)
@@ -569,7 +562,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
     func testURLParameterEncodeStringWithThousandsOfChineseCharacters() {
         do {
             // Given
-            let repeatedCount = 2_000
+            let repeatedCount = 2000
             let url = URL(string: "https://example.com/movies")!
             let parameters = ["chinese": String(repeating: "一二三四五六七八九十", count: repeatedCount)]
 
@@ -666,7 +659,7 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
     func testJSONParameterEncodeNilParameters() {
         do {
             // Given, When
-            let URLRequest = try encoding.encode(self.urlRequest, with: nil)
+            let URLRequest = try encoding.encode(urlRequest, with: nil)
 
             // Then
             XCTAssertNil(URLRequest.url?.query, "query should be nil")
@@ -680,18 +673,14 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
     func testJSONParameterEncodeComplexParameters() {
         do {
             // Given
-            let parameters: [String: Any] = [
-                "foo": "bar",
-                "baz": ["a", 1, true],
-                "qux": [
-                    "a": 1,
-                    "b": [2, 2],
-                    "c": [3, 3, 3]
-                ]
-            ]
+            let parameters: [String: Any] = ["foo": "bar",
+                                             "baz": ["a", 1, true],
+                                             "qux": ["a": 1,
+                                                     "b": [2, 2],
+                                                     "c": [3, 3, 3]]]
 
             // When
-            let URLRequest = try encoding.encode(self.urlRequest, with: parameters)
+            let URLRequest = try encoding.encode(urlRequest, with: parameters)
 
             // Then
             XCTAssertNil(URLRequest.url?.query)
@@ -723,7 +712,7 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
             let array: [String] = ["foo", "bar", "baz"]
 
             // When
-            let URLRequest = try encoding.encode(self.urlRequest, withJSONObject: array)
+            let URLRequest = try encoding.encode(urlRequest, withJSONObject: array)
 
             // Then
             XCTAssertNil(URLRequest.url?.query)

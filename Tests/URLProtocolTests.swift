@@ -27,7 +27,6 @@ import Foundation
 import XCTest
 
 class ProxyURLProtocol: URLProtocol {
-
     // MARK: Properties
 
     struct PropertyKeys {
@@ -93,7 +92,6 @@ class ProxyURLProtocol: URLProtocol {
 // MARK: -
 
 extension ProxyURLProtocol: URLSessionDataDelegate {
-
     // MARK: NSURLSessionDelegate
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {

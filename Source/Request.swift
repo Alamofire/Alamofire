@@ -145,6 +145,7 @@ public class Request {
         get { return protectedMutableState.directValue.uploadProgressHandler }
         set { protectedMutableState.write { $0.uploadProgressHandler = newValue } }
     }
+
     /// `ProgressHandler` called when `downloadProgress` is updated, on the provided `DispatchQueue`.
     fileprivate var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
         get { return protectedMutableState.directValue.downloadProgressHandler }
@@ -233,7 +234,7 @@ public class Request {
     // MARK: Error
 
     /// `Error` returned from Alamofire internally, from the network request directly, or any validators executed.
-    fileprivate(set) public var error: AFError? {
+    public fileprivate(set) var error: AFError? {
         get { return protectedMutableState.directValue.error }
         set { protectedMutableState.write { $0.error = newValue } }
     }
@@ -263,6 +264,7 @@ public class Request {
     }
 
     // MARK: - Internal Event API
+
     // All API must be called from underlyingQueue.
 
     /// Called when a initial `URLRequest` has been created on behalf of the instance. If a `RequestAdapter` is active,
@@ -442,7 +444,7 @@ public class Request {
             switch retryResult {
             case .doNotRetry:
                 self.finish()
-            case .doNotRetryWithError(let retryError):
+            case let .doNotRetryWithError(retryError):
                 self.finish(error: retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
             case .retry, .retryWithDelay:
                 delegate.retryRequest(self, withDelay: retryResult.delay)
@@ -594,7 +596,7 @@ public class Request {
     /// - Returns: The instance.
     @discardableResult
     public func cancel() -> Self {
-        protectedMutableState.write { (mutableState) in
+        protectedMutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
 
             mutableState.state = .cancelled
@@ -620,7 +622,7 @@ public class Request {
     /// - Returns: The instance.
     @discardableResult
     public func suspend() -> Self {
-        protectedMutableState.write { (mutableState) in
+        protectedMutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.suspended) else { return }
 
             mutableState.state = .suspended
@@ -636,13 +638,12 @@ public class Request {
         return self
     }
 
-
     /// Resumes the instance.
     ///
     /// - Returns: The instance.
     @discardableResult
     public func resume() -> Self {
-        protectedMutableState.write { (mutableState) in
+        protectedMutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.resumed) else { return }
 
             mutableState.state = .resumed
@@ -789,7 +790,7 @@ public class Request {
 // MARK: - Protocol Conformances
 
 extension Request: Equatable {
-    public static func == (lhs: Request, rhs: Request) -> Bool {
+    public static func ==(lhs: Request, rhs: Request) -> Bool {
         return lhs.id == rhs.id
     }
 }
@@ -830,13 +831,11 @@ extension Request {
         components.append("-X \(method)")
 
         if let credentialStorage = delegate?.sessionConfiguration.urlCredentialStorage {
-            let protectionSpace = URLProtectionSpace(
-                host: host,
-                port: url.port ?? 0,
-                protocol: url.scheme,
-                realm: host,
-                authenticationMethod: NSURLAuthenticationMethodHTTPBasic
-            )
+            let protectionSpace = URLProtectionSpace(host: host,
+                                                     port: url.port ?? 0,
+                                                     protocol: url.scheme,
+                                                     realm: host,
+                                                     authenticationMethod: NSURLAuthenticationMethodHTTPBasic)
 
             if let credentials = credentialStorage.credentials(for: protectionSpace)?.values {
                 for credential in credentials {
@@ -853,8 +852,7 @@ extension Request {
         if let configuration = delegate?.sessionConfiguration, configuration.httpShouldSetCookies {
             if
                 let cookieStorage = configuration.httpCookieStorage,
-                let cookies = cookieStorage.cookies(for: url), !cookies.isEmpty
-            {
+                let cookies = cookieStorage.cookies(for: url), !cookies.isEmpty {
                 let allCookies = cookies.map { "\($0.name)=\($0.value)" }.joined(separator: ";")
 
                 components.append("-b \"\(allCookies)\"")
@@ -1012,7 +1010,7 @@ public class DataRequest: Request {
 
             let result = validation(self.request, response, self.data)
 
-            if case .failure(let error) = result { self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
+            if case let .failure(error) = result { self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
 
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,
@@ -1082,7 +1080,7 @@ public class DownloadRequest: Request {
     /// `Alamofire_` to the automatically generated download name and moves it within the temporary directory. Files
     /// with this destination must be additionally moved if they should survive the system reclamation of temporary
     /// space.
-    static let defaultDestination: Destination = { (url, _) in
+    static let defaultDestination: Destination = { url, _ in
         let filename = "Alamofire_\(url.lastPathComponent)"
         let destination = url.deletingLastPathComponent().appendingPathComponent(filename)
 
@@ -1174,8 +1172,8 @@ public class DownloadRequest: Request {
         eventMonitor?.request(self, didFinishDownloadingUsing: task, with: result)
 
         switch result {
-        case .success(let url): protectedDownloadMutableState.write { $0.fileURL = url }
-        case .failure(let error): self.error = error
+        case let .success(url): protectedDownloadMutableState.write { $0.fileURL = url }
+        case let .failure(error): self.error = error
         }
     }
 
@@ -1226,7 +1224,7 @@ public class DownloadRequest: Request {
     /// - Returns: The instance.
     @discardableResult
     public func cancel(producingResumeData shouldProduceResumeData: Bool) -> Self {
-        return cancel(optionallyProducingResumeData: (shouldProduceResumeData) ? { _ in } : nil)
+        return cancel(optionallyProducingResumeData: shouldProduceResumeData ? { _ in } : nil)
     }
 
     /// Cancels the instance while producing resume data. Once cancelled, a `DownloadRequest` can no longer be resumed
@@ -1252,7 +1250,7 @@ public class DownloadRequest: Request {
     ///
     /// - Returns:                     The instance.
     private func cancel(optionallyProducingResumeData completionHandler: ((_ resumeData: Data?) -> Void)?) -> Self {
-        protectedMutableState.write { (mutableState) in
+        protectedMutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
 
             mutableState.state = .cancelled
@@ -1267,7 +1265,7 @@ public class DownloadRequest: Request {
             if let completionHandler = completionHandler {
                 // Resume to ensure metrics are gathered.
                 task.resume()
-                task.cancel { (resumeData) in
+                task.cancel { resumeData in
                     self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
                     self.underlyingQueue.async { self.didCancelTask(task) }
                     completionHandler(resumeData)
@@ -1297,7 +1295,7 @@ public class DownloadRequest: Request {
 
             let result = validation(self.request, response, self.fileURL)
 
-            if case .failure(let error) = result { self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
+            if case let .failure(error) = result { self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error))) }
 
             self.eventMonitor?.request(self,
                                        didValidateRequest: self.request,
@@ -1360,7 +1358,7 @@ public class UploadRequest: DataRequest {
          interceptor: RequestInterceptor?,
          fileManager: FileManager,
          delegate: RequestDelegate) {
-        self.upload = convertible
+        upload = convertible
         self.fileManager = fileManager
 
         super.init(id: id,
@@ -1450,5 +1448,6 @@ extension UploadRequest.Uploadable: UploadableConvertible {
         return self
     }
 }
+
 /// A type that can be converted to an upload, whether from an `UploadRequest.Uploadable` or `URLRequestConvertible`.
-public protocol UploadConvertible: UploadableConvertible & URLRequestConvertible { }
+public protocol UploadConvertible: UploadableConvertible & URLRequestConvertible {}

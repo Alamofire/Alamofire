@@ -28,7 +28,6 @@ import SystemConfiguration
 import XCTest
 
 final class NetworkReachabilityManagerTestCase: BaseTestCase {
-
     // MARK: - Tests - Initialization
 
     func testThatManagerCanBeInitializedFromHost() {
@@ -87,14 +86,14 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
         let second = expectation(description: "second listener notified")
 
         // When
-        manager?.startListening { (status) in
+        manager?.startListening { _ in
             first.fulfill()
         }
         wait(for: [first], timeout: timeout)
 
         manager?.stopListening()
 
-        manager?.startListening { (status) in
+        manager?.startListening { _ in
             second.fulfill()
         }
         wait(for: [second], timeout: timeout)
@@ -110,14 +109,14 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
         let second = expectation(description: "second listener notified")
 
         // When
-        manager?.startListening { (status) in
+        manager?.startListening { _ in
             first.fulfill()
         }
         wait(for: [first], timeout: timeout)
 
         manager?.stopListening()
 
-        manager?.startListening { (status) in
+        manager?.startListening { _ in
             second.fulfill()
         }
         wait(for: [second], timeout: timeout)

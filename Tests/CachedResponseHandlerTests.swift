@@ -27,7 +27,6 @@ import Foundation
 import XCTest
 
 final class CachedResponseHandlerTestCase: BaseTestCase {
-
     // MARK: Properties
 
     private let urlString = "https://httpbin.org/get"
@@ -82,16 +81,12 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
-        let cacher = ResponseCacher(
-            behavior: .modify { _, response in
-                return CachedURLResponse(
-                    response: response.response,
-                    data: response.data,
-                    userInfo: ["key": "value"],
-                    storagePolicy: .allowed
-                )
-            }
-        )
+        let cacher = ResponseCacher(behavior: .modify { _, response in
+            CachedURLResponse(response: response.response,
+                              data: response.data,
+                              userInfo: ["key": "value"],
+                              storagePolicy: .allowed)
+        })
 
         let request = session.request(urlString).cacheResponse(using: cacher).response { resp in
             response = resp
@@ -150,16 +145,12 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 
     func testThatSessionCachedResponseHandlerCanModifyCacheResponse() {
         // Given
-        let cacher = ResponseCacher(
-            behavior: .modify { _, response in
-                return CachedURLResponse(
-                    response: response.response,
-                    data: response.data,
-                    userInfo: ["key": "value"],
-                    storagePolicy: .allowed
-                )
-            }
-        )
+        let cacher = ResponseCacher(behavior: .modify { _, response in
+            CachedURLResponse(response: response.response,
+                              data: response.data,
+                              userInfo: ["key": "value"],
+                              storagePolicy: .allowed)
+        })
 
         let session = self.session(using: cacher)
 

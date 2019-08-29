@@ -43,7 +43,6 @@ import CoreServices
 /// - https://www.ietf.org/rfc/rfc2045.txt
 /// - https://www.w3.org/TR/html401/interact/forms.html#h-17.13
 open class MultipartFormData {
-
     // MARK: - Helper Types
 
     struct EncodingCharacters {
@@ -119,14 +118,14 @@ open class MultipartFormData {
     public init(fileManager: FileManager = .default, boundary: String? = nil) {
         self.fileManager = fileManager
         self.boundary = boundary ?? BoundaryGenerator.randomBoundary()
-        self.bodyParts = []
+        bodyParts = []
 
         //
         // The optimal read/write buffer size in bytes for input and output streams is 1024 (1KB). For more
         // information, please refer to the following article:
         //   - https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Streams/Articles/ReadingInputStreams.html
         //
-        self.streamBufferSize = 1024
+        streamBufferSize = 1024
     }
 
     // MARK: - Body Parts
@@ -247,8 +246,7 @@ open class MultipartFormData {
             }
 
             bodyContentLength = fileSize.uint64Value
-        }
-        catch {
+        } catch {
             setBodyPartError(withReason: .bodyPartFileSizeQueryFailedWithError(forURL: fileURL, error: error))
             return
         }
@@ -280,13 +278,11 @@ open class MultipartFormData {
     ///   - name:     Name to associate with the stream content in the `Content-Disposition` HTTP header.
     ///   - fileName: Filename to associate with the stream content in the `Content-Disposition` HTTP header.
     ///   - mimeType: MIME type to associate with the stream content in the `Content-Type` HTTP header.
-    public func append(
-        _ stream: InputStream,
-        withLength length: UInt64,
-        name: String,
-        fileName: String,
-        mimeType: String)
-    {
+    public func append(_ stream: InputStream,
+                       withLength length: UInt64,
+                       name: String,
+                       fileName: String,
+                       mimeType: String) {
         let headers = contentHeaders(withName: name, fileName: fileName, mimeType: mimeType)
         append(stream, withLength: length, headers: headers)
     }
@@ -361,10 +357,10 @@ open class MultipartFormData {
         outputStream.open()
         defer { outputStream.close() }
 
-        self.bodyParts.first?.hasInitialBoundary = true
-        self.bodyParts.last?.hasFinalBoundary = true
+        bodyParts.first?.hasInitialBoundary = true
+        bodyParts.last?.hasFinalBoundary = true
 
-        for bodyPart in self.bodyParts {
+        for bodyPart in bodyParts {
             try write(bodyPart, to: outputStream)
         }
     }
@@ -392,8 +388,8 @@ open class MultipartFormData {
 
     private func encodeHeaders(for bodyPart: BodyPart) -> Data {
         let headerText = bodyPart.headers.map { "\($0.name): \($0.value)\(EncodingCharacters.crlf)" }
-                                         .joined()
-                                         + EncodingCharacters.crlf
+            .joined()
+            + EncodingCharacters.crlf
 
         return Data(headerText.utf8)
     }
@@ -506,8 +502,7 @@ open class MultipartFormData {
     private func mimeType(forPathExtension pathExtension: String) -> String {
         if
             let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as CFString, nil)?.takeRetainedValue(),
-            let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue()
-        {
+            let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue() {
             return contentType as String
         }
 

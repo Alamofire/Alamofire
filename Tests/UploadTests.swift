@@ -262,7 +262,6 @@ class UploadDataTestCase: BaseTestCase {
 // MARK: -
 
 class UploadMultipartFormDataTestCase: BaseTestCase {
-
     // MARK: Tests
 
     func testThatUploadingMultipartFormDataSetsContentTypeHeader() {
@@ -276,12 +275,11 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.upload(
-            multipartFormData: { multipartFormData in
-                multipartFormData.append(uploadData, withName: "upload_data")
-                formData = multipartFormData
-            },
-            to: urlString)
+        AF.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(uploadData, withName: "upload_data")
+            formData = multipartFormData
+        },
+                  to: urlString)
             .response { resp in
                 response = resp
                 expectation.fulfill()
@@ -298,8 +296,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         if
             let request = response?.request,
             let multipartFormData = formData,
-            let contentType = request.value(forHTTPHeaderField: "Content-Type")
-        {
+            let contentType = request.value(forHTTPHeaderField: "Content-Type") {
             XCTAssertEqual(contentType, multipartFormData.contentType)
         } else {
             XCTFail("Content-Type header value should not be nil")
@@ -349,13 +346,12 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.upload(
-            multipartFormData: { multipartFormData in
-                multipartFormData.append(frenchData, withName: "french")
-                multipartFormData.append(japaneseData, withName: "japanese")
-            },
-            to: urlString)
-            .response { (resp) in
+        AF.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(frenchData, withName: "french")
+            multipartFormData.append(japaneseData, withName: "japanese")
+        },
+                  to: urlString)
+            .response { resp in
                 response = resp
                 expectation.fulfill()
             }
@@ -387,16 +383,15 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        let request = AF.upload(
-                        multipartFormData: { multipartFormData in
-                            multipartFormData.append(frenchData, withName: "french")
-                            multipartFormData.append(japaneseData, withName: "japanese")
-                        },
-                        to: urlString)
-                        .response { (resp) in
-                            response = resp
-                            expectation.fulfill()
-                        }
+        let request = AF.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(frenchData, withName: "french")
+            multipartFormData.append(japaneseData, withName: "japanese")
+        },
+                                to: urlString)
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -406,7 +401,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return
         }
 
-        XCTAssertTrue(response?.result.isSuccess ==  true)
+        XCTAssertTrue(response?.result.isSuccess == true)
     }
 
     func testThatUploadingMultipartFormDataBelowMemoryThresholdSetsContentTypeHeader() {
@@ -420,16 +415,15 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        let request = AF.upload(
-                        multipartFormData: { multipartFormData in
-                            multipartFormData.append(uploadData, withName: "upload_data")
-                            formData = multipartFormData
-                        },
-                        to: urlString)
-                        .response { resp in
-                            response = resp
-                            expectation.fulfill()
-                        }
+        let request = AF.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(uploadData, withName: "upload_data")
+            formData = multipartFormData
+        },
+                                to: urlString)
+            .response { resp in
+                response = resp
+                expectation.fulfill()
+            }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -442,8 +436,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         if
             let request = response?.request,
             let multipartFormData = formData,
-            let contentType = request.value(forHTTPHeaderField: "Content-Type")
-        {
+            let contentType = request.value(forHTTPHeaderField: "Content-Type") {
             XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
         } else {
             XCTFail("Content-Type header value should not be nil")
@@ -460,16 +453,15 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        let request = AF.upload(
-                        multipartFormData: { multipartFormData in
-                            multipartFormData.append(frenchData, withName: "french")
-                            multipartFormData.append(japaneseData, withName: "japanese")
-                        },
-                        to: urlString,
-                        usingThreshold: 0).response { resp in
-                            response = resp
-                            expectation.fulfill()
-                        }
+        let request = AF.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(frenchData, withName: "french")
+            multipartFormData.append(japaneseData, withName: "japanese")
+        },
+                                to: urlString,
+                                usingThreshold: 0).response { resp in
+            response = resp
+            expectation.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -493,16 +485,15 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var formData: MultipartFormData?
 
         // When
-        let request = AF.upload(
-                        multipartFormData: { multipartFormData in
-                            multipartFormData.append(uploadData, withName: "upload_data")
-                            formData = multipartFormData
-                        },
-                        to: urlString,
-                        usingThreshold: 0).response { resp in
-                            response = resp
-                            expectation.fulfill()
-                        }
+        let request = AF.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(uploadData, withName: "upload_data")
+            formData = multipartFormData
+        },
+                                to: urlString,
+                                usingThreshold: 0).response { resp in
+            response = resp
+            expectation.fulfill()
+        }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -517,8 +508,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         if
             let request = response?.request,
             let multipartFormData = formData,
-            let contentType = request.value(forHTTPHeaderField: "Content-Type")
-        {
+            let contentType = request.value(forHTTPHeaderField: "Content-Type") {
             XCTAssertEqual(contentType, multipartFormData.contentType, "Content-Type header value should match")
         } else {
             XCTFail("Content-Type header value should not be nil")
@@ -547,12 +537,11 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var error: AFError?
 
         // When
-        let upload = manager.upload(
-            multipartFormData: { multipartFormData in
-                multipartFormData.append(french, withName: "french")
-                multipartFormData.append(japanese, withName: "japanese")
-            },
-            to: urlString)
+        let upload = manager.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(french, withName: "french")
+            multipartFormData.append(japanese, withName: "japanese")
+        },
+                                    to: urlString)
             .response { defaultResponse in
                 request = defaultResponse.request
                 response = defaultResponse.response
@@ -595,13 +584,12 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var response: DataResponse<Data?, AFError>?
 
         // When
-        AF.upload(
-            multipartFormData: { multipartFormData in
-                multipartFormData.append(loremData1, withName: "lorem1")
-                multipartFormData.append(loremData2, withName: "lorem2")
-            },
-            to: urlString,
-            usingThreshold: streamFromDisk ? 0 : 100_000_000)
+        AF.upload(multipartFormData: { multipartFormData in
+            multipartFormData.append(loremData1, withName: "lorem1")
+            multipartFormData.append(loremData2, withName: "lorem2")
+        },
+                  to: urlString,
+                  usingThreshold: streamFromDisk ? 0 : 100_000_000)
             .uploadProgress { progress in
                 uploadProgressValues.append(progress.fractionCompleted)
             }
@@ -668,17 +656,17 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let didParseResponse = expectation(description: "didParseResponse should fire")
         let responseHandler = expectation(description: "responseHandler should fire")
 
-        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
-        eventMonitor.requestDidCreateInitialURLRequest = { (_, _) in didCreateInitialURLRequest.fulfill() }
-        eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
-        eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
-        eventMonitor.requestDidGatherMetrics = { (_, _) in didGatherMetrics.fulfill() }
-        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in didComplete.fulfill() }
-        eventMonitor.requestDidFinish = { (_) in didFinish.fulfill() }
-        eventMonitor.requestDidResume = { (_) in didResume.fulfill() }
-        eventMonitor.requestDidResumeTask = { (_, _) in didResumeTask.fulfill() }
-        eventMonitor.requestDidCreateUploadable = { (_, _) in didCreateUploadable.fulfill() }
-        eventMonitor.requestDidParseResponse = { (_, _) in didParseResponse.fulfill() }
+        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateInitialURLRequest.fulfill() }
+        eventMonitor.requestDidCreateURLRequest = { _, _ in didCreateURLRequest.fulfill() }
+        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
+        eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
+        eventMonitor.requestDidResume = { _ in didResume.fulfill() }
+        eventMonitor.requestDidResumeTask = { _, _ in didResumeTask.fulfill() }
+        eventMonitor.requestDidCreateUploadable = { _, _ in didCreateUploadable.fulfill() }
+        eventMonitor.requestDidParseResponse = { _, _ in didParseResponse.fulfill() }
 
         // When
         let request = session.upload(Data("PAYLOAD".utf8),
@@ -712,18 +700,18 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let didCancelTask = expectation(description: "didCancelTask should fire")
         let responseHandler = expectation(description: "responseHandler should fire")
 
-        eventMonitor.taskDidFinishCollectingMetrics = { (_, _, _) in taskDidFinishCollecting.fulfill() }
-        eventMonitor.requestDidCreateInitialURLRequest = { (_, _) in didCreateInitialURLRequest.fulfill() }
-        eventMonitor.requestDidCreateURLRequest = { (_, _) in didCreateURLRequest.fulfill() }
-        eventMonitor.requestDidCreateTask = { (_, _) in didCreateTask.fulfill() }
-        eventMonitor.requestDidGatherMetrics = { (_, _) in didGatherMetrics.fulfill() }
-        eventMonitor.requestDidCompleteTaskWithError = { (_, _, _) in didComplete.fulfill() }
-        eventMonitor.requestDidFinish = { (_) in didFinish.fulfill() }
-        eventMonitor.requestDidResume = { (_) in didResume.fulfill() }
-        eventMonitor.requestDidCreateUploadable = { (_, _) in didCreateUploadable.fulfill() }
-        eventMonitor.requestDidParseResponse = { (_, _) in didParseResponse.fulfill() }
-        eventMonitor.requestDidCancel = { (_) in didCancel.fulfill() }
-        eventMonitor.requestDidCancelTask = { (_, _) in didCancelTask.fulfill() }
+        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateInitialURLRequest.fulfill() }
+        eventMonitor.requestDidCreateURLRequest = { _, _ in didCreateURLRequest.fulfill() }
+        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
+        eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
+        eventMonitor.requestDidResume = { _ in didResume.fulfill() }
+        eventMonitor.requestDidCreateUploadable = { _, _ in didCreateUploadable.fulfill() }
+        eventMonitor.requestDidParseResponse = { _, _ in didParseResponse.fulfill() }
+        eventMonitor.requestDidCancel = { _ in didCancel.fulfill() }
+        eventMonitor.requestDidCancelTask = { _, _ in didCancelTask.fulfill() }
 
         // When
         let request = session.upload(Data("PAYLOAD".utf8),
@@ -731,7 +719,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
             responseHandler.fulfill()
         }
 
-        eventMonitor.requestDidResumeTask = { (_, _) in
+        eventMonitor.requestDidResumeTask = { _, _ in
             request.cancel()
             didResumeTask.fulfill()
         }

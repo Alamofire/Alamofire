@@ -28,7 +28,7 @@ import Foundation
 public final class NSLoggingEventMonitor: EventMonitor {
     public let queue = DispatchQueue(label: "org.alamofire.nsLoggingEventMonitorQueue", qos: .background)
 
-    public init() { }
+    public init() {}
 
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
         NSLog("URLSession: \(session), didBecomeInvalidWithError: \(error?.localizedDescription ?? "None")")

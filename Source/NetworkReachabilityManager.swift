@@ -101,13 +101,13 @@ open class NetworkReachabilityManager {
 
     /// A closure executed when the network reachability status changes.
     private var listener: Listener?
-    
+
     /// `DispatchQueue` on which listeners will be called.
     private var listenerQueue: DispatchQueue?
 
     /// `SCNetworkReachability` instance providing notifications.
     private let reachability: SCNetworkReachability
-    
+
     /// Protected storage for the previous status.
     private let previousStatus = Protector<NetworkReachabilityStatus?>(nil)
 
@@ -171,7 +171,7 @@ open class NetworkReachabilityManager {
                                                    retain: nil,
                                                    release: nil,
                                                    copyDescription: nil)
-        let callback: SCNetworkReachabilityCallBack = { (target, flags, info) in
+        let callback: SCNetworkReachabilityCallBack = { _, flags, info in
             guard let info = info else { return }
 
             let instance = Unmanaged<NetworkReachabilityManager>.fromOpaque(info).takeUnretainedValue()
@@ -201,7 +201,7 @@ open class NetworkReachabilityManager {
     }
 
     // MARK: - Internal - Listener Notification
-    
+
     /// Calls the `listener` closure of the `listenerQueue` if the computed status hasn't changed.
     ///
     /// - Note: Should only be called from the `reachabilityQueue`.
@@ -212,9 +212,9 @@ open class NetworkReachabilityManager {
 
         previousStatus.write { previousStatus in
             guard previousStatus != newStatus else { return }
-            
+
             previousStatus = newStatus
-            
+
             listenerQueue?.async { self.listener?(newStatus) }
         }
     }
@@ -222,7 +222,7 @@ open class NetworkReachabilityManager {
 
 // MARK: -
 
-extension NetworkReachabilityManager.NetworkReachabilityStatus: Equatable { }
+extension NetworkReachabilityManager.NetworkReachabilityStatus: Equatable {}
 
 extension SCNetworkReachabilityFlags {
     var isReachable: Bool { return contains(.reachable) }
@@ -231,11 +231,11 @@ extension SCNetworkReachabilityFlags {
     var canConnectWithoutUserInteraction: Bool { return canConnectAutomatically && !contains(.interventionRequired) }
     var isActuallyReachable: Bool { return isReachable && (!isConnectionRequired || canConnectWithoutUserInteraction) }
     var isCellular: Bool {
-        #if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS)
         return contains(.isWWAN)
-        #else
+#else
         return false
-        #endif
+#endif
     }
 
     /// Human readable `String` for all states, to help with debugging.

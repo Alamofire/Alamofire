@@ -728,7 +728,7 @@ open class Session {
                      fileManager: FileManager = .default) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
 
-        let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
+        let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
                                               encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: convertible,
                                               multipartFormData: multipartFormData)
@@ -768,7 +768,7 @@ open class Session {
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
+        let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
                                               encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: request,
                                               multipartFormData: multipartFormData)
@@ -804,7 +804,6 @@ open class Session {
     }
 
     // MARK: Perform
-
 
     /// Perform `Request`.
     ///
@@ -922,7 +921,7 @@ open class Session {
     }
 
     func updateStatesForTask(_ task: URLSessionTask, request: Request) {
-        request.withState { (state) in
+        request.withState { state in
             switch (startRequestsImmediately, state) {
             case (true, .initialized):
                 rootQueue.async { request.resume() }
@@ -1000,7 +999,7 @@ extension Session: RequestDelegate {
     }
 
     public func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?) {
-        self.rootQueue.async {
+        rootQueue.async {
             let retry: () -> Void = {
                 guard !request.isCancelled else { return }
 

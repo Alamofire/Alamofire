@@ -27,7 +27,6 @@ import Foundation
 import XCTest
 
 final class SessionTestCase: BaseTestCase {
-
     // MARK: Helper Types
 
     private class HTTPMethodAdapter: RequestInterceptor {
@@ -130,12 +129,10 @@ final class SessionTestCase: BaseTestCase {
             completion(result)
         }
 
-        func retry(
-            _ request: Request,
-            for session: Session,
-            dueTo error: Error,
-            completion: @escaping (RetryResult) -> Void)
-        {
+        func retry(_ request: Request,
+                   for session: Session,
+                   dueTo error: Error,
+                   completion: @escaping (RetryResult) -> Void) {
             retryCalledCount += 1
 
             if throwsErrorOnRetry {
@@ -182,12 +179,10 @@ final class SessionTestCase: BaseTestCase {
             completion(result)
         }
 
-        func retry(
-            _ request: Request,
-            for session: Session,
-            dueTo error: Error,
-            completion: @escaping (RetryResult) -> Void)
-        {
+        func retry(_ request: Request,
+                   for session: Session,
+                   dueTo error: Error,
+                   completion: @escaping (RetryResult) -> Void) {
             retryCalledCount += 1
 
             retryCount += 1
@@ -217,8 +212,8 @@ final class SessionTestCase: BaseTestCase {
 
         // When
         let session = Session(configuration: configuration,
-                                     delegate: delegate,
-                                     serverTrustManager: serverTrustManager)
+                              delegate: delegate,
+                              serverTrustManager: serverTrustManager)
 
         // Then
         XCTAssertNotNil(session.session.delegate, "session delegate should not be nil")
@@ -258,9 +253,9 @@ final class SessionTestCase: BaseTestCase {
 
         // When
         let session = Session(session: urlSession,
-                                     delegate: delegate,
-                                     rootQueue: underlyingQueue,
-                                     serverTrustManager: serverTrustManager)
+                              delegate: delegate,
+                              rootQueue: underlyingQueue,
+                              serverTrustManager: serverTrustManager)
 
         // Then
         XCTAssertTrue(session.delegate === session.session.delegate, "manager delegate should equal session delegate")
@@ -279,19 +274,19 @@ final class SessionTestCase: BaseTestCase {
             let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
 
             let osName: String = {
-                #if os(iOS)
-                    return "iOS"
-                #elseif os(watchOS)
-                    return "watchOS"
-                #elseif os(tvOS)
-                    return "tvOS"
-                #elseif os(macOS)
-                    return "macOS"
-                #elseif os(Linux)
-                    return "Linux"
-                #else
-                    return "Unknown"
-                #endif
+#if os(iOS)
+                return "iOS"
+#elseif os(watchOS)
+                return "watchOS"
+#elseif os(tvOS)
+                return "tvOS"
+#elseif os(macOS)
+                return "macOS"
+#elseif os(Linux)
+                return "Linux"
+#else
+                return "Unknown"
+#endif
             }()
 
             return "\(osName) \(versionString)"
@@ -433,7 +428,6 @@ final class SessionTestCase: BaseTestCase {
                 response = resp
                 expectation.fulfill()
             }
-
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -684,13 +678,13 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
-        let expectation1 = self.expectation(description: "Request 1 created")
+        let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidCreateTask = { _, _ in expectation1.fulfill() }
 
         let request1 = session.request(urlString)
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let expectation2 = self.expectation(description: "Request 2 created")
+        let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
         let request2 = session.request(urlString, interceptor: headerAdapter)
@@ -715,13 +709,13 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
-        let expectation1 = self.expectation(description: "Request 1 created")
+        let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidCreateTask = { _, _ in expectation1.fulfill() }
 
         let request1 = session.download(urlString)
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let expectation2 = self.expectation(description: "Request 2 created")
+        let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
         let request2 = session.download(urlString, interceptor: headerAdapter)
@@ -747,13 +741,13 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
-        let expectation1 = self.expectation(description: "Request 1 created")
+        let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidCreateTask = { _, _ in expectation1.fulfill() }
 
         let request1 = session.upload(data, to: urlString)
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let expectation2 = self.expectation(description: "Request 2 created")
+        let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
         let request2 = session.upload(data, to: urlString, interceptor: headerAdapter)
@@ -779,13 +773,13 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
-        let expectation1 = self.expectation(description: "Request 1 created")
+        let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidCreateTask = { _, _ in expectation1.fulfill() }
 
         let request1 = session.upload(fileURL, to: urlString)
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let expectation2 = self.expectation(description: "Request 2 created")
+        let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
         let request2 = session.upload(fileURL, to: urlString, interceptor: headerAdapter)
@@ -811,13 +805,13 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
-        let expectation1 = self.expectation(description: "Request 1 created")
+        let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidCreateTask = { _, _ in expectation1.fulfill() }
 
         let request1 = session.upload(inputStream, to: urlString)
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let expectation2 = self.expectation(description: "Request 2 created")
+        let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidCreateTask = { _, _ in expectation2.fulfill() }
 
         let request2 = session.upload(inputStream, to: urlString, interceptor: headerAdapter)
@@ -842,13 +836,13 @@ final class SessionTestCase: BaseTestCase {
         let session = Session(startRequestsImmediately: false, interceptor: methodAdapter, eventMonitors: [monitor])
 
         // When
-        let expectation1 = self.expectation(description: "Request 1 created")
+        let expectation1 = expectation(description: "Request 1 created")
         monitor.requestDidFailToAdaptURLRequestWithError = { _, _, _ in expectation1.fulfill() }
 
         let request1 = session.request(urlString)
         waitForExpectations(timeout: timeout, handler: nil)
 
-        let expectation2 = self.expectation(description: "Request 2 created")
+        let expectation2 = expectation(description: "Request 2 created")
         monitor.requestDidFailToAdaptURLRequestWithError = { _, _, _ in expectation2.fulfill() }
 
         let request2 = session.request(urlString, interceptor: headerAdapter)
@@ -1246,10 +1240,10 @@ final class SessionTestCase: BaseTestCase {
 
         let session = Session()
 
-        let json1Expectation = self.expectation(description: "request should eventually fail")
+        let json1Expectation = expectation(description: "request should eventually fail")
         var json1Response: DataResponse<Any, AFError>?
 
-        let json2Expectation = self.expectation(description: "request should eventually fail")
+        let json2Expectation = expectation(description: "request should eventually fail")
         var json2Response: DataResponse<Any, AFError>?
 
         // When
@@ -1300,10 +1294,10 @@ final class SessionTestCase: BaseTestCase {
         let handler = RequestHandler()
         let session = Session()
 
-        let json1Expectation = self.expectation(description: "request should eventually fail")
+        let json1Expectation = expectation(description: "request should eventually fail")
         var json1Response: DataResponse<Any, AFError>?
 
-        let json2Expectation = self.expectation(description: "request should eventually fail")
+        let json2Expectation = expectation(description: "request should eventually fail")
         var json2Response: DataResponse<Any, AFError>?
 
         // When
@@ -1355,10 +1349,10 @@ final class SessionTestCase: BaseTestCase {
 
         let session = Session()
 
-        let json1Expectation = self.expectation(description: "request should eventually fail")
+        let json1Expectation = expectation(description: "request should eventually fail")
         var json1Response: DataResponse<Any, AFError>?
 
-        let json2Expectation = self.expectation(description: "request should eventually fail")
+        let json2Expectation = expectation(description: "request should eventually fail")
         var json2Response: DataResponse<Any, AFError>?
 
         // When
@@ -1410,10 +1404,10 @@ final class SessionTestCase: BaseTestCase {
 
         let session = Session()
 
-        let json1Expectation = self.expectation(description: "request should eventually fail")
+        let json1Expectation = expectation(description: "request should eventually fail")
         var json1Response: DownloadResponse<Any, AFError>?
 
-        let json2Expectation = self.expectation(description: "request should eventually fail")
+        let json2Expectation = expectation(description: "request should eventually fail")
         var json2Response: DownloadResponse<Any, AFError>?
 
         // When
@@ -1458,7 +1452,7 @@ final class SessionTestCase: BaseTestCase {
         // Given
         let invalidationExpectation = expectation(description: "sessionDidBecomeInvalidWithError should be called")
         let events = ClosureEventMonitor()
-        events.sessionDidBecomeInvalidWithError = { (_, _) in
+        events.sessionDidBecomeInvalidWithError = { _, _ in
             invalidationExpectation.fulfill()
         }
         var session: Session? = Session(startRequestsImmediately: false, eventMonitors: [events])
@@ -1466,7 +1460,7 @@ final class SessionTestCase: BaseTestCase {
         let requestExpectation = expectation(description: "request should complete")
 
         // When
-        session?.request(URLRequest.makeHTTPBinRequest()).response { (response) in
+        session?.request(URLRequest.makeHTTPBinRequest()).response { response in
             error = response.error
             requestExpectation.fulfill()
         }
@@ -1556,7 +1550,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         // When
         for _ in 1...count {
             let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
-            session.request(request).response { (response) in
+            session.request(request).response { response in
                 responses.append(response)
                 completion.fulfill()
             }
@@ -1587,7 +1581,7 @@ final class SessionCancellationTestCase: BaseTestCase {
 
         // When
         for _ in 1...count {
-            session.request(request).response { (response) in
+            session.request(request).response { response in
                 responses.append(response)
                 completion.fulfill()
             }
@@ -1623,7 +1617,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         let cancellation = expectation(description: "cancel all requests should be called")
         let createTask = expectation(description: "should create task twice")
         createTask.expectedFulfillmentCount = 2
-        monitor.requestDidCreateTask = { (_, _) in
+        monitor.requestDidCreateTask = { _, _ in
             createTask.fulfill()
         }
         // Cancel when retry starts.
@@ -1636,7 +1630,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         var received: DataResponse<Data?, AFError>?
 
         // When
-        session.request(request).validate().response { (response) in
+        session.request(request).validate().response { response in
             received = response
             completion.fulfill()
         }
@@ -1719,6 +1713,7 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
         // Given, When, Then
         executeAuthorizationHeaderTest(for: .ephemeral)
     }
+
 #if os(macOS)
     func disabled_testThatBackgroundConfigurationHeadersAreSentWithRequest() {
         // Given, When, Then
@@ -1775,8 +1770,7 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
             if
                 let response = response.result.value as? [String: Any],
                 let headers = response["headers"] as? [String: String],
-                let authorization = headers["Authorization"]
-            {
+                let authorization = headers["Authorization"] {
                 XCTAssertEqual(authorization, "Bearer 123456", "authorization header value does not match")
             } else {
                 XCTFail("failed to extract authorization header value")

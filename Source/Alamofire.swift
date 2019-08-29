@@ -115,7 +115,7 @@ public enum AF {
                                 encoding: ParameterEncoding = URLEncoding.default,
                                 headers: HTTPHeaders? = nil,
                                 interceptor: RequestInterceptor? = nil,
-                                to destination: DownloadRequest.Destination? =  nil) -> DownloadRequest {
+                                to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         return Session.default.download(url,
                                         method: method,
                                         parameters: parameters,

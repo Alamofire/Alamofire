@@ -6,20 +6,6 @@
 	objectVersion = 51;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		4CCB207C1D45563900C64D5B /* Cleanup Whitespace */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 4CCB207F1D45563900C64D5B /* Build configuration list for PBXAggregateTarget "Cleanup Whitespace" */;
-			buildPhases = (
-				4CCB20801D45564D00C64D5B /* Cleanup Whitespace */,
-			);
-			dependencies = (
-			);
-			name = "Cleanup Whitespace";
-			productName = "Cleanup Whitespace";
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		3107EA3520A11AE100445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
 		3107EA3620A11AE100445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
@@ -1064,10 +1050,6 @@
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = Alamofire;
 				TargetAttributes = {
-					4CCB207C1D45563900C64D5B = {
-						CreatedOnToolsVersion = 7.3.1;
-						ProvisioningStyle = Manual;
-					};
 					4CF626EE1BA7CB3E0011A099 = {
 						CreatedOnToolsVersion = 7.1;
 						LastSwiftMigration = 0900;
@@ -1124,7 +1106,6 @@
 				4CF626EE1BA7CB3E0011A099 /* Alamofire tvOS */,
 				4CF626F71BA7CB3E0011A099 /* Alamofire tvOS Tests */,
 				E4202FCD1B667AA100C997FB /* Alamofire watchOS */,
-				4CCB207C1D45563900C64D5B /* Cleanup Whitespace */,
 			);
 		};
 /* End PBXProject section */
@@ -1273,23 +1254,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		4CCB20801D45564D00C64D5B /* Cleanup Whitespace */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Cleanup Whitespace";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/sh\ndirectories=(Example Source Tests)\n\nfor directory in \"${directories[@]}\"\ndo\n    echo \"Cleaning whitespace in directory: $directory\"\n    find $directory -iregex '.*\\.swift' -exec sed -E -i '' -e 's/[[:blank:]]*$//' {} \\;\ndone\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4CF626EA1BA7CB3E0011A099 /* Sources */ = {
@@ -1574,20 +1538,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		4CCB207D1D45563900C64D5B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		4CCB207E1D45563900C64D5B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		4CF627001BA7CB3E0011A099 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1977,15 +1927,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4CCB207F1D45563900C64D5B /* Build configuration list for PBXAggregateTarget "Cleanup Whitespace" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				4CCB207D1D45563900C64D5B /* Debug */,
-				4CCB207E1D45563900C64D5B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		4CF627041BA7CB3E0011A099 /* Build configuration list for PBXNativeTarget "Alamofire tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

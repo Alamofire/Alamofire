@@ -52,7 +52,7 @@ extension URLRequest {
     }
 
     static func make(url: URL = URL(string: "https://httpbin.org/get")!, method: HTTPMethod = .get, headers: HTTPHeaders = .init()) -> URLRequest {
-        var request = URLRequest(url:url)
+        var request = URLRequest(url: url)
         request.method = method
         request.headers = headers
 
