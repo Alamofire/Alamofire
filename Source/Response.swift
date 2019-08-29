@@ -24,7 +24,12 @@
 
 import Foundation
 
-/// Used to store all data associated with a serialized response of a data or upload request.
+/// Default type of `DataResponse` returned by Alamofire, with an `AFError` `Failure` type.
+public typealias AFDataResponse<Success> = DataResponse<Success, AFError>
+/// Default type of `DownloadResponse` returned by Alamofire, with an `AFError` `Failure` type.
+public typealias AFDownloadResponse<Success> = DownloadResponse<Success, AFError>
+
+/// Type used to store all values associated with a serialized response of a `DataRequest` or `UploadRequest`.
 public struct DataResponse<Success, Failure: Error> {
     /// The URL request sent to the server.
     public let request: URLRequest?
@@ -50,13 +55,13 @@ public struct DataResponse<Success, Failure: Error> {
     /// Returns the associated error value if the result if it is a failure, `nil` otherwise.
     public var error: Failure? { return result.failure }
 
-    /// Creates a `DataResponse` instance with the specified parameters derviced from the response serialization.
+    /// Creates a `DataResponse` instance with the specified parameters derived from the response serialization.
     ///
     /// - Parameters:
     ///   - request:               The `URLRequest` sent to the server.
     ///   - response:              The `HTTPURLResponse` from the server.
     ///   - data:                  The `Data` returned by the server.
-    ///   - metrics:               The `URLSessionTaskMetrics` of the serialized response.
+    ///   - metrics:               The `URLSessionTaskMetrics` of the `DataRequest` or `UploadRequest`.
     ///   - serializationDuration: The duration taken by serialization.
     ///   - result:                The `Result` of response serialization.
     public init(request: URLRequest?,
@@ -84,7 +89,7 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     }
 
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
-    /// response, the server data, the duration of the network and serializatino actions, and the response serialization
+    /// response, the server data, the duration of the network and serialization actions, and the response serialization
     /// result.
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
@@ -238,10 +243,10 @@ public struct DownloadResponse<Success, Failure: Error> {
     /// - Parameters:
     ///   - request:               The `URLRequest` sent to the server.
     ///   - response:              The `HTTPURLResponse` from the server.
-    ///   - temporaryURL:          The temporary destinatio `URL` of the data returned from the server.
+    ///   - temporaryURL:          The temporary destination `URL` of the data returned from the server.
     ///   - destinationURL:        The final destination `URL` of the data returned from the server, if it was moved.
     ///   - resumeData:            The resume `Data` generated if the request was cancelled.
-    ///   - metrics:               The `URLSessionTaskMetrics` of the serialized response.
+    ///   - metrics:               The `URLSessionTaskMetrics` of the `DownloadRequest`.
     ///   - serializationDuration: The duration taken by serialization.
     ///   - result:                The `Result` of response serialization.
     public init(request: URLRequest?,
