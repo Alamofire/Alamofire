@@ -65,7 +65,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         // Given
         let expectation = self.expectation(description: "\(urlString) 401")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         manager.request(urlString)
@@ -89,7 +89,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         // Given
         let expectation = self.expectation(description: "\(urlString) 200")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         manager.request(urlString)
@@ -115,7 +115,7 @@ class BasicAuthenticationTestCase: AuthenticationTestCase {
         let expectation = self.expectation(description: "\(urlString) 200")
         let headers: HTTPHeaders = [.authorization(username: user, password: password)]
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         manager.request(urlString, headers: headers)
@@ -149,7 +149,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         // Given
         let expectation = self.expectation(description: "\(urlString) 401")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         manager.request(urlString)
@@ -173,7 +173,7 @@ class HTTPDigestAuthenticationTestCase: AuthenticationTestCase {
         // Given
         let expectation = self.expectation(description: "\(urlString) 200")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         manager.request(urlString)

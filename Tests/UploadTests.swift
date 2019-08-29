@@ -180,7 +180,7 @@ class UploadDataTestCase: BaseTestCase {
         let data = Data("Lorem ipsum dolor sit amet".utf8)
 
         let expectation = self.expectation(description: "Upload request should succeed: \(urlString)")
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         AF.upload(data, to: urlString)
@@ -208,7 +208,7 @@ class UploadDataTestCase: BaseTestCase {
         var uploadProgressValues: [Double] = []
         var downloadProgressValues: [Double] = []
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         AF.upload(data, to: urlString)
@@ -273,7 +273,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         AF.upload(
@@ -315,7 +315,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         formData.append(uploadData, withName: "upload_data")
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         AF.upload(multipartFormData: formData, with: urlRequest).response { resp in
@@ -346,7 +346,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let japaneseData = Data("日本語".utf8)
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         AF.upload(
@@ -384,7 +384,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let japaneseData = Data("日本語".utf8)
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         let request = AF.upload(
@@ -417,7 +417,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let expectation = self.expectation(description: "multipart form data upload should succeed")
 
         var formData: MultipartFormData?
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         let request = AF.upload(
@@ -457,7 +457,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let japaneseData = Data("日本語".utf8)
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         let request = AF.upload(
@@ -465,8 +465,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                             multipartFormData.append(frenchData, withName: "french")
                             multipartFormData.append(japaneseData, withName: "japanese")
                         },
-                        usingThreshold: 0,
-                        to: urlString).response { resp in
+                        to: urlString,
+                        usingThreshold: 0).response { resp in
                             response = resp
                             expectation.fulfill()
                         }
@@ -489,7 +489,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         let uploadData = Data("upload_data".utf8)
 
         let expectation = self.expectation(description: "multipart form data upload should succeed")
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         var formData: MultipartFormData?
 
         // When
@@ -498,8 +498,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                             multipartFormData.append(uploadData, withName: "upload_data")
                             formData = multipartFormData
                         },
-                        usingThreshold: 0,
-                        to: urlString).response { resp in
+                        to: urlString,
+                        usingThreshold: 0).response { resp in
                             response = resp
                             expectation.fulfill()
                         }
@@ -544,7 +544,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var request: URLRequest?
         var response: HTTPURLResponse?
         var data: Data?
-        var error: Error?
+        var error: AFError?
 
         // When
         let upload = manager.upload(
@@ -592,7 +592,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         var uploadProgressValues: [Double] = []
         var downloadProgressValues: [Double] = []
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         AF.upload(
@@ -600,8 +600,8 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
                 multipartFormData.append(loremData1, withName: "lorem1")
                 multipartFormData.append(loremData2, withName: "lorem2")
             },
-            usingThreshold: streamFromDisk ? 0 : 100_000_000,
-            to: urlString)
+            to: urlString,
+            usingThreshold: streamFromDisk ? 0 : 100_000_000)
             .uploadProgress { progress in
                 uploadProgressValues.append(progress.fractionCompleted)
             }
@@ -611,7 +611,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             .response { resp in
                 response = resp
                 expectation.fulfill()
-        }
+            }
 
         waitForExpectations(timeout: timeout, handler: nil)
 

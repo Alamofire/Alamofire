@@ -28,8 +28,8 @@ import Foundation
 public enum AF {
     // MARK: - Data Request
 
-    /// Creates a `DataRequest` using `Session.default` to retrive the contents of the specified `url`
-    /// using the `method`, `parameters`, `encoding`, and `headers` provided.
+    /// Creates a `DataRequest` using `Session.default` to retrieve the contents of the specified `url` using the
+    /// `method`, `parameters`, `encoding`, and `headers` provided.
     ///
     /// - Parameters:
     ///   - url:           The `URLConvertible` value.
@@ -54,8 +54,8 @@ public enum AF {
                                        interceptor: interceptor)
     }
 
-    /// Creates a `DataRequest` using `Session.default` to retrive the contents of the specified `url`
-    /// using the `method`, `parameters`, `encoding`, and `headers` provided.
+    /// Creates a `DataRequest` using `Session.default` to retrieve the contents of the specified `url` using the
+    /// `method`, `parameters`, `encoding`, and `headers` provided.
     ///
     /// - Parameters:
     ///   - url:           The `URLConvertible` value.
@@ -206,113 +206,143 @@ public enum AF {
 
     // MARK: - Upload Request
 
-    // MARK: File
-
-    /// Creates an `UploadRequest` using `Session.default` to upload the contents of the `fileURL` specified
-    /// using the `url`, `method` and `headers` provided.
-    ///
-    /// - Parameters:
-    ///   - fileURL:       The `URL` of the file to upload.
-    ///   - url:           The `URLConvertible` value.
-    ///   - method:        The `HTTPMethod`, `.post` by default.
-    ///   - headers:       The `HTTPHeaders`, `nil` by default.
-    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
-    ///
-    /// - Returns:         The created `UploadRequest`.
-    public static func upload(_ fileURL: URL,
-                              to url: URLConvertible,
-                              method: HTTPMethod = .post,
-                              headers: HTTPHeaders? = nil,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(fileURL, to: url, method: method, headers: headers, interceptor: interceptor)
-    }
-
-    /// Creates an `UploadRequest` using the `Session.default` to upload the contents of the `fileURL` specificed
-    /// using the `urlRequest` provided.
-    ///
-    /// - Parameters:
-    ///   - fileURL:       The `URL` of the file to upload.
-    ///   - urlRequest:    The `URLRequestConvertible` value.
-    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
-    ///
-    /// - Returns:         The created `UploadRequest`.
-    public static func upload(_ fileURL: URL,
-                              with urlRequest: URLRequestConvertible,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(fileURL, with: urlRequest, interceptor: interceptor)
-    }
-
     // MARK: Data
 
-    /// Creates an `UploadRequest` using `Session.default` to upload the contents of the `data` specified using
-    /// the `url`, `method` and `headers` provided.
+    /// Creates an `UploadRequest` for the given `Data`, `URLRequest` components, and `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - data:          The `Data` to upload.
-    ///   - url:           The `URLConvertible` value.
-    ///   - method:        The `HTTPMethod`, `.post` by default.
-    ///   - headers:       The `HTTPHeaders`, `nil` by default.
-    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
-    ///   - retryPolicies: The `RetryPolicy` types, `[]` by default.
+    ///   - data:        The `Data` to upload.
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                  default.
     ///
-    /// - Returns:         The created `UploadRequest`.
+    /// - Returns:       The created `UploadRequest`.
     public static func upload(_ data: Data,
-                              to url: URLConvertible,
+                              to convertible: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(data, to: url, method: method, headers: headers, interceptor: interceptor)
+                              interceptor: RequestInterceptor? = nil,
+                              fileManager: FileManager = .default) -> UploadRequest {
+        return Session.default.upload(data,
+                                      to: convertible,
+                                      method: method,
+                                      headers: headers,
+                                      interceptor: interceptor,
+                                      fileManager: fileManager)
     }
 
-    /// Creates an `UploadRequest` using `Session.default` to upload the contents of the `data` specified using the
-    /// `urlRequest` provided.
+    /// Creates an `UploadRequest` for the given `Data` using the `URLRequestConvertible` value and `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - data:          The `Data` to upload.
-    ///   - urlRequest:    The `URLRequestConvertible` value.
-    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - data:        The `Data` to upload.
+    ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                  default.
     ///
-    /// - Returns:         The created `UploadRequest`.
+    /// - Returns:       The created `UploadRequest`.
     public static func upload(_ data: Data,
-                              with urlRequest: URLRequestConvertible,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(data, with: urlRequest, interceptor: interceptor)
+                              with convertible: URLRequestConvertible,
+                              interceptor: RequestInterceptor? = nil,
+                              fileManager: FileManager = .default) -> UploadRequest {
+        return Session.default.upload(data, with: convertible, interceptor: interceptor, fileManager: fileManager)
+    }
+
+    // MARK: File
+
+    /// Creates an `UploadRequest` for the file at the given file `URL`, using a `URLRequest` from the provided
+    /// components and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - fileURL:     The `URL` of the file to upload.
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `UploadRequest`. `nil` by default.
+    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                  default.
+    ///
+    /// - Returns:       The created `UploadRequest`.
+    public static func upload(_ fileURL: URL,
+                              to convertible: URLConvertible,
+                              method: HTTPMethod = .post,
+                              headers: HTTPHeaders? = nil,
+                              interceptor: RequestInterceptor? = nil,
+                              fileManager: FileManager = .default) -> UploadRequest {
+        return Session.default.upload(fileURL,
+                                      to: convertible,
+                                      method: method,
+                                      headers: headers,
+                                      interceptor: interceptor,
+                                      fileManager: fileManager)
+    }
+
+    /// Creates an `UploadRequest` for the file at the given file `URL` using the `URLRequestConvertible` value and
+    /// `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - fileURL:     The `URL` of the file to upload.
+    ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                  default.
+    ///
+    /// - Returns:       The created `UploadRequest`.
+    public static func upload(_ fileURL: URL,
+                              with convertible: URLRequestConvertible,
+                              interceptor: RequestInterceptor? = nil,
+                              fileManager: FileManager = .default) -> UploadRequest {
+        return Session.default.upload(fileURL, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     // MARK: InputStream
 
-    /// Creates an `UploadRequest` using `Session.default` to upload the content provided by the `stream` specified
-    /// using the `url`, `method` and `headers` provided.
+    /// Creates an `UploadRequest` from the `InputStream` provided using a `URLRequest` from the provided components and
+    /// `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - stream:        The `InputStream` to upload.
-    ///   - url:           The `URLConvertible` value.
-    ///   - method:        The `HTTPMethod`, `.post` by default.
-    ///   - headers:       The `HTTPHeaders`, `nil` by default.
-    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - stream:      The `InputStream` that provides the data to upload.
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                  default.
     ///
-    /// - Returns:         The created `UploadRequest`.
+    /// - Returns:       The created `UploadRequest`.
     public static func upload(_ stream: InputStream,
-                              to url: URLConvertible,
+                              to convertible: URLConvertible,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(stream, to: url, method: method, headers: headers, interceptor: interceptor)
+                              interceptor: RequestInterceptor? = nil,
+                              fileManager: FileManager = .default) -> UploadRequest {
+        return Session.default.upload(stream,
+                                      to: convertible,
+                                      method: method,
+                                      headers: headers,
+                                      interceptor: interceptor,
+                                      fileManager: fileManager)
     }
 
-    /// Creates an `UploadRequest` using `Session.default` to upload the content provided by the `stream`
-    /// specified using the `urlRequest` specified.
+    /// Creates an `UploadRequest` from the provided `InputStream` using the `URLRequestConvertible` value and
+    /// `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - stream:        The `InputStream` to upload.
-    ///   - urlRequest:    The `URLRequestConvertible` value.
-    ///   - interceptor:   The `RequestInterceptor`, `nil` by default.
+    ///   - stream:      The `InputStream` that provides the data to upload.
+    ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                  default.
     ///
-    /// - Returns:         The created `UploadRequest`.
+    /// - Returns:       The created `UploadRequest`.
     public static func upload(_ stream: InputStream,
-                              with urlRequest: URLRequestConvertible,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return Session.default.upload(stream, with: urlRequest, interceptor: interceptor)
+                              with convertible: URLRequestConvertible,
+                              interceptor: RequestInterceptor? = nil,
+                              fileManager: FileManager = .default) -> UploadRequest {
+        return Session.default.upload(stream, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     // MARK: MultipartFormData
@@ -320,7 +350,7 @@ public enum AF {
     /// Creates an `UploadRequest` for the multipart form data built using a closure and sent using the provided
     /// `URLRequest` components and `RequestInterceptor`.
     ///
-    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cumulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
     /// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
     /// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
@@ -335,36 +365,37 @@ public enum AF {
     ///
     /// - Parameters:
     ///   - multipartFormData:       `MultipartFormData` building closure.
-    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
-    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by default.
-    ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
-    ///                              written to disk before being uploaded.
     ///   - convertible:             `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
+    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
+    ///                              default.
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
+    ///                              written to disk before being uploaded. `.default` instance by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     public static func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
-                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
-                              fileManager: FileManager = .default,
                               to url: URLConvertible,
+                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                              interceptor: RequestInterceptor? = nil,
+                              fileManager: FileManager = .default) -> UploadRequest {
         return Session.default.upload(multipartFormData: multipartFormData,
-                                      usingThreshold: encodingMemoryThreshold,
-                                      fileManager: fileManager,
                                       to: url,
+                                      usingThreshold: encodingMemoryThreshold,
                                       method: method,
                                       headers: headers,
-                                      interceptor: interceptor)
+                                      interceptor: interceptor,
+                                      fileManager: fileManager)
     }
 
     /// Creates an `UploadRequest` using a `MultipartFormData` building closure, the provided `URLRequestConvertible`
     /// value, and a `RequestInterceptor`.
     ///
-    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cumulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
     /// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
     /// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
@@ -379,30 +410,31 @@ public enum AF {
     ///
     /// - Parameters:
     ///   - multipartFormData:       `MultipartFormData` building closure.
-    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
-    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by default.
-    ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
-    ///                              written to disk before being uploaded.
     ///   - request:                 `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
+    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
+    ///                              default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
+    ///                              written to disk before being uploaded. `.default` instance by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     public static func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
-                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
-                              fileManager: FileManager = .default,
                               with request: URLRequestConvertible,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
+                              interceptor: RequestInterceptor? = nil,
+                              fileManager: FileManager = .default) -> UploadRequest {
         return Session.default.upload(multipartFormData: multipartFormData,
-                                      usingThreshold: encodingMemoryThreshold,
-                                      fileManager: fileManager,
                                       with: request,
-                                      interceptor: interceptor)
+                                      usingThreshold: encodingMemoryThreshold,
+                                      interceptor: interceptor,
+                                      fileManager: fileManager)
     }
 
     /// Creates an `UploadRequest` for the prebuilt `MultipartFormData` value using the provided `URLRequest` components
     /// and `RequestInterceptor`.
     ///
-    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cumulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
     /// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
     /// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
@@ -417,32 +449,37 @@ public enum AF {
     ///
     /// - Parameters:
     ///   - multipartFormData:       `MultipartFormData` instance to upload.
-    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
-    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by default.
     ///   - url:                     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
+    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
+    ///                              default.
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
+    ///                              written to disk before being uploaded. `.default` instance by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     public static func upload(multipartFormData: MultipartFormData,
-                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                               to url: URLConvertible,
+                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                               method: HTTPMethod = .post,
                               headers: HTTPHeaders? = nil,
-                              interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                              interceptor: RequestInterceptor? = nil,
+                              fileManager: FileManager = .default) -> UploadRequest {
         return Session.default.upload(multipartFormData: multipartFormData,
-                                      usingThreshold: encodingMemoryThreshold,
                                       to: url,
+                                      usingThreshold: encodingMemoryThreshold,
                                       method: method,
                                       headers: headers,
-                                      interceptor: interceptor)
+                                      interceptor: interceptor,
+                                      fileManager: fileManager)
     }
 
     /// Creates an `UploadRequest` for the prebuilt `MultipartFormData` value using the providing `URLRequestConvertible`
     /// value and `RequestInterceptor`.
     ///
-    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cumulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
     /// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
     /// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
@@ -457,20 +494,24 @@ public enum AF {
     ///
     /// - Parameters:
     ///   - multipartFormData:       `MultipartFormData` instance to upload.
+    ///   - request:                 `URLRequestConvertible` value to be used to create the `URLRequest`.
     ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
     ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
     ///                              default.
-    ///   - request:                 `URLRequestConvertible` value to be used to create the `URLRequest`.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:             `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                              default.
     ///
     /// - Returns:                   The created `UploadRequest`.
-    public static  func upload(multipartFormData: MultipartFormData,
-                               usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
-                               with request: URLRequestConvertible,
-                               interceptor: RequestInterceptor? = nil) -> UploadRequest {
+    public static func upload(multipartFormData: MultipartFormData,
+                              with request: URLRequestConvertible,
+                              usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
+                              interceptor: RequestInterceptor? = nil,
+                              fileManager: FileManager = .default) -> UploadRequest {
         return Session.default.upload(multipartFormData: multipartFormData,
-                                      usingThreshold: encodingMemoryThreshold,
                                       with: request,
-                                      interceptor: interceptor)
+                                      usingThreshold: encodingMemoryThreshold,
+                                      interceptor: interceptor,
+                                      fileManager: fileManager)
     }
 }

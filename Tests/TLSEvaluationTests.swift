@@ -83,9 +83,9 @@ class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if let error = error as? URLError {
+        if let error = error?.asAFError?.underlyingError as? URLError {
             XCTAssertEqual(error.code, .serverCertificateUntrusted)
-        } else if let error = error as NSError? {
+        } else if let error = error?.asAFError?.underlyingError as NSError? {
             XCTAssertEqual(error.domain, kCFErrorDomainCFNetwork as String)
             XCTAssertEqual(error.code, Int(CFNetworkErrors.cfErrorHTTPSProxyConnectionFailure.rawValue))
         } else {

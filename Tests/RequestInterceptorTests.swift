@@ -89,7 +89,7 @@ final class AdapterTestCase: BaseTestCase {
             completion(.success(request))
         }
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         // When
         adapter.adapt(urlRequest, for: session) { result = $0 }
@@ -131,7 +131,7 @@ final class AdapterTestCase: BaseTestCase {
             }
         }
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         let completesExpectation = expectation(description: "adapter completes")
 
@@ -183,7 +183,7 @@ final class RetrierTestCase: BaseTestCase {
             completion(.retry)
         }
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         // When
         retrier.adapt(urlRequest, for: session) { result = $0 }
@@ -272,7 +272,7 @@ final class InterceptorTestCase: BaseTestCase {
         let session = Session()
         let interceptor = Interceptor()
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
@@ -290,7 +290,7 @@ final class InterceptorTestCase: BaseTestCase {
         let adapter = Adapter { urlRequest, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter])
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
@@ -309,7 +309,7 @@ final class InterceptorTestCase: BaseTestCase {
         let adapter2 = Adapter { urlRequest, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter1, adapter2])
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
@@ -331,7 +331,7 @@ final class InterceptorTestCase: BaseTestCase {
         }
         let interceptor = Interceptor(adapters: [adapter])
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         let completesExpectation = expectation(description: "interceptor completes")
 
@@ -494,7 +494,7 @@ final class InterceptorTestCase: BaseTestCase {
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
 
         // Then
-        XCTAssertEqual(result, .doNotRetryWithError(RetryError()))
+        XCTAssertEqual(result, RetryResult.doNotRetryWithError(RetryError()))
         XCTAssertTrue(result.error is RetryError)
         XCTAssertFalse(retrier2Called)
     }
