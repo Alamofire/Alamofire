@@ -515,6 +515,40 @@ class DownloadResumeDataTestCase: BaseTestCase {
 
         progressValues.forEach { XCTAssertGreaterThanOrEqual($0, 0.4) }
     }
+    
+    func testThatDownloadCanBeCancelledWithoutResumeData() {
+        // Given
+        let expectation = self.expectation(description: "Download should be cancelled")
+        var cancelled = false
+        
+        var response: DefaultDownloadResponse?
+        
+        // When
+        let download = Alamofire.download(urlString)
+        download.downloadProgress { progress in
+            guard !cancelled else { return }
+            
+            if progress.fractionCompleted > 0.1 {
+                download.cancel(createResumeData: false)
+                cancelled = true
+            }
+        }
+        download.response { resp in
+            response = resp
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: timeout, handler: nil)
+        
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.destinationURL)
+        XCTAssertNotNil(response?.error)
+        
+        XCTAssertNil(response?.resumeData)
+        XCTAssertNil(download.resumeData)
+    }
 }
 
 // MARK: -
