@@ -110,6 +110,8 @@ open class Session {
                 redirectHandler: RedirectHandler? = nil,
                 cachedResponseHandler: CachedResponseHandler? = nil,
                 eventMonitors: [EventMonitor] = []) {
+        precondition(session.configuration.identifier == nil,
+                     "Alamofire does not support background URLSessionConfigurations.")
         precondition(session.delegateQueue.underlyingQueue === rootQueue,
                      "Session(session:) intializer must be passed the DispatchQueue used as the delegateQueue's underlyingQueue as rootQueue.")
 
@@ -173,6 +175,8 @@ open class Session {
                             redirectHandler: RedirectHandler? = nil,
                             cachedResponseHandler: CachedResponseHandler? = nil,
                             eventMonitors: [EventMonitor] = []) {
+        precondition(configuration.identifier == nil, "Alamofire does not support background URLSessionConfigurations.")
+
         let delegateQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: rootQueue, name: "org.alamofire.session.sessionDelegateQueue")
         let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
 
@@ -724,7 +728,7 @@ open class Session {
                      fileManager: FileManager = .default) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
 
-        let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
+        let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
                                               encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: convertible,
                                               multipartFormData: multipartFormData)
@@ -764,7 +768,7 @@ open class Session {
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
+        let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
                                               encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: request,
                                               multipartFormData: multipartFormData)
@@ -800,7 +804,6 @@ open class Session {
     }
 
     // MARK: Perform
-
 
     /// Perform `Request`.
     ///
@@ -918,7 +921,7 @@ open class Session {
     }
 
     func updateStatesForTask(_ task: URLSessionTask, request: Request) {
-        request.withState { (state) in
+        request.withState { state in
             switch (startRequestsImmediately, state) {
             case (true, .initialized):
                 rootQueue.async { request.resume() }
@@ -996,7 +999,7 @@ extension Session: RequestDelegate {
     }
 
     public func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?) {
-        self.rootQueue.async {
+        rootQueue.async {
             let retry: () -> Void = {
                 guard !request.isCancelled else { return }
 

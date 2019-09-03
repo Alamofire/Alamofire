@@ -44,6 +44,6 @@ extension OperationQueue {
         self.maxConcurrentOperationCount = maxConcurrentOperationCount
         self.underlyingQueue = underlyingQueue
         self.name = name
-        self.isSuspended = startSuspended
+        isSuspended = startSuspended
     }
 }

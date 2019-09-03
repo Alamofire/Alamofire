@@ -79,15 +79,15 @@ public struct Redirector {
 
 extension Redirector: RedirectHandler {
     public func task(_ task: URLSessionTask,
-              willBeRedirectedTo request: URLRequest,
-              for response: HTTPURLResponse,
-              completion: @escaping (URLRequest?) -> Void) {
+                     willBeRedirectedTo request: URLRequest,
+                     for response: HTTPURLResponse,
+                     completion: @escaping (URLRequest?) -> Void) {
         switch behavior {
         case .follow:
             completion(request)
         case .doNotFollow:
             completion(nil)
-        case .modify(let closure):
+        case let .modify(closure):
             let request = closure(task, request, response)
             completion(request)
         }

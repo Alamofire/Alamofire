@@ -205,81 +205,81 @@ extension EventMonitor {
 
     // MARK: Default Implementations
 
-    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) { }
+    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {}
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
-                           didReceive challenge: URLAuthenticationChallenge) { }
+                           didReceive challenge: URLAuthenticationChallenge) {}
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didSendBodyData bytesSent: Int64,
                            totalBytesSent: Int64,
-                           totalBytesExpectedToSend: Int64) { }
-    public func urlSession(_ session: URLSession, taskNeedsNewBodyStream task: URLSessionTask) { }
+                           totalBytesExpectedToSend: Int64) {}
+    public func urlSession(_ session: URLSession, taskNeedsNewBodyStream task: URLSessionTask) {}
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            willPerformHTTPRedirection response: HTTPURLResponse,
-                           newRequest request: URLRequest) { }
+                           newRequest request: URLRequest) {}
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
-                           didFinishCollecting metrics: URLSessionTaskMetrics) { }
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) { }
-    public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) { }
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) { }
+                           didFinishCollecting metrics: URLSessionTaskMetrics) {}
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {}
+    public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {}
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {}
     public func urlSession(_ session: URLSession,
                            dataTask: URLSessionDataTask,
-                           willCacheResponse proposedResponse: CachedURLResponse) { }
+                           willCacheResponse proposedResponse: CachedURLResponse) {}
     public func urlSession(_ session: URLSession,
                            downloadTask: URLSessionDownloadTask,
                            didResumeAtOffset fileOffset: Int64,
-                           expectedTotalBytes: Int64) { }
+                           expectedTotalBytes: Int64) {}
     public func urlSession(_ session: URLSession,
                            downloadTask: URLSessionDownloadTask,
                            didWriteData bytesWritten: Int64,
                            totalBytesWritten: Int64,
-                           totalBytesExpectedToWrite: Int64) { }
+                           totalBytesExpectedToWrite: Int64) {}
     public func urlSession(_ session: URLSession,
                            downloadTask: URLSessionDownloadTask,
-                           didFinishDownloadingTo location: URL) { }
-    public func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) { }
-    public func request(_ request: Request, didFailToCreateURLRequestWithError error: AFError) { }
+                           didFinishDownloadingTo location: URL) {}
+    public func request(_ request: Request, didCreateInitialURLRequest urlRequest: URLRequest) {}
+    public func request(_ request: Request, didFailToCreateURLRequestWithError error: AFError) {}
     public func request(_ request: Request,
                         didAdaptInitialRequest initialRequest: URLRequest,
-                        to adaptedRequest: URLRequest) { }
+                        to adaptedRequest: URLRequest) {}
     public func request(_ request: Request,
                         didFailToAdaptURLRequest initialRequest: URLRequest,
-                        withError error: AFError) { }
-    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) { }
-    public func request(_ request: Request, didCreateTask task: URLSessionTask) { }
-    public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) { }
-    public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: AFError) { }
-    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: AFError?) { }
-    public func requestIsRetrying(_ request: Request) { }
-    public func requestDidFinish(_ request: Request) { }
-    public func requestDidResume(_ request: Request) { }
-    public func request(_ request: Request, didResumeTask task: URLSessionTask) { }
-    public func requestDidSuspend(_ request: Request) { }
-    public func request(_ request: Request, didSuspendTask task: URLSessionTask) { }
-    public func requestDidCancel(_ request: Request) { }
-    public func request(_ request: Request, didCancelTask task: URLSessionTask) { }
+                        withError error: AFError) {}
+    public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {}
+    public func request(_ request: Request, didCreateTask task: URLSessionTask) {}
+    public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {}
+    public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: AFError) {}
+    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: AFError?) {}
+    public func requestIsRetrying(_ request: Request) {}
+    public func requestDidFinish(_ request: Request) {}
+    public func requestDidResume(_ request: Request) {}
+    public func request(_ request: Request, didResumeTask task: URLSessionTask) {}
+    public func requestDidSuspend(_ request: Request) {}
+    public func request(_ request: Request, didSuspendTask task: URLSessionTask) {}
+    public func requestDidCancel(_ request: Request) {}
+    public func request(_ request: Request, didCancelTask task: URLSessionTask) {}
     public func request(_ request: DataRequest,
                         didValidateRequest urlRequest: URLRequest?,
                         response: HTTPURLResponse,
                         data: Data?,
-                        withResult result: Request.ValidationResult) { }
-    public func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>) { }
-    public func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) { }
-    public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) { }
-    public func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: AFError) { }
-    public func request(_ request: UploadRequest, didProvideInputStream stream: InputStream) { }
-    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, AFError>) { }
-    public func request(_ request: DownloadRequest, didCreateDestinationURL url: URL) { }
+                        withResult result: Request.ValidationResult) {}
+    public func request(_ request: DataRequest, didParseResponse response: DataResponse<Data?, AFError>) {}
+    public func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {}
+    public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {}
+    public func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: AFError) {}
+    public func request(_ request: UploadRequest, didProvideInputStream stream: InputStream) {}
+    public func request(_ request: DownloadRequest, didFinishDownloadingUsing task: URLSessionTask, with result: Result<URL, AFError>) {}
+    public func request(_ request: DownloadRequest, didCreateDestinationURL url: URL) {}
     public func request(_ request: DownloadRequest,
                         didValidateRequest urlRequest: URLRequest?,
                         response: HTTPURLResponse,
                         fileURL: URL?,
-                        withResult result: Request.ValidationResult) { }
-    public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) { }
-    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) { }
+                        withResult result: Request.ValidationResult) {}
+    public func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {}
+    public func request<Value>(_ request: DownloadRequest, didParseResponse response: DownloadResponse<Value, AFError>) {}
 }
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
@@ -841,5 +841,4 @@ open class ClosureEventMonitor: EventMonitor {
     open func request(_ request: DownloadRequest, didParseResponse response: DownloadResponse<URL?, AFError>) {
         requestDidParseDownloadResponse?(request, response)
     }
-
 }

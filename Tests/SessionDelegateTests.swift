@@ -161,7 +161,7 @@ class SessionDelegateTestCase: BaseTestCase {
         let expect = expectation(description: "request should complete")
 
         // When
-        let request = session.download("https://httpbin.org/get").response { (response) in
+        let request = session.download("https://httpbin.org/get").response { response in
             requestResponse = response
             expect.fulfill()
         }

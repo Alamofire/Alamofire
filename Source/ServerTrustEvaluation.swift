@@ -73,9 +73,9 @@ open class ServerTrustManager {
 
 /// A protocol describing the API used to evaluate server trusts.
 public protocol ServerTrustEvaluating {
-    #if os(Linux)
-    // Implement this once Linux has API for evaluating server trusts.
-    #else
+#if os(Linux)
+// Implement this once Linux has API for evaluating server trusts.
+#else
     /// Evaluates the given `SecTrust` value for the given `host`.
     ///
     /// - Parameters:
@@ -84,7 +84,7 @@ public protocol ServerTrustEvaluating {
     ///
     /// - Returns: A `Bool` indicating whether the evaluator considers the `SecTrust` value valid for `host`.
     func evaluate(_ trust: SecTrust, forHost host: String) throws
-    #endif
+#endif
 }
 
 // MARK: - Server Trust Evaluators
@@ -178,7 +178,7 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
             try trust.af.performValidation(forHost: host)
         }
 
-        try trust.af.validate(policy: SecPolicy.af.revocation(options: options)) { (status, result) in
+        try trust.af.validate(policy: SecPolicy.af.revocation(options: options)) { status, result in
             AFError.serverTrustEvaluationFailed(reason: .revocationCheckFailed(output: .init(host, trust, status, result), options: options))
         }
     }
@@ -333,17 +333,17 @@ public final class CompositeTrustEvaluator: ServerTrustEvaluating {
 /// **THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!**
 public final class DisabledEvaluator: ServerTrustEvaluating {
     /// Creates an instance.
-    public init() { }
+    public init() {}
 
-    public func evaluate(_ trust: SecTrust, forHost host: String) throws { }
+    public func evaluate(_ trust: SecTrust, forHost host: String) throws {}
 }
 
 // MARK: - Extensions
 
 public extension Array where Element == ServerTrustEvaluating {
-    #if os(Linux)
-    // Add this same convenience method for Linux.
-    #else
+#if os(Linux)
+// Add this same convenience method for Linux.
+#else
     /// Evaluates the given `SecTrust` value for the given `host`.
     ///
     /// - Parameters:
@@ -356,7 +356,7 @@ public extension Array where Element == ServerTrustEvaluating {
             try evaluator.evaluate(trust, forHost: host)
         }
     }
-    #endif
+#endif
 }
 
 extension Bundle: AlamofireExtended {}
@@ -473,7 +473,7 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
     /// - Parameter host: The hostname, used only in the error output if validation fails.
     /// - Throws: An `AFError.serverTrustEvaluationFailed` instance with a `.defaultEvaluationFailed` reason.
     func performDefaultValidation(forHost host: String) throws {
-        try validate(policy: SecPolicy.af.default) { (status, result) in
+        try validate(policy: SecPolicy.af.default) { status, result in
             AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, type, status, result)))
         }
     }
@@ -484,7 +484,7 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
     /// - Parameter host: The hostname to use in the validation.
     /// - Throws:         An `AFError.serverTrustEvaluationFailed` instance with a `.defaultEvaluationFailed` reason.
     func performValidation(forHost host: String) throws {
-        try validate(policy: SecPolicy.af.hostname(host)) { (status, result) in
+        try validate(policy: SecPolicy.af.hostname(host)) { status, result in
             AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, type, status, result)))
         }
     }
@@ -521,7 +521,7 @@ public extension AlamofireExtension where ExtendedType == SecPolicy {
 }
 
 extension Array: AlamofireExtended {}
-public extension AlamofireExtension where ExtendedType == Array<SecCertificate> {
+public extension AlamofireExtension where ExtendedType == [SecCertificate] {
     /// All `Data` values for the contained `SecCertificate`s.
     var data: [Data] {
         return type.map { SecCertificateCopyData($0) as Data }

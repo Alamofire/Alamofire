@@ -25,7 +25,6 @@
 import Alamofire
 
 extension AFError {
-
     // ParameterEncodingFailureReason
 
     var isMissingURLFailed: Bool {

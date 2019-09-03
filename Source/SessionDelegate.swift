@@ -104,8 +104,8 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
             let trust = challenge.protectionSpace.serverTrust
-            else {
-                return (.performDefaultHandling, nil, nil)
+        else {
+            return (.performDefaultHandling, nil, nil)
         }
 
         do {
@@ -153,7 +153,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
                                  totalBytesExpectedToSend: totalBytesExpectedToSend)
 
         stateProvider?.request(for: task)?.updateUploadProgress(totalBytesSent: totalBytesSent,
-                                                   totalBytesExpectedToSend: totalBytesExpectedToSend)
+                                                                totalBytesExpectedToSend: totalBytesExpectedToSend)
     }
 
     open func urlSession(_ session: URLSession,
@@ -193,7 +193,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)
 
-        stateProvider?.request(for: task)?.didCompleteTask(task, with: error.map{ $0.asAFError(or: .sessionTaskFailed(error: $0)) })
+        stateProvider?.request(for: task)?.didCompleteTask(task, with: error.map { $0.asAFError(or: .sessionTaskFailed(error: $0)) })
 
         stateProvider?.didCompleteTask(task)
     }

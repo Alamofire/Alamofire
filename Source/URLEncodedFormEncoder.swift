@@ -391,7 +391,7 @@ public final class URLEncodedFormEncoder {
 final class _URLEncodedFormEncoder {
     var codingPath: [CodingKey]
     // Returns an empty dictionary, as this encoder doesn't support userInfo.
-    var userInfo: [CodingUserInfoKey : Any] { return [:] }
+    var userInfo: [CodingUserInfoKey: Any] { return [:] }
 
     let context: URLEncodedFormContext
 
@@ -413,7 +413,7 @@ final class _URLEncodedFormEncoder {
 }
 
 extension _URLEncodedFormEncoder: Encoder {
-    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key : CodingKey {
+    func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key> where Key: CodingKey {
         let container = _URLEncodedFormEncoder.KeyedContainer<Key>(context: context,
                                                                    codingPath: codingPath,
                                                                    boolEncoding: boolEncoding,
@@ -543,7 +543,7 @@ struct AnyCodingKey: CodingKey, Hashable {
         self.intValue = intValue
     }
 
-    init<Key>(_ base: Key) where Key : CodingKey {
+    init<Key>(_ base: Key) where Key: CodingKey {
         if let intValue = base.intValue {
             self.init(intValue: intValue)!
         } else {
@@ -586,7 +586,7 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
         throw EncodingError.invalidValue("\(key): nil", context)
     }
 
-    func encode<T>(_ value: T, forKey key: Key) throws where T : Encodable {
+    func encode<T>(_ value: T, forKey key: Key) throws where T: Encodable {
         var container = nestedSingleValueEncoder(for: key)
         try container.encode(value)
     }
@@ -611,7 +611,7 @@ extension _URLEncodedFormEncoder.KeyedContainer: KeyedEncodingContainerProtocol 
         return container
     }
 
-    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
+    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type, forKey key: Key) -> KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey {
         let container = _URLEncodedFormEncoder.KeyedContainer<NestedKey>(context: context,
                                                                          codingPath: nestedCodingPath(for: key),
                                                                          boolEncoding: boolEncoding,
@@ -737,14 +737,14 @@ extension _URLEncodedFormEncoder.SingleValueContainer: SingleValueEncodingContai
         try encode(value, as: String(value))
     }
 
-    private func encode<T>(_ value: T, as string: String) throws where T : Encodable {
+    private func encode<T>(_ value: T, as string: String) throws where T: Encodable {
         try checkCanEncode(value: value)
         defer { canEncodeNewValue = false }
 
         context.component.set(to: .string(string), at: codingPath)
     }
 
-    func encode<T>(_ value: T) throws where T : Encodable {
+    func encode<T>(_ value: T) throws where T: Encodable {
         switch value {
         case let date as Date:
             guard let string = try dateEncoding.encode(date) else {
@@ -813,7 +813,7 @@ extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
         throw EncodingError.invalidValue("nil", context)
     }
 
-    func encode<T>(_ value: T) throws where T : Encodable {
+    func encode<T>(_ value: T) throws where T: Encodable {
         var container = nestedSingleValueContainer()
         try container.encode(value)
     }
@@ -828,7 +828,7 @@ extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
                                                            dateEncoding: dateEncoding)
     }
 
-    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
+    func nestedContainer<NestedKey>(keyedBy keyType: NestedKey.Type) -> KeyedEncodingContainer<NestedKey> where NestedKey: CodingKey {
         defer { count += 1 }
         let container = _URLEncodedFormEncoder.KeyedContainer<NestedKey>(context: context,
                                                                          codingPath: nestedCodingPath,
@@ -895,7 +895,7 @@ final class URLEncodedFormSerializer {
     }
 
     func serialize(_ object: [String: URLEncodedFormComponent], forKey key: String) -> String {
-        let segments: [String] = object.map { (subKey, value) in
+        let segments: [String] = object.map { subKey, value in
             let keyPath = "[\(subKey)]"
             return serialize(value, forKey: key + keyPath)
         }
@@ -904,7 +904,7 @@ final class URLEncodedFormSerializer {
     }
 
     func serialize(_ array: [URLEncodedFormComponent], forKey key: String) -> String {
-        let segments: [String] = array.map { (component) in
+        let segments: [String] = array.map { component in
             let keyPath = arrayEncoding.encode(key)
             return serialize(component, forKey: keyPath)
         }

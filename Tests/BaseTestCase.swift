@@ -57,7 +57,7 @@ class BaseTestCase: XCTestCase {
     }
 
     func assertErrorIsServerTrustEvaluationError(_ error: Error?, file: StaticString = #file, line: UInt = #line, evaluation: (_ reason: AFError.ServerTrustFailureReason) -> Void) {
-        assertErrorIsAFError(error, file: file, line: line) { (error) in
+        assertErrorIsAFError(error, file: file, line: line) { error in
             guard case let .serverTrustEvaluationFailed(reason) = error else {
                 XCTFail("error is not .serverTrustEvaluationFailed", file: file, line: line)
                 return
