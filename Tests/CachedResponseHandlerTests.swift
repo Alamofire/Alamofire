@@ -37,7 +37,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session()
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
@@ -57,7 +57,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session()
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should not cache response")
 
         // When
@@ -77,7 +77,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session()
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
@@ -107,7 +107,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session(using: ResponseCacher.cache)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
@@ -127,7 +127,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session(using: ResponseCacher.doNotCache)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should not cache response")
 
         // When
@@ -154,7 +154,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 
         let session = self.session(using: cacher)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
@@ -177,7 +177,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session(using: ResponseCacher.cache)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
