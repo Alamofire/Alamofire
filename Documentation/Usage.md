@@ -210,7 +210,7 @@ AF.request("https://httpbin.org/post", method: .post, parameters: parameters, en
 
 ##### Configuring the Encoding of `Array` Parameters
 
-Since there is no published specification for how to encode collection types, by default, Alamofire follows the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
+Since there is no published specification for how to encode collection types, by default Alamofire follows the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
 
 The `URLEncodedFormEncoder.ArrayEncoding` enumeration provides the following methods for encoding `Array` parameters:
 
