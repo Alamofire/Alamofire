@@ -55,16 +55,17 @@ Alamofire provides an elegant and composable interface to HTTP network requests.
 Additionally, networking in Alamofire (and the URL Loading System in general) is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
 
 #### Aside: The `AF` Namespace
-Previous versions of Alamofire's documentation used examples like `Alamofire.request()`. This API, while it appeared to require the `Alamofire` prefix, in fact worked fine without it. The `request` method and other functions were available globally in any file with `import Alamofire`. Starting in Alamofire 5, this functionality has been moved out of the global [namespace](https://en.wikipedia.org/wiki/Namespace) and into the `AF` enum, which acts as a namespace. This allows Alamofire to offer the same convenience functionality while not having to pollute the global namespace every time Alamofire is used. Similarly, types extended by Alamofire will use an `.af.` extension prefix to separate the functionality Alamofire offers from other extensions.
+Previous versions of Alamofire's documentation used examples like `Alamofire.request()`. This API, while it appeared to require the `Alamofire` prefix, in fact worked fine without it. The `request` method and other functions were available globally in any file with `import Alamofire`. Starting in Alamofire 5, this functionality has been moved out of the global [namespace](https://en.wikipedia.org/wiki/Namespace) and into the `AF` enum, which acts as a namespace. This allows Alamofire to offer the same convenience functionality while not having to pollute the global namespace every time Alamofire is used. Similarly, types extended by Alamofire will use an `af` property extension to separate the functionality Alamofire adds from other extensions.
 
 ## Making Requests
-Alamofire provides a variety of convenient methods for making HTTP requests. At the simplest, just provide a `String` that can be converted into a `URL`:
+Alamofire provides a variety of convenience methods for making HTTP requests. At the simplest, just provide a `String` that can be converted into a `URL`:
 
 ```swift
 AF.request("https://httpbin.org/get").response { response in
     debugPrint(response)
 }
 ```
+
 > All examples require `import Alamofire` somewhere in the source file.
 
 This is actually one form of the two top-level APIs on Alamofire's `Session` type for making requests. Its full definition looks like this:
@@ -167,7 +168,7 @@ AF.request("https://httpbin.org/post",
 
 #### `URLEncodedFormParameterEncoder`
 
-The `URLEncodedFormParameterEncoder` encodes values into a url-encoded string to be set as or appended to any existing URL query or set as the HTTP body of the request. Controlling where the encoded string is set can be done by setting the `destination` of the encoding. The `URLEncodedFormParameterEncoder.Destination` enumeration has three cases:
+The `URLEncodedFormParameterEncoder` encodes values into a url-encoded string to be set as or appended to any existing URL query string or set as the HTTP body of the request. Controlling where the encoded string is set can be done by setting the `destination` of the encoding. The `URLEncodedFormParameterEncoder.Destination` enumeration has three cases:
 
 - `.methodDependent` - Applies the encoded query string result to existing query string for `.get`, `.head` and `.delete` requests and sets it as the HTTP body for requests with any other HTTP method.
 - `.queryString` - Sets or appends the encoded string to the query of the request's `URL`.
@@ -186,6 +187,7 @@ let parameters = ["foo": "bar"]
 AF.request("https://httpbin.org/get", parameters: parameters) // encoding defaults to `URLEncoding.default`
 AF.request("https://httpbin.org/get", parameters: parameters, encoder: URLEncodedFormParameterEncoder.default)
 AF.request("https://httpbin.org/get", parameters: parameters, encoder: URLEncodedFormParameterEncoder(destination: .methodDependent))
+
 // https://httpbin.org/get?foo=bar
 ```
 
@@ -197,20 +199,22 @@ let parameters: [String: [String]] = [
     "baz": ["a", "b"],
     "qux": ["x", "y", "z"]
 ]
+
 // All three of these calls are equivalent
 AF.request("https://httpbin.org/post", method: .post, parameters: parameters)
 AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: URLEncodedFormParameterEncoder.default)
 AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: URLEncodedFormParameterEncoder(destination: .httpBody))
+
 // HTTP body: "qux[]=x&qux[]=y&qux[]=z&baz[]=a&baz[]=b&foo[]=bar"
 ```
 
 ##### Configuring the Encoding of `Array` Parameters
 
-Since there is no published specification for how to encode collection types, by default Alamofire follows the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
+Since there is no published specification for how to encode collection types, by default, Alamofire follows the convention of appending `[]` to the key for array values (`foo[]=1&foo[]=2`), and appending the key surrounded by square brackets for nested dictionary values (`foo[bar]=baz`).
 
 The `URLEncodedFormEncoder.ArrayEncoding` enumeration provides the following methods for encoding `Array` parameters:
 
-- `.brackets` - An empty set of square brackets is appended to the key for every value.
+- `.brackets` - An empty set of square brackets is appended to the key for every value. This is the default case.
 - `.noBrackets` - No brackets are appended. The key is encoded as is.
 
 By default, Alamofire uses the `.brackets` encoding, where `foo = [1, 2]` is encoded as `foo[]=1&foo[]=2`.
@@ -227,7 +231,7 @@ let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(arra
 
 The `URLEncodedFormEncoder.BoolEncoding` enumeration provides the following methods for encoding `Bool` parameters:
 
-- `.numeric` - Encode `true` as `1` and `false` as `0`.
+- `.numeric` - Encode `true` as `1` and `false` as `0`. This is the default case.
 - `.literal` - Encode `true` and `false` as string literals.
 
 By default, Alamofire uses the `.numeric` encoding.
@@ -243,7 +247,7 @@ let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(bool
 `DataEncoding` includes the following methods for encoding `Data` parameters:
 
 - `.deferredToData` - Uses `Data`'s native `Encodable` support.
-- `.base64` - Encodes `Data` as a Base 64 encoded `String`. This is the default.
+- `.base64` - Encodes `Data` as a Base 64 encoded `String`. This is the default case.
 - `.custom((Data) -> throws -> String)` - Encodes `Data` using the given closure.
 
 You can create your own `URLEncodedFormParameterEncoder` and specify the desired `DataEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
@@ -256,7 +260,7 @@ let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(data
 
 Given the sheer number of ways to encode a `Date` into a `String`, `DateEncoding` includes the following methods for encoding `Date` parameters:
 
-- `.deferredToDate` - Uses `Date`'s native `Encodable` support.
+- `.deferredToDate` - Uses `Date`'s native `Encodable` support. This is the default case.
 - `.secondsSince1970` - Encodes `Date`s as seconds since midnight UTC on January 1, 1970. 
 - `.millisecondsSince1970` - Encodes `Date`s as milliseconds since midnight UTC on January 1, 1970.
 - `.iso8601` - Encodes `Date`s according to the ISO 8601 and RFC3339 standards.
@@ -273,6 +277,7 @@ let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(date
 
 Due to the variety of parameter key styles, `KeyEncoding` provides the following methods to customize key encoding from keys in `lowerCamelCase`:
 
+- `.useDefaultKeys` - Uses the keys specified by each type. This is the default case.
 - `.convertToSnakeCase` - Converts keys to snake case: `oneTwoThree` becomes `one_two_three`.
 - `.convertToKebabCase` - Converts keys to kebab case: `oneTwoThree` becomes `one-two-three`.
 - `.capitalized` - Capitalizes the first letter only, a.k.a `UpperCamelCase`: `oneTwoThree` becomes `OneTwoThree`.
@@ -290,7 +295,7 @@ let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(keyE
 
 Older form encoders used `+` to encode spaces and some servers still expect this encoding instead of the modern percent encoding, so Alamofire includes the following methods for encoding spaces:
 
-- `.percentEscaped` - Encodes space characters by applying standard percent escaping. `" "` is encoded as  `"%20"`.
+- `.percentEscaped` - Encodes space characters by applying standard percent escaping. `" "` is encoded as  `"%20"`. This is the default case.
 - `.plusReplaced` - Encodes space characters by replacing them with `+`. `" "` is encoded as `"+"`.
 
 You can create your own `URLEncodedFormParameterEncoder` and specify the desired `SpaceEncoding` in the initializer of the passed `URLEncodedFormEncoder`:
@@ -381,7 +386,7 @@ The default Alamofire `Session` provides a default set of headers for every `Req
 - `Accept-Language`, which defaults to up to the top 6 preferred languages on the system, formatted like `en;q=1.0`, per [RFC 7231 §5.3.5](https://tools.ietf.org/html/rfc7231#section-5.3.5).
 - `User-Agent`, which contains versioning information about the current app. For example: `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 13.0.0) Alamofire/5.0.0`, per [RFC 7231 §5.5.3](https://tools.ietf.org/html/rfc7231#section-5.5.3).
 
-If you need to customize these headers, a custom `URLSessionConfiguration` should be created, the `defaultHTTPHeaders` property updated and the configuration applied to a new `Session` instance. Use `URLSessionConfiguration.af.default` to customize your configuration while keeping Alamofire's default headers.
+If you need to customize these headers, a custom `URLSessionConfiguration` should be created, the `defaultHTTPHeaders` property updated, and the configuration applied to a new `Session` instance. Use `URLSessionConfiguration.af.default` to customize your configuration while keeping Alamofire's default headers.
 
 ### Response Validation
 
@@ -389,7 +394,7 @@ By default, Alamofire treats any completed request to be successful, regardless 
 
 #### Automatic Validation
 
-`validate()` automatically validates that status codes are within the `200..<300` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
+The `validate()` API automatically validates that status codes are within the `200..<300` range, and that the `Content-Type` header of the response matches the `Accept` header of the request, if one is provided.
 
 ```swift
 AF.request("https://httpbin.org/get").validate().responseJSON { response in
@@ -415,7 +420,7 @@ AF.request("https://httpbin.org/get")
 
 ### Response Handling
 
-Alamofire's `DataRequest` and `DownloadRequest` both have a corresponding response type: `DataResponse<Success, Failure: Error>` and `DownloadResponse<Success, Failure: Error>`. Both of these types are generic to the type serialized from the response as well as the error type returned. By default, all response values will produce the `AFError` error type (i.e. `DataResponse<Success, AFError>`). Alamofire uses the simpler `AFDataResponse<Success>` and `AFDownloadResponse<Success>`, in it's public API, which always have `AFError` error types. `UploadRequest`, as a subclass of `DataRequest`, uses the same `DataResponse` type.
+Alamofire's `DataRequest` and `DownloadRequest` both have a corresponding response type: `DataResponse<Success, Failure: Error>` and `DownloadResponse<Success, Failure: Error>`. Both of these are composed of two generics: the serialized type and the error type. By default, all response values will produce the `AFError` error type (i.e. `DataResponse<Success, AFError>`). Alamofire uses the simpler `AFDataResponse<Success>` and `AFDownloadResponse<Success>`, in its public API, which always have `AFError` error types. `UploadRequest`, a subclass of `DataRequest`, uses the same `DataResponse` type.
 
 Handling the `DataResponse` of a `DataRequest` or `UploadRequest` made in Alamofire involves chaining a response handler like `responseJSON` onto the `DataRequest`:
 
@@ -470,7 +475,7 @@ None of the response handlers perform any validation of the `HTTPURLResponse` it
 
 #### Response Handler
 
-The `response` handler does NOT evaluate any of the response data. It merely forwards on all information directly from the URL session delegate. It is the Alamofire equivalent of using `cURL` to execute a `Request`.
+The `response` handler does NOT evaluate any of the response data. It merely forwards on all information directly from the `URLSessionDelegate`. It is the Alamofire equivalent of using `cURL` to execute a `Request`.
 
 ```swift
 AF.request("https://httpbin.org/get").response { response in
@@ -482,7 +487,7 @@ AF.request("https://httpbin.org/get").response { response in
 
 #### Response Data Handler
 
-The `responseData` handler uses a `DataResponseSerializer`  to extract and validate the `Data` returned by the server. If no errors occur and `Data` is returned, the response `Result` will be a `.success` and the `value` will be the `Data` returned from the server.
+The `responseData` handler uses a `DataResponseSerializer` to extract and validate the `Data` returned by the server. If no errors occur and `Data` is returned, the response `Result` will be a `.success` and the `value` will be the `Data` returned from the server.
 
 ```swift
 AF.request("https://httpbin.org/get").responseData { response in
@@ -516,7 +521,7 @@ AF.request("https://httpbin.org/get").responseJSON { response in
 
 #### Response `Decodable` Handler
 
-The `responseDecodable` handler uses a `DecodableResponseSerializer` to convert the `Data` returned by the server into the passed `Decodable` type using the specified `DataDecoder` (a protocol abstraction for `Decoder`s which can decode from `Data`). If no errors occur and the server data is successfully decoded into a value, the response `Result` will be a `.success` and the `value` will be of the passed type.
+The `responseDecodable` handler uses a `DecodableResponseSerializer` to convert the `Data` returned by the server into the passed `Decodable` type using the specified `DataDecoder` (a protocol abstraction for `Decoder`s which can decode from `Data`). If no errors occur and the server data is successfully decoded into a `Decodable` type, the response `Result` will be a `.success` and the `value` will be of the passed type.
 
 ```swift
 struct HTTPBinResponse: Decodable { let url: String }
@@ -626,7 +631,7 @@ However, headers that must be part of all requests are often better handled as p
 
 ### Downloading Data to a File
 
-In addition to fetching data into memory, Alamofire also provides the `Session.download`, `DownloadRequest`, and `DownloadResponse<Success, Failure: Error>` APIs to facilitate downloading to disk. While downloading into memory works great for small payloads like most JSON API responses, downloading larger assets like images and videos should be done to disk, to avoid memory issues with your application.
+In addition to fetching data into memory, Alamofire also provides the `Session.download`, `DownloadRequest`, and `DownloadResponse<Success, Failure: Error>` APIs to facilitate downloading to disk. While downloading into memory works great for small payloads like most JSON API responses, fetching larger assets like images and videos should be downloaded to disk to avoid memory issues with your application.
 
 ```swift
 AF.download("https://httpbin.org/image/png").responseData { response in
@@ -688,7 +693,7 @@ AF.download("https://httpbin.org/image/png")
     }
 ```
 
-> `URLSession`'s, and therefore Alamofire's, progress reporting APIs only work if the server properly returns a `Content-Length` header that can be used to calculate the progress. Without that header, progress will stay at `0.0` until the download completes, at which point the progress will jump to `1.0`.
+> The progress reporting APIs for `URLSession`, and therefore Alamofire, only work if the server properly returns a `Content-Length` header that can be used to calculate the progress. Without that header, progress will stay at `0.0` until the download completes, at which point the progress will jump to `1.0`.
 
 The `downloadProgress` API can also take a `queue` parameter which defines which `DispatchQueue` the download progress closure should be called on.
 
@@ -710,7 +715,7 @@ AF.download("https://httpbin.org/image/png")
 
 In addition to the `cancel()` API that all `Request` classes have, `DownloadRequest`s can also produce resume data, which can be used to later resume a download. There are two forms of this API: `cancel(producingResumeData: Bool)`, which allows control over whether resume data is produced, but only makes it available on the `DownloadResponse`; and `cancel(byProducingResumeData: (_ resumeData: Data?) -> Void)`, which performs the same actions but makes the resume data available in the completion handler.
 
-If a `DownloadRequest` is cancelled or interrupted, the underlying `URLSessionDownloadTask` *may* generate resume data. If this happens, the resume data can be re-used to restart the `DownloadRequest` where it left off. 
+If a `DownloadRequest` is canceled or interrupted, the underlying `URLSessionDownloadTask` *may* generate resume data. If this happens, the resume data can be re-used to restart the `DownloadRequest` where it left off. 
 
 > **IMPORTANT:** On some versions of all Apple platforms (iOS 10 - 10.2, macOS 10.12 - 10.12.2, tvOS 10 - 10.1, watchOS 3 - 3.1.1), `resumeData` is broken on background `URLSessionConfiguration`s. There's an underlying bug in the `resumeData` generation logic where the data is written incorrectly and will always fail to resume the download. For more information about the bug and possible workarounds, please see this [Stack Overflow post](https://stackoverflow.com/a/39347461/1342462).
 
@@ -773,7 +778,7 @@ AF.upload(multipartFormData: { multipartFormData in
 
 #### Upload Progress
 
-While your user is waiting for their upload to complete, sometimes it can be handy to show the progress of the upload to the user. Any `UploadRequest` can report both upload progress and download progress of the response data using the `uploadProgress` and `downloadProgress` APIs.
+While your user is waiting for their upload to complete, sometimes it can be handy to show the progress of the upload to the user. Any `UploadRequest` can report both upload progress of the upload and download progress of the response data download using the `uploadProgress` and `downloadProgress` APIs.
 
 ```swift
 let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
@@ -804,7 +809,7 @@ AF.request("https://httpbin.org/get").responseJSON { response in
 
 ### cURL Command Output
 
-Debugging platform issues can be frustrating. Thankfully, Alamofire `Request`s can produce the equivalent cURL command for easy debugging. Due to the asynchronous nature of Alamofire's `Request` creation, this API has both synchronous and asynchronous versions. To get the cURL command as soon as possible, you can chain the `cURLDescription` onto a request:
+Debugging platform issues can be frustrating. Thankfully, Alamofire's `Request` type can produce the equivalent cURL command for easy debugging. Due to the asynchronous nature of Alamofire's `Request` creation, this API has both synchronous and asynchronous versions. To get the cURL command as soon as possible, you can chain the `cURLDescription` onto a request:
 
 ```swift
 AF.request("https://httpbin.org/get")
