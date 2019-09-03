@@ -117,7 +117,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
 
-        if let json = response?.result.value as? [String: Any], let form = json["form"] as? [String: String] {
+        if let json = response?.result.success as? [String: Any], let form = json["form"] as? [String: String] {
             XCTAssertEqual(form["french"], parameters["french"])
             XCTAssertEqual(form["japanese"], parameters["japanese"])
             XCTAssertEqual(form["arabic"], parameters["arabic"])
@@ -168,7 +168,7 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
 
-        if let json = response?.result.value as? [String: Any], let form = json["form"] as? [String: String] {
+        if let json = response?.result.success as? [String: Any], let form = json["form"] as? [String: String] {
             XCTAssertEqual(form["email"], parameters["email"])
             XCTAssertEqual(form["png_image"], parameters["png_image"])
             XCTAssertEqual(form["jpeg_image"], parameters["jpeg_image"])
@@ -236,7 +236,7 @@ final class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(receivedResponse?.result.value?.data, "{\"property\":\"one\"}")
+        XCTAssertEqual(receivedResponse?.result.success?.data, "{\"property\":\"one\"}")
     }
 
     func testThatRequestsCanPassEncodableParametersAsAURLQuery() {
@@ -255,7 +255,7 @@ final class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(receivedResponse?.result.value?.args, ["property": "one"])
+        XCTAssertEqual(receivedResponse?.result.success?.args, ["property": "one"])
     }
 
     func testThatRequestsCanPassEncodableParametersAsURLEncodedBodyData() {
@@ -274,7 +274,7 @@ final class RequestResponseTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(receivedResponse?.result.value?.form, ["property": "one"])
+        XCTAssertEqual(receivedResponse?.result.success?.form, ["property": "one"])
     }
 
     // MARK: Lifetime Events

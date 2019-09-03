@@ -24,8 +24,8 @@
 
 import Foundation
 
-/// `Result` that always has an `Error` `Failure` type.
-public typealias AFResult<T> = Result<T, Error>
+/// Default type of `Result` returned by Alamofire, with an `AFError` `Failure` type.
+public typealias AFResult<Success> = Result<Success, AFError>
 
 // MARK: - Internal APIs
 

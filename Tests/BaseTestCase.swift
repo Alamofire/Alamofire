@@ -44,29 +44,6 @@ class BaseTestCase: XCTestCase {
         return bundle.url(forResource: fileName, withExtension: ext)!
     }
 
-    func assertErrorIsAFError(_ error: Error?,
-                              file: StaticString = #file,
-                              line: UInt = #line,
-                              evaluation: (_ error: AFError) -> Void) {
-        guard let error = error?.asAFError else {
-            XCTFail("error is not an AFError", file: file, line: line)
-            return
-        }
-
-        evaluation(error)
-    }
-
-    func assertErrorIsServerTrustEvaluationError(_ error: Error?, file: StaticString = #file, line: UInt = #line, evaluation: (_ reason: AFError.ServerTrustFailureReason) -> Void) {
-        assertErrorIsAFError(error, file: file, line: line) { error in
-            guard case let .serverTrustEvaluationFailed(reason) = error else {
-                XCTFail("error is not .serverTrustEvaluationFailed", file: file, line: line)
-                return
-            }
-
-            evaluation(reason)
-        }
-    }
-
     /// Runs assertions on a particular `DispatchQueue`.
     ///
     /// - Parameters:

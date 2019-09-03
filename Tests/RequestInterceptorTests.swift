@@ -279,7 +279,7 @@ final class InterceptorTestCase: BaseTestCase {
 
         // Then
         XCTAssertTrue(result.isSuccess)
-        XCTAssertEqual(result.value, urlRequest)
+        XCTAssertEqual(result.success, urlRequest)
     }
 
     func testThatInterceptorCanAdaptRequestWithOneAdapter() {
@@ -297,7 +297,7 @@ final class InterceptorTestCase: BaseTestCase {
 
         // Then
         XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.error is MockError)
+        XCTAssertTrue(result.failure is MockError)
     }
 
     func testThatInterceptorCanAdaptRequestWithMultipleAdapters() {
@@ -316,7 +316,7 @@ final class InterceptorTestCase: BaseTestCase {
 
         // Then
         XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.error is MockError)
+        XCTAssertTrue(result.failure is MockError)
     }
 
     func testThatInterceptorCanAdaptRequestAsynchronously() {
@@ -345,7 +345,7 @@ final class InterceptorTestCase: BaseTestCase {
 
         // Then
         XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.error is MockError)
+        XCTAssertTrue(result.failure is MockError)
     }
 
     func testThatInterceptorCanRetryRequestWithNoRetriers() {

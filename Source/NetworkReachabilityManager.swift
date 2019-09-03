@@ -99,17 +99,21 @@ open class NetworkReachabilityManager {
         return flags.map(NetworkReachabilityStatus.init) ?? .unknown
     }
 
-    /// A closure executed when the network reachability status changes.
-    private var listener: Listener?
-
-    /// `DispatchQueue` on which listeners will be called.
-    private var listenerQueue: DispatchQueue?
+    /// Mutable state storage.
+    struct MutableState {
+        /// A closure executed when the network reachability status changes.
+        var listener: Listener?
+        /// `DispatchQueue` on which listeners will be called.
+        var listenerQueue: DispatchQueue?
+        /// Previously calculated status.
+        var previousStatus: NetworkReachabilityStatus?
+    }
 
     /// `SCNetworkReachability` instance providing notifications.
     private let reachability: SCNetworkReachability
 
-    /// Protected storage for the previous status.
-    private let previousStatus = Protector<NetworkReachabilityStatus?>(nil)
+    /// Protected storage for mutable state.
+    private let mutableState = Protector(MutableState())
 
     // MARK: - Initialization
 
@@ -163,8 +167,10 @@ open class NetworkReachabilityManager {
                              onUpdatePerforming listener: @escaping Listener) -> Bool {
         stopListening()
 
-        listenerQueue = queue
-        self.listener = listener
+        mutableState.write { state in
+            state.listenerQueue = queue
+            state.listener = listener
+        }
 
         var context = SCNetworkReachabilityContext(version: 0,
                                                    info: Unmanaged.passRetained(self).toOpaque(),
@@ -195,9 +201,11 @@ open class NetworkReachabilityManager {
     open func stopListening() {
         SCNetworkReachabilitySetCallback(reachability, nil, nil)
         SCNetworkReachabilitySetDispatchQueue(reachability, nil)
-        previousStatus.write { $0 = nil }
-        listenerQueue = nil
-        listener = nil
+        mutableState.write { state in
+            state.listener = nil
+            state.listenerQueue = nil
+            state.previousStatus = nil
+        }
     }
 
     // MARK: - Internal - Listener Notification
@@ -210,12 +218,13 @@ open class NetworkReachabilityManager {
     func notifyListener(_ flags: SCNetworkReachabilityFlags) {
         let newStatus = NetworkReachabilityStatus(flags)
 
-        previousStatus.write { previousStatus in
-            guard previousStatus != newStatus else { return }
+        mutableState.write { state in
+            guard state.previousStatus != newStatus else { return }
 
-            previousStatus = newStatus
+            state.previousStatus = newStatus
 
-            listenerQueue?.async { self.listener?(newStatus) }
+            let listener = state.listener
+            state.listenerQueue?.async { listener?(newStatus) }
         }
     }
 }

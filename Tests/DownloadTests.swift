@@ -63,7 +63,7 @@ class DownloadInitializationTestCase: BaseTestCase {
         XCTAssertNotNil(request.request)
         XCTAssertEqual(request.request?.httpMethod, "GET")
         XCTAssertEqual(request.request?.url?.absoluteString, urlString)
-        XCTAssertEqual(request.request?.value(forHTTPHeaderField: "Authorization"), "123456")
+        XCTAssertEqual(request.request?.headers["Authorization"], "123456")
         XCTAssertNotNil(request.response)
     }
 }
@@ -136,6 +136,7 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.fileURL)
         XCTAssertNotNil(response?.error)
+        XCTAssertEqual(response?.error?.isExplicitlyCancelledError, true)
     }
 
     func testDownloadRequestWithProgress() {
@@ -206,7 +207,7 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(response?.error)
-        // TODO: Fails since the file is deleted by the time we get here?
+
         if
             let data = try? Data(contentsOf: fileURL),
             let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []),
@@ -277,12 +278,7 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
-
-        if let error = response?.error?.underlyingError as? CocoaError {
-            XCTAssertEqual(error.code, .fileNoSuchFile)
-        } else {
-            XCTFail("error should not be nil")
-        }
+        XCTAssertEqual((response?.error?.underlyingError as? CocoaError)?.code, .fileNoSuchFile)
     }
 
     func testThatDownloadOptionsCanCreateIntermediateDirectoriesPriorToMovingFile() {
@@ -309,44 +305,35 @@ class DownloadResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.error)
     }
 
-    func testThatDownloadingFileAndMovingToDestinationThatIsOccupiedThrowsError() {
-        do {
-            // Given
-            let directoryURL = testDirectoryURL.appendingPathComponent("some/random/folder")
-            let directoryCreated = FileManager.createDirectory(at: directoryURL)
+    func testThatDownloadingFileAndMovingToDestinationThatIsOccupiedThrowsError() throws {
+        // Given
+        let directoryURL = testDirectoryURL.appendingPathComponent("some/random/folder")
+        let directoryCreated = FileManager.createDirectory(at: directoryURL)
 
-            let fileURL = directoryURL.appendingPathComponent("test_output.json")
-            try "random_data".write(to: fileURL, atomically: true, encoding: .utf8)
+        let fileURL = directoryURL.appendingPathComponent("test_output.json")
+        try "random_data".write(to: fileURL, atomically: true, encoding: .utf8)
 
-            let expectation = self.expectation(description: "Download should complete but fail to move file")
-            var response: DownloadResponse<URL?, AFError>?
+        let expectation = self.expectation(description: "Download should complete but fail to move file")
+        var response: DownloadResponse<URL?, AFError>?
 
-            // When
-            AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, []) })
-                .response { resp in
-                    response = resp
-                    expectation.fulfill()
-                }
-
-            waitForExpectations(timeout: timeout, handler: nil)
-
-            // Then
-            XCTAssertTrue(directoryCreated)
-
-            XCTAssertNotNil(response?.request)
-            XCTAssertNotNil(response?.response)
-            XCTAssertNil(response?.fileURL)
-            XCTAssertNil(response?.resumeData)
-            XCTAssertNotNil(response?.error)
-
-            if let error = response?.error?.underlyingError as? CocoaError {
-                XCTAssertEqual(error.code, .fileWriteFileExists)
-            } else {
-                XCTFail("error should not be nil")
+        // When
+        AF.download("https://httpbin.org/get", to: { _, _ in (fileURL, []) })
+            .response { resp in
+                response = resp
+                expectation.fulfill()
             }
-        } catch {
-            XCTFail("Test encountered unexpected error: \(error)")
-        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertTrue(directoryCreated)
+
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNil(response?.fileURL)
+        XCTAssertNil(response?.resumeData)
+        XCTAssertNotNil(response?.error)
+        XCTAssertEqual((response?.error?.underlyingError as? CocoaError)?.code, .fileWriteFileExists)
     }
 
     func testThatDownloadOptionsCanRemovePreviousFilePriorToMovingFile() {
@@ -588,7 +575,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNil(response?.fileURL)
         XCTAssertEqual(response?.result.isFailure, true)
-        XCTAssertNotNil(response?.result.error)
+        XCTAssertNotNil(response?.result.failure)
 
         XCTAssertNotNil(response?.resumeData)
         XCTAssertNotNil(download.resumeData)
@@ -646,12 +633,12 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         XCTAssertNotNil(response1?.response)
         XCTAssertNil(response1?.fileURL)
         XCTAssertEqual(response1?.result.isFailure, true)
-        XCTAssertNotNil(response1?.result.error)
+        XCTAssertNotNil(response1?.result.failure)
 
         XCTAssertNotNil(response2?.response)
         XCTAssertNotNil(response2?.fileURL)
         XCTAssertEqual(response2?.result.isSuccess, true)
-        XCTAssertNil(response2?.result.error)
+        XCTAssertNil(response2?.result.failure)
 
         progressValues.forEach { XCTAssertGreaterThanOrEqual($0, 0.4) }
     }
@@ -723,7 +710,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(response?.error)
-        XCTAssertEqual(response?.result.value, "bar")
+        XCTAssertEqual(response?.result.success, "bar")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -781,7 +768,7 @@ class DownloadResponseTryMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(response?.error)
-        XCTAssertEqual(response?.result.value, "bar")
+        XCTAssertEqual(response?.result.success, "bar")
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -810,7 +797,7 @@ class DownloadResponseTryMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
-        if let error = response?.result.error {
+        if let error = response?.result.failure {
             XCTAssertTrue(error is TransformError)
         } else {
             XCTFail("flatMap should catch the transformation error")
@@ -872,7 +859,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.result.isFailure, true)
 
-        guard let error = response?.error, case TestError.error = error else { XCTFail(); return }
+        guard let error = response?.error, case .error = error else { XCTFail(); return }
 
         XCTAssertNotNil(response?.metrics)
     }
@@ -953,7 +940,7 @@ class DownloadResponseTryMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.result.isFailure, true)
 
-        if let error = response?.result.error {
+        if let error = response?.result.failure {
             XCTAssertTrue(error is TransformationError)
         } else {
             XCTFail("flatMapError should catch the transformation error")

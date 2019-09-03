@@ -402,11 +402,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
         XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling || request.task?.state == .completed))
-
-        guard let error = request.error, case .explicitlyCancelled = error else {
-            XCTFail("Request should have an .explicitlyCancelled error.")
-            return
-        }
+        XCTAssertEqual(request.error?.isExplicitlyCancelledError, true)
     }
 
     func testSetStartRequestsImmediatelyToFalseAndResumeThenCancelRequestHasCorrectOutput() {
@@ -435,11 +431,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
         XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling || request.task?.state == .completed))
-
-        guard let error = request.error, case .explicitlyCancelled = error else {
-            XCTFail("Request should have an .explicitlyCancelled error.")
-            return
-        }
+        XCTAssertEqual(request.error?.isExplicitlyCancelledError, true)
     }
 
     func testSetStartRequestsImmediatelyToFalseAndCancelThenResumeRequestDoesntCreateTaskAndStaysCancelled() {
@@ -468,11 +460,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNotNil(response, "response should not be nil")
         XCTAssertTrue(request.isCancelled)
         XCTAssertTrue((request.task == nil) || (request.task?.state == .canceling || request.task?.state == .completed))
-
-        guard let error = request.error, case .explicitlyCancelled = error else {
-            XCTFail("Request should have an .explicitlyCancelled error.")
-            return
-        }
+        XCTAssertEqual(request.error?.isExplicitlyCancelledError, true)
     }
 
     // MARK: Tests - Deinitialization
@@ -539,13 +527,8 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
-
-        if let error = response?.error {
-            XCTAssertTrue(error.isInvalidURLError)
-            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
-        } else {
-            XCTFail("error should not be nil")
-        }
+        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+        XCTAssertEqual(response?.error?.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
     }
 
     func testThatDownloadRequestWithInvalidURLStringThrowsResponseHandlerError() {
@@ -569,13 +552,8 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
-
-        if let error = response?.error {
-            XCTAssertTrue(error.isInvalidURLError)
-            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
-        } else {
-            XCTFail("error should not be nil")
-        }
+        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+        XCTAssertEqual(response?.error?.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
     }
 
     func testThatUploadDataRequestWithInvalidURLStringThrowsResponseHandlerError() {
@@ -598,13 +576,8 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
-
-        if let error = response?.error {
-            XCTAssertTrue(error.isInvalidURLError)
-            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
-        } else {
-            XCTFail("error should not be nil")
-        }
+        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+        XCTAssertEqual(response?.error?.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
     }
 
     func testThatUploadFileRequestWithInvalidURLStringThrowsResponseHandlerError() {
@@ -627,13 +600,8 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
-
-        if let error = response?.error {
-            XCTAssertTrue(error.isInvalidURLError)
-            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
-        } else {
-            XCTFail("error should not be nil")
-        }
+        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+        XCTAssertEqual(response?.error?.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
     }
 
     func testThatUploadStreamRequestWithInvalidURLStringThrowsResponseHandlerError() {
@@ -656,13 +624,8 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertNil(response?.response)
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
-
-        if let error = response?.error {
-            XCTAssertTrue(error.isInvalidURLError)
-            XCTAssertEqual(error.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
-        } else {
-            XCTFail("error should not be nil")
-        }
+        XCTAssertEqual(response?.error?.isInvalidURLError, true)
+        XCTAssertEqual(response?.error?.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
     }
 
     // MARK: Tests - Request Adapter
@@ -852,12 +815,8 @@ final class SessionTestCase: BaseTestCase {
 
         // Then
         for request in requests {
-            if let error = request.error {
-                XCTAssertTrue(error.isRequestAdaptationError)
-                XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "")
-            } else {
-                XCTFail("error should not be nil")
-            }
+            XCTAssertEqual(request.error?.isRequestAdaptationError, true)
+            XCTAssertEqual(request.error?.underlyingError?.asAFError?.urlConvertible as? String, "")
         }
     }
 
@@ -1097,16 +1056,11 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
+        XCTAssertEqual(request.error?.isRequestAdaptationError, true)
+        XCTAssertEqual(request.error?.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         assert(on: session.rootQueue) {
             XCTAssertTrue(session.requestTaskMap.isEmpty)
             XCTAssertTrue(session.activeRequests.isEmpty)
-        }
-
-        if let error = response?.result.error {
-            XCTAssertTrue(error.isRequestAdaptationError)
-            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
-        } else {
-            XCTFail("error should not be nil")
         }
     }
 
@@ -1138,16 +1092,11 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 3)
         XCTAssertEqual(request.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, false)
+        XCTAssertEqual(request.error?.isRequestAdaptationError, true)
+        XCTAssertEqual(request.error?.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         assert(on: session.rootQueue) {
             XCTAssertTrue(session.requestTaskMap.isEmpty)
             XCTAssertTrue(session.activeRequests.isEmpty)
-        }
-
-        if let error = response?.result.error {
-            XCTAssertTrue(error.isRequestAdaptationError)
-            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
-        } else {
-            XCTFail("error should not be nil")
         }
     }
 
@@ -1183,7 +1132,7 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        if let error = response?.result.error {
+        if let error = response?.result.failure {
             XCTAssertTrue(error.isRequestRetryError)
             XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/invalid/url/2")
         } else {
@@ -1220,16 +1169,11 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(handler.retryCount, 0)
         XCTAssertEqual(request.retryCount, 0)
         XCTAssertEqual(response?.result.isSuccess, false)
+        XCTAssertEqual(response?.error?.isResponseSerializationError, true)
+        XCTAssertEqual((response?.error?.underlyingError as? CocoaError)?.code, .propertyListReadCorrupt)
         assert(on: session.rootQueue) {
             XCTAssertTrue(session.requestTaskMap.isEmpty)
             XCTAssertTrue(session.activeRequests.isEmpty)
-        }
-
-        if let error = response?.error {
-            XCTAssertTrue(error.isResponseSerializationError)
-            XCTAssertTrue(error.localizedDescription.starts(with: "JSON could not be serialized"))
-        } else {
-            XCTFail("error should not be nil")
         }
     }
 
@@ -1273,16 +1217,15 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error?.asAFError }
+        let errors = [json1Response, json2Response].compactMap { $0?.error }
+
         XCTAssertEqual(errors.count, 2)
 
         for (index, error) in errors.enumerated() {
             XCTAssertTrue(error.isRequestRetryError)
-            XCTAssertEqual(error.localizedDescription.starts(with: "Request retry failed with retry error"), true)
-
             if case let .requestRetryFailed(retryError, originalError) = error {
-                XCTAssertEqual(try retryError.asAFError?.urlConvertible?.asURL().absoluteString, "/invalid/url/\(index + 1)")
-                XCTAssertTrue(originalError.localizedDescription.starts(with: "JSON could not be serialized"))
+                XCTAssertEqual(retryError.asAFError?.urlConvertible as? String, "/invalid/url/\(index + 1)")
+                XCTAssertEqual((originalError.asAFError?.underlyingError as? CocoaError)?.code, .propertyListReadCorrupt)
             } else {
                 XCTFail("Error failure reason should be response serialization failure")
             }
@@ -1327,12 +1270,12 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error }
+        let errors = [json1Response, json2Response].compactMap { $0?.error }
         XCTAssertEqual(errors.count, 2)
 
         for error in errors {
             XCTAssertTrue(error.isResponseSerializationError)
-            XCTAssertTrue(error.localizedDescription.starts(with: "JSON could not be serialized"))
+            XCTAssertEqual((error.underlyingError as? CocoaError)?.code, .propertyListReadCorrupt)
         }
     }
 
@@ -1382,12 +1325,12 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error }
+        let errors = [json1Response, json2Response].compactMap { $0?.error }
         XCTAssertEqual(errors.count, 2)
 
         for error in errors {
             XCTAssertTrue(error.isRequestAdaptationError)
-            XCTAssertEqual(error.localizedDescription, "Request adaption failed with error: URL is not valid: /adapt/error/2")
+            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         }
     }
 
@@ -1437,12 +1380,12 @@ final class SessionTestCase: BaseTestCase {
             XCTAssertTrue(session.activeRequests.isEmpty)
         }
 
-        let errors: [AFError] = [json1Response, json2Response].compactMap { $0?.error }
+        let errors = [json1Response, json2Response].compactMap { $0?.error }
         XCTAssertEqual(errors.count, 2)
 
         for error in errors {
             XCTAssertTrue(error.isRequestAdaptationError)
-            XCTAssertEqual(error.localizedDescription, "Request adaption failed with error: URL is not valid: /adapt/error/2")
+            XCTAssertEqual(error.underlyingError?.asAFError?.urlConvertible as? String, "/adapt/error/2")
         }
     }
 
@@ -1638,7 +1581,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertTrue(received?.error?.isExplicitlyCancelledError == true)
+        XCTAssertEqual(received?.error?.isExplicitlyCancelledError, true)
         assert(on: session.rootQueue) {
             XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
             XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
@@ -1693,6 +1636,7 @@ final class SessionCancellationTestCase: BaseTestCase {
 
         // Then
         XCTAssertEqual(response?.result.isFailure, true)
+        XCTAssertEqual(response?.error?.isRequestAdaptationError, true)
         XCTAssertEqual(response?.error?.underlyingError?.asAFError?.isBodyDataInGETRequest, true)
     }
 }
@@ -1749,11 +1693,11 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "request should complete successfully")
 
-        var response: DataResponse<Any, AFError>?
+        var response: DataResponse<HTTPBinResponse, AFError>?
 
         // When
-        session.request("https://httpbin.org/headers")
-            .responseJSON { closureResponse in
+        session.request("https://httpbin.org/get")
+            .responseDecodable(of: HTTPBinResponse.self) { closureResponse in
                 response = closureResponse
                 expectation.fulfill()
             }
@@ -1761,22 +1705,10 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        if let response = response {
-            XCTAssertNotNil(response.request, "request should not be nil")
-            XCTAssertNotNil(response.response, "response should not be nil")
-            XCTAssertNotNil(response.data, "data should not be nil")
-            XCTAssertTrue(response.result.isSuccess, "result should be a success")
-
-            if
-                let response = response.result.value as? [String: Any],
-                let headers = response["headers"] as? [String: String],
-                let authorization = headers["Authorization"] {
-                XCTAssertEqual(authorization, "Bearer 123456", "authorization header value does not match")
-            } else {
-                XCTFail("failed to extract authorization header value")
-            }
-        } else {
-            XCTFail("response should not be nil")
-        }
+        XCTAssertNotNil(response?.request, "request should not be nil")
+        XCTAssertNotNil(response?.response, "response should not be nil")
+        XCTAssertNotNil(response?.data, "data should not be nil")
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertEqual(response?.value?.headers["Authorization"], "Bearer 123456", "Authorization header should match")
     }
 }

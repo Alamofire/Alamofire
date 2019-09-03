@@ -121,7 +121,7 @@ class URLProtocolTestCase: BaseTestCase {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.default
                 configuration.protocolClasses = [ProxyURLProtocol.self]
-                configuration.httpAdditionalHeaders = ["Session-Configuration-Header": "foo"]
+                configuration.headers["Session-Configuration-Header"] = "foo"
 
                 return configuration
             }()
@@ -138,8 +138,8 @@ class URLProtocolTestCase: BaseTestCase {
         let url = URL(string: urlString)!
 
         var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = HTTPMethod.get.rawValue
-        urlRequest.setValue("foobar", forHTTPHeaderField: "Request-Header")
+        urlRequest.method = .get
+        urlRequest.headers["Request-Header"] = "foobar"
 
         let expectation = self.expectation(description: "GET request should succeed")
 
@@ -159,12 +159,7 @@ class URLProtocolTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
-
-        if let headers = response?.response?.allHeaderFields as? [String: String] {
-            XCTAssertEqual(headers["Request-Header"] ?? headers["request-header"], "foobar")
-            XCTAssertEqual(headers["Session-Configuration-Header"] ?? headers["session-configuration-header"], "foo")
-        } else {
-            XCTFail("headers should not be nil")
-        }
+        XCTAssertEqual(response?.response?.headers["Request-Header"], "foobar")
+        XCTAssertEqual(response?.response?.headers["Session-Configuration-Header"], "foo")
     }
 }

@@ -176,10 +176,10 @@ extension DataRequest {
     ///
     /// - Returns:             The request.
     @discardableResult
-    public func response(queue: DispatchQueue = .main, completionHandler: @escaping (DataResponse<Data?, AFError>) -> Void) -> Self {
+    public func response(queue: DispatchQueue = .main, completionHandler: @escaping (AFDataResponse<Data?>) -> Void) -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
-            let result = Result<Data?, AFError>(value: self.data, error: self.error)
+            let result = AFResult<Data?>(value: self.data, error: self.error)
             // End work that should be on the serialization queue.
 
             self.underlyingQueue.async {
@@ -210,12 +210,12 @@ extension DataRequest {
     @discardableResult
     public func response<Serializer: DataResponseSerializerProtocol>(queue: DispatchQueue = .main,
                                                                      responseSerializer: Serializer,
-                                                                     completionHandler: @escaping (DataResponse<Serializer.SerializedObject, AFError>) -> Void)
+                                                                     completionHandler: @escaping (AFDataResponse<Serializer.SerializedObject>) -> Void)
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
             let start = CFAbsoluteTimeGetCurrent()
-            let result: Result<Serializer.SerializedObject, AFError> = Result {
+            let result: AFResult<Serializer.SerializedObject> = Result {
                 try responseSerializer.serialize(request: self.request,
                                                  response: self.response,
                                                  data: self.data,
@@ -256,7 +256,7 @@ extension DataRequest {
                         didComplete = { completionHandler(response) }
 
                     case let .doNotRetryWithError(retryError):
-                        let result: Result<Serializer.SerializedObject, AFError> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
+                        let result: AFResult<Serializer.SerializedObject> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
 
                         let response = DataResponse(request: self.request,
                                                     response: self.response,
@@ -288,11 +288,11 @@ extension DownloadRequest {
     /// - Returns:             The request.
     @discardableResult
     public func response(queue: DispatchQueue = .main,
-                         completionHandler: @escaping (DownloadResponse<URL?, AFError>) -> Void)
+                         completionHandler: @escaping (AFDownloadResponse<URL?>) -> Void)
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
-            let result = Result<URL?, AFError>(value: self.fileURL, error: self.error)
+            let result = AFResult<URL?>(value: self.fileURL, error: self.error)
             // End work that should be on the serialization queue.
 
             self.underlyingQueue.async {
@@ -325,12 +325,12 @@ extension DownloadRequest {
     @discardableResult
     public func response<T: DownloadResponseSerializerProtocol>(queue: DispatchQueue = .main,
                                                                 responseSerializer: T,
-                                                                completionHandler: @escaping (DownloadResponse<T.SerializedObject, AFError>) -> Void)
+                                                                completionHandler: @escaping (AFDownloadResponse<T.SerializedObject>) -> Void)
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
             let start = CFAbsoluteTimeGetCurrent()
-            let result: Result<T.SerializedObject, AFError> = Result {
+            let result: AFResult<T.SerializedObject> = Result {
                 try responseSerializer.serializeDownload(request: self.request,
                                                          response: self.response,
                                                          fileURL: self.fileURL,
@@ -371,7 +371,7 @@ extension DownloadRequest {
                         didComplete = { completionHandler(response) }
 
                     case let .doNotRetryWithError(retryError):
-                        let result: Result<T.SerializedObject, AFError> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
+                        let result: AFResult<T.SerializedObject> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
 
                         let response = DownloadResponse(request: self.request,
                                                         response: self.response,
@@ -406,7 +406,7 @@ extension DataRequest {
     /// - Returns:             The request.
     @discardableResult
     public func responseData(queue: DispatchQueue = .main,
-                             completionHandler: @escaping (DataResponse<Data, AFError>) -> Void)
+                             completionHandler: @escaping (AFDataResponse<Data>) -> Void)
         -> Self {
         return response(queue: queue,
                         responseSerializer: DataResponseSerializer(),
@@ -463,7 +463,7 @@ extension DownloadRequest {
     /// - Returns:             The request.
     @discardableResult
     public func responseData(queue: DispatchQueue = .main,
-                             completionHandler: @escaping (DownloadResponse<Data, AFError>) -> Void)
+                             completionHandler: @escaping (AFDownloadResponse<Data>) -> Void)
         -> Self {
         return response(queue: queue,
                         responseSerializer: DataResponseSerializer(),
@@ -545,7 +545,7 @@ extension DataRequest {
     @discardableResult
     public func responseString(queue: DispatchQueue = .main,
                                encoding: String.Encoding? = nil,
-                               completionHandler: @escaping (DataResponse<String, AFError>) -> Void) -> Self {
+                               completionHandler: @escaping (AFDataResponse<String>) -> Void) -> Self {
         return response(queue: queue,
                         responseSerializer: StringResponseSerializer(encoding: encoding),
                         completionHandler: completionHandler)
@@ -565,7 +565,7 @@ extension DownloadRequest {
     @discardableResult
     public func responseString(queue: DispatchQueue = .main,
                                encoding: String.Encoding? = nil,
-                               completionHandler: @escaping (DownloadResponse<String, AFError>) -> Void)
+                               completionHandler: @escaping (AFDownloadResponse<String>) -> Void)
         -> Self {
         return response(queue: queue,
                         responseSerializer: StringResponseSerializer(encoding: encoding),
@@ -635,7 +635,7 @@ extension DataRequest {
     @discardableResult
     public func responseJSON(queue: DispatchQueue = .main,
                              options: JSONSerialization.ReadingOptions = .allowFragments,
-                             completionHandler: @escaping (DataResponse<Any, AFError>) -> Void) -> Self {
+                             completionHandler: @escaping (AFDataResponse<Any>) -> Void) -> Self {
         return response(queue: queue,
                         responseSerializer: JSONResponseSerializer(options: options),
                         completionHandler: completionHandler)
@@ -654,7 +654,7 @@ extension DownloadRequest {
     @discardableResult
     public func responseJSON(queue: DispatchQueue = .main,
                              options: JSONSerialization.ReadingOptions = .allowFragments,
-                             completionHandler: @escaping (DownloadResponse<Any, AFError>) -> Void)
+                             completionHandler: @escaping (AFDownloadResponse<Any>) -> Void)
         -> Self {
         return response(queue: queue,
                         responseSerializer: JSONResponseSerializer(options: options),
@@ -771,7 +771,7 @@ extension DataRequest {
     public func responseDecodable<T: Decodable>(of type: T.Type = T.self,
                                                 queue: DispatchQueue = .main,
                                                 decoder: DataDecoder = JSONDecoder(),
-                                                completionHandler: @escaping (DataResponse<T, AFError>) -> Void) -> Self {
+                                                completionHandler: @escaping (AFDataResponse<T>) -> Void) -> Self {
         return response(queue: queue,
                         responseSerializer: DecodableResponseSerializer(decoder: decoder),
                         completionHandler: completionHandler)
