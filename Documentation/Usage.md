@@ -61,7 +61,7 @@ Previous versions of Alamofire's documentation used examples like `Alamofire.req
 Alamofire provides a variety of convenient methods for making HTTP requests. At the simplest, just provide a `String` that can be converted into a `URL`:
 
 ```swift
-AF.request("https://httpbin.org/get").response { (response) in
+AF.request("https://httpbin.org/get").response { response in
     debugPrint(response)
 }
 ```
@@ -160,7 +160,7 @@ let login = Login(email: "test@test.test", password: "testPassword")
 AF.request("https://httpbin.org/post",
            method: .post,
            parameters: login,
-           encoder: JSONParameterEncoder.default).response { (response) in
+           encoder: JSONParameterEncoder.default).response { response in
     debugPrint(response)
 }
 ```
@@ -724,7 +724,7 @@ let download = AF.download("https://httpbin.org/image/png").responseData { respo
 }
 
 // download.cancel(producingResumeData: true) // Makes resumeData available in response only.
-download.cancel { (data) in
+download.cancel { data in
     resumeData = data
 }
 
@@ -762,11 +762,11 @@ AF.upload(fileURL, to: "https://httpbin.org/post").responseJSON { response in
 #### Uploading Multipart Form Data
 
 ```swift
-AF.upload(multipartFormData: { (multipartFormData) in
+AF.upload(multipartFormData: { multipartFormData in
     multipartFormData.append(Data("one".utf8), withName: "one")
     multipartFormData.append(Data("two".utf8), withName: "two")
 }, to: "https://httpbin.org/post")
-    .responseJSON { (response) in
+    .responseJSON { response in
         debugPrint(response)
     }
 ```
