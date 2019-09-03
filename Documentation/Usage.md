@@ -1,3 +1,40 @@
+- [Using Alamofire](#using-alamofire)
+* [Introduction](#introduction)
+    - [Aside: The `AF` Namespace](#aside--the--af--namespace)
+* [Making Requests](#making-requests)
+  + [HTTP Methods](#http-methods)
+  + [Request Parameters and Parameter Encoders](#request-parameters-and-parameter-encoders)
+    - [Passing Parameters](#passing-parameters)
+  + [HTTP Headers](#http-headers)
+  + [Response Validation](#response-validation)
+    - [Automatic Validation](#automatic-validation)
+    - [Manual Validation](#manual-validation)
+  + [Response Handling](#response-handling)
+    - [Response Handler](#response-handler)
+    - [Response Data Handler](#response-data-handler)
+    - [Response String Handler](#response-string-handler)
+    - [Response JSON Handler](#response-json-handler)
+    - [Response `Decodable` Handler](#response--decodable--handler)
+    - [Chained Response Handlers](#chained-response-handlers)
+    - [Response Handler Queue](#response-handler-queue)
+  + [Response Caching](#response-caching)
+  + [Authentication](#authentication)
+    - [HTTP Basic Authentication](#http-basic-authentication)
+    - [Authentication with `URLCredential`](#authentication-with--urlcredential-)
+    - [Manual Authentication](#manual-authentication)
+  + [Downloading Data to a File](#downloading-data-to-a-file)
+    - [Download File Destination](#download-file-destination)
+    - [Download Progress](#download-progress)
+    - [Canceling and Resuming a Download](#canceling-and-resuming-a-download)
+  + [Uploading Data to a Server](#uploading-data-to-a-server)
+    - [Uploading Data](#uploading-data)
+    - [Uploading a File](#uploading-a-file)
+    - [Uploading Multipart Form Data](#uploading-multipart-form-data)
+    - [Upload Progress](#upload-progress)
+  + [Statistical Metrics](#statistical-metrics)
+    - [`URLSessionTaskMetrics`](#-urlsessiontaskmetrics-)
+  + [cURL Command Output](#curl-command-output)
+
 # Using Alamofire
 
 ## Introduction
@@ -252,7 +289,7 @@ You can create your own `URLEncodedFormParameterEncoder` and specify the desired
 let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(spaceEncoding: .plusReplaced))
 ```
 
-#### `JSONParameterEncoder`
+##### `JSONParameterEncoder`
 
 `JSONParameterEncoder` encodes `Encodable` values using Swift's `JSONEncoder` and sets the result as the `httpBody` of the `URLRequest`. The `Content-Type` HTTP header field of an encoded request is set to `application/json` if not already set.
 
