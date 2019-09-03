@@ -145,7 +145,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNotNil(error, "error should not be nil")
 
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
-        if case let .serverTrustEvaluationFailed(reason) = error {
+        if case let .serverTrustEvaluationFailed(reason)? = error {
             XCTAssertTrue(reason.isHostValidationFailed, "should be .hostValidationFailed")
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
@@ -211,7 +211,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
-        if case let .serverTrustEvaluationFailed(reason) = error {
+        if case let .serverTrustEvaluationFailed(reason)? = error {
             XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
@@ -243,7 +243,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
-        if case let .serverTrustEvaluationFailed(reason) = error {
+        if case let .serverTrustEvaluationFailed(reason)? = error {
             XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
@@ -276,7 +276,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
-        if case let .serverTrustEvaluationFailed(reason) = error {
+        if case let .serverTrustEvaluationFailed(reason)? = error {
             XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
@@ -311,7 +311,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
-        if case let .serverTrustEvaluationFailed(reason) = error {
+        if case let .serverTrustEvaluationFailed(reason)? = error {
             XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
@@ -420,7 +420,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
-        if case let .serverTrustEvaluationFailed(reason) = error {
+        if case let .serverTrustEvaluationFailed(reason)? = error {
             XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
