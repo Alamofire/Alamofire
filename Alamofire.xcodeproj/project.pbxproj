@@ -1744,7 +1744,7 @@
 					"-framework",
 					CFNetwork,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.Alamofire.${PLATFORM_NAME}";
 				PRODUCT_NAME = Alamofire;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
@@ -1807,7 +1807,7 @@
 					"-framework",
 					CFNetwork,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.Alamofire.${PLATFORM_NAME}";
 				PRODUCT_NAME = Alamofire;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
