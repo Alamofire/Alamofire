@@ -159,7 +159,10 @@ open class NetworkReachabilityManager {
         let queueEnabled = SCNetworkReachabilitySetDispatchQueue(reachability, listenerQueue)
 
         listenerQueue.async {
+            self.previousFlags = SCNetworkReachabilityFlags(rawValue: 1 << 30)
+
             guard let flags = self.flags else { return }
+
             self.notifyListener(flags)
         }
 
