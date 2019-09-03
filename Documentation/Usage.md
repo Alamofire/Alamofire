@@ -540,7 +540,7 @@ Alamofire.request("https://httpbin.org/get")
     }
 ```
 
-> It is important to note that using multiple response handlers on the same `Request` requires the server data to be serialized multiple times, once for each response handler.
+> It is important to note that using multiple response handlers on the same `Request` requires the server data to be serialized multiple times, once for each response handler. Using multiple response handlers on the same `Request` should generally be avoided as best practice, especially in production environments. They should only be used for debugging or in circumstances where there is no better option.
 
 #### Response Handler Queue
 
