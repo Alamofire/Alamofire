@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 4.x Releases
+- `4.9.x` Releases - [4.9.0](#490)
 - `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481) | [4.8.2](#482)
 - `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471) | [4.7.2](#472) | [4.7.3](#473)
 - `4.6.x` Releases - [4.6.0](#460)
@@ -35,18 +36,35 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [4.8.2](https://github.com/Alamofire/Alamofire/releases/tag/4.8.2)
-Released on 2019-03-27. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.8.2).
+## [4.9.0](https://github.com/Alamofire/Alamofire/releases/tag/4.9.0)
+Released on 2019-09-03. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.9.0).
+
+#### Added
+- API to cancel `DownloadRequest`s without producing resume data.
+  - Added by [ullstrm](https://github.com/ullstrm) in Pull Request [#2851](https://github.com/Alamofire/Alamofire/pull/2851).
+
+#### Updated
+- Bundle identifiers to include the platform name, fixing ITMS-90806.
+  - Updated by [Jonathan](https://github.com/JonMo) in Pull Request [#2930](https://github.com/Alamofire/Alamofire/pull/2930).
 
 #### Fixed
-- Compatability with SPM from Xcode 10.2.
-  - Fixed by [Klaas](https://github.com/klaas) in Pull Request [#2762](https://github.com/Alamofire/Alamofire/pull/2762).
+- NetworkReachabilityManager behavior regression from 4.8.1.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2931](https://github.com/Alamofire/Alamofire/pull/2931).
+- Memory leak when using `validate()`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2931](https://github.com/Alamofire/Alamofire/pull/2931).
+
+## [4.8.2](https://github.com/Alamofire/Alamofire/releases/tag/4.8.2)
+Released on 2019-03-27. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.8.2).
 
 #### Updated
 - Project for compatability with Xcode 10.2.
   - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2767](https://github.com/Alamofire/Alamofire/pull/2767).
 - MultipartFormData to have a mutable boundary.
   - Updated by [Ondrej Stocek](https://github.com/ondrejstocek) in Pull Request [#2705](https://github.com/Alamofire/Alamofire/pull/2705).
+
+#### Fixed
+- Compatability with SPM from Xcode 10.2.
+  - Fixed by [Klaas](https://github.com/klaas) in Pull Request [#2762](https://github.com/Alamofire/Alamofire/pull/2762).
 
 ## [4.8.1](https://github.com/Alamofire/Alamofire/releases/tag/4.8.1)
 Released on 2019-01-15. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.8.1).
