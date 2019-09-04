@@ -148,6 +148,32 @@ class NetworkReachabilityManagerTestCase: BaseTestCase {
         XCTAssertEqual(networkReachabilityStatus, .reachable(.ethernetOrWiFi))
     }
 
+    func testThatZeroManagerIsNotifiedWhenStoppedAndStarted() {
+        // Given
+        let manager = NetworkReachabilityManager()
+        let first = expectation(description: "first listener notified")
+        let second = expectation(description: "second listener notified")
+
+        // When
+        manager?.listener = { _ in
+            first.fulfill()
+        }
+        manager?.startListening()
+
+        wait(for: [first], timeout: timeout)
+
+        manager?.stopListening()
+        manager?.listener = { _ in
+            second.fulfill()
+        }
+        manager?.startListening()
+
+        wait(for: [second], timeout: timeout)
+
+        // Then
+        XCTAssertEqual(manager?.networkReachabilityStatus, .reachable(.ethernetOrWiFi))
+    }
+
     // MARK: - Tests - Network Reachability Status
 
     func testThatManagerReturnsNotReachableStatusWhenReachableFlagIsAbsent() {

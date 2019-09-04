@@ -500,7 +500,7 @@ open class DownloadRequest: Request {
     override open func cancel() {
         cancel(createResumeData: true)
     }
-    
+
     /// Cancels the request.
     ///
     /// - parameter createResumeData: Determines whether resume data is created via the underlying download task or not.
