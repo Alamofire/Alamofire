@@ -28,7 +28,7 @@ import Foundation
 public enum AF {
     /// Current Alamofire version. Necessary since SPM doesn't use dynamic libraries. Plus this will be more accurate.
     static let version = "5.0.0-rc.1"
-    
+
     // MARK: - Data Request
 
     /// Creates a `DataRequest` using `Session.default` to retrieve the contents of the specified `url` using the

@@ -63,7 +63,6 @@ In order to keep Alamofire focused specifically on core networking implementatio
 - Xcode 10.2+
 - Swift 5+
 
-
 ## Migration Guides
 
 - Alamofire 5.0 Migration Guide: To be written!
