@@ -29,6 +29,20 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ResponseSerialization.swift",
+      "line": 84,
+      "symbol": "PassthroughPreprocessor.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ResponseSerialization.swift",
+      "line": 91,
+      "symbol": "GoogleXSSIPreprocessor.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
       "line": 59,
       "symbol": "SessionDelegate.urlSession(_:didBecomeInvalidWithError:)",
@@ -116,6 +130,13 @@
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
       "line": 273,
       "symbol": "SessionDelegate.urlSession(_:downloadTask:didFinishDownloadingTo:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/URLRequest+Alamofire.swift",
+      "line": 34,
+      "symbol": "URLRequest.validate()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     }

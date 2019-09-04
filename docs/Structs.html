@@ -120,9 +120,6 @@
                 <a class="nav-group-task-link" href="Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/NetworkReachabilityManager/ConnectionType.html">– ConnectionType</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -206,13 +203,13 @@
                 <a class="nav-group-task-link" href="Enums/AFError.html">AFError</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError/ParameterEncodingFailureReason.html">– ParameterEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError/ParameterEncoderFailureReason.html">– ParameterEncoderFailureReason</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError/ResponseValidationFailureReason.html">– ResponseValidationFailureReason</a>
@@ -224,7 +221,7 @@
                 <a class="nav-group-task-link" href="Enums/AFError/ServerTrustFailureReason.html">– ServerTrustFailureReason</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Enums/HTTPMethod.html">HTTPMethod</a>
+                <a class="nav-group-task-link" href="Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/RetryResult.html">RetryResult</a>
@@ -277,6 +274,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/DataDecoder.html">DataDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/DataPreprocessor.html">DataPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
@@ -347,13 +347,22 @@
                 <a class="nav-group-task-link" href="Structs/Empty.html">Empty</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/GoogleXSSIPreprocessor.html">GoogleXSSIPreprocessor</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/HTTPHeader.html">HTTPHeader</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/HTTPHeaders.html">HTTPHeaders</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/HTTPMethod.html">HTTPMethod</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/JSONEncoding.html">JSONEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/Redirector.html">Redirector</a>
@@ -384,6 +393,12 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Typealiases.html#/s:9Alamofire18AFDownloadResponsea">AFDownloadResponse</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a>
               </li>
@@ -553,6 +568,41 @@ response.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire10HTTPMethodV"></a>
+                    <a name="//apple_ref/swift/Struct/HTTPMethod" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire10HTTPMethodV">HTTPMethod</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Type representing HTTP methods. Raw <code>String</code> value is stored and compared case-sensitively, so
+<code>HTTPMethod.get != HTTPMethod(rawValue: &quot;get&quot;)</code>.</p>
+
+<p>See <a href="https://tools.ietf.org/html/rfc7231#section-4.3">https://tools.ietf.org/html/rfc7231#section-4.3</a></p>
+
+                        <a href="Structs/HTTPMethod.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">HTTPMethod</span> <span class="p">:</span> <span class="kt">RawRepresentable</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Hashable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire11URLEncodingV"></a>
                     <a name="//apple_ref/swift/Struct/URLEncoding" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire11URLEncodingV">URLEncoding</a>
@@ -673,7 +723,7 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Used to store all data associated with a serialized response of a data or upload request.</p>
+                        <p>Type used to store all values associated with a serialized response of a <code><a href="Classes/DataRequest.html">DataRequest</a></code> or <code><a href="Classes/UploadRequest.html">UploadRequest</a></code>.</p>
 
                         <a href="Structs/DataResponse.html" class="slightly-smaller">See more</a>
                       </div>
@@ -681,7 +731,7 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DataResponse</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DataResponse</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">Failure</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
 
                         </div>
                       </div>
@@ -713,7 +763,74 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">Failure</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Protocols"></a>
+                <a name="//apple_ref/swift/Section/Protocols" class="dashAnchor"></a>
+                <a href="#/Protocols">
+                  <h3 class="section-name">Protocols</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire23PassthroughPreprocessorV"></a>
+                    <a name="//apple_ref/swift/Struct/PassthroughPreprocessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire23PassthroughPreprocessorV">PassthroughPreprocessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code><a href="Protocols/DataPreprocessor.html">DataPreprocessor</a></code> that returns passed <code>Data</code> without any transform.</p>
+
+                        <a href="Structs/PassthroughPreprocessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">PassthroughPreprocessor</span> <span class="p">:</span> <span class="kt"><a href="Protocols/DataPreprocessor.html">DataPreprocessor</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire22GoogleXSSIPreprocessorV"></a>
+                    <a name="//apple_ref/swift/Struct/GoogleXSSIPreprocessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire22GoogleXSSIPreprocessorV">GoogleXSSIPreprocessor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code><a href="Protocols/DataPreprocessor.html">DataPreprocessor</a></code> that trims Google&rsquo;s typical <code>)]}&#39;,\n</code> XSSI JSON header.</p>
+
+                        <a href="Structs/GoogleXSSIPreprocessor.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">GoogleXSSIPreprocessor</span> <span class="p">:</span> <span class="kt"><a href="Protocols/DataPreprocessor.html">DataPreprocessor</a></span></code></pre>
 
                         </div>
                       </div>
@@ -767,7 +884,7 @@ request. The <code>Content-Type</code> HTTP header field of an encoded request i
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-09-04)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

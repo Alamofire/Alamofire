@@ -120,9 +120,6 @@
                 <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/ConnectionType.html">– ConnectionType</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -206,13 +203,13 @@
                 <a class="nav-group-task-link" href="../Enums/AFError.html">AFError</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncodingFailureReason.html">– ParameterEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncoderFailureReason.html">– ParameterEncoderFailureReason</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ResponseValidationFailureReason.html">– ResponseValidationFailureReason</a>
@@ -224,7 +221,7 @@
                 <a class="nav-group-task-link" href="../Enums/AFError/ServerTrustFailureReason.html">– ServerTrustFailureReason</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/HTTPMethod.html">HTTPMethod</a>
+                <a class="nav-group-task-link" href="../Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/RetryResult.html">RetryResult</a>
@@ -277,6 +274,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataDecoder.html">DataDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/DataPreprocessor.html">DataPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
@@ -347,13 +347,22 @@
                 <a class="nav-group-task-link" href="../Structs/Empty.html">Empty</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GoogleXSSIPreprocessor.html">GoogleXSSIPreprocessor</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/HTTPHeader.html">HTTPHeader</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/HTTPHeaders.html">HTTPHeaders</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/HTTPMethod.html">HTTPMethod</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/JSONEncoding.html">JSONEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Redirector.html">Redirector</a>
@@ -384,6 +393,12 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire18AFDownloadResponsea">AFDownloadResponse</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a>
               </li>
@@ -423,9 +438,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire18ResponseSerializerP19emptyRequestMethodsShyAA10HTTPMethodOGvp"></a>
-                    <a name="//apple_ref/swift/Property/emptyRequestMethods" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire18ResponseSerializerP19emptyRequestMethodsShyAA10HTTPMethodOGvp">emptyRequestMethods</a>
+                    <a name="/s:9Alamofire18ResponseSerializerP16dataPreprocessorAA04DataE0_pvp"></a>
+                    <a name="//apple_ref/swift/Property/dataPreprocessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18ResponseSerializerP16dataPreprocessorAA04DataE0_pvp">dataPreprocessor</a>
                     </code>
                       <span class="declaration-note">
                         Default implementation
@@ -436,7 +451,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code>s for which empty response bodies are considered appropriate.</p>
+                        <p><code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code> used to prepare incoming <code>Data</code> for serialization.</p>
 
                       </div>
                       <h4>Default Implementation</h4>
@@ -447,7 +462,41 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">dataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18ResponseSerializerP19emptyRequestMethodsShyAA10HTTPMethodVGvp"></a>
+                    <a name="//apple_ref/swift/Property/emptyRequestMethods" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18ResponseSerializerP19emptyRequestMethodsShyAA10HTTPMethodVGvp">emptyRequestMethods</a>
+                    </code>
+                      <span class="declaration-note">
+                        Default implementation
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code>s for which empty response bodies are considered appropriate.</p>
+
+                      </div>
+                      <h4>Default Implementation</h4>
+                      <div class="default_impl abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">emptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -502,9 +551,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire18ResponseSerializerPAAE26defaultEmptyRequestMethodsShyAA10HTTPMethodOGvpZ"></a>
-                    <a name="//apple_ref/swift/Variable/defaultEmptyRequestMethods" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire18ResponseSerializerPAAE26defaultEmptyRequestMethodsShyAA10HTTPMethodOGvpZ">defaultEmptyRequestMethods</a>
+                    <a name="/s:9Alamofire18ResponseSerializerPAAE23defaultDataPreprocessorAA0eF0_pvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/defaultDataPreprocessor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18ResponseSerializerPAAE23defaultDataPreprocessorAA0eF0_pvpZ">defaultDataPreprocessor</a>
                     </code>
                       <span class="declaration-note">
                         Extension method
@@ -515,14 +564,44 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Default <code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code>s for which empty response bodies are considered appropriate. <code>[.head]</code> by default.</p>
+                        <p>Default <code><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></code>. <code><a href="../Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a></code> by default.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">defaultEmptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">defaultDataPreprocessor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/DataPreprocessor.html">DataPreprocessor</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire18ResponseSerializerPAAE26defaultEmptyRequestMethodsShyAA10HTTPMethodVGvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/defaultEmptyRequestMethods" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire18ResponseSerializerPAAE26defaultEmptyRequestMethodsShyAA10HTTPMethodVGvpZ">defaultEmptyRequestMethods</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Default <code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code>s for which empty response bodies are considered appropriate. <code>[.head]</code> by default.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">defaultEmptyRequestMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -738,7 +817,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-09-04)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

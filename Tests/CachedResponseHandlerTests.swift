@@ -199,6 +199,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         let configuration = URLSessionConfiguration.af.default
         let capacity = 100_000_000
         let cache: URLCache
+        // swiftformat:disable indent
         #if swift(>=5.1)
         if #available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
             let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
@@ -209,6 +210,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         #else
         cache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: UUID().uuidString)
         #endif
+        // swiftformat:enable indent
         configuration.urlCache = cache
 
         return Session(configuration: configuration, cachedResponseHandler: handler)

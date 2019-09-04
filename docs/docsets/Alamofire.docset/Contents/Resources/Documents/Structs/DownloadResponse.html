@@ -120,9 +120,6 @@
                 <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/ConnectionType.html">– ConnectionType</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -206,13 +203,13 @@
                 <a class="nav-group-task-link" href="../Enums/AFError.html">AFError</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncodingFailureReason.html">– ParameterEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncoderFailureReason.html">– ParameterEncoderFailureReason</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ResponseValidationFailureReason.html">– ResponseValidationFailureReason</a>
@@ -224,7 +221,7 @@
                 <a class="nav-group-task-link" href="../Enums/AFError/ServerTrustFailureReason.html">– ServerTrustFailureReason</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/HTTPMethod.html">HTTPMethod</a>
+                <a class="nav-group-task-link" href="../Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/RetryResult.html">RetryResult</a>
@@ -277,6 +274,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataDecoder.html">DataDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/DataPreprocessor.html">DataPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
@@ -347,13 +347,22 @@
                 <a class="nav-group-task-link" href="../Structs/Empty.html">Empty</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GoogleXSSIPreprocessor.html">GoogleXSSIPreprocessor</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/HTTPHeader.html">HTTPHeader</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/HTTPHeaders.html">HTTPHeaders</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/HTTPMethod.html">HTTPMethod</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/JSONEncoding.html">JSONEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Redirector.html">Redirector</a>
@@ -385,6 +394,12 @@
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire18AFDownloadResponsea">AFDownloadResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a>
               </li>
               <li class="nav-group-task">
@@ -407,7 +422,7 @@
             <h1>DownloadResponse</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">Failure</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
 
                 </div>
               </div>
@@ -585,9 +600,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire16DownloadResponseV6results6ResultOyxs5Error_pGvp"></a>
+                    <a name="/s:9Alamofire16DownloadResponseV6results6ResultOyxq_Gvp"></a>
                     <a name="//apple_ref/swift/Property/result" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire16DownloadResponseV6results6ResultOyxs5Error_pGvp">result</a>
+                    <a class="token" href="#/s:9Alamofire16DownloadResponseV6results6ResultOyxq_Gvp">result</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -602,7 +617,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">result</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a></span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -629,7 +644,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Value</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Success</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -639,9 +654,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire16DownloadResponseV5errors5Error_pSgvp"></a>
+                    <a name="/s:9Alamofire16DownloadResponseV5errorq_Sgvp"></a>
                     <a name="//apple_ref/swift/Property/error" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire16DownloadResponseV5errors5Error_pSgvp">error</a>
+                    <a class="token" href="#/s:9Alamofire16DownloadResponseV5errorq_Sgvp">error</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -656,7 +671,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Failure</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -666,9 +681,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire16DownloadResponseV7request8response7fileURL10resumeData7metrics21serializationDuration6resultACyxG10Foundation10URLRequestVSg_So17NSHTTPURLResponseCSgAL0G0VSgAL0I0VSgSo23NSURLSessionTaskMetricsCSgSds6ResultOyxs5Error_pGtcfc"></a>
+                    <a name="/s:9Alamofire16DownloadResponseV7request8response7fileURL10resumeData7metrics21serializationDuration6resultACyxq_G10Foundation10URLRequestVSg_So17NSHTTPURLResponseCSgAL0G0VSgAL0I0VSgSo23NSURLSessionTaskMetricsCSgSds6ResultOyxq_Gtcfc"></a>
                     <a name="//apple_ref/swift/Method/init(request:response:fileURL:resumeData:metrics:serializationDuration:result:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire16DownloadResponseV7request8response7fileURL10resumeData7metrics21serializationDuration6resultACyxG10Foundation10URLRequestVSg_So17NSHTTPURLResponseCSgAL0G0VSgAL0I0VSgSo23NSURLSessionTaskMetricsCSgSds6ResultOyxs5Error_pGtcfc">init(request:response:fileURL:resumeData:metrics:serializationDuration:result:)</a>
+                    <a class="token" href="#/s:9Alamofire16DownloadResponseV7request8response7fileURL10resumeData7metrics21serializationDuration6resultACyxq_G10Foundation10URLRequestVSg_So17NSHTTPURLResponseCSgAL0G0VSgAL0I0VSgSo23NSURLSessionTaskMetricsCSgSds6ResultOyxq_Gtcfc">init(request:response:fileURL:resumeData:metrics:serializationDuration:result:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -683,14 +698,13 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
-    <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?,</span>
-    <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">?,</span>
-    <span class="nv">fileURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?,</span>
-    <span class="nv">resumeData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span>
-    <span class="nv">metrics</span><span class="p">:</span> <span class="kt">URLSessionTaskMetrics</span><span class="p">?,</span>
-    <span class="nv">serializationDuration</span><span class="p">:</span> <span class="kt">TimeInterval</span><span class="p">,</span>
-    <span class="nv">result</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a></span><span class="o">&lt;</span><span class="kt">Value</span><span class="o">&gt;</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?,</span>
+            <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">?,</span>
+            <span class="nv">fileURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?,</span>
+            <span class="nv">resumeData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span>
+            <span class="nv">metrics</span><span class="p">:</span> <span class="kt">URLSessionTaskMetrics</span><span class="p">?,</span>
+            <span class="nv">serializationDuration</span><span class="p">:</span> <span class="kt">TimeInterval</span><span class="p">,</span>
+            <span class="nv">result</span><span class="p">:</span> <span class="kt">Result</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -730,7 +744,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The temporary destinatio <code>URL</code> of the data returned from the server.</p>
+                                  <p>The temporary destination <code>URL</code> of the data returned from the server.</p>
                                 </div>
                               </td>
                             </tr>
@@ -766,7 +780,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code>URLSessionTaskMetrics</code> of the serialized response.</p>
+                                  <p>The <code>URLSessionTaskMetrics</code> of the <code><a href="../Classes/DownloadRequest.html">DownloadRequest</a></code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -790,7 +804,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code><a href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a></code> of response serialization.</p>
+                                  <p>The <code>Result</code> of response serialization.</p>
                                 </div>
                               </td>
                             </tr>
@@ -868,9 +882,9 @@ actions, and the response serialization result.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire16DownloadResponseV3mapyACyqd__Gqd__xXElF"></a>
+                    <a name="/s:9Alamofire16DownloadResponseV3mapyACyqd__q_Gqd__xXElF"></a>
                     <a name="//apple_ref/swift/Method/map(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire16DownloadResponseV3mapyACyqd__Gqd__xXElF">map(_:)</a>
+                    <a class="token" href="#/s:9Alamofire16DownloadResponseV3mapyACyqd__q_Gqd__xXElF">map(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -891,7 +905,7 @@ result value as a parameter.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">map</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">transform</span><span class="p">:</span> <span class="p">(</span><span class="kt">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">map</span><span class="o">&lt;</span><span class="kt">NewSuccess</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">transform</span><span class="p">:</span> <span class="p">(</span><span class="kt">Success</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">NewSuccess</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">NewSuccess</span><span class="p">,</span> <span class="kt">Failure</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -925,9 +939,9 @@ result value as a parameter.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire16DownloadResponseV7flatMapyACyqd__Gqd__xKXElF"></a>
-                    <a name="//apple_ref/swift/Method/flatMap(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire16DownloadResponseV7flatMapyACyqd__Gqd__xKXElF">flatMap(_:)</a>
+                    <a name="/s:9Alamofire16DownloadResponseV6tryMapyACyqd__s5Error_pGqd__xKXElF"></a>
+                    <a name="//apple_ref/swift/Method/tryMap(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire16DownloadResponseV6tryMapyACyqd__s5Error_pGqd__xKXElF">tryMap(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -938,9 +952,9 @@ result value as a parameter.</p>
                         <p>Evaluates the given closure when the result of this <code>DownloadResponse</code> is a success, passing the unwrapped
 result value as a parameter.</p>
 
-<p>Use the <code>flatMap</code> method with a closure that may throw an error. For example:</p>
+<p>Use the <code>tryMap</code> method with a closure that may throw an error. For example:</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">possibleData</span><span class="p">:</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Data</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">...</span>
-<span class="k">let</span> <span class="nv">possibleObject</span> <span class="o">=</span> <span class="n">possibleData</span><span class="o">.</span><span class="n">flatMap</span> <span class="p">{</span>
+<span class="k">let</span> <span class="nv">possibleObject</span> <span class="o">=</span> <span class="n">possibleData</span><span class="o">.</span><span class="n">tryMap</span> <span class="p">{</span>
     <span class="k">try</span> <span class="kt">JSONSerialization</span><span class="o">.</span><span class="nf">jsonObject</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre>
@@ -950,7 +964,7 @@ result value as a parameter.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">flatMap</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">transform</span><span class="p">:</span> <span class="p">(</span><span class="kt">Value</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">tryMap</span><span class="o">&lt;</span><span class="kt">NewSuccess</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">transform</span><span class="p">:</span> <span class="p">(</span><span class="kt">Success</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">NewSuccess</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">NewSuccess</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -984,9 +998,9 @@ instance&rsquo;s result is a failure, returns the same failure.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire16DownloadResponseV8mapErroryACyxGqd__s0E0_pXEsAFRd__lF"></a>
+                    <a name="/s:9Alamofire16DownloadResponseV8mapErroryACyxqd__Gqd__q_XEs0E0Rd__lF"></a>
                     <a name="//apple_ref/swift/Method/mapError(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire16DownloadResponseV8mapErroryACyxGqd__s0E0_pXEsAFRd__lF">mapError(_:)</a>
+                    <a class="token" href="#/s:9Alamofire16DownloadResponseV8mapErroryACyxqd__Gqd__q_XEs0E0Rd__lF">mapError(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1006,7 +1020,7 @@ instance&rsquo;s result is a failure, returns the same failure.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">mapError</span><span class="o">&lt;</span><span class="kt">E</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">transform</span><span class="p">:</span> <span class="p">(</span><span class="kt">Error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">DownloadResponse</span> <span class="k">where</span> <span class="kt">E</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">mapError</span><span class="o">&lt;</span><span class="kt">NewFailure</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">transform</span><span class="p">:</span> <span class="p">(</span><span class="kt">Failure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">NewFailure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">NewFailure</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">NewFailure</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
 
                         </div>
                       </div>
@@ -1039,9 +1053,9 @@ instance&rsquo;s result is a failure, returns the same failure.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire16DownloadResponseV12flatMapErroryACyxGqd__s0F0_pKXEsAFRd__lF"></a>
-                    <a name="//apple_ref/swift/Method/flatMapError(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire16DownloadResponseV12flatMapErroryACyxGqd__s0F0_pKXEsAFRd__lF">flatMapError(_:)</a>
+                    <a name="/s:9Alamofire16DownloadResponseV11tryMapErroryACyxs0F0_pGqd__q_KXEsAERd__lF"></a>
+                    <a name="//apple_ref/swift/Method/tryMapError(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire16DownloadResponseV11tryMapErroryACyxs0F0_pGqd__q_KXEsAERd__lF">tryMapError(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1051,9 +1065,9 @@ instance&rsquo;s result is a failure, returns the same failure.</p>
                       <div class="abstract">
                         <p>Evaluates the specified closure when the <code>DownloadResponse</code> is a failure, passing the unwrapped error as a parameter.</p>
 
-<p>Use the <code>flatMapError</code> function with a closure that may throw an error. For example:</p>
+<p>Use the <code>tryMapError</code> function with a closure that may throw an error. For example:</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">possibleData</span><span class="p">:</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Data</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">...</span>
-<span class="k">let</span> <span class="nv">possibleObject</span> <span class="o">=</span> <span class="n">possibleData</span><span class="o">.</span><span class="n">flatMapError</span> <span class="p">{</span>
+<span class="k">let</span> <span class="nv">possibleObject</span> <span class="o">=</span> <span class="n">possibleData</span><span class="o">.</span><span class="n">tryMapError</span> <span class="p">{</span>
     <span class="k">try</span> <span class="nf">someFailableFunction</span><span class="p">(</span><span class="nv">taking</span><span class="p">:</span> <span class="nv">$0</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre>
@@ -1063,7 +1077,7 @@ instance&rsquo;s result is a failure, returns the same failure.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">flatMapError</span><span class="o">&lt;</span><span class="kt">E</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">transform</span><span class="p">:</span> <span class="p">(</span><span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">E</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">DownloadResponse</span> <span class="k">where</span> <span class="kt">E</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="n">tryMapError</span><span class="o">&lt;</span><span class="kt">NewFailure</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">transform</span><span class="p">:</span> <span class="p">(</span><span class="kt">Failure</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">NewFailure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">DownloadResponse</span><span class="o">&lt;</span><span class="kt">Success</span><span class="p">,</span> <span class="kt">Error</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">NewFailure</span> <span class="p">:</span> <span class="kt">Error</span></code></pre>
 
                         </div>
                       </div>
@@ -1101,7 +1115,7 @@ instance&rsquo;s result is a failure, returns the same failure.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-09-04)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

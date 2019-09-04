@@ -63,7 +63,6 @@ In order to keep Alamofire focused specifically on core networking implementatio
 - Xcode 10.2+
 - Swift 5+
 
-
 ## Migration Guides
 
 - Alamofire 5.0 Migration Guide: To be written!
@@ -87,7 +86,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 [CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-pod 'Alamofire', '~> 5.0.0-beta.5'
+pod 'Alamofire', '~> 5.0.0-rc.1'
 ```
 
 ### Carthage
@@ -95,7 +94,7 @@ pod 'Alamofire', '~> 5.0.0-beta.5'
 [Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" "5.0.0-beta.5"
+github "Alamofire/Alamofire" "5.0.0-rc.1"
 ```
 
 ### Swift Package Manager
@@ -106,7 +105,7 @@ Once you have your Swift package set up, adding Alamofire as a dependency is as 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0-beta.5")
+    .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0-rc.1")
 ]
 ```
 

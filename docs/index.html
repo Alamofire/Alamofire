@@ -119,9 +119,6 @@
                 <a class="nav-group-task-link" href="Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/NetworkReachabilityManager/ConnectionType.html">– ConnectionType</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -205,13 +202,13 @@
                 <a class="nav-group-task-link" href="Enums/AFError.html">AFError</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError/ParameterEncodingFailureReason.html">– ParameterEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError/ParameterEncoderFailureReason.html">– ParameterEncoderFailureReason</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError/ResponseValidationFailureReason.html">– ResponseValidationFailureReason</a>
@@ -223,7 +220,7 @@
                 <a class="nav-group-task-link" href="Enums/AFError/ServerTrustFailureReason.html">– ServerTrustFailureReason</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Enums/HTTPMethod.html">HTTPMethod</a>
+                <a class="nav-group-task-link" href="Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/RetryResult.html">RetryResult</a>
@@ -276,6 +273,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/DataDecoder.html">DataDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/DataPreprocessor.html">DataPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
@@ -346,13 +346,22 @@
                 <a class="nav-group-task-link" href="Structs/Empty.html">Empty</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/GoogleXSSIPreprocessor.html">GoogleXSSIPreprocessor</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/HTTPHeader.html">HTTPHeader</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/HTTPHeaders.html">HTTPHeaders</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/HTTPMethod.html">HTTPMethod</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/JSONEncoding.html">JSONEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/Redirector.html">Redirector</a>
@@ -383,6 +392,12 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Typealiases.html#/s:9Alamofire18AFDownloadResponsea">AFDownloadResponse</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a>
               </li>
@@ -425,11 +440,11 @@
 <li><a href="#migration-guides">Migration Guides</a></li>
 <li><a href="#communication">Communication</a></li>
 <li><a href="#installation">Installation</a></li>
-<li><a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md">Usage</a>
+<li><a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#using-alamofire">Usage</a>
 
 <ul>
-<li><strong>Intro -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#making-a-request">Making a Request</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#response-handling">Response Handling</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#response-validation">Response Validation</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#response-caching">Response Caching</a></li>
-<li><strong>HTTP -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#http-methods">HTTP Methods</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#parameter-encoding">Parameter Encoding</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#http-headers">HTTP Headers</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#authentication">Authentication</a></li>
+<li><a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#introduction"><strong>Introduction -</strong></a> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#making-requests">Making Requests</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#response-handling">Response Handling</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#response-validation">Response Validation</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#response-caching">Response Caching</a></li>
+<li><strong>HTTP -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#http-methods">HTTP Methods</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md##request-parameters-and-parameter-encoders">Parameters and Parameter Encoder</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#http-headers">HTTP Headers</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#authentication">Authentication</a></li>
 <li><strong>Large Data -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file">Downloading Data to a File</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#uploading-data-to-a-server">Uploading Data to a Server</a></li>
 <li><strong>Tools -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#statistical-metrics">Statistical Metrics</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#curl-command-output">cURL Command Output</a></li>
 </ul></li>
@@ -502,21 +517,20 @@
 <h3 id='cocoapods' class='heading'>CocoaPods</h3>
 
 <p><a href="https://cocoapods.org">CocoaPods</a> is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>:</p>
-<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.0.0-beta.5'</span>
+<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.0.0-rc.1'</span>
 </code></pre>
 <h3 id='carthage' class='heading'>Carthage</h3>
 
 <p><a href="https://github.com/Carthage/Carthage">Carthage</a> is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your <code>Cartfile</code>:</p>
-<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" "5.0.0-beta.5"
+<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" "5.0.0-rc.1"
 </code></pre>
 <h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
 
 <p>The <a href="https://swift.org/package-manager/">Swift Package Manager</a> is a tool for automating the distribution of Swift code and is integrated into the <code>swift</code> compiler. It is in early development, but Alamofire does support its use on supported platforms.</p>
 
 <p>Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the <code>dependencies</code> value of your <code>Package.swift</code>.</p>
-<h4 id='swift-4' class='heading'>Swift 4</h4>
 <pre class="highlight swift"><code><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
-    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="s">"5.0.0-beta.5"</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="s">"5.0.0-rc.1"</span><span class="p">)</span>
 <span class="p">]</span>
 </code></pre>
 <h3 id='manually' class='heading'>Manually</h3>
@@ -584,10 +598,10 @@
 <li><a href="http://openradar.appspot.com/radar?id=4942308441063424"><code>rdar://36082113</code></a> - <code>URLSessionTaskMetrics</code> failing to link on watchOS 3.0+
 
 <ul>
-<li>(Resolved): Just add <code>CFNetwork</code> to your linked frameworks.
-## FAQ</li>
+<li>(Resolved): Just add <code>CFNetwork</code> to your linked frameworks.</li>
 </ul></li>
 </ul>
+<h2 id='faq' class='heading'>FAQ</h2>
 <h3 id='what-39-s-the-origin-of-the-name-alamofire' class='heading'>What&rsquo;s the origin of the name Alamofire?</h3>
 
 <p>Alamofire is named after the <a href="https://aggie-horticulture.tamu.edu/wildseed/alamofire.html">Alamo Fire flower</a>, a hybrid variant of the Bluebonnet, the official state flower of Texas.</p>
@@ -628,7 +642,7 @@ Any amount you can donate today to help us reach our goal would be greatly appre
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-09-04)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

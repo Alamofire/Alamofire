@@ -120,9 +120,6 @@
                 <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/ConnectionType.html">– ConnectionType</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -206,13 +203,13 @@
                 <a class="nav-group-task-link" href="../Enums/AFError.html">AFError</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncodingFailureReason.html">– ParameterEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncoderFailureReason.html">– ParameterEncoderFailureReason</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ResponseValidationFailureReason.html">– ResponseValidationFailureReason</a>
@@ -224,7 +221,7 @@
                 <a class="nav-group-task-link" href="../Enums/AFError/ServerTrustFailureReason.html">– ServerTrustFailureReason</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/HTTPMethod.html">HTTPMethod</a>
+                <a class="nav-group-task-link" href="../Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/RetryResult.html">RetryResult</a>
@@ -277,6 +274,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataDecoder.html">DataDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/DataPreprocessor.html">DataPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
@@ -347,13 +347,22 @@
                 <a class="nav-group-task-link" href="../Structs/Empty.html">Empty</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GoogleXSSIPreprocessor.html">GoogleXSSIPreprocessor</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/HTTPHeader.html">HTTPHeader</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/HTTPHeaders.html">HTTPHeaders</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/HTTPMethod.html">HTTPMethod</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/JSONEncoding.html">JSONEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Redirector.html">Redirector</a>
@@ -384,6 +393,12 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire18AFDownloadResponsea">AFDownloadResponse</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a>
               </li>
@@ -573,7 +588,7 @@ cache handling.</p>
                       <div class="abstract">
                         <p><code>DispatchQueue</code> on which <code>URLRequest</code>s are created asynchronously. By default this queue uses <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC9rootQueueSo17OS_dispatch_queueCvp">rootQueue</a></code> as its
 <code>target</code>, but a separate queue can be used if request creation is determined to be a bottleneck. Always profile
-and test before introduing an additional queue.</p>
+and test before introducing an additional queue.</p>
 
                       </div>
                       <div class="declaration">
@@ -856,7 +871,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p>Root <code>DispatchQueue</code> for all internal callbacks and state updats. <strong>MUST</strong> be a
+                                  <p>Root <code>DispatchQueue</code> for all internal callbacks and state updates. <strong>MUST</strong> be a
                       serial queue.</p>
                                 </div>
                               </td>
@@ -992,8 +1007,8 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                         <p>Creates a <code>Session</code> from a <code>URLSessionConfiguration</code>.</p>
 <div class="aside aside-note">
     <p class="aside-title">Note</p>
-    <p>This intializer lets Alamofire handle the creation of the underlying <code>URLSession</code> and its
-    <code>delegateQueue</code>, and is the recommended intiailizer for most uses.</p>
+    <p>This initializer lets Alamofire handle the creation of the underlying <code>URLSession</code> and its
+    <code>delegateQueue</code>, and is the recommended initializer for most uses.</p>
 
 </div>
 
@@ -1055,7 +1070,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p>Root <code>DispatchQueue</code> for all internal callbacks and state updats. <strong>MUST</strong> be a
+                                  <p>Root <code>DispatchQueue</code> for all internal callbacks and state updates. <strong>MUST</strong> be a
                       serial queue. <code>DispatchQueue(label: &quot;org.alamofire.session.rootQueue&quot;)</code> by default.</p>
                                 </div>
                               </td>
@@ -1179,6 +1194,82 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
             </div>
             <div class="task-group">
               <div class="task-name-container">
+                <a name="/Cancellation"></a>
+                <a name="//apple_ref/swift/Section/Cancellation" class="dashAnchor"></a>
+                <a href="#/Cancellation">
+                  <h3 class="section-name">Cancellation</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7SessionC17cancelAllRequests17completingOnQueue10completionySo17OS_dispatch_queueC_yycSgtF"></a>
+                    <a name="//apple_ref/swift/Method/cancelAllRequests(completingOnQueue:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC17cancelAllRequests17completingOnQueue10completionySo17OS_dispatch_queueC_yycSgtF">cancelAllRequests(completingOnQueue:completion:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Cancel all active <code><a href="../Classes/Request.html">Request</a></code>s, optionally calling a completion handler when complete.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>This is an asynchronous operation and does not block the creation of future <code><a href="../Classes/Request.html">Request</a></code>s. Cancelled
+    <code><a href="../Classes/Request.html">Request</a></code>s may not cancel immediately due internal work, and may not cancel at all if they are close to
+    completion when cancelled.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">cancelAllRequests</span><span class="p">(</span><span class="n">completingOnQueue</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which the completion handler is run. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Closure to be called when all <code><a href="../Classes/Request.html">Request</a></code>s have been cancelled.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
                 <a name="/DataRequest"></a>
                 <a name="//apple_ref/swift/Section/DataRequest" class="dashAnchor"></a>
                 <a href="#/DataRequest">
@@ -1189,9 +1280,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC7request_6method10parameters8encoding7headers11interceptorAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodOSDySSypGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0J11Interceptor_pSgtF"></a>
+                    <a name="/s:9Alamofire7SessionC7request_6method10parameters8encoding7headers11interceptorAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSypGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0J11Interceptor_pSgtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:method:parameters:encoding:headers:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC7request_6method10parameters8encoding7headers11interceptorAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodOSDySSypGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0J11Interceptor_pSgtF">request(_:method:parameters:encoding:headers:interceptor:)</a>
+                    <a class="token" href="#/s:9Alamofire7SessionC7request_6method10parameters8encoding7headers11interceptorAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSypGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0J11Interceptor_pSgtF">request(_:method:parameters:encoding:headers:interceptor:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1199,7 +1290,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> from a <code>URLRequest</code> created using the passeed components and a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
+                        <p>Creates a <code><a href="../Classes/DataRequest.html">DataRequest</a></code> from a <code>URLRequest</code> created using the passed components and a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -1207,7 +1298,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
-                  <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
+                  <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
                   <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                   <span class="nv">encoding</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/URLEncoding.html">URLEncoding</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                   <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -1239,7 +1330,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1305,9 +1396,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC7request_6method10parameters7encoder7headers11interceptorAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodOxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0J11Interceptor_pSgtSERzlF"></a>
+                    <a name="/s:9Alamofire7SessionC7request_6method10parameters7encoder7headers11interceptorAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0J11Interceptor_pSgtSERzlF"></a>
                     <a name="//apple_ref/swift/Method/request(_:method:parameters:encoder:headers:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC7request_6method10parameters7encoder7headers11interceptorAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodOxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0J11Interceptor_pSgtSERzlF">request(_:method:parameters:encoder:headers:interceptor:)</a>
+                    <a class="token" href="#/s:9Alamofire7SessionC7request_6method10parameters7encoder7headers11interceptorAA11DataRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0J11Interceptor_pSgtSERzlF">request(_:method:parameters:encoder:headers:interceptor:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1324,7 +1415,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">:</span> <span class="kt">Encodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
-                                         <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
+                                         <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
                                          <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                          <span class="nv">encoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/URLEncodedFormParameterEncoder.html">URLEncodedFormParameterEncoder</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                                          <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -1356,7 +1447,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1368,7 +1459,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p>Value conforming to <code>Encodable</code> to be encoded into the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                  <p><code>Encodable</code> value to be encoded into the <code>URLRequest</code>. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1495,9 +1586,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC8download_6method10parameters8encoding7headers11interceptor2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodOSDySSypGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0K11Interceptor_pSg10Foundation3URLV011destinationS0_AL7OptionsV7optionstAZ_So17NSHTTPURLResponseCtcSgtF"></a>
+                    <a name="/s:9Alamofire7SessionC8download_6method10parameters8encoding7headers11interceptor2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSypGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0K11Interceptor_pSg10Foundation3URLV011destinationS0_AL7OptionsV7optionstAZ_So17NSHTTPURLResponseCtcSgtF"></a>
                     <a name="//apple_ref/swift/Method/download(_:method:parameters:encoding:headers:interceptor:to:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC8download_6method10parameters8encoding7headers11interceptor2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodOSDySSypGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0K11Interceptor_pSg10Foundation3URLV011destinationS0_AL7OptionsV7optionstAZ_So17NSHTTPURLResponseCtcSgtF">download(_:method:parameters:encoding:headers:interceptor:to:)</a>
+                    <a class="token" href="#/s:9Alamofire7SessionC8download_6method10parameters8encoding7headers11interceptor2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVSDySSypGSgAA17ParameterEncoding_pAA11HTTPHeadersVSgAA0K11Interceptor_pSg10Foundation3URLV011destinationS0_AL7OptionsV7optionstAZ_So17NSHTTPURLResponseCtcSgtF">download(_:method:parameters:encoding:headers:interceptor:to:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1514,7 +1605,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">download</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
-                   <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
+                   <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
                    <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                    <span class="nv">encoding</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoding.html">ParameterEncoding</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/URLEncoding.html">URLEncoding</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                    <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -1547,7 +1638,7 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1626,9 +1717,9 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC8download_6method10parameters7encoder7headers11interceptor2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodOxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0K11Interceptor_pSg10Foundation3URLV011destinationS0_AL7OptionsV7optionstAY_So17NSHTTPURLResponseCtcSgtSERzlF"></a>
+                    <a name="/s:9Alamofire7SessionC8download_6method10parameters7encoder7headers11interceptor2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0K11Interceptor_pSg10Foundation3URLV011destinationS0_AL7OptionsV7optionstAY_So17NSHTTPURLResponseCtcSgtSERzlF"></a>
                     <a name="//apple_ref/swift/Method/download(_:method:parameters:encoder:headers:interceptor:to:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC8download_6method10parameters7encoder7headers11interceptor2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodOxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0K11Interceptor_pSg10Foundation3URLV011destinationS0_AL7OptionsV7optionstAY_So17NSHTTPURLResponseCtcSgtSERzlF">download(_:method:parameters:encoder:headers:interceptor:to:)</a>
+                    <a class="token" href="#/s:9Alamofire7SessionC8download_6method10parameters7encoder7headers11interceptor2toAA15DownloadRequestCAA14URLConvertible_p_AA10HTTPMethodVxSgAA16ParameterEncoder_pAA11HTTPHeadersVSgAA0K11Interceptor_pSg10Foundation3URLV011destinationS0_AL7OptionsV7optionstAY_So17NSHTTPURLResponseCtcSgtSERzlF">download(_:method:parameters:encoder:headers:interceptor:to:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1645,7 +1736,7 @@ a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></c
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="n">download</span><span class="o">&lt;</span><span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">:</span> <span class="kt">Encodable</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
-                                          <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
+                                          <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">get</span><span class="p">,</span>
                                           <span class="nv">parameters</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9Alamofire10Parametersa">Parameters</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                                           <span class="nv">encoder</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ParameterEncoder.html">ParameterEncoder</a></span> <span class="o">=</span> <span class="kt"><a href="../Classes/URLEncodedFormParameterEncoder.html">URLEncodedFormParameterEncoder</a></span><span class="o">.</span><span class="k">default</span><span class="p">,</span>
                                           <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -1678,7 +1769,7 @@ a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></c
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.get</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1937,9 +2028,9 @@ information about the bug and possible workarounds, please refer to the <a href=
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_2to6method7headers11interceptorAA13UploadRequestC10Foundation4DataV_AA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0I11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:to:method:headers:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_2to6method7headers11interceptorAA13UploadRequestC10Foundation4DataV_AA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0I11Interceptor_pSgtF">upload(_:to:method:headers:interceptor:)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor11fileManagerAA13UploadRequestC10Foundation4DataV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0K11Interceptor_pSgSo06NSFileI0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:to:method:headers:interceptor:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor11fileManagerAA13UploadRequestC10Foundation4DataV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0K11Interceptor_pSgSo06NSFileI0CtF">upload(_:to:method:headers:interceptor:fileManager:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1956,9 +2047,10 @@ information about the bug and possible workarounds, please refer to the <a href=
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="n">_</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span>
                  <span class="n">to</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
-                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
+                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
                  <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1998,7 +2090,7 @@ information about the bug and possible workarounds, please refer to the <a href=
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2026,6 +2118,19 @@ information about the bug and possible workarounds, please refer to the <a href=
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
+         default.</p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -2039,9 +2144,9 @@ information about the bug and possible workarounds, please refer to the <a href=
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptorAA13UploadRequestC10Foundation4DataV_AA21URLRequestConvertible_pAA0G11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptorAA13UploadRequestC10Foundation4DataV_AA21URLRequestConvertible_pAA0G11Interceptor_pSgtF">upload(_:with:interceptor:)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestC10Foundation4DataV_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestC10Foundation4DataV_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF">upload(_:with:interceptor:fileManager:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2058,7 +2163,8 @@ information about the bug and possible workarounds, please refer to the <a href=
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="n">_</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span>
                  <span class="n">with</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
-                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
                       </div>
@@ -2099,6 +2205,19 @@ information about the bug and possible workarounds, please refer to the <a href=
                               <td>
                                 <div>
                                   <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
+         default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2126,9 +2245,9 @@ information about the bug and possible workarounds, please refer to the <a href=
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_2to6method7headers11interceptorAA13UploadRequestC10Foundation3URLV_AA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0I11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:to:method:headers:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_2to6method7headers11interceptorAA13UploadRequestC10Foundation3URLV_AA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0I11Interceptor_pSgtF">upload(_:to:method:headers:interceptor:)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor11fileManagerAA13UploadRequestC10Foundation3URLV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0K11Interceptor_pSgSo06NSFileI0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:to:method:headers:interceptor:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor11fileManagerAA13UploadRequestC10Foundation3URLV_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0K11Interceptor_pSgSo06NSFileI0CtF">upload(_:to:method:headers:interceptor:fileManager:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2146,9 +2265,10 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="n">_</span> <span class="nv">fileURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span>
                  <span class="n">to</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
-                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
+                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
                  <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
                       </div>
@@ -2188,7 +2308,7 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2212,7 +2332,20 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
+         default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2229,9 +2362,9 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptorAA13UploadRequestC10Foundation3URLV_AA21URLRequestConvertible_pAA0G11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptorAA13UploadRequestC10Foundation3URLV_AA21URLRequestConvertible_pAA0G11Interceptor_pSgtF">upload(_:with:interceptor:)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestC10Foundation3URLV_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestC10Foundation3URLV_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF">upload(_:with:interceptor:fileManager:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2249,7 +2382,8 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="n">_</span> <span class="nv">fileURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span>
                  <span class="n">with</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
-                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
                       </div>
@@ -2290,6 +2424,19 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                               <td>
                                 <div>
                                   <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
+         default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2317,9 +2464,9 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_2to6method7headers11interceptorAA13UploadRequestCSo13NSInputStreamC_AA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0I11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:to:method:headers:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_2to6method7headers11interceptorAA13UploadRequestCSo13NSInputStreamC_AA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0I11Interceptor_pSgtF">upload(_:to:method:headers:interceptor:)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor11fileManagerAA13UploadRequestCSo13NSInputStreamC_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0K11Interceptor_pSgSo06NSFileI0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:to:method:headers:interceptor:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_2to6method7headers11interceptor11fileManagerAA13UploadRequestCSo13NSInputStreamC_AA14URLConvertible_pAA10HTTPMethodVAA11HTTPHeadersVSgAA0K11Interceptor_pSgSo06NSFileI0CtF">upload(_:to:method:headers:interceptor:fileManager:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2337,9 +2484,10 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="n">_</span> <span class="nv">stream</span><span class="p">:</span> <span class="kt">InputStream</span><span class="p">,</span>
                  <span class="n">to</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
-                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
+                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
                  <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
                       </div>
@@ -2379,7 +2527,7 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2407,6 +2555,19 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
+         default.</p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -2420,9 +2581,9 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptorAA13UploadRequestCSo13NSInputStreamC_AA21URLRequestConvertible_pAA0G11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptorAA13UploadRequestCSo13NSInputStreamC_AA21URLRequestConvertible_pAA0G11Interceptor_pSgtF">upload(_:with:interceptor:)</a>
+                    <a name="/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestCSo13NSInputStreamC_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(_:with:interceptor:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload_4with11interceptor11fileManagerAA13UploadRequestCSo13NSInputStreamC_AA21URLRequestConvertible_pAA0I11Interceptor_pSgSo06NSFileG0CtF">upload(_:with:interceptor:fileManager:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2440,7 +2601,8 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="n">_</span> <span class="nv">stream</span><span class="p">:</span> <span class="kt">InputStream</span><span class="p">,</span>
                  <span class="n">with</span> <span class="nv">convertible</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
-                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
                       </div>
@@ -2481,6 +2643,19 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                               <td>
                                 <div>
                                   <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
+         default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2508,9 +2683,9 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold11fileManager2to6method7headers11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VSo06NSFileJ0CAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0P11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:fileManager:to:method:headers:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold11fileManager2to6method7headers11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VSo06NSFileJ0CAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0P11Interceptor_pSgtF">upload(multipartFormData:usingThreshold:fileManager:to:method:headers:interceptor:)</a>
+                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData2to14usingThreshold6method7headers11interceptor11fileManagerAA13UploadRequestCyAA09MultiparteF0Cc_AA14URLConvertible_ps6UInt64VAA10HTTPMethodVAA11HTTPHeadersVSgAA0P11Interceptor_pSgSo06NSFileN0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:to:usingThreshold:method:headers:interceptor:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData2to14usingThreshold6method7headers11interceptor11fileManagerAA13UploadRequestCyAA09MultiparteF0Cc_AA14URLConvertible_ps6UInt64VAA10HTTPMethodVAA11HTTPHeadersVSgAA0P11Interceptor_pSgSo06NSFileN0CtF">upload(multipartFormData:to:usingThreshold:method:headers:interceptor:fileManager:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2521,7 +2696,7 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
                         <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the multipart form data built using a closure and sent using the provided
 <code>URLRequest</code> components and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
 
-<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
+<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cumulative
 payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
 efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
 be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
@@ -2540,12 +2715,12 @@ technique was used.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">,</span>
-                 <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
-                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
                  <span class="n">to</span> <span class="nv">url</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
-                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
+                 <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
+                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
                  <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
 
                         </div>
                       </div>
@@ -2562,32 +2737,6 @@ technique was used.</p>
                               <td>
                                 <div>
                                   <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>encodingMemoryThreshold</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
-                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>fileManager</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>FileManager</code> to be used if the form data exceeds the memory threshold and is
-                     written to disk before being uploaded.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2600,357 +2749,6 @@ technique was used.</p>
                               <td>
                                 <div>
                                   <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>method</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>headers</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>interceptor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold11fileManager4with11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VSo06NSFileJ0CAA21URLRequestConvertible_pAA0N11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:fileManager:with:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold11fileManager4with11interceptorAA13UploadRequestCyAA09MultiparteF0Cc_s6UInt64VSo06NSFileJ0CAA21URLRequestConvertible_pAA0N11Interceptor_pSgtF">upload(multipartFormData:usingThreshold:fileManager:with:interceptor:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using a <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure, the provided <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code>
-value, and a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
-
-<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
-payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
-efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
-be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
-footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
-used for larger payloads such as video content.</p>
-
-<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
-or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
-encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
-during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
-technique was used.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">,</span>
-                 <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
-                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
-                 <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
-                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>multipartFormData</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>encodingMemoryThreshold</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
-                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>fileManager</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>FileManager</code> to be used if the form data exceeds the memory threshold and is
-                     written to disk before being uploaded.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>request</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>interceptor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold2to6method7headers11interceptorAA13UploadRequestCAA09MultiparteF0C_s6UInt64VAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0N11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:to:method:headers:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold2to6method7headers11interceptorAA13UploadRequestCAA09MultiparteF0C_s6UInt64VAA14URLConvertible_pAA10HTTPMethodOAA11HTTPHeadersVSgAA0N11Interceptor_pSgtF">upload(multipartFormData:usingThreshold:to:method:headers:interceptor:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the prebuilt <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> value using the provided <code>URLRequest</code> components
-and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
-
-<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
-payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
-efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
-be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
-footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
-used for larger payloads such as video content.</p>
-
-<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
-or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
-encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
-during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
-technique was used.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">,</span>
-                 <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
-                 <span class="n">to</span> <span class="nv">url</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
-                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
-                 <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>multipartFormData</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> instance to upload.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>encodingMemoryThreshold</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
-                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>url</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>method</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Enums/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>headers</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>interceptor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold4with11interceptorAA13UploadRequestCAA09MultiparteF0C_s6UInt64VAA21URLRequestConvertible_pAA0L11Interceptor_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/upload(multipartFormData:usingThreshold:with:interceptor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData14usingThreshold4with11interceptorAA13UploadRequestCAA09MultiparteF0C_s6UInt64VAA21URLRequestConvertible_pAA0L11Interceptor_pSgtF">upload(multipartFormData:usingThreshold:with:interceptor:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the prebuilt <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> value using the providing <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code>
-value and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
-
-<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cummulative
-payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
-efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
-be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
-footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
-used for larger payloads such as video content.</p>
-
-<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
-or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
-encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
-during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
-technique was used.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">,</span>
-                 <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
-                 <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
-                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>multipartFormData</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> instance to upload.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2971,12 +2769,24 @@ technique was used.</p>
                             <tr>
                               <td>
                                 <code>
-                                <em>request</em>
+                                <em>method</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2989,6 +2799,402 @@ technique was used.</p>
                               <td>
                                 <div>
                                   <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> to be used if the form data exceeds the memory threshold and is
+                     written to disk before being uploaded. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData4with14usingThreshold11interceptor11fileManagerAA13UploadRequestCyAA09MultiparteF0Cc_AA21URLRequestConvertible_ps6UInt64VAA0N11Interceptor_pSgSo06NSFileL0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:with:usingThreshold:interceptor:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData4with14usingThreshold11interceptor11fileManagerAA13UploadRequestCyAA09MultiparteF0Cc_AA21URLRequestConvertible_ps6UInt64VAA0N11Interceptor_pSgSo06NSFileL0CtF">upload(multipartFormData:with:usingThreshold:interceptor:fileManager:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> using a <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure, the provided <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code>
+value, and a <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
+
+<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cumulative
+payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+used for larger payloads such as video content.</p>
+
+<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
+or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
+encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+technique was used.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">,</span>
+                 <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
+                 <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>multipartFormData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> building closure.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encodingMemoryThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by
+                     default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> to be used if the form data exceeds the memory threshold and is
+                     written to disk before being uploaded. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData2to14usingThreshold6method7headers11interceptor11fileManagerAA13UploadRequestCAA09MultiparteF0C_AA14URLConvertible_ps6UInt64VAA10HTTPMethodVAA11HTTPHeadersVSgAA0P11Interceptor_pSgSo06NSFileN0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:to:usingThreshold:method:headers:interceptor:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData2to14usingThreshold6method7headers11interceptor11fileManagerAA13UploadRequestCAA09MultiparteF0C_AA14URLConvertible_ps6UInt64VAA10HTTPMethodVAA11HTTPHeadersVSgAA0P11Interceptor_pSgSo06NSFileN0CtF">upload(multipartFormData:to:usingThreshold:method:headers:interceptor:fileManager:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the prebuilt <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> value using the provided <code>URLRequest</code> components
+and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
+
+<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cumulative
+payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+used for larger payloads such as video content.</p>
+
+<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
+or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
+encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+technique was used.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">,</span>
+                 <span class="n">to</span> <span class="nv">url</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLConvertible.html">URLConvertible</a></span><span class="p">,</span>
+                 <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
+                 <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">post</span><span class="p">,</span>
+                 <span class="nv">headers</span><span class="p">:</span> <span class="kt"><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>multipartFormData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> instance to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>url</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLConvertible.html">URLConvertible</a></code> value to be used as the <code>URLRequest</code>&lsquo;s <code>URL</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encodingMemoryThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by
+                     default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>method</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPMethod.html">HTTPMethod</a></code> for the <code>URLRequest</code>. <code>.post</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>headers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/HTTPHeaders.html">HTTPHeaders</a></code> value to be added to the <code>URLRequest</code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> to be used if the form data exceeds the memory threshold and is
+                     written to disk before being uploaded. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The created <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire7SessionC6upload17multipartFormData4with14usingThreshold11interceptor11fileManagerAA13UploadRequestCAA09MultiparteF0C_AA21URLRequestConvertible_ps6UInt64VAA0N11Interceptor_pSgSo06NSFileL0CtF"></a>
+                    <a name="//apple_ref/swift/Method/upload(multipartFormData:with:usingThreshold:interceptor:fileManager:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire7SessionC6upload17multipartFormData4with14usingThreshold11interceptor11fileManagerAA13UploadRequestCAA09MultiparteF0C_AA21URLRequestConvertible_ps6UInt64VAA0N11Interceptor_pSgSo06NSFileL0CtF">upload(multipartFormData:with:usingThreshold:interceptor:fileManager:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code> for the prebuilt <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> value using the providing <code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code>
+value and <code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code>.</p>
+
+<p>It is important to understand the memory implications of uploading <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code>. If the cumulative
+payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
+efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
+be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
+footprint low, then the data can be uploaded as a stream from the resulting file. Streaming from disk MUST be
+used for larger payloads such as video content.</p>
+
+<p>The <code>encodingMemoryThreshold</code> parameter allows Alamofire to automatically determine whether to encode in-memory
+or stream from disk. If the content length of the <code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> is below the <code>encodingMemoryThreshold</code>,
+encoding takes place in-memory. If the content length exceeds the threshold, the data is streamed to disk
+during the encoding process. Then the result is uploaded as data or as a stream depending on which encoding
+technique was used.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">upload</span><span class="p">(</span><span class="nv">multipartFormData</span><span class="p">:</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="p">,</span>
+                 <span class="n">with</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span><span class="p">,</span>
+                 <span class="n">usingThreshold</span> <span class="nv">encodingMemoryThreshold</span><span class="p">:</span> <span class="kt">UInt64</span> <span class="o">=</span> <span class="kt"><a href="../Classes/MultipartFormData.html">MultipartFormData</a></span><span class="o">.</span><span class="n">encodingMemoryThreshold</span><span class="p">,</span>
+                 <span class="nv">interceptor</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">fileManager</span><span class="p">:</span> <span class="kt">FileManager</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/UploadRequest.html">UploadRequest</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>multipartFormData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/MultipartFormData.html">MultipartFormData</a></code> instance to upload.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>request</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/URLRequestConvertible.html">URLRequestConvertible</a></code> value to be used to create the <code>URLRequest</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>encodingMemoryThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Byte threshold used to determine whether the form data is encoded into memory or
+                     onto disk before being uploaded. <code><a href="../Classes/MultipartFormData.html#/s:9Alamofire17MultipartFormDataC23encodingMemoryThresholds6UInt64VvpZ">MultipartFormData.encodingMemoryThreshold</a></code> by
+                     default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>interceptor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Protocols/RequestInterceptor.html">RequestInterceptor</a></code> value to be used by the returned <code><a href="../Classes/DataRequest.html">DataRequest</a></code>. <code>nil</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileManager</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>FileManager</code> instance to be used by the returned <code><a href="../Classes/UploadRequest.html">UploadRequest</a></code>. <code><a href="../Classes/Session.html#/s:9Alamofire7SessionC7defaultACvpZ">.default</a></code> instance by
+                     default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3042,9 +3248,9 @@ technique was used.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire15RequestDelegateP11retryResult3for5dueTo10completionyAA0B0C_s5Error_pyAA05RetryE0OctF"></a>
-                    <a name="//apple_ref/swift/Method/retryResult(for:dueTo:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15RequestDelegateP11retryResult3for5dueTo10completionyAA0B0C_s5Error_pyAA05RetryE0OctF">retryResult(for:dueTo:completion:)</a>
+                    <a name="/s:9Alamofire15RequestDelegateP7cleanup5afteryAA0B0C_tF"></a>
+                    <a name="//apple_ref/swift/Method/cleanup(after:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire15RequestDelegateP7cleanup5afteryAA0B0C_tF">cleanup(after:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3058,7 +3264,33 @@ technique was used.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">retryResult</span><span class="p">(</span><span class="k">for</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="n">dueTo</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/RetryResult.html">RetryResult</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">cleanup</span><span class="p">(</span><span class="n">after</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire15RequestDelegateP11retryResult3for5dueTo10completionyAA0B0C_AA7AFErrorOyAA05RetryE0OctF"></a>
+                    <a name="//apple_ref/swift/Method/retryResult(for:dueTo:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire15RequestDelegateP11retryResult3for5dueTo10completionyAA0B0C_AA7AFErrorOyAA05RetryE0OctF">retryResult(for:dueTo:completion:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">retryResult</span><span class="p">(</span><span class="k">for</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span> <span class="n">dueTo</span> <span class="nv">error</span><span class="p">:</span> <span class="kt"><a href="../Enums/AFError.html">AFError</a></span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/RetryResult.html">RetryResult</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -3099,7 +3331,7 @@ technique was used.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-09-04)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

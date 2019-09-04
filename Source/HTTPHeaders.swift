@@ -398,14 +398,7 @@ extension HTTPHeader {
                     return "\(osName) \(versionString)"
                 }()
 
-                let alamofireVersion: String = {
-                    guard
-                        let afInfo = Bundle(for: Session.self).infoDictionary,
-                        let build = afInfo["CFBundleShortVersionString"]
-                    else { return "Unknown" }
-
-                    return "Alamofire/\(build)"
-                }()
+                let alamofireVersion = "Alamofire/\(AF.version)"
 
                 return "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
             }
