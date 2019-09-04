@@ -363,7 +363,7 @@ class OAuth2Handler: RequestAdapter, RequestRetrier {
         return SessionManager(configuration: configuration)
     }()
 
-    private let lock = NSLock()
+    private let lock = NSRecursiveLock()
 
     private var clientID: String
     private var baseURLString: String
