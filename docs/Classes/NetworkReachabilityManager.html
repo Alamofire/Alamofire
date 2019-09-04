@@ -120,9 +120,6 @@
                 <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/ConnectionType.html">– ConnectionType</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -206,13 +203,13 @@
                 <a class="nav-group-task-link" href="../Enums/AFError.html">AFError</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncodingFailureReason.html">– ParameterEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncoderFailureReason.html">– ParameterEncoderFailureReason</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ResponseValidationFailureReason.html">– ResponseValidationFailureReason</a>
@@ -224,7 +221,7 @@
                 <a class="nav-group-task-link" href="../Enums/AFError/ServerTrustFailureReason.html">– ServerTrustFailureReason</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/HTTPMethod.html">HTTPMethod</a>
+                <a class="nav-group-task-link" href="../Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/RetryResult.html">RetryResult</a>
@@ -277,6 +274,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataDecoder.html">DataDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/DataPreprocessor.html">DataPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
@@ -347,13 +347,22 @@
                 <a class="nav-group-task-link" href="../Structs/Empty.html">Empty</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GoogleXSSIPreprocessor.html">GoogleXSSIPreprocessor</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/HTTPHeader.html">HTTPHeader</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/HTTPHeaders.html">HTTPHeaders</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/HTTPMethod.html">HTTPMethod</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/JSONEncoding.html">JSONEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Redirector.html">Redirector</a>
@@ -385,6 +394,12 @@
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire18AFDownloadResponsea">AFDownloadResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a>
               </li>
               <li class="nav-group-task">
@@ -411,7 +426,7 @@
 
                 </div>
               </div>
-            <p>The <code>NetworkReachabilityManager</code> class listens for reachability changes of hosts and addresses for both WWAN and
+            <p>The <code>NetworkReachabilityManager</code> class listens for reachability changes of hosts and addresses for both cellular and
 WiFi network interfaces.</p>
 
 <p>Reachability can be used to determine background information about why a network operation failed, or to retry
@@ -456,34 +471,6 @@ request, as it&rsquo;s possible that an initial request may be required to estab
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC14ConnectionTypeO"></a>
-                    <a name="//apple_ref/swift/Enum/ConnectionType" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC14ConnectionTypeO">ConnectionType</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Defines the various connection types detected by reachability flags.</p>
-
-                        <a href="../Classes/NetworkReachabilityManager/ConnectionType.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ConnectionType</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:9Alamofire26NetworkReachabilityManagerC8Listenera"></a>
                     <a name="//apple_ref/swift/Alias/Listener" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC8Listenera">Listener</a>
@@ -503,6 +490,33 @@ network reachability status.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Listener</span> <span class="o">=</span> <span class="p">(</span><span class="kt"><a href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">NetworkReachabilityStatus</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9Alamofire26NetworkReachabilityManagerC7defaultACSgvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/default" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC7defaultACSgvpZ">default</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Default <code>NetworkReachabilityManager</code> for the zero address and a <code>listenerQueue</code> of <code>.main</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">let</span> <span class="err">`</span><span class="k">default</span><span class="err">`</span><span class="p">:</span> <span class="kt">NetworkReachabilityManager</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -550,9 +564,9 @@ network reachability status.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC17isReachableOnWWANSbvp"></a>
-                    <a name="//apple_ref/swift/Property/isReachableOnWWAN" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC17isReachableOnWWANSbvp">isReachableOnWWAN</a>
+                    <a name="/s:9Alamofire26NetworkReachabilityManagerC21isReachableOnCellularSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isReachableOnCellular" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC21isReachableOnCellularSbvp">isReachableOnCellular</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -560,14 +574,20 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Whether the network is currently reachable over the WWAN interface.</p>
+                        <p>Whether the network is currently reachable over the cellular interface.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Using this property to decide whether to make a high or low bandwidth request is not recommended.
+    Instead, set the <code>allowsCellularAccess</code> on any <code>URLRequest</code>s being issued.
+
+</div>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">isReachableOnWWAN</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">isReachableOnCellular</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -604,9 +624,9 @@ network reachability status.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC07networkC6StatusAC0bcF0Ovp"></a>
-                    <a name="//apple_ref/swift/Property/networkReachabilityStatus" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC07networkC6StatusAC0bcF0Ovp">networkReachabilityStatus</a>
+                    <a name="/s:9Alamofire26NetworkReachabilityManagerC17reachabilityQueueSo17OS_dispatch_queueCvp"></a>
+                    <a name="//apple_ref/swift/Property/reachabilityQueue" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC17reachabilityQueueSo17OS_dispatch_queueCvp">reachabilityQueue</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -614,68 +634,14 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The current network reachability status.</p>
+                        <p><code>DispatchQueue</code> on which reachability will update.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">networkReachabilityStatus</span><span class="p">:</span> <span class="kt"><a href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">NetworkReachabilityStatus</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC13listenerQueueSo17OS_dispatch_queueCvp"></a>
-                    <a name="//apple_ref/swift/Property/listenerQueue" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC13listenerQueueSo17OS_dispatch_queueCvp">listenerQueue</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>The dispatch queue to execute the <code><a href="../Classes/NetworkReachabilityManager.html#/s:9Alamofire26NetworkReachabilityManagerC8listeneryAC0bC6StatusOcSgvp">listener</a></code> closure on.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">listenerQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC8listeneryAC0bC6StatusOcSgvp"></a>
-                    <a name="//apple_ref/swift/Property/listener" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC8listeneryAC0bC6StatusOcSgvp">listener</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A closure executed when the network reachability status changes.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">listener</span><span class="p">:</span> <span class="kt">NetworkReachabilityManager</span><span class="o">.</span><span class="kt"><a href="../Classes/NetworkReachabilityManager.html#/s:9Alamofire26NetworkReachabilityManagerC8Listenera">Listener</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">reachabilityQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span></code></pre>
 
                         </div>
                       </div>
@@ -712,9 +678,9 @@ network reachability status.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC13previousFlagsSo09SCNetworkcF0Vvp"></a>
-                    <a name="//apple_ref/swift/Property/previousFlags" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC13previousFlagsSo09SCNetworkcF0Vvp">previousFlags</a>
+                    <a name="/s:9Alamofire26NetworkReachabilityManagerC6statusAC0bC6StatusOvp"></a>
+                    <a name="//apple_ref/swift/Property/status" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC6statusAC0bC6StatusOvp">status</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -722,14 +688,14 @@ network reachability status.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Reachability flags of the previous reachability state.</p>
+                        <p>The current network reachability status.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">previousFlags</span><span class="p">:</span> <span class="kt">SCNetworkReachabilityFlags</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">status</span><span class="p">:</span> <span class="kt"><a href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">NetworkReachabilityStatus</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -761,6 +727,11 @@ network reachability status.</p>
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Creates an instance with the specified host.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>The <code>host</code> value must <em>not</em> contain a scheme, just the hostname.</p>
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -783,7 +754,7 @@ network reachability status.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>Host used to evaluate network reachability. Must not include the scheme (i.e. <code>https</code>).</p>
+                                  <p>Host used to evaluate network reachability. Must <em>not</em> include the scheme (e.g. <code>https</code>).</p>
                                 </div>
                               </td>
                             </tr>
@@ -837,9 +808,9 @@ status of the device, both IPv4 and IPv6.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire26NetworkReachabilityManagerC14startListeningSbyF"></a>
-                    <a name="//apple_ref/swift/Method/startListening()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC14startListeningSbyF">startListening()</a>
+                    <a name="/s:9Alamofire26NetworkReachabilityManagerC14startListening7onQueue0G16UpdatePerformingSbSo17OS_dispatch_queueC_yAC0bC6StatusOctF"></a>
+                    <a name="//apple_ref/swift/Method/startListening(onQueue:onUpdatePerforming:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire26NetworkReachabilityManagerC14startListening7onQueue0G16UpdatePerformingSbSo17OS_dispatch_queueC_yAC0bC6StatusOctF">startListening(onQueue:onUpdatePerforming:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -848,6 +819,11 @@ status of the device, both IPv4 and IPv6.</p>
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Starts listening for changes in network reachability status.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Stops and removes any existing listener.</p>
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -855,9 +831,41 @@ status of the device, both IPv4 and IPv6.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">open</span> <span class="kd">func</span> <span class="nf">startListening</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+<span class="kd">open</span> <span class="kd">func</span> <span class="nf">startListening</span><span class="p">(</span><span class="n">onQueue</span> <span class="nv">queue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="o">.</span><span class="n">main</span><span class="p">,</span>
+                         <span class="n">onUpdatePerforming</span> <span class="nv">listener</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/NetworkReachabilityManager.html#/s:9Alamofire26NetworkReachabilityManagerC8Listenera">Listener</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>DispatchQueue</code> on which to call the <code>listener</code> closure. <code>.main</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>listener</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Classes/NetworkReachabilityManager.html#/s:9Alamofire26NetworkReachabilityManagerC8Listenera">Listener</a></code> closure called when reachability changes.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
@@ -901,7 +909,7 @@ status of the device, both IPv4 and IPv6.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-09-04)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

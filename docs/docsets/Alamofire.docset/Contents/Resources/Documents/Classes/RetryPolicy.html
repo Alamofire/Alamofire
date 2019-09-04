@@ -120,9 +120,6 @@
                 <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/NetworkReachabilityStatus.html">– NetworkReachabilityStatus</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/NetworkReachabilityManager/ConnectionType.html">– ConnectionType</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/PinnedCertificatesTrustEvaluator.html">PinnedCertificatesTrustEvaluator</a>
               </li>
               <li class="nav-group-task">
@@ -206,13 +203,13 @@
                 <a class="nav-group-task-link" href="../Enums/AFError.html">AFError</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncodingFailureReason.html">– ParameterEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ParameterEncoderFailureReason.html">– ParameterEncoderFailureReason</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/AFError/MultipartEncodingFailureReason.html">– MultipartEncodingFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError/ResponseValidationFailureReason.html">– ResponseValidationFailureReason</a>
@@ -224,7 +221,7 @@
                 <a class="nav-group-task-link" href="../Enums/AFError/ServerTrustFailureReason.html">– ServerTrustFailureReason</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/HTTPMethod.html">HTTPMethod</a>
+                <a class="nav-group-task-link" href="../Enums/AFError/URLRequestValidationFailureReason.html">– URLRequestValidationFailureReason</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/RetryResult.html">RetryResult</a>
@@ -277,6 +274,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataDecoder.html">DataDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/DataPreprocessor.html">DataPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
@@ -347,13 +347,22 @@
                 <a class="nav-group-task-link" href="../Structs/Empty.html">Empty</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GoogleXSSIPreprocessor.html">GoogleXSSIPreprocessor</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/HTTPHeader.html">HTTPHeader</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/HTTPHeaders.html">HTTPHeaders</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/HTTPMethod.html">HTTPMethod</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/JSONEncoding.html">JSONEncoding</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PassthroughPreprocessor.html">PassthroughPreprocessor</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Redirector.html">Redirector</a>
@@ -384,6 +393,12 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire14AFDataResponsea">AFDataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire18AFDownloadResponsea">AFDownloadResponse</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:9Alamofire8AFResulta">AFResult</a>
               </li>
@@ -505,9 +520,9 @@ as well as certain types of networking errors.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11RetryPolicyC27defaultRetryableHTTPMethodsShyAA10HTTPMethodOGvpZ"></a>
+                    <a name="/s:9Alamofire11RetryPolicyC27defaultRetryableHTTPMethodsShyAA10HTTPMethodVGvpZ"></a>
                     <a name="//apple_ref/swift/Variable/defaultRetryableHTTPMethods" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11RetryPolicyC27defaultRetryableHTTPMethodsShyAA10HTTPMethodOGvpZ">defaultRetryableHTTPMethods</a>
+                    <a class="token" href="#/s:9Alamofire11RetryPolicyC27defaultRetryableHTTPMethodsShyAA10HTTPMethodVGvpZ">defaultRetryableHTTPMethods</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -523,7 +538,7 @@ See <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">RFC 2616 - 
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">defaultRetryableHTTPMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">defaultRetryableHTTPMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -669,9 +684,9 @@ See <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10">RFC 
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11RetryPolicyC20retryableHTTPMethodsShyAA10HTTPMethodOGvp"></a>
+                    <a name="/s:9Alamofire11RetryPolicyC20retryableHTTPMethodsShyAA10HTTPMethodVGvp"></a>
                     <a name="//apple_ref/swift/Property/retryableHTTPMethods" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11RetryPolicyC20retryableHTTPMethodsShyAA10HTTPMethodOGvp">retryableHTTPMethods</a>
+                    <a class="token" href="#/s:9Alamofire11RetryPolicyC20retryableHTTPMethodsShyAA10HTTPMethodVGvp">retryableHTTPMethods</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -686,7 +701,7 @@ See <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10">RFC 
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">retryableHTTPMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">retryableHTTPMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -750,9 +765,9 @@ See <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10">RFC 
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire11RetryPolicyC10retryLimit22exponentialBackoffBase0fG5Scale20retryableHTTPMethods0J15HTTPStatusCodes0j8URLErrorM0ACSu_SuSdShyAA10HTTPMethodOGShySiGShy10Foundation0N0V4CodeVGtcfc"></a>
+                    <a name="/s:9Alamofire11RetryPolicyC10retryLimit22exponentialBackoffBase0fG5Scale20retryableHTTPMethods0J15HTTPStatusCodes0j8URLErrorM0ACSu_SuSdShyAA10HTTPMethodVGShySiGShy10Foundation0N0V4CodeVGtcfc"></a>
                     <a name="//apple_ref/swift/Method/init(retryLimit:exponentialBackoffBase:exponentialBackoffScale:retryableHTTPMethods:retryableHTTPStatusCodes:retryableURLErrorCodes:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire11RetryPolicyC10retryLimit22exponentialBackoffBase0fG5Scale20retryableHTTPMethods0J15HTTPStatusCodes0j8URLErrorM0ACSu_SuSdShyAA10HTTPMethodOGShySiGShy10Foundation0N0V4CodeVGtcfc">init(retryLimit:exponentialBackoffBase:exponentialBackoffScale:retryableHTTPMethods:retryableHTTPStatusCodes:retryableURLErrorCodes:)</a>
+                    <a class="token" href="#/s:9Alamofire11RetryPolicyC10retryLimit22exponentialBackoffBase0fG5Scale20retryableHTTPMethods0J15HTTPStatusCodes0j8URLErrorM0ACSu_SuSdShyAA10HTTPMethodVGShySiGShy10Foundation0N0V4CodeVGtcfc">init(retryLimit:exponentialBackoffBase:exponentialBackoffScale:retryableHTTPMethods:retryableHTTPStatusCodes:retryableURLErrorCodes:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -767,13 +782,12 @@ See <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10">RFC 
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
-    <span class="nv">retryLimit</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC07defaultB5LimitSuvpZ">defaultRetryLimit</a></span><span class="p">,</span>
-    <span class="nv">exponentialBackoffBase</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC29defaultExponentialBackoffBaseSuvpZ">defaultExponentialBackoffBase</a></span><span class="p">,</span>
-    <span class="nv">exponentialBackoffScale</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC30defaultExponentialBackoffScaleSdvpZ">defaultExponentialBackoffScale</a></span><span class="p">,</span>
-    <span class="nv">retryableHTTPMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC27defaultRetryableHTTPMethodsShyAA10HTTPMethodOGvpZ">defaultRetryableHTTPMethods</a></span><span class="p">,</span>
-    <span class="nv">retryableHTTPStatusCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC31defaultRetryableHTTPStatusCodesShySiGvpZ">defaultRetryableHTTPStatusCodes</a></span><span class="p">,</span>
-    <span class="nv">retryableURLErrorCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">URLError</span><span class="o">.</span><span class="kt">Code</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC29defaultRetryableURLErrorCodesShy10Foundation0F0V4CodeVGvpZ">defaultRetryableURLErrorCodes</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">retryLimit</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC07defaultB5LimitSuvpZ">defaultRetryLimit</a></span><span class="p">,</span>
+            <span class="nv">exponentialBackoffBase</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC29defaultExponentialBackoffBaseSuvpZ">defaultExponentialBackoffBase</a></span><span class="p">,</span>
+            <span class="nv">exponentialBackoffScale</span><span class="p">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC30defaultExponentialBackoffScaleSdvpZ">defaultExponentialBackoffScale</a></span><span class="p">,</span>
+            <span class="nv">retryableHTTPMethods</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/HTTPMethod.html">HTTPMethod</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC27defaultRetryableHTTPMethodsShyAA10HTTPMethodVGvpZ">defaultRetryableHTTPMethods</a></span><span class="p">,</span>
+            <span class="nv">retryableHTTPStatusCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC31defaultRetryableHTTPStatusCodesShySiGvpZ">defaultRetryableHTTPStatusCodes</a></span><span class="p">,</span>
+            <span class="nv">retryableURLErrorCodes</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">URLError</span><span class="o">.</span><span class="kt">Code</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">RetryPolicy</span><span class="o">.</span><span class="n"><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC29defaultRetryableURLErrorCodesShy10Foundation0F0V4CodeVGvpZ">defaultRetryableURLErrorCodes</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -826,7 +840,7 @@ See <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10">RFC 
                               <td>
                                 <div>
                                   <p>The HTTP methods that are allowed to be retried.
-                      <code><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC27defaultRetryableHTTPMethodsShyAA10HTTPMethodOGvpZ">RetryPolicy.defaultRetryableHTTPMethods</a></code> by default.</p>
+                      <code><a href="../Classes/RetryPolicy.html#/s:9Alamofire11RetryPolicyC27defaultRetryableHTTPMethodsShyAA10HTTPMethodVGvpZ">RetryPolicy.defaultRetryableHTTPMethods</a></code> by default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -881,11 +895,10 @@ See <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10">RFC 
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">retry</span><span class="p">(</span>
-    <span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span>
-    <span class="k">for</span> <span class="nv">session</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html">Session</a></span><span class="p">,</span>
-    <span class="n">dueTo</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">,</span>
-    <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/RetryResult.html">RetryResult</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">retry</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="p">,</span>
+                <span class="k">for</span> <span class="nv">session</span><span class="p">:</span> <span class="kt"><a href="../Classes/Session.html">Session</a></span><span class="p">,</span>
+                <span class="n">dueTo</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">,</span>
+                <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Enums/RetryResult.html">RetryResult</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -900,7 +913,7 @@ See <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10">RFC 
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-07-29)</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-09-04)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
