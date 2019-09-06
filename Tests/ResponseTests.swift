@@ -526,7 +526,7 @@ class ResponseTryMapTestCase: BaseTestCase {
 // MARK: -
 
 enum TestError: Error {
-    case error(error: Error)
+    case error(error: AFError)
 }
 
 enum TransformationError: Error {
