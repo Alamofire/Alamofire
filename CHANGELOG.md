@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1)
+- `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2)
 - `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4) | [5.0.0-beta.5](#500-beta5) | [5.0.0-beta.6](#500-beta6) | [5.0.0-beta.7](#500-beta7)
 
 #### 4.x Releases
@@ -39,6 +39,13 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.0.0-rc.2](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-rc.2)
+Released on 2019-09-08. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/59?closed=1). **Note:** Alamofire 5 is now API stable.
+
+#### Fixed
+- Single remaining use of `Error` instead of generic `Failure` constraint in `DataResponse` API.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2937](https://github.com/Alamofire/Alamofire/pull/2937).
 
 ## [5.0.0-rc.1](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-rc.1)
 Released on 2019-09-04. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/58?closed=1). **Note:** Alamofire 5 is now API stable.
