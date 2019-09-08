@@ -1,6 +1,145 @@
 {
   "warnings": [
-
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/EventMonitor.swift",
+      "line": 269,
+      "symbol": "EventMonitor.request(_:didParseResponse:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/EventMonitor.swift",
+      "line": 270,
+      "symbol": "EventMonitor.request(_:didParseResponse:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/EventMonitor.swift",
+      "line": 281,
+      "symbol": "EventMonitor.request(_:didParseResponse:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/EventMonitor.swift",
+      "line": 282,
+      "symbol": "EventMonitor.request(_:didParseResponse:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ResponseSerialization.swift",
+      "line": 84,
+      "symbol": "PassthroughPreprocessor.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ResponseSerialization.swift",
+      "line": 91,
+      "symbol": "GoogleXSSIPreprocessor.init()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 59,
+      "symbol": "SessionDelegate.urlSession(_:didBecomeInvalidWithError:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 72,
+      "symbol": "SessionDelegate.urlSession(_:task:didReceive:completionHandler:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 144,
+      "symbol": "SessionDelegate.urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 159,
+      "symbol": "SessionDelegate.urlSession(_:task:needNewBodyStream:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 171,
+      "symbol": "SessionDelegate.urlSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 185,
+      "symbol": "SessionDelegate.urlSession(_:task:didFinishCollecting:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 193,
+      "symbol": "SessionDelegate.urlSession(_:task:didCompleteWithError:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 202,
+      "symbol": "SessionDelegate.urlSession(_:taskIsWaitingForConnectivity:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 210,
+      "symbol": "SessionDelegate.urlSession(_:dataTask:didReceive:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 220,
+      "symbol": "SessionDelegate.urlSession(_:dataTask:willCacheResponse:completionHandler:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 237,
+      "symbol": "SessionDelegate.urlSession(_:downloadTask:didResumeAtOffset:expectedTotalBytes:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 254,
+      "symbol": "SessionDelegate.urlSession(_:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
+      "line": 273,
+      "symbol": "SessionDelegate.urlSession(_:downloadTask:didFinishDownloadingTo:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/URLRequest+Alamofire.swift",
+      "line": 34,
+      "symbol": "URLRequest.validate()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    }
   ],
   "source_directory": "/Users/jshier/Desktop/Code/Alamofire"
 }
