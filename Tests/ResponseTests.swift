@@ -26,7 +26,7 @@ import Alamofire
 import Foundation
 import XCTest
 
-class ResponseTestCase: BaseTestCase {
+final class ResponseTestCase: BaseTestCase {
     func testThatResponseReturnsSuccessResultWithValidData() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -78,7 +78,7 @@ class ResponseTestCase: BaseTestCase {
 
 // MARK: -
 
-class ResponseDataTestCase: BaseTestCase {
+final class ResponseDataTestCase: BaseTestCase {
     func testThatResponseDataReturnsSuccessResultWithValidData() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -131,7 +131,7 @@ class ResponseDataTestCase: BaseTestCase {
 
 // MARK: -
 
-class ResponseStringTestCase: BaseTestCase {
+final class ResponseStringTestCase: BaseTestCase {
     func testThatResponseStringReturnsSuccessResultWithValidString() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -184,7 +184,7 @@ class ResponseStringTestCase: BaseTestCase {
 
 // MARK: -
 
-class ResponseJSONTestCase: BaseTestCase {
+final class ResponseJSONTestCase: BaseTestCase {
     func testThatResponseJSONReturnsSuccessResultWithValidJSON() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -299,7 +299,7 @@ class ResponseJSONTestCase: BaseTestCase {
     }
 }
 
-class ResponseJSONDecodableTestCase: BaseTestCase {
+final class ResponseJSONDecodableTestCase: BaseTestCase {
     func testThatResponseDecodableReturnsSuccessResultWithValidJSON() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -376,7 +376,7 @@ class ResponseJSONDecodableTestCase: BaseTestCase {
 
 // MARK: -
 
-class ResponseMapTestCase: BaseTestCase {
+final class ResponseMapTestCase: BaseTestCase {
     func testThatMapTransformsSuccessValue() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -433,7 +433,7 @@ class ResponseMapTestCase: BaseTestCase {
 
 // MARK: -
 
-class ResponseTryMapTestCase: BaseTestCase {
+final class ResponseTryMapTestCase: BaseTestCase {
     func testThatTryMapTransformsSuccessValue() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -526,7 +526,7 @@ class ResponseTryMapTestCase: BaseTestCase {
 // MARK: -
 
 enum TestError: Error {
-    case error(error: Error)
+    case error(error: AFError)
 }
 
 enum TransformationError: Error {
@@ -537,7 +537,7 @@ enum TransformationError: Error {
     }
 }
 
-class ResponseMapErrorTestCase: BaseTestCase {
+final class ResponseMapErrorTestCase: BaseTestCase {
     func testThatMapErrorTransformsFailureValue() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
@@ -592,7 +592,7 @@ class ResponseMapErrorTestCase: BaseTestCase {
 
 // MARK: -
 
-class ResponseTryMapErrorTestCase: BaseTestCase {
+final class ResponseTryMapErrorTestCase: BaseTestCase {
     func testThatTryMapErrorPreservesSuccessValue() {
         // Given
         let urlString = "https://httpbin.org/get"

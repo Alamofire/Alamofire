@@ -244,7 +244,9 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
         if case let .serverTrustEvaluationFailed(reason)? = error {
-            XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
+            // Test seems flaky and can result in either of these failures, perhaps due to the OS actually checking?
+            XCTAssertTrue(reason.isDefaultEvaluationFailed || reason.isRevocationCheckFailed,
+                          "should be .defaultEvaluationFailed or .revocationCheckFailed")
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
         }

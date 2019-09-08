@@ -176,7 +176,7 @@ extension DataResponse {
     /// - Parameter transform: A closure that takes the error of the instance.
     ///
     /// - Returns: A `DataResponse` instance containing the result of the transform.
-    public func mapError<NewFailure: Error>(_ transform: (Error) -> NewFailure) -> DataResponse<Success, NewFailure> {
+    public func mapError<NewFailure: Error>(_ transform: (Failure) -> NewFailure) -> DataResponse<Success, NewFailure> {
         return DataResponse<Success, NewFailure>(request: request,
                                                  response: response,
                                                  data: data,
