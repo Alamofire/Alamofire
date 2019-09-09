@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: watchOS - ${{ matrix.destination }}
-        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test
+        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean build
   spm:
     name: Test SPM Integration
     runs-on: macOS-latest    
@@ -51,7 +51,6 @@ jobs:
       - uses: actions/checkout@v1
       - name: SPM Build & Test
         run: |
-          cd 'Integrations/SPM'
           swift build
           swift test
 
