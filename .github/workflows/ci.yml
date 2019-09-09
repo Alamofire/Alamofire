@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - master
-      - hotfix
-  pull_request:
-      - master
-      - hotfix
 
 jobs:
   macOS:
