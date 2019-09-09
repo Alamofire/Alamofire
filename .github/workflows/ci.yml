@@ -22,7 +22,7 @@ jobs:
     runs-on: macOS-latest
     strategy:
       matrix:
-        destination: ["OS=12.4,name=iPhone XS", "OS=11.4,name=iPhone X", "OS=10.3.1,name=iPhone SE"
+        destination: ["OS=12.4,name=iPhone XS", "OS=11.4,name=iPhone X", "OS=10.3.1,name=iPhone SE"]
     steps:
       - uses: actions/checkout@v1            
       - name: iOS - ${{ maxtrix.destination }}
@@ -32,7 +32,7 @@ jobs:
     runs-on: macOS-latest
     strategy:
       matrix:
-        destination: ["OS=12.4,name=Apple TV 4K", "OS=11.4,name=Apple TV 4K", "OS=10.2,name=Apple TV 1080p"
+        destination: ["OS=12.4,name=Apple TV 4K", "OS=11.4,name=Apple TV 4K", "OS=10.2,name=Apple TV 1080p"]
     steps:
       - uses: actions/checkout@v1            
       - name: tvOS - ${{ matrix.destination }}
@@ -42,7 +42,7 @@ jobs:
     runs-on: macOS-latest
         strategy:
       matrix:
-        destination: ["OS=5.3,name=Apple Watch Series 4 - 44mm", "OS=4.2,name=Apple Watch Series 3 - 42mm", "OS=3.2,name=Apple Watch Series 2 - 42mm"
+        destination: ["OS=5.3,name=Apple Watch Series 4 - 44mm", "OS=4.2,name=Apple Watch Series 3 - 42mm", "OS=3.2,name=Apple Watch Series 2 - 42mm"]
     steps:
       - uses: actions/checkout@v1
       - name: watchOS
