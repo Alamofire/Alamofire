@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1    
       - name: macOS
-        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | tee .ci/results/xcodebuild-macOS.log
+        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test
   iOS:
     name: Test iOS 
     runs-on: macOS-latest
@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1            
       - name: iOS - ${{ matrix.destination }}
-        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | tee .ci/results/xcodebuild-iOS.log
+        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test
   tvOS:
     name: Test tvOS 
     runs-on: macOS-latest
@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1            
       - name: tvOS - ${{ matrix.destination }}
-        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | tee .ci/results/xcodebuild-tvOS.log
+        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test
   watchOS:
     name: Build watchOS
     runs-on: macOS-latest
@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: watchOS - ${{ matrix.destination }}
-        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test | tee .ci/results/xcodebuild-watchOS.log
+        run: xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean test
   spm:
     name: Test SPM Integration
     runs-on: macOS-latest    
