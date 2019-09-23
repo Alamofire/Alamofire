@@ -94,7 +94,8 @@ class MasterViewController: UITableViewController {
     // MARK: - Private - Reachability
 
     private func monitorReachability() {
-        NetworkReachabilityManager.default?.startListening { status in
+        reachability = NetworkReachabilityManager.default
+        reachability?.startListening { status in
             print("Reachability Status Changed: \(status)")
         }
     }
