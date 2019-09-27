@@ -137,6 +137,8 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
         let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         output.append("[Request Body]: \n\(requestBody)")
         output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
+        let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
+        output.append("[Response Body]: \n\(responseBody)")
         output.append("[Data]: \(data?.count ?? 0) bytes")
         output.append("[Result]: \(result.debugDescription)")
         output.append("[Timeline]: \(timeline.debugDescription)")
@@ -392,6 +394,8 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
         let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         output.append("[Request Body]: \n\(requestBody)")
         output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
+        let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
+        output.append("[Response Body]: \n\(responseBody)")
         output.append("[TemporaryURL]: \(temporaryURL?.path ?? "nil")")
         output.append("[DestinationURL]: \(destinationURL?.path ?? "nil")")
         output.append("[ResumeData]: \(resumeData?.count ?? 0) bytes")
