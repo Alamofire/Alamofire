@@ -24,40 +24,34 @@
 
 import Foundation
 
-open class MultipartUpload {
-    /// Default memory threshold used when encoding `MultipartFormData`, in bytes.
-    public static let encodingMemoryThreshold: UInt64 = 10_000_000
-
+/// Internal type which encapsulates a `MultipartFormData` upload.
+final class MultipartUpload {
     lazy var result = Result { try build() }
 
     let isInBackgroundSession: Bool
-    let multipartBuilder: (MultipartFormData) -> Void
+    let multipartFormData: MultipartFormData
     let encodingMemoryThreshold: UInt64
     let request: URLRequestConvertible
     let fileManager: FileManager
 
     init(isInBackgroundSession: Bool,
-         encodingMemoryThreshold: UInt64 = MultipartUpload.encodingMemoryThreshold,
+         encodingMemoryThreshold: UInt64,
          request: URLRequestConvertible,
-         fileManager: FileManager = .default,
-         multipartBuilder: @escaping (MultipartFormData) -> Void) {
+         multipartFormData: MultipartFormData) {
         self.isInBackgroundSession = isInBackgroundSession
         self.encodingMemoryThreshold = encodingMemoryThreshold
         self.request = request
-        self.fileManager =  fileManager
-        self.multipartBuilder = multipartBuilder
+        fileManager = multipartFormData.fileManager
+        self.multipartFormData = multipartFormData
     }
 
     func build() throws -> (request: URLRequest, uploadable: UploadRequest.Uploadable) {
-        let formData = MultipartFormData(fileManager: fileManager)
-        multipartBuilder(formData)
-
         var urlRequest = try request.asURLRequest()
-        urlRequest.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
+        urlRequest.setValue(multipartFormData.contentType, forHTTPHeaderField: "Content-Type")
 
         let uploadable: UploadRequest.Uploadable
-        if formData.contentLength < encodingMemoryThreshold && !isInBackgroundSession {
-            let data = try formData.encode()
+        if multipartFormData.contentLength < encodingMemoryThreshold && !isInBackgroundSession {
+            let data = try multipartFormData.encode()
 
             uploadable = .data(data)
         } else {
@@ -69,7 +63,7 @@ open class MultipartUpload {
             try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
 
             do {
-                try formData.writeEncodedData(to: fileURL)
+                try multipartFormData.writeEncodedData(to: fileURL)
             } catch {
                 // Cleanup after attempted write if it fails.
                 try? fileManager.removeItem(at: fileURL)
@@ -83,11 +77,11 @@ open class MultipartUpload {
 }
 
 extension MultipartUpload: UploadConvertible {
-    public func asURLRequest() throws -> URLRequest {
-        return try result.unwrap().request
+    func asURLRequest() throws -> URLRequest {
+        return try result.get().request
     }
 
-    public func createUploadable() throws -> UploadRequest.Uploadable {
-        return try result.unwrap().uploadable
+    func createUploadable() throws -> UploadRequest.Uploadable {
+        return try result.get().uploadable
     }
 }

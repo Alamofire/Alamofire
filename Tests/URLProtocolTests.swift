@@ -27,7 +27,6 @@ import Foundation
 import XCTest
 
 class ProxyURLProtocol: URLProtocol {
-
     // MARK: Properties
 
     struct PropertyKeys {
@@ -37,7 +36,7 @@ class ProxyURLProtocol: URLProtocol {
     lazy var session: URLSession = {
         let configuration: URLSessionConfiguration = {
             let configuration = URLSessionConfiguration.ephemeral
-            configuration.httpHeaders = HTTPHeaders.default
+            configuration.headers = HTTPHeaders.default
 
             return configuration
         }()
@@ -78,7 +77,7 @@ class ProxyURLProtocol: URLProtocol {
     // MARK: Loading Methods
 
     override func startLoading() {
-        // rdar://26849668 - URLProtocol had some API's that didnt make the value type conversion
+        // rdar://26849668 - URLProtocol had some API's that didn't make the value type conversion
         let urlRequest = (request.urlRequest! as NSURLRequest).mutableCopy() as! NSMutableURLRequest
         URLProtocol.setProperty(true, forKey: PropertyKeys.handledByForwarderURLProtocol, in: urlRequest)
         activeTask = session.dataTask(with: urlRequest as URLRequest)
@@ -93,7 +92,6 @@ class ProxyURLProtocol: URLProtocol {
 // MARK: -
 
 extension ProxyURLProtocol: URLSessionDataDelegate {
-
     // MARK: NSURLSessionDelegate
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
@@ -123,7 +121,7 @@ class URLProtocolTestCase: BaseTestCase {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.default
                 configuration.protocolClasses = [ProxyURLProtocol.self]
-                configuration.httpAdditionalHeaders = ["Session-Configuration-Header": "foo"]
+                configuration.headers["Session-Configuration-Header"] = "foo"
 
                 return configuration
             }()
@@ -140,12 +138,12 @@ class URLProtocolTestCase: BaseTestCase {
         let url = URL(string: urlString)!
 
         var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = HTTPMethod.get.rawValue
-        urlRequest.setValue("foobar", forHTTPHeaderField: "Request-Header")
+        urlRequest.method = .get
+        urlRequest.headers["Request-Header"] = "foobar"
 
         let expectation = self.expectation(description: "GET request should succeed")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         manager.request(urlRequest)
@@ -161,12 +159,7 @@ class URLProtocolTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
-
-        if let headers = response?.response?.allHeaderFields as? [String: String] {
-            XCTAssertEqual(headers["Request-Header"] ?? headers["request-header"], "foobar")
-            XCTAssertEqual(headers["Session-Configuration-Header"] ?? headers["session-configuration-header"], "foo")
-        } else {
-            XCTFail("headers should not be nil")
-        }
+        XCTAssertEqual(response?.response?.headers["Request-Header"], "foobar")
+        XCTAssertEqual(response?.response?.headers["Session-Configuration-Header"], "foo")
     }
 }

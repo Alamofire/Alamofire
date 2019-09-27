@@ -24,10 +24,13 @@
 
 import Foundation
 
-extension URLSessionConfiguration {
-    public static var alamofireDefault: URLSessionConfiguration {
+extension URLSessionConfiguration: AlamofireExtended {}
+extension AlamofireExtension where ExtendedType: URLSessionConfiguration {
+    /// Alamofire's default configuration. Same as `URLSessionConfiguration.default` but adds Alamofire default
+    /// `Accept-Language`, `Accept-Encoding`, and `User-Agent` headers.
+    public static var `default`: URLSessionConfiguration {
         let configuration = URLSessionConfiguration.default
-        configuration.httpHeaders = .default
+        configuration.headers = .default
 
         return configuration
     }

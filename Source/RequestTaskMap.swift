@@ -26,63 +26,111 @@ import Foundation
 
 /// A type that maintains a two way, one to one map of `URLSessionTask`s to `Request`s.
 struct RequestTaskMap {
-    private var requests: [URLSessionTask: Request]
-    private var tasks: [Request: URLSessionTask]
+    private var tasksToRequests: [URLSessionTask: Request]
+    private var requestsToTasks: [Request: URLSessionTask]
+    private var taskEvents: [URLSessionTask: (completed: Bool, metricsGathered: Bool)]
 
-    init(requests: [URLSessionTask: Request] = [:], tasks: [Request: URLSessionTask] = [:]) {
-        self.requests = requests
-        self.tasks = tasks
+    var requests: [Request] {
+        return Array(tasksToRequests.values)
+    }
+
+    init(tasksToRequests: [URLSessionTask: Request] = [:],
+         requestsToTasks: [Request: URLSessionTask] = [:],
+         taskEvents: [URLSessionTask: (completed: Bool, metricsGathered: Bool)] = [:]) {
+        self.tasksToRequests = tasksToRequests
+        self.requestsToTasks = requestsToTasks
+        self.taskEvents = taskEvents
     }
 
     subscript(_ request: Request) -> URLSessionTask? {
-        get { return tasks[request] }
+        get { return requestsToTasks[request] }
         set {
             guard let newValue = newValue else {
-                guard let task = tasks[request] else {
+                guard let task = requestsToTasks[request] else {
                     fatalError("RequestTaskMap consistency error: no task corresponding to request found.")
                 }
 
-                tasks.removeValue(forKey: request)
-                requests.removeValue(forKey: task)
+                requestsToTasks.removeValue(forKey: request)
+                tasksToRequests.removeValue(forKey: task)
+                taskEvents.removeValue(forKey: task)
 
                 return
             }
 
-            tasks[request] = newValue
-            requests[newValue] = request
+            requestsToTasks[request] = newValue
+            tasksToRequests[newValue] = request
+            taskEvents[newValue] = (completed: false, metricsGathered: false)
         }
     }
 
     subscript(_ task: URLSessionTask) -> Request? {
-        get { return requests[task] }
+        get { return tasksToRequests[task] }
         set {
             guard let newValue = newValue else {
-                guard let request = requests[task] else {
+                guard let request = tasksToRequests[task] else {
                     fatalError("RequestTaskMap consistency error: no request corresponding to task found.")
                 }
 
-                requests.removeValue(forKey: task)
-                tasks.removeValue(forKey: request)
+                tasksToRequests.removeValue(forKey: task)
+                requestsToTasks.removeValue(forKey: request)
+                taskEvents.removeValue(forKey: task)
 
                 return
             }
 
-            requests[task] = newValue
-            tasks[newValue] = task
+            tasksToRequests[task] = newValue
+            requestsToTasks[newValue] = task
+            taskEvents[task] = (completed: false, metricsGathered: false)
         }
     }
 
     var count: Int {
-        precondition(requests.count == tasks.count,
-                     "RequestTaskMap.count invalid, requests.count: \(requests.count) != tasks.count: \(tasks.count)")
+        precondition(tasksToRequests.count == requestsToTasks.count,
+                     "RequestTaskMap.count invalid, requests.count: \(tasksToRequests.count) != tasks.count: \(requestsToTasks.count)")
 
-        return requests.count
+        return tasksToRequests.count
+    }
+
+    var eventCount: Int {
+        precondition(taskEvents.count == count, "RequestTaskMap.eventCount invalid, count: \(count) != taskEvents.count: \(taskEvents.count)")
+
+        return taskEvents.count
     }
 
     var isEmpty: Bool {
-        precondition(requests.isEmpty == tasks.isEmpty,
-                     "RequestTaskMap.isEmpty invalid, requests.isEmpty: \(requests.isEmpty) != tasks.isEmpty: \(tasks.isEmpty)")
+        precondition(tasksToRequests.isEmpty == requestsToTasks.isEmpty,
+                     "RequestTaskMap.isEmpty invalid, requests.isEmpty: \(tasksToRequests.isEmpty) != tasks.isEmpty: \(requestsToTasks.isEmpty)")
 
-        return requests.isEmpty
+        return tasksToRequests.isEmpty
+    }
+
+    var isEventsEmpty: Bool {
+        precondition(taskEvents.isEmpty == isEmpty, "RequestTaskMap.isEventsEmpty invalid, isEmpty: \(isEmpty) != taskEvents.isEmpty: \(taskEvents.isEmpty)")
+
+        return taskEvents.isEmpty
+    }
+
+    mutating func disassociateIfNecessaryAfterGatheringMetricsForTask(_ task: URLSessionTask) {
+        guard let events = taskEvents[task] else {
+            fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
+        }
+
+        switch (events.completed, events.metricsGathered) {
+        case (_, true): fatalError("RequestTaskMap consistency error: duplicate metricsGatheredForTask call.")
+        case (false, false): taskEvents[task] = (completed: false, metricsGathered: true)
+        case (true, false): self[task] = nil
+        }
+    }
+
+    mutating func disassociateIfNecessaryAfterCompletingTask(_ task: URLSessionTask) {
+        guard let events = taskEvents[task] else {
+            fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
+        }
+
+        switch (events.completed, events.metricsGathered) {
+        case (true, _): fatalError("RequestTaskMap consistency error: duplicate completionReceivedForTask call.")
+        case (false, false): taskEvents[task] = (completed: true, metricsGathered: false)
+        case (false, true): self[task] = nil
+        }
     }
 }

@@ -26,16 +26,16 @@
 import Foundation
 import XCTest
 
-class StatusCodeValidationTestCase: BaseTestCase {
+final class StatusCodeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeResponseSucceeds() {
         // Given
         let urlString = "https://httpbin.org/status/200"
 
-        let expectation1 = self.expectation(description: "request should return 200 status code")
-        let expectation2 = self.expectation(description: "download should return 200 status code")
+        let expectation1 = expectation(description: "request should return 200 status code")
+        let expectation2 = expectation(description: "download should return 200 status code")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -63,11 +63,11 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/status/404"
 
-        let expectation1 = self.expectation(description: "request should return 404 status code")
-        let expectation2 = self.expectation(description: "download should return 404 status code")
+        let expectation1 = expectation(description: "request should return 404 status code")
+        let expectation2 = expectation(description: "download should return 404 status code")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -82,7 +82,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
             .response { resp in
                 downloadError = resp.error
                 expectation2.fulfill()
-        }
+            }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -91,12 +91,8 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error?.asAFError, let statusCode = error.responseCode {
-                XCTAssertTrue(error.isUnacceptableStatusCode)
-                XCTAssertEqual(statusCode, 404)
-            } else {
-                XCTFail("Error should not be nil, should be an AFError, and should have an associated statusCode.")
-            }
+            XCTAssertEqual(error?.isUnacceptableStatusCode, true)
+            XCTAssertEqual(error?.responseCode, 404)
         }
     }
 
@@ -104,11 +100,11 @@ class StatusCodeValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/status/201"
 
-        let expectation1 = self.expectation(description: "request should return 201 status code")
-        let expectation2 = self.expectation(description: "download should return 201 status code")
+        let expectation1 = expectation(description: "request should return 201 status code")
+        let expectation2 = expectation(description: "download should return 201 status code")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -123,7 +119,7 @@ class StatusCodeValidationTestCase: BaseTestCase {
             .response { resp in
                 downloadError = resp.error
                 expectation2.fulfill()
-        }
+            }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -132,28 +128,24 @@ class StatusCodeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error?.asAFError, let statusCode = error.responseCode {
-                XCTAssertTrue(error.isUnacceptableStatusCode)
-                XCTAssertEqual(statusCode, 201)
-            } else {
-                XCTFail("Error should not be nil, should be an AFError, and should have an associated statusCode.")
-            }
+            XCTAssertEqual(error?.isUnacceptableStatusCode, true)
+            XCTAssertEqual(error?.responseCode, 201)
         }
     }
 }
 
 // MARK: -
 
-class ContentTypeValidationTestCase: BaseTestCase {
+final class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableContentTypeResponseSucceeds() {
         // Given
         let urlString = "https://httpbin.org/ip"
 
-        let expectation1 = self.expectation(description: "request should succeed and return ip")
-        let expectation2 = self.expectation(description: "download should succeed and return ip")
+        let expectation1 = expectation(description: "request should succeed and return ip")
+        let expectation2 = expectation(description: "download should succeed and return ip")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -185,11 +177,11 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/ip"
 
-        let expectation1 = self.expectation(description: "request should succeed and return ip")
-        let expectation2 = self.expectation(description: "download should succeed and return ip")
+        let expectation1 = expectation(description: "request should succeed and return ip")
+        let expectation2 = expectation(description: "download should succeed and return ip")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -221,11 +213,11 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/xml"
 
-        let expectation1 = self.expectation(description: "request should succeed and return xml")
-        let expectation2 = self.expectation(description: "download should succeed and return xml")
+        let expectation1 = expectation(description: "request should succeed and return xml")
+        let expectation2 = expectation(description: "download should succeed and return xml")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -249,13 +241,9 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error?.asAFError {
-                XCTAssertTrue(error.isUnacceptableContentType)
-                XCTAssertEqual(error.responseContentType, "application/xml")
-                XCTAssertEqual(error.acceptableContentTypes?.first, "application/octet-stream")
-            } else {
-                XCTFail("error should not be nil")
-            }
+            XCTAssertEqual(error?.isUnacceptableContentType, true)
+            XCTAssertEqual(error?.responseContentType, "application/xml")
+            XCTAssertEqual(error?.acceptableContentTypes?.first, "application/octet-stream")
         }
     }
 
@@ -263,11 +251,11 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/xml"
 
-        let expectation1 = self.expectation(description: "request should succeed and return xml")
-        let expectation2 = self.expectation(description: "download should succeed and return xml")
+        let expectation1 = expectation(description: "request should succeed and return xml")
+        let expectation2 = expectation(description: "download should succeed and return xml")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -291,13 +279,9 @@ class ContentTypeValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error?.asAFError {
-                XCTAssertTrue(error.isUnacceptableContentType)
-                XCTAssertEqual(error.responseContentType, "application/xml")
-                XCTAssertTrue(error.acceptableContentTypes?.isEmpty ?? false)
-            } else {
-                XCTFail("error should not be nil")
-            }
+            XCTAssertEqual(error?.isUnacceptableContentType, true)
+            XCTAssertEqual(error?.responseContentType, "application/xml")
+            XCTAssertEqual(error?.acceptableContentTypes?.isEmpty, true)
         }
     }
 
@@ -305,11 +289,11 @@ class ContentTypeValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/status/204"
 
-        let expectation1 = self.expectation(description: "request should succeed and return no data")
-        let expectation2 = self.expectation(description: "download should succeed and return no data")
+        let expectation1 = expectation(description: "request should succeed and return no data")
+        let expectation2 = expectation(description: "download should succeed and return no data")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -336,11 +320,13 @@ class ContentTypeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableWildcardContentTypeResponseSucceedsWhenResponseIsNil() {
         // Given
         class MockManager: Session {
-            override func request(_ convertible: URLRequestConvertible) -> DataRequest {
+            override func request(_ convertible: URLRequestConvertible,
+                                  interceptor: RequestInterceptor? = nil) -> DataRequest {
                 let request = MockDataRequest(convertible: convertible,
                                               underlyingQueue: rootQueue,
                                               serializationQueue: serializationQueue,
                                               eventMonitor: eventMonitor,
+                                              interceptor: interceptor,
                                               delegate: self)
 
                 perform(request)
@@ -348,17 +334,17 @@ class ContentTypeValidationTestCase: BaseTestCase {
                 return request
             }
 
-            override func download(
-                _ convertible: URLRequestConvertible,
-                to destination: DownloadRequest.Destination? = nil)
-                -> DownloadRequest
-            {
+            override func download(_ convertible: URLRequestConvertible,
+                                   interceptor: RequestInterceptor? = nil,
+                                   to destination: DownloadRequest.Destination?)
+                -> DownloadRequest {
                 let request = MockDownloadRequest(downloadable: .request(convertible),
                                                   underlyingQueue: rootQueue,
                                                   serializationQueue: serializationQueue,
                                                   eventMonitor: eventMonitor,
-                                                  delegate: self
-                )
+                                                  interceptor: interceptor,
+                                                  delegate: self,
+                                                  destination: destination ?? MockDownloadRequest.defaultDestination)
 
                 perform(request)
 
@@ -368,23 +354,19 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
         class MockDataRequest: DataRequest {
             override var response: HTTPURLResponse? {
-                return MockHTTPURLResponse(
-                    url: request!.url!,
-                    statusCode: 204,
-                    httpVersion: "HTTP/1.1",
-                    headerFields: nil
-                )
+                return MockHTTPURLResponse(url: request!.url!,
+                                           statusCode: 204,
+                                           httpVersion: "HTTP/1.1",
+                                           headerFields: nil)
             }
         }
 
         class MockDownloadRequest: DownloadRequest {
             override var response: HTTPURLResponse? {
-                return MockHTTPURLResponse(
-                    url: request!.url!,
-                    statusCode: 204,
-                    httpVersion: "HTTP/1.1",
-                    headerFields: nil
-                )
+                return MockHTTPURLResponse(url: request!.url!,
+                                           statusCode: 204,
+                                           httpVersion: "HTTP/1.1",
+                                           headerFields: nil)
             }
         }
 
@@ -395,7 +377,7 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let manager: Session = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.ephemeral
-                configuration.httpHeaders = HTTPHeaders.default
+                configuration.headers = HTTPHeaders.default
 
                 return configuration
             }()
@@ -408,8 +390,8 @@ class ContentTypeValidationTestCase: BaseTestCase {
         let expectation1 = expectation(description: "request should be stubbed and return 204 status code")
         let expectation2 = expectation(description: "download should be stubbed and return 204 status code")
 
-        var requestResponse: DataResponse<Data?>?
-        var downloadResponse: DownloadResponse<URL?>?
+        var requestResponse: DataResponse<Data?, AFError>?
+        var downloadResponse: DownloadResponse<URL?, AFError>?
 
         // When
         manager.request(urlString, method: .delete)
@@ -447,16 +429,16 @@ class ContentTypeValidationTestCase: BaseTestCase {
 
 // MARK: -
 
-class MultipleValidationTestCase: BaseTestCase {
+final class MultipleValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
         let urlString = "https://httpbin.org/ip"
 
-        let expectation1 = self.expectation(description: "request should succeed and return ip")
-        let expectation2 = self.expectation(description: "request should succeed and return ip")
+        let expectation1 = expectation(description: "request should succeed and return ip")
+        let expectation2 = expectation(description: "request should succeed and return ip")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -486,11 +468,11 @@ class MultipleValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/xml"
 
-        let expectation1 = self.expectation(description: "request should succeed and return xml")
-        let expectation2 = self.expectation(description: "download should succeed and return xml")
+        let expectation1 = expectation(description: "request should succeed and return xml")
+        let expectation2 = expectation(description: "download should succeed and return xml")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -516,12 +498,8 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error?.asAFError {
-                XCTAssertTrue(error.isUnacceptableStatusCode)
-                XCTAssertEqual(error.responseCode, 200)
-            } else {
-                XCTFail("error should not be nil")
-            }
+            XCTAssertEqual(error?.isUnacceptableStatusCode, true)
+            XCTAssertEqual(error?.responseCode, 200)
         }
     }
 
@@ -529,11 +507,11 @@ class MultipleValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/xml"
 
-        let expectation1 = self.expectation(description: "request should succeed and return xml")
-        let expectation2 = self.expectation(description: "download should succeed and return xml")
+        let expectation1 = expectation(description: "request should succeed and return xml")
+        let expectation2 = expectation(description: "download should succeed and return xml")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -559,31 +537,27 @@ class MultipleValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error?.asAFError {
-                XCTAssertTrue(error.isUnacceptableContentType)
-                XCTAssertEqual(error.responseContentType, "application/xml")
-                XCTAssertEqual(error.acceptableContentTypes?.first, "application/octet-stream")
-            } else {
-                XCTFail("error should not be nil")
-            }
+            XCTAssertEqual(error?.isUnacceptableContentType, true)
+            XCTAssertEqual(error?.responseContentType, "application/xml")
+            XCTAssertEqual(error?.acceptableContentTypes?.first, "application/octet-stream")
         }
     }
 }
 
 // MARK: -
 
-class AutomaticValidationTestCase: BaseTestCase {
+final class AutomaticValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeAndContentTypeResponseSucceeds() {
         // Given
         let url = URL(string: "https://httpbin.org/ip")!
         var urlRequest = URLRequest(url: url)
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let expectation1 = self.expectation(description: "request should succeed and return ip")
-        let expectation2 = self.expectation(description: "download should succeed and return ip")
+        let expectation1 = expectation(description: "request should succeed and return ip")
+        let expectation2 = expectation(description: "download should succeed and return ip")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlRequest).validate().response { resp in
@@ -607,11 +581,11 @@ class AutomaticValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/status/404"
 
-        let expectation1 = self.expectation(description: "request should return 404 status code")
-        let expectation2 = self.expectation(description: "download should return 404 status code")
+        let expectation1 = expectation(description: "request should return 404 status code")
+        let expectation2 = expectation(description: "download should return 404 status code")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -635,12 +609,8 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error?.asAFError, let statusCode = error.responseCode {
-                XCTAssertTrue(error.isUnacceptableStatusCode)
-                XCTAssertEqual(statusCode, 404)
-            } else {
-                XCTFail("error should not be nil")
-            }
+            XCTAssertEqual(error?.isUnacceptableStatusCode, true)
+            XCTAssertEqual(error?.responseCode, 404)
         }
     }
 
@@ -650,11 +620,11 @@ class AutomaticValidationTestCase: BaseTestCase {
         var urlRequest = URLRequest(url: url)
         urlRequest.setValue("application/*", forHTTPHeaderField: "Accept")
 
-        let expectation1 = self.expectation(description: "request should succeed and return ip")
-        let expectation2 = self.expectation(description: "download should succeed and return ip")
+        let expectation1 = expectation(description: "request should succeed and return ip")
+        let expectation2 = expectation(description: "download should succeed and return ip")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlRequest).validate().response { resp in
@@ -682,11 +652,11 @@ class AutomaticValidationTestCase: BaseTestCase {
         let headerValue = "text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8,*/*;q=0.5"
         urlRequest.setValue(headerValue, forHTTPHeaderField: "Accept")
 
-        let expectation1 = self.expectation(description: "request should succeed and return xml")
-        let expectation2 = self.expectation(description: "request should succeed and return xml")
+        let expectation1 = expectation(description: "request should succeed and return xml")
+        let expectation2 = expectation(description: "request should succeed and return xml")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlRequest).validate().response { resp in
@@ -715,8 +685,8 @@ class AutomaticValidationTestCase: BaseTestCase {
         let expectation1 = expectation(description: "request should succeed and return xml")
         let expectation2 = expectation(description: "download should succeed and return xml")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlRequest).validate().response { resp in
@@ -736,13 +706,9 @@ class AutomaticValidationTestCase: BaseTestCase {
         XCTAssertNotNil(downloadError)
 
         for error in [requestError, downloadError] {
-            if let error = error?.asAFError {
-                XCTAssertTrue(error.isUnacceptableContentType)
-                XCTAssertEqual(error.responseContentType, "application/xml")
-                XCTAssertEqual(error.acceptableContentTypes?.first, "application/json")
-            } else {
-                XCTFail("error should not be nil")
-            }
+            XCTAssertEqual(error?.isUnacceptableContentType, true)
+            XCTAssertEqual(error?.responseContentType, "application/xml")
+            XCTAssertEqual(error?.acceptableContentTypes?.first, "application/json")
         }
     }
 }
@@ -755,7 +721,7 @@ private enum ValidationError: Error {
 
 extension DataRequest {
     func validateDataExists() -> Self {
-        return validate { request, response, data in
+        return validate { _, _, data in
             guard data != nil else { return .failure(ValidationError.missingData) }
             return .success(Void())
         }
@@ -768,13 +734,13 @@ extension DataRequest {
 
 extension DownloadRequest {
     func validateDataExists() -> Self {
-        return validate { (request, response, _) in
+        return validate { _, _, _ in
             let fileURL = self.fileURL
 
             guard let validFileURL = fileURL else { return .failure(ValidationError.missingFile) }
 
             do {
-                let _ = try Data(contentsOf: validFileURL)
+                _ = try Data(contentsOf: validFileURL)
                 return .success(Void())
             } catch {
                 return .failure(ValidationError.fileReadFailed)
@@ -783,26 +749,26 @@ extension DownloadRequest {
     }
 
     func validate(with error: Error) -> Self {
-        return validate { (_, _, _) in .failure(error) }
+        return validate { _, _, _ in .failure(error) }
     }
 }
 
 // MARK: -
 
-class CustomValidationTestCase: BaseTestCase {
+final class CustomValidationTestCase: BaseTestCase {
     func testThatCustomValidationClosureHasAccessToServerResponseData() {
         // Given
         let urlString = "https://httpbin.org/get"
 
-        let expectation1 = self.expectation(description: "request should return 200 status code")
-        let expectation2 = self.expectation(description: "download should return 200 status code")
+        let expectation1 = expectation(description: "request should return 200 status code")
+        let expectation2 = expectation(description: "download should return 200 status code")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
-            .validate { request, response, data in
+            .validate { _, _, data in
                 guard data != nil else { return .failure(ValidationError.missingData) }
                 return .success(Void())
             }
@@ -812,7 +778,7 @@ class CustomValidationTestCase: BaseTestCase {
             }
 
         AF.download(urlString)
-            .validate { (request, response, fileURL) in
+            .validate { _, _, fileURL in
                 guard let fileURL = fileURL else { return .failure(ValidationError.missingFile) }
 
                 do {
@@ -838,11 +804,11 @@ class CustomValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/get"
 
-        let expectation1 = self.expectation(description: "request should return 200 status code")
-        let expectation2 = self.expectation(description: "download should return 200 status code")
+        let expectation1 = expectation(description: "request should return 200 status code")
+        let expectation2 = expectation(description: "download should return 200 status code")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -854,8 +820,8 @@ class CustomValidationTestCase: BaseTestCase {
             }
 
         AF.download(urlString)
-            .validate { (_, _, _) in .failure(ValidationError.missingFile) }
-            .validate { (_, _, _) in .failure(ValidationError.fileReadFailed) } // should be ignored
+            .validate { _, _, _ in .failure(ValidationError.missingFile) }
+            .validate { _, _, _ in .failure(ValidationError.fileReadFailed) } // should be ignored
             .response { resp in
                 downloadError = resp.error
                 expectation2.fulfill()
@@ -864,19 +830,19 @@ class CustomValidationTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(requestError as? ValidationError, ValidationError.missingData)
-        XCTAssertEqual(downloadError as? ValidationError, ValidationError.missingFile)
+        XCTAssertEqual(requestError?.asAFError?.underlyingError as? ValidationError, .missingData)
+        XCTAssertEqual(downloadError?.asAFError?.underlyingError as? ValidationError, .missingFile)
     }
 
     func testThatValidationExtensionHasAccessToServerResponseData() {
         // Given
         let urlString = "https://httpbin.org/get"
 
-        let expectation1 = self.expectation(description: "request should return 200 status code")
-        let expectation2 = self.expectation(description: "download should return 200 status code")
+        let expectation1 = expectation(description: "request should return 200 status code")
+        let expectation2 = expectation(description: "download should return 200 status code")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -884,14 +850,14 @@ class CustomValidationTestCase: BaseTestCase {
             .response { resp in
                 requestError = resp.error
                 expectation1.fulfill()
-        }
+            }
 
         AF.download(urlString)
             .validateDataExists()
             .response { resp in
                 downloadError = resp.error
                 expectation2.fulfill()
-        }
+            }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -904,11 +870,11 @@ class CustomValidationTestCase: BaseTestCase {
         // Given
         let urlString = "https://httpbin.org/get"
 
-        let expectation1 = self.expectation(description: "request should return 200 status code")
-        let expectation2 = self.expectation(description: "download should return 200 status code")
+        let expectation1 = expectation(description: "request should return 200 status code")
+        let expectation2 = expectation(description: "download should return 200 status code")
 
-        var requestError: Error?
-        var downloadError: Error?
+        var requestError: AFError?
+        var downloadError: AFError?
 
         // When
         AF.request(urlString)
@@ -930,7 +896,7 @@ class CustomValidationTestCase: BaseTestCase {
         waitForExpectations(timeout: timeout, handler: nil)
 
         // Then
-        XCTAssertEqual(requestError as? ValidationError, ValidationError.missingData)
-        XCTAssertEqual(downloadError as? ValidationError, ValidationError.missingFile)
+        XCTAssertEqual(requestError?.asAFError?.underlyingError as? ValidationError, .missingData)
+        XCTAssertEqual(downloadError?.asAFError?.underlyingError as? ValidationError, .missingFile)
     }
 }

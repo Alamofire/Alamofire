@@ -28,48 +28,115 @@ import Foundation
 
 /// The type to which all data response serializers must conform in order to serialize a response.
 public protocol DataResponseSerializerProtocol {
-    /// The type of serialized object to be created by this serializer.
+    /// The type of serialized object to be created.
     associatedtype SerializedObject
 
-    /// The function used to serialize the response data in response handlers.
+    /// Serialize the response `Data` into the provided type..
+    ///
+    /// - Parameters:
+    ///   - request:  `URLRequest` which was used to perform the request, if any.
+    ///   - response: `HTTPURLResponse` received from the server, if any.
+    ///   - data:     `Data` returned from the server, if any.
+    ///   - error:    `Error` produced by Alamofire or the underlying `URLSession` during the request.
+    ///
+    /// - Returns:    The `SerializedObject`.
+    /// - Throws:     Any `Error` produced during serialization.
     func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> SerializedObject
 }
 
 /// The type to which all download response serializers must conform in order to serialize a response.
 public protocol DownloadResponseSerializerProtocol {
-    /// The type of serialized object to be created by this `DownloadResponseSerializerType`.
+    /// The type of serialized object to be created.
     associatedtype SerializedObject
 
-    /// The function used to serialize the downloaded data in response handlers.
+    /// Serialize the downloaded response `Data` from disk into the provided type..
+    ///
+    /// - Parameters:
+    ///   - request:  `URLRequest` which was used to perform the request, if any.
+    ///   - response: `HTTPURLResponse` received from the server, if any.
+    ///   - fileURL:  File `URL` to which the response data was downloaded.
+    ///   - error:    `Error` produced by Alamofire or the underlying `URLSession` during the request.
+    ///
+    /// - Returns:    The `SerializedObject`.
+    /// - Throws:     Any `Error` produced during serialization.
     func serializeDownload(request: URLRequest?, response: HTTPURLResponse?, fileURL: URL?, error: Error?) throws -> SerializedObject
 }
 
 /// A serializer that can handle both data and download responses.
 public protocol ResponseSerializer: DataResponseSerializerProtocol & DownloadResponseSerializerProtocol {
+    /// `DataPreprocessor` used to prepare incoming `Data` for serialization.
+    var dataPreprocessor: DataPreprocessor { get }
+    /// `HTTPMethod`s for which empty response bodies are considered appropriate.
     var emptyRequestMethods: Set<HTTPMethod> { get }
+    /// HTTP response codes for which empty response bodies are considered appropriate.
     var emptyResponseCodes: Set<Int> { get }
 }
 
+/// Type used to preprocess `Data` before it handled by a serializer.
+public protocol DataPreprocessor {
+    /// Process           `Data` before it's handled by a serializer.
+    /// - Parameter data: The raw `Data` to process.
+    func preprocess(_ data: Data) throws -> Data
+}
+
+/// `DataPreprocessor` that returns passed `Data` without any transform.
+public struct PassthroughPreprocessor: DataPreprocessor {
+    public init() {}
+
+    public func preprocess(_ data: Data) throws -> Data { return data }
+}
+
+/// `DataPreprocessor` that trims Google's typical `)]}',\n` XSSI JSON header.
+public struct GoogleXSSIPreprocessor: DataPreprocessor {
+    public init() {}
+
+    public func preprocess(_ data: Data) throws -> Data {
+        return (data.prefix(6) == Data(")]}',\n".utf8)) ? data.dropFirst(6) : data
+    }
+}
+
 extension ResponseSerializer {
+    /// Default `DataPreprocessor`. `PassthroughPreprocessor` by default.
+    public static var defaultDataPreprocessor: DataPreprocessor { return PassthroughPreprocessor() }
+    /// Default `HTTPMethod`s for which empty response bodies are considered appropriate. `[.head]` by default.
     public static var defaultEmptyRequestMethods: Set<HTTPMethod> { return [.head] }
+    /// HTTP response codes for which empty response bodies are considered appropriate. `[204, 205]` by default.
     public static var defaultEmptyResponseCodes: Set<Int> { return [204, 205] }
 
+    public var dataPreprocessor: DataPreprocessor { return Self.defaultDataPreprocessor }
     public var emptyRequestMethods: Set<HTTPMethod> { return Self.defaultEmptyRequestMethods }
     public var emptyResponseCodes: Set<Int> { return Self.defaultEmptyResponseCodes }
 
+    /// Determines whether the `request` allows empty response bodies, if `request` exists.
+    ///
+    /// - Parameter request: `URLRequest` to evaluate.
+    ///
+    /// - Returns:           `Bool` representing the outcome of the evaluation, or `nil` if `request` was `nil`.
     public func requestAllowsEmptyResponseData(_ request: URLRequest?) -> Bool? {
         return request.flatMap { $0.httpMethod }
-                      .flatMap(HTTPMethod.init)
-                      .map { emptyRequestMethods.contains($0) }
+            .flatMap(HTTPMethod.init)
+            .map { emptyRequestMethods.contains($0) }
     }
 
+    /// Determines whether the `response` allows empty response bodies, if `response` exists`.
+    ///
+    /// - Parameter response: `HTTPURLResponse` to evaluate.
+    ///
+    /// - Returns:            `Bool` representing the outcome of the evaluation, or `nil` if `response` was `nil`.
     public func responseAllowsEmptyResponseData(_ response: HTTPURLResponse?) -> Bool? {
         return response.flatMap { $0.statusCode }
-                       .map { emptyResponseCodes.contains($0) }
+            .map { emptyResponseCodes.contains($0) }
     }
 
+    /// Determines whether `request` and `response` allow empty response bodies.
+    ///
+    /// - Parameters:
+    ///   - request:  `URLRequest` to evaluate.
+    ///   - response: `HTTPURLResponse` to evaluate.
+    ///
+    /// - Returns:    `true` if `request` or `response` allow empty bodies, `false` otherwise.
     public func emptyResponseAllowed(forRequest request: URLRequest?, response: HTTPURLResponse?) -> Bool {
-        return requestAllowsEmptyResponseData(request) ?? responseAllowsEmptyResponseData(response) ?? false
+        return (requestAllowsEmptyResponseData(request) == true) || (responseAllowsEmptyResponseData(response) == true)
     }
 }
 
@@ -104,15 +171,18 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                        the handler is called on `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
-    public func response(queue: DispatchQueue? = nil, completionHandler: @escaping (DataResponse<Data?>) -> Void) -> Self {
-        internalQueue.addOperation {
-            self.serializationQueue.async {
-                let result = Result(value: self.data, error: self.error)
+    public func response(queue: DispatchQueue = .main, completionHandler: @escaping (AFDataResponse<Data?>) -> Void) -> Self {
+        appendResponseSerializer {
+            // Start work that should be on the serialization queue.
+            let result = AFResult<Data?>(value: self.data, error: self.error)
+            // End work that should be on the serialization queue.
+
+            self.underlyingQueue.async {
                 let response = DataResponse(request: self.request,
                                             response: self.response,
                                             data: self.data,
@@ -122,7 +192,7 @@ extension DataRequest {
 
                 self.eventMonitor?.request(self, didParseResponse: response)
 
-                (queue ?? .main).async { completionHandler(response) }
+                self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
             }
         }
 
@@ -132,37 +202,75 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:              The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                         the handler is called on `.main`.
+    ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default
     ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data.
     ///   - completionHandler:  The code to be executed once the request has finished.
+    ///
     /// - Returns:              The request.
     @discardableResult
-    public func response<Serializer: DataResponseSerializerProtocol>(
-        queue: DispatchQueue? = nil,
-        responseSerializer: Serializer,
-        completionHandler: @escaping (DataResponse<Serializer.SerializedObject>) -> Void)
-        -> Self
-    {
-        internalQueue.addOperation {
-            self.serializationQueue.async {
-                let start = CFAbsoluteTimeGetCurrent()
-                let result = Result { try responseSerializer.serialize(request: self.request,
-                                                                       response: self.response,
-                                                                       data: self.data,
-                                                                       error: self.error) }
-                let end = CFAbsoluteTimeGetCurrent()
+    public func response<Serializer: DataResponseSerializerProtocol>(queue: DispatchQueue = .main,
+                                                                     responseSerializer: Serializer,
+                                                                     completionHandler: @escaping (AFDataResponse<Serializer.SerializedObject>) -> Void)
+        -> Self {
+        appendResponseSerializer {
+            // Start work that should be on the serialization queue.
+            let start = CFAbsoluteTimeGetCurrent()
+            let result: AFResult<Serializer.SerializedObject> = Result {
+                try responseSerializer.serialize(request: self.request,
+                                                 response: self.response,
+                                                 data: self.data,
+                                                 error: self.error)
+            }.mapError { error in
+                error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+            }
 
+            let end = CFAbsoluteTimeGetCurrent()
+            // End work that should be on the serialization queue.
+
+            self.underlyingQueue.async {
                 let response = DataResponse(request: self.request,
                                             response: self.response,
                                             data: self.data,
                                             metrics: self.metrics,
-                                            serializationDuration: (end - start),
+                                            serializationDuration: end - start,
                                             result: result)
 
                 self.eventMonitor?.request(self, didParseResponse: response)
 
-                (queue ?? .main).async { completionHandler(response) }
+                guard let serializerError = result.failure, let delegate = self.delegate else {
+                    self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+                    return
+                }
+
+                delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
+                    var didComplete: (() -> Void)?
+
+                    defer {
+                        if let didComplete = didComplete {
+                            self.responseSerializerDidComplete { queue.async { didComplete() } }
+                        }
+                    }
+
+                    switch retryResult {
+                    case .doNotRetry:
+                        didComplete = { completionHandler(response) }
+
+                    case let .doNotRetryWithError(retryError):
+                        let result: AFResult<Serializer.SerializedObject> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
+
+                        let response = DataResponse(request: self.request,
+                                                    response: self.response,
+                                                    data: self.data,
+                                                    metrics: self.metrics,
+                                                    serializationDuration: end - start,
+                                                    result: result)
+
+                        didComplete = { completionHandler(response) }
+
+                    case .retry, .retryWithDelay:
+                        delegate.retryRequest(self, withDelay: retryResult.delay)
+                    }
+                }
             }
         }
 
@@ -174,19 +282,20 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                        the handler is called on `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
-    public func response(
-        queue: DispatchQueue? = nil,
-        completionHandler: @escaping (DownloadResponse<URL?>) -> Void)
-        -> Self
-    {
-        internalQueue.addOperation {
-            self.serializationQueue.async {
-                let result = Result(value: self.fileURL , error: self.error)
+    public func response(queue: DispatchQueue = .main,
+                         completionHandler: @escaping (AFDownloadResponse<URL?>) -> Void)
+        -> Self {
+        appendResponseSerializer {
+            // Start work that should be on the serialization queue.
+            let result = AFResult<URL?>(value: self.fileURL, error: self.error)
+            // End work that should be on the serialization queue.
+
+            self.underlyingQueue.async {
                 let response = DownloadResponse(request: self.request,
                                                 response: self.response,
                                                 fileURL: self.fileURL,
@@ -195,7 +304,9 @@ extension DownloadRequest {
                                                 serializationDuration: 0,
                                                 result: result)
 
-                (queue ?? .main).async { completionHandler(response) }
+                self.eventMonitor?.request(self, didParseResponse: response)
+
+                self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
             }
         }
 
@@ -205,37 +316,77 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:              The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                         the handler is called on `.main`.
+    ///   - queue:              The queue on which the completion handler is dispatched. `.main` by default.
     ///   - responseSerializer: The response serializer responsible for serializing the request, response, and data
-    ///                         contained in the destination url.
+    ///                         contained in the destination `URL`.
     ///   - completionHandler:  The code to be executed once the request has finished.
+    ///
     /// - Returns:              The request.
     @discardableResult
-    public func response<T: DownloadResponseSerializerProtocol>(
-        queue: DispatchQueue? = nil,
-        responseSerializer: T,
-        completionHandler: @escaping (DownloadResponse<T.SerializedObject>) -> Void)
-        -> Self
-    {
-        internalQueue.addOperation {
-            self.serializationQueue.async {
-                let start = CFAbsoluteTimeGetCurrent()
-                let result = Result { try responseSerializer.serializeDownload(request: self.request,
-                                                                               response: self.response,
-                                                                               fileURL: self.fileURL,
-                                                                               error: self.error) }
-                let end = CFAbsoluteTimeGetCurrent()
+    public func response<T: DownloadResponseSerializerProtocol>(queue: DispatchQueue = .main,
+                                                                responseSerializer: T,
+                                                                completionHandler: @escaping (AFDownloadResponse<T.SerializedObject>) -> Void)
+        -> Self {
+        appendResponseSerializer {
+            // Start work that should be on the serialization queue.
+            let start = CFAbsoluteTimeGetCurrent()
+            let result: AFResult<T.SerializedObject> = Result {
+                try responseSerializer.serializeDownload(request: self.request,
+                                                         response: self.response,
+                                                         fileURL: self.fileURL,
+                                                         error: self.error)
+            }.mapError { error in
+                error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+            }
+            let end = CFAbsoluteTimeGetCurrent()
+            // End work that should be on the serialization queue.
 
+            self.underlyingQueue.async {
                 let response = DownloadResponse(request: self.request,
                                                 response: self.response,
                                                 fileURL: self.fileURL,
                                                 resumeData: self.resumeData,
                                                 metrics: self.metrics,
-                                                serializationDuration: (end - start),
+                                                serializationDuration: end - start,
                                                 result: result)
 
-                (queue ?? .main).async { completionHandler(response) }
+                self.eventMonitor?.request(self, didParseResponse: response)
+
+                guard let serializerError = result.failure, let delegate = self.delegate else {
+                    self.responseSerializerDidComplete { queue.async { completionHandler(response) } }
+                    return
+                }
+
+                delegate.retryResult(for: self, dueTo: serializerError) { retryResult in
+                    var didComplete: (() -> Void)?
+
+                    defer {
+                        if let didComplete = didComplete {
+                            self.responseSerializerDidComplete { queue.async { didComplete() } }
+                        }
+                    }
+
+                    switch retryResult {
+                    case .doNotRetry:
+                        didComplete = { completionHandler(response) }
+
+                    case let .doNotRetryWithError(retryError):
+                        let result: AFResult<T.SerializedObject> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
+
+                        let response = DownloadResponse(request: self.request,
+                                                        response: self.response,
+                                                        fileURL: self.fileURL,
+                                                        resumeData: self.resumeData,
+                                                        metrics: self.metrics,
+                                                        serializationDuration: end - start,
+                                                        result: result)
+
+                        didComplete = { completionHandler(response) }
+
+                    case .retry, .retryWithDelay:
+                        delegate.retryRequest(self, withDelay: retryResult.delay)
+                    }
+                }
             }
         }
 
@@ -249,39 +400,38 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                        the handler is called on `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
-    public func responseData(
-        queue: DispatchQueue? = nil,
-        completionHandler: @escaping (DataResponse<Data>) -> Void)
-        -> Self
-    {
+    public func responseData(queue: DispatchQueue = .main,
+                             completionHandler: @escaping (AFDataResponse<Data>) -> Void)
+        -> Self {
         return response(queue: queue,
                         responseSerializer: DataResponseSerializer(),
                         completionHandler: completionHandler)
     }
 }
 
-/// A `ResponseSerializer` that performs minimal reponse checking and returns any response data as-is. By default, a
+/// A `ResponseSerializer` that performs minimal response checking and returns any response data as-is. By default, a
 /// request returning `nil` or no data is considered an error. However, if the response is has a status code valid for
 /// empty responses (`204`, `205`), then an empty `Data` value is returned.
 public final class DataResponseSerializer: ResponseSerializer {
-    /// HTTP response codes for which empty responses are allowed.
+    public let dataPreprocessor: DataPreprocessor
     public let emptyResponseCodes: Set<Int>
-    /// HTTP request methods for which empty responses are allowed.
     public let emptyRequestMethods: Set<HTTPMethod>
 
     /// Creates an instance using the provided values.
     ///
     /// - Parameters:
-    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. Defaults to
-    ///                          `[204, 205]`.
-    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. Defaults to `[.head]`.
-    public init(emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
+    public init(dataPreprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) {
+        self.dataPreprocessor = dataPreprocessor
         self.emptyResponseCodes = emptyResponseCodes
         self.emptyRequestMethods = emptyRequestMethods
     }
@@ -289,13 +439,15 @@ public final class DataResponseSerializer: ResponseSerializer {
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Data {
         guard error == nil else { throw error! }
 
-        guard let data = data, !data.isEmpty else {
+        guard var data = data, !data.isEmpty else {
             guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
 
             return Data()
         }
+
+        data = try dataPreprocessor.preprocess(data)
 
         return data
     }
@@ -305,21 +457,17 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                        the handler is called on `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - completionHandler: The code to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
-    public func responseData(
-        queue: DispatchQueue? = nil,
-        completionHandler: @escaping (DownloadResponse<Data>) -> Void)
-        -> Self
-    {
-        return response(
-            queue: queue,
-            responseSerializer: DataResponseSerializer(),
-            completionHandler: completionHandler
-        )
+    public func responseData(queue: DispatchQueue = .main,
+                             completionHandler: @escaping (AFDownloadResponse<Data>) -> Void)
+        -> Self {
+        return response(queue: queue,
+                        responseSerializer: DataResponseSerializer(),
+                        completionHandler: completionHandler)
     }
 }
 
@@ -329,24 +477,25 @@ extension DownloadRequest {
 /// data is considered an error. However, if the response is has a status code valid for empty responses (`204`, `205`),
 /// then an empty `String` is returned.
 public final class StringResponseSerializer: ResponseSerializer {
+    public let dataPreprocessor: DataPreprocessor
     /// Optional string encoding used to validate the response.
     public let encoding: String.Encoding?
-    /// HTTP response codes for which empty responses are allowed.
     public let emptyResponseCodes: Set<Int>
-    /// HTTP request methods for which empty responses are allowed.
     public let emptyRequestMethods: Set<HTTPMethod>
 
     /// Creates an instance with the provided values.
     ///
     /// - Parameters:
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
     ///   - encoding:            A string encoding. Defaults to `nil`, in which case the encoding will be determined
     ///                          from the server response, falling back to the default HTTP character set, `ISO-8859-1`.
-    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. Defaults to
-    ///                          `[204, 205]`.
-    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. Defaults to `[.head]`.
-    public init(encoding: String.Encoding? = nil,
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
+    public init(dataPreprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                encoding: String.Encoding? = nil,
                 emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) {
+        self.dataPreprocessor = dataPreprocessor
         self.encoding = encoding
         self.emptyResponseCodes = emptyResponseCodes
         self.emptyRequestMethods = emptyRequestMethods
@@ -355,13 +504,15 @@ public final class StringResponseSerializer: ResponseSerializer {
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> String {
         guard error == nil else { throw error! }
 
-        guard let data = data, !data.isEmpty else {
+        guard var data = data, !data.isEmpty else {
             guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
 
             return ""
         }
+
+        data = try dataPreprocessor.preprocess(data)
 
         var convertedEncoding = encoding
 
@@ -385,16 +536,16 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                        the handler is called on `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - encoding:          The string encoding. Defaults to `nil`, in which case the encoding will be determined from
     ///                        the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
-    public func responseString(queue: DispatchQueue? = nil,
+    public func responseString(queue: DispatchQueue = .main,
                                encoding: String.Encoding? = nil,
-                               completionHandler: @escaping (DataResponse<String>) -> Void) -> Self {
+                               completionHandler: @escaping (AFDataResponse<String>) -> Void) -> Self {
         return response(queue: queue,
                         responseSerializer: StringResponseSerializer(encoding: encoding),
                         completionHandler: completionHandler)
@@ -405,24 +556,20 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                        the handler is called on `.main`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
     ///   - encoding:          The string encoding. Defaults to `nil`, in which case the encoding will be determined from
     ///                        the server response, falling back to the default HTTP character set, `ISO-8859-1`.
     ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
-    public func responseString(
-        queue: DispatchQueue? = nil,
-        encoding: String.Encoding? = nil,
-        completionHandler: @escaping (DownloadResponse<String>) -> Void)
-        -> Self
-    {
-        return response(
-            queue: queue,
-            responseSerializer: StringResponseSerializer(encoding: encoding),
-            completionHandler: completionHandler
-        )
+    public func responseString(queue: DispatchQueue = .main,
+                               encoding: String.Encoding? = nil,
+                               completionHandler: @escaping (AFDownloadResponse<String>) -> Void)
+        -> Self {
+        return response(queue: queue,
+                        responseSerializer: StringResponseSerializer(encoding: encoding),
+                        completionHandler: completionHandler)
     }
 }
 
@@ -432,38 +579,41 @@ extension DownloadRequest {
 /// `nil` or no data is considered an error. However, if the response is has a status code valid for empty responses
 /// (`204`, `205`), then an `NSNull`  value is returned.
 public final class JSONResponseSerializer: ResponseSerializer {
+    public let dataPreprocessor: DataPreprocessor
+    public let emptyResponseCodes: Set<Int>
+    public let emptyRequestMethods: Set<HTTPMethod>
     /// `JSONSerialization.ReadingOptions` used when serializing a response.
     public let options: JSONSerialization.ReadingOptions
-    /// HTTP response codes for which empty responses are allowed.
-    public let emptyResponseCodes: Set<Int>
-    /// HTTP request methods for which empty responses are allowed.
-    public let emptyRequestMethods: Set<HTTPMethod>
 
     /// Creates an instance with the provided values.
     ///
     /// - Parameters:
-    ///   - options:             The options to use. Defaults to `.allowFragments`.
-    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. Defaults to
-    ///                          `[204, 205]`.
-    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. Defaults to `[.head]`.
-    public init(options: JSONSerialization.ReadingOptions = .allowFragments,
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
+    ///   - options:             The options to use. `.allowFragments` by default.
+    public init(dataPreprocessor: DataPreprocessor = JSONResponseSerializer.defaultDataPreprocessor,
                 emptyResponseCodes: Set<Int> = JSONResponseSerializer.defaultEmptyResponseCodes,
-                emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods) {
-        self.options = options
+                emptyRequestMethods: Set<HTTPMethod> = JSONResponseSerializer.defaultEmptyRequestMethods,
+                options: JSONSerialization.ReadingOptions = .allowFragments) {
+        self.dataPreprocessor = dataPreprocessor
         self.emptyResponseCodes = emptyResponseCodes
         self.emptyRequestMethods = emptyRequestMethods
+        self.options = options
     }
 
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Any {
         guard error == nil else { throw error! }
 
-        guard let data = data, !data.isEmpty else {
+        guard var data = data, !data.isEmpty else {
             guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
 
             return NSNull()
         }
+
+        data = try dataPreprocessor.preprocess(data)
 
         do {
             return try JSONSerialization.jsonObject(with: data, options: options)
@@ -477,15 +627,15 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                        the handler is called on `.main`.
-    ///   - options:           The JSON serialization reading options. Defaults to `.allowFragments`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
+    ///   - options:           The JSON serialization reading options. `.allowFragments` by default.
     ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
-    public func responseJSON(queue: DispatchQueue? = nil,
+    public func responseJSON(queue: DispatchQueue = .main,
                              options: JSONSerialization.ReadingOptions = .allowFragments,
-                             completionHandler: @escaping (DataResponse<Any>) -> Void) -> Self {
+                             completionHandler: @escaping (AFDataResponse<Any>) -> Void) -> Self {
         return response(queue: queue,
                         responseSerializer: JSONResponseSerializer(options: options),
                         completionHandler: completionHandler)
@@ -496,18 +646,16 @@ extension DownloadRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                        the handler is called on `.main`.
-    ///   - options:           The JSON serialization reading options. Defaults to `.allowFragments`.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
+    ///   - options:           The JSON serialization reading options. `.allowFragments` by default.
     ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
-    public func responseJSON(
-        queue: DispatchQueue? = nil,
-        options: JSONSerialization.ReadingOptions = .allowFragments,
-        completionHandler: @escaping (DownloadResponse<Any>) -> Void)
-        -> Self
-    {
+    public func responseJSON(queue: DispatchQueue = .main,
+                             options: JSONSerialization.ReadingOptions = .allowFragments,
+                             completionHandler: @escaping (AFDownloadResponse<Any>) -> Void)
+        -> Self {
         return response(queue: queue,
                         responseSerializer: JSONResponseSerializer(options: options),
                         completionHandler: completionHandler)
@@ -516,27 +664,43 @@ extension DownloadRequest {
 
 // MARK: - Empty
 
-/// A type representing an empty response. Use `Empty.value` to get the instance.
+/// Protocol representing an empty response. Use `T.emptyValue()` to get an instance.
+public protocol EmptyResponse {
+    /// Empty value for the conforming type.
+    ///
+    /// - Returns: Value of `Self` to use for empty values.
+    static func emptyValue() -> Self
+}
+
+/// Type representing an empty response. Use `Empty.value` to get the static instance.
 public struct Empty: Decodable {
+    /// Static `Empty` instance used for all `Empty` responses.
     public static let value = Empty()
+}
+
+extension Empty: EmptyResponse {
+    public static func emptyValue() -> Empty {
+        return value
+    }
 }
 
 // MARK: - DataDecoder Protocol
 
-/// Any type which can decode `Data`.
+/// Any type which can decode `Data` into a `Decodable` type.
 public protocol DataDecoder {
     /// Decode `Data` into the provided type.
     ///
     /// - Parameters:
     ///   - type:  The `Type` to be decoded.
-    ///   - data:  The `Data`
+    ///   - data:  The `Data` to be decoded.
+    ///
     /// - Returns: The decoded value of type `D`.
     /// - Throws:  Any error that occurs during decode.
     func decode<D: Decodable>(_ type: D.Type, from data: Data) throws -> D
 }
 
 /// `JSONDecoder` automatically conforms to `DataDecoder`.
-extension JSONDecoder: DataDecoder { }
+extension JSONDecoder: DataDecoder {}
 
 // MARK: - Decodable
 
@@ -545,23 +709,24 @@ extension JSONDecoder: DataDecoder { }
 /// is considered an error. However, if the response is has a status code valid for empty responses (`204`, `205`), then
 /// the `Empty.value` value is returned.
 public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer {
-    /// The `JSONDecoder` instance used to decode responses.
+    public let dataPreprocessor: DataPreprocessor
+    /// The `DataDecoder` instance used to decode responses.
     public let decoder: DataDecoder
-    /// HTTP response codes for which empty responses are allowed.
     public let emptyResponseCodes: Set<Int>
-    /// HTTP request methods for which empty responses are allowed.
     public let emptyRequestMethods: Set<HTTPMethod>
 
     /// Creates an instance using the values provided.
     ///
     /// - Parameters:
-    ///   - decoder:           The `JSONDecoder`. Defaults to a `JSONDecoder()`.
-    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. Defaults to
-    ///                          `[204, 205]`.
-    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. Defaults to `[.head]`.
-    public init(decoder: DataDecoder = JSONDecoder(),
+    ///   - dataPreprocessor:    `DataPreprocessor` used to prepare the received `Data` for serialization.
+    ///   - decoder:             The `DataDecoder`. `JSONDecoder()` by default.
+    ///   - emptyResponseCodes:  The HTTP response codes for which empty responses are allowed. `[204, 205]` by default.
+    ///   - emptyRequestMethods: The HTTP request methods for which empty responses are allowed. `[.head]` by default.
+    public init(dataPreprocessor: DataPreprocessor = DecodableResponseSerializer.defaultDataPreprocessor,
+                decoder: DataDecoder = JSONDecoder(),
                 emptyResponseCodes: Set<Int> = DecodableResponseSerializer.defaultEmptyResponseCodes,
                 emptyRequestMethods: Set<HTTPMethod> = DecodableResponseSerializer.defaultEmptyRequestMethods) {
+        self.dataPreprocessor = dataPreprocessor
         self.decoder = decoder
         self.emptyResponseCodes = emptyResponseCodes
         self.emptyRequestMethods = emptyRequestMethods
@@ -570,17 +735,19 @@ public final class DecodableResponseSerializer<T: Decodable>: ResponseSerializer
     public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> T {
         guard error == nil else { throw error! }
 
-        guard let data = data, !data.isEmpty else {
+        guard var data = data, !data.isEmpty else {
             guard emptyResponseAllowed(forRequest: request, response: response) else {
                 throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
             }
 
-            guard let emptyValue = Empty.value as? T else {
+            guard let emptyResponseType = T.self as? EmptyResponse.Type, let emptyValue = emptyResponseType.emptyValue() as? T else {
                 throw AFError.responseSerializationFailed(reason: .invalidEmptyResponse(type: "\(T.self)"))
             }
 
             return emptyValue
         }
+
+        data = try dataPreprocessor.preprocess(data)
 
         do {
             return try decoder.decode(T.self, from: data)
@@ -594,16 +761,17 @@ extension DataRequest {
     /// Adds a handler to be called once the request has finished.
     ///
     /// - Parameters:
-    ///   - queue:             The queue on which the completion handler is dispatched. Defaults to `nil`, which means
-    ///                        the handler is called on `.main`.
-    ///   - decoder:           The `DataDecoder` to use to decode the response. Defaults to a `JSONDecoder` with default
-    ///                        settings.
+    ///   - type:              `Decodable` type to decode from response data.
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
+    ///   - decoder:           `DataDecoder` to use to decode the response. `JSONDecoder()` by default.
     ///   - completionHandler: A closure to be executed once the request has finished.
+    ///
     /// - Returns:             The request.
     @discardableResult
-    public func responseDecodable<T: Decodable>(queue: DispatchQueue? = nil,
+    public func responseDecodable<T: Decodable>(of type: T.Type = T.self,
+                                                queue: DispatchQueue = .main,
                                                 decoder: DataDecoder = JSONDecoder(),
-                                                completionHandler: @escaping (DataResponse<T>) -> Void) -> Self {
+                                                completionHandler: @escaping (AFDataResponse<T>) -> Void) -> Self {
         return response(queue: queue,
                         responseSerializer: DecodableResponseSerializer(decoder: decoder),
                         completionHandler: completionHandler)
