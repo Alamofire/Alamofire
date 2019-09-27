@@ -619,7 +619,7 @@ If you are communicating with an API that always requires an `Authenticate` or s
 let user = "user"
 let password = "password"
 
-let headers: HTTPHeaders = [.authenticate(username: user, password: password)]
+let headers: HTTPHeaders = [.authorization(username: user, password: password)]
 
 AF.request("https://httpbin.org/basic-auth/user/password", headers: headers)
     .responseJSON { response in
