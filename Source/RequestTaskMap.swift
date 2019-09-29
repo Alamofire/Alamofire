@@ -26,9 +26,9 @@ import Foundation
 
 /// A type that maintains a two way, one to one map of `URLSessionTask`s to `Request`s.
 struct RequestTaskMap {
-    private var tasksToRequests: [URLSessionTask: Request]
-    private var requestsToTasks: [Request: URLSessionTask]
-    private var taskEvents: [URLSessionTask: (completed: Bool, metricsGathered: Bool)]
+    var tasksToRequests: [URLSessionTask: Request]
+    var requestsToTasks: [Request: URLSessionTask]
+    var taskEvents: [URLSessionTask: (completed: Bool, metricsGathered: Bool)]
 
     var requests: [Request] {
         return Array(tasksToRequests.values)

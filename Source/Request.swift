@@ -65,7 +65,7 @@ public class Request {
 
     // MARK: - Initial State
 
-    /// `UUID` prividing a unique identifier for the `Request`, used in the `Hashable` and `Equatable` conformances.
+    /// `UUID` providing a unique identifier for the `Request`, used in the `Hashable` and `Equatable` conformances.
     public let id: UUID
     /// The serial queue for all internal async actions.
     public let underlyingQueue: DispatchQueue
@@ -343,6 +343,8 @@ public class Request {
     ///
     /// - Parameter task: The `URLSessionTask` created.
     func didCreateTask(_ task: URLSessionTask) {
+        //assert(protectedMutableState.directValue.state != .cancelled)
+        
         protectedMutableState.write { $0.tasks.append(task) }
 
         eventMonitor?.request(self, didCreateTask: task)
@@ -452,10 +454,15 @@ public class Request {
         }
     }
 
+    var finishedCalled = false
     /// Finishes this `Request` and starts the response serializers.
     ///
     /// - Parameter error: The possible `Error` with which the instance will finish.
     func finish(error: AFError? = nil) {
+        //assert(!finishedCalled)
+        
+        finishedCalled = true
+        
         if let error = error { self.error = error }
 
         // Start response handlers
@@ -602,11 +609,13 @@ public class Request {
             mutableState.state = .cancelled
 
             underlyingQueue.async { self.didCancel() }
-
-            guard let task = mutableState.tasks.last, task.state != .completed else {
+            
+            guard let task = mutableState.tasks.last else {
                 underlyingQueue.async { self.finish() }
                 return
             }
+            
+            guard ![.canceling, .completed].contains(task.state) else { return }
 
             // Resume to ensure metrics are gathered.
             task.resume()

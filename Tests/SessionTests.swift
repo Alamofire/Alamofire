@@ -1480,11 +1480,46 @@ final class SessionTestCase: BaseTestCase {
 
 // MARK: -
 
+final class EventAccumulator: EventMonitor {
+    var didCreateTasks: [(Request, URLSessionTask)] = []
+    var didCancelTasks: [(Request, URLSessionTask)] = []
+    var requestDidFinish: [Request] = []
+    var requestDidGatherMetrics: [Request] = []
+    var sessionDidGatherMetrics: [URLSessionTask] = []
+    
+    func request(_ request: Request, didCreateTask task: URLSessionTask) {
+        didCreateTasks.append((request, task))
+    }
+    
+    func request(_ request: Request, didCancelTask task: URLSessionTask) {
+        didCancelTasks.append((request, task))
+    }
+    
+    func requestDidFinish(_ request: Request) {
+        requestDidFinish.append(request)
+    }
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+        sessionDidGatherMetrics.append(task)
+    }
+    
+    func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
+        requestDidGatherMetrics.append(request)
+    }
+}
+
 final class SessionCancellationTestCase: BaseTestCase {
+    func testMany() {
+        for _ in 0..<100 {
+            testThatAutomaticallyResumedRequestsCanBeMassCancelled()
+        }
+    }
+    
     func testThatAutomaticallyResumedRequestsCanBeMassCancelled() {
         // Given
-        let count = 100
-        let session = Session()
+        let count = 1000
+        let accumulator = EventAccumulator()
+        let session = Session(eventMonitors: [accumulator])
         var responses: [DataResponse<Data?, AFError>] = []
         let completion = expectation(description: "all requests should finish")
         completion.expectedFulfillmentCount = count
@@ -1504,17 +1539,18 @@ final class SessionCancellationTestCase: BaseTestCase {
 
         waitForExpectations(timeout: timeout)
 
+        print("")
         // Then
         XCTAssertTrue(responses.allSatisfy { $0.error?.isExplicitlyCancelledError == true })
         assert(on: session.rootQueue) {
-            XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
+            XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items, id: \(session.requestTaskMap.tasksToRequests.first?.value.id)")
             XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
         }
     }
 
     func testThatManuallyResumedRequestsCanBeMassCancelled() {
         // Given
-        let count = 100
+        let count = 1000
         let session = Session(startRequestsImmediately: false)
         let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
         var responses: [DataResponse<Data?, AFError>] = []

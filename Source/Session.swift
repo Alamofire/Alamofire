@@ -908,6 +908,37 @@ open class Session {
         request.didCreateTask(task)
 
         updateStatesForTask(task, request: request)
+        
+//        request.withState { state in
+//            let task = request.task(for: urlRequest, using: session)
+//            requestTaskMap[request] = task
+//            rootQueue.async {
+//                request.didCreateTask(task)
+//                request.withState { innerState in
+//                    switch (self.startRequestsImmediately, innerState) {
+//                    case (true, .initialized):
+//                        self.rootQueue.async { request.resume() }
+//                    case (false, .initialized):
+//                        // Do nothing.
+//                        break
+//                    case (_, .resumed):
+//                        task.resume()
+//                        self.rootQueue.async { request.didResumeTask(task) }
+//                    case (_, .suspended):
+//                        task.suspend()
+//                        self.rootQueue.async { request.didSuspendTask(task) }
+//                    case (_, .cancelled):
+//                        // Resume to ensure metrics are gathered.
+//                        task.resume()
+//                        task.cancel()
+//                        self.rootQueue.async { request.didCancelTask(task) }
+//                    case (_, .finished):
+//                        // Do nothing
+//                        break
+//                    }
+//                }
+//            }
+//        }
     }
 
     func didReceiveResumeData(_ data: Data, for request: DownloadRequest) {
@@ -967,7 +998,7 @@ open class Session {
     // MARK: - Invalidation
 
     func finishRequestsForDeinit() {
-        requestTaskMap.requests.forEach { $0.finish(error: AFError.sessionDeinitialized) }
+//        requestTaskMap.requests.forEach { $0.finish(error: AFError.sessionDeinitialized) }
     }
 }
 
