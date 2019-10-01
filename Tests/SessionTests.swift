@@ -1543,7 +1543,7 @@ final class SessionCancellationTestCase: BaseTestCase {
         // Then
         XCTAssertTrue(responses.allSatisfy { $0.error?.isExplicitlyCancelledError == true })
         assert(on: session.rootQueue) {
-            XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items, id: \(session.requestTaskMap.tasksToRequests.first?.value.id)")
+            XCTAssertTrue(session.requestTaskMap.isEmpty, "requestTaskMap should be empty but has \(session.requestTaskMap.count) items")
             XCTAssertTrue(session.activeRequests.isEmpty, "activeRequests should be empty but has \(session.activeRequests.count) items")
         }
     }
