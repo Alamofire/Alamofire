@@ -1,9 +1,7 @@
 name: "Alamofire CI"
 
 on: 
-  push:
-    branches:
-      - master
+  [push, pull_request]
 
 jobs:
   macOS:
@@ -16,9 +14,11 @@ jobs:
   iOS:
     name: Test iOS 
     runs-on: macOS-latest
+    env: 
+      DEVELOPER_DIR: /Applications/Xcode_11.app/Contents/Developer
     strategy:
       matrix:
-        destination: ["OS=12.4,name=iPhone XS", "OS=11.4,name=iPhone X", "OS=10.3.1,name=iPhone SE"]
+        destination: ["OS=13.0,name=iPhone 11 Pro", "OS=12.4,name=iPhone XS", "OS=11.4,name=iPhone X", "OS=10.3.1,name=iPhone SE"]
     steps:
       - uses: actions/checkout@v1            
       - name: iOS - ${{ matrix.destination }}
@@ -50,7 +50,5 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: SPM Build & Test
-        run: |
-          swift build
-          swift test
+        run: swift build
 
