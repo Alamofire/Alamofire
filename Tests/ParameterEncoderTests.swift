@@ -992,10 +992,3 @@ private struct FailingOptionalStruct: Encodable {
         }
     }
 }
-
-private func assertQueryEqual(_ query1: String?, _ query2: String?) {
-    let items1 = query1?.split(separator: "&").sorted()
-    let items2 = query2?.split(separator: "&").sorted()
-
-    XCTAssertEqual(items1, items2)
-}
