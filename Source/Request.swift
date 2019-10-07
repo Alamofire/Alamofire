@@ -859,26 +859,25 @@ extension Request {
             }
         }
 
-        var headers: [String: String] = [:]
+        var headers = HTTPHeaders()
 
-        if let additionalHeaders = delegate?.sessionConfiguration.httpAdditionalHeaders as? [String: String] {
-            for (field, value) in additionalHeaders where field != "Cookie" {
-                headers[field] = value
+        if let sessionHeaders = delegate?.sessionConfiguration.headers {
+            for header in sessionHeaders where header.name != "Cookie" {
+                headers[header.name] = header.value
             }
         }
 
-        if let headerFields = request.allHTTPHeaderFields {
-            for (field, value) in headerFields where field != "Cookie" {
-                headers[field] = value
-            }
+        for header in request.headers where header.name != "Cookie" {
+            headers[header.name] = header.value
         }
 
-        for (field, value) in headers {
-            let escapedValue = value.replacingOccurrences(of: "\"", with: "\\\"")
-            components.append("-H \"\(field): \(escapedValue)\"")
+        for header in headers {
+            let escapedValue = header.value.replacingOccurrences(of: "\"", with: "\\\"")
+            components.append("-H \"\(header.name): \(escapedValue)\"")
         }
 
-        if let httpBodyData = request.httpBody, let httpBody = String(data: httpBodyData, encoding: .utf8) {
+        if let httpBodyData = request.httpBody {
+            let httpBody = String(decoding: httpBodyData, as: UTF8.self)
             var escapedBody = httpBody.replacingOccurrences(of: "\\\"", with: "\\\\\"")
             escapedBody = escapedBody.replacingOccurrences(of: "\"", with: "\\\"")
 
