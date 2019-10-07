@@ -855,7 +855,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components?.contains("-X") == true)
         XCTAssertEqual(components?.last, "\"\(urlString)\"")
-        XCTAssertEqual(components, syncComponents)
+        XCTAssertEqual(components?.sorted(), syncComponents?.sorted())
     }
 
     func testGETRequestCURLDescriptionCanBeRequestedManyTimes() {
@@ -889,7 +889,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components?.contains("-X") == true)
         XCTAssertEqual(components?.last, "\"\(urlString)\"")
-        XCTAssertEqual(components, secondComponents)
+        XCTAssertEqual(components?.sorted(), secondComponents?.sorted())
     }
 
     func testGETRequestWithCustomHeaderCURLDescription() {
