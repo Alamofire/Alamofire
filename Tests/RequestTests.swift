@@ -676,7 +676,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var response2: DataResponse<Any, AFError>?
         var response3: DataResponse<Any, AFError>?
 
-        let expect = expectation(description: "both response serializer completions should be called")
+        let expect = expectation(description: "all response serializer completions should be called")
         expect.expectedFulfillmentCount = 3
 
         // When
