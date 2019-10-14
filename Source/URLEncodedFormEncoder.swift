@@ -324,7 +324,7 @@ public final class URLEncodedFormEncoder {
     /// Creates an instance from the supplied parameters.
     ///
     /// - Parameters:
-    ///   - alphabetizeKeyValuePairs: Whether or to sort the encoded key value pairs. `true` by default.
+    ///   - alphabetizeKeyValuePairs: Whether or not to sort the encoded key value pairs. `true` by default.
     ///   - arrayEncoding:            The `ArrayEncoding` to use. `.brackets` by default.
     ///   - boolEncoding:             The `BoolEncoding` to use. `.numeric` by default.
     ///   - dataEncoding:             The `DataEncoding` to use. `.base64` by default.
