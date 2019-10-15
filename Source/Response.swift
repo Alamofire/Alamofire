@@ -129,21 +129,33 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     }
 
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
-    /// response, the server data, the response serialization result and the timeline.
+    /// response, the server data, the duration of the network and serialization actions, and the response serialization
+    /// result.
     public var debugDescription: String {
-        var output: [String] = []
-
-        output.append(request != nil ? "[Request]: \(request!.httpMethod ?? "GET") \(request!)" : "[Request]: nil")
+        let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
         let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
-        output.append("[Request Body]: \n\(requestBody)")
-        output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
-        let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
-        output.append("[Response Body]: \n\(responseBody)")
-        output.append("[Data]: \(data?.count ?? 0) bytes")
-        output.append("[Result]: \(result.debugDescription)")
-        output.append("[Timeline]: \(timeline.debugDescription)")
+        let responseDescription = response.map { response in
+            let sortedHeaders = response.headers.sorted()
 
-        return output.joined(separator: "\n")
+            return """
+            [Status Code]: \(response.statusCode)
+            [Headers]:
+            \(sortedHeaders)
+            """
+        } ?? "nil"
+        let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
+        let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
+
+        return """
+        [Request]: \(requestDescription)
+        [Request Body]: \n\(requestBody)
+        [Response]: \n\(responseDescription)
+        [Response Body]: \n\(responseBody)
+        [Data]: \(data?.description ?? "None")
+        [Network Duration]: \(metricsDescription)
+        [Serialization Duration]: \(serializationDuration)s
+        [Result]: \(result)
+        """
     }
 }
 
@@ -385,24 +397,33 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     }
 
     /// The debug textual representation used when written to an output stream, which includes the URL request, the URL
-    /// response, the temporary and destination URLs, the resume data, the response serialization result and the
-    /// timeline.
+    /// response, the temporary and destination URLs, the resume data, the durations of the network and serialization
+    /// actions, and the response serialization result.
     public var debugDescription: String {
-        var output: [String] = []
-
-        output.append(request != nil ? "[Request]: \(request!.httpMethod ?? "GET") \(request!)" : "[Request]: nil")
+        let requestDescription = request.map { "\($0.httpMethod!) \($0)" } ?? "nil"
         let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
-        output.append("[Request Body]: \n\(requestBody)")
-        output.append(response != nil ? "[Response]: \(response!)" : "[Response]: nil")
-        let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
-        output.append("[Response Body]: \n\(responseBody)")
-        output.append("[TemporaryURL]: \(temporaryURL?.path ?? "nil")")
-        output.append("[DestinationURL]: \(destinationURL?.path ?? "nil")")
-        output.append("[ResumeData]: \(resumeData?.count ?? 0) bytes")
-        output.append("[Result]: \(result.debugDescription)")
-        output.append("[Timeline]: \(timeline.debugDescription)")
+        let responseDescription = response.map { response in
+            let sortedHeaders = response.headers.sorted()
 
-        return output.joined(separator: "\n")
+            return """
+            [Status Code]: \(response.statusCode)
+            [Headers]:
+            \(sortedHeaders)
+            """
+        } ?? "nil"
+        let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
+        let resumeDataDescription = resumeData.map { "\($0)" } ?? "None"
+
+        return """
+        [Request]: \(requestDescription)
+        [Request Body]: \n\(requestBody)
+        [Response]: \n\(responseDescription)
+        [File URL]: \(fileURL?.path ?? "nil")
+        [ResumeData]: \(resumeDataDescription)
+        [Network Duration]: \(metricsDescription)
+        [Serialization Duration]: \(serializationDuration)s
+        [Result]: \(result)
+        """
     }
 }
 
