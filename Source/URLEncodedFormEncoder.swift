@@ -44,7 +44,7 @@ import Foundation
 public final class URLEncodedFormEncoder {
     /// Encoding to use for `Array` values.
     public enum ArrayEncoding {
-        /// An empty set of square brackets ("[]") are sppended to the key for every value. This is the default encoding.
+        /// An empty set of square brackets ("[]") are appended to the key for every value. This is the default encoding.
         case brackets
         /// No brackets are appended to the key and the key is encoded as is.
         case noBrackets
