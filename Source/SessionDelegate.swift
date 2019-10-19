@@ -79,7 +79,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         switch challenge.protectionSpace.authenticationMethod {
         case NSURLAuthenticationMethodServerTrust:
             evaluation = attemptServerTrustAuthentication(with: challenge)
-        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest:
+        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM, NSURLAuthenticationMethodNegotiate:
             evaluation = attemptHTTPAuthentication(for: challenge, belongingTo: task)
         // case NSURLAuthenticationMethodClientCertificate:
         // Alamofire doesn't currently support client certificate validation.
