@@ -304,7 +304,7 @@ public final class URLEncodedFormEncoder {
     ///
     /// - Note: This setting ensures a consistent ordering for all encodings of the same parameters. When set to `false`,
     ///         encoded `Dictionary` values may have a different encoded order each time they're encoded due to
-    ///       ` Dictionary`'s random storage order.
+    ///       ` Dictionary`'s random storage order, but `Encodable` types will maintain their encoded order.
     public let alphabetizeKeyValuePairs: Bool
     /// The `ArrayEncoding` to use.
     public let arrayEncoding: ArrayEncoding
