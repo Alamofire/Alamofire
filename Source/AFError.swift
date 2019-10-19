@@ -422,7 +422,7 @@ extension AFError {
 
     /// The `source` URL of a `.downloadedFileMoveFailed` error.
     public var sourceURL: URL? {
-        guard case .downloadedFileMoveFailed(_, let source, _) = self else { return nil }
+        guard case let .downloadedFileMoveFailed(_, source, _) = self else { return nil }
         return source
     }
 
@@ -808,11 +808,11 @@ extension AFError.ServerTrustFailureReason {
             return "Default evaluation failed for host \(output.host)."
         case let .hostValidationFailed(output):
             return "Host validation failed for host \(output.host)."
-        case .revocationCheckFailed(let output, _):
+        case let .revocationCheckFailed(output, _):
             return "Revocation check failed for host \(output.host)."
-        case .certificatePinningFailed(let host, _, _, _):
+        case let .certificatePinningFailed(host, _, _, _):
             return "Certificate pinning failed for host \(host)."
-        case .publicKeyPinningFailed(let host, _, _, _):
+        case let .publicKeyPinningFailed(host, _, _, _):
             return "Public key pinning failed for host \(host)."
         case let .customEvaluationFailed(error):
             return "Custom trust evaluation failed with error: \(error.localizedDescription)"
