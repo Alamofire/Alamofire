@@ -285,7 +285,7 @@ final class RequestResponseTestCase: BaseTestCase {
         let session = Session(eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 3
+        expect.expectedFulfillmentCount = 4
 
         eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
         eventMonitor.requestDidResume = { _ in expect.fulfill() }
@@ -297,7 +297,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in expect.fulfill() }
 
         waitForExpectations(timeout: timeout, handler: nil)
 
@@ -512,7 +512,7 @@ final class RequestResponseTestCase: BaseTestCase {
         let session = Session(eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 5
+        expect.expectedFulfillmentCount = 6
 
         eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
         eventMonitor.requestDidCancel = { _ in expect.fulfill() }
@@ -523,7 +523,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidSuspendTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in expect.fulfill() }
         // Cancellation stops task creation, so don't cancel the request until the task has been created.
         eventMonitor.requestDidCreateTask = { _, _ in
             DispatchQueue.concurrentPerform(iterations: 100) { i in

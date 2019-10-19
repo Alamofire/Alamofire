@@ -118,7 +118,7 @@ public protocol EventMonitor {
     /// Event called when a `Request` receives a `URLSessionTaskMetrics` value.
     func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics)
 
-    /// Event called when a `Request` fails due to an error created by Alamofire. e.g. When certificat pinning fails.
+    /// Event called when a `Request` fails due to an error created by Alamofire. e.g. When certificate pinning fails.
     func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: AFError)
 
     /// Event called when a `Request`'s task completes, possibly with an error. A `Request` may receive this event
@@ -169,7 +169,7 @@ public protocol EventMonitor {
     /// Event called when an `UploadRequest` creates its `Uploadable` value, indicating the type of upload it represents.
     func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable)
 
-    /// Event called when an `UploadRequest` failes to create its `Uploadable` value due to an error.
+    /// Event called when an `UploadRequest` failed to create its `Uploadable` value due to an error.
     func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: AFError)
 
     /// Event called when an `UploadRequest` provides the `InputStream` from its `Uploadable` value. This only occurs if
@@ -284,7 +284,7 @@ extension EventMonitor {
 
 /// An `EventMonitor` which can contain multiple `EventMonitor`s and calls their methods on their queues.
 public final class CompositeEventMonitor: EventMonitor {
-    public let queue = DispatchQueue(label: "org.alamofire.componsiteEventMonitor", qos: .background)
+    public let queue = DispatchQueue(label: "org.alamofire.compositeEventMonitor", qos: .background)
 
     let monitors: [EventMonitor]
 
