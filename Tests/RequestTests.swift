@@ -676,7 +676,7 @@ final class RequestResponseTestCase: BaseTestCase {
         var response2: DataResponse<Any, AFError>?
         var response3: DataResponse<Any, AFError>?
 
-        let expect = expectation(description: "both response serializer completions should be called")
+        let expect = expectation(description: "all response serializer completions should be called")
         expect.expectedFulfillmentCount = 3
 
         // When
@@ -855,7 +855,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components?.contains("-X") == true)
         XCTAssertEqual(components?.last, "\"\(urlString)\"")
-        XCTAssertEqual(components, syncComponents)
+        XCTAssertEqual(components?.sorted(), syncComponents?.sorted())
     }
 
     func testGETRequestCURLDescriptionCanBeRequestedManyTimes() {
@@ -889,7 +889,7 @@ final class RequestCURLDescriptionTestCase: BaseTestCase {
         XCTAssertEqual(components?[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components?.contains("-X") == true)
         XCTAssertEqual(components?.last, "\"\(urlString)\"")
-        XCTAssertEqual(components, secondComponents)
+        XCTAssertEqual(components?.sorted(), secondComponents?.sorted())
     }
 
     func testGETRequestWithCustomHeaderCURLDescription() {
