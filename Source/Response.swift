@@ -392,13 +392,11 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
         let requestDescription = request.map { "\($0.httpMethod ?? "GET") \($0)"} ?? "nil"
         let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         let responseDescriotion = response.map { "\($0)" } ?? "nil"
-        let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         
         return """
         [Request]: \(requestDescription)
         [Request Body]: \n\(requestBody)
         [Response]: \(responseDescriotion)
-        [Response Body]: \n\(responseBody)
         [TemporaryURL]: \(temporaryURL?.path ?? "nil")
         [DestinationURL]: \(destinationURL?.path ?? "nil")
         [ResumeData]: \(resumeData?.count ?? 0) bytes
