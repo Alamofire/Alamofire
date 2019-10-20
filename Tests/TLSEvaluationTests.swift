@@ -328,7 +328,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
-        NSLog(error?.localizedDescription ?? "None")
+
         if case let .serverTrustEvaluationFailed(reason)? = error {
             if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
                 XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
