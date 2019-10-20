@@ -113,7 +113,7 @@ open class Session {
         precondition(session.configuration.identifier == nil,
                      "Alamofire does not support background URLSessionConfigurations.")
         precondition(session.delegateQueue.underlyingQueue === rootQueue,
-                     "Session(session:) intializer must be passed the DispatchQueue used as the delegateQueue's underlyingQueue as rootQueue.")
+                     "Session(session:) initializer must be passed the DispatchQueue used as the delegateQueue's underlyingQueue as rootQueue.")
 
         self.session = session
         self.delegate = delegate
@@ -922,26 +922,21 @@ open class Session {
 
     func updateStatesForTask(_ task: URLSessionTask, request: Request) {
         request.withState { state in
-            switch (startRequestsImmediately, state) {
-            case (true, .initialized):
-                rootQueue.async { request.resume() }
-            case (false, .initialized):
+            switch state {
+            case .initialized, .finished:
                 // Do nothing.
                 break
-            case (_, .resumed):
+            case .resumed:
                 task.resume()
                 rootQueue.async { request.didResumeTask(task) }
-            case (_, .suspended):
+            case .suspended:
                 task.suspend()
                 rootQueue.async { request.didSuspendTask(task) }
-            case (_, .cancelled):
+            case .cancelled:
                 // Resume to ensure metrics are gathered.
                 task.resume()
                 task.cancel()
                 rootQueue.async { request.didCancelTask(task) }
-            case (_, .finished):
-                // Do nothing
-                break
             }
         }
     }
@@ -977,6 +972,8 @@ extension Session: RequestDelegate {
     public var sessionConfiguration: URLSessionConfiguration {
         return session.configuration
     }
+
+    public var startImmediately: Bool { return startRequestsImmediately }
 
     public func cleanup(after request: Request) {
         activeRequests.remove(request)

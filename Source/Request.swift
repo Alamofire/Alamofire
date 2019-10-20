@@ -65,7 +65,7 @@ public class Request {
 
     // MARK: - Initial State
 
-    /// `UUID` prividing a unique identifier for the `Request`, used in the `Hashable` and `Equatable` conformances.
+    /// `UUID` providing a unique identifier for the `Request`, used in the `Hashable` and `Equatable` conformances.
     public let id: UUID
     /// The serial queue for all internal async actions.
     public let underlyingQueue: DispatchQueue
@@ -115,7 +115,7 @@ public class Request {
         var error: AFError?
     }
 
-    /// Protected `MutableState` value that provides threadsafe access to state values.
+    /// Protected `MutableState` value that provides thread-safe access to state values.
     fileprivate let protectedMutableState: Protector<MutableState> = Protector(MutableState())
 
     /// `State` of the `Request`.
@@ -267,7 +267,7 @@ public class Request {
 
     // All API must be called from underlyingQueue.
 
-    /// Called when a initial `URLRequest` has been created on behalf of the instance. If a `RequestAdapter` is active,
+    /// Called when an initial `URLRequest` has been created on behalf of the instance. If a `RequestAdapter` is active,
     /// the `URLRequest` will be adapted before being issued.
     ///
     /// - Parameter request: The `URLRequest` created.
@@ -466,6 +466,8 @@ public class Request {
 
     /// Appends the response serialization closure to the instance.
     ///
+    ///  - Note: This method will also `resume` the instance if `delegate.startImmediately` returns `true`.
+    ///
     /// - Parameter closure: The closure containing the response serialization call.
     func appendResponseSerializer(_ closure: @escaping () -> Void) {
         protectedMutableState.write { mutableState in
@@ -477,6 +479,10 @@ public class Request {
 
             if mutableState.responseSerializerProcessingFinished {
                 underlyingQueue.async { self.processNextResponseSerializer() }
+            }
+
+            if mutableState.state.canTransitionTo(.resumed) {
+                underlyingQueue.async { if self.delegate?.startImmediately == true { self.resume() } }
             }
         }
     }
@@ -534,7 +540,7 @@ public class Request {
 
     /// Notifies the `Request` that the response serializer is complete.
     ///
-    /// - Parameter completion: The completion handler provided with the response serilizer, called when all serializers
+    /// - Parameter completion: The completion handler provided with the response serializer, called when all serializers
     ///                         are complete.
     func responseSerializerDidComplete(completion: @escaping () -> Void) {
         protectedMutableState.write { $0.responseSerializerCompletions.append(completion) }
@@ -859,26 +865,25 @@ extension Request {
             }
         }
 
-        var headers: [String: String] = [:]
+        var headers = HTTPHeaders()
 
-        if let additionalHeaders = delegate?.sessionConfiguration.httpAdditionalHeaders as? [String: String] {
-            for (field, value) in additionalHeaders where field != "Cookie" {
-                headers[field] = value
+        if let sessionHeaders = delegate?.sessionConfiguration.headers {
+            for header in sessionHeaders where header.name != "Cookie" {
+                headers[header.name] = header.value
             }
         }
 
-        if let headerFields = request.allHTTPHeaderFields {
-            for (field, value) in headerFields where field != "Cookie" {
-                headers[field] = value
-            }
+        for header in request.headers where header.name != "Cookie" {
+            headers[header.name] = header.value
         }
 
-        for (field, value) in headers {
-            let escapedValue = value.replacingOccurrences(of: "\"", with: "\\\"")
-            components.append("-H \"\(field): \(escapedValue)\"")
+        for header in headers {
+            let escapedValue = header.value.replacingOccurrences(of: "\"", with: "\\\"")
+            components.append("-H \"\(header.name): \(escapedValue)\"")
         }
 
-        if let httpBodyData = request.httpBody, let httpBody = String(data: httpBodyData, encoding: .utf8) {
+        if let httpBodyData = request.httpBody {
+            let httpBody = String(decoding: httpBodyData, as: UTF8.self)
             var escapedBody = httpBody.replacingOccurrences(of: "\\\"", with: "\\\\\"")
             escapedBody = escapedBody.replacingOccurrences(of: "\"", with: "\\\"")
 
@@ -895,6 +900,9 @@ extension Request {
 public protocol RequestDelegate: AnyObject {
     /// `URLSessionConfiguration` used to create the underlying `URLSessionTask`s.
     var sessionConfiguration: URLSessionConfiguration { get }
+
+    /// Determines whether the `Request` should automatically call `resume()` when adding the first response handler.
+    var startImmediately: Bool { get }
 
     /// Notifies the delegate the `Request` has reached a point where it needs cleanup.
     ///

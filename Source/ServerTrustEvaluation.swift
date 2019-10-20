@@ -35,14 +35,14 @@ open class ServerTrustManager {
     /// Initializes the `ServerTrustManager` instance with the given evaluators.
     ///
     /// Since different servers and web services can have different leaf certificates, intermediate and even root
-    /// certficates, it is important to have the flexibility to specify evaluation policies on a per host basis. This
+    /// certificates, it is important to have the flexibility to specify evaluation policies on a per host basis. This
     /// allows for scenarios such as using default evaluation for host1, certificate pinning for host2, public key
     /// pinning for host3 and disabling evaluation for host4.
     ///
     /// - Parameters:
     ///   - allHostsMustBeEvaluated: The value determining whether all hosts for this instance must be evaluated. `true`
     ///                              by default.
-    ///   - evaluators:              A dictionary of evaluators mappend to hosts.
+    ///   - evaluators:              A dictionary of evaluators mapped to hosts.
     public init(allHostsMustBeEvaluated: Bool = true, evaluators: [String: ServerTrustEvaluating]) {
         self.allHostsMustBeEvaluated = allHostsMustBeEvaluated
         self.evaluators = evaluators
@@ -95,7 +95,7 @@ public protocol ServerTrustEvaluating {
 public final class DefaultTrustEvaluator: ServerTrustEvaluating {
     private let validateHost: Bool
 
-    /// Creates a `DefaultTrustEvalutor`.
+    /// Creates a `DefaultTrustEvaluator`.
     ///
     /// - Parameter validateHost: Determines whether or not the evaluator should validate the host. `true` by default.
     public init(validateHost: Bool = true) {
@@ -198,9 +198,9 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
     /// Creates a `PinnedCertificatesTrustEvaluator`.
     ///
     /// - Parameters:
-    ///   - certificates:                 The certificates to use to evalute the trust. All `cer`, `crt`, and `der`
+    ///   - certificates:                 The certificates to use to evaluate the trust. All `cer`, `crt`, and `der`
     ///                                   certificates in `Bundle.main` by default.
-    ///   - acceptSelfSignedCertificates: Adds the provided certificates as anchors for the trust evaulation, allowing
+    ///   - acceptSelfSignedCertificates: Adds the provided certificates as anchors for the trust evaluation, allowing
     ///                                   self-signed certificates to pass. `false` by default. THIS SETTING SHOULD BE
     ///                                   FALSE IN PRODUCTION!
     ///   - performDefaultValidation:     Determines whether default validation should be performed in addition to
