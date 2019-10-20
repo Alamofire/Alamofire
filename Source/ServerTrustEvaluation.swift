@@ -395,9 +395,9 @@ extension SecTrust: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == SecTrust {
     /// Evaluates `self` after applying the `SecPolicy` value provided.
     ///
-    /// - Parameter policy: The `SecPolicy` using to apply to `self` before evaluation.
+    /// - Parameter policy: The `SecPolicy` to apply to `self` before evaluation.
     ///
-    /// - Throws:           Any `Error` from applying the `SecPolicy` or from validation.
+    /// - Throws:           Any `Error` from applying the `SecPolicy` or from evaluation.
     @available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)
     func evaluate(afterApplying policy: SecPolicy) throws {
         try apply(policy: policy).af.evaluate()
@@ -435,9 +435,10 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
         return type
     }
 
-    /// Attempts to validate `self`.
+    /// Evaluate `self`, throwing an `Error` if evaluation fails.
     ///
-    /// - Throws: `AFError.serverTrustEvaluationFailed` with reason `.trustValidationFailed`.
+    /// - Throws: `AFError.serverTrustEvaluationFailed` with reason `.trustValidationFailed` and associated error from
+    ///           the underlying evaluation.
     @available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)
     func evaluate() throws {
         var error: CFError?
