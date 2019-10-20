@@ -44,7 +44,7 @@ import Foundation
 public final class URLEncodedFormEncoder {
     /// Encoding to use for `Array` values.
     public enum ArrayEncoding {
-        /// An empty set of square brackets ("[]") are sppended to the key for every value. This is the default encoding.
+        /// An empty set of square brackets ("[]") are appended to the key for every value. This is the default encoding.
         case brackets
         /// No brackets are appended to the key and the key is encoded as is.
         case noBrackets
@@ -177,17 +177,17 @@ public final class URLEncodedFormEncoder {
         ///
         /// - Note: Using a key encoding strategy has a nominal performance cost, as each string key has to be converted.
         case convertToSnakeCase
-        /// Same as convertToSnakeCase, but using `-` instead of `_`
+        /// Same as convertToSnakeCase, but using `-` instead of `_`.
         /// For example `oneTwoThree` becomes `one-two-three`.
         case convertToKebabCase
-        /// Capitalize the first letter only
-        /// For example `oneTwoThree` becomes  `OneTwoThree`
+        /// Capitalize the first letter only.
+        /// For example `oneTwoThree` becomes  `OneTwoThree`.
         case capitalized
-        /// Uppercase all letters
-        /// For example `oneTwoThree` becomes  `ONETWOTHREE`
+        /// Uppercase all letters.
+        /// For example `oneTwoThree` becomes  `ONETWOTHREE`.
         case uppercased
-        /// Lowercase all letters
-        /// For example `oneTwoThree` becomes  `onetwothree`
+        /// Lowercase all letters.
+        /// For example `oneTwoThree` becomes  `onetwothree`.
         case lowercased
         /// A custom encoding using the provided closure.
         case custom((String) -> String)
@@ -294,11 +294,18 @@ public final class URLEncodedFormEncoder {
 
         var localizedDescription: String {
             switch self {
-            case let .invalidRootObject(object): return "URLEncodedFormEncoder requires keyed root object. Received \(object) instead."
+            case let .invalidRootObject(object):
+                return "URLEncodedFormEncoder requires keyed root object. Received \(object) instead."
             }
         }
     }
 
+    /// Whether or not to sort the encoded key value pairs.
+    ///
+    /// - Note: This setting ensures a consistent ordering for all encodings of the same parameters. When set to `false`,
+    ///         encoded `Dictionary` values may have a different encoded order each time they're encoded due to
+    ///       ` Dictionary`'s random storage order, but `Encodable` types will maintain their encoded order.
+    public let alphabetizeKeyValuePairs: Bool
     /// The `ArrayEncoding` to use.
     public let arrayEncoding: ArrayEncoding
     /// The `BoolEncoding` to use.
@@ -317,20 +324,24 @@ public final class URLEncodedFormEncoder {
     /// Creates an instance from the supplied parameters.
     ///
     /// - Parameters:
-    ///   - arrayEncoding:     The `ArrayEncoding` to use. `.brackets` by default.
-    ///   - boolEncoding:      The `BoolEncoding` to use. `.numeric` by default.
-    ///   - dataEncoding:      The `DataEncoding` to use. `.base64` by default.
-    ///   - dateEncoding:      The `DateEncoding` to use. `.deferredToDate` by default.
-    ///   - keyEncoding:       The `KeyEncoding` to use. `.useDefaultKeys` by default.
-    ///   - spaceEncoding:     The `SpaceEncoding` to use. `.percentEscaped` by default.
-    ///   - allowedCharacters: The `CharacterSet` of allowed (non-escaped) characters. `.afURLQueryAllowed` by default.
-    public init(arrayEncoding: ArrayEncoding = .brackets,
+    ///   - alphabetizeKeyValuePairs: Whether or not to sort the encoded key value pairs. `true` by default.
+    ///   - arrayEncoding:            The `ArrayEncoding` to use. `.brackets` by default.
+    ///   - boolEncoding:             The `BoolEncoding` to use. `.numeric` by default.
+    ///   - dataEncoding:             The `DataEncoding` to use. `.base64` by default.
+    ///   - dateEncoding:             The `DateEncoding` to use. `.deferredToDate` by default.
+    ///   - keyEncoding:              The `KeyEncoding` to use. `.useDefaultKeys` by default.
+    ///   - spaceEncoding:            The `SpaceEncoding` to use. `.percentEscaped` by default.
+    ///   - allowedCharacters:        The `CharacterSet` of allowed (non-escaped) characters. `.afURLQueryAllowed` by
+    ///                               default.
+    public init(alphabetizeKeyValuePairs: Bool = true,
+                arrayEncoding: ArrayEncoding = .brackets,
                 boolEncoding: BoolEncoding = .numeric,
                 dataEncoding: DataEncoding = .base64,
                 dateEncoding: DateEncoding = .deferredToDate,
                 keyEncoding: KeyEncoding = .useDefaultKeys,
                 spaceEncoding: SpaceEncoding = .percentEscaped,
                 allowedCharacters: CharacterSet = .afURLQueryAllowed) {
+        self.alphabetizeKeyValuePairs = alphabetizeKeyValuePairs
         self.arrayEncoding = arrayEncoding
         self.boolEncoding = boolEncoding
         self.dataEncoding = dataEncoding
@@ -341,7 +352,7 @@ public final class URLEncodedFormEncoder {
     }
 
     func encode(_ value: Encodable) throws -> URLEncodedFormComponent {
-        let context = URLEncodedFormContext(.object([:]))
+        let context = URLEncodedFormContext(.object([]))
         let encoder = _URLEncodedFormEncoder(context: context,
                                              boolEncoding: boolEncoding,
                                              dataEncoding: dataEncoding,
@@ -364,7 +375,8 @@ public final class URLEncodedFormEncoder {
             throw Error.invalidRootObject("\(component)")
         }
 
-        let serializer = URLEncodedFormSerializer(arrayEncoding: arrayEncoding,
+        let serializer = URLEncodedFormSerializer(alphabetizeKeyValuePairs: alphabetizeKeyValuePairs,
+                                                  arrayEncoding: arrayEncoding,
                                                   keyEncoding: keyEncoding,
                                                   spaceEncoding: spaceEncoding,
                                                   allowedCharacters: allowedCharacters)
@@ -448,9 +460,11 @@ final class URLEncodedFormContext {
 }
 
 enum URLEncodedFormComponent {
+    typealias Object = [(key: String, value: URLEncodedFormComponent)]
+
     case string(String)
     case array([URLEncodedFormComponent])
-    case object([String: URLEncodedFormComponent])
+    case object(Object)
 
     /// Converts self to an `[URLEncodedFormData]` or returns `nil` if not convertible.
     var array: [URLEncodedFormComponent]? {
@@ -460,8 +474,8 @@ enum URLEncodedFormComponent {
         }
     }
 
-    /// Converts self to an `[String: URLEncodedFormData]` or returns `nil` if not convertible.
-    var object: [String: URLEncodedFormComponent]? {
+    /// Converts self to an `Object` or returns `nil` if not convertible.
+    var object: Object? {
         switch self {
         case let .object(object): return object
         default: return nil
@@ -501,7 +515,7 @@ enum URLEncodedFormComponent {
                 }
                 set(&child, to: value, at: Array(path[1...]))
             } else {
-                child = context.object?[end.stringValue] ?? .object([:])
+                child = context.object?.first { $0.key == end.stringValue }?.value ?? .object(.init())
                 set(&child, to: value, at: Array(path[1...]))
             }
         default: fatalError("Unreachable")
@@ -520,10 +534,14 @@ enum URLEncodedFormComponent {
             }
         } else {
             if var object = context.object {
-                object[end.stringValue] = child
+                if let index = object.firstIndex(where: { $0.key == end.stringValue }) {
+                    object[index] = (key: end.stringValue, value: child)
+                } else {
+                    object.append((key: end.stringValue, value: child))
+                }
                 context = .object(object)
             } else {
-                context = .object([end.stringValue: child])
+                context = .object([(key: end.stringValue, value: child)])
             }
         }
     }
@@ -861,27 +879,31 @@ extension _URLEncodedFormEncoder.UnkeyedContainer: UnkeyedEncodingContainer {
 }
 
 final class URLEncodedFormSerializer {
+    private let alphabetizeKeyValuePairs: Bool
     private let arrayEncoding: URLEncodedFormEncoder.ArrayEncoding
     private let keyEncoding: URLEncodedFormEncoder.KeyEncoding
     private let spaceEncoding: URLEncodedFormEncoder.SpaceEncoding
     private let allowedCharacters: CharacterSet
 
-    init(arrayEncoding: URLEncodedFormEncoder.ArrayEncoding,
+    init(alphabetizeKeyValuePairs: Bool,
+         arrayEncoding: URLEncodedFormEncoder.ArrayEncoding,
          keyEncoding: URLEncodedFormEncoder.KeyEncoding,
          spaceEncoding: URLEncodedFormEncoder.SpaceEncoding,
          allowedCharacters: CharacterSet) {
+        self.alphabetizeKeyValuePairs = alphabetizeKeyValuePairs
         self.arrayEncoding = arrayEncoding
         self.keyEncoding = keyEncoding
         self.spaceEncoding = spaceEncoding
         self.allowedCharacters = allowedCharacters
     }
 
-    func serialize(_ object: [String: URLEncodedFormComponent]) -> String {
+    func serialize(_ object: URLEncodedFormComponent.Object) -> String {
         var output: [String] = []
         for (key, component) in object {
             let value = serialize(component, forKey: key)
             output.append(value)
         }
+        output = alphabetizeKeyValuePairs ? output.sorted() : output
 
         return output.joinedWithAmpersands()
     }
@@ -890,24 +912,26 @@ final class URLEncodedFormSerializer {
         switch component {
         case let .string(string): return "\(escape(keyEncoding.encode(key)))=\(escape(string))"
         case let .array(array): return serialize(array, forKey: key)
-        case let .object(dictionary): return serialize(dictionary, forKey: key)
+        case let .object(object): return serialize(object, forKey: key)
         }
     }
 
-    func serialize(_ object: [String: URLEncodedFormComponent], forKey key: String) -> String {
-        let segments: [String] = object.map { subKey, value in
+    func serialize(_ object: URLEncodedFormComponent.Object, forKey key: String) -> String {
+        var segments: [String] = object.map { subKey, value in
             let keyPath = "[\(subKey)]"
             return serialize(value, forKey: key + keyPath)
         }
+        segments = alphabetizeKeyValuePairs ? segments.sorted() : segments
 
         return segments.joinedWithAmpersands()
     }
 
     func serialize(_ array: [URLEncodedFormComponent], forKey key: String) -> String {
-        let segments: [String] = array.map { component in
+        var segments: [String] = array.map { component in
             let keyPath = arrayEncoding.encode(key)
             return serialize(component, forKey: keyPath)
         }
+        segments = alphabetizeKeyValuePairs ? segments.sorted() : segments
 
         return segments.joinedWithAmpersands()
     }
@@ -928,7 +952,7 @@ extension Array where Element == String {
     }
 }
 
-extension CharacterSet {
+public extension CharacterSet {
     /// Creates a CharacterSet from RFC 3986 allowed characters.
     ///
     /// RFC 3986 states that the following characters are "reserved" characters.
@@ -939,7 +963,7 @@ extension CharacterSet {
     /// In RFC 3986 - Section 3.4, it states that the "?" and "/" characters should not be escaped to allow
     /// query strings to include a URL. Therefore, all "reserved" characters with the exception of "?" and "/"
     /// should be percent-escaped in the query string.
-    public static let afURLQueryAllowed: CharacterSet = {
+    static let afURLQueryAllowed: CharacterSet = {
         let generalDelimitersToEncode = ":#[]@" // does not include "?" or "/" due to RFC 3986 - Section 3.4
         let subDelimitersToEncode = "!$&'()*+,;="
         let encodableDelimiters = CharacterSet(charactersIn: "\(generalDelimitersToEncode)\(subDelimitersToEncode)")

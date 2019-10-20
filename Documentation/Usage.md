@@ -7,6 +7,7 @@
       - [`URLEncodedFormParameterEncoder`](#-urlencodedformparameterencoder-)
         * [GET Request With URL-Encoded Parameters](#get-request-with-url-encoded-parameters)
         * [POST Request With URL-Encoded Parameters](#post-request-with-url-encoded-parameters)
+        * [Configuring the Sorting of Encoded Parameters](#configuring-the-sorting-of-encoded-parameters)
         * [Configuring the Encoding of `Array` Parameters](#configuring-the-encoding-of--array--parameters)
         * [Configuring the Encoding of `Bool` Parameters](#configuring-the-encoding-of--bool--parameters)
         * [Configuring the Encoding of `Data` Parameters](#configuring-the-encoding-of--data--parameters)
@@ -206,6 +207,16 @@ AF.request("https://httpbin.org/post", method: .post, parameters: parameters, en
 AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: URLEncodedFormParameterEncoder(destination: .httpBody))
 
 // HTTP body: "qux[]=x&qux[]=y&qux[]=z&baz[]=a&baz[]=b&foo[]=bar"
+```
+
+#### Configuring the Sorting of Encoded Values
+
+Since Swift 4.2, the hashing algorithm used by Swift's `Dictionary` type produces a random internal ordering at runtime which differs between app launches. This can cause encoded parameters to change order, which may have an impact on caching and other behaviors. By default `URLEncodedFormEncoder` will sort its encoded key-value pairs. While this produces constant output for all `Encodable` types, it may not match the actual encoding order implemented by the type. You can set `alphabetizeKeyValuePairs` to return to implementation order, though that will also have the randomized `Dictionary` order as well.
+
+You can create your own `URLEncodedFormParameterEncoder` and specify the desired `alphabetizeKeyValuePairs` in the initializer of the passed `URLEncodedFormEncoder`:
+
+```swift
+let encoder = URLEncodedFormParameterEncoder(encoder: URLEncodedFormEncoder(alphabetizeKeyValuePairs: false))
 ```
 
 ##### Configuring the Encoding of `Array` Parameters
