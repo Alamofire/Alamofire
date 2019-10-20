@@ -1583,13 +1583,15 @@ final class SessionCancellationTestCase: BaseTestCase {
         let cancellation = expectation(description: "cancel all requests should be called")
         let createTask = expectation(description: "should create task twice")
         createTask.expectedFulfillmentCount = 2
+        var tasksCreated = 0
         monitor.requestDidCreateTask = { _, _ in
+            tasksCreated += 1
             createTask.fulfill()
-        }
-        // Cancel when retry starts.
-        monitor.requestIsRetrying = { _ in
-            session.cancelAllRequests {
-                cancellation.fulfill()
+            // Cancel after the second task is created to ensure proper lifetime events.
+            if tasksCreated == 2 {
+                session.cancelAllRequests {
+                    cancellation.fulfill()
+                }
             }
         }
 
