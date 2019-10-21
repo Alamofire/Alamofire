@@ -141,7 +141,6 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
         [Request Body]: \n\(requestBody)
         [Response]: \(responseDescriotion)
         [Response Body]: \n\(responseBody)
-        [Data]: \(data?.description ?? "None")
         [Result]: \(result)
         [Timeline]: \(timeline.debugDescription)
         """
@@ -391,12 +390,12 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
     public var debugDescription: String {     
         let requestDescription = request.map { "\($0.httpMethod ?? "GET") \($0)"} ?? "nil"
         let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
-        let responseDescriotion = response.map { "\($0)" } ?? "nil"
+        let responseDescription = response.map { "\($0)" } ?? "nil"
         
         return """
         [Request]: \(requestDescription)
         [Request Body]: \n\(requestBody)
-        [Response]: \(responseDescriotion)
+        [Response]: \(responseDescription)
         [TemporaryURL]: \(temporaryURL?.path ?? "nil")
         [DestinationURL]: \(destinationURL?.path ?? "nil")
         [ResumeData]: \(resumeData?.count ?? 0) bytes
