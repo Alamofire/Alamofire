@@ -79,8 +79,8 @@ extension SessionDelegate: URLSessionTaskDelegate {
         switch challenge.protectionSpace.authenticationMethod {
         case NSURLAuthenticationMethodServerTrust:
             evaluation = attemptServerTrustAuthentication(with: challenge)
-        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest:
-            evaluation = attemptHTTPAuthentication(for: challenge, belongingTo: task)
+        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM, NSURLAuthenticationMethodNegotiate:
+            evaluation = attemptCredentialAuthentication(for: challenge, belongingTo: task)
         // case NSURLAuthenticationMethodClientCertificate:
         // Alamofire doesn't currently support client certificate validation.
         default:
@@ -121,15 +121,15 @@ extension SessionDelegate: URLSessionTaskDelegate {
         }
     }
 
-    /// Evaluates the HTTP authentication `URLAuthenticationChallenge` received for `task`.
+    /// Evaluates the credential-based authentication `URLAuthenticationChallenge` received for `task`.
     ///
     /// - Parameters:
     ///   - challenge: The `URLAuthenticationChallenge`.
     ///   - task:      The `URLSessionTask` which received the challenge.
     ///
     /// - Returns:     The `ChallengeEvaluation`.
-    func attemptHTTPAuthentication(for challenge: URLAuthenticationChallenge,
-                                   belongingTo task: URLSessionTask) -> ChallengeEvaluation {
+    func attemptCredentialAuthentication(for challenge: URLAuthenticationChallenge,
+                                         belongingTo task: URLSessionTask) -> ChallengeEvaluation {
         guard challenge.previousFailureCount == 0 else {
             return (.rejectProtectionSpace, nil, nil)
         }
