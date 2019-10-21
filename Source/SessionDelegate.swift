@@ -129,7 +129,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     ///
     /// - Returns:     The `ChallengeEvaluation`.
     func attemptCredentialAuthentication(for challenge: URLAuthenticationChallenge,
-                                   belongingTo task: URLSessionTask) -> ChallengeEvaluation {
+                                         belongingTo task: URLSessionTask) -> ChallengeEvaluation {
         guard challenge.previousFailureCount == 0 else {
             return (.rejectProtectionSpace, nil, nil)
         }
