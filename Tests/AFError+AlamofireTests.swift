@@ -355,6 +355,11 @@ extension AFError.ServerTrustFailureReason {
         return false
     }
 
+    var isTrustEvaluationFailed: Bool {
+        if case .trustEvaluationFailed = self { return true }
+        return false
+    }
+
     var isDefaultEvaluationFailed: Bool {
         if case .defaultEvaluationFailed = self { return true }
         return false

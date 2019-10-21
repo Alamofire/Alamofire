@@ -178,8 +178,12 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
             try trust.af.performValidation(forHost: host)
         }
 
-        try trust.af.validate(policy: SecPolicy.af.revocation(options: options)) { status, result in
-            AFError.serverTrustEvaluationFailed(reason: .revocationCheckFailed(output: .init(host, trust, status, result), options: options))
+        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+            try trust.af.evaluate(afterApplying: SecPolicy.af.revocation(options: options))
+        } else {
+            try trust.af.validate(policy: SecPolicy.af.revocation(options: options)) { status, result in
+                AFError.serverTrustEvaluationFailed(reason: .revocationCheckFailed(output: .init(host, trust, status, result), options: options))
+            }
         }
     }
 }
@@ -389,12 +393,26 @@ public extension AlamofireExtension where ExtendedType: Bundle {
 
 extension SecTrust: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == SecTrust {
-    /// Attempts to validate `self` using the policy provided and transforming any error produced using the closure passed.
+    /// Evaluates `self` after applying the `SecPolicy` value provided.
+    ///
+    /// - Parameter policy: The `SecPolicy` to apply to `self` before evaluation.
+    ///
+    /// - Throws:           Any `Error` from applying the `SecPolicy` or from evaluation.
+    @available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)
+    func evaluate(afterApplying policy: SecPolicy) throws {
+        try apply(policy: policy).af.evaluate()
+    }
+
+    /// Attempts to validate `self` using the `SecPolicy` provided and transforming any error produced using the closure passed.
     ///
     /// - Parameters:
     ///   - policy:        The `SecPolicy` used to evaluate `self`.
     ///   - errorProducer: The closure used transform the failed `OSStatus` and `SecTrustResultType`.
-    /// - Throws:          Any error from applying the `policy`, or the result of `errorProducer` if validation fails.
+    /// - Throws:          Any `Error` from applying the `policy`, or the result of `errorProducer` if validation fails.
+    @available(iOS, introduced: 10, deprecated: 12, renamed: "evaluate(afterApplying:)")
+    @available(macOS, introduced: 10.12, deprecated: 10.14, renamed: "evaluate(afterApplying:)")
+    @available(tvOS, introduced: 10, deprecated: 12, renamed: "evaluate(afterApplying:)")
+    @available(watchOS, introduced: 3, deprecated: 5, renamed: "evaluate(afterApplying:)")
     func validate(policy: SecPolicy, errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> Error) throws {
         try apply(policy: policy).af.validate(errorProducer: errorProducer)
     }
@@ -417,11 +435,29 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
         return type
     }
 
+    /// Evaluate `self`, throwing an `Error` if evaluation fails.
+    ///
+    /// - Throws: `AFError.serverTrustEvaluationFailed` with reason `.trustValidationFailed` and associated error from
+    ///           the underlying evaluation.
+    @available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)
+    func evaluate() throws {
+        var error: CFError?
+        let evaluationSucceeded = SecTrustEvaluateWithError(type, &error)
+
+        if !evaluationSucceeded {
+            throw AFError.serverTrustEvaluationFailed(reason: .trustEvaluationFailed(error: error))
+        }
+    }
+
     /// Validate `self`, passing any failure values through `errorProducer`.
     ///
     /// - Parameter errorProducer: The closure used to transform the failed `OSStatus` and `SecTrustResultType` into an
     ///                            `Error`.
     /// - Throws:                  The `Error` produced by the `errorProducer` closure.
+    @available(iOS, introduced: 10, deprecated: 12, renamed: "evaluate()")
+    @available(macOS, introduced: 10.12, deprecated: 10.14, renamed: "evaluate()")
+    @available(tvOS, introduced: 10, deprecated: 12, renamed: "evaluate()")
+    @available(watchOS, introduced: 3, deprecated: 5, renamed: "evaluate()")
     func validate(errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> Error) throws {
         var result = SecTrustResultType.invalid
         let status = SecTrustEvaluate(type, &result)
@@ -473,8 +509,12 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
     /// - Parameter host: The hostname, used only in the error output if validation fails.
     /// - Throws: An `AFError.serverTrustEvaluationFailed` instance with a `.defaultEvaluationFailed` reason.
     func performDefaultValidation(forHost host: String) throws {
-        try validate(policy: SecPolicy.af.default) { status, result in
-            AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, type, status, result)))
+        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+            try evaluate(afterApplying: SecPolicy.af.default)
+        } else {
+            try validate(policy: SecPolicy.af.default) { status, result in
+                AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, type, status, result)))
+            }
         }
     }
 
@@ -484,8 +524,12 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
     /// - Parameter host: The hostname to use in the validation.
     /// - Throws:         An `AFError.serverTrustEvaluationFailed` instance with a `.defaultEvaluationFailed` reason.
     func performValidation(forHost host: String) throws {
-        try validate(policy: SecPolicy.af.hostname(host)) { status, result in
-            AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, type, status, result)))
+        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+            try evaluate(afterApplying: SecPolicy.af.hostname(host))
+        } else {
+            try validate(policy: SecPolicy.af.hostname(host)) { status, result in
+                AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, type, status, result)))
+            }
         }
     }
 }

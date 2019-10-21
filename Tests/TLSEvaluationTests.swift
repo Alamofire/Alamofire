@@ -146,7 +146,11 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
         if case let .serverTrustEvaluationFailed(reason)? = error {
-            XCTAssertTrue(reason.isHostValidationFailed, "should be .hostValidationFailed")
+            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
+            } else {
+                XCTAssertTrue(reason.isHostValidationFailed, "should be .hostValidationFailed")
+            }
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
         }
@@ -212,7 +216,11 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
         if case let .serverTrustEvaluationFailed(reason)? = error {
-            XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
+            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
+            } else {
+                XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
+            }
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
         }
@@ -244,9 +252,13 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
         if case let .serverTrustEvaluationFailed(reason)? = error {
-            // Test seems flaky and can result in either of these failures, perhaps due to the OS actually checking?
-            XCTAssertTrue(reason.isDefaultEvaluationFailed || reason.isRevocationCheckFailed,
-                          "should be .defaultEvaluationFailed or .revocationCheckFailed")
+            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
+            } else {
+                // Test seems flaky and can result in either of these failures, perhaps due to the OS actually checking?
+                XCTAssertTrue(reason.isDefaultEvaluationFailed || reason.isRevocationCheckFailed,
+                              "should be .defaultEvaluationFailed or .revocationCheckFailed")
+            }
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
         }
@@ -279,7 +291,11 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
         if case let .serverTrustEvaluationFailed(reason)? = error {
-            XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
+            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
+            } else {
+                XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
+            }
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
         }
@@ -314,7 +330,11 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
         if case let .serverTrustEvaluationFailed(reason)? = error {
-            XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
+            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
+            } else {
+                XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
+            }
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
         }
@@ -423,7 +443,11 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
         if case let .serverTrustEvaluationFailed(reason)? = error {
-            XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
+            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
+            } else {
+                XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
+            }
         } else {
             XCTFail("error should be .serverTrustEvaluationFailed")
         }

@@ -154,6 +154,8 @@ public enum AFError: Error {
         case settingAnchorCertificatesFailed(status: OSStatus, certificates: [SecCertificate])
         /// During evaluation, creation of the revocation policy failed.
         case revocationPolicyCreationFailed
+        /// `SecTrust` evaluation failed with the associated `Error`, if one was produced.
+        case trustEvaluationFailed(error: Error?)
         /// Default evaluation failed with the associated `Output`.
         case defaultEvaluationFailed(output: Output)
         /// Host validation failed with the associated `Output`.
@@ -597,6 +599,7 @@ extension AFError.ServerTrustFailureReason {
              .policyApplicationFailed,
              .settingAnchorCertificatesFailed,
              .revocationPolicyCreationFailed,
+             .trustEvaluationFailed,
              .certificatePinningFailed,
              .publicKeyPinningFailed,
              .customEvaluationFailed:
@@ -607,6 +610,8 @@ extension AFError.ServerTrustFailureReason {
     var underlyingError: Error? {
         switch self {
         case let .customEvaluationFailed(error):
+            return error
+        case let .trustEvaluationFailed(error):
             return error
         case .noRequiredEvaluator,
              .noCertificatesFound,
@@ -657,8 +662,8 @@ extension AFError: LocalizedError {
             """
         case let .sessionInvalidated(error):
             return "Session was invalidated with error: \(error?.localizedDescription ?? "No description.")"
-        case .serverTrustEvaluationFailed:
-            return "Server trust evaluation failed."
+        case let .serverTrustEvaluationFailed(reason):
+            return "Server trust evaluation failed due to reason: \(reason.localizedDescription)"
         case let .urlRequestValidationFailed(reason):
             return "URLRequest validation failed due to reason: \(reason.localizedDescription)"
         case let .createUploadableFailed(error):
@@ -804,6 +809,8 @@ extension AFError.ServerTrustFailureReason {
             return "Attempting to set the provided certificates as anchor certificates failed."
         case .revocationPolicyCreationFailed:
             return "Attempting to create a revocation policy failed."
+        case let .trustEvaluationFailed(error):
+            return "SecTrust evaluation failed with error: \(error?.localizedDescription ?? "None")"
         case let .defaultEvaluationFailed(output):
             return "Default evaluation failed for host \(output.host)."
         case let .hostValidationFailed(output):
