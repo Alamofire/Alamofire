@@ -133,13 +133,13 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
     public var debugDescription: String {
         let requestDescription = request.map { "\($0.httpMethod ?? "GET") \($0)"} ?? "nil"
         let requestBody = request?.httpBody.map { String(decoding: $0, as: UTF8.self) } ?? "None"
-        let responseDescriotion = response.map { "\($0)" } ?? "nil"
+        let responseDescription = response.map { "\($0)" } ?? "nil"
         let responseBody = data.map { String(decoding: $0, as: UTF8.self) } ?? "None"
         
         return """
         [Request]: \(requestDescription)
         [Request Body]: \n\(requestBody)
-        [Response]: \(responseDescriotion)
+        [Response]: \(responseDescription)
         [Response Body]: \n\(responseBody)
         [Result]: \(result)
         [Timeline]: \(timeline.debugDescription)
