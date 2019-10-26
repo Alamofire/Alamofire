@@ -281,13 +281,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/NetworkReachabilityManager.swift",
-      "line": 136,
-      "symbol": "NetworkReachabilityManager.deinit",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/ParameterEncoding.swift",
       "line": 31,
       "symbol": "HTTPMethod.options",
@@ -467,13 +460,6 @@
       "line": 41,
       "symbol": "SessionManager.MultipartFormDataEncodingResult.failure(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionManager.swift",
-      "line": 209,
-      "symbol": "SessionManager.deinit",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
