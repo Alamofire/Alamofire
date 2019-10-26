@@ -57,8 +57,8 @@ In order to keep Alamofire focused specifically on core networking implementatio
 ## Requirements
 
 - iOS 8.0+ / macOS 10.10+ / tvOS 9.0+ / watchOS 2.0+
-- Xcode 8.3+
-- Swift 3.1+
+- Xcode 9.3+
+- Swift 4.0+
 
 ## Migration Guides
 
@@ -129,19 +129,11 @@ The [Swift Package Manager](https://swift.org/package-manager/) is a tool for au
 
 Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift`.
 
-#### Swift 3
-
-```swift
-dependencies: [
-    .Package(url: "https://github.com/Alamofire/Alamofire.git", majorVersion: 4)
-]
-```
-
 #### Swift 4
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Alamofire/Alamofire.git", from: "4.9.0")
+    .package(url: "https://github.com/Alamofire/Alamofire.git", from: "4.9")
 ]
 ```
 
