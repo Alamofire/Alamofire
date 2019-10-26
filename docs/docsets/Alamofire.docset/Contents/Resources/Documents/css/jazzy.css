@@ -63,6 +63,10 @@ a {
   a:hover, a:focus {
     outline: 0;
     text-decoration: underline; }
+  a.discouraged {
+    text-decoration: line-through; }
+    a.discouraged:hover, a.discouraged:focus {
+      text-decoration: underline line-through; }
 
 table {
   background: #fff;
@@ -225,7 +229,7 @@ pre code {
   .item a[name]:before {
     content: "";
     display: block; }
-  .item .token {
+  .item .token, .item .direct-link {
     padding-left: 3px;
     margin-left: 0px;
     font-size: 1rem; }
@@ -287,9 +291,9 @@ pre code {
   .language .aside-title {
     color: #4183c4; }
 
-.aside-warning {
+.aside-warning, .aside-deprecated, .aside-unavailable {
   border-left: 5px solid #ff6666; }
-  .aside-warning .aside-title {
+  .aside-warning .aside-title, .aside-deprecated .aside-title, .aside-unavailable .aside-title {
     color: #ff0000; }
 
 .graybox {
@@ -325,6 +329,7 @@ pre code {
 
 html.dash .header, html.dash .breadcrumbs, html.dash .navigation {
   display: none; }
+
 html.dash .height-container {
   display: block; }
 
@@ -338,14 +343,17 @@ form[role=search] input {
   border-radius: 1em; }
   .loading form[role=search] input {
     background: white url(../img/spinner.gif) center right 4px no-repeat; }
+
 form[role=search] .tt-menu {
   margin: 0;
   min-width: 300px;
   background: #fbfbfb;
   color: #333;
   border: 1px solid #ddd; }
+
 form[role=search] .tt-highlight {
   font-weight: bold; }
+
 form[role=search] .tt-suggestion {
   font: 16px/1.7 "Helvetica Neue", Helvetica, Arial, sans-serif;
   padding: 0 8px; }
@@ -358,11 +366,13 @@ form[role=search] .tt-suggestion {
     font-weight: normal;
     font-size: 0.9em;
     padding-left: 16px; }
+
 form[role=search] .tt-suggestion:hover,
 form[role=search] .tt-suggestion.tt-cursor {
   cursor: pointer;
   background-color: #4183c4;
   color: #fff; }
+
 form[role=search] .tt-suggestion:hover .doc-parent-name,
 form[role=search] .tt-suggestion.tt-cursor .doc-parent-name {
   color: #fff; }
