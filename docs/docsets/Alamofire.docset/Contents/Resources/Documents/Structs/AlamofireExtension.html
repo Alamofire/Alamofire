@@ -560,6 +560,58 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8evaluate13afterApplyingySo0c6PolicyE0a_tKF"></a>
+                    <a name="//apple_ref/swift/Method/evaluate(afterApplying:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8evaluate13afterApplyingySo0c6PolicyE0a_tKF">evaluate(afterApplying:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Evaluates <code>self</code> after applying the <code>SecPolicy</code> value provided.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <p>Any <code>Error</code> from applying the <code>SecPolicy</code> or from evaluation.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS 12, OSX 10.14, tvOS 12, watchOS 5, *)</span>
+<span class="kd">func</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">afterApplying</span> <span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>policy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>SecPolicy</code> to apply to <code>self</code> before evaluation.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8validate6policy13errorProducerySo0c6PolicyE0a_s5Error_ps5Int32V_So0cD10ResultTypeVtXEtKF"></a>
                     <a name="//apple_ref/swift/Method/validate(policy:errorProducer:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8validate6policy13errorProducerySo0c6PolicyE0a_s5Error_ps5Int32V_So0cD10ResultTypeVtXEtKF">validate(policy:errorProducer:)</a>
@@ -570,10 +622,10 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Attempts to validate <code>self</code> using the policy provided and transforming any error produced using the closure passed.</p>
+                        <p>Attempts to validate <code>self</code> using the <code>SecPolicy</code> provided and transforming any error produced using the closure passed.</p>
 <div class="aside aside-throws">
     <p class="aside-title">Throws</p>
-    Any error from applying the <code>policy</code>, or the result of <code>errorProducer</code> if validation fails.
+    Any <code>Error</code> from applying the <code>policy</code>, or the result of <code>errorProducer</code> if validation fails.
 
 </div>
 
@@ -582,7 +634,11 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">,</span> <span class="nv">errorProducer</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">OSStatus</span><span class="p">,</span> <span class="n">_</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">SecTrustResultType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS, introduced: 10, deprecated: 12, renamed: "evaluate(afterApplying:﹚")</span>
+<span class="kd">@available(OSX, introduced: 10.12, deprecated: 10.14, renamed: "evaluate(afterApplying:﹚")</span>
+<span class="kd">@available(tvOS, introduced: 10, deprecated: 12, renamed: "evaluate(afterApplying:﹚")</span>
+<span class="kd">@available(watchOS, introduced: 3, deprecated: 5, renamed: "evaluate(afterApplying:﹚")</span>
+<span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">policy</span><span class="p">:</span> <span class="kt">SecPolicy</span><span class="p">,</span> <span class="nv">errorProducer</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">OSStatus</span><span class="p">,</span> <span class="n">_</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">SecTrustResultType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -678,6 +734,40 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8evaluateyyKF"></a>
+                    <a name="//apple_ref/swift/Method/evaluate()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8evaluateyyKF">evaluate()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Evaluate <code>self</code>, throwing an <code>Error</code> if evaluation fails.</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code>AFError.serverTrustEvaluationFailed</code> with reason <code>.trustValidationFailed</code> and associated error from
+      the underlying evaluation.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS 12, OSX 10.14, tvOS 12, watchOS 5, *)</span>
+<span class="kd">func</span> <span class="nf">evaluate</span><span class="p">()</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8validate13errorProducerys5Error_ps5Int32V_So0cD10ResultTypeVtXE_tKF"></a>
                     <a name="//apple_ref/swift/Method/validate(errorProducer:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire0A9ExtensionVAASo11SecTrustRefaRszlE8validate13errorProducerys5Error_ps5Int32V_So0cD10ResultTypeVtXE_tKF">validate(errorProducer:)</a>
@@ -700,7 +790,11 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">errorProducer</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">OSStatus</span><span class="p">,</span> <span class="n">_</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">SecTrustResultType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(iOS, introduced: 10, deprecated: 12, renamed: "evaluate(﹚")</span>
+<span class="kd">@available(OSX, introduced: 10.12, deprecated: 10.14, renamed: "evaluate(﹚")</span>
+<span class="kd">@available(tvOS, introduced: 10, deprecated: 12, renamed: "evaluate(﹚")</span>
+<span class="kd">@available(watchOS, introduced: 3, deprecated: 5, renamed: "evaluate(﹚")</span>
+<span class="kd">func</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">errorProducer</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">status</span><span class="p">:</span> <span class="kt">OSStatus</span><span class="p">,</span> <span class="n">_</span> <span class="nv">result</span><span class="p">:</span> <span class="kt">SecTrustResultType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Error</span><span class="p">)</span> <span class="k">throws</span></code></pre>
 
                         </div>
                       </div>
@@ -1325,8 +1419,8 @@ hostname validation.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-09-08)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-10-26)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

@@ -653,6 +653,40 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC24alphabetizeKeyValuePairsSbvp"></a>
+                    <a name="//apple_ref/swift/Property/alphabetizeKeyValuePairs" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC24alphabetizeKeyValuePairsSbvp">alphabetizeKeyValuePairs</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Whether or not to sort the encoded key value pairs.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    This setting ensures a consistent ordering for all encodings of the same parameters. When set to <code>false</code>,
+    encoded <code>Dictionary</code> values may have a different encoded order each time they&rsquo;re encoded due to
+  <code>Dictionary</code>&lsquo;s random storage order, but <code>Encodable</code> types will maintain their encoded order.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">alphabetizeKeyValuePairs</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire21URLEncodedFormEncoderC13arrayEncodingAC05ArrayF0Ovp"></a>
                     <a name="//apple_ref/swift/Property/arrayEncoding" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC13arrayEncodingAC05ArrayF0Ovp">arrayEncoding</a>
@@ -842,9 +876,9 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9Alamofire21URLEncodedFormEncoderC13arrayEncoding04boolF004dataF004dateF003keyF005spaceF017allowedCharactersA2C05ArrayF0O_AC04BoolF0OAC04DataF0OAC04DateF0OAC03KeyF0OAC05SpaceF0O10Foundation12CharacterSetVtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(arrayEncoding:boolEncoding:dataEncoding:dateEncoding:keyEncoding:spaceEncoding:allowedCharacters:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC13arrayEncoding04boolF004dataF004dateF003keyF005spaceF017allowedCharactersA2C05ArrayF0O_AC04BoolF0OAC04DataF0OAC04DateF0OAC03KeyF0OAC05SpaceF0O10Foundation12CharacterSetVtcfc">init(arrayEncoding:boolEncoding:dataEncoding:dateEncoding:keyEncoding:spaceEncoding:allowedCharacters:)</a>
+                    <a name="/s:9Alamofire21URLEncodedFormEncoderC24alphabetizeKeyValuePairs13arrayEncoding04boolJ004dataJ004dateJ003keyJ005spaceJ017allowedCharactersACSb_AC05ArrayJ0OAC04BoolJ0OAC04DataJ0OAC04DateJ0OAC0fJ0OAC05SpaceJ0O10Foundation12CharacterSetVtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(alphabetizeKeyValuePairs:arrayEncoding:boolEncoding:dataEncoding:dateEncoding:keyEncoding:spaceEncoding:allowedCharacters:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire21URLEncodedFormEncoderC24alphabetizeKeyValuePairs13arrayEncoding04boolJ004dataJ004dateJ003keyJ005spaceJ017allowedCharactersACSb_AC05ArrayJ0OAC04BoolJ0OAC04DataJ0OAC04DateJ0OAC0fJ0OAC05SpaceJ0O10Foundation12CharacterSetVtcfc">init(alphabetizeKeyValuePairs:arrayEncoding:boolEncoding:dataEncoding:dateEncoding:keyEncoding:spaceEncoding:allowedCharacters:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -859,7 +893,8 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">arrayEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">ArrayEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">brackets</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">alphabetizeKeyValuePairs</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nv">arrayEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/ArrayEncoding.html">ArrayEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">brackets</span><span class="p">,</span>
             <span class="nv">boolEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/BoolEncoding.html">BoolEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">numeric</span><span class="p">,</span>
             <span class="nv">dataEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/DataEncoding.html">DataEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">base64</span><span class="p">,</span>
             <span class="nv">dateEncoding</span><span class="p">:</span> <span class="kt"><a href="../Classes/URLEncodedFormEncoder/DateEncoding.html">DateEncoding</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">deferredToDate</span><span class="p">,</span>
@@ -873,6 +908,18 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
                         <h4>Parameters</h4>
                         <table class="graybox">
                           <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>alphabetizeKeyValuePairs</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether or not to sort the encoded key value pairs. <code>true</code> by default.</p>
+                                </div>
+                              </td>
+                            </tr>
                             <tr>
                               <td>
                                 <code>
@@ -953,7 +1000,8 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code>CharacterSet</code> of allowed (non-escaped) characters. <code>.afURLQueryAllowed</code> by default.</p>
+                                  <p>The <code>CharacterSet</code> of allowed (non-escaped) characters. <code>.afURLQueryAllowed</code> by
+                      default.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1082,8 +1130,8 @@ and <a href="https://github.com/MaxDesiatov/XMLCoder/blob/master/Sources/XMLCode
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-09-08)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-10-26)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
