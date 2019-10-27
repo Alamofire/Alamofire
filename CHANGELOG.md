@@ -3,11 +3,11 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2)
+- `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2) | [5.0.0-rc.3](#500-rc3)
 - `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4) | [5.0.0-beta.5](#500-beta5) | [5.0.0-beta.6](#500-beta6) | [5.0.0-beta.7](#500-beta7)
 
 #### 4.x Releases
-- `4.9.x` Releases - [4.9.0](#490)
+- `4.9.x` Releases - [4.9.0](#490) | [4.9.1](#491)
 - `4.8.x` Releases - [4.8.0](#480) | [4.8.1](#481) | [4.8.2](#482)
 - `4.7.x` Releases - [4.7.0](#470) | [4.7.1](#471) | [4.7.2](#472) | [4.7.3](#473)
 - `4.6.x` Releases - [4.6.0](#460)
@@ -39,6 +39,25 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.0.0-rc.3](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-rc.3)
+Released on 2019-10-26. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/62?closed=1). **Note:** Alamofire 5 is now API stable.
+
+#### Updated
+- Automatic `resume()` behavior to be called after the first response handler is added instead of immediately after task creation.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#2965](https://github.com/Alamofire/Alamofire/pull/2965).
+
+#### Fixed
+- Incorrect header convenience method in Usage documentation.
+  - Fixed by [Sebastian](https://github.com/Buesing-Sebastian) in Pull Request [#2952](https://github.com/Alamofire/Alamofire/pull/2952).
+- Unstable parameter ordering in `URLEncodedFormEncoder`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2961](https://github.com/Alamofire/Alamofire/pull/2961).
+- Xcode build issues and precompiled binary build issues by removing the dynamic bundle identifier.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2966](https://github.com/Alamofire/Alamofire/pull/2966).
+- Build warnings for deprecated `SecTrust` API when building for Catalyst.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2977](https://github.com/Alamofire/Alamofire/pull/2977).
+- Regression from Alamofire 4 causing Alamofire to reject NTLM and Negotiate authentication methods.
+  - Fixed by [Adrian Kashivskyy](https://github.com/akashivskyy) in Pull Request [#2975](https://github.com/Alamofire/Alamofire/pull/2975).
 
 ## [5.0.0-rc.2](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-rc.2)
 Released on 2019-09-08. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/59?closed=1). **Note:** Alamofire 5 is now API stable.
@@ -285,6 +304,23 @@ Released on 2018-12-06. All issues associated with this milestone can be found u
   - Removed by [Jon Shier](https://github.com/jshier) in Pull Request [#2521](https://github.com/Alamofire/Alamofire/pull/2521).
 
 ---
+
+## [4.9.1](https://github.com/Alamofire/Alamofire/releases/tag/4.9.1)
+Released on 2019-10-26. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/61?closed=1).
+
+#### Added
+- Support for GitHub Actions for CI.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#2979](https://github.com/Alamofire/Alamofire/pull/2979).
+
+#### Updated
+- `DataResponse` and `DownloadResponse` `debugDescription` to include more useful information.
+  - Updated by [rain2540](https://github.com/rain2540) in Pull Request [#2976](https://github.com/Alamofire/Alamofire/pull/2976).
+
+#### Fixed
+- Dynamic bundle identifier causing issues with Xcode and precompiled binaries by removing the dynamic behavior.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2967](https://github.com/Alamofire/Alamofire/pull/2967).
+- Compiler warnings when building for Catalyst by updating the usage of deprecated API.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#2979](https://github.com/Alamofire/Alamofire/pull/2979).
 
 ## [4.9.0](https://github.com/Alamofire/Alamofire/releases/tag/4.9.0)
 Released on 2019-09-03. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/issues?utf8=✓&q=milestone%3A4.9.0).
