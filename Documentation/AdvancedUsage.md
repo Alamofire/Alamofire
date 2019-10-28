@@ -1,27 +1,27 @@
 ## Advanced Usage
 
-Alamofire is built on `URLSession` and the Foundation URL Loading System. To make the most of this framework, it is recommended that you be familiar with the concepts and capabilities of the underlying networking stack.
+Alamofire is built on top of `URLSession` and the Foundation URL Loading System. To make the most of this framework, it is recommended that you be familiar with the concepts and capabilities of the underlying networking stack.
 
 **Recommended Reading**
 
 - [URL Loading System Programming Guide](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/URLLoadingSystem/URLLoadingSystem.html)
-- [URLSession Class Reference](https://developer.apple.com/reference/foundation/nsurlsession)
-- [URLCache Class Reference](https://developer.apple.com/reference/foundation/urlcache)
-- [URLAuthenticationChallenge Class Reference](https://developer.apple.com/reference/foundation/urlauthenticationchallenge)
+- [`URLSession` Class Reference](https://developer.apple.com/reference/foundation/urlsession)
+- [`URLCache` Class Reference](https://developer.apple.com/reference/foundation/urlcache)
+- [`URLAuthenticationChallenge` Class Reference](https://developer.apple.com/reference/foundation/urlauthenticationchallenge)
 
-### Session Manager
+### Session
 
 Top-level convenience methods like `Alamofire.request` use a default instance of `Alamofire.SessionManager`, which is configured with the default `URLSessionConfiguration`.
 
 As such, the following two statements are equivalent:
 
 ```swift
-Alamofire.request("https://httpbin.org/get")
+AF.request("https://httpbin.org/get")
 ```
 
 ```swift
-let sessionManager = Alamofire.SessionManager.default
-sessionManager.request("https://httpbin.org/get")
+let session = Session.default
+session.request("https://httpbin.org/get")
 ```
 
 Applications can create session managers for background and ephemeral sessions, as well as new managers that customize the default session configuration, such as for default headers (`httpAdditionalHeaders`) or timeout interval (`timeoutIntervalForRequest`).
