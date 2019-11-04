@@ -1,4 +1,4 @@
-## Advanced Usage
+# Advanced Usage
 
 Alamofire is built on top of `URLSession` and the Foundation URL Loading System. To make the most of this framework, it is recommended that you be familiar with the concepts and capabilities of the underlying networking stack.
 
@@ -6,133 +6,98 @@ Alamofire is built on top of `URLSession` and the Foundation URL Loading System.
 
 - [URL Loading System Programming Guide](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/URLLoadingSystem/URLLoadingSystem.html)
 - [`URLSession` Class Reference](https://developer.apple.com/reference/foundation/urlsession)
-- [`URLCache` Class Reference](https://developer.apple.com/reference/foundation/urlcache)
+### - [`URLCache` Class Reference](https://developer.apple.com/reference/foundation/urlcache)
 - [`URLAuthenticationChallenge` Class Reference](https://developer.apple.com/reference/foundation/urlauthenticationchallenge)
 
-### Session
+## `Session`
 
-Top-level convenience methods like `Alamofire.request` use a default instance of `Alamofire.SessionManager`, which is configured with the default `URLSessionConfiguration`.
+Alamofire’s `Session` is roughly equivalent in responsibility to the `URLSession` instance it maintains: it provides API to produce the various `Request` subclasses encapsulating different `URLSessionTask` subclasses, as well as encapsulating a variety of configuration applied to all `Request`s produced by the instance.
 
-As such, the following two statements are equivalent:
+`Session` provides a `default` singleton instance which powers the top-level API from the `AF` enum namespace. As such, the following two statements are equivalent:
 
 ```swift
 AF.request("https://httpbin.org/get")
 ```
 
 ```swift
-let session = Session.default
+let session = Session.af.default
 session.request("https://httpbin.org/get")
 ```
 
-Applications can create session managers for background and ephemeral sessions, as well as new managers that customize the default session configuration, such as for default headers (`httpAdditionalHeaders`) or timeout interval (`timeoutIntervalForRequest`).
+### Creating Custom `Session` Instances
 
-#### Creating a Session Manager with Default Configuration
-
-```swift
-let configuration = URLSessionConfiguration.default
-let sessionManager = Alamofire.SessionManager(configuration: configuration)
-```
-
-#### Creating a Session Manager with Background Configuration
+Most applications will need to customize the behavior of their `Session` instances in a variety of ways. The easiest way to accomplish this is to use the following convenience initializer and store the result in a singleton used throughout the app.
 
 ```swift
-let configuration = URLSessionConfiguration.background(withIdentifier: "com.example.app.background")
-let sessionManager = Alamofire.SessionManager(configuration: configuration)
+    public convenience init(configuration: URLSessionConfiguration = URLSessionConfiguration.af.default,
+                            delegate: SessionDelegate = SessionDelegate(),
+                            rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.session.rootQueue"),
+                            startRequestsImmediately: Bool = true,
+                            requestQueue: DispatchQueue? = nil,
+                            serializationQueue: DispatchQueue? = nil,
+                            interceptor: RequestInterceptor? = nil,
+                            serverTrustManager: ServerTrustManager? = nil,
+                            redirectHandler: RedirectHandler? = nil,
+                            cachedResponseHandler: CachedResponseHandler? = nil,
+                            eventMonitors: [EventMonitor] = [])
 ```
 
-#### Creating a Session Manager with Ephemeral Configuration
+This initializer allows the customization of all fundamental `Session` behaviors, including that of the underlying `URLSession`.
+
+#### Creating a `Session` With a `URLSessionConfiguration`
+
+To customize the behavior of the underlying `URLSesion`, a customized `URLSessionConfiguration` instance can be provided. Starting from the `URLSession.af.default` instance is recommended, as it adds the default `Accept-Encoding`, `Accept-Language`, and `User-Agent` headers provided by Alamofire, but any `URLSessionConfiguration` can be used.
 
 ```swift
-let configuration = URLSessionConfiguration.ephemeral
-let sessionManager = Alamofire.SessionManager(configuration: configuration)
+let configuration = URLSessionConfiguration.af.default
+configuration.allowsCellularAccess = false
+
+let session = Session(configuration: configuration)
 ```
 
-#### Modifying the Session Configuration
+> `URLSessionConfiguration` is **not** the recommended location to set `Authorization` or `Content-Type` headers. Instead, add them to `Request`s using the provided `headers` APIs, using `ParameterEncoder`s, or a `RequestAdapter`.
 
-```swift
-var defaultHeaders = Alamofire.SessionManager.defaultHTTPHeaders
-defaultHeaders["DNT"] = "1 (Do Not Track Enabled)"
-
-let configuration = URLSessionConfiguration.default
-configuration.httpAdditionalHeaders = defaultHeaders
-
-let sessionManager = Alamofire.SessionManager(configuration: configuration)
-```
-
-> This is **not** recommended for `Authorization` or `Content-Type` headers. Instead, use the `headers` parameter in the top-level `Alamofire.request` APIs, `URLRequestConvertible` and `ParameterEncoding`, respectively.
+> As Apple states in their [documentation](https://developer.apple.com/documentation/foundation/urlsessionconfiguration), mutating `URLSessionConfiguration` properties after the instance has been added to a `URLSession`, or used to initialize an Alamofire `Session`, has no effect.
 
 ### Session Delegate
 
-By default, an Alamofire `SessionManager` instance creates a `SessionDelegate` object to handle all the various types of delegate callbacks that are generated by the underlying `URLSession`. The implementations of each delegate method handle the most common use cases for these types of calls abstracting the complexity away from the top-level APIs. However, advanced users may find the need to override the default functionality for various reasons.
+### `startRequestsImmediately`
 
-#### Override Closures
-
-The first way to customize the `SessionDelegate` behavior is through the use of the override closures. Each closure gives you the ability to override the implementation of the matching `SessionDelegate` API, yet still use the default implementation for all other APIs. This makes it easy to customize subsets of the delegate functionality. Here are a few examples of some of the override closures available:
+By default, `Session` will call `resume()` on all `Request`s as soon as they’ve add at least one response handler. Setting it to `false` requires that all `Request`s have `resume()` called manually.
 
 ```swift
-/// Overrides default behavior for URLSessionDelegate method `urlSession(_:didReceive:completionHandler:)`.
-open var sessionDidReceiveChallenge: ((URLSession, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))?
-
-/// Overrides default behavior for URLSessionDelegate method `urlSessionDidFinishEvents(forBackgroundURLSession:)`.
-open var sessionDidFinishEventsForBackgroundURLSession: ((URLSession) -> Void)?
-
-/// Overrides default behavior for URLSessionTaskDelegate method `urlSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)`.
-open var taskWillPerformHTTPRedirection: ((URLSession, URLSessionTask, HTTPURLResponse, URLRequest) -> URLRequest?)?
-
-/// Overrides default behavior for URLSessionDataDelegate method `urlSession(_:dataTask:willCacheResponse:completionHandler:)`.
-open var dataTaskWillCacheResponse: ((URLSession, URLSessionDataTask, CachedURLResponse) -> CachedURLResponse?)?
+let session = Session(startRequestsImmediately: false)
 ```
 
-The following is a short example of how to use the `taskWillPerformHTTPRedirection` to avoid following redirects to any `apple.com` domains.
+### `Session`’s `DispatchQueue`s
+
+By default, `Session` instances use a single `DispatchQueue` for all asynchronous work, including as the `underlyingQueue` of the `URLSession`’s `delegate` `OperationQueue`, for all `URLRequest` creation, all response serialization work, and all internal `Session` and `Request` state mutation. If performance analysis show a particular bottleneck around `URLRequest` creation or response serialization, `Session` can be provided with separate `DispatchQueue`s for each area of work.
 
 ```swift
-let sessionManager = Alamofire.SessionManager(configuration: URLSessionConfiguration.default)
-let delegate: Alamofire.SessionDelegate = sessionManager.delegate
+let rootQueue = DispatchQueue("com.app.session.rootQueue")
+let requestQueue = DispatchQueue("com.app.session.requestQueue")
+let serializationQueue = DispatchQueue("com.app.session.serializationQueue")
 
-delegate.taskWillPerformHTTPRedirection = { session, task, response, request in
-    var finalRequest = request
-
-    if
-        let originalRequest = task.originalRequest,
-        let urlString = originalRequest.url?.urlString,
-        urlString.contains("apple.com")
-    {
-        finalRequest = originalRequest
-    }
-
-    return finalRequest
-}
+let session = Session(rootQueue: rootQueue, 
+					  requestQueue: requestQueue, 
+                      serializationQueue: serializationQueue)
 ```
 
-#### Subclassing
+Any custom `rootQueue` provided **MUST** be a serial queue, but `requestQueue` and `serializationQueue` can be either serial or parallel queues. Serial queues are the recommended default unless performance analysis shows work being delayed, in which case making the queues parallel may help overall performance.
 
-Another way to override the default implementation of the `SessionDelegate` is to subclass it. Subclassing allows you completely customize the behavior of the API or to create a proxy for the API and still use the default implementation. Creating a proxy allows you to log events, emit notifications, provide pre and post hook implementations, etc. Here's a quick example of subclassing the `SessionDelegate` and logging a message when a redirect occurs.
+### Adding a `RequestInterceptor`
+
+Alamofire’s `RequestInterceptor` protocol (`RequestAdapter & RequestRetrier`) provides important request setup and resiliency features. It can be applied at both the `Session` and `Request` levels. For more detail on `RequestInterceptor` and the various implementations Alamofire includes, like `RetryPolicy`, see [below](#requestinterceptor).
 
 ```swift
-class LoggingSessionDelegate: SessionDelegate {
-    override func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        willPerformHTTPRedirection response: HTTPURLResponse,
-        newRequest request: URLRequest,
-        completionHandler: @escaping (URLRequest?) -> Void)
-    {
-        print("URLSession will perform HTTP redirection to request: \(request)")
+let policy = RetryPolicy()
 
-        super.urlSession(
-            session,
-            task: task,
-            willPerformHTTPRedirection: response,
-            newRequest: request,
-            completionHandler: completionHandler
-        )
-    }
-}
+let session = Session(interceptor: policy) 
 ```
 
-Generally speaking, either the default implementation or the override closures should provide the necessary functionality required. Subclassing should only be used as a last resort.
+### Add a `ServerTrustManager`
 
-> It is important to keep in mind that the `subdelegates` are initialized and destroyed in the default implementation. Be careful when subclassing to not introduce memory leaks.
+Alamofire’s `ServerTrustManager` protocol provides the ability to customize `Session`’s handling of TLS security.
 
 ### Request
 
@@ -946,8 +911,8 @@ manager?.startListening()
 There are some important things to remember when using network reachability to determine what to do next.
 
 - **Do NOT** use Reachability to determine if a network request should be sent.
-    - You should **ALWAYS** send it.
+	- You should **ALWAYS** send it.
 - When Reachability is restored, use the event to retry failed network requests.
-    - Even though the network requests may still fail, this is a good moment to retry them.
+	- Even though the network requests may still fail, this is a good moment to retry them.
 - The network reachability status can be useful for determining why a network request may have failed.
-    - If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
+	- If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
