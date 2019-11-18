@@ -6,7 +6,7 @@ Alamofire is built on top of `URLSession` and the Foundation URL Loading System.
 
 - [URL Loading System Programming Guide](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/URLLoadingSystem/URLLoadingSystem.html)
 - [`URLSession` Class Reference](https://developer.apple.com/reference/foundation/urlsession)
-### - [`URLCache` Class Reference](https://developer.apple.com/reference/foundation/urlcache)
+- [`URLCache` Class Reference](https://developer.apple.com/reference/foundation/urlcache)
 - [`URLAuthenticationChallenge` Class Reference](https://developer.apple.com/reference/foundation/urlauthenticationchallenge)
 
 ## `Session`
