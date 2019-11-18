@@ -43,6 +43,7 @@ class MasterViewController: UITableViewController {
         navigationItem.titleView = titleImageView
         clearsSelectionOnViewWillAppear = true
 
+        reachability = NetworkReachabilityManager.default
         monitorReachability()
     }
 
@@ -94,7 +95,7 @@ class MasterViewController: UITableViewController {
     // MARK: - Private - Reachability
 
     private func monitorReachability() {
-        NetworkReachabilityManager.default?.startListening { status in
+        reachability.startListening { status in
             print("Reachability Status Changed: \(status)")
         }
     }
