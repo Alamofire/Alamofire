@@ -71,7 +71,7 @@ final class ResponseTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertEqual(response?.hasHostURLError, true)
+        XCTAssertEqual(response?.error?.isHostURLError, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -124,7 +124,7 @@ final class ResponseDataTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertEqual(response?.hasHostURLError, true)
+        XCTAssertEqual(response?.error?.isHostURLError, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -177,7 +177,7 @@ final class ResponseStringTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertEqual(response?.hasHostURLError, true)
+        XCTAssertEqual(response?.error?.isHostURLError, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -230,7 +230,7 @@ final class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertEqual(response?.hasHostURLError, true)
+        XCTAssertEqual(response?.error?.isHostURLError, true)
         XCTAssertNotNil(response?.metrics)
     }
 
@@ -369,7 +369,7 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertEqual(response?.hasHostURLError, true)
+        XCTAssertEqual(response?.error?.isHostURLError, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -426,7 +426,7 @@ final class ResponseMapTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
-        XCTAssertEqual(response?.hasHostURLError, true)
+        XCTAssertEqual(response?.error?.isHostURLError, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -518,7 +518,7 @@ final class ResponseTryMapTestCase: BaseTestCase {
         XCTAssertNil(response?.data)
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.asAFError?.isSessionTaskError, true)
-        XCTAssertTrue(urlHostErrorCodes.contains(response!.error!.asAFError!.urlErrorCode))
+        XCTAssertEqual(response?.error?.asAFError?.isHostURLError, true)
         XCTAssertNotNil(response?.metrics)
     }
 }
@@ -675,24 +675,4 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
         XCTAssertEqual(underlyingError.asAFError?.isHostURLError, true)
         XCTAssertNotNil(response?.metrics)
     }
-}
-
-private extension DataResponse where Failure == AFError {
-    var hasHostURLError: Bool? {
-        return error?.isHostURLError
-    }
-}
-
-private extension AFError {
-    var isHostURLError: Bool {
-        return urlHostErrorCodes.contains(urlErrorCode)
-    }
-    
-    var urlErrorCode : URLError.Code {
-        return (underlyingError as? URLError)?.code ?? .unknown
-    }
-}
-
-private var urlHostErrorCodes : Set<URLError.Code> {
-    return Set<URLError.Code>([.cannotConnectToHost, .cannotFindHost])
 }
