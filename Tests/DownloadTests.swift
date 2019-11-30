@@ -655,7 +655,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         download.downloadProgress { progress in
             guard !cancelled else { return }
 
-            if progress.fractionCompleted > 0.1 {
+            if progress.fractionCompleted > 0.5 {
                 download.cancel { receivedResumeData = $0 }
                 cancelled = true
             }
