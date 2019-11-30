@@ -38,8 +38,7 @@ open class SessionDelegate: NSObject {
     public init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
     }
-    
-    
+
     /// Internal method to find and cast requests while maintaining some integrity checking.
     ///
     /// - Parameters:
@@ -50,11 +49,11 @@ open class SessionDelegate: NSObject {
             assertionFailure("StateProvider is nil.")
             return nil
         }
-        
+
         guard let request = provider.request(for: task) as? R else {
             fatalError("Returned Request is not of expected type: \(R.self).")
         }
-        
+
         return request
     }
 }
