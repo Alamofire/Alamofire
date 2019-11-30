@@ -474,7 +474,7 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 // MARK: -
 
 final class DownloadResumeDataTestCase: BaseTestCase {
-    let urlString = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/HubbleDeepField.800px.jpg/600px-HubbleDeepField.800px.jpg"
+    let urlString = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/HubbleDeepField.800px.jpg/1024px-HubbleDeepField.800px.jpg"
 
     func testThatCancelledDownloadRequestDoesNotProduceResumeData() {
         // Given
