@@ -591,8 +591,9 @@ final class RequestResponseTestCase: BaseTestCase {
 
     func testThatCancelledRequestTriggersAllAppropriateLifetimeEvents() {
         // Given
-        let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let queue = DispatchQueue(label: "org.alamofire.Session.TestRootQueue")
+        let eventMonitor = ClosureEventMonitor(queue: queue)
+        let session = Session(rootQueue: queue, startRequestsImmediately: false, eventMonitors: [eventMonitor])
 
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
@@ -619,15 +620,13 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in didCancelTask.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in
+            responseHandler.fulfill()
+        }
 
         eventMonitor.requestDidResumeTask = { _, _ in
             request.cancel()
             didResumeTask.fulfill()
-        }
-
-        request.response { _ in
-            responseHandler.fulfill()
         }
 
         request.resume()
