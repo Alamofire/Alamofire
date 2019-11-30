@@ -71,7 +71,7 @@ let session = Session(startRequestsImmediately: false)
 
 ### `Session`’s `DispatchQueue`s
 
-By default, `Session` instances use a single `DispatchQueue` for all asynchronous work, including as the `underlyingQueue` of the `URLSession`’s `delegate` `OperationQueue`, for all `URLRequest` creation, all response serialization work, and all internal `Session` and `Request` state mutation. If performance analysis show a particular bottleneck around `URLRequest` creation or response serialization, `Session` can be provided with separate `DispatchQueue`s for each area of work.
+By default, `Session` instances use a single `DispatchQueue` for all asynchronous work, including the `underlyingQueue` of the `URLSession`’s `delegate` `OperationQueue`, for all `URLRequest` creation, all response serialization work, and all internal `Session` and `Request` state mutation. If performance analysis shows a particular bottleneck around `URLRequest` creation or response serialization, `Session` can be provided with separate `DispatchQueue`s for each area of work.
 
 ```swift
 let rootQueue = DispatchQueue("com.app.session.rootQueue")
@@ -97,7 +97,7 @@ let session = Session(interceptor: policy)
 
 ### Add a `ServerTrustManager`
 
-Alamofire’s `ServerTrustManager` protocol provides the ability to customize `Session`’s handling of TLS security.
+Alamofire’s `ServerTrustManager` protocol provides the ability to customize `Session`’s handling of TLS security using certificate and public key pinning, as well as 
 
 ### Request
 
