@@ -619,13 +619,15 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in didCancelTask.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in
-            responseHandler.fulfill()
-        }
+        let request = session.request(URLRequest.makeHTTPBinRequest())
 
         eventMonitor.requestDidResumeTask = { _, _ in
             request.cancel()
             didResumeTask.fulfill()
+        }
+
+        request.response { _ in
+            responseHandler.fulfill()
         }
 
         request.resume()
