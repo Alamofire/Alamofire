@@ -474,7 +474,7 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 // MARK: -
 
 final class DownloadResumeDataTestCase: BaseTestCase {
-    let urlString = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Hubble_ultra_deep_field_high_rez_edit1.jpg/290px-Hubble_ultra_deep_field_high_rez_edit1.jpg"
+    let urlString = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/HubbleDeepField.800px.jpg/600px-HubbleDeepField.800px.jpg"
 
     func testThatCancelledDownloadRequestDoesNotProduceResumeData() {
         // Given
@@ -655,7 +655,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
         download.downloadProgress { progress in
             guard !cancelled else { return }
 
-            if progress.fractionCompleted > 0.5 {
+            if progress.fractionCompleted > 0.1 {
                 download.cancel { receivedResumeData = $0 }
                 cancelled = true
             }
