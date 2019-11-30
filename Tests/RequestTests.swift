@@ -51,7 +51,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
     func testRequestResponseWithProgress() {
         // Given
-        let randomBytes = 1 * 1024 * 1024
+        let randomBytes = 1 * 25 * 1024
         let urlString = "https://httpbin.org/bytes/\(randomBytes)"
 
         let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
