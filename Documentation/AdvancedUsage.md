@@ -10,7 +10,6 @@ Alamofire is built on top of `URLSession` and the Foundation URL Loading System.
 - [`URLAuthenticationChallenge` Class Reference](https://developer.apple.com/reference/foundation/urlauthenticationchallenge)
 
 ## `Session`
-
 Alamofire’s `Session` is roughly equivalent in responsibility to the `URLSession` instance it maintains: it provides API to produce the various `Request` subclasses encapsulating different `URLSessionTask` subclasses, as well as encapsulating a variety of configuration applied to all `Request`s produced by the instance.
 
 `Session` provides a `default` singleton instance which powers the top-level API from the `AF` enum namespace. As such, the following two statements are equivalent:
@@ -25,27 +24,25 @@ session.request("https://httpbin.org/get")
 ```
 
 ### Creating Custom `Session` Instances
-
 Most applications will need to customize the behavior of their `Session` instances in a variety of ways. The easiest way to accomplish this is to use the following convenience initializer and store the result in a singleton used throughout the app.
 
 ```swift
-    public convenience init(configuration: URLSessionConfiguration = URLSessionConfiguration.af.default,
-                            delegate: SessionDelegate = SessionDelegate(),
-                            rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.session.rootQueue"),
-                            startRequestsImmediately: Bool = true,
-                            requestQueue: DispatchQueue? = nil,
-                            serializationQueue: DispatchQueue? = nil,
-                            interceptor: RequestInterceptor? = nil,
-                            serverTrustManager: ServerTrustManager? = nil,
-                            redirectHandler: RedirectHandler? = nil,
-                            cachedResponseHandler: CachedResponseHandler? = nil,
-                            eventMonitors: [EventMonitor] = [])
+public convenience init(configuration: URLSessionConfiguration = URLSessionConfiguration.af.default,
+                        delegate: SessionDelegate = SessionDelegate(),
+                        rootQueue: DispatchQueue = DispatchQueue(label: "org.alamofire.session.rootQueue"),
+                        startRequestsImmediately: Bool = true,
+                        requestQueue: DispatchQueue? = nil,
+                        serializationQueue: DispatchQueue? = nil,
+                        interceptor: RequestInterceptor? = nil,
+                        serverTrustManager: ServerTrustManager? = nil,
+                        redirectHandler: RedirectHandler? = nil,
+                        cachedResponseHandler: CachedResponseHandler? = nil,
+                        eventMonitors: [EventMonitor] = [])
 ```
 
-This initializer allows the customization of all fundamental `Session` behaviors, including that of the underlying `URLSession`.
+This initializer allows the customization of all fundamental `Session` behaviors.
 
 #### Creating a `Session` With a `URLSessionConfiguration`
-
 To customize the behavior of the underlying `URLSesion`, a customized `URLSessionConfiguration` instance can be provided. Starting from the `URLSession.af.default` instance is recommended, as it adds the default `Accept-Encoding`, `Accept-Language`, and `User-Agent` headers provided by Alamofire, but any `URLSessionConfiguration` can be used.
 
 ```swift
@@ -57,21 +54,20 @@ let session = Session(configuration: configuration)
 
 > `URLSessionConfiguration` is **not** the recommended location to set `Authorization` or `Content-Type` headers. Instead, add them to `Request`s using the provided `headers` APIs, using `ParameterEncoder`s, or a `RequestAdapter`.
 
-> As Apple states in their [documentation](https://developer.apple.com/documentation/foundation/urlsessionconfiguration), mutating `URLSessionConfiguration` properties after the instance has been added to a `URLSession`, or used to initialize an Alamofire `Session`, has no effect.
+> As Apple states in their [documentation](https://developer.apple.com/documentation/foundation/urlsessionconfiguration), mutating `URLSessionConfiguration` properties after the instance has been added to a `URLSession` (or, in Alamofire’s case, used to initialize a`Session`) has no effect.
 
 ### Session Delegate
+TBD.
 
 ### `startRequestsImmediately`
-
-By default, `Session` will call `resume()` on all `Request`s as soon as they’ve add at least one response handler. Setting it to `false` requires that all `Request`s have `resume()` called manually.
+By default, `Session` will call `resume()` on a `Request` as soon as it has added at least one response handler. Setting `startRequestsImmediately` to `false` requires that all `Request`s have `resume()` called manually.
 
 ```swift
 let session = Session(startRequestsImmediately: false)
 ```
 
-### `Session`’s `DispatchQueue`s
-
-By default, `Session` instances use a single `DispatchQueue` for all asynchronous work, including the `underlyingQueue` of the `URLSession`’s `delegate` `OperationQueue`, for all `URLRequest` creation, all response serialization work, and all internal `Session` and `Request` state mutation. If performance analysis shows a particular bottleneck around `URLRequest` creation or response serialization, `Session` can be provided with separate `DispatchQueue`s for each area of work.
+### A `Session`’s `DispatchQueue`s
+By default, `Session` instances use a single `DispatchQueue` for all asynchronous work. This includes the `underlyingQueue` of the `URLSession`’s `delegate` `OperationQueue`, for all `URLRequest` creation, all response serialization work, and all internal `Session` and `Request` state mutation. If performance analysis shows a particular bottleneck around `URLRequest` creation or response serialization, `Session` can be provided with separate `DispatchQueue`s for each area of work.
 
 ```swift
 let rootQueue = DispatchQueue(label: "com.app.session.rootQueue")
@@ -86,7 +82,6 @@ let session = Session(rootQueue: rootQueue,
 Any custom `rootQueue` provided **MUST** be a serial queue, but `requestQueue` and `serializationQueue` can be either serial or parallel queues. Serial queues are the recommended default unless performance analysis shows work being delayed, in which case making the queues parallel may help overall performance.
 
 ### Adding a `RequestInterceptor`
-
 Alamofire’s `RequestInterceptor` protocol (`RequestAdapter & RequestRetrier`) provides important request adaptation and retry features. It can be applied at both the `Session` and `Request` level. For more details on `RequestInterceptor` and the various implementations Alamofire includes, like `RetryPolicy`, see [below](#requestinterceptor).
 
 ```swift
@@ -95,7 +90,6 @@ let session = Session(interceptor: policy)
 ```
 
 ### Adding a `ServerTrustManager`
-
 Alamofire’s `ServerTrustManager` class encapsulates mappings between domains and instances of `ServerTrustEvaluating`-conforming types, which provide the ability to customize a `Session`’s handling of TLS security. This includes the use of certificate and public key pinning, as well as certificate revocation checking. For more information, see the section about the `ServerTrustManager` and `ServerTrustEvaluating`. Initializing a `ServerTrustManger` is as simple as providing a mapping between the domain and the type of evaluation to be performed:
 
 ```swift
