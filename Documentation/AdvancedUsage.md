@@ -74,12 +74,12 @@ let session = Session(startRequestsImmediately: false)
 By default, `Session` instances use a single `DispatchQueue` for all asynchronous work, including the `underlyingQueue` of the `URLSession`’s `delegate` `OperationQueue`, for all `URLRequest` creation, all response serialization work, and all internal `Session` and `Request` state mutation. If performance analysis shows a particular bottleneck around `URLRequest` creation or response serialization, `Session` can be provided with separate `DispatchQueue`s for each area of work.
 
 ```swift
-let rootQueue = DispatchQueue("com.app.session.rootQueue")
-let requestQueue = DispatchQueue("com.app.session.requestQueue")
-let serializationQueue = DispatchQueue("com.app.session.serializationQueue")
+let rootQueue = DispatchQueue(label: "com.app.session.rootQueue")
+let requestQueue = DispatchQueue(label: "com.app.session.requestQueue")
+let serializationQueue = DispatchQueue(label: "com.app.session.serializationQueue")
 
 let session = Session(rootQueue: rootQueue, 
-					  requestQueue: requestQueue, 
+                      requestQueue: requestQueue, 
                       serializationQueue: serializationQueue)
 ```
 
@@ -87,17 +87,67 @@ Any custom `rootQueue` provided **MUST** be a serial queue, but `requestQueue` a
 
 ### Adding a `RequestInterceptor`
 
-Alamofire’s `RequestInterceptor` protocol (`RequestAdapter & RequestRetrier`) provides important request setup and resiliency features. It can be applied at both the `Session` and `Request` levels. For more detail on `RequestInterceptor` and the various implementations Alamofire includes, like `RetryPolicy`, see [below](#requestinterceptor).
+Alamofire’s `RequestInterceptor` protocol (`RequestAdapter & RequestRetrier`) provides important request adaptation and retry features. It can be applied at both the `Session` and `Request` level. For more details on `RequestInterceptor` and the various implementations Alamofire includes, like `RetryPolicy`, see [below](#requestinterceptor).
 
 ```swift
 let policy = RetryPolicy()
-
 let session = Session(interceptor: policy) 
 ```
 
-### Add a `ServerTrustManager`
+### Adding a `ServerTrustManager`
 
-Alamofire’s `ServerTrustManager` protocol provides the ability to customize `Session`’s handling of TLS security using certificate and public key pinning, as well as 
+Alamofire’s `ServerTrustManager` class encapsulates mappings between domains and instances of `ServerTrustEvaluating`-conforming types, which provide the ability to customize a `Session`’s handling of TLS security. This includes the use of certificate and public key pinning, as well as certificate revocation checking. For more information, see the section about the `ServerTrustManager` and `ServerTrustEvaluating`. Initializing a `ServerTrustManger` is as simple as providing a mapping between the domain and the type of evaluation to be performed:
+
+```swift
+let manager = ServerTrustManager(evaluators: ["httpbin.org": PinnedCertificatesTrustEvaluator()])
+let session = Session(serverTrustManager: manager)
+```
+
+### Adding a `RedirectHandler`
+Alamofire’s `RedirectHandler` protocol customizes the handling of HTTP redirect responses. It can be applied at both the `Session` and `Request` level. Alamofire includes the `Redirector` type which conforms to `RedirectHandler` and offers simple control over redirects. For more details on `RedirectHandler`, see the detailed documentation below. 
+
+```swift
+let redirector = Redirector(behavior: .follow)
+let session = Session(redirectHandler: redirector)
+```
+
+### Adding a `CachedResponseHandler`
+Alamofire’s `CachedResponseHandler` protocol customizes the caching of responses. It can be applied at both the `Session` and `Request` level. Alamofire includes the `ResponseCacher` type which conforms to `CachedResponseHandler` and offers simple control over response caching. For more details, see the detailed documentation below. Link.
+
+```swift
+let cacher = ResponseCacher(behavior: .cache)
+let session = Session(cachedResponseHandler: cacher)
+```
+
+### Adding `EventMonitor`s
+Alamofire’s `EventMonitor` protocol provides powerful insight into Alamofire’s internal events. It can be used to provide logging and other event-based features. `Session` accepts an array of `EventMonitor`-conforming instances at initialization time. 
+
+```swift
+let monitor = ClosureEventMonitor()
+monitor.requestDidCompleteTaskWithError = { (request, task, error) in
+    debugPrint(request)
+}
+let session = Session(eventMonitors: [monitor])
+```
+
+### Creating Instances From `URLSession`s
+In addition to the `convenience` initializer mentioned previously, `Session`s can be initialized directly from `URLSession`s. However, there are several requirements to keep in mind, so using the convenience initializer is recommended. These include:
+* Alamofire does not support `URLSession`s configured for background use. This will lead to a runtime error when the `Session` is initialized.
+* A `SessionDelegate` instance must be created and used as the `URLSession`’s `delegate`, as well as passed to the `Session` initializer.
+* A custom `OperationQueue` must be passed as the `URLSession`’s `delegateQueue`. This queue must be a serial queue, it must have a backing `DispatchQueue`, and that `DispatchQueue` must be passed to the `Session` as its `rootQueue`.
+
+```swift
+let rootQueue = DispatchQueue(label: "org.alamofire.customQueue")
+let queue = OperationQueue()
+queue.maxConcurrentOperationCount = 1
+queue.underlyingQueue = rootQueue
+let delegate = SessionDelegate()
+let configuration = URLSessionConfiguration.af.default
+let urlSession = URLSession(configuration: configuration,
+                            delegate: delegate,
+                            delegateQueue: queue)
+let session = Session(session: urlSession, delegate: delegate, rootQueue: rootQueue)
+```
 
 ### Request
 
