@@ -85,7 +85,7 @@ public struct URLEncoding: ParameterEncoding {
         case brackets
         /// No brackets are appended. The key is encoded as is.
         case noBrackets
-        
+        /// Index in square brackets ("key[index]")
         case index
 
         func encode(key: String, index: Int) -> String {
@@ -97,7 +97,6 @@ public struct URLEncoding: ParameterEncoding {
             case .index:
                 return "\(key)[\(index)]"
             }
-            
         }
     }
 

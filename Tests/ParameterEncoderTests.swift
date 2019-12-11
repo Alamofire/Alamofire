@@ -485,6 +485,54 @@ final class URLEncodedFormEncoderTests: BaseTestCase {
         // Then
         XCTAssertFalse(result.isSuccess)
     }
+    
+    func testThatEncodableStructCanBeEncodedWithIndex() {
+        // Given
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .index)
+        let parameters = ["foo": [EncodableSuperclass()]]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "foo%5B0%5D%5Bone%5D=one&foo%5B0%5D%5Bthree%5D=1&foo%5B0%5D%5Btwo%5D=2")
+    }
+    
+    func testThatArrayNestedDictionaryIntValueCanBeEncodedWithIndex() {
+        // Given
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .index)
+        let parameters = ["foo": [["bar": 2], ["qux": 3],  ["quy": 4]]]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "foo%5B0%5D%5Bbar%5D=2&foo%5B1%5D%5Bqux%5D=3&foo%5B2%5D%5Bquy%5D=4")
+    }
+    
+    func testThatArrayNestedDictionaryStringValueCanBeEncodedWithIndex() {
+        // Given
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .index)
+        let parameters = ["foo": [["bar": "2"], ["qux": "3"],  ["quy": "4"]]]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "foo%5B0%5D%5Bbar%5D=2&foo%5B1%5D%5Bqux%5D=3&foo%5B2%5D%5Bquy%5D=4")
+    }
+    
+    func testThatArrayNestedDictionaryBoolValueCanBeEncodedWithIndex() {
+        // Given
+        let encoder = URLEncodedFormEncoder(arrayEncoding: .index)
+        let parameters = ["foo": [["bar": true], ["qux": false],  ["quy": true]]]
+
+        // When
+        let result = Result<String, Error> { try encoder.encode(parameters) }
+
+        // Then
+        XCTAssertEqual(result.success, "foo%5B0%5D%5Bbar%5D=1&foo%5B1%5D%5Bqux%5D=0&foo%5B2%5D%5Bquy%5D=1")
+    }
 
     func testThatArraysCanBeEncodedWithoutBrackets() {
         // Given
