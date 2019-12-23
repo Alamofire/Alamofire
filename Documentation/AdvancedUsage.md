@@ -82,7 +82,7 @@ let session = Session(rootQueue: rootQueue,
 Any custom `rootQueue` provided **MUST** be a serial queue, but `requestQueue` and `serializationQueue` can be either serial or parallel queues. Serial queues are the recommended default unless performance analysis shows work being delayed, in which case making the queues parallel may help overall performance.
 
 ### Adding a `RequestInterceptor`
-Alamofire’s `RequestInterceptor` protocol (`RequestAdapter & RequestRetrier`) provides important request adaptation and retry features. It can be applied at both the `Session` and `Request` level. For more details on `RequestInterceptor` and the various implementations Alamofire includes, like `RetryPolicy`, see [below](#requestinterceptor).
+Alamofire’s `RequestInterceptor` protocol (`RequestAdapter & RequestRetrier`) provides important and powerful request adaptation and retry features. It can be applied at both the `Session` and `Request` level. For more details on `RequestInterceptor` and the various implementations Alamofire includes, like `RetryPolicy`, see [below](#requestinterceptor).
 
 ```swift
 let policy = RetryPolicy()
@@ -90,7 +90,7 @@ let session = Session(interceptor: policy)
 ```
 
 ### Adding a `ServerTrustManager`
-Alamofire’s `ServerTrustManager` class encapsulates mappings between domains and instances of `ServerTrustEvaluating`-conforming types, which provide the ability to customize a `Session`’s handling of TLS security. This includes the use of certificate and public key pinning, as well as certificate revocation checking. For more information, see the section about the `ServerTrustManager` and `ServerTrustEvaluating`. Initializing a `ServerTrustManger` is as simple as providing a mapping between the domain and the type of evaluation to be performed:
+Alamofire’s `ServerTrustManager` class encapsulates mappings between domains and instances of `ServerTrustEvaluating`-conforming types, which provide the ability to customize a `Session`’s handling of TLS security. This includes the use of certificate and public key pinning as well as certificate revocation checking. For more information, see the section about the `ServerTrustManager` and `ServerTrustEvaluating`. Initializing a `ServerTrustManger` is as simple as providing a mapping between the domain and the type of evaluation to be performed:
 
 ```swift
 let manager = ServerTrustManager(evaluators: ["httpbin.org": PinnedCertificatesTrustEvaluator()])
@@ -106,7 +106,7 @@ let session = Session(redirectHandler: redirector)
 ```
 
 ### Adding a `CachedResponseHandler`
-Alamofire’s `CachedResponseHandler` protocol customizes the caching of responses. It can be applied at both the `Session` and `Request` level. Alamofire includes the `ResponseCacher` type which conforms to `CachedResponseHandler` and offers simple control over response caching. For more details, see the detailed documentation below. Link.
+Alamofire’s `CachedResponseHandler` protocol customizes the caching of responses and can be applied at both the `Session` and `Request` level. Alamofire includes the `ResponseCacher` type which conforms to `CachedResponseHandler` and offers simple control over response caching. For more details, see the detailed documentation below. Link.
 
 ```swift
 let cacher = ResponseCacher(behavior: .cache)
@@ -125,7 +125,7 @@ let session = Session(eventMonitors: [monitor])
 ```
 
 ### Creating Instances From `URLSession`s
-In addition to the `convenience` initializer mentioned previously, `Session`s can be initialized directly from `URLSession`s. However, there are several requirements to keep in mind, so using the convenience initializer is recommended. These include:
+In addition to the `convenience` initializer mentioned previously, `Session`s can be initialized directly from `URLSession`s. However, there are several requirements to keep in mind when using this initializer, so using the convenience initializer is recommended. These include:
 * Alamofire does not support `URLSession`s configured for background use. This will lead to a runtime error when the `Session` is initialized.
 * A `SessionDelegate` instance must be created and used as the `URLSession`’s `delegate`, as well as passed to the `Session` initializer.
 * A custom `OperationQueue` must be passed as the `URLSession`’s `delegateQueue`. This queue must be a serial queue, it must have a backing `DispatchQueue`, and that `DispatchQueue` must be passed to the `Session` as its `rootQueue`.
