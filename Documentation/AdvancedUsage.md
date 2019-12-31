@@ -56,8 +56,12 @@ let session = Session(configuration: configuration)
 
 > As Apple states in their [documentation](https://developer.apple.com/documentation/foundation/urlsessionconfiguration), mutating `URLSessionConfiguration` properties after the instance has been added to a `URLSession` (or, in Alamofire’s case, used to initialize a`Session`) has no effect.
 
-### Session Delegate
-TBD.
+### `SessionDelegate`
+A `SessionDelegate` instance encapsulates all handling of the various `URLSessionDelegate` and related protocols callbacks. `SessionDelegate` also acts as the `SessionStateDelegate` for every `Request` produced by Alamofire, allow the `Request` to indirectly important state from the `Session` instance that produced them. `SessionDelegate` can be customized with a specific `FileManager` instance, which will be used for any disk access, like accessing file’s to be uploaded by `UploadRequest`s or files downloaded by `DownloadRequest`s.
+
+```swift
+let delelgate = SessionDelegate(fileManager: .default)
+```
 
 ### `startRequestsImmediately`
 By default, `Session` will call `resume()` on a `Request` as soon as it has added at least one response handler. Setting `startRequestsImmediately` to `false` requires that all `Request`s have `resume()` called manually.
@@ -143,178 +147,78 @@ let urlSession = URLSession(configuration: configuration,
 let session = Session(session: urlSession, delegate: delegate, rootQueue: rootQueue)
 ```
 
-### Request
+## Requests
+Each request performed by Alamofire is encapsulated by particular class, `DataRequest`, `UploadRequest`, and `DownloadRequest`. Each of these classes encapsulate functionality unique to each type of request, but `DataRequest` and `DownloadRequest` inherit from a common superclass, `Request` (`UploadRequest` inherits from `DataRequest`).
 
-The result of a `request`, `download`, `upload` or `stream` methods are a `DataRequest`, `DownloadRequest`, `UploadRequest` and `StreamRequest` which all inherit from `Request`. All `Request` instances are always created by an owning session manager, and never initialized directly.
+### `Request`
+Although `Request` doesn’t encapsulate any particular type of request, it contains the state and functionality common to all requests Alamofire performs. This includes:
 
-Each subclass has specialized methods such as `authenticate`, `validate`, `responseJSON` and `uploadProgress` that each return the caller instance in order to facilitate method chaining.
-
-Requests can be suspended, resumed and cancelled:
-
-- `suspend()`: Suspends the underlying task and dispatch queue.
-- `resume()`: Resumes the underlying task and dispatch queue. If the owning manager does not have `startRequestsImmediately` set to `true`, the request must call `resume()` in order to start.
-- `cancel()`: Cancels the underlying task, producing an error that is passed to any registered response handlers.
-
-### Routing Requests
-
-As apps grow in size, it's important to adopt common patterns as you build out your network stack. An important part of that design is how to route your requests. The Alamofire `URLConvertible` and `URLRequestConvertible` protocols along with the `Router` design pattern are here to help.
-
-#### URLConvertible
-
-Types adopting the `URLConvertible` protocol can be used to construct URLs, which are then used to construct URL requests internally. `String`, `URL`, and `URLComponents` conform to `URLConvertible` by default, allowing any of them to be passed as `url` parameters to the `request`, `upload`, and `download` methods:
+#### State
+All `Request` types include the notion of state, indicating the major events in the `Request`’s lifetime.
 
 ```swift
-let urlString = "https://httpbin.org/post"
-Alamofire.request(urlString, method: .post)
-
-let url = URL(string: urlString)!
-Alamofire.request(url, method: .post)
-
-let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)!
-Alamofire.request(urlComponents, method: .post)
-```
-
-Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLConvertible` as a convenient way to map domain-specific models to server resources.
-
-##### Type-Safe Routing
-
-```swift
-extension User: URLConvertible {
-    static let baseURLString = "https://example.com"
-
-    func asURL() throws -> URL {
-    	let urlString = User.baseURLString + "/users/\(username)/"
-        return try urlString.asURL()
-    }
+public enum State {
+    case initialized
+    case resumed
+    case suspended
+    case cancelled
+    case finished
 }
 ```
 
+`Request`s start in the `.initialized` state after their creation. `Request`s can be suspended, resumed, and cancelled by calling the appropriate lifetime method.
+- `resume()` resumes, or starts, a `Request`’s network traffic. If `startRequestsImmediately` is `true`, this is called automatically once a response handler has been added to the `Request`.
+- `suspend()` suspends, or pauses the `Request` and its network traffic. `Request`s in this state can be resumed, but only `DownloadRequests` may be able continue transferring data. Other `Request`s will start over.
+- `cancel()` cancels a `Request`. Once in this state, a `Request` cannot be resumed or suspended. When `cancel()` is called, the `Request`’s `error` property will be set with an `AFError.explicitlyCancelled` instance.
+If a `Request` is resumed and isn’t later cancelled, it will reach the `.finished` state once all response validators and response serializers have been run. However, if additional response serializers are added to the `Request` after it has reached the `.finished` state, it will transition back to the `.resumed` state and perform the network request again.
+
+#### Progress
+In order to track the progress of a request, `Request` offers a both  `uploadProgress` and `downloadProgress` properties as well as closure-based `uploadProgress` and `downloadProgress` methods. Like all closure-based `Request` APIs, the progress APIs can be chained off of the `Request`. Like the other closure-based APIs, they should be added to a request *before* calling any response handler, like `responseDecodable`.
+
 ```swift
-let user = User(username: "mattt")
-Alamofire.request(user) // https://example.com/users/mattt
-```
-
-#### URLRequestConvertible
-
-Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly (this is the recommended way to specify custom HTTP body for individual requests):
-
-```swift
-let url = URL(string: "https://httpbin.org/post")!
-var urlRequest = URLRequest(url: url)
-urlRequest.httpMethod = "POST"
-
-let parameters = ["foo": "bar"]
-
-do {
-    urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
-} catch {
-    // No-op
+AF.request(...)
+.uploadProgress { progress in
+    print(progress)
 }
-
-urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-Alamofire.request(urlRequest)
-```
-
-Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLRequestConvertible` as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage authentication credentials and other state.
-
-##### API Parameter Abstraction
-
-```swift
-enum Router: URLRequestConvertible {
-    case search(query: String, page: Int)
-
-    static let baseURLString = "https://example.com"
-    static let perPage = 50
-
-    // MARK: URLRequestConvertible
-
-    func asURLRequest() throws -> URLRequest {
-        let result: (path: String, parameters: Parameters) = {
-            switch self {
-            case let .search(query, page) where page > 0:
-                return ("/search", ["q": query, "offset": Router.perPage * page])
-            case let .search(query, _):
-                return ("/search", ["q": query])
-            }
-        }()
-
-        let url = try Router.baseURLString.asURL()
-        let urlRequest = URLRequest(url: url.appendingPathComponent(result.path))
-
-        return try URLEncoding.default.encode(urlRequest, with: result.parameters)
-    }
+.downloadProgress { progress in
+    print(progress)
+}
+.responseDecodable(of: SomeType.self) { response in
+    debugPrint(response)
 }
 ```
+ 
+Importantly, not all `Request` subclasses are able to report their progress accurately, or may have other dependencies to do so.
+- For upload progress, progress can be determined in the following ways:
+	- The length of the `Data` object provided as the upload body to an `UploadRequest`.
+	- The length of a file on disk provided as the upload body of an `UploadRequest`.
+	- The value of the `Content-Length` header on the request, if it has been manually set.
+- For download progress, there is a single requirement:
+	- The server response must contain a `Content-Length` header.
+Unfortunately there may be other, undocumented requirements for progress reporting from `URLSession` which prevents accurate progress reporting.
 
-```swift
-Alamofire.request(Router.search(query: "foo bar", page: 1)) // https://example.com/search?q=foo%20bar&offset=50
-```
+#### Handling Redirects
+Alamofire’s `RedirectHandler` protocol provides control and customization of redirect handling for `Request`.
 
-##### CRUD & Authorization
+#### Customizing Caching
 
-```swift
-import Alamofire
+#### Adding Credentials
 
-enum Router: URLRequestConvertible {
-    case createUser(parameters: Parameters)
-    case readUser(username: String)
-    case updateUser(username: String, parameters: Parameters)
-    case destroyUser(username: String)
+#### Tracking Requests
 
-    static let baseURLString = "https://example.com"
+#### Response
 
-    var method: HTTPMethod {
-        switch self {
-        case .createUser:
-            return .post
-        case .readUser:
-            return .get
-        case .updateUser:
-            return .put
-        case .destroyUser:
-            return .delete
-        }
-    }
+#### `URLSessionTask`s
 
-    var path: String {
-        switch self {
-        case .createUser:
-            return "/users"
-        case .readUser(let username):
-            return "/users/\(username)"
-        case .updateUser(let username, _):
-            return "/users/\(username)"
-        case .destroyUser(let username):
-            return "/users/\(username)"
-        }
-    }
+#### Metrics
 
-    // MARK: URLRequestConvertible
+#### cURL
 
-    func asURLRequest() throws -> URLRequest {
-    	let url = try Router.baseURLString.asURL()
+### `DataRequest`
 
-        var urlRequest = URLRequest(url: url.appendingPathComponent(path))
-        urlRequest.httpMethod = method.rawValue
+### `UploadRequest`
 
-        switch self {
-        case .createUser(let parameters):
-            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
-        case .updateUser(_, let parameters):
-            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
-        default:
-            break
-        }
-
-        return urlRequest
-    }
-}
-```
-
-```swift
-Alamofire.request(Router.readUser("mattt")) // GET https://example.com/users/mattt
-```
+### `DownloadRequest`
 
 ### Adapting and Retrying Requests
 
@@ -495,6 +399,326 @@ Once the `OAuth2Handler` is applied as both the `adapter` and `retrier` for the 
 The example above only checks for a `401` response code which is not nearly robust enough, but does demonstrate how one could check for an invalid access token error. In a production application, one would want to check the `realm` and most likely the `www-authenticate` header response although it depends on the OAuth2 implementation.
 
 Another important note is that this authentication system could be shared between multiple session managers. For example, you may need to use both a `default` and `ephemeral` session configuration for the same set of web services. The example above allows the same `oauthHandler` instance to be shared across multiple session managers to manage the single refresh flow.
+
+### Security
+
+Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire will evaluate the certificate chain provided by the server using Apple's built in validation provided by the Security framework. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by the `ServerTrustPolicy`.
+
+#### ServerTrustPolicy
+
+The `ServerTrustPolicy` enumeration evaluates the server trust generally provided by an `URLAuthenticationChallenge` when connecting to a server over a secure HTTPS connection.
+
+```swift
+let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
+    certificates: ServerTrustPolicy.certificates(),
+    validateCertificateChain: true,
+    validateHost: true
+)
+```
+
+There are many different cases of server trust evaluation giving you complete control over the validation process:
+
+* `performDefaultEvaluation`: Uses the default server trust evaluation while allowing you to control whether to validate the host provided by the challenge.
+* `pinCertificates`: Uses the pinned certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates.
+* `pinPublicKeys`: Uses the pinned public keys to validate the server trust. The server trust is considered valid if one of the pinned public keys match one of the server certificate public keys.
+* `disableEvaluation`: Disables all evaluation which in turn will always consider any server trust as valid.
+* `customEvaluation`: Uses the associated closure to evaluate the validity of the server trust thus giving you complete control over the validation process. Use with caution.
+
+#### Server Trust Policy Manager
+
+The `ServerTrustPolicyManager` is responsible for storing an internal mapping of server trust policies to a particular host. This allows Alamofire to evaluate each host against a different server trust policy.
+
+```swift
+let serverTrustPolicies: [String: ServerTrustPolicy] = [
+    "test.example.com": .pinCertificates(
+        certificates: ServerTrustPolicy.certificates(),
+        validateCertificateChain: true,
+        validateHost: true
+    ),
+    "insecure.expired-apis.com": .disableEvaluation
+]
+
+let sessionManager = SessionManager(
+    serverTrustPolicyManager: ServerTrustPolicyManager(policies: serverTrustPolicies)
+)
+```
+
+> Make sure to keep a reference to the new `SessionManager` instance, otherwise your requests will all get cancelled when your `sessionManager` is deallocated.
+
+These server trust policies will result in the following behavior:
+
+- `test.example.com` will always use certificate pinning with certificate chain and host validation enabled thus requiring the following criteria to be met to allow the TLS handshake to succeed:
+	- Certificate chain MUST be valid.
+	- Certificate chain MUST include one of the pinned certificates.
+	- Challenge host MUST match the host in the certificate chain's leaf certificate.
+- `insecure.expired-apis.com` will never evaluate the certificate chain and will always allow the TLS handshake to succeed.
+- All other hosts will use the default evaluation provided by Apple.
+
+##### Subclassing Server Trust Policy Manager
+
+If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcarded domains), then subclass the `ServerTrustPolicyManager` and override the `serverTrustPolicyForHost` method with your own custom implementation.
+
+```swift
+class CustomServerTrustPolicyManager: ServerTrustPolicyManager {
+    override func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
+        var policy: ServerTrustPolicy?
+
+        // Implement your custom domain matching behavior...
+
+        return policy
+    }
+}
+```
+
+#### Validating the Host
+
+The `.performDefaultEvaluation`, `.pinCertificates` and `.pinPublicKeys` server trust policies all take a `validateHost` parameter. Setting the value to `true` will cause the server trust evaluation to verify that hostname in the certificate matches the hostname of the challenge. If they do not match, evaluation will fail. A `validateHost` value of `false` will still evaluate the full certificate chain, but will not validate the hostname of the leaf certificate.
+
+> It is recommended that `validateHost` always be set to `true` in production environments.
+
+#### Validating the Certificate Chain
+
+Pinning certificates and public keys both have the option of validating the certificate chain using the `validateCertificateChain` parameter. By setting this value to `true`, the full certificate chain will be evaluated in addition to performing a byte equality check against the pinned certificates or public keys. A value of `false` will skip the certificate chain validation, but will still perform the byte equality check.
+
+There are several cases where it may make sense to disable certificate chain validation. The most common use cases for disabling validation are self-signed and expired certificates. The evaluation would always fail in both of these cases, but the byte equality check will still ensure you are receiving the certificate you expect from the server.
+
+> It is recommended that `validateCertificateChain` always be set to `true` in production environments.
+
+#### App Transport Security
+
+With the addition of App Transport Security (ATS) in iOS 9, it is possible that using a custom `ServerTrustPolicyManager` with several `ServerTrustPolicy` objects will have no effect. If you continuously see `CFNetwork SSLHandshake failed (-9806)` errors, you have probably run into this problem. Apple's ATS system overrides the entire challenge system unless you configure the ATS settings in your app's plist to disable enough of it to allow your app to evaluate the server trust.
+
+If you run into this problem (high probability with self-signed certificates), you can work around this issue by adding the following to your `Info.plist`.
+
+```xml
+<dict>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>example.com</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSExceptionRequiresForwardSecrecy</key>
+                <false/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+                <!-- Optional: Specify minimum TLS version -->
+                <key>NSTemporaryExceptionMinimumTLSVersion</key>
+                <string>TLSv1.2</string>
+            </dict>
+        </dict>
+    </dict>
+</dict>
+```
+
+Whether you need to set the `NSExceptionRequiresForwardSecrecy` to `NO` depends on whether your TLS connection is using an allowed cipher suite. In certain cases, it will need to be set to `NO`. The `NSExceptionAllowsInsecureHTTPLoads` MUST be set to `YES` in order to allow the `SessionDelegate` to receive challenge callbacks. Once the challenge callbacks are being called, the `ServerTrustPolicyManager` will take over the server trust evaluation. You may also need to specify the `NSTemporaryExceptionMinimumTLSVersion` if you're trying to connect to a host that only supports TLS versions less than `1.2`.
+
+> It is recommended to always use valid certificates in production environments.
+
+#### Using Self-Signed Certificates with Local Networking
+
+If you are attempting to connect to a server running on your localhost, and you are using self-signed certificates, you will need to add the following to your `Info.plist`.
+
+```xml
+<dict>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
+</dict>
+```
+
+According to [Apple documentation](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW35), setting `NSAllowsLocalNetworking` to `YES` allows loading of local resources without disabling ATS for the rest of your app.
+
+### Network Reachability
+
+The `NetworkReachabilityManager` listens for reachability changes of hosts and addresses for both WWAN and WiFi network interfaces.
+
+```swift
+let manager = NetworkReachabilityManager(host: "www.apple.com")
+
+manager?.listener = { status in
+    print("Network Status Changed: \(status)")
+}
+
+manager?.startListening()
+```
+
+> Make sure to remember to retain the `manager` in the above example, or no status changes will be reported.
+> Also, do not include the scheme in the `host` string or reachability won't function correctly.
+
+There are some important things to remember when using network reachability to determine what to do next.
+
+- **Do NOT** use Reachability to determine if a network request should be sent.
+	- You should **ALWAYS** send it.
+- When Reachability is restored, use the event to retry failed network requests.
+	- Even though the network requests may still fail, this is a good moment to retry them.
+- The network reachability status can be useful for determining why a network request may have failed.
+	- If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
+
+### Routing Requests
+
+As apps grow in size, it's important to adopt common patterns as you build out your network stack. An important part of that design is how to route your requests. The Alamofire `URLConvertible` and `URLRequestConvertible` protocols along with the `Router` design pattern are here to help.
+
+#### URLConvertible
+
+Types adopting the `URLConvertible` protocol can be used to construct URLs, which are then used to construct URL requests internally. `String`, `URL`, and `URLComponents` conform to `URLConvertible` by default, allowing any of them to be passed as `url` parameters to the `request`, `upload`, and `download` methods:
+
+```swift
+let urlString = "https://httpbin.org/post"
+Alamofire.request(urlString, method: .post)
+
+let url = URL(string: urlString)!
+Alamofire.request(url, method: .post)
+
+let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+Alamofire.request(urlComponents, method: .post)
+```
+
+Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLConvertible` as a convenient way to map domain-specific models to server resources.
+
+##### Type-Safe Routing
+
+```swift
+extension User: URLConvertible {
+    static let baseURLString = "https://example.com"
+
+    func asURL() throws -> URL {
+    	let urlString = User.baseURLString + "/users/\(username)/"
+        return try urlString.asURL()
+    }
+}
+```
+
+```swift
+let user = User(username: "mattt")
+Alamofire.request(user) // https://example.com/users/mattt
+```
+
+#### URLRequestConvertible
+
+Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly (this is the recommended way to specify custom HTTP body for individual requests):
+
+```swift
+let url = URL(string: "https://httpbin.org/post")!
+var urlRequest = URLRequest(url: url)
+urlRequest.httpMethod = "POST"
+
+let parameters = ["foo": "bar"]
+
+do {
+    urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
+} catch {
+    // No-op
+}
+
+urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+Alamofire.request(urlRequest)
+```
+
+Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLRequestConvertible` as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage authentication credentials and other state.
+
+##### API Parameter Abstraction
+
+```swift
+enum Router: URLRequestConvertible {
+    case search(query: String, page: Int)
+
+    static let baseURLString = "https://example.com"
+    static let perPage = 50
+
+    // MARK: URLRequestConvertible
+
+    func asURLRequest() throws -> URLRequest {
+        let result: (path: String, parameters: Parameters) = {
+            switch self {
+            case let .search(query, page) where page > 0:
+                return ("/search", ["q": query, "offset": Router.perPage * page])
+            case let .search(query, _):
+                return ("/search", ["q": query])
+            }
+        }()
+
+        let url = try Router.baseURLString.asURL()
+        let urlRequest = URLRequest(url: url.appendingPathComponent(result.path))
+
+        return try URLEncoding.default.encode(urlRequest, with: result.parameters)
+    }
+}
+```
+
+```swift
+Alamofire.request(Router.search(query: "foo bar", page: 1)) // https://example.com/search?q=foo%20bar&offset=50
+```
+
+##### CRUD & Authorization
+
+```swift
+import Alamofire
+
+enum Router: URLRequestConvertible {
+    case createUser(parameters: Parameters)
+    case readUser(username: String)
+    case updateUser(username: String, parameters: Parameters)
+    case destroyUser(username: String)
+
+    static let baseURLString = "https://example.com"
+
+    var method: HTTPMethod {
+        switch self {
+        case .createUser:
+            return .post
+        case .readUser:
+            return .get
+        case .updateUser:
+            return .put
+        case .destroyUser:
+            return .delete
+        }
+    }
+
+    var path: String {
+        switch self {
+        case .createUser:
+            return "/users"
+        case .readUser(let username):
+            return "/users/\(username)"
+        case .updateUser(let username, _):
+            return "/users/\(username)"
+        case .destroyUser(let username):
+            return "/users/\(username)"
+        }
+    }
+
+    // MARK: URLRequestConvertible
+
+    func asURLRequest() throws -> URLRequest {
+    	let url = try Router.baseURLString.asURL()
+
+        var urlRequest = URLRequest(url: url.appendingPathComponent(path))
+        urlRequest.httpMethod = method.rawValue
+
+        switch self {
+        case .createUser(let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+        case .updateUser(_, let parameters):
+            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
+        default:
+            break
+        }
+
+        return urlRequest
+    }
+}
+```
+
+```swift
+Alamofire.request(Router.readUser("mattt")) // GET https://example.com/users/mattt
+```
 
 ### Custom Response Serialization
 
@@ -801,162 +1025,3 @@ Alamofire.request("https://example.com/users").responseCollection { (response: D
     }
 }
 ```
-
-### Security
-
-Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire will evaluate the certificate chain provided by the server using Apple's built in validation provided by the Security framework. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by the `ServerTrustPolicy`.
-
-#### ServerTrustPolicy
-
-The `ServerTrustPolicy` enumeration evaluates the server trust generally provided by an `URLAuthenticationChallenge` when connecting to a server over a secure HTTPS connection.
-
-```swift
-let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-    certificates: ServerTrustPolicy.certificates(),
-    validateCertificateChain: true,
-    validateHost: true
-)
-```
-
-There are many different cases of server trust evaluation giving you complete control over the validation process:
-
-* `performDefaultEvaluation`: Uses the default server trust evaluation while allowing you to control whether to validate the host provided by the challenge.
-* `pinCertificates`: Uses the pinned certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates.
-* `pinPublicKeys`: Uses the pinned public keys to validate the server trust. The server trust is considered valid if one of the pinned public keys match one of the server certificate public keys.
-* `disableEvaluation`: Disables all evaluation which in turn will always consider any server trust as valid.
-* `customEvaluation`: Uses the associated closure to evaluate the validity of the server trust thus giving you complete control over the validation process. Use with caution.
-
-#### Server Trust Policy Manager
-
-The `ServerTrustPolicyManager` is responsible for storing an internal mapping of server trust policies to a particular host. This allows Alamofire to evaluate each host against a different server trust policy.
-
-```swift
-let serverTrustPolicies: [String: ServerTrustPolicy] = [
-    "test.example.com": .pinCertificates(
-        certificates: ServerTrustPolicy.certificates(),
-        validateCertificateChain: true,
-        validateHost: true
-    ),
-    "insecure.expired-apis.com": .disableEvaluation
-]
-
-let sessionManager = SessionManager(
-    serverTrustPolicyManager: ServerTrustPolicyManager(policies: serverTrustPolicies)
-)
-```
-
-> Make sure to keep a reference to the new `SessionManager` instance, otherwise your requests will all get cancelled when your `sessionManager` is deallocated.
-
-These server trust policies will result in the following behavior:
-
-- `test.example.com` will always use certificate pinning with certificate chain and host validation enabled thus requiring the following criteria to be met to allow the TLS handshake to succeed:
-	- Certificate chain MUST be valid.
-	- Certificate chain MUST include one of the pinned certificates.
-	- Challenge host MUST match the host in the certificate chain's leaf certificate.
-- `insecure.expired-apis.com` will never evaluate the certificate chain and will always allow the TLS handshake to succeed.
-- All other hosts will use the default evaluation provided by Apple.
-
-##### Subclassing Server Trust Policy Manager
-
-If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcarded domains), then subclass the `ServerTrustPolicyManager` and override the `serverTrustPolicyForHost` method with your own custom implementation.
-
-```swift
-class CustomServerTrustPolicyManager: ServerTrustPolicyManager {
-    override func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
-        var policy: ServerTrustPolicy?
-
-        // Implement your custom domain matching behavior...
-
-        return policy
-    }
-}
-```
-
-#### Validating the Host
-
-The `.performDefaultEvaluation`, `.pinCertificates` and `.pinPublicKeys` server trust policies all take a `validateHost` parameter. Setting the value to `true` will cause the server trust evaluation to verify that hostname in the certificate matches the hostname of the challenge. If they do not match, evaluation will fail. A `validateHost` value of `false` will still evaluate the full certificate chain, but will not validate the hostname of the leaf certificate.
-
-> It is recommended that `validateHost` always be set to `true` in production environments.
-
-#### Validating the Certificate Chain
-
-Pinning certificates and public keys both have the option of validating the certificate chain using the `validateCertificateChain` parameter. By setting this value to `true`, the full certificate chain will be evaluated in addition to performing a byte equality check against the pinned certificates or public keys. A value of `false` will skip the certificate chain validation, but will still perform the byte equality check.
-
-There are several cases where it may make sense to disable certificate chain validation. The most common use cases for disabling validation are self-signed and expired certificates. The evaluation would always fail in both of these cases, but the byte equality check will still ensure you are receiving the certificate you expect from the server.
-
-> It is recommended that `validateCertificateChain` always be set to `true` in production environments.
-
-#### App Transport Security
-
-With the addition of App Transport Security (ATS) in iOS 9, it is possible that using a custom `ServerTrustPolicyManager` with several `ServerTrustPolicy` objects will have no effect. If you continuously see `CFNetwork SSLHandshake failed (-9806)` errors, you have probably run into this problem. Apple's ATS system overrides the entire challenge system unless you configure the ATS settings in your app's plist to disable enough of it to allow your app to evaluate the server trust.
-
-If you run into this problem (high probability with self-signed certificates), you can work around this issue by adding the following to your `Info.plist`.
-
-```xml
-<dict>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSExceptionDomains</key>
-        <dict>
-            <key>example.com</key>
-            <dict>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
-                <key>NSExceptionRequiresForwardSecrecy</key>
-                <false/>
-                <key>NSIncludesSubdomains</key>
-                <true/>
-                <!-- Optional: Specify minimum TLS version -->
-                <key>NSTemporaryExceptionMinimumTLSVersion</key>
-                <string>TLSv1.2</string>
-            </dict>
-        </dict>
-    </dict>
-</dict>
-```
-
-Whether you need to set the `NSExceptionRequiresForwardSecrecy` to `NO` depends on whether your TLS connection is using an allowed cipher suite. In certain cases, it will need to be set to `NO`. The `NSExceptionAllowsInsecureHTTPLoads` MUST be set to `YES` in order to allow the `SessionDelegate` to receive challenge callbacks. Once the challenge callbacks are being called, the `ServerTrustPolicyManager` will take over the server trust evaluation. You may also need to specify the `NSTemporaryExceptionMinimumTLSVersion` if you're trying to connect to a host that only supports TLS versions less than `1.2`.
-
-> It is recommended to always use valid certificates in production environments.
-
-#### Using Self-Signed Certificates with Local Networking
-
-If you are attempting to connect to a server running on your localhost, and you are using self-signed certificates, you will need to add the following to your `Info.plist`.
-
-```xml
-<dict>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsLocalNetworking</key>
-        <true/>
-    </dict>
-</dict>
-```
-
-According to [Apple documentation](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW35), setting `NSAllowsLocalNetworking` to `YES` allows loading of local resources without disabling ATS for the rest of your app.
-
-### Network Reachability
-
-The `NetworkReachabilityManager` listens for reachability changes of hosts and addresses for both WWAN and WiFi network interfaces.
-
-```swift
-let manager = NetworkReachabilityManager(host: "www.apple.com")
-
-manager?.listener = { status in
-    print("Network Status Changed: \(status)")
-}
-
-manager?.startListening()
-```
-
-> Make sure to remember to retain the `manager` in the above example, or no status changes will be reported.
-> Also, do not include the scheme in the `host` string or reachability won't function correctly.
-
-There are some important things to remember when using network reachability to determine what to do next.
-
-- **Do NOT** use Reachability to determine if a network request should be sent.
-	- You should **ALWAYS** send it.
-- When Reachability is restored, use the event to retry failed network requests.
-	- Even though the network requests may still fail, this is a good moment to retry them.
-- The network reachability status can be useful for determining why a network request may have failed.
-	- If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
