@@ -38,6 +38,24 @@ open class SessionDelegate: NSObject {
     public init(fileManager: FileManager = .default) {
         self.fileManager = fileManager
     }
+
+    /// Internal method to find and cast requests while maintaining some integrity checking.
+    ///
+    /// - Parameters:
+    ///   - task: The `URLSessionTask` for which to find the associated `Request`.
+    ///   - type: The `Request` subclass type to cast any `Request` associate with `task`.
+    func request<R: Request>(for task: URLSessionTask, as type: R.Type) -> R? {
+        guard let provider = stateProvider else {
+            assertionFailure("StateProvider is nil.")
+            return nil
+        }
+
+        guard let request = provider.request(for: task) as? R else {
+            fatalError("Returned Request is not of expected type: \(R.self).")
+        }
+
+        return request
+    }
 }
 
 /// Type which provides various `Session` state values.
@@ -79,7 +97,8 @@ extension SessionDelegate: URLSessionTaskDelegate {
         switch challenge.protectionSpace.authenticationMethod {
         case NSURLAuthenticationMethodServerTrust:
             evaluation = attemptServerTrustAuthentication(with: challenge)
-        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM, NSURLAuthenticationMethodNegotiate, NSURLAuthenticationMethodClientCertificate:
+        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM,
+             NSURLAuthenticationMethodNegotiate, NSURLAuthenticationMethodClientCertificate:
             evaluation = attemptCredentialAuthentication(for: challenge, belongingTo: task)
         default:
             evaluation = (.performDefaultHandling, nil, nil)
@@ -159,8 +178,10 @@ extension SessionDelegate: URLSessionTaskDelegate {
                          needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
         eventMonitor?.urlSession(session, taskNeedsNewBodyStream: task)
 
-        guard let request = stateProvider?.request(for: task) as? UploadRequest else {
-            fatalError("needNewBodyStream for request that isn't UploadRequest.")
+        guard let request = request(for: task, as: UploadRequest.self) else {
+            assertionFailure("needNewBodyStream did not find UploadRequest.")
+            completionHandler(nil)
+            return
         }
 
         completionHandler(request.inputStream())
@@ -208,8 +229,9 @@ extension SessionDelegate: URLSessionDataDelegate {
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
 
-        guard let request = stateProvider?.request(for: dataTask) as? DataRequest else {
-            fatalError("dataTask received data for incorrect Request subclass: \(String(describing: stateProvider?.request(for: dataTask)))")
+        guard let request = request(for: dataTask, as: DataRequest.self) else {
+            assertionFailure("dataTask did not find DataRequest.")
+            return
         }
 
         request.didReceive(data: data)
@@ -240,9 +262,9 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                  downloadTask: downloadTask,
                                  didResumeAtOffset: fileOffset,
                                  expectedTotalBytes: expectedTotalBytes)
-
-        guard let downloadRequest = stateProvider?.request(for: downloadTask) as? DownloadRequest else {
-            fatalError("No DownloadRequest found for downloadTask: \(downloadTask)")
+        guard let downloadRequest = request(for: downloadTask, as: DownloadRequest.self) else {
+            assertionFailure("downloadTask did not find DownloadRequest.")
+            return
         }
 
         downloadRequest.updateDownloadProgress(bytesWritten: fileOffset,
@@ -259,9 +281,9 @@ extension SessionDelegate: URLSessionDownloadDelegate {
                                  didWriteData: bytesWritten,
                                  totalBytesWritten: totalBytesWritten,
                                  totalBytesExpectedToWrite: totalBytesExpectedToWrite)
-
-        guard let downloadRequest = stateProvider?.request(for: downloadTask) as? DownloadRequest else {
-            fatalError("No DownloadRequest found for downloadTask: \(downloadTask)")
+        guard let downloadRequest = request(for: downloadTask, as: DownloadRequest.self) else {
+            assertionFailure("downloadTask did not find DownloadRequest.")
+            return
         }
 
         downloadRequest.updateDownloadProgress(bytesWritten: bytesWritten,
@@ -271,8 +293,9 @@ extension SessionDelegate: URLSessionDownloadDelegate {
     open func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         eventMonitor?.urlSession(session, downloadTask: downloadTask, didFinishDownloadingTo: location)
 
-        guard let request = stateProvider?.request(for: downloadTask) as? DownloadRequest else {
-            fatalError("Download finished but either no request found or request wasn't DownloadRequest")
+        guard let request = request(for: downloadTask, as: DownloadRequest.self) else {
+            assertionFailure("downloadTask did not find DownloadRequest.")
+            return
         }
 
         guard let response = request.response else {

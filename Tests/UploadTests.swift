@@ -200,7 +200,7 @@ class UploadDataTestCase: BaseTestCase {
     func testUploadDataRequestWithProgress() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let string = String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", count: 100)
+        let string = String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", count: 300)
         let data = Data(string.utf8)
 
         let expectation = self.expectation(description: "Bytes upload progress should be reported: \(urlString)")

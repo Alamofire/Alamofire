@@ -51,7 +51,7 @@ final class RequestResponseTestCase: BaseTestCase {
 
     func testRequestResponseWithProgress() {
         // Given
-        let randomBytes = 1 * 1024 * 1024
+        let randomBytes = 1 * 25 * 1024
         let urlString = "https://httpbin.org/bytes/\(randomBytes)"
 
         let expectation = self.expectation(description: "Bytes download progress should be reported: \(urlString)")
@@ -591,8 +591,9 @@ final class RequestResponseTestCase: BaseTestCase {
 
     func testThatCancelledRequestTriggersAllAppropriateLifetimeEvents() {
         // Given
-        let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let queue = DispatchQueue(label: "org.alamofire.Session.TestRootQueue")
+        let eventMonitor = ClosureEventMonitor(queue: queue)
+        let session = Session(rootQueue: queue, startRequestsImmediately: false, eventMonitors: [eventMonitor])
 
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
