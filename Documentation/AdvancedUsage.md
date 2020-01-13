@@ -177,15 +177,15 @@ In order to track the progress of a request, `Request` offers a both  `uploadPro
 
 ```swift
 AF.request(...)
-.uploadProgress { progress in
-    print(progress)
-}
-.downloadProgress { progress in
-    print(progress)
-}
-.responseDecodable(of: SomeType.self) { response in
-    debugPrint(response)
-}
+    .uploadProgress { progress in
+        print(progress)
+    }
+    .downloadProgress { progress in
+        print(progress)
+    }
+    .responseDecodable(of: SomeType.self) { response in
+        debugPrint(response)
+    }
 ```
  
 Importantly, not all `Request` subclasses are able to report their progress accurately, or may have other dependencies to do so.
@@ -198,21 +198,63 @@ Importantly, not all `Request` subclasses are able to report their progress accu
 Unfortunately there may be other, undocumented requirements for progress reporting from `URLSession` which prevents accurate progress reporting.
 
 #### Handling Redirects
-Alamofire’s `RedirectHandler` protocol provides control and customization of redirect handling for `Request`.
+Alamofire’s `RedirectHandler` protocol provides control and customization of redirect handling for `Request`. In addition to per-`Session` `RedirectHandler`s, each `Request` can be given its own `RedirectHandler` which overrides any provided by the `Session`. 
+
+```swift
+let redirector = Redirector(behavior: .follow)
+AF.request(...)
+    .redirect(using: redirector)
+    .responseDecodable(of: SomeType.self) { response in 
+        debugPrint(response)
+    }
+```
+
+> Note: Only one `RedirectHandler` can be set on a `Request`. Attempting to set more than one will result in a runtime exception.
 
 #### Customizing Caching
+Alamofire’s `CachedResponseHandler` protocol provides control and customization over the caching of responses. In addition to per-`Session` `CachedResponseHandler`s, each `Request` can be given its own `CachedResponseHandler` which overrides any provided by the `Session`.
 
-#### Adding Credentials
+```swift
+let cacher = Cacher(behavior: .cache)
+AF.request(...)
+    .cacheResponse(using: cacher)
+    .responseDecodable(of: SomeType.self) { response in 
+        debugPrint(response)
+    }
+```
 
-#### Tracking Requests
+> Note: Only one `CachedResponseHandler` can be set on a `Request`. Attempting to set more than one will result in a runtime exception.
 
+#### Credentials
+In order to take advantage of the automatic credential handling provided by `URLSession`, Alamofire provides per-`Request` API to allow the automatic addition of `URLCredential` instances to requests. These include both convenience API for HTTP authentication using a username and password, as well as any `URLCredential` instance. 
+
+Adding a credential to automatically reply to any HTTP authentication challenges is straightforward:
+```swift
+AF.request(...)
+    .authenticate(username: "user@example.domain", password: "password")
+    .responseDecodable(of: SomeType.self) { response in 
+        debugPrint(response)
+    }
+```
+> Note: This mechanism only supports HTTP authentication prompts. If a request requires an `Authentication` header for all requests, it should be provided directly.
+
+Additionally, adding a raw `URLCredential` is just as easy:
+```swift
+let credential = URLCredential(...)
+AF.request(...)
+    .authenticate(using: credential)
+    .responseDecodable(of: SomeType.self) { response in 
+        debugPrint(response)
+    }
+```
+
+#### A `Request`’s `URLRequest`s
+Each network request issued by a `Request` is ultimately encapsulated in a `URLRequest` created from the various parameters passed to one of the `Session` request methods. `Request` will keep a copy of these `URLRequest` in its `requests` property.
 #### Response
 
 #### `URLSessionTask`s
 
 #### Metrics
-
-#### cURL
 
 ### `DataRequest`
 
@@ -222,7 +264,7 @@ Alamofire’s `RedirectHandler` protocol provides control and customization of r
 
 ### Adapting and Retrying Requests
 
-Most web services these days are behind some sort of authentication system. One of the more common ones today is OAuth. This generally involves generating an access token authorizing your application or user to call the various supported web services. While creating these initial access tokens can be laborsome, it can be even more complicated when your access token expires and you need to fetch a new one. There are many thread-safety issues that need to be considered.
+Most web services these days are behind some sort of authentication system. One of the more common ones today is OAuth. This generally involves generating an access token authorizing your application or user to call the various supported web services. While creating these initial access tokens can be laborious, it can be even more complicated when your access token expires and you need to fetch a new one. There are many thread-safety issues that need to be considered.
 
 The `RequestAdapter` and `RequestRetrier` protocols were created to make it much easier to create a thread-safe authentication system for a specific set of web services.
 
