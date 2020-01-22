@@ -1,3 +1,37 @@
+- [Advanced Usage](#advanced-usage)
+  * [Session](#session)
+    + [Creating a Session with Default Configuration](#creating-a-session-with-default-configuration)
+    + [Creating a Session with Background Configuration](#creating-a-session-with-background-configuration)
+    + [Creating a Session with Ephemeral Configuration](#creating-a-session-with-ephemeral-configuration)
+    + [Modifying the Session Configuration](#modifying-the-session-configuration)
+  * [Session Delegate](#session-delegate)
+    + [Override Closures](#override-closures)
+    + [Subclassing](#subclassing)
+  * [Request](#request)
+  * [Routing Requests](#routing-requests)
+    + [URLConvertible](#urlconvertible)
+      - [Type-Safe Routing](#type-safe-routing)
+    + [URLRequestConvertible](#urlrequestconvertible)
+      - [API Parameter Abstraction](#api-parameter-abstraction)
+      - [CRUD and Authorization](#crud-and-authorization)
+  * [Adapting and Retrying Requests](#adapting-and-retrying-requests)
+    + [RequestAdapter](#requestadapter)
+    + [RequestRetrier](#requestretrier)
+  * [Custom Response Serialization](#custom-response-serialization)
+    + [Response Mapping](#response-mapping)
+    + [Handling Errors](#handling-errors)
+    + [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
+    + [Generic Response Object Serialization](#generic-response-object-serialization)
+  * [Security](#security)
+    + [ServerTrustPolicy](#servertrustpolicy)
+    + [Server Trust Policy Manager](#server-trust-policy-manager)
+      - [Subclassing Server Trust Policy Manager](#subclassing-server-trust-policy-manager)
+    + [Validating the Host](#validating-the-host)
+    + [Validating the Certificate Chain](#validating-the-certificate-chain)
+    + [App Transport Security](#app-transport-security)
+    + [Using Self-Signed Certificates with Local Networking](#using-self-signed-certificates-with-local-networking)
+  * [Network Reachability](#network-reachability)
+
 ## Advanced Usage
 
 Alamofire is built on `URLSession` and the Foundation URL Loading System. To make the most of this framework, it is recommended that you be familiar with the concepts and capabilities of the underlying networking stack.
@@ -242,7 +276,7 @@ enum Router: URLRequestConvertible {
 Alamofire.request(Router.search(query: "foo bar", page: 1)) // https://example.com/search?q=foo%20bar&offset=50
 ```
 
-##### CRUD & Authorization
+##### CRUD and Authorization
 
 ```swift
 import Alamofire
