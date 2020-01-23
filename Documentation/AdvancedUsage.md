@@ -148,7 +148,7 @@ let session = Session(session: urlSession, delegate: delegate, rootQueue: rootQu
 ```
 
 ## Requests
-Each request performed by Alamofire is encapsulated by particular class, `DataRequest`, `UploadRequest`, and `DownloadRequest`. Each of these classes encapsulate functionality unique to each type of request, but `DataRequest` and `DownloadRequest` inherit from a common superclass, `Request` (`UploadRequest` inherits from `DataRequest`).
+Each request performed by Alamofire is encapsulated by particular class, `DataRequest`, `UploadRequest`, and `DownloadRequest`. Each of these classes encapsulate functionality unique to each type of request, but `DataRequest` and `DownloadRequest` inherit from a common superclass, `Request` (`UploadRequest` inherits from `DataRequest`). `Request` instances are never created directly, but are instead vended from a `Session` instance through one of the various `request` methods.
 
 ### `Request`
 Although `Request` doesn’t encapsulate any particular type of request, it contains the state and functionality common to all requests Alamofire performs. This includes:
@@ -173,7 +173,7 @@ public enum State {
 If a `Request` is resumed and isn’t later cancelled, it will reach the `.finished` state once all response validators and response serializers have been run. However, if additional response serializers are added to the `Request` after it has reached the `.finished` state, it will transition back to the `.resumed` state and perform the network request again.
 
 #### Progress
-In order to track the progress of a request, `Request` offers a both  `uploadProgress` and `downloadProgress` properties as well as closure-based `uploadProgress` and `downloadProgress` methods. Like all closure-based `Request` APIs, the progress APIs can be chained off of the `Request`. Like the other closure-based APIs, they should be added to a request *before* calling any response handler, like `responseDecodable`.
+In order to track the progress of a request, `Request` offers a both  `uploadProgress` and `downloadProgress` properties as well as closure-based `uploadProgress` and `downloadProgress` methods. Like all closure-based `Request` APIs, the progress APIs can be chained off of the `Request` with other methods. Also like the other closure-based APIs, they should be added to a request *before* calling any response handler, like `responseDecodable`.
 
 ```swift
 AF.request(...)
@@ -190,9 +190,9 @@ AF.request(...)
  
 Importantly, not all `Request` subclasses are able to report their progress accurately, or may have other dependencies to do so.
 - For upload progress, progress can be determined in the following ways:
-	- The length of the `Data` object provided as the upload body to an `UploadRequest`.
-	- The length of a file on disk provided as the upload body of an `UploadRequest`.
-	- The value of the `Content-Length` header on the request, if it has been manually set.
+	- By the length of the `Data` object provided as the upload body to an `UploadRequest`.
+	- By the length of a file on disk provided as the upload body of an `UploadRequest`.
+	- By the value of the `Content-Length` header on the request, if it has been manually set.
 - For download progress, there is a single requirement:
 	- The server response must contain a `Content-Length` header.
 Unfortunately there may be other, undocumented requirements for progress reporting from `URLSession` which prevents accurate progress reporting.
@@ -228,7 +228,7 @@ AF.request(...)
 #### Credentials
 In order to take advantage of the automatic credential handling provided by `URLSession`, Alamofire provides per-`Request` API to allow the automatic addition of `URLCredential` instances to requests. These include both convenience API for HTTP authentication using a username and password, as well as any `URLCredential` instance. 
 
-Adding a credential to automatically reply to any HTTP authentication challenges is straightforward:
+Adding a credential to automatically reply to any HTTP authentication challenge is straightforward:
 ```swift
 AF.request(...)
     .authenticate(username: "user@example.domain", password: "password")
@@ -236,7 +236,7 @@ AF.request(...)
         debugPrint(response)
     }
 ```
-> Note: This mechanism only supports HTTP authentication prompts. If a request requires an `Authentication` header for all requests, it should be provided directly.
+> Note: This mechanism only supports HTTP authentication prompts. If a request requires an `Authentication` header for all requests, it should be provided directly, either as part of the `Request`, or through a `RequestInterceptor`.
 
 Additionally, adding a raw `URLCredential` is just as easy:
 ```swift
@@ -249,20 +249,79 @@ AF.request(...)
 ```
 
 #### A `Request`’s `URLRequest`s
-Each network request issued by a `Request` is ultimately encapsulated in a `URLRequest` created from the various parameters passed to one of the `Session` request methods. `Request` will keep a copy of these `URLRequest` in its `requests` property.
-#### Response
+Each network request issued by a `Request` is ultimately encapsulated in a `URLRequest` value created from the various parameters passed to one of the `Session` request methods. `Request` will keep a copy of these `URLRequest`s in its `requests` array property. These values include both the initial `URLRequest` created from the passed parameters, as well any `URLRequest`s created by `RequestInterceptor`s. That array does not, however, include the `URLRequest`s performed by the `URLSessionTask`s issued on behalf of the `Request`. To inspect those values, the `tasks` property gives access to all of the `URLSessionTasks` performed by the `Request`.
 
 #### `URLSessionTask`s
+In many ways the various `Request` subclasses act as a wrapper for a `URLSessionTask`, presenting particular API for interacting with particular types of tasks. These tasks are made visible on the `Request` instance through the `tasks` array property. This includes both the initial task created for the `Request`, as well as any subsequent tasks created as part of the retry process, with one task per retry.
 
-#### Metrics
+#### Response
+Each `Request` may have an `HTTPURLResponse` value available once the request is complete. This value is only available if the request wasn’t cancelled and didn’t fail to make the network request. Additionally, if the request is retried, only the *last* response is available. Intermediate responses can be derived from the `URLSessionTask`s in the `tasks` property.
+
+#### `URLSessionTaskMetrics`
+Alamofire gathers `URLSessionTaskMetrics` values for every `URLSessionTask` performed for a `Request`. These values are available in the `metrics` property, with each value corresponding to the `URLSessionTask` in `tasks` at the same index.
+
+`URLSessionTaskMetrics` are also made available on Alamofire’s various response types, like `DataResponse`. For instance:
+```swift
+AF.request(...)
+    .responseDecodable(of: SomeType.self) { response in {
+        print(response.metrics)
+    }
+```
 
 ### `DataRequest`
+`DataRequest` is a concrete subclass of `Request` which encapsulates a `URLSessionDataTask` downloading a server response into `Data` stored in memory. Therefore, it’s important to realize that extremely large downloads may adversely affect system performance. For those types of downloads, using `DownloadRequest` to save the data to disk is recommended.
+
+#### Additional State
+`DataRequest`s have a few properties in addition to those provided by `Request`. These include `data`, which is the accumulated `Data` from the server response, and `convertible`, which is the `URLRequestConvertible` the `DataRequest` was created with, containing the original parameters creating the instance.
+
+#### Validation
+`DataRequest`s do not validate responses by default. Instead, a call to `validate()` must be added to the in order to verify various properties are valid. 
+
+```swift
+public typealias Validation = (URLRequest?, HTTPURLResponse, Data?) -> Result<Void, Error>
+```
+
+By default, adding `validate()` ensures the response status code is within the `200..<300` range and that the response’s `Content-Type` matches the request `Accept` value. Validation can be further customized by passing a `Validation` closure:
+
+```swift
+AF.request(...)
+    .validate { request, response, data in
+        ...
+    }
+```
 
 ### `UploadRequest`
+`UploadRequest` is a subclass of `DataRequest` which encapsulates a `URLSessionUploadTask`, uploading a `Data` value, file on disk, or `InputStream` to a remote server. 
+
+#### Additional State
+`UploadRequest`s have a few properties in addition to those provided by `DataRequest`. These include a `FileManager` instance, used to customize access to disk when uploading a file, and `upload`, which encapsulates both the `URLRequestConvertible` value used to describe the request, as well as the `Uploadable`, which determines the type of upload being performed.
 
 ### `DownloadRequest`
+`DownloadRequest` is a concrete subclass of `Request` which encapsulates a `URLSessionDownloadTask`, downloading response `Data` to disk.
 
-### Adapting and Retrying Requests
+#### Additional State
+`DownloadRequest`s have a few properties in addition to those provided by `Request`. These include `resumeData`, the `Data` produced when cancelling a `DownloadRequest`, which may be used to resume the download later, and `fileURL`, the `URL` at which the downloaded file is available once the download completes.
+
+#### Cancellation
+In addition to supporting the `cancel()` method provided by `Request`, `DownloadRequest` includes `cancel(producingResumeData shouldProduceResumeData: Bool)`, which optionally populates the `resumeData` property when cancelled, if possible, and `cancel(byProducingResumeData completionHandler: @escaping (_ data: Data?) -> Void)`, which provides the produced resume data to the passed closure.
+
+```swift
+AF.download(...)
+    .cancel { resumeData in
+        ...
+    }
+```
+
+#### Validation
+`DownloadRequest` supports a slightly different version of validation than `DataRequest` and `UploadRequest`, due to the fact it’s data is downloaded to disk.
+
+```swift
+public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLResponse, _ fileURL: URL?)
+```
+
+Instead of accessing the downloaded `Data` directly it must be accessed using the `fileURL` provided. Otherwise, the capabilities of `DownloadRequest`’s validators are the same as `DataRequest`’s.
+
+## Adapting and Retrying Requests with `RequestInterceptor`
 
 Most web services these days are behind some sort of authentication system. One of the more common ones today is OAuth. This generally involves generating an access token authorizing your application or user to call the various supported web services. While creating these initial access tokens can be laborious, it can be even more complicated when your access token expires and you need to fetch a new one. There are many thread-safety issues that need to be considered.
 
@@ -303,136 +362,7 @@ sessionManager.request("https://httpbin.org/get")
 
 The `RequestRetrier` protocol allows a `Request` that encountered an `Error` while being executed to be retried. When using both the `RequestAdapter` and `RequestRetrier` protocols together, you can create credential refresh systems for OAuth1, OAuth2, Basic Auth and even exponential backoff retry policies. The possibilities are endless. Here's an example of how you could implement a refresh flow for OAuth2 access tokens.
 
-> **DISCLAIMER:** This is **NOT** a global `OAuth2` solution. It is merely an example demonstrating how one could use the `RequestAdapter` in conjunction with the `RequestRetrier` to create a thread-safe refresh system.
-
-> To reiterate, **do NOT copy** this sample code and drop it into a production application. This is merely an example. Each authentication system must be tailored to a particular platform and authentication type.
-
-```swift
-class OAuth2Handler: RequestAdapter, RequestRetrier {
-    private typealias RefreshCompletion = (_ succeeded: Bool, _ accessToken: String?, _ refreshToken: String?) -> Void
-
-    private let sessionManager: SessionManager = {
-        let configuration = URLSessionConfiguration.default
-        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
-
-        return SessionManager(configuration: configuration)
-    }()
-
-    private let lock = NSLock()
-
-    private var clientID: String
-    private var baseURLString: String
-    private var accessToken: String
-    private var refreshToken: String
-
-    private var isRefreshing = false
-    private var requestsToRetry: [RequestRetryCompletion] = []
-
-    // MARK: - Initialization
-
-    public init(clientID: String, baseURLString: String, accessToken: String, refreshToken: String) {
-        self.clientID = clientID
-        self.baseURLString = baseURLString
-        self.accessToken = accessToken
-        self.refreshToken = refreshToken
-    }
-
-    // MARK: - RequestAdapter
-
-    func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-        if let urlString = urlRequest.url?.absoluteString, urlString.hasPrefix(baseURLString) {
-            var urlRequest = urlRequest
-            urlRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
-            return urlRequest
-        }
-
-        return urlRequest
-    }
-
-    // MARK: - RequestRetrier
-
-    func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
-        lock.lock() ; defer { lock.unlock() }
-
-        if let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 {
-            requestsToRetry.append(completion)
-
-            if !isRefreshing {
-                refreshTokens { [weak self] succeeded, accessToken, refreshToken in
-                    guard let strongSelf = self else { return }
-
-                    strongSelf.lock.lock() ; defer { strongSelf.lock.unlock() }
-
-                    if let accessToken = accessToken, let refreshToken = refreshToken {
-                        strongSelf.accessToken = accessToken
-                        strongSelf.refreshToken = refreshToken
-                    }
-
-                    strongSelf.requestsToRetry.forEach { $0(succeeded, 0.0) }
-                    strongSelf.requestsToRetry.removeAll()
-                }
-            }
-        } else {
-            completion(false, 0.0)
-        }
-    }
-
-    // MARK: - Private - Refresh Tokens
-
-    private func refreshTokens(completion: @escaping RefreshCompletion) {
-        guard !isRefreshing else { return }
-
-        isRefreshing = true
-
-        let urlString = "\(baseURLString)/oauth2/token"
-
-        let parameters: [String: Any] = [
-            "access_token": accessToken,
-            "refresh_token": refreshToken,
-            "client_id": clientID,
-            "grant_type": "refresh_token"
-        ]
-
-        sessionManager.request(urlString, method: .post, parameters: parameters, encoding: JSONEncoding.default)
-            .responseJSON { [weak self] response in
-                guard let strongSelf = self else { return }
-
-                if 
-                    let json = response.result.value as? [String: Any], 
-                    let accessToken = json["access_token"] as? String, 
-                    let refreshToken = json["refresh_token"] as? String 
-                {
-                    completion(true, accessToken, refreshToken)
-                } else {
-                    completion(false, nil, nil)
-                }
-
-                strongSelf.isRefreshing = false
-            }
-    }
-}
-```
-
-```swift
-let baseURLString = "https://some.domain-behind-oauth2.com"
-
-let oauthHandler = OAuth2Handler(
-    clientID: "12345678",
-    baseURLString: baseURLString,
-    accessToken: "abcd1234",
-    refreshToken: "ef56789a"
-)
-
-let sessionManager = SessionManager()
-sessionManager.adapter = oauthHandler
-sessionManager.retrier = oauthHandler
-
-let urlString = "\(baseURLString)/some/endpoint"
-
-sessionManager.request(urlString).validate().responseJSON { response in
-    debugPrint(response)
-}
-```
+// Walkthrough of Retrier implementation.
 
 Once the `OAuth2Handler` is applied as both the `adapter` and `retrier` for the `SessionManager`, it will handle an invalid access token error by automatically refreshing the access token and retrying all failed requests in the same order they failed.
 
@@ -442,7 +372,7 @@ The example above only checks for a `401` response code which is not nearly robu
 
 Another important note is that this authentication system could be shared between multiple session managers. For example, you may need to use both a `default` and `ephemeral` session configuration for the same set of web services. The example above allows the same `oauthHandler` instance to be shared across multiple session managers to manage the single refresh flow.
 
-### Security
+## Security
 
 Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire will evaluate the certificate chain provided by the server using Apple's built in validation provided by the Security framework. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by the `ServerTrustPolicy`.
 
@@ -600,6 +530,8 @@ There are some important things to remember when using network reachability to d
 	- Even though the network requests may still fail, this is a good moment to retry them.
 - The network reachability status can be useful for determining why a network request may have failed.
 	- If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
+
+## Making Requests
 
 ### Routing Requests
 
@@ -762,6 +694,12 @@ enum Router: URLRequestConvertible {
 Alamofire.request(Router.readUser("mattt")) // GET https://example.com/users/mattt
 ```
 
+## Response Handling
+
+### Response Transforms
+
+### Custom Response Serializers
+
 ### Custom Response Serialization
 
 Alamofire provides built-in response serialization for data, strings, JSON, and property lists:
@@ -909,161 +847,6 @@ extension DataRequest {
             responseSerializer: DataRequest.xmlResponseSerializer(),
             completionHandler: completionHandler
         )
-    }
-}
-```
-
-#### Generic Response Object Serialization
-
-Generics can be used to provide automatic, type-safe response object serialization.
-
-```swift
-protocol ResponseObjectSerializable {
-    init?(response: HTTPURLResponse, representation: Any)
-}
-
-extension DataRequest {
-    func responseObject<T: ResponseObjectSerializable>(
-        queue: DispatchQueue? = nil,
-        completionHandler: @escaping (DataResponse<T>) -> Void)
-        -> Self
-    {
-        let responseSerializer = DataResponseSerializer<T> { request, response, data, error in
-            guard error == nil else { return .failure(BackendError.network(error: error!)) }
-
-            let jsonResponseSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
-            let result = jsonResponseSerializer.serializeResponse(request, response, data, nil)
-
-            guard case let .success(jsonObject) = result else {
-                return .failure(BackendError.jsonSerialization(error: result.error!))
-            }
-
-            guard let response = response, let responseObject = T(response: response, representation: jsonObject) else {
-                return .failure(BackendError.objectSerialization(reason: "JSON could not be serialized: \(jsonObject)"))
-            }
-
-            return .success(responseObject)
-        }
-
-        return response(queue: queue, responseSerializer: responseSerializer, completionHandler: completionHandler)
-    }
-}
-```
-
-```swift
-struct User: ResponseObjectSerializable, CustomStringConvertible {
-    let username: String
-    let name: String
-
-    var description: String {
-        return "User: { username: \(username), name: \(name) }"
-    }
-
-    init?(response: HTTPURLResponse, representation: Any) {
-        guard
-            let username = response.url?.lastPathComponent,
-            let representation = representation as? [String: Any],
-            let name = representation["name"] as? String
-        else { return nil }
-
-        self.username = username
-        self.name = name
-    }
-}
-```
-
-```swift
-Alamofire.request("https://example.com/users/mattt").responseObject { (response: DataResponse<User>) in
-    debugPrint(response)
-
-    if let user = response.result.value {
-        print("User: { username: \(user.username), name: \(user.name) }")
-    }
-}
-```
-
-The same approach can also be used to handle endpoints that return a representation of a collection of objects:
-
-```swift
-protocol ResponseCollectionSerializable {
-    static func collection(from response: HTTPURLResponse, withRepresentation representation: Any) -> [Self]
-}
-
-extension ResponseCollectionSerializable where Self: ResponseObjectSerializable {
-    static func collection(from response: HTTPURLResponse, withRepresentation representation: Any) -> [Self] {
-        var collection: [Self] = []
-
-        if let representation = representation as? [[String: Any]] {
-            for itemRepresentation in representation {
-                if let item = Self(response: response, representation: itemRepresentation) {
-                    collection.append(item)
-                }
-            }
-        }
-
-        return collection
-    }
-}
-```
-
-```swift
-extension DataRequest {
-    @discardableResult
-    func responseCollection<T: ResponseCollectionSerializable>(
-        queue: DispatchQueue? = nil,
-        completionHandler: @escaping (DataResponse<[T]>) -> Void) -> Self
-    {
-        let responseSerializer = DataResponseSerializer<[T]> { request, response, data, error in
-            guard error == nil else { return .failure(BackendError.network(error: error!)) }
-
-            let jsonSerializer = DataRequest.jsonResponseSerializer(options: .allowFragments)
-            let result = jsonSerializer.serializeResponse(request, response, data, nil)
-
-            guard case let .success(jsonObject) = result else {
-                return .failure(BackendError.jsonSerialization(error: result.error!))
-            }
-
-            guard let response = response else {
-                let reason = "Response collection could not be serialized due to nil response."
-                return .failure(BackendError.objectSerialization(reason: reason))
-            }
-
-            return .success(T.collection(from: response, withRepresentation: jsonObject))
-        }
-
-        return response(responseSerializer: responseSerializer, completionHandler: completionHandler)
-    }
-}
-```
-
-```swift
-struct User: ResponseObjectSerializable, ResponseCollectionSerializable, CustomStringConvertible {
-    let username: String
-    let name: String
-
-    var description: String {
-        return "User: { username: \(username), name: \(name) }"
-    }
-
-    init?(response: HTTPURLResponse, representation: Any) {
-        guard
-            let username = response.url?.lastPathComponent,
-            let representation = representation as? [String: Any],
-            let name = representation["name"] as? String
-        else { return nil }
-
-        self.username = username
-        self.name = name
-    }
-}
-```
-
-```swift
-Alamofire.request("https://example.com/users").responseCollection { (response: DataResponse<[User]>) in
-    debugPrint(response)
-
-    if let users = response.result.value {
-        users.forEach { print("- \($0)") }
     }
 }
 ```

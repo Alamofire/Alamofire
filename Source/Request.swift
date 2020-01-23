@@ -1054,7 +1054,7 @@ public class DownloadRequest: Request {
 
     // MARK: Destination
 
-    /// A closure executed once a download request has successfully completed in order to determine where to move the
+    /// A closure executed once a `DownloadRequest` has successfully completed in order to determine where to move the
     /// temporary file written to during the download process. The closure takes two arguments: the temporary file URL
     /// and the URL response, and returns a two arguments: the file URL where the temporary file should be moved and
     /// the options defining how the file should be moved.
