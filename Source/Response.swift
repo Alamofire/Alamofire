@@ -143,6 +143,27 @@ extension DataResponse {
                                                  result: result.map(transform))
     }
 
+    /// Similar to `func map<NewSuccess>(_ transform: (Success) -> NewSuccess) -> DataResponse<NewSuccess, Failure>`,
+    /// but uses a key path instead of a closure
+    ///
+    /// For example:
+    ///
+    ///     let possibleData: DataResponse<Data> = ...
+    ///     let possibleInt = possibleData.map(\.count)
+    ///
+    /// - parameter keyPath: A key path for the success value of the instance's result.
+    ///
+    /// - returns: A `DataResponse` whose result wraps the value for the given key path. If this instance's
+    ///            result is a failure, returns a response wrapping the same failure.
+    public func map<NewSuccess>(_ keyPath: KeyPath<Success, NewSuccess>) -> DataResponse<NewSuccess, Failure> {
+        return DataResponse<NewSuccess, Failure>(request: request,
+                                                 response: response,
+                                                 data: data,
+                                                 metrics: metrics,
+                                                 serializationDuration: serializationDuration,
+                                                 result: result.map { $0[keyPath: keyPath] } )
+    }
+
     /// Evaluates the given closure when the result of this `DataResponse` is a success, passing the unwrapped result
     /// value as a parameter.
     ///
