@@ -405,6 +405,30 @@ final class ResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    func testThatMapTransformsSuccessValueByKeyPath() {
+        // Given
+        let urlString = "https://httpbin.org/base64/SFRUUEJJTiBpcyBhd2Vzb21l"
+        let expectation = self.expectation(description: "request should succeed")
+
+        var response: DataResponse<Int, AFError>?
+
+        // When
+        AF.request(urlString).responseString { resp in
+            response = resp.map(\.count)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(response?.request)
+        XCTAssertNotNil(response?.response)
+        XCTAssertNotNil(response?.data)
+        XCTAssertEqual(response?.result.isSuccess, true)
+        XCTAssertEqual(response?.result.success, 18)
+        XCTAssertNotNil(response?.metrics)
+    }
+
     func testThatMapPreservesFailureError() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
