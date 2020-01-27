@@ -405,6 +405,7 @@ final class ResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.metrics)
     }
 
+    #if !swift(>=5.2)
     func testThatMapTransformsSuccessValueByKeyPath() {
         // Given
         let urlString = "https://httpbin.org/base64/SFRUUEJJTiBpcyBhd2Vzb21l"
@@ -428,6 +429,7 @@ final class ResponseMapTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.success, 18)
         XCTAssertNotNil(response?.metrics)
     }
+    #endif
 
     func testThatMapPreservesFailureError() {
         // Given
