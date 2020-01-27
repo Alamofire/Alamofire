@@ -560,7 +560,7 @@ Alamofire.request("https://httpbin.org/get")
 
 #### Response Handler Queue
 
-Closures passed to response handlers are executed on the `.main` queue by default, but a specific `DispatchQueue` can passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed on a background queue.
+Closures passed to response handlers are executed on the `.main` queue by default, but a specific `DispatchQueue` can be passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed on a background queue.
 
 ```swift
 let utilityQueue = DispatchQueue.global(qos: .utility)
