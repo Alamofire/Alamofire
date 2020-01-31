@@ -143,7 +143,6 @@ extension DataResponse {
                                                  result: result.map(transform))
     }
 
-    #if !swift(>=5.2)
     /// Similar to `func map<NewSuccess>(_ transform: (Success) -> NewSuccess) -> DataResponse<NewSuccess, Failure>`,
     /// but uses a key path instead of a closure
     ///
@@ -164,7 +163,6 @@ extension DataResponse {
                                                  serializationDuration: serializationDuration,
                                                  result: result.map { $0[keyPath: keyPath] } )
     }
-    #endif
 
     /// Evaluates the given closure when the result of this `DataResponse` is a success, passing the unwrapped result
     /// value as a parameter.
