@@ -343,10 +343,10 @@ public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLRespon
 Instead of accessing the downloaded `Data` directly it must be accessed using the `fileURL` provided. Otherwise, the capabilities of `DownloadRequest`’s validators are the same as `DataRequest`’s.
 
 ## Adapting and Retrying Requests with `RequestInterceptor`
-Alamofire’s `RequestInterceptor` protocol (composed of the `RequestAdapter` and `RequestRetrier` protocol) enables powerful per-`Session` and per-`Request` capabilities, enabling a variety of features. These include authentication systems, where a common header is added to every `Request` and `Request`s are retried when authorization expires. Additionally, Alamofire includes a built in `RetryPolicy` type, which enables easy retry when requests fail due to a variety of common network errors.
+Alamofire’s `RequestInterceptor` protocol (composed of the `RequestAdapter` and `RequestRetrier` protocols) enables powerful per-`Session` and per-`Request` capabilities. These include authentication systems, where a common header is added to every `Request` and `Request`s are retried when authorization expires. Additionally, Alamofire includes a built in `RetryPolicy` type, which enables easy retry when requests fail due to a variety of common network errors.
 
 ### `RequestAdapter`
-Alamofire’s  `RequestAdapter` protocol allows each `URLRequest` that’s to be performed by a `Session` to be inspected and adapted before being issued over the network. One very common use of an adapter is to add an `Authorization` header to requests behind a certain type of authentication.
+Alamofire’s  `RequestAdapter` protocol allows each `URLRequest` that’s to be performed by a `Session` to be inspected and mutated before being issued over the network. One very common use of an adapter is to add an `Authorization` header to requests behind a certain type of authentication.
 
 The `RequestAdapter` protocol has a single requirement: 
 
@@ -431,11 +431,11 @@ func evaluate(_ trust: SecTrust, forHost host: String) throws
 
 This method provides the [`SecTrust`](https://developer.apple.com/documentation/security/certificate_key_and_trust_services/trust) value and host `String` received from the underlying `URLSession` and provides the opportunity to perform various evaluations.
 
-Alamofire many different types of trust evolution, providing composable and complete control over the evaluation process:
+Alamofire includes many different types of trust evaluators, providing composable control over the evaluation process:
 * `DefaultTrustEvaluator`: Uses the default server trust evaluation while allowing you to control whether to validate the host provided by the challenge.
-* `RevocationTrustEvaluator`: Checks the status of the received certificate to ensure it hasn’t been revoked. This isn’t performed on every request due to the network request overhead it entails.
-* `PinnedCertificatesTrustEvaluator`: Uses the pinned certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates. This evaluator can also accept self-signed certificates.
-* `PublicKeysTrustEvaluator`: Uses the pinned public keys to validate the server trust. The server trust is considered valid if one of the pinned public keys match one of the server certificate public keys.
+* `RevocationTrustEvaluator`: Checks the status of the received certificate to ensure it hasn’t been revoked. This isn’t usually performed on every request due to the network request overhead it entails.
+* `PinnedCertificatesTrustEvaluator`: Uses the provided certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates. This evaluator can also accept self-signed certificates.
+* `PublicKeysTrustEvaluator`: Uses the provided public keys to validate the server trust. The server trust is considered valid if one of the pinned public keys match one of the server certificate public keys.
 * `CompositeTrustEvaluator`: Evaluates an array of `ServerTrustEvaluating` values, only succeeding if all of them are successful. This type can be used to combine, for example, the `RevocationTrustEvaluator` and the `PinnedCertificatesTrustEvaluator`.
 * `DisabledEvaluator`: This evaluator should only be used in debug scenarios as it disables all evaluation which in turn will always consider any server trust as valid. This evaluator should **never** be used in production environments!
 
@@ -455,21 +455,21 @@ let manager = ServerTrustManager(evaluators: serverTrustPolicies)
 
 This `ServerTrustManager` will have the following behaviors:
 - `cert.example.com` will always use certificate pinning with default and host validation enabled , thus requiring the following criteria to be met in order to allow the TLS handshake to succeed:
-	   - Certificate chain *must* be valid.
+	- Certificate chain *must* be valid.
 	- Certificate chain *must* include one of the pinned certificates.
 	- Challenge host *must* match the host in the certificate chain's leaf certificate.
 - `keys.example.com` will always use public key pinning with default and host validation enabled, thus requiring the following criteria to be met in order to allow the TLS handshake to succeed:
 	- Certificate chain *must* be valid.
 	- Leaf certificates *must* include one of the pinned public keys.
 	- Challenge host *must* match the host in the certificate chain's leaf certificate.
-- All other hosts will use the default evaluation provided by Apple.
+- Requests to other hosts will produce an error, as `ServerTrustManager` requires all requests 
 
 ##### Subclassing Server Trust Policy Manager
-If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcarded domains), then subclass the `ServerTrustManager` and override the `serverTrustEvaluator(forHost:)` method with your own custom implementation.
+If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcard domains), then subclass the `ServerTrustManager` and override the `serverTrustEvaluator(forHost:)` method with your own custom implementation.
 
 ```swift
-class CustomServerTrustPolicyManager: ServerTrustPolicyManager {
-    override func serverTrustEvaluator(forHost:) -> ServerTrustEvaluating? {
+final class CustomServerTrustPolicyManager: ServerTrustPolicyManager {
+    override func serverTrustEvaluator(forHost host: String) -> ServerTrustEvaluating? {
         var policy: ServerTrustPolicy?
 
         // Implement your custom domain matching behavior...
@@ -495,7 +495,7 @@ If you are attempting to connect to a server running on your localhost, and you 
 </dict>
 ```
 
-According to [Apple documentation](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW35), setting `NSAllowsLocalNetworking` to `YES` allows loading of local resources without disabling ATS for the rest of your app.
+According to [Apple documentation](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW35), setting `NSAllowsLocalNetworking` to `YES` allows loading local resources without disabling ATS for the rest of your app.
 
 ### Network Reachability
 The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.
@@ -519,7 +519,13 @@ There are some important things to remember when using network reachability to d
 - The network reachability status can be useful for determining why a network request may have failed.
 	- If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
 
-Alternatively, using a `RequestRetrier`, like the built in `RetryPolicy`, instead of reachability updates, to retry requests which failed to a network failure, will likely be simpler and more reliable. By default, `RetryPolicy` will retry idempotent requests on a variety of error conditions, include an offline network connection.
+Alternatively, using a `RequestRetrier`, like the built in `RetryPolicy`, instead of reachability updates to retry requests which failed to a network failure will likely be simpler and more reliable. By default, `RetryPolicy` will retry idempotent requests on a variety of error conditions, including an offline network connection.
+
+## Customizing Caching and Redirect Handling
+`URLSession` allows the customization of caching and redirect behaviors using `URLSessionDataDelegate` and `URLSessionDelegate` methods. Alamofire surfaces these customization points as the `CachedResponseHandler` and `RedirectHandler` protocols. 
+
+## Using `EventMonitor`s
+
 
 ## Making Requests
 
