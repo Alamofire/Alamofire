@@ -150,6 +150,27 @@ let session = Session(session: urlSession, delegate: delegate, rootQueue: rootQu
 ## Requests
 Each request performed by Alamofire is encapsulated by particular class, `DataRequest`, `UploadRequest`, and `DownloadRequest`. Each of these classes encapsulate functionality unique to each type of request, but `DataRequest` and `DownloadRequest` inherit from a common superclass, `Request` (`UploadRequest` inherits from `DataRequest`). `Request` instances are never created directly, but are instead vended from a `Session` instance through one of the various `request` methods.
 
+### The Request Pipeline
+Once a `Request` subclass has been created with it’s initial parameters or `URLRequestConvertible` value, it is pass through the series of steps making up Alamofire’s request pipeline. For a successful request, these include:
+
+1. Initial parameters, like HTTP method, headers, and parameters, are encapsulated into an internal `URLRequestConvertible` value. If a `URLRequestConvertible` value is passed directly, that value is used unchanged.
+2. `asURLRequest()` is called on the the `URLRequestConvertible` value, creating the first `URLRequest` value. This value is passed to the `Request` and stored in `requests`.
+3. If there are any `Session` or `Request` `RequestAdapter`s or `RequestInterceptor`s, they’re called using the previously created `URLRequest`. The adapted `URLRequest` is then passed to the `Request` and stored in `request`s as well.
+4. `Session` calls the `Request` to create the `URLSessionTask` to perform the network request based on the `URLRequest`.
+5. Once the `URLSessionTask` is complete and has gathered `URLSessionTaskMetrics`, the `Request` executes its `Validator`s. 
+6. Request executes any response handlers, such as `responseDecodable`, that have been appended.
+
+At any one of these steps, a failure can be indicated through a created or received `Error` value, which is then passed to the associated `Request`. For example, aside from steps 1 and 4, all of the steps above can create an `Error` which is then passed to the response handlers or available for retry.
+
+1. Parameter encapsulation cannot fail.
+2. Any `URLRequestConvertible` value can create an error when `asURLRequest()` is called. This allows for the initial validation of various `URLRequest` properties or the failure of parameter encoding.
+3. `RequestAdapter`s can fail during adaptation, perhaps due to a missing authorization token.
+4. `URLSessionTask` creation cannot fail.
+5. `URLSessionTask`s can complete with errors for a variety of reasons, including network availability and cancellation. These `Error` values are passed back to the `Request`.
+6. Response handlers can produce any `Error`, usually due to an invalid response or other parsing error.
+
+Once an error is passed to the `Request`, the `Request` will attempt to run any `RequestRetrier`s associated with the `Sesion` or `Request`. If any `RequestRetrier`s choose to retry the `Request`, the complete pipeline is run again. `RequestRetrier`s can also produce `Error`s, which do not trigger retry.
+
 ### `Request`
 Although `Request` doesn’t encapsulate any particular type of request, it contains the state and functionality common to all requests Alamofire performs. This includes:
 
@@ -322,117 +343,133 @@ public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLRespon
 Instead of accessing the downloaded `Data` directly it must be accessed using the `fileURL` provided. Otherwise, the capabilities of `DownloadRequest`’s validators are the same as `DataRequest`’s.
 
 ## Adapting and Retrying Requests with `RequestInterceptor`
+Alamofire’s `RequestInterceptor` protocol (composed of the `RequestAdapter` and `RequestRetrier` protocol) enables powerful per-`Session` and per-`Request` capabilities, enabling a variety of features. These include authentication systems, where a common header is added to every `Request` and `Request`s are retried when authorization expires. Additionally, Alamofire includes a built in `RetryPolicy` type, which enables easy retry when requests fail due to a variety of common network errors.
 
-Most web services these days are behind some sort of authentication system. One of the more common ones today is OAuth. This generally involves generating an access token authorizing your application or user to call the various supported web services. While creating these initial access tokens can be laborious, it can be even more complicated when your access token expires and you need to fetch a new one. There are many thread-safety issues that need to be considered.
+### `RequestAdapter`
+Alamofire’s  `RequestAdapter` protocol allows each `URLRequest` that’s to be performed by a `Session` to be inspected and adapted before being issued over the network. One very common use of an adapter is to add an `Authorization` header to requests behind a certain type of authentication.
 
-The `RequestAdapter` and `RequestRetrier` protocols were created to make it much easier to create a thread-safe authentication system for a specific set of web services.
-
-#### RequestAdapter
-
-The `RequestAdapter` protocol allows each `Request` made on a `SessionManager` to be inspected and adapted before being created. One very specific way to use an adapter is to append an `Authorization` header to requests behind a certain type of authentication.
+The `RequestAdapter` protocol has a single requirement: 
 
 ```swift
-class AccessTokenAdapter: RequestAdapter {
-    private let accessToken: String
+func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void)
+```
 
-    init(accessToken: String) {
-        self.accessToken = accessToken
-    }
+Its parameters include:
+- `urlRequest`: The `URLRequest` initially created from the parameters or `URLRequestConvertible` value used to create the `Request`
+- `session`: The `Session` which created the `Request` for which the adapter is being called.
+- `completion`: The asynchronous completion handler that *must* be called to indicate the adapter is finished. It’s asynchronous nature enables `RequestAdapter`s to access asynchronous resources from the network or disk before the `Request` is sent over the network. The `Result` provided to the `completion` closure can either return a `.success` value with the modified `URLRequest` value, or a `.failure` value with an associated `Error` which will then be used to fail the `Request`.
+For example, adding an `Authorization` header requires modifying the `URLRequest` and then calling the completion handler.
 
-    func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
-        var urlRequest = urlRequest
+```swift
+let accessToken: String
 
-        if let urlString = urlRequest.url?.absoluteString, urlString.hasPrefix("https://httpbin.org") {
-            urlRequest.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
-        }
+func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+    var urlRequest = urlRequest
+    urlRequest.headers.add(.authorization(bearer: accessToken))
 
-        return urlRequest
+    completion(.success(urlRequest))
+}
+```
+
+### `RequestRetrier`
+Alamofire’s `RequestRetrier` protocol allows a `Request` that encountered an `Error` while being executed to be retried. This includes `Error`s produced at any stage of Alamofire’s [request pipeline](#the-request-pipeline).
+
+`RequestRetrier` has a single requirement.
+
+```swift
+func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
+```
+
+Its parameters include:
+- `request`: The `Request` which is being retried.
+- `session`: The `Session` which is managing the `Request` being retried.
+- `error`: The `Error` which triggered the retry attempt. Usually an `AFError`.
+- `completion`: The asynchronous completion handler that *must* be called to indicate the retry is finished. It must be called with a `RetryResult`.
+The `RetryResult` type represents the outcome of whatever logic is implemented in the `RequestRetrier`. It’s defined as:
+
+```swift
+/// Outcome of determination whether retry is necessary.
+public enum RetryResult {
+    /// Retry should be attempted immediately.
+    case retry
+    /// Retry should be attempted after the associated `TimeInterval`.
+    case retryWithDelay(TimeInterval)
+    /// Do not retry.
+    case doNotRetry
+    /// Do not retry due to the associated `Error`.
+    case doNotRetryWithError(Error)
+}  
+```
+
+For example, Alamofire’s `RetryPolicy` type will automatically retry `Request`s that fail due to a network error of some kind, if the request is idempotent.
+
+```swift
+open func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+    if request.retryCount < retryLimit,
+       let httpMethod = request.request?.method,
+       retryableHTTPMethods.contains(httpMethod),
+       shouldRetry(response: request.response, error: error) {
+        let timeDelay = pow(Double(exponentialBackoffBase), Double(request.retryCount)) * exponentialBackoffScale
+        completion(.retryWithDelay(timeDelay))
+    } else {
+        completion(.doNotRetry)
     }
 }
 ```
 
-```swift
-let sessionManager = SessionManager()
-sessionManager.adapter = AccessTokenAdapter(accessToken: "1234")
-
-sessionManager.request("https://httpbin.org/get")
-```
-
-#### RequestRetrier
-
-The `RequestRetrier` protocol allows a `Request` that encountered an `Error` while being executed to be retried. When using both the `RequestAdapter` and `RequestRetrier` protocols together, you can create credential refresh systems for OAuth1, OAuth2, Basic Auth and even exponential backoff retry policies. The possibilities are endless. Here's an example of how you could implement a refresh flow for OAuth2 access tokens.
-
-// Walkthrough of Retrier implementation.
-
-Once the `OAuth2Handler` is applied as both the `adapter` and `retrier` for the `SessionManager`, it will handle an invalid access token error by automatically refreshing the access token and retrying all failed requests in the same order they failed.
-
-> If you needed them to execute in the same order they were created, you could sort them by their task identifiers.
-
-The example above only checks for a `401` response code which is not nearly robust enough, but does demonstrate how one could check for an invalid access token error. In a production application, one would want to check the `realm` and most likely the `www-authenticate` header response although it depends on the OAuth2 implementation.
-
-Another important note is that this authentication system could be shared between multiple session managers. For example, you may need to use both a `default` and `ephemeral` session configuration for the same set of web services. The example above allows the same `oauthHandler` instance to be shared across multiple session managers to manage the single refresh flow.
-
 ## Security
+Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire receives the same automatic TLS certificate and certificate chain validation as `URLSession`. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by Alamofire’s `ServerTrustEvaluating` protocol.
 
-Using a secure HTTPS connection when communicating with servers and web services is an important step in securing sensitive data. By default, Alamofire will evaluate the certificate chain provided by the server using Apple's built in validation provided by the Security framework. While this guarantees the certificate chain is valid, it does not prevent man-in-the-middle (MITM) attacks or other potential vulnerabilities. In order to mitigate MITM attacks, applications dealing with sensitive customer data or financial information should use certificate or public key pinning provided by the `ServerTrustPolicy`.
+### Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`
 
-#### ServerTrustPolicy
-
-The `ServerTrustPolicy` enumeration evaluates the server trust generally provided by an `URLAuthenticationChallenge` when connecting to a server over a secure HTTPS connection.
+#### `ServerTrustEvaluting`
+The `ServerTrustEvaluting` protocol provides a way to perform any sort of server trust evaluation. It has a single requirement:
 
 ```swift
-let serverTrustPolicy = ServerTrustPolicy.pinCertificates(
-    certificates: ServerTrustPolicy.certificates(),
-    validateCertificateChain: true,
-    validateHost: true
-)
+func evaluate(_ trust: SecTrust, forHost host: String) throws
 ```
 
-There are many different cases of server trust evaluation giving you complete control over the validation process:
+This method provides the [`SecTrust`](https://developer.apple.com/documentation/security/certificate_key_and_trust_services/trust) value and host `String` received from the underlying `URLSession` and provides the opportunity to perform various evaluations.
 
-* `performDefaultEvaluation`: Uses the default server trust evaluation while allowing you to control whether to validate the host provided by the challenge.
-* `pinCertificates`: Uses the pinned certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates.
-* `pinPublicKeys`: Uses the pinned public keys to validate the server trust. The server trust is considered valid if one of the pinned public keys match one of the server certificate public keys.
-* `disableEvaluation`: Disables all evaluation which in turn will always consider any server trust as valid.
-* `customEvaluation`: Uses the associated closure to evaluate the validity of the server trust thus giving you complete control over the validation process. Use with caution.
+Alamofire many different types of trust evolution, providing composable and complete control over the evaluation process:
+* `DefaultTrustEvaluator`: Uses the default server trust evaluation while allowing you to control whether to validate the host provided by the challenge.
+* `RevocationTrustEvaluator`: Checks the status of the received certificate to ensure it hasn’t been revoked. This isn’t performed on every request due to the network request overhead it entails.
+* `PinnedCertificatesTrustEvaluator`: Uses the pinned certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates. This evaluator can also accept self-signed certificates.
+* `PublicKeysTrustEvaluator`: Uses the pinned public keys to validate the server trust. The server trust is considered valid if one of the pinned public keys match one of the server certificate public keys.
+* `CompositeTrustEvaluator`: Evaluates an array of `ServerTrustEvaluating` values, only succeeding if all of them are successful. This type can be used to combine, for example, the `RevocationTrustEvaluator` and the `PinnedCertificatesTrustEvaluator`.
+* `DisabledEvaluator`: This evaluator should only be used in debug scenarios as it disables all evaluation which in turn will always consider any server trust as valid. This evaluator should **never** be used in production environments!
 
-#### Server Trust Policy Manager
-
-The `ServerTrustPolicyManager` is responsible for storing an internal mapping of server trust policies to a particular host. This allows Alamofire to evaluate each host against a different server trust policy.
+#### `ServerTrustManager`
+The `ServerTrustManager` is responsible for storing an internal mapping of `ServerTrustEvaluating` values to a particular host. This allows Alamofire to evaluate each host with different evaluators. 
 
 ```swift
-let serverTrustPolicies: [String: ServerTrustPolicy] = [
-    "test.example.com": .pinCertificates(
-        certificates: ServerTrustPolicy.certificates(),
-        validateCertificateChain: true,
-        validateHost: true
-    ),
-    "insecure.expired-apis.com": .disableEvaluation
+let evaluators: [String: ServerTrustEvaluating] = [
+    // By default, certificates included in the app bundle are pinned automatically.
+    "cert.example.com": PinnedCertificatesTrustEvalutor(),
+    // By default, public keys from certificates included in the app bundle are used automatically.
+    "keys.example.com": PublicKeysTrustEvalutor(),
 ]
 
-let sessionManager = SessionManager(
-    serverTrustPolicyManager: ServerTrustPolicyManager(policies: serverTrustPolicies)
-)
+let manager = ServerTrustManager(evaluators: serverTrustPolicies)
 ```
 
-> Make sure to keep a reference to the new `SessionManager` instance, otherwise your requests will all get cancelled when your `sessionManager` is deallocated.
-
-These server trust policies will result in the following behavior:
-
-- `test.example.com` will always use certificate pinning with certificate chain and host validation enabled thus requiring the following criteria to be met to allow the TLS handshake to succeed:
-	- Certificate chain MUST be valid.
-	- Certificate chain MUST include one of the pinned certificates.
-	- Challenge host MUST match the host in the certificate chain's leaf certificate.
-- `insecure.expired-apis.com` will never evaluate the certificate chain and will always allow the TLS handshake to succeed.
+This `ServerTrustManager` will have the following behaviors:
+- `cert.example.com` will always use certificate pinning with default and host validation enabled , thus requiring the following criteria to be met in order to allow the TLS handshake to succeed:
+	   - Certificate chain *must* be valid.
+	- Certificate chain *must* include one of the pinned certificates.
+	- Challenge host *must* match the host in the certificate chain's leaf certificate.
+- `keys.example.com` will always use public key pinning with default and host validation enabled, thus requiring the following criteria to be met in order to allow the TLS handshake to succeed:
+	- Certificate chain *must* be valid.
+	- Leaf certificates *must* include one of the pinned public keys.
+	- Challenge host *must* match the host in the certificate chain's leaf certificate.
 - All other hosts will use the default evaluation provided by Apple.
 
 ##### Subclassing Server Trust Policy Manager
-
-If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcarded domains), then subclass the `ServerTrustPolicyManager` and override the `serverTrustPolicyForHost` method with your own custom implementation.
+If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcarded domains), then subclass the `ServerTrustManager` and override the `serverTrustEvaluator(forHost:)` method with your own custom implementation.
 
 ```swift
 class CustomServerTrustPolicyManager: ServerTrustPolicyManager {
-    override func serverTrustPolicy(forHost host: String) -> ServerTrustPolicy? {
+    override func serverTrustEvaluator(forHost:) -> ServerTrustEvaluating? {
         var policy: ServerTrustPolicy?
 
         // Implement your custom domain matching behavior...
@@ -442,55 +479,10 @@ class CustomServerTrustPolicyManager: ServerTrustPolicyManager {
 }
 ```
 
-#### Validating the Host
-
-The `.performDefaultEvaluation`, `.pinCertificates` and `.pinPublicKeys` server trust policies all take a `validateHost` parameter. Setting the value to `true` will cause the server trust evaluation to verify that hostname in the certificate matches the hostname of the challenge. If they do not match, evaluation will fail. A `validateHost` value of `false` will still evaluate the full certificate chain, but will not validate the hostname of the leaf certificate.
-
-> It is recommended that `validateHost` always be set to `true` in production environments.
-
-#### Validating the Certificate Chain
-
-Pinning certificates and public keys both have the option of validating the certificate chain using the `validateCertificateChain` parameter. By setting this value to `true`, the full certificate chain will be evaluated in addition to performing a byte equality check against the pinned certificates or public keys. A value of `false` will skip the certificate chain validation, but will still perform the byte equality check.
-
-There are several cases where it may make sense to disable certificate chain validation. The most common use cases for disabling validation are self-signed and expired certificates. The evaluation would always fail in both of these cases, but the byte equality check will still ensure you are receiving the certificate you expect from the server.
-
-> It is recommended that `validateCertificateChain` always be set to `true` in production environments.
-
-#### App Transport Security
-
-With the addition of App Transport Security (ATS) in iOS 9, it is possible that using a custom `ServerTrustPolicyManager` with several `ServerTrustPolicy` objects will have no effect. If you continuously see `CFNetwork SSLHandshake failed (-9806)` errors, you have probably run into this problem. Apple's ATS system overrides the entire challenge system unless you configure the ATS settings in your app's plist to disable enough of it to allow your app to evaluate the server trust.
-
-If you run into this problem (high probability with self-signed certificates), you can work around this issue by adding the following to your `Info.plist`.
-
-```xml
-<dict>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSExceptionDomains</key>
-        <dict>
-            <key>example.com</key>
-            <dict>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
-                <key>NSExceptionRequiresForwardSecrecy</key>
-                <false/>
-                <key>NSIncludesSubdomains</key>
-                <true/>
-                <!-- Optional: Specify minimum TLS version -->
-                <key>NSTemporaryExceptionMinimumTLSVersion</key>
-                <string>TLSv1.2</string>
-            </dict>
-        </dict>
-    </dict>
-</dict>
-```
-
-Whether you need to set the `NSExceptionRequiresForwardSecrecy` to `NO` depends on whether your TLS connection is using an allowed cipher suite. In certain cases, it will need to be set to `NO`. The `NSExceptionAllowsInsecureHTTPLoads` MUST be set to `YES` in order to allow the `SessionDelegate` to receive challenge callbacks. Once the challenge callbacks are being called, the `ServerTrustPolicyManager` will take over the server trust evaluation. You may also need to specify the `NSTemporaryExceptionMinimumTLSVersion` if you're trying to connect to a host that only supports TLS versions less than `1.2`.
-
-> It is recommended to always use valid certificates in production environments.
+### App Transport Security
+With the addition of App Transport Security (ATS) in iOS 9, it is possible that using a custom `ServerTrustManager` with several `ServerTrustEvaluating` objects will have no effect. If you continuously see `CFNetwork SSLHandshake failed (-9806)` errors, you have probably run into this problem. Apple's ATS system overrides the entire challenge system unless you configure the ATS settings in your app's plist to disable enough of it to allow your app to evaluate the server trust. If you run into this problem (high probability with self-signed certificates), you can work around this issue by adding [`NSAppTransportSecurity` overrides](https://developer.apple.com/documentation/bundleresources/information_property_list/nsapptransportsecurity) to your `Info.plist`. You can use the `nscurl` tool’s `--ats-diagnostics` option to perform a series of tests against a host to see which ATS overrides might be required.
 
 #### Using Self-Signed Certificates with Local Networking
-
 If you are attempting to connect to a server running on your localhost, and you are using self-signed certificates, you will need to add the following to your `Info.plist`.
 
 ```xml
@@ -506,30 +498,28 @@ If you are attempting to connect to a server running on your localhost, and you 
 According to [Apple documentation](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW35), setting `NSAllowsLocalNetworking` to `YES` allows loading of local resources without disabling ATS for the rest of your app.
 
 ### Network Reachability
-
-The `NetworkReachabilityManager` listens for reachability changes of hosts and addresses for both WWAN and WiFi network interfaces.
+The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.
 
 ```swift
 let manager = NetworkReachabilityManager(host: "www.apple.com")
 
-manager?.listener = { status in
+manager?.startListening { status in
     print("Network Status Changed: \(status)")
 }
-
-manager?.startListening()
 ```
 
 > Make sure to remember to retain the `manager` in the above example, or no status changes will be reported.
 > Also, do not include the scheme in the `host` string or reachability won't function correctly.
 
 There are some important things to remember when using network reachability to determine what to do next.
-
-- **Do NOT** use Reachability to determine if a network request should be sent.
+- **Do *NOT*** use Reachability to determine if a network request should be sent.
 	- You should **ALWAYS** send it.
-- When Reachability is restored, use the event to retry failed network requests.
+- When reachability is restored, use the event to retry failed network requests.
 	- Even though the network requests may still fail, this is a good moment to retry them.
 - The network reachability status can be useful for determining why a network request may have failed.
 	- If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
+
+Alternatively, using a `RequestRetrier`, like the built in `RetryPolicy`, instead of reachability updates, to retry requests which failed to a network failure, will likely be simpler and more reliable. By default, `RetryPolicy` will retry idempotent requests on a variety of error conditions, include an offline network connection.
 
 ## Making Requests
 
@@ -572,8 +562,7 @@ let user = User(username: "mattt")
 Alamofire.request(user) // https://example.com/users/mattt
 ```
 
-#### URLRequestConvertible
-
+#### `URLRequestConvertible`
 Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly (this is the recommended way to specify custom HTTP body for individual requests):
 
 ```swift
