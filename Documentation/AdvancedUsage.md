@@ -497,7 +497,7 @@ If you are attempting to connect to a server running on your localhost, and you 
 
 According to [Apple documentation](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW35), setting `NSAllowsLocalNetworking` to `YES` allows loading local resources without disabling ATS for the rest of your app.
 
-### Network Reachability
+## Network Reachability
 The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.
 
 ```swift
@@ -522,10 +522,68 @@ There are some important things to remember when using network reachability to d
 Alternatively, using a `RequestRetrier`, like the built in `RetryPolicy`, instead of reachability updates to retry requests which failed to a network failure will likely be simpler and more reliable. By default, `RetryPolicy` will retry idempotent requests on a variety of error conditions, including an offline network connection.
 
 ## Customizing Caching and Redirect Handling
-`URLSession` allows the customization of caching and redirect behaviors using `URLSessionDataDelegate` and `URLSessionDelegate` methods. Alamofire surfaces these customization points as the `CachedResponseHandler` and `RedirectHandler` protocols. 
+`URLSession` allows the customization of caching and redirect behaviors using `URLSessionDataDelegate` and `URLSessionTaskDelegate` methods. Alamofire surfaces these customization points as the `CachedResponseHandler` and `RedirectHandler` protocols. 
+
+### `CachedResponseHandler`
+The `CachedResponseHandler` protocol allows control over the caching of HTTP responses into the `URLCache` instance associated with the `Session` making a request. The protocol has a single requirement:
+
+```swift
+func dataTask(_ task: URLSessionDataTask,
+                  willCacheResponse response: CachedURLResponse,
+                  completion: @escaping (CachedURLResponse?) -> Void)
+```
+
+As can be seen in the method signature, this control only applies to `Request`s that use an underlying `URLSessionDataTask` for network transfers, which include `DataRequest`s and `UploadRequest`s (since `URLSessionUploadTask` is a subclass of `URLSessionDataTask`). The conditions under which a response will be considered for caching are extensive, so it’s best to review the documentation of the `URLSessionDataDelegate` method [`urlSession(_:dataTask:willCacheResponse:completionHandler:)`](https://developer.apple.com/documentation/foundation/urlsessiondatadelegate/1411612-urlsession). Once a response is considered for caching, there are variety of valuable manipulations that can be made:
+* Prevent caching the response altogether by returning a `nil` `CachedURLResponse`.
+* Modify the `CachedURLResponse`’s `storagePolicy` to change where the cached value should live.
+* Modify the underlying `URLResponse` directly, adding or removing values.
+* Modify the `Data` associated with the response, if any.
+
+Alamofire includes the `ResponseCacher` type which conforms to `CachedResponseHandler`, making it easy to cache, not cache, or modify a response. `ResponseCacher` takes a `Behavior` value to control the caching behavior.
+
+```swift
+public enum Behavior {
+    /// Stores the cached response in the cache.
+    case cache
+    /// Prevents the cached response from being stored in the cache.
+    case doNotCache
+    /// Modifies the cached response before storing it in the cache.
+    case modify((URLSessionDataTask, CachedURLResponse) -> CachedURLResponse?)
+}
+```
+
+`ResponseCacher` can be used on both a `Session` and `Request` basis, as outlined above.
+
+### `RedirectHandler`
+The `RedirectHandler` protocol allows control over the redirect behavior of particular `Request`s. It has a single requirement:
+
+```swift
+func task(_ task: URLSessionTask,
+          willBeRedirectedTo request: URLRequest,
+          for response: HTTPURLResponse,
+          completion: @escaping (URLRequest?) -> Void)
+```
+
+This method provides an opportunity to modify the redirected `URLRequest` or pass `nil` to disable the redirect entirely. Alamofire provides the `Redirector`type which conforms to `RedirectHandler`, making it easy to follow, not follow, or modify a redirected request. `Redirector` takes a `Behavior` value to control the redirect behavior.
+
+```swift
+public enum Behavior {
+    /// Follow the redirect as defined in the response.
+    case follow
+    /// Do not follow the redirect defined in the response.
+    case doNotFollow
+    /// Modify the redirect request defined in the response.
+    case modify((URLSessionTask, URLRequest, HTTPURLResponse) -> URLRequest?)
+}
+```
+
+`Redirector` can be used on both a `Session` and `Request` basis, as outlined above.
 
 ## Using `EventMonitor`s
 
+### Logging
+
+### Background Tasks
 
 ## Making Requests
 
