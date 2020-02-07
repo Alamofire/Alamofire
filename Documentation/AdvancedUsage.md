@@ -580,6 +580,7 @@ public enum Behavior {
 `Redirector` can be used on both a `Session` and `Request` basis, as outlined above.
 
 ## Using `EventMonitor`s
+The `EventMonitor` protocol allows the observation and inspection of a large number of internal Alamofire events, from `URLSession` callbacks to `Request` state updates. 
 
 ### Logging
 
