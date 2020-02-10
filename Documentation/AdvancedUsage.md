@@ -194,7 +194,7 @@ public enum State {
 If a `Request` is resumed and isn’t later cancelled, it will reach the `.finished` state once all response validators and response serializers have been run. However, if additional response serializers are added to the `Request` after it has reached the `.finished` state, it will transition back to the `.resumed` state and perform the network request again.
 
 #### Progress
-In order to track the progress of a request, `Request` offers a both  `uploadProgress` and `downloadProgress` properties as well as closure-based `uploadProgress` and `downloadProgress` methods. Like all closure-based `Request` APIs, the progress APIs can be chained off of the `Request` with other methods. Also like the other closure-based APIs, they should be added to a request *before* calling any response handler, like `responseDecodable`.
+In order to track the progress of a request, `Request` offers a both  `uploadProgress` and `downloadProgress` properties as well as closure-based `uploadProgress` and `downloadProgress` methods. Like all closure-based `Request` APIs, the progress APIs can be chained off of the `Request` with other methods. Also like the other closure-based APIs, they should be added to a request *before* adding any response handlers, like `responseDecodable`.
 
 ```swift
 AF.request(...)
@@ -250,6 +250,7 @@ AF.request(...)
 In order to take advantage of the automatic credential handling provided by `URLSession`, Alamofire provides per-`Request` API to allow the automatic addition of `URLCredential` instances to requests. These include both convenience API for HTTP authentication using a username and password, as well as any `URLCredential` instance. 
 
 Adding a credential to automatically reply to any HTTP authentication challenge is straightforward:
+
 ```swift
 AF.request(...)
     .authenticate(username: "user@example.domain", password: "password")
@@ -257,9 +258,11 @@ AF.request(...)
         debugPrint(response)
     }
 ```
+
 > Note: This mechanism only supports HTTP authentication prompts. If a request requires an `Authentication` header for all requests, it should be provided directly, either as part of the `Request`, or through a `RequestInterceptor`.
 
 Additionally, adding a raw `URLCredential` is just as easy:
+
 ```swift
 let credential = URLCredential(...)
 AF.request(...)
@@ -290,7 +293,7 @@ AF.request(...)
 ```
 
 ### `DataRequest`
-`DataRequest` is a concrete subclass of `Request` which encapsulates a `URLSessionDataTask` downloading a server response into `Data` stored in memory. Therefore, it’s important to realize that extremely large downloads may adversely affect system performance. For those types of downloads, using `DownloadRequest` to save the data to disk is recommended.
+`DataRequest` is a subclass of `Request` which encapsulates a `URLSessionDataTask` downloading a server response into `Data` stored in memory. Therefore, it’s important to realize that extremely large downloads may adversely affect system performance. For those types of downloads, using `DownloadRequest` to save the data to disk is recommended.
 
 #### Additional State
 `DataRequest`s have a few properties in addition to those provided by `Request`. These include `data`, which is the accumulated `Data` from the server response, and `convertible`, which is the `URLRequestConvertible` the `DataRequest` was created with, containing the original parameters creating the instance.
@@ -462,7 +465,7 @@ This `ServerTrustManager` will have the following behaviors:
 	- Certificate chain *must* be valid.
 	- Leaf certificates *must* include one of the pinned public keys.
 	- Challenge host *must* match the host in the certificate chain's leaf certificate.
-- Requests to other hosts will produce an error, as `ServerTrustManager` requires all requests 
+- Requests to other hosts will produce an error, as `ServerTrustManager` requires all hosts to be evaluated by default.
 
 ##### Subclassing Server Trust Policy Manager
 If you find yourself needing more flexible server trust policy matching behavior (i.e. wildcard domains), then subclass the `ServerTrustManager` and override the `serverTrustEvaluator(forHost:)` method with your own custom implementation.
