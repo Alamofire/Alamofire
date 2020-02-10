@@ -86,7 +86,7 @@ let session = Session(rootQueue: rootQueue,
 Any custom `rootQueue` provided **MUST** be a serial queue, but `requestQueue` and `serializationQueue` can be either serial or parallel queues. Serial queues are the recommended default unless performance analysis shows work being delayed, in which case making the queues parallel may help overall performance.
 
 ### Adding a `RequestInterceptor`
-Alamofire’s `RequestInterceptor` protocol (`RequestAdapter & RequestRetrier`) provides important and powerful request adaptation and retry features. It can be applied at both the `Session` and `Request` level. For more details on `RequestInterceptor` and the various implementations Alamofire includes, like `RetryPolicy`, see [below](#adapting-and-retrying-requests-with-equestInterceptor).
+Alamofire’s `RequestInterceptor` protocol (`RequestAdapter & RequestRetrier`) provides important and powerful request adaptation and retry features. It can be applied at both the `Session` and `Request` level. For more details on `RequestInterceptor` and the various implementations Alamofire includes, like `RetryPolicy`, see [below](#adapting-and-retrying-requests-with-requestinterceptor).
 
 ```swift
 let policy = RetryPolicy()
