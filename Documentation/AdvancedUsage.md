@@ -19,7 +19,7 @@ AF.request("https://httpbin.org/get")
 ```
 
 ```swift
-let session = Session.af.default
+let session = Session.default
 session.request("https://httpbin.org/get")
 ```
 
