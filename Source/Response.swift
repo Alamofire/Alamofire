@@ -98,8 +98,8 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
             let sortedHeaders = response.headers.sorted()
 
             return """
-            [Status Code]: \(response.statusCode)
-            [Headers]:
+            [Alamofire] [Status Code]: \(response.statusCode)
+            [Alamofire] [Headers]:
             \(sortedHeaders)
             """
         } ?? "nil"
@@ -107,14 +107,14 @@ extension DataResponse: CustomStringConvertible, CustomDebugStringConvertible {
         let metricsDescription = metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
 
         return """
-        [Request]: \(requestDescription)
-        [Request Body]: \n\(requestBody)
-        [Response]: \n\(responseDescription)
-        [Response Body]: \n\(responseBody)
-        [Data]: \(data?.description ?? "None")
-        [Network Duration]: \(metricsDescription)
-        [Serialization Duration]: \(serializationDuration)s
-        [Result]: \(result)
+        [Alamofire] [Request]: \(requestDescription)
+        [Alamofire] [Request Body]: \n\(requestBody)
+        [Alamofire] [Response]: \n\(responseDescription)
+        [Alamofire] [Response Body]: \n\(responseBody)
+        [Alamofire] [Data]: \(data?.description ?? "None")
+        [Alamofire] [Network Duration]: \(metricsDescription)
+        [Alamofire] [Serialization Duration]: \(serializationDuration)s
+        [Alamofire] [Result]: \(result)
         """
     }
 }
@@ -285,8 +285,8 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
             let sortedHeaders = response.headers.sorted()
 
             return """
-            [Status Code]: \(response.statusCode)
-            [Headers]:
+            [Alamofire] [Status Code]: \(response.statusCode)
+            [Alamofire] [Headers]:
             \(sortedHeaders)
             """
         } ?? "nil"
@@ -294,14 +294,14 @@ extension DownloadResponse: CustomStringConvertible, CustomDebugStringConvertibl
         let resumeDataDescription = resumeData.map { "\($0)" } ?? "None"
 
         return """
-        [Request]: \(requestDescription)
-        [Request Body]: \n\(requestBody)
-        [Response]: \n\(responseDescription)
-        [File URL]: \(fileURL?.path ?? "nil")
-        [ResumeData]: \(resumeDataDescription)
-        [Network Duration]: \(metricsDescription)
-        [Serialization Duration]: \(serializationDuration)s
-        [Result]: \(result)
+        [Alamofire] [Request]: \(requestDescription)
+        [Alamofire] [Request Body]: \n\(requestBody)
+        [Alamofire] [Response]: \n\(responseDescription)
+        [Alamofire] [File URL]: \(fileURL?.path ?? "nil")
+        [Alamofire] [ResumeData]: \(resumeDataDescription)
+        [Alamofire] [Network Duration]: \(metricsDescription)
+        [Alamofire] [Serialization Duration]: \(serializationDuration)s
+        [Alamofire] [Result]: \(result)
         """
     }
 }
