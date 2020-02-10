@@ -371,8 +371,9 @@ class DownloadResponseTestCase: BaseTestCase {
 final class DownloadRequestEventsTestCase: BaseTestCase {
     func testThatDownloadRequestTriggersAllAppropriateLifetimeEvents() {
         // Given
-        let eventMonitor = ClosureEventMonitor()
-        let session = Session(eventMonitors: [eventMonitor])
+        let queue = DispatchQueue(label: "org.alamofire.downloadTestQueue")
+        let eventMonitor = ClosureEventMonitor(queue: queue)
+        let session = Session(rootQueue: queue, eventMonitors: [eventMonitor])
 
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
@@ -425,8 +426,9 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 
     func testThatCancelledDownloadRequestTriggersAllAppropriateLifetimeEvents() {
         // Given
-        let eventMonitor = ClosureEventMonitor()
-        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let queue = DispatchQueue(label: "org.alamofire.downloadTestQueue")
+        let eventMonitor = ClosureEventMonitor(queue: queue)
+        let session = Session(rootQueue: queue, startRequestsImmediately: false, eventMonitors: [eventMonitor])
 
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
