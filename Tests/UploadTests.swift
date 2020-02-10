@@ -715,7 +715,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
 
         // When
         let request = session.upload(Data("PAYLOAD".utf8),
-                                     with: URLRequest.makeHTTPBinRequest(path: "post", method: .post)).response { _ in
+                                     with: URLRequest.makeHTTPBinRequest(path: "delay/5", method: .post)).response { _ in
             responseHandler.fulfill()
         }
 
