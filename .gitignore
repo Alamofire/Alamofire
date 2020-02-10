@@ -38,3 +38,4 @@ playground.xcworkspace
 # Carthage
 Carthage/Build
 .UlyssesRoot
+.Ulysses-Settings.plist
