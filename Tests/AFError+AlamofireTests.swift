@@ -174,7 +174,7 @@ extension AFError {
         if case let .urlRequestValidationFailed(reason) = self, reason.isBodyDataInGETRequest { return true }
         return false
     }
-    
+
     var isHostURLError: Bool {
         guard let errorCode = (underlyingError as? URLError)?.code else { return false }
         return [.cannotConnectToHost, .cannotFindHost].contains(errorCode)

@@ -580,327 +580,274 @@ public enum Behavior {
 `Redirector` can be used on both a `Session` and `Request` basis, as outlined above.
 
 ## Using `EventMonitor`s
-The `EventMonitor` protocol allows the observation and inspection of a large number of internal Alamofire events, from `URLSession` callbacks to `Request` state updates. 
+The `EventMonitor` protocol allows the observation and inspection of a large number of internal Alamofire events. These include all `URLSessionDelegate`, `URLSessionTaskDelegate`, and `URLSessionDownloadDelegate` methods implemented by Alamofire as well as a large number of internal `Request` events. In addition to these events, which by default are an empty method that does no work, the `EventMonitor` protocol also requires a `DispatchQueue` on which all the events are dispatched in order to maintain performance. This `DispatchQueue` defaults to `.main`, but dedicated serial queues are recommended for any custom conforming types. 
 
 ### Logging
+Perhaps the biggest use of the `EventMonitor` protocol is to implement the logging of relevant events. A simple implementation may look something like this:
 
-### Background Tasks
+```swift
+final class Logger: EventMonitor {
+    let queue = DispatchQueue(label: ...)
+    
+    // Event called when any type of Request is resumed.
+    func requestDidResume(_ request: Request) {
+        print("Resuming: \(request)")
+    }
+    
+    // Event called whenever a DataRequest has parsed a response.
+    func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
+        debugPrint("Finished: \(response)")
+    }
+} 
+```
+
+This `Logger` type can be added to a `Session` in the same way demonstrated above:
+
+```swift
+let logger = Logger()
+let session = Session(eventMonitors: [logger])
+```
 
 ## Making Requests
+As a framework, Alamofire has two main goals: to enable the easy implementation of network requests for prototypes and tools, and to serve as the generic foundation of app networking. It accomplishes these goals through the use of powerful abstractions, providing useful defaults, and included implementations of common tasks. However, once use of Alamofire  has gone beyond a few requests, it’s necessary to move beyond the high level, default implementations into behavior customized for particular applications. Alamofire provides the `URLConvertible` and `URLRequestConvertible` protocols to help with this customization.
 
-### Routing Requests
-
-As apps grow in size, it's important to adopt common patterns as you build out your network stack. An important part of that design is how to route your requests. The Alamofire `URLConvertible` and `URLRequestConvertible` protocols along with the `Router` design pattern are here to help.
-
-#### URLConvertible
-
+### `URLConvertible`
 Types adopting the `URLConvertible` protocol can be used to construct URLs, which are then used to construct URL requests internally. `String`, `URL`, and `URLComponents` conform to `URLConvertible` by default, allowing any of them to be passed as `url` parameters to the `request`, `upload`, and `download` methods:
 
 ```swift
-let urlString = "https://httpbin.org/post"
-Alamofire.request(urlString, method: .post)
+let urlString = "https://httpbin.org/get"
+AF.request(urlString)
 
 let url = URL(string: urlString)!
-Alamofire.request(url, method: .post)
+AF.request(url)
 
 let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)!
-Alamofire.request(urlComponents, method: .post)
+AF.request(urlComponents)
 ```
 
 Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLConvertible` as a convenient way to map domain-specific models to server resources.
 
-##### Type-Safe Routing
+### `URLRequestConvertible`
+Types adopting the `URLRequestConvertible` protocol can be used to construct `URLRequest`s. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly. Alamofire uses `URLRequestConvertible` as the foundation of all requests flowing through the request pipeline. Using `URLRequest`s directly the recommended way to customize `URLRequest` creation outside of the `ParamterEncoder`s that Alamofire provides.
 
-```swift
-extension User: URLConvertible {
-    static let baseURLString = "https://example.com"
-
-    func asURL() throws -> URL {
-    	let urlString = User.baseURLString + "/users/\(username)/"
-        return try urlString.asURL()
-    }
-}
 ```
-
-```swift
-let user = User(username: "mattt")
-Alamofire.request(user) // https://example.com/users/mattt
-```
-
-#### `URLRequestConvertible`
-Types adopting the `URLRequestConvertible` protocol can be used to construct URL requests. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly (this is the recommended way to specify custom HTTP body for individual requests):
-
-```swift
 let url = URL(string: "https://httpbin.org/post")!
 var urlRequest = URLRequest(url: url)
-urlRequest.httpMethod = "POST"
+urlRequest.method = .post
 
 let parameters = ["foo": "bar"]
 
 do {
-    urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
+    urlRequest.httpBody = try JSONEncoder().encode(parameters)
 } catch {
-    // No-op
+    // Handle error.
 }
 
-urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+urlRequest.headers.add(.contentType("application/json"))
 
-Alamofire.request(urlRequest)
+AF.request(urlRequest)
 ```
 
-Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLRequestConvertible` as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage authentication credentials and other state.
+Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLRequestConvertible` as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage other state.
 
-##### API Parameter Abstraction
+### Routing Requests
+As apps grow in size, it's important to adopt common patterns as you build out your network stack. An important part of that design is how to route your requests. The Alamofire `URLConvertible` and `URLRequestConvertible` protocols along with the `Router` design pattern are here to help.
+
+A “router” is a type that defines “routes”, or the components of a request. These components can include the parts of a `URLRequest`, the parameters required to make a request, as well as various per-request Alamofire settings. A simple router could look something like this:
 
 ```swift
 enum Router: URLRequestConvertible {
-    case search(query: String, page: Int)
-
-    static let baseURLString = "https://example.com"
-    static let perPage = 50
-
-    // MARK: URLRequestConvertible
-
-    func asURLRequest() throws -> URLRequest {
-        let result: (path: String, parameters: Parameters) = {
-            switch self {
-            case let .search(query, page) where page > 0:
-                return ("/search", ["q": query, "offset": Router.perPage * page])
-            case let .search(query, _):
-                return ("/search", ["q": query])
-            }
-        }()
-
-        let url = try Router.baseURLString.asURL()
-        let urlRequest = URLRequest(url: url.appendingPathComponent(result.path))
-
-        return try URLEncoding.default.encode(urlRequest, with: result.parameters)
+    case get, post
+    
+    var baseURL: URL {
+        return URL(string: "https://httpbin.org")!
     }
-}
-```
-
-```swift
-Alamofire.request(Router.search(query: "foo bar", page: 1)) // https://example.com/search?q=foo%20bar&offset=50
-```
-
-##### CRUD & Authorization
-
-```swift
-import Alamofire
-
-enum Router: URLRequestConvertible {
-    case createUser(parameters: Parameters)
-    case readUser(username: String)
-    case updateUser(username: String, parameters: Parameters)
-    case destroyUser(username: String)
-
-    static let baseURLString = "https://example.com"
-
+    
     var method: HTTPMethod {
         switch self {
-        case .createUser:
-            return .post
-        case .readUser:
-            return .get
-        case .updateUser:
-            return .put
-        case .destroyUser:
-            return .delete
+        case .get: return .get
+        case .post: return .post
         }
     }
-
+    
     var path: String {
         switch self {
-        case .createUser:
-            return "/users"
-        case .readUser(let username):
-            return "/users/\(username)"
-        case .updateUser(let username, _):
-            return "/users/\(username)"
-        case .destroyUser(let username):
-            return "/users/\(username)"
+        case .get: return "get"
+        case .post: return "post"
         }
     }
-
-    // MARK: URLRequestConvertible
-
+    
     func asURLRequest() throws -> URLRequest {
-    	let url = try Router.baseURLString.asURL()
-
-        var urlRequest = URLRequest(url: url.appendingPathComponent(path))
-        urlRequest.httpMethod = method.rawValue
-
-        switch self {
-        case .createUser(let parameters):
-            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
-        case .updateUser(_, let parameters):
-            urlRequest = try URLEncoding.default.encode(urlRequest, with: parameters)
-        default:
-            break
-        }
-
-        return urlRequest
+        let url = baseURL.appendingPathComponent(path)
+        var request = URLRequest(url: url)
+        request.method = method
+        
+        return request
     }
 }
+
+AF.request(Router.get)
 ```
 
+More complex routers may include the parameters of a request. With Alamofire’s `ParameterEncoder` protocol and included encoders, any `Encodable` type can be used as parameters:
+
 ```swift
-Alamofire.request(Router.readUser("mattt")) // GET https://example.com/users/mattt
+enum Router: URLRequestConvertible {
+    case get([String: String]), post([String: String])
+    
+    var baseURL: URL {
+        return URL(string: "https://httpbin.org")!
+    }
+    
+    var method: HTTPMethod {
+        switch self {
+        case .get: return .get
+        case .post: return .post
+        }
+    }
+    
+    var path: String {
+        switch self {
+        case .get: return "get"
+        case .post: return "post"
+        }
+    }
+    
+    func asURLRequest() throws -> URLRequest {
+        let url = baseURL.appendingPathComponent(path)
+        var request = URLRequest(url: url)
+        request.method = method
+        
+        switch self {
+        case let .get(parameters):
+            request = try URLEncodedFormParameterEncoder().encode(parameters, into: request)
+        case let .post(parameters):
+            request = try JSONParameterEncoder().encode(parameters, into: request)
+        }
+        
+        return request
+    }
+}
 ```
 
 ## Response Handling
+Alamofire provides response handling through various `response` methods and the `ResponseSerializer` protocol.
 
-### Response Transforms
-
-### Custom Response Serializers
-
-### Custom Response Serialization
-
-Alamofire provides built-in response serialization for data, strings, JSON, and property lists:
+### Handling Responses Without Serialization
+Both `DataRequest` and `DownloadRequest` offer methods that allow response handling without invoking any `ResponseSerializer` at all. This is most important for `DownloadRequest`s where loading large files into memory may not be possible. 
 
 ```swift
-Alamofire.request(...).responseData { (resp: DataResponse<Data>) in ... }
-Alamofire.request(...).responseString { (resp: DataResponse<String>) in ... }
-Alamofire.request(...).responseJSON { (resp: DataResponse<Any>) in ... }
-Alamofire.request(...).responsePropertyList { (resp: DataResponse<Any>) in ... }
+// DataRequest
+func response(queue: DispatchQueue = .main, completionHandler: @escaping (AFDataResponse<Data?>) -> Void) -> Self
+
+// DownloadRequest
+func response(queue: DispatchQueue = .main, completionHandler: @escaping (AFDownloadResponse<URL?>) -> Void) -> Self
 ```
 
-Those responses wrap deserialized *values* (Data, String, Any) or *errors* (network, validation errors), as well as *meta-data* (URL request, HTTP headers, status code, [metrics](#statistical-metrics), ...).
+As with all response handlers, all serialization work (in this case none) is performed on an internal queue and the completion handler called on the `queue` passed to the method. This means that it’s not necessary to dispatch back to the `main` queue by default. However, if there is to be any significant work performed in the completion handler, passing a custom queue to the response methods is recommended, with a dispatch back to `main` in the handler itself if necessary.
 
-You have several ways to customize all of those response elements:
-
-- [Response Mapping](#response-mapping)
-- [Handling Errors](#handling-errors)
-- [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
-- [Generic Response Object Serialization](#generic-response-object-serialization)
-
-#### Response Mapping
-
-Response mapping is the simplest way to produce customized responses. It transforms the value of a response, while preserving eventual errors and meta-data. For example, you can turn a json response `DataResponse<Any>` into a response that holds an application model, such as `DataResponse<User>`. You perform response mapping with the `DataResponse.map` method:
+### `ResponseSerializer`
+The `ResponseSerializer` protocol is composed of the `DataResponseSerializerProtocol` and `DownloadResponseSerializerProtocol` protocols. The combined version of `ResponseSerializer` looks like this:
 
 ```swift
-Alamofire.request("https://example.com/users/mattt").responseJSON { (response: DataResponse<Any>) in
-    let userResponse = response.map { json in
-        // We assume an existing User(json: Any) initializer
-        return User(json: json)
-    }
+public protocol ResponseSerializer: DataResponseSerializerProtocol & DownloadResponseSerializerProtocol {
+    /// The type of serialized object to be created.
+    associatedtype SerializedObject
 
-    // Process userResponse, of type DataResponse<User>:
-    if let user = userResponse.value {
-        print("User: { username: \(user.username), name: \(user.name) }")
-    }
+    /// `DataPreprocessor` used to prepare incoming `Data` for serialization.
+    var dataPreprocessor: DataPreprocessor { get }
+    /// `HTTPMethod`s for which empty response bodies are considered appropriate.
+    var emptyRequestMethods: Set<HTTPMethod> { get }
+    /// HTTP response codes for which empty response bodies are considered appropriate.
+    var emptyResponseCodes: Set<Int> { get }
+
+    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> SerializedObject
+    func serializeDownload(request: URLRequest?, 
+                           response: HTTPURLResponse?, 
+                           fileURL: URL?, 
+                           error: Error?) throws -> SerializedObject
 }
 ```
 
-When the transformation may throw an error, use `flatMap` instead:
+By default, the `serializeDownload` method is implemented by reading the downloaded `Data` from disk and calling `serialize` with it. Therefore, it may be more appropriate to implement custom handling for large downloads using `DownloadRequest`’s `response(queue:completionHandler:)` method mentioned above.
+
+`ResponseSerializer` provides various default implementations for the `dataPreprocessor`, `emptyResponseMethods`, and `emptyResponseCodes` which can be customized in conforming types, like various `ResponseSerializer`s included with Alamofire.
+
+All `ResponseSerializer` usage flows through methods on `DataRequest` and `DownloadRequest`:
 
 ```swift
-Alamofire.request("https://example.com/users/mattt").responseJSON { response in
-    let userResponse = response.flatMap { json in
-        try User(json: json)
-    }
+// DataRequest
+func response<Serializer: DataResponseSerializerProtocol>(
+    queue: DispatchQueue = .main,
+    responseSerializer: Serializer,
+    completionHandler: @escaping (AFDataResponse<Serializer.SerializedObject>) -> Void) -> Self
+
+// DownloadRequest
+func response<Serializer: DownloadResponseSerializerProtocol>(
+    queue: DispatchQueue = .main,
+    responseSerializer: Serializer,
+    completionHandler: @escaping (AFDownloadResponse<Serializer.SerializedObject>) -> Void) -> Self
+```
+ 
+Alamofire includes a few common responses handlers, including:
+- `responseData(queue:completionHandler)`: Validates and preprocesses the response `Data` using `DataResponseSerializer`.
+- `responseString(queue:encoding:completionHandler:)`: Parses the response `Data` as a `String` using the provided `String.Encoding`.
+- `responseJSON(queue:options:completionHandler)`: Parses the response `Data` using `JSONSerialization` using the provided `JSONSerialization.ReadingOptions`. Using this method is not recommended and is only offered for compatibility with existing Alamofire usage. Instead, `responseDecodable` should be used.
+- `responseDecodable(of:queue:decoder:completionHandler:)`: Parses the response `Data` into the provided or inferred `Decodable` type using the provided `DataDecoder`. Uses `JSONDecoder` by default. Recommend method for JSON and generic response parsing.
+
+#### `DataResponseSerializer`
+Calling `responseData(queue:completionHandler:)` on `DataRequest` or `DownloadRequest` uses a `DataResponseSerializer` to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. This response handler is useful for customized `Data` handling but isn’t usually necessary.
+
+#### `StringResponseSerializer`
+Calling `responseString(queue:encoding:completionHandler)` on `DataRequest` or `DownloadRequest` uses a `StringResponseSerializer` to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then used to initialize a `String` using the `String.Encoding` parsed from the `HTTPURLResponse`.
+
+#### `JSONResponseSerializer`
+Calling `responseJSON(queue:options:completionHandler)` on `DataRequest` or `DownloadRequest` uses a `JSONResponseSerializer` to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then passed through `JSONSerialization.jsonObject(with:options:)` with the provided options. This serializer is no longer recommended. Instead, using the `DecodableResponseSerializer` provides a better Swift experience.
+
+#### `DecodableResponseSerializer`
+Calling `responseDecodable(of:queue:decoder:completionHandler)` on `DataRequest` or `DownloadRequest` uses a `DecodableResponseSerializer`to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then passed through the provided `DataDecoder` and parsed into the provided or inferred `Decodable` type.
+
+### Customizing Response Handlers
+In addition to the flexible `ResponseSerializer`s included with Alamofire, there are additional ways to customize response handling. 
+
+#### Response Transforms
+Using an existing `ResponseSerializer` and then transforming the output is one of the simplest ways of customizing response handlers. Both `DataResponse` and `DownloadResponse` have `map`, `tryMap`, `mapError`, and `tryMapError` methods that can transform responses while preserving the metadata associated with the response. For example, extracting a property from a `Decodable` response can be achieved using `map`, while also preserving any previous parsing errors.
+
+```swift
+AF.request(...).responseDecodable(of: SomeType.self) { response in
+    let propertyResponse = response.map { $0.someProperty }
+
+    debugPrint(propertyResponse)
 }
 ```
 
-Response mapping is a good fit for your custom completion handlers:
+Transforms that throw errors can also be used with `tryMap`, perhaps to perform validation:
 
 ```swift
-@discardableResult
-func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) -> Alamofire.DataRequest {
-    return Alamofire.request("https://example.com/users/mattt").responseJSON { response in
-        let userResponse = response.flatMap { json in
-            try User(json: json)
-        }
+AF.request(..).responseDecodable(of: SomeType.self) { response in
+    let propertyResponse = response.tryMap { try $0.someProperty.validated() }
 
-        completionHandler(userResponse)
-    }
-}
-
-loadUser { response in
-    if let user = response.value {
-        print("User: { username: \(user.username), name: \(user.name) }")
-    }
-}
-```
-
-When the map/flatMap closure may process a big amount of data, make sure you execute it outside of the main thread:
-
-```swift
-@discardableResult
-func loadUser(completionHandler: @escaping (DataResponse<User>) -> Void) -> Alamofire.DataRequest {
-    let utilityQueue = DispatchQueue.global(qos: .utility)
-
-    return Alamofire.request("https://example.com/users/mattt").responseJSON(queue: utilityQueue) { response in
-        let userResponse = response.flatMap { json in
-            try User(json: json)
-        }
-
-        DispatchQueue.main.async {
-            completionHandler(userResponse)
-        }
-    }
-}
-```
-
-`map` and `flatMap` are also available for [download responses](#downloading-data-to-a-file).
-
-#### Handling Errors
-
-Before implementing custom response serializers or object serialization methods, it's important to consider how to handle any errors that may occur. There are two basic options: passing existing errors along unmodified, to be dealt with at response time; or, wrapping all errors in an `Error` type specific to your app.
-
-For example, here's a simple `BackendError` enum which will be used in later examples:
-
-```swift
-enum BackendError: Error {
-    case network(error: Error) // Capture any underlying Error from the URLSession API
-    case dataSerialization(error: Error)
-    case jsonSerialization(error: Error)
-    case xmlSerialization(error: Error)
-    case objectSerialization(reason: String)
+    debugPrint(propertyResponse)
 }
 ```
 
 #### Creating a Custom Response Serializer
-
-Alamofire provides built-in response serialization for strings, JSON, and property lists, but others can be added in extensions on `Alamofire.DataRequest` and / or `Alamofire.DownloadRequest`.
-
-For example, here's how a response handler using [Ono](https://github.com/mattt/Ono) might be implemented:
+When Alamofire’s provided `ResponseSerializer`s or response transforms aren’t flexible enough, or the amount of customization is extensive, creating a `ResponseSerializer` is a good way to encapsulate that logic. There are usually two parts to integrating a custom `ResponseSerializer`: creating the conforming type and extending the relevant `Request` type(s) to make it convenient to use. For example, if a server returned a specially encoded `String`, perhaps values separated by commas, the `ResponseSerializer` for such a format could look something like this:
 
 ```swift
-extension DataRequest {
-    static func xmlResponseSerializer() -> DataResponseSerializer<ONOXMLDocument> {
-        return DataResponseSerializer { request, response, data, error in
-            // Pass through any underlying URLSession error to the .network case.
-            guard error == nil else { return .failure(BackendError.network(error: error!)) }
-
-            // Use Alamofire's existing data serializer to extract the data, passing the error as nil, as it has
-            // already been handled.
-            let result = Request.serializeResponseData(response: response, data: data, error: nil)
-
-            guard case let .success(validData) = result else {
-                return .failure(BackendError.dataSerialization(error: result.error! as! AFError))
-            }
-
-            do {
-                let xml = try ONOXMLDocument(data: validData)
-                return .success(xml)
-            } catch {
-                return .failure(BackendError.xmlSerialization(error: error))
-            }
-        }
-    }
-
-    @discardableResult
-    func responseXMLDocument(
-        queue: DispatchQueue? = nil,
-        completionHandler: @escaping (DataResponse<ONOXMLDocument>) -> Void)
-        -> Self
-    {
-        return response(
-            queue: queue,
-            responseSerializer: DataRequest.xmlResponseSerializer(),
-            completionHandler: completionHandler
-        )
+struct CommaDelimitedSerializer: ResponseSerializer {
+    func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> [String] {
+        // Call the existing StringResponseSerializer to get many behaviors automatically.
+        let string = try StringResponseSerializer().serialize(request: request, 
+                                                              response: response, 
+                                                              data: data, 
+                                                              error: error)
+        
+        return Array(string.split(separator: ","))
     }
 }
 ```
+
+Note that the `SerializedObject` `associatedtype` requirement is met by the return type of the `serialize` method. In more complex serializers, this return type itself can be generic, allowing the serialization of generic types, as seen by the `DecodableResponseSerializer`.
+
+To make the `CommaDelimitedSerializer` more useful, additional behaviors could be added, like allowing the customization of empty HTTP methods and response codes by passing them through to the underlying `StringResponseSerializer`.
