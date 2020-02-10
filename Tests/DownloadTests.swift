@@ -371,9 +371,8 @@ class DownloadResponseTestCase: BaseTestCase {
 final class DownloadRequestEventsTestCase: BaseTestCase {
     func testThatDownloadRequestTriggersAllAppropriateLifetimeEvents() {
         // Given
-        let queue = DispatchQueue(label: "org.alamofire.downloadTestQueue")
-        let eventMonitor = ClosureEventMonitor(queue: queue)
-        let session = Session(rootQueue: queue, eventMonitors: [eventMonitor])
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(eventMonitors: [eventMonitor])
 
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
@@ -426,9 +425,8 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 
     func testThatCancelledDownloadRequestTriggersAllAppropriateLifetimeEvents() {
         // Given
-        let queue = DispatchQueue(label: "org.alamofire.downloadTestQueue")
-        let eventMonitor = ClosureEventMonitor(queue: queue)
-        let session = Session(rootQueue: queue, startRequestsImmediately: false, eventMonitors: [eventMonitor])
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
 
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
@@ -457,7 +455,7 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in didCancelTask.fulfill() }
 
         // When
-        let request = session.download(URLRequest.makeHTTPBinRequest()).response { _ in
+        let request = session.download(URLRequest.makeHTTPBinRequest(path: "delay/5")).response { _ in
             responseHandler.fulfill()
         }
 
