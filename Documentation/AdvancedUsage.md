@@ -1,6 +1,6 @@
 - [Advanced Usage](#advanced-usage)
-  * [`Session`](#-session-)
-	+ [Creating Custom `Session` Instances](#creating-custom--session--instances)
+  * [`Session`](#session)
+	+ [Creating Custom `Session` Instances](#creating-custom-session-instances)
 	  - [Creating a `Session` With a `URLSessionConfiguration`](#creating-a--session--with-a--urlsessionconfiguration-)
 	+ [`SessionDelegate`](#-sessiondelegate-)
 	+ [`startRequestsImmediately`](#-startrequestsimmediately-)
