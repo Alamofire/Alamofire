@@ -1,3 +1,68 @@
+- [Advanced Usage]()(#advanced-usage)
+  * [`Session`]()(#-session-)
+	+ [Creating Custom `Session` Instances]()(#creating-custom--session--instances)
+	  - [Creating a `Session` With a `URLSessionConfiguration`]()(#creating-a--session--with-a--urlsessionconfiguration-)
+	+ [`SessionDelegate`]()(#-sessiondelegate-)
+	+ [`startRequestsImmediately`]()(#-startrequestsimmediately-)
+	+ [A `Session`’s `DispatchQueue`s]()(#a--session--s--dispatchqueue-s)
+	+ [Adding a `RequestInterceptor`]()(#adding-a--requestinterceptor-)
+	+ [Adding a `ServerTrustManager`]()(#adding-a--servertrustmanager-)
+	+ [Adding a `RedirectHandler`]()(#adding-a--redirecthandler-)
+	+ [Adding a `CachedResponseHandler`]()(#adding-a--cachedresponsehandler-)
+	+ [Adding `EventMonitor`s]()(#adding--eventmonitor-s)
+	+ [Creating Instances From `URLSession`s]()(#creating-instances-from--urlsession-s)
+  * [Requests]()(#requests)
+	+ [The Request Pipeline]()(#the-request-pipeline)
+	+ [`Request`]()(#-request-)
+	  - [State]()(#state)
+	  - [Progress]()(#progress)
+	  - [Handling Redirects]()(#handling-redirects)
+	  - [Customizing Caching]()(#customizing-caching)
+	  - [Credentials]()(#credentials)
+	  - [A `Request`’s `URLRequest`s]()(#a--request--s--urlrequest-s)
+	  - [`URLSessionTask`s]()(#-urlsessiontask-s)
+	  - [Response]()(#response)
+	  - [`URLSessionTaskMetrics`]()(#-urlsessiontaskmetrics-)
+	+ [`DataRequest`]()(#-datarequest-)
+	  - [Additional State]()(#additional-state)
+	  - [Validation]()(#validation)
+	+ [`UploadRequest`]()(#-uploadrequest-)
+	  - [Additional State]()(#additional-state-1)
+	+ [`DownloadRequest`]()(#-downloadrequest-)
+	  - [Additional State]()(#additional-state-2)
+	  - [Cancellation]()(#cancellation)
+	  - [Validation]()(#validation-1)
+  * [Adapting and Retrying Requests with `RequestInterceptor`]()(#adapting-and-retrying-requests-with--requestinterceptor-)
+	+ [`RequestAdapter`]()(#-requestadapter-)
+	+ [`RequestRetrier`]()(#-requestretrier-)
+  * [Security]()(#security)
+	+ [Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`]()(#evaluating-server-trusts-with--servertrustmanager--and--servertrustevaluating-)
+	  - [`ServerTrustEvaluting`]()(#-servertrustevaluting-)
+	  - [`ServerTrustManager`]()(#-servertrustmanager-)
+		* [Subclassing Server Trust Policy Manager]()(#subclassing-server-trust-policy-manager)
+	+ [App Transport Security]()(#app-transport-security)
+	  - [Using Self-Signed Certificates with Local Networking]()(#using-self-signed-certificates-with-local-networking)
+  * [Customizing Caching and Redirect Handling]()(#customizing-caching-and-redirect-handling)
+	+ [`CachedResponseHandler`]()(#-cachedresponsehandler-)
+	+ [`RedirectHandler`]()(#-redirecthandler-)
+  * [Using `EventMonitor`s]()(#using--eventmonitor-s)
+	+ [Logging]()(#logging)
+  * [Making Requests]()(#making-requests)
+	+ [`URLConvertible`]()(#-urlconvertible-)
+	+ [`URLRequestConvertible`]()(#-urlrequestconvertible-)
+	+ [Routing Requests]()(#routing-requests)
+  * [Response Handling]()(#response-handling)
+	+ [Handling Responses Without Serialization]()(#handling-responses-without-serialization)
+	+ [`ResponseSerializer`]()(#-responseserializer-)
+	  - [`DataResponseSerializer`]()(#-dataresponseserializer-)
+	  - [`StringResponseSerializer`]()(#-stringresponseserializer-)
+	  - [`JSONResponseSerializer`]()(#-jsonresponseserializer-)
+	  - [`DecodableResponseSerializer`]()(#-decodableresponseserializer-)
+	+ [Customizing Response Handlers]()(#customizing-response-handlers)
+	  - [Response Transforms]()(#response-transforms)
+	  - [Creating a Custom Response Serializer]()(#creating-a-custom-response-serializer)
+  * [Network Reachability]()(#network-reachability)
+
 # Advanced Usage
 
 Alamofire is built on top of `URLSession` and the Foundation URL Loading System. To make the most of this framework, it is recommended that you be familiar with the concepts and capabilities of the underlying networking stack.
@@ -500,30 +565,6 @@ If you are attempting to connect to a server running on your localhost, and you 
 
 According to [Apple documentation](https://developer.apple.com/library/content/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html#//apple_ref/doc/uid/TP40009251-SW35), setting `NSAllowsLocalNetworking` to `YES` allows loading local resources without disabling ATS for the rest of your app.
 
-## Network Reachability
-The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.
-
-```swift
-let manager = NetworkReachabilityManager(host: "www.apple.com")
-
-manager?.startListening { status in
-    print("Network Status Changed: \(status)")
-}
-```
-
-> Make sure to remember to retain the `manager` in the above example, or no status changes will be reported.
-> Also, do not include the scheme in the `host` string or reachability won't function correctly.
-
-There are some important things to remember when using network reachability to determine what to do next.
-- **Do *NOT*** use Reachability to determine if a network request should be sent.
-	- You should **ALWAYS** send it.
-- When reachability is restored, use the event to retry failed network requests.
-	- Even though the network requests may still fail, this is a good moment to retry them.
-- The network reachability status can be useful for determining why a network request may have failed.
-	- If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
-
-Alternatively, using a `RequestRetrier`, like the built in `RetryPolicy`, instead of reachability updates to retry requests which failed to a network failure will likely be simpler and more reliable. By default, `RetryPolicy` will retry idempotent requests on a variety of error conditions, including an offline network connection.
-
 ## Customizing Caching and Redirect Handling
 `URLSession` allows the customization of caching and redirect behaviors using `URLSessionDataDelegate` and `URLSessionTaskDelegate` methods. Alamofire surfaces these customization points as the `CachedResponseHandler` and `RedirectHandler` protocols. 
 
@@ -633,7 +674,7 @@ Applications interacting with web applications in a significant manner are encou
 ### `URLRequestConvertible`
 Types adopting the `URLRequestConvertible` protocol can be used to construct `URLRequest`s. `URLRequest` conforms to `URLRequestConvertible` by default, allowing it to be passed into `request`, `upload`, and `download` methods directly. Alamofire uses `URLRequestConvertible` as the foundation of all requests flowing through the request pipeline. Using `URLRequest`s directly the recommended way to customize `URLRequest` creation outside of the `ParamterEncoder`s that Alamofire provides.
 
-```
+```swift
 let url = URL(string: "https://httpbin.org/post")!
 var urlRequest = URLRequest(url: url)
 urlRequest.method = .post
@@ -732,6 +773,8 @@ enum Router: URLRequestConvertible {
     }
 }
 ```
+
+Routers can be expanded for any number of endpoints with any number of configurable properties, but once a certain level of complexity has been reached, separating one big router into smaller routers for parts of an API should be considered.
 
 ## Response Handling
 Alamofire provides response handling through various `response` methods and the `ResponseSerializer` protocol.
@@ -854,3 +897,27 @@ struct CommaDelimitedSerializer: ResponseSerializer {
 Note that the `SerializedObject` `associatedtype` requirement is met by the return type of the `serialize` method. In more complex serializers, this return type itself can be generic, allowing the serialization of generic types, as seen by the `DecodableResponseSerializer`.
 
 To make the `CommaDelimitedSerializer` more useful, additional behaviors could be added, like allowing the customization of empty HTTP methods and response codes by passing them through to the underlying `StringResponseSerializer`.
+
+## Network Reachability
+The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.
+
+```swift
+let manager = NetworkReachabilityManager(host: "www.apple.com")
+
+manager?.startListening { status in
+    print("Network Status Changed: \(status)")
+}
+```
+
+> Make sure to remember to retain the `manager` in the above example, or no status changes will be reported.
+> Also, do not include the scheme in the `host` string or reachability won't function correctly.
+
+There are some important things to remember when using network reachability to determine what to do next.
+- **Do *NOT*** use Reachability to determine if a network request should be sent.
+	- You should **ALWAYS** send it.
+- When reachability is restored, use the event to retry failed network requests.
+	- Even though the network requests may still fail, this is a good moment to retry them.
+- The network reachability status can be useful for determining why a network request may have failed.
+	- If a network request fails, it is more useful to tell the user that the network request failed due to being offline rather than a more technical error, such as "request timed out."
+
+Alternatively, using a `RequestRetrier`, like the built in `RetryPolicy`, instead of reachability updates to retry requests which failed to a network failure will likely be simpler and more reliable. By default, `RetryPolicy` will retry idempotent requests on a variety of error conditions, including an offline network connection.
