@@ -1,7 +1,7 @@
 # Alamofire 5.0 Migration Guide
 Alamofire 5.0 is the latest major release of Alamofire, an HTTP networking library for iOS, tvOS, macOS and watchOS written in Swift. As a major release, following Semantic Versioning conventions, 5.0 introduces API-breaking changes.
 
-This guide is provided in order to ease the transition of existing applications using Alamofire 4.x to the latest APIs, as well as explain the design and structure of new and updated functionality. Due to the extensive nature of the changes in Alamofire 5, this guide provide a complete overview of all changes. Instead, the largest changes will be summarized and users encouraged to read Alamofire’s extensive API, Usage, and Advanced Usage documentation.
+This guide is provided in order to ease the transition of existing applications using Alamofire 4.x to the latest APIs, as well as explain the design and structure of new and updated functionality. Due to the extensive nature of the changes in Alamofire 5, this guide does not provide a complete overview of all changes. Instead, the largest changes are summarized and users encouraged to read Alamofire’s extensive API, Usage, and Advanced Usage documentation.
 
 ## Benefits of Upgrading
 - **Rewritten Core:** Alamofire’s core architecture has been rewritten to follow a variety of best practices.
@@ -56,7 +56,7 @@ Most APIs have changed in Alamofire 5, so this list is not complete. While most 
 - Alamofire now vends its extensions of Swift and Foundation types through an `af` namespace.
 - Serializers updated with more configuration options, including allowed empty response methods and codes, as well as the `DataPreprocessor` protocol, to prepare the received `Data` for serialization.
 - **`RetryPolicy`:** A `RequestRetrier` to retry requests which failed due to system errors, such as network connectivity. Configurable with custom debounce settings and defaults to an extensive set of errors to make your requests more reliable.
-- **`CacheHandler`:** New protocol that provides control over whether a response is cached or not. The `Cacher` type is provided as an easy to use implementation of the protocol.
+- **`CachedResponseHandler `:** New protocol that provides control over whether a response is cached or not. The `ResponseCacher` type is provided as an easy to use implementation of the protocol.
 - **`RedirectHandler`:** New protocol that provides control over a request’s redirect behavior. The `Redirector` type is provided as an easy to use implementation of the protocol.
 - **`ParameterEncoder`:** New protocol that provides support for encoding `Encodable` values into `URLRequest`s. `JSONParameterEncoder` and `URLEncodedFormParameterEncoder` are included with Alamofire.
 - **`URLEncodedFormEncoder`:** An `Encoder` that produced `URLEncodedForm` strings.
