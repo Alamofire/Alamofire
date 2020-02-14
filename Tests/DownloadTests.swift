@@ -366,6 +366,8 @@ class DownloadResponseTestCase: BaseTestCase {
     }
 }
 
+// MARK: -
+
 final class DownloadRequestEventsTestCase: BaseTestCase {
     func testThatDownloadRequestTriggersAllAppropriateLifetimeEvents() {
         // Given
@@ -453,7 +455,7 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in didCancelTask.fulfill() }
 
         // When
-        let request = session.download(URLRequest.makeHTTPBinRequest()).response { _ in
+        let request = session.download(URLRequest.makeHTTPBinRequest(path: "delay/5")).response { _ in
             responseHandler.fulfill()
         }
 
@@ -684,7 +686,7 @@ final class DownloadResumeDataTestCase: BaseTestCase {
 
 // MARK: -
 
-class DownloadResponseMapTestCase: BaseTestCase {
+final class DownloadResponseMapTestCase: BaseTestCase {
     func testThatMapTransformsSuccessValue() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -742,7 +744,7 @@ class DownloadResponseMapTestCase: BaseTestCase {
 
 // MARK: -
 
-class DownloadResponseTryMapTestCase: BaseTestCase {
+final class DownloadResponseTryMapTestCase: BaseTestCase {
     func testThatTryMapTransformsSuccessValue() {
         // Given
         let urlString = "https://httpbin.org/get"
@@ -832,7 +834,7 @@ class DownloadResponseTryMapTestCase: BaseTestCase {
     }
 }
 
-class DownloadResponseMapErrorTestCase: BaseTestCase {
+final class DownloadResponseMapErrorTestCase: BaseTestCase {
     func testThatMapErrorTransformsFailureValue() {
         // Given
         let urlString = "https://invalid-url-here.org/this/does/not/exist"
@@ -891,7 +893,7 @@ class DownloadResponseMapErrorTestCase: BaseTestCase {
 
 // MARK: -
 
-class DownloadResponseTryMapErrorTestCase: BaseTestCase {
+final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
     func testThatTryMapErrorPreservesSuccessValue() {
         // Given
         let urlString = "https://httpbin.org/get"

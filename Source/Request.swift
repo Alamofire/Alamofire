@@ -1045,7 +1045,6 @@ public class DownloadRequest: Request {
         /// Specifies that any previous file at the destination `URL` should be removed.
         public static let removePreviousFile = Options(rawValue: 1 << 1)
 
-        /// Returns the raw bitmask value of the option and satisfies the `RawRepresentable` protocol.
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -1055,14 +1054,12 @@ public class DownloadRequest: Request {
 
     // MARK: Destination
 
-    /// A closure executed once a download request has successfully completed in order to determine where to move the
+    /// A closure executed once a `DownloadRequest` has successfully completed in order to determine where to move the
     /// temporary file written to during the download process. The closure takes two arguments: the temporary file URL
     /// and the URL response, and returns a two arguments: the file URL where the temporary file should be moved and
     /// the options defining how the file should be moved.
     public typealias Destination = (_ temporaryURL: URL,
                                     _ response: HTTPURLResponse) -> (destinationURL: URL, options: Options)
-
-    // MARK: Destination
 
     /// Creates a download file destination closure which uses the default file manager to move the temporary file to a
     /// file URL in the first available directory with the specified search path directory and search path domain mask.
@@ -1094,6 +1091,8 @@ public class DownloadRequest: Request {
 
         return (destination, [])
     }
+
+    // MARK: Downloadable
 
     /// Type describing the source used to create the underlying `URLSessionDownloadTask`.
     public enum Downloadable {
