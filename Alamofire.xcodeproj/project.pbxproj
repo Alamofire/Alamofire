@@ -369,6 +369,7 @@
 		31D83FCD20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLConvertible+URLRequestConvertible.swift"; sourceTree = "<group>"; };
 		31DADDFA224811ED0051390F /* AlamofireExtended.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireExtended.swift; sourceTree = "<group>"; };
 		31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AFError+AlamofireTests.swift"; sourceTree = "<group>"; };
+		31F1AA4123F75AEE00C2BB80 /* Alamofire 5.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "Alamofire 5.0 Migration Guide.md"; path = "Documentation/Alamofire 5.0 Migration Guide.md"; sourceTree = "<group>"; };
 		31F5085C20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSessionConfiguration+Alamofire.swift"; sourceTree = "<group>"; };
 		31F9683B20BB70290009606F /* NSLoggingEventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSLoggingEventMonitor.swift; sourceTree = "<group>"; };
 		31FB2F8622C828D8007FD6D5 /* URLEncodedFormEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncodedFormEncoder.swift; sourceTree = "<group>"; };
@@ -679,6 +680,7 @@
 				4C9E88371F5FB3B0000BEC61 /* Alamofire 2.0 Migration Guide.md */,
 				4C9E88381F5FB3B0000BEC61 /* Alamofire 3.0 Migration Guide.md */,
 				4C9E88391F5FB3B0000BEC61 /* Alamofire 4.0 Migration Guide.md */,
+				31F1AA4123F75AEE00C2BB80 /* Alamofire 5.0 Migration Guide.md */,
 			);
 			name = "Migration Guides";
 			sourceTree = "<group>";

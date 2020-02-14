@@ -10,8 +10,6 @@
 
 Alamofire is an HTTP networking library written in Swift.
 
-**⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️** This documentation is out of date during the Alamofire 5 beta process.
-
 - [Features](#features)
 - [Component Libraries](#component-libraries)
 - [Requirements](#requirements)
@@ -24,7 +22,7 @@ Alamofire is an HTTP networking library written in Swift.
 	- **Large Data -** [Downloading Data to a File](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#downloading-data-to-a-file), [Uploading Data to a Server](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#uploading-data-to-a-server)
 	- **Tools -** [Statistical Metrics](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#statistical-metrics), [cURL Command Output](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#curl-command-output)
 - [Advanced Usage](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md)
-	- **URL Session -** [Session Manager](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session-manager), [Session Delegate](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session-delegate), [Request](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#request)
+	- **URL Session -** [Session Manager](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session), [Session Delegate](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#sessiondelegate), [Request](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#request)
 	- **Routing -** [Routing Requests](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#routing-requests), [Adapting and Retrying Requests](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#adapting-and-retrying-requests)
 	- **Model Objects -** [Custom Response Serialization](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#custom-response-serialization)
 	- **Connection -** [Security](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#security), [Network Reachability](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#network-reachability)
@@ -37,7 +35,7 @@ Alamofire is an HTTP networking library written in Swift.
 ## Features
 
 - [x] Chainable Request / Response Methods
-- [x] URL / JSON / plist Parameter Encoding
+- [x] URL / JSON Parameter Encoding
 - [x] Upload File / Data / Stream / MultipartFormData
 - [x] Download File using Request or Resume Data
 - [x] Authentication with URLCredential
@@ -65,7 +63,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 
 ## Migration Guides
 
-- Alamofire 5.0 Migration Guide: To be written!
+- [Alamofire 5.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%205.0%20Migration%20Guide.md)
 - [Alamofire 4.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%204.0%20Migration%20Guide.md)
 - [Alamofire 3.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%203.0%20Migration%20Guide.md)
 - [Alamofire 2.0 Migration Guide](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%202.0%20Migration%20Guide.md)
@@ -77,7 +75,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 - If you'd like to **discuss Alamofire best practices**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire).
 - If you'd like to **discuss a feature request**, use [our forum on swift.org](https://forums.swift.org/c/related-projects/alamofire). 
 - If you **found a bug**, open an issue here on GitHub and follow the guide. The more detail the better!
-- If you **want to contribute**, submit a pull request.
+- If you **want to contribute**, submit a pull request!
 
 ## Installation
 
@@ -86,7 +84,7 @@ In order to keep Alamofire focused specifically on core networking implementatio
 [CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-pod 'Alamofire', '~> 5.0.0-rc.3'
+pod 'Alamofire', '~> 5.0'
 ```
 
 ### Carthage
@@ -94,7 +92,7 @@ pod 'Alamofire', '~> 5.0.0-rc.3'
 [Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "Alamofire/Alamofire" "5.0.0-rc.3"
+github "Alamofire/Alamofire" "5.0"
 ```
 
 ### Swift Package Manager
@@ -105,7 +103,7 @@ Once you have your Swift package set up, adding Alamofire as a dependency is as 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0.0-rc.3")
+    .package(url: "https://github.com/Alamofire/Alamofire.git", from: "5.0")
 ]
 ```
 
