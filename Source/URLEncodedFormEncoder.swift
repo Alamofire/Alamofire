@@ -411,11 +411,11 @@ final class _URLEncodedFormEncoder {
     private let dataEncoding: URLEncodedFormEncoder.DataEncoding
     private let dateEncoding: URLEncodedFormEncoder.DateEncoding
 
-    public init(context: URLEncodedFormContext,
-                codingPath: [CodingKey] = [],
-                boolEncoding: URLEncodedFormEncoder.BoolEncoding,
-                dataEncoding: URLEncodedFormEncoder.DataEncoding,
-                dateEncoding: URLEncodedFormEncoder.DateEncoding) {
+    init(context: URLEncodedFormContext,
+         codingPath: [CodingKey] = [],
+         boolEncoding: URLEncodedFormEncoder.BoolEncoding,
+         dataEncoding: URLEncodedFormEncoder.DataEncoding,
+         dateEncoding: URLEncodedFormEncoder.DateEncoding) {
         self.context = context
         self.codingPath = codingPath
         self.boolEncoding = boolEncoding

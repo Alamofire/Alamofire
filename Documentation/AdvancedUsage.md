@@ -108,7 +108,7 @@ public convenience init(configuration: URLSessionConfiguration = URLSessionConfi
 This initializer allows the customization of all fundamental `Session` behaviors.
 
 #### Creating a `Session` With a `URLSessionConfiguration`
-To customize the behavior of the underlying `URLSesion`, a customized `URLSessionConfiguration` instance can be provided. Starting from the `URLSession.af.default` instance is recommended, as it adds the default `Accept-Encoding`, `Accept-Language`, and `User-Agent` headers provided by Alamofire, but any `URLSessionConfiguration` can be used.
+To customize the behavior of the underlying `URLSession`, a customized `URLSessionConfiguration` instance can be provided. Starting from the `URLSessionConfiguration.af.default` instance is recommended, as it adds the default `Accept-Encoding`, `Accept-Language`, and `User-Agent` headers provided by Alamofire, but any `URLSessionConfiguration` can be used.
 
 ```swift
 let configuration = URLSessionConfiguration.af.default
@@ -122,7 +122,7 @@ let session = Session(configuration: configuration)
 > As Apple states in their [documentation](https://developer.apple.com/documentation/foundation/urlsessionconfiguration), mutating `URLSessionConfiguration` properties after the instance has been added to a `URLSession` (or, in Alamofire’s case, used to initialize a`Session`) has no effect.
 
 ### `SessionDelegate`
-A `SessionDelegate` instance encapsulates all handling of the various `URLSessionDelegate` and related protocols callbacks. `SessionDelegate` also acts as the `SessionStateDelegate` for every `Request` produced by Alamofire, allow the `Request` to indirectly important state from the `Session` instance that produced them. `SessionDelegate` can be customized with a specific `FileManager` instance, which will be used for any disk access, like accessing file’s to be uploaded by `UploadRequest`s or files downloaded by `DownloadRequest`s.
+A `SessionDelegate` instance encapsulates all handling of the various `URLSessionDelegate` and related protocols callbacks. `SessionDelegate` also acts as the `SessionStateDelegate` for every `Request` produced by Alamofire, allowing the `Request` to indirectly import state from the `Session` instance that created them. `SessionDelegate` can be customized with a specific `FileManager` instance, which will be used for any disk access, like accessing files to be uploaded by `UploadRequest`s or files downloaded by `DownloadRequest`s.
 
 ```swift
 let delelgate = SessionDelegate(fileManager: .default)
@@ -166,8 +166,10 @@ let manager = ServerTrustManager(evaluators: ["httpbin.org": PinnedCertificatesT
 let session = Session(serverTrustManager: manager)
 ```
 
+For more details on evaluating server trusts, see the detailed documentation [below](#evaluating-server-trusts-with-servertrustmanager-and-servertrustevaluating).
+
 ### Adding a `RedirectHandler`
-Alamofire’s `RedirectHandler` protocol customizes the handling of HTTP redirect responses. It can be applied at both the `Session` and `Request` level. Alamofire includes the `Redirector` type which conforms to `RedirectHandler` and offers simple control over redirects. For more details on `RedirectHandler`, see the detailed documentation below. 
+Alamofire’s `RedirectHandler` protocol customizes the handling of HTTP redirect responses. It can be applied at both the `Session` and `Request` level. Alamofire includes the `Redirector` type which conforms to `RedirectHandler` and offers simple control over redirects. For more details on `RedirectHandler`, see the detailed documentation [below](#redirecthandler). 
 
 ```swift
 let redirector = Redirector(behavior: .follow)
@@ -175,7 +177,7 @@ let session = Session(redirectHandler: redirector)
 ```
 
 ### Adding a `CachedResponseHandler`
-Alamofire’s `CachedResponseHandler` protocol customizes the caching of responses and can be applied at both the `Session` and `Request` level. Alamofire includes the `ResponseCacher` type which conforms to `CachedResponseHandler` and offers simple control over response caching. For more details, see the detailed documentation below. Link.
+Alamofire’s `CachedResponseHandler` protocol customizes the caching of responses and can be applied at both the `Session` and `Request` level. Alamofire includes the `ResponseCacher` type which conforms to `CachedResponseHandler` and offers simple control over response caching. For more details, see the detailed documentation [below](#cachedresponsehandler).
 
 ```swift
 let cacher = ResponseCacher(behavior: .cache)
@@ -195,6 +197,7 @@ let session = Session(eventMonitors: [monitor])
 
 ### Creating Instances From `URLSession`s
 In addition to the `convenience` initializer mentioned previously, `Session`s can be initialized directly from `URLSession`s. However, there are several requirements to keep in mind when using this initializer, so using the convenience initializer is recommended. These include:
+
 * Alamofire does not support `URLSession`s configured for background use. This will lead to a runtime error when the `Session` is initialized.
 * A `SessionDelegate` instance must be created and used as the `URLSession`’s `delegate`, as well as passed to the `Session` initializer.
 * A custom `OperationQueue` must be passed as the `URLSession`’s `delegateQueue`. This queue must be a serial queue, it must have a backing `DispatchQueue`, and that `DispatchQueue` must be passed to the `Session` as its `rootQueue`.
@@ -218,14 +221,14 @@ Each request performed by Alamofire is encapsulated by particular class, `DataRe
 ### The Request Pipeline
 Once a `Request` subclass has been created with it’s initial parameters or `URLRequestConvertible` value, it is passed through the series of steps making up Alamofire’s request pipeline. For a successful request, these include:
 
-1. Initial parameters, like HTTP method, headers, and parameters, are encapsulated into an internal `URLRequestConvertible` value. If a `URLRequestConvertible` value is passed directly, that value is used unchanged.
+1. Initial parameters, like HTTP method, headers, and parameters are encapsulated into an internal `URLRequestConvertible` value. If a `URLRequestConvertible` value is passed directly, that value is used unchanged.
 2. `asURLRequest()` is called on the the `URLRequestConvertible` value, creating the first `URLRequest` value. This value is passed to the `Request` and stored in `requests`.
 3. If there are any `Session` or `Request` `RequestAdapter`s or `RequestInterceptor`s, they’re called using the previously created `URLRequest`. The adapted `URLRequest` is then passed to the `Request` and stored in `request`s as well.
 4. `Session` calls the `Request` to create the `URLSessionTask` to perform the network request based on the `URLRequest`.
 5. Once the `URLSessionTask` is complete and `URLSessionTaskMetrics` have been gathered, the `Request` executes its `Validator`s. 
 6. Request executes any response handlers, such as `responseDecodable`, that have been appended.
 
-At any one of these steps, a failure can be indicated through a created or received `Error` value, which is then passed to the associated `Request`. For example, aside from steps 1 and 4, all of the steps above can create an `Error` which is then passed to the response handlers or available for retry.
+At any one of these steps, a failure can be indicated through a created or received `Error` value, which is then passed to the associated `Request`. For example, aside from steps 1 and 4, all of the steps above can create an `Error` which is then passed to the response handlers or available for retry. Here are a few examples of what can or cannot fail throughout the `Request` pipeline.
 
 1. Parameter encapsulation cannot fail.
 2. Any `URLRequestConvertible` value can create an error when `asURLRequest()` is called. This allows for the initial validation of various `URLRequest` properties or the failure of parameter encoding.
@@ -234,7 +237,7 @@ At any one of these steps, a failure can be indicated through a created or recei
 5. `URLSessionTask`s can complete with errors for a variety of reasons, including network availability and cancellation. These `Error` values are passed back to the `Request`.
 6. Response handlers can produce any `Error`, usually due to an invalid response or other parsing error.
 
-Once an error is passed to the `Request`, the `Request` will attempt to run any `RequestRetrier`s associated with the `Sesion` or `Request`. If any `RequestRetrier`s choose to retry the `Request`, the complete pipeline is run again. `RequestRetrier`s can also produce `Error`s, which do not trigger retry.
+Once an error is passed to the `Request`, the `Request` will attempt to run any `RequestRetrier`s associated with the `Session` or `Request`. If any `RequestRetrier`s choose to retry the `Request`, the complete pipeline is run again. `RequestRetrier`s can also produce `Error`s, which do not trigger retry.
 
 ### `Request`
 Although `Request` doesn’t encapsulate any particular type of request, it contains the state and functionality common to all requests Alamofire performs. This includes:
@@ -253,6 +256,7 @@ public enum State {
 ```
 
 `Request`s start in the `.initialized` state after their creation. `Request`s can be suspended, resumed, and cancelled by calling the appropriate lifetime method.
+
 - `resume()` resumes, or starts, a `Request`’s network traffic. If `startRequestsImmediately` is `true`, this is called automatically once a response handler has been added to the `Request`.
 - `suspend()` suspends, or pauses the `Request` and its network traffic. `Request`s in this state can be resumed, but only `DownloadRequests` may be able continue transferring data. Other `Request`s will start over.
 - `cancel()` cancels a `Request`. Once in this state, a `Request` cannot be resumed or suspended. When `cancel()` is called, the `Request`’s `error` property will be set with an `AFError.explicitlyCancelled` instance.
@@ -275,6 +279,7 @@ AF.request(...)
 ```
  
 Importantly, not all `Request` subclasses are able to report their progress accurately, or may have other dependencies to do so.
+
 - For upload progress, progress can be determined in the following ways:
 	- By the length of the `Data` object provided as the upload body to an `UploadRequest`.
 	- By the length of a file on disk provided as the upload body of an `UploadRequest`.
@@ -341,7 +346,7 @@ AF.request(...)
 Each network request issued by a `Request` is ultimately encapsulated in a `URLRequest` value created from the various parameters passed to one of the `Session` request methods. `Request` will keep a copy of these `URLRequest`s in its `requests` array property. These values include both the initial `URLRequest` created from the passed parameters, as well any `URLRequest`s created by `RequestInterceptor`s. That array does not, however, include the `URLRequest`s performed by the `URLSessionTask`s issued on behalf of the `Request`. To inspect those values, the `tasks` property gives access to all of the `URLSessionTasks` performed by the `Request`.
 
 #### `URLSessionTask`s
-In many ways the various `Request` subclasses act as a wrapper for a `URLSessionTask`, presenting particular API for interacting with particular types of tasks. These tasks are made visible on the `Request` instance through the `tasks` array property. This includes both the initial task created for the `Request`, as well as any subsequent tasks created as part of the retry process, with one task per retry.
+In many ways, the various `Request` subclasses act as a wrapper for a `URLSessionTask`, presenting particular API for interacting with particular types of tasks. These tasks are made visible on the `Request` instance through the `tasks` array property. This includes both the initial task created for the `Request`, as well as any subsequent tasks created as part of the retry process, with one task per retry.
 
 #### Response
 Each `Request` may have an `HTTPURLResponse` value available once the request is complete. This value is only available if the request wasn’t cancelled and didn’t fail to make the network request. Additionally, if the request is retried, only the *last* response is available. Intermediate responses can be derived from the `URLSessionTask`s in the `tasks` property.
@@ -350,6 +355,7 @@ Each `Request` may have an `HTTPURLResponse` value available once the request is
 Alamofire gathers `URLSessionTaskMetrics` values for every `URLSessionTask` performed for a `Request`. These values are available in the `metrics` property, with each value corresponding to the `URLSessionTask` in `tasks` at the same index.
 
 `URLSessionTaskMetrics` are also made available on Alamofire’s various response types, like `DataResponse`. For instance:
+
 ```swift
 AF.request(...)
     .responseDecodable(of: SomeType.self) { response in {
@@ -423,7 +429,8 @@ func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping
 ```
 
 Its parameters include:
-- `urlRequest`: The `URLRequest` initially created from the parameters or `URLRequestConvertible` value used to create the `Request`
+
+- `urlRequest`: The `URLRequest` initially created from the parameters or `URLRequestConvertible` value used to create the `Request`.
 - `session`: The `Session` which created the `Request` for which the adapter is being called.
 - `completion`: The asynchronous completion handler that *must* be called to indicate the adapter is finished. It’s asynchronous nature enables `RequestAdapter`s to access asynchronous resources from the network or disk before the `Request` is sent over the network. The `Result` provided to the `completion` closure can either return a `.success` value with the modified `URLRequest` value, or a `.failure` value with an associated `Error` which will then be used to fail the `Request`.
 For example, adding an `Authorization` header requires modifying the `URLRequest` and then calling the completion handler.
@@ -449,10 +456,12 @@ func retry(_ request: Request, for session: Session, dueTo error: Error, complet
 ```
 
 Its parameters include:
-- `request`: The `Request` which is being retried.
-- `session`: The `Session` which is managing the `Request` being retried.
+
+- `request`: The `Request` which encountered an error.
+- `session`: The `Session` managing the `Request`.
 - `error`: The `Error` which triggered the retry attempt. Usually an `AFError`.
-- `completion`: The asynchronous completion handler that *must* be called to indicate the retry is finished. It must be called with a `RetryResult`.
+- `completion`: The asynchronous completion handler that *must* be called to indicate whether the `Request` should be retried. It must be called with a `RetryResult`.
+
 The `RetryResult` type represents the outcome of whatever logic is implemented in the `RequestRetrier`. It’s defined as:
 
 ```swift
@@ -500,6 +509,7 @@ func evaluate(_ trust: SecTrust, forHost host: String) throws
 This method provides the [`SecTrust`](https://developer.apple.com/documentation/security/certificate_key_and_trust_services/trust) value and host `String` received from the underlying `URLSession` and provides the opportunity to perform various evaluations.
 
 Alamofire includes many different types of trust evaluators, providing composable control over the evaluation process:
+
 * `DefaultTrustEvaluator`: Uses the default server trust evaluation while allowing you to control whether to validate the host provided by the challenge.
 * `RevocationTrustEvaluator`: Checks the status of the received certificate to ensure it hasn’t been revoked. This isn’t usually performed on every request due to the network request overhead it entails.
 * `PinnedCertificatesTrustEvaluator`: Uses the provided certificates to validate the server trust. The server trust is considered valid if one of the pinned certificates match one of the server certificates. This evaluator can also accept self-signed certificates.
@@ -522,13 +532,14 @@ let manager = ServerTrustManager(evaluators: serverTrustPolicies)
 ```
 
 This `ServerTrustManager` will have the following behaviors:
+
 - `cert.example.com` will always use certificate pinning with default and host validation enabled , thus requiring the following criteria to be met in order to allow the TLS handshake to succeed:
 	- Certificate chain *must* be valid.
 	- Certificate chain *must* include one of the pinned certificates.
 	- Challenge host *must* match the host in the certificate chain's leaf certificate.
 - `keys.example.com` will always use public key pinning with default and host validation enabled, thus requiring the following criteria to be met in order to allow the TLS handshake to succeed:
 	- Certificate chain *must* be valid.
-	- Leaf certificates *must* include one of the pinned public keys.
+	- Certificate chain *must* include one of the pinned public keys.
 	- Challenge host *must* match the host in the certificate chain's leaf certificate.
 - Requests to other hosts will produce an error, as `ServerTrustManager` requires all hosts to be evaluated by default.
 
@@ -573,11 +584,12 @@ The `CachedResponseHandler` protocol allows control over the caching of HTTP res
 
 ```swift
 func dataTask(_ task: URLSessionDataTask,
-                  willCacheResponse response: CachedURLResponse,
-                  completion: @escaping (CachedURLResponse?) -> Void)
+              willCacheResponse response: CachedURLResponse,
+              completion: @escaping (CachedURLResponse?) -> Void)
 ```
 
 As can be seen in the method signature, this control only applies to `Request`s that use an underlying `URLSessionDataTask` for network transfers, which include `DataRequest`s and `UploadRequest`s (since `URLSessionUploadTask` is a subclass of `URLSessionDataTask`). The conditions under which a response will be considered for caching are extensive, so it’s best to review the documentation of the `URLSessionDataDelegate` method [`urlSession(_:dataTask:willCacheResponse:completionHandler:)`](https://developer.apple.com/documentation/foundation/urlsessiondatadelegate/1411612-urlsession). Once a response is considered for caching, there are variety of valuable manipulations that can be made:
+
 * Prevent caching the response altogether by returning a `nil` `CachedURLResponse`.
 * Modify the `CachedURLResponse`’s `storagePolicy` to change where the cached value should live.
 * Modify the underlying `URLResponse` directly, adding or removing values.
@@ -653,7 +665,12 @@ let session = Session(eventMonitors: [logger])
 ```
 
 ## Making Requests
-As a framework, Alamofire has two main goals: to enable the easy implementation of network requests for prototypes and tools, and to serve as the generic foundation of app networking. It accomplishes these goals through the use of powerful abstractions, providing useful defaults, and included implementations of common tasks. However, once use of Alamofire  has gone beyond a few requests, it’s necessary to move beyond the high level, default implementations into behavior customized for particular applications. Alamofire provides the `URLConvertible` and `URLRequestConvertible` protocols to help with this customization.
+As a framework, Alamofire has two main goals: 
+
+1. To enable the easy implementation of network requests for prototypes and tools
+2. To serve as the generic foundation of app networking
+
+It accomplishes these goals through the use of powerful abstractions, providing useful defaults, and included implementations of common tasks. However, once use of Alamofire  has gone beyond a few requests, it’s necessary to move beyond the high level, default implementations into behavior customized for particular applications. Alamofire provides the `URLConvertible` and `URLRequestConvertible` protocols to help with this customization.
 
 ### `URLConvertible`
 Types adopting the `URLConvertible` protocol can be used to construct URLs, which are then used to construct URL requests internally. `String`, `URL`, and `URLComponents` conform to `URLConvertible` by default, allowing any of them to be passed as `url` parameters to the `request`, `upload`, and `download` methods:
@@ -836,6 +853,7 @@ func response<Serializer: DownloadResponseSerializerProtocol>(
 ```
  
 Alamofire includes a few common responses handlers, including:
+
 - `responseData(queue:completionHandler)`: Validates and preprocesses the response `Data` using `DataResponseSerializer`.
 - `responseString(queue:encoding:completionHandler:)`: Parses the response `Data` as a `String` using the provided `String.Encoding`.
 - `responseJSON(queue:options:completionHandler)`: Parses the response `Data` using `JSONSerialization` using the provided `JSONSerialization.ReadingOptions`. Using this method is not recommended and is only offered for compatibility with existing Alamofire usage. Instead, `responseDecodable` should be used.
@@ -913,7 +931,8 @@ manager?.startListening { status in
 > Also, do not include the scheme in the `host` string or reachability won't function correctly.
 
 There are some important things to remember when using network reachability to determine what to do next.
-- **Do *NOT*** use Reachability to determine if a network request should be sent.
+
+- **DO NOT** use Reachability to determine if a network request should be sent.
 	- You should **ALWAYS** send it.
 - When reachability is restored, use the event to retry failed network requests.
 	- Even though the network requests may still fail, this is a good moment to retry them.
