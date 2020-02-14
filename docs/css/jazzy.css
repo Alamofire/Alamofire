@@ -94,10 +94,10 @@ pre {
 code {
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace; }
 
-p > code, li > code {
+.item-container p > code, .item-container li > code, .top-matter p > code, .top-matter li > code {
   background: #f7f7f7;
   padding: .2em; }
-  p > code:before, p > code:after, li > code:before, li > code:after {
+  .item-container p > code:before, .item-container p > code:after, .item-container li > code:before, .item-container li > code:after, .top-matter p > code:before, .top-matter p > code:after, .top-matter li > code:before, .top-matter li > code:after {
     letter-spacing: -.2em;
     content: "\00a0"; }
 
@@ -201,6 +201,8 @@ pre code {
 .section-name {
   color: #666;
   display: block; }
+  .section-name p {
+    margin-bottom: inherit; }
 
 .declaration .highlight {
   overflow-x: initial;
@@ -218,6 +220,22 @@ pre code {
 .task-name-container a[name]:before {
   content: "";
   display: block; }
+
+.section-name-container {
+  position: relative; }
+  .section-name-container .section-name-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 0; }
+  .section-name-container .section-name {
+    position: relative;
+    pointer-events: none;
+    z-index: 1; }
+    .section-name-container .section-name a {
+      pointer-events: auto; }
 
 .item-container {
   padding: 0; }

@@ -22,7 +22,7 @@
         <a class="header-link" href="index.html">
           Alamofire Docs
         </a>
-         (98% documented)
+         (97% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -193,11 +193,16 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Enums.html">Enumerations</a>
+            <a class="nav-group-name-link" href="Global%20Variables.html">Global Variables</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Enums/AF.html">AF</a>
+                <a class="nav-group-task-link" href="Global%20Variables.html#/s:9Alamofire2AFAA7SessionCvp">AF</a>
               </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError.html">AFError</a>
               </li>
@@ -234,6 +239,9 @@
                 <a class="nav-group-task-link" href="Extensions/Array.html">Array</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:objc(cs)NSBundle">Bundle</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/CharacterSet.html">CharacterSet</a>
               </li>
               <li class="nav-group-task">
@@ -243,7 +251,25 @@
                 <a class="nav-group-task-link" href="Extensions/HTTPURLResponse.html">HTTPURLResponse</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:10Foundation11JSONDecoderC">JSONDecoder</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/Notification.html">Notification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@T@OSStatus">OSStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@T@SecPolicyRef">SecPolicy</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@T@SecTrustRef">SecTrust</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@E@SecTrustResultType">SecTrustResultType</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/String.html">String</a>
@@ -417,11 +443,11 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             
             <p><img src="https://raw.githubusercontent.com/Alamofire/Alamofire/master/alamofire.png" alt="Alamofire: Elegant Networking in Swift"></p>
 
-<p><a href="https://travis-ci.org/Alamofire/Alamofire"><img src="https://travis-ci.org/Alamofire/Alamofire.svg?branch=master" alt="Build Status"></a>
+<p><a href="https://github.com/Alamofire/Alamofire/actions"><img src="https://github.com/Alamofire/Alamofire/workflows/Alamofire%20CI/badge.svg?branch=master" alt="Build Status"></a>
 <a href="https://img.shields.io/cocoapods/v/Alamofire.svg"><img src="https://img.shields.io/cocoapods/v/Alamofire.svg" alt="CocoaPods Compatible"></a>
 <a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage Compatible"></a>
 <a href="https://alamofire.github.io/Alamofire"><img src="https://img.shields.io/cocoapods/p/Alamofire.svg?style=flat" alt="Platform"></a>
@@ -430,8 +456,6 @@
 <a href="https://www.codetriage.com/alamofire/alamofire"><img src="https://www.codetriage.com/alamofire/alamofire/badges/users.svg" alt="Open Source Helpers"></a></p>
 
 <p>Alamofire is an HTTP networking library written in Swift.</p>
-
-<p><strong>⚠️⚠️⚠️ WARNING ⚠️⚠️⚠️</strong> This documentation is out of date during the Alamofire 5 beta process.</p>
 
 <ul>
 <li><a href="#features">Features</a></li>
@@ -451,7 +475,7 @@
 <li><a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md">Advanced Usage</a>
 
 <ul>
-<li><strong>URL Session -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session-manager">Session Manager</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session-delegate">Session Delegate</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#request">Request</a></li>
+<li><strong>URL Session -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session">Session Manager</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#sessiondelegate">Session Delegate</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#request">Request</a></li>
 <li><strong>Routing -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#routing-requests">Routing Requests</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#adapting-and-retrying-requests">Adapting and Retrying Requests</a></li>
 <li><strong>Model Objects -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#custom-response-serialization">Custom Response Serialization</a></li>
 <li><strong>Connection -</strong> <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#security">Security</a>, <a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#network-reachability">Network Reachability</a></li>
@@ -466,7 +490,7 @@
 
 <ul>
 <li>[x] Chainable Request / Response Methods</li>
-<li>[x] URL / JSON / plist Parameter Encoding</li>
+<li>[x] URL / JSON Parameter Encoding</li>
 <li>[x] Upload File / Data / Stream / MultipartFormData</li>
 <li>[x] Download File using Request or Resume Data</li>
 <li>[x] Authentication with URLCredential</li>
@@ -497,7 +521,7 @@
 <h2 id='migration-guides' class='heading'>Migration Guides</h2>
 
 <ul>
-<li>Alamofire 5.0 Migration Guide: To be written!</li>
+<li><a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%205.0%20Migration%20Guide.md">Alamofire 5.0 Migration Guide</a></li>
 <li><a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%204.0%20Migration%20Guide.md">Alamofire 4.0 Migration Guide</a></li>
 <li><a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%203.0%20Migration%20Guide.md">Alamofire 3.0 Migration Guide</a></li>
 <li><a href="https://github.com/Alamofire/Alamofire/blob/master/Documentation/Alamofire%202.0%20Migration%20Guide.md">Alamofire 2.0 Migration Guide</a></li>
@@ -511,18 +535,18 @@
 <li>If you&rsquo;d like to <strong>discuss Alamofire best practices</strong>, use <a href="https://forums.swift.org/c/related-projects/alamofire">our forum on swift.org</a>.</li>
 <li>If you&rsquo;d like to <strong>discuss a feature request</strong>, use <a href="https://forums.swift.org/c/related-projects/alamofire">our forum on swift.org</a>.</li>
 <li>If you <strong>found a bug</strong>, open an issue here on GitHub and follow the guide. The more detail the better!</li>
-<li>If you <strong>want to contribute</strong>, submit a pull request.</li>
+<li>If you <strong>want to contribute</strong>, submit a pull request!</li>
 </ul>
 <h2 id='installation' class='heading'>Installation</h2>
 <h3 id='cocoapods' class='heading'>CocoaPods</h3>
 
 <p><a href="https://cocoapods.org">CocoaPods</a> is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate Alamofire into your Xcode project using CocoaPods, specify it in your <code>Podfile</code>:</p>
-<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.0.0-rc.3'</span>
+<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'Alamofire'</span><span class="p">,</span> <span class="s1">'~&gt; 5.0'</span>
 </code></pre>
 <h3 id='carthage' class='heading'>Carthage</h3>
 
 <p><a href="https://github.com/Carthage/Carthage">Carthage</a> is a decentralized dependency manager that builds your dependencies and provides you with binary frameworks. To integrate Alamofire into your Xcode project using Carthage, specify it in your <code>Cartfile</code>:</p>
-<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" "5.0.0-rc.3"
+<pre class="highlight plaintext"><code>github "Alamofire/Alamofire" "5.0"
 </code></pre>
 <h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
 
@@ -530,7 +554,7 @@
 
 <p>Once you have your Swift package set up, adding Alamofire as a dependency is as easy as adding it to the <code>dependencies</code> value of your <code>Package.swift</code>.</p>
 <pre class="highlight swift"><code><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
-    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="s">"5.0.0-rc.3"</span><span class="p">)</span>
+    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Alamofire/Alamofire.git"</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="s">"5.0"</span><span class="p">)</span>
 <span class="p">]</span>
 </code></pre>
 <h3 id='manually' class='heading'>Manually</h3>
@@ -539,7 +563,7 @@
 <h4 id='embedded-framework' class='heading'>Embedded Framework</h4>
 
 <ul>
-<li>Open up Terminal, <code>cd</code> into your top-level project directory, and run the following command <q>if</q> your project is not initialized as a git repository:</li>
+<li>Open up Terminal, <code>cd</code> into your top-level project directory, and run the following command &ldquo;if&rdquo; your project is not initialized as a git repository:</li>
 </ul>
 <pre class="highlight shell"><code>  <span class="nv">$ </span>git init
 </code></pre>
@@ -557,9 +581,9 @@
 <p>It should appear nested underneath your application&rsquo;s blue project icon. Whether it is above or below all the other Xcode groups does not matter.</p>
 </blockquote></li>
 <li><p>Select the <code>Alamofire.xcodeproj</code> in the Project Navigator and verify the deployment target matches that of your application target.</p></li>
-<li><p>Next, select your application project in the Project Navigator (blue project icon) to navigate to the target configuration window and select the application target under the <q>Targets</q> heading in the sidebar.</p></li>
-<li><p>In the tab bar at the top of that window, open the <q>General</q> panel.</p></li>
-<li><p>Click on the <code>+</code> button under the <q>Embedded Binaries</q> section.</p></li>
+<li><p>Next, select your application project in the Project Navigator (blue project icon) to navigate to the target configuration window and select the application target under the &ldquo;Targets&rdquo; heading in the sidebar.</p></li>
+<li><p>In the tab bar at the top of that window, open the &ldquo;General&rdquo; panel.</p></li>
+<li><p>Click on the <code>+</code> button under the &ldquo;Embedded Binaries&rdquo; section.</p></li>
 <li><p>You will see two different <code>Alamofire.xcodeproj</code> folders each with two different versions of the <code>Alamofire.framework</code> nested inside a <code>Products</code> folder.</p>
 
 <blockquote>
@@ -642,8 +666,8 @@ Any amount you can donate today to help us reach our goal would be greatly appre
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-10-26)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-02-14)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
