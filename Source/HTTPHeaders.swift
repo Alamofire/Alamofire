@@ -398,7 +398,7 @@ extension HTTPHeader {
                     return "\(osName) \(versionString)"
                 }()
 
-                let alamofireVersion = "Alamofire/\(AF.version)"
+                let alamofireVersion = "Alamofire/\(version)"
 
                 return "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
             }
