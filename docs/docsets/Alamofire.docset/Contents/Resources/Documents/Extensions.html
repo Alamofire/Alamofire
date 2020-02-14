@@ -23,7 +23,7 @@
         <a class="header-link" href="index.html">
           Alamofire Docs
         </a>
-         (98% documented)
+         (97% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -194,11 +194,16 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="Enums.html">Enumerations</a>
+            <a class="nav-group-name-link" href="Global%20Variables.html">Global Variables</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Enums/AF.html">AF</a>
+                <a class="nav-group-task-link" href="Global%20Variables.html#/s:9Alamofire2AFAA7SessionCvp">AF</a>
               </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/AFError.html">AFError</a>
               </li>
@@ -235,6 +240,9 @@
                 <a class="nav-group-task-link" href="Extensions/Array.html">Array</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:objc(cs)NSBundle">Bundle</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/CharacterSet.html">CharacterSet</a>
               </li>
               <li class="nav-group-task">
@@ -244,7 +252,25 @@
                 <a class="nav-group-task-link" href="Extensions/HTTPURLResponse.html">HTTPURLResponse</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/s:10Foundation11JSONDecoderC">JSONDecoder</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/Notification.html">Notification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@T@OSStatus">OSStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@T@SecPolicyRef">SecPolicy</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@T@SecTrustRef">SecTrust</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/c:@E@SecTrustResultType">SecTrustResultType</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/String.html">String</a>
@@ -418,7 +444,7 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>Extensions</h1>
             <p>The following extensions are available globally.</p>
 
@@ -462,9 +488,11 @@
               <div class="task-name-container">
                 <a name="/System%20Type%20Extensions"></a>
                 <a name="//apple_ref/swift/Section/System Type Extensions" class="dashAnchor"></a>
-                <a href="#/System%20Type%20Extensions">
-                  <h3 class="section-name">System Type Extensions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/System%20Type%20Extensions"></a>
+                  <h3 class="section-name"><p>System Type Extensions</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -488,6 +516,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">URLRequest</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">URLRequest</span><span class="p">:</span> <span class="kt"><a href="Protocols/URLRequestConvertible.html">URLRequestConvertible</a></span></code></pre>
 
                         </div>
                       </div>
@@ -542,6 +571,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">extension</span> <span class="kt">URLSessionConfiguration</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">URLSessionConfiguration</span><span class="p">:</span> <span class="kt"><a href="Protocols/AlamofireExtended.html">AlamofireExtended</a></span></code></pre>
 
                         </div>
                       </div>
@@ -583,11 +613,53 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
+                <a name="/DataDecoder%20Protocol"></a>
+                <a name="//apple_ref/swift/Section/DataDecoder Protocol" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/DataDecoder%20Protocol"></a>
+                  <h3 class="section-name"><p>DataDecoder Protocol</p>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10Foundation11JSONDecoderC"></a>
+                    <a name="//apple_ref/swift/Extension/JSONDecoder" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Foundation11JSONDecoderC">JSONDecoder</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>JSONDecoder</code> automatically conforms to <code><a href="Protocols/DataDecoder.html">DataDecoder</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">JSONDecoder</span><span class="p">:</span> <span class="kt"><a href="Protocols/DataDecoder.html">DataDecoder</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
                 <a name="/Extensions"></a>
                 <a name="//apple_ref/swift/Section/Extensions" class="dashAnchor"></a>
-                <a href="#/Extensions">
-                  <h3 class="section-name">Extensions</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Extensions"></a>
+                  <h3 class="section-name"><p>Extensions</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -610,18 +682,170 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@frozen</span>
-<span class="kd">public</span> <span class="kd">extension</span> <span class="kt">Array</span> <span class="k">where</span> <span class="kt">Element</span> <span class="o">==</span> <span class="kt"><a href="Protocols/ServerTrustEvaluating.html">ServerTrustEvaluating</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Array</span><span class="p">:</span> <span class="kt"><a href="Protocols/AlamofireExtended.html">AlamofireExtended</a></span></code></pre>
+<pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">extension</span> <span class="kt">Array</span> <span class="k">where</span> <span class="kt">Element</span> <span class="o">==</span> <span class="kt"><a href="Protocols/ServerTrustEvaluating.html">ServerTrustEvaluating</a></span></code></pre>
 
                         </div>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)NSBundle"></a>
+                    <a name="//apple_ref/swift/Extension/Bundle" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)NSBundle">Bundle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Bundle</span><span class="p">:</span> <span class="kt"><a href="Protocols/AlamofireExtended.html">AlamofireExtended</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@T@SecTrustRef"></a>
+                    <a name="//apple_ref/swift/Extension/SecTrust" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@T@SecTrustRef">SecTrust</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SecTrust</span><span class="p">:</span> <span class="kt"><a href="Protocols/AlamofireExtended.html">AlamofireExtended</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@T@SecPolicyRef"></a>
+                    <a name="//apple_ref/swift/Extension/SecPolicy" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@T@SecPolicyRef">SecPolicy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SecPolicy</span><span class="p">:</span> <span class="kt"><a href="Protocols/AlamofireExtended.html">AlamofireExtended</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@T@SecCertificateRef"></a>
+                    <a name="//apple_ref/swift/Extension/SecCertificate" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@T@SecCertificateRef">SecCertificate</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SecCertificate</span><span class="p">:</span> <span class="kt"><a href="Protocols/AlamofireExtended.html">AlamofireExtended</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@T@OSStatus"></a>
+                    <a name="//apple_ref/swift/Extension/OSStatus" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@T@OSStatus">OSStatus</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">OSStatus</span><span class="p">:</span> <span class="kt"><a href="Protocols/AlamofireExtended.html">AlamofireExtended</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@E@SecTrustResultType"></a>
+                    <a name="//apple_ref/swift/Extension/SecTrustResultType" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@E@SecTrustResultType">SecTrustResultType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">SecTrustResultType</span><span class="p">:</span> <span class="kt"><a href="Protocols/AlamofireExtended.html">AlamofireExtended</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -642,8 +866,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@frozen</span>
-<span class="kd">extension</span> <span class="kt">String</span><span class="p">:</span> <span class="kt"><a href="Protocols/URLConvertible.html">URLConvertible</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">String</span><span class="p">:</span> <span class="kt"><a href="Protocols/URLConvertible.html">URLConvertible</a></span></code></pre>
 
                         </div>
                       </div>
@@ -704,10 +927,6 @@
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -743,8 +962,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-10-26)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-02-14)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

@@ -18,7 +18,7 @@
 --ifdef outdent
 --importgrouping testable-top
 --operatorfunc no-space
---ranges no-space
+--nospaceoperators ..<, ...
 --selfrequired validate
 --stripunusedargs closure-only
 --wraparguments after-first

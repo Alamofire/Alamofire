@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           Alamofire Docs
         </a>
-         (98% documented)
+         (97% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -194,11 +194,16 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <a class="nav-group-name-link" href="../Global%20Variables.html">Global Variables</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/AF.html">AF</a>
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/s:9Alamofire2AFAA7SessionCvp">AF</a>
               </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AFError.html">AFError</a>
               </li>
@@ -235,6 +240,9 @@
                 <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)NSBundle">Bundle</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/CharacterSet.html">CharacterSet</a>
               </li>
               <li class="nav-group-task">
@@ -244,7 +252,25 @@
                 <a class="nav-group-task-link" href="../Extensions/HTTPURLResponse.html">HTTPURLResponse</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation11JSONDecoderC">JSONDecoder</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/Notification.html">Notification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@T@OSStatus">OSStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecCertificateRef">SecCertificate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecPolicyRef">SecPolicy</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@T@SecTrustRef">SecTrust</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:@E@SecTrustResultType">SecTrustResultType</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
@@ -418,11 +444,12 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>Session</h1>
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">Session</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Session</span><span class="p">:</span> <span class="kt"><a href="../Protocols/RequestDelegate.html">RequestDelegate</a></span></code></pre>
 
                 </div>
               </div>
@@ -1196,9 +1223,11 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
               <div class="task-name-container">
                 <a name="/Cancellation"></a>
                 <a name="//apple_ref/swift/Section/Cancellation" class="dashAnchor"></a>
-                <a href="#/Cancellation">
-                  <h3 class="section-name">Cancellation</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Cancellation"></a>
+                  <h3 class="section-name"><p>Cancellation</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1272,9 +1301,11 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
               <div class="task-name-container">
                 <a name="/DataRequest"></a>
                 <a name="//apple_ref/swift/Section/DataRequest" class="dashAnchor"></a>
-                <a href="#/DataRequest">
-                  <h3 class="section-name">DataRequest</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/DataRequest"></a>
+                  <h3 class="section-name"><p>DataRequest</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1578,9 +1609,11 @@ per-<code><a href="../Classes/Request.html">Request</a></code> basis, in which c
               <div class="task-name-container">
                 <a name="/DownloadRequest"></a>
                 <a name="//apple_ref/swift/Section/DownloadRequest" class="dashAnchor"></a>
-                <a href="#/DownloadRequest">
-                  <h3 class="section-name">DownloadRequest</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/DownloadRequest"></a>
+                  <h3 class="section-name"><p>DownloadRequest</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -1942,8 +1975,7 @@ well as a <code><a href="../Protocols/RequestInterceptor.html">RequestIntercepto
     <p>If <code>destination</code> is not specified, the download will be moved to a temporary location determined by
     Alamofire. The file will not be deleted until the system purges the temporary files.</p>
 
-</div>
-<div class="aside aside-note">
+</div><div class="aside aside-note">
     <p class="aside-title">Note</p>
     <p>On some versions of all Apple platforms (iOS 10 - 10.2, macOS 10.12 - 10.12.2, tvOS 10 - 10.1, watchOS 3 - 3.1.1),
 <code>resumeData</code> is broken on background URL session configurations. There&rsquo;s an underlying bug in the <code>resumeData</code>
@@ -2020,9 +2052,11 @@ information about the bug and possible workarounds, please refer to the <a href=
               <div class="task-name-container">
                 <a name="/Data"></a>
                 <a name="//apple_ref/swift/Section/Data" class="dashAnchor"></a>
-                <a href="#/Data">
-                  <h3 class="section-name">Data</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Data"></a>
+                  <h3 class="section-name"><p>Data</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -2237,9 +2271,11 @@ information about the bug and possible workarounds, please refer to the <a href=
               <div class="task-name-container">
                 <a name="/File"></a>
                 <a name="//apple_ref/swift/Section/File" class="dashAnchor"></a>
-                <a href="#/File">
-                  <h3 class="section-name">File</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/File"></a>
+                  <h3 class="section-name"><p>File</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -2456,9 +2492,11 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
               <div class="task-name-container">
                 <a name="/InputStream"></a>
                 <a name="//apple_ref/swift/Section/InputStream" class="dashAnchor"></a>
-                <a href="#/InputStream">
-                  <h3 class="section-name">InputStream</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/InputStream"></a>
+                  <h3 class="section-name"><p>InputStream</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -2675,9 +2713,11 @@ components and <code><a href="../Protocols/RequestInterceptor.html">RequestInter
               <div class="task-name-container">
                 <a name="/MultipartFormData"></a>
                 <a name="//apple_ref/swift/Section/MultipartFormData" class="dashAnchor"></a>
-                <a href="#/MultipartFormData">
-                  <h3 class="section-name">MultipartFormData</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/MultipartFormData"></a>
+                  <h3 class="section-name"><p>MultipartFormData</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -3214,9 +3254,11 @@ technique was used.</p>
               <div class="task-name-container">
                 <a name="/RequestDelegate"></a>
                 <a name="//apple_ref/swift/Section/RequestDelegate" class="dashAnchor"></a>
-                <a href="#/RequestDelegate">
-                  <h3 class="section-name">RequestDelegate</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/RequestDelegate"></a>
+                  <h3 class="section-name"><p>RequestDelegate</p>
+</h3>
+                </div>
               </div>
               <ul class="item-container">
                 <li class="item">
@@ -3357,8 +3399,8 @@ technique was used.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2019-10-26)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-02-14)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

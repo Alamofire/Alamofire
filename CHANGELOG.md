@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
+- `5.0.x` Releases - [5.0.0](#500)
 - `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2) | [5.0.0-rc.3](#500-rc3)
 - `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4) | [5.0.0-beta.5](#500-beta5) | [5.0.0-beta.6](#500-beta6) | [5.0.0-beta.7](#500-beta7)
 
@@ -39,6 +40,27 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.0.0](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0)
+Released on 2020-02-14. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/63?closed=1).
+
+#### Added
+- Support for `NSURLAuthenticationMethodClientCertificate` when handling auth challenges using `URLCredential`s.
+  - Added by [刘富东](https://github.com/liuwin7) in Pull Request [#2993](https://github.com/Alamofire/Alamofire/pull/2993).
+- Migration Guide for Alamofire 5.
+  - Added by [Jon Shier](https://github.com/jshier) in Pull Request [#3061](https://github.com/Alamofire/Alamofire/pull/3061).
+
+#### Updated
+- Advanced Usage documentation for Alamofire 5.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3062](https://github.com/Alamofire/Alamofire/pull/3062).
+- `AF` namespace to be a reference to `Session.default`.
+  - Updated by [Jon Shier](https://github.com/jshier) in Pull Request [#3059](https://github.com/Alamofire/Alamofire/pull/3059).
+
+#### Fixed
+- Runtime crashes due to overzealous state checking in `SessionDelegate` by reducing the severity of the assertions.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3010](https://github.com/Alamofire/Alamofire/pull/3010).
+- Unwanted `public` attribute on `_URLEncodedFormEncoder`.
+  - Fixed by [Mattt](https://github.com/mattt) in Pull Request [#3053](https://github.com/Alamofire/Alamofire/pull/3053).
 
 ## [5.0.0-rc.3](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-rc.3)
 Released on 2019-10-26. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/62?closed=1). **Note:** Alamofire 5 is now API stable.
