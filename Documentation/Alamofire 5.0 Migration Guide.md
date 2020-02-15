@@ -9,7 +9,7 @@ This guide is provided in order to ease the transition of existing applications 
 	- Areas of responsibility have been clarified among internal APIs, making it easier to implement certain features, like the new `EventMonitor` protocol and per-request SSL failure errors, among many others.
 	- It was written with the benefit of the various sanitizers, especially the thread sanitizer, from the very beginning, so there will be far fewer threading and other runtime issues than seen in previous versions.
 - **Decodable Responses:** `responseDecodable` and the `DecodableResponseSerializer` now provide built-in support for parsing `Decodable` types from network responses using any `DataDecoder` type.
-- **Encodable Parameters:** Alamofire now supports and prefers `Encodable` types as parameters using the `ParamterEncoder` protocol, allowing fully type-safe representation of request parameters.
+- **Encodable Parameters:** Alamofire now supports and prefers `Encodable` types as parameters using the `ParameterEncoder` protocol, allowing fully type-safe representation of request parameters.
 - **URLEncodedFormEncoder:** In addition to supporting `Encodable` parameters in general, Alamofire now includes the `URLEncodedFormEncoder`, an `Encoder` for URL form encoding. 
 - **`EventMonitor` Protocol:** `EventMonitor`s allow access to Alamofire’s internal events, making it far easier to observe specific actions through a request’s lifetime. This makes logging requests very easy.
 - **Async `RequestAdapter`s:** The `RequestAdatper` protocol now operates asynchronously, making it possible to add async resources to requests.
