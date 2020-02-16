@@ -116,10 +116,11 @@ public class Request {
     }
 
     /// Protected `MutableState` value that provides thread-safe access to state values.
-    fileprivate let protectedMutableState: Protector<MutableState> = Protector(MutableState())
-
+    @Protected
+    fileprivate var mutableState = MutableState()
+    
     /// `State` of the `Request`.
-    public var state: State { protectedMutableState.directValue.state }
+    public var state: State { mutableState.state }
     /// Returns whether `state` is `.initialized`.
     public var isInitialized: Bool { state == .initialized }
     /// Returns whether `state is `.resumed`.
@@ -142,49 +143,50 @@ public class Request {
     public let downloadProgress = Progress(totalUnitCount: 0)
     /// `ProgressHandler` called when `uploadProgress` is updated, on the provided `DispatchQueue`.
     fileprivate var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
-        get { protectedMutableState.directValue.uploadProgressHandler }
-        set { protectedMutableState.write { $0.uploadProgressHandler = newValue } }
+        get { mutableState.uploadProgressHandler }
+        set { mutableState.uploadProgressHandler = newValue }
     }
 
     /// `ProgressHandler` called when `downloadProgress` is updated, on the provided `DispatchQueue`.
     fileprivate var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
-        get { protectedMutableState.directValue.downloadProgressHandler }
-        set { protectedMutableState.write { $0.downloadProgressHandler = newValue } }
+        get { mutableState.downloadProgressHandler }
+        set { mutableState.downloadProgressHandler = newValue }
     }
 
     // MARK: Redirect Handling
 
     /// `RedirectHandler` set on the instance.
     public private(set) var redirectHandler: RedirectHandler? {
-        get { protectedMutableState.directValue.redirectHandler }
-        set { protectedMutableState.write { $0.redirectHandler = newValue } }
+        get { mutableState.redirectHandler }
+        set { mutableState.redirectHandler = newValue }
     }
 
     // MARK: Cached Response Handling
 
     /// `CachedResponseHandler` set on the instance.
     public private(set) var cachedResponseHandler: CachedResponseHandler? {
-        get { protectedMutableState.directValue.cachedResponseHandler }
-        set { protectedMutableState.write { $0.cachedResponseHandler = newValue } }
+        get { mutableState.cachedResponseHandler }
+        set { mutableState.cachedResponseHandler = newValue }
     }
 
     // MARK: URLCredential
 
     /// `URLCredential` used for authentication challenges. Created by calling one of the `authenticate` methods.
     public private(set) var credential: URLCredential? {
-        get { protectedMutableState.directValue.credential }
-        set { protectedMutableState.write { $0.credential = newValue } }
+        get { mutableState.credential }
+        set { mutableState.credential = newValue }
     }
 
     // MARK: Validators
 
     /// `Validator` callback closures that store the validation calls enqueued.
-    fileprivate var protectedValidators: Protector<[() -> Void]> = Protector([])
+    @Protected
+    fileprivate var validators: [() -> Void] = []
 
     // MARK: URLRequests
 
     /// All `URLRequests` created on behalf of the `Request`, including original and adapted requests.
-    public var requests: [URLRequest] { protectedMutableState.directValue.requests }
+    public var requests: [URLRequest] { mutableState.requests }
     /// First `URLRequest` created on behalf of the `Request`. May not be the first one actually executed.
     public var firstRequest: URLRequest? { requests.first }
     /// Last `URLRequest` created on behalf of the `Request`.
@@ -194,9 +196,7 @@ public class Request {
 
     /// `URLRequest`s from all of the `URLSessionTask`s executed on behalf of the `Request`. May be different from
     /// `requests` due to `URLSession` manipulation.
-    public var performedRequests: [URLRequest] {
-        protectedMutableState.read { $0.tasks.compactMap { $0.currentRequest } }
-    }
+    public var performedRequests: [URLRequest] { $mutableState.read { $0.tasks.compactMap { $0.currentRequest } } }
 
     // MARK: HTTPURLResponse
 
@@ -207,7 +207,7 @@ public class Request {
     // MARK: Tasks
 
     /// All `URLSessionTask`s created on behalf of the `Request`.
-    public var tasks: [URLSessionTask] { protectedMutableState.directValue.tasks }
+    public var tasks: [URLSessionTask] { mutableState.tasks }
     /// First `URLSessionTask` created on behalf of the `Request`.
     public var firstTask: URLSessionTask? { tasks.first }
     /// Last `URLSessionTask` crated on behalf of the `Request`.
@@ -218,7 +218,7 @@ public class Request {
     // MARK: Metrics
 
     /// All `URLSessionTaskMetrics` gathered on behalf of the `Request`. Should correspond to the `tasks` created.
-    public var allMetrics: [URLSessionTaskMetrics] { protectedMutableState.directValue.metrics }
+    public var allMetrics: [URLSessionTaskMetrics] { mutableState.metrics }
     /// First `URLSessionTaskMetrics` gathered on behalf of the `Request`.
     public var firstMetrics: URLSessionTaskMetrics? { allMetrics.first }
     /// Last `URLSessionTaskMetrics` gathered on behalf of the `Request`.
@@ -229,14 +229,14 @@ public class Request {
     // MARK: Retry Count
 
     /// Number of times the `Request` has been retried.
-    public var retryCount: Int { protectedMutableState.directValue.retryCount }
+    public var retryCount: Int { mutableState.retryCount }
 
     // MARK: Error
 
     /// `Error` returned from Alamofire internally, from the network request directly, or any validators executed.
     public fileprivate(set) var error: AFError? {
-        get { protectedMutableState.directValue.error }
-        set { protectedMutableState.write { $0.error = newValue } }
+        get { mutableState.error }
+        set { mutableState.error = newValue }
     }
 
     /// Default initializer for the `Request` superclass.
@@ -272,7 +272,7 @@ public class Request {
     ///
     /// - Parameter request: The `URLRequest` created.
     func didCreateInitialURLRequest(_ request: URLRequest) {
-        protectedMutableState.write { $0.requests.append(request) }
+        $mutableState.write { $0.requests.append(request) }
 
         eventMonitor?.request(self, didCreateInitialURLRequest: request)
     }
@@ -298,7 +298,7 @@ public class Request {
     ///   - initialRequest: The `URLRequest` that was adapted.
     ///   - adaptedRequest: The `URLRequest` returned by the `RequestAdapter`.
     func didAdaptInitialRequest(_ initialRequest: URLRequest, to adaptedRequest: URLRequest) {
-        protectedMutableState.write { $0.requests.append(adaptedRequest) }
+        $mutableState.write { $0.requests.append(adaptedRequest) }
 
         eventMonitor?.request(self, didAdaptInitialRequest: initialRequest, to: adaptedRequest)
     }
@@ -331,7 +331,7 @@ public class Request {
 
     /// Asynchronously calls any stored `cURLHandler` and then removes it from `mutableState`.
     private func callCURLHandlerIfNecessary() {
-        protectedMutableState.write { mutableState in
+        $mutableState.write { mutableState in
             guard let cURLHandler = mutableState.cURLHandler else { return }
 
             self.underlyingQueue.async { cURLHandler(self.cURLDescription()) }
@@ -343,7 +343,7 @@ public class Request {
     ///
     /// - Parameter task: The `URLSessionTask` created.
     func didCreateTask(_ task: URLSessionTask) {
-        protectedMutableState.write { $0.tasks.append(task) }
+        $mutableState.write { $0.tasks.append(task) }
 
         eventMonitor?.request(self, didCreateTask: task)
     }
@@ -390,7 +390,7 @@ public class Request {
     ///
     /// - Parameter metrics: The `URLSessionTaskMetrics` gathered.
     func didGatherMetrics(_ metrics: URLSessionTaskMetrics) {
-        protectedMutableState.write { $0.metrics.append(metrics) }
+        $mutableState.write { $0.metrics.append(metrics) }
 
         eventMonitor?.request(self, didGatherMetrics: metrics)
     }
@@ -417,7 +417,7 @@ public class Request {
     ///            value is ignored.
     func didCompleteTask(_ task: URLSessionTask, with error: AFError?) {
         self.error = self.error ?? error
-        protectedValidators.directValue.forEach { $0() }
+        validators.forEach { $0() }
 
         eventMonitor?.request(self, didCompleteTask: task, with: error)
 
@@ -426,7 +426,7 @@ public class Request {
 
     /// Called when the `RequestDelegate` is going to retry this `Request`. Calls `reset()`.
     func prepareForRetry() {
-        protectedMutableState.write { $0.retryCount += 1 }
+        $mutableState.write { $0.retryCount += 1 }
 
         reset()
 
@@ -470,7 +470,7 @@ public class Request {
     ///
     /// - Parameter closure: The closure containing the response serialization call.
     func appendResponseSerializer(_ closure: @escaping () -> Void) {
-        protectedMutableState.write { mutableState in
+        $mutableState.write { mutableState in
             mutableState.responseSerializers.append(closure)
 
             if mutableState.state == .finished {
@@ -493,7 +493,7 @@ public class Request {
     func nextResponseSerializer() -> (() -> Void)? {
         var responseSerializer: (() -> Void)?
 
-        protectedMutableState.write { mutableState in
+        $mutableState.write { mutableState in
             let responseSerializerIndex = mutableState.responseSerializerCompletions.count
 
             if responseSerializerIndex < mutableState.responseSerializers.count {
@@ -510,7 +510,7 @@ public class Request {
             // Execute all response serializer completions and clear them
             var completions: [() -> Void] = []
 
-            protectedMutableState.write { mutableState in
+            $mutableState.write { mutableState in
                 completions = mutableState.responseSerializerCompletions
 
                 // Clear out all response serializers and response serializer completions in mutable state since the
@@ -543,7 +543,7 @@ public class Request {
     /// - Parameter completion: The completion handler provided with the response serializer, called when all serializers
     ///                         are complete.
     func responseSerializerDidComplete(completion: @escaping () -> Void) {
-        protectedMutableState.write { $0.responseSerializerCompletions.append(completion) }
+        $mutableState.write { $0.responseSerializerCompletions.append(completion) }
         processNextResponseSerializer()
     }
 
@@ -556,7 +556,7 @@ public class Request {
         downloadProgress.totalUnitCount = 0
         downloadProgress.completedUnitCount = 0
 
-        protectedMutableState.write { $0.responseSerializerCompletions = [] }
+        mutableState.responseSerializerCompletions = []
     }
 
     /// Called when updating the upload progress.
@@ -575,7 +575,7 @@ public class Request {
     ///
     /// - Parameter perform: The closure to perform.
     func withState(perform: (State) -> Void) {
-        protectedMutableState.withState(perform: perform)
+        $mutableState.withState(perform: perform)
     }
 
     // MARK: Task Creation
@@ -602,7 +602,7 @@ public class Request {
     /// - Returns: The instance.
     @discardableResult
     public func cancel() -> Self {
-        protectedMutableState.write { mutableState in
+        $mutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
 
             mutableState.state = .cancelled
@@ -628,7 +628,7 @@ public class Request {
     /// - Returns: The instance.
     @discardableResult
     public func suspend() -> Self {
-        protectedMutableState.write { mutableState in
+        $mutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.suspended) else { return }
 
             mutableState.state = .suspended
@@ -649,7 +649,7 @@ public class Request {
     /// - Returns: The instance.
     @discardableResult
     public func resume() -> Self {
-        protectedMutableState.write { mutableState in
+        $mutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.resumed) else { return }
 
             mutableState.state = .resumed
@@ -689,7 +689,7 @@ public class Request {
     /// - Returns:              The instance.
     @discardableResult
     public func authenticate(with credential: URLCredential) -> Self {
-        protectedMutableState.write { $0.credential = credential }
+        mutableState.credential = credential
 
         return self
     }
@@ -705,7 +705,7 @@ public class Request {
     /// - Returns:   The instance.
     @discardableResult
     public func downloadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
-        protectedMutableState.write { $0.downloadProgressHandler = (handler: closure, queue: queue) }
+        mutableState.downloadProgressHandler = (handler: closure, queue: queue)
 
         return self
     }
@@ -721,7 +721,7 @@ public class Request {
     /// - Returns:   The instance.
     @discardableResult
     public func uploadProgress(queue: DispatchQueue = .main, closure: @escaping ProgressHandler) -> Self {
-        protectedMutableState.write { $0.uploadProgressHandler = (handler: closure, queue: queue) }
+        mutableState.uploadProgressHandler = (handler: closure, queue: queue)
 
         return self
     }
@@ -737,7 +737,7 @@ public class Request {
     /// - Returns:           The instance.
     @discardableResult
     public func redirect(using handler: RedirectHandler) -> Self {
-        protectedMutableState.write { mutableState in
+        $mutableState.write { mutableState in
             precondition(mutableState.redirectHandler == nil, "Redirect handler has already been set.")
             mutableState.redirectHandler = handler
         }
@@ -756,7 +756,7 @@ public class Request {
     /// - Returns:           The instance.
     @discardableResult
     public func cacheResponse(using handler: CachedResponseHandler) -> Self {
-        protectedMutableState.write { mutableState in
+        $mutableState.write { mutableState in
             precondition(mutableState.cachedResponseHandler == nil, "Cached response handler has already been set.")
             mutableState.cachedResponseHandler = handler
         }
@@ -773,7 +773,7 @@ public class Request {
     /// - Returns:           The instance.
     @discardableResult
     public func cURLDescription(calling handler: @escaping (String) -> Void) -> Self {
-        protectedMutableState.write { mutableState in
+        $mutableState.write { mutableState in
             if mutableState.requests.last != nil {
                 underlyingQueue.async { handler(self.cURLDescription()) }
             } else {
@@ -934,10 +934,11 @@ public class DataRequest: Request {
     /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
     public let convertible: URLRequestConvertible
     /// `Data` read from the server so far.
-    public var data: Data? { protectedData.directValue }
+    public var data: Data? { mutableData }
 
     /// Protected storage for the `Data` read by the instance.
-    private var protectedData: Protector<Data?> = Protector(nil)
+    @Protected
+    private var mutableData: Data? = nil
 
     /// Creates a `DataRequest` using the provided parameters.
     ///
@@ -970,7 +971,7 @@ public class DataRequest: Request {
     override func reset() {
         super.reset()
 
-        protectedData.directValue = nil
+        mutableData = nil
     }
 
     /// Called when `Data` is received by this instance.
@@ -980,9 +981,9 @@ public class DataRequest: Request {
     /// - Parameter data: The `Data` received.
     func didReceive(data: Data) {
         if self.data == nil {
-            protectedData.directValue = data
+            mutableData = data
         } else {
-            protectedData.append(data)
+            $mutableData.write { $0?.append(data) }
         }
 
         updateDownloadProgress()
@@ -1027,7 +1028,7 @@ public class DataRequest: Request {
                                        withResult: result)
         }
 
-        protectedValidators.append(validator)
+        $validators.write { $0.append(validator) }
 
         return self
     }
@@ -1113,15 +1114,16 @@ public class DownloadRequest: Request {
     }
 
     /// Protected mutable state specific to `DownloadRequest`.
-    private let protectedDownloadMutableState: Protector<DownloadRequestMutableState> = Protector(DownloadRequestMutableState())
+    @Protected
+    private var mutableDownloadState = DownloadRequestMutableState()
 
     /// If the download is resumable and eventually cancelled, this value may be used to resume the download using the
     /// `download(resumingWith data:)` API.
     ///
     /// - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
-    public var resumeData: Data? { protectedDownloadMutableState.directValue.resumeData }
+    public var resumeData: Data? { mutableDownloadState.resumeData }
     /// If the download is successful, the `URL` where the file was downloaded.
-    public var fileURL: URL? { protectedDownloadMutableState.directValue.fileURL }
+    public var fileURL: URL? { mutableDownloadState.fileURL }
 
     // MARK: Initial State
 
@@ -1164,7 +1166,7 @@ public class DownloadRequest: Request {
     override func reset() {
         super.reset()
 
-        protectedDownloadMutableState.write {
+        $mutableDownloadState.write {
             $0.resumeData = nil
             $0.fileURL = nil
         }
@@ -1179,7 +1181,7 @@ public class DownloadRequest: Request {
         eventMonitor?.request(self, didFinishDownloadingUsing: task, with: result)
 
         switch result {
-        case let .success(url): protectedDownloadMutableState.write { $0.fileURL = url }
+        case let .success(url): mutableDownloadState.fileURL = url
         case let .failure(error): self.error = error
         }
     }
@@ -1257,7 +1259,7 @@ public class DownloadRequest: Request {
     ///
     /// - Returns:                     The instance.
     private func cancel(optionallyProducingResumeData completionHandler: ((_ resumeData: Data?) -> Void)?) -> Self {
-        protectedMutableState.write { mutableState in
+        $mutableState.write { mutableState in
             guard mutableState.state.canTransitionTo(.cancelled) else { return }
 
             mutableState.state = .cancelled
@@ -1273,7 +1275,7 @@ public class DownloadRequest: Request {
                 // Resume to ensure metrics are gathered.
                 task.resume()
                 task.cancel { resumeData in
-                    self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
+                    self.mutableDownloadState.resumeData = resumeData
                     self.underlyingQueue.async { self.didCancelTask(task) }
                     completionHandler(resumeData)
                 }
@@ -1311,7 +1313,7 @@ public class DownloadRequest: Request {
                                        withResult: result)
         }
 
-        protectedValidators.append(validator)
+        $validators.write { $0.append(validator) }
 
         return self
     }

@@ -1,7 +1,7 @@
 //
-//  Protector.swift
+//  Protected.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2020 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +68,9 @@ final class UnfairLock {
 }
 
 /// A thread-safe wrapper around a value.
-final class Protector<T> {
+@propertyWrapper
+@dynamicMemberLookup
+final class Protected<T> {
     private let lock = UnfairLock()
     private var value: T
 
@@ -77,9 +79,15 @@ final class Protector<T> {
     }
 
     /// The contained value. Unsafe for anything more than direct read or write.
-    var directValue: T {
+    var wrappedValue: T {
         get { lock.around { value } }
         set { lock.around { value = newValue } }
+    }
+    
+    var projectedValue: Protected<T> { self }
+    
+    init(wrappedValue: T) {
+        self.value = wrappedValue
     }
 
     /// Synchronously read or transform the contained value.
@@ -100,9 +108,14 @@ final class Protector<T> {
     func write<U>(_ closure: (inout T) -> U) -> U {
         lock.around { closure(&self.value) }
     }
+    
+    subscript<Property>(dynamicMember keyPath: WritableKeyPath<T, Property>) -> Property {
+        get { lock.around { value[keyPath: keyPath] } }
+        set { lock.around { value[keyPath: keyPath] = newValue } }
+    }
 }
 
-extension Protector where T: RangeReplaceableCollection {
+extension Protected where T: RangeReplaceableCollection {
     /// Adds a new element to the end of this protected collection.
     ///
     /// - Parameter newElement: The `Element` to append.
@@ -131,7 +144,7 @@ extension Protector where T: RangeReplaceableCollection {
     }
 }
 
-extension Protector where T == Data? {
+extension Protected where T == Data? {
     /// Adds the contents of a `Data` value to the end of the protected `Data`.
     ///
     /// - Parameter data: The `Data` to be appended.
@@ -142,7 +155,7 @@ extension Protector where T == Data? {
     }
 }
 
-extension Protector where T == Request.MutableState {
+extension Protected where T == Request.MutableState {
     /// Attempts to transition to the passed `State`.
     ///
     /// - Parameter state: The `State` to attempt transition to.
