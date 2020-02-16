@@ -78,7 +78,7 @@ final class Protector<T> {
 
     /// The contained value. Unsafe for anything more than direct read or write.
     var directValue: T {
-        get { return lock.around { value } }
+        get { lock.around { value } }
         set { lock.around { value = newValue } }
     }
 
@@ -88,7 +88,7 @@ final class Protector<T> {
     ///
     /// - Returns:           The return value of the closure passed.
     func read<U>(_ closure: (T) -> U) -> U {
-        return lock.around { closure(self.value) }
+        lock.around { closure(self.value) }
     }
 
     /// Synchronously modify the protected value.
@@ -98,7 +98,7 @@ final class Protector<T> {
     /// - Returns:           The modified value.
     @discardableResult
     func write<U>(_ closure: (inout T) -> U) -> U {
-        return lock.around { closure(&self.value) }
+        lock.around { closure(&self.value) }
     }
 }
 
@@ -149,7 +149,7 @@ extension Protector where T == Request.MutableState {
     ///
     /// - Returns:         Whether the transition occurred.
     func attemptToTransitionTo(_ state: Request.State) -> Bool {
-        return lock.around {
+        lock.around {
             guard value.state.canTransitionTo(state) else { return false }
 
             value.state = state

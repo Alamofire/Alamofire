@@ -31,10 +31,10 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 
     class StubRequest: DataRequest {
         let urlRequest: URLRequest
-        override var request: URLRequest? { return urlRequest }
+        override var request: URLRequest? { urlRequest }
 
         let mockedResponse: HTTPURLResponse?
-        override var response: HTTPURLResponse? { return mockedResponse }
+        override var response: HTTPURLResponse? { mockedResponse }
 
         init(_ url: URL, method: HTTPMethod, response: HTTPURLResponse?, session: Session) {
             mockedResponse = response
@@ -60,7 +60,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 
     let idempotentMethods: Set<HTTPMethod> = [.get, .head, .put, .delete, .options, .trace]
     let nonIdempotentMethods: Set<HTTPMethod> = [.post, .patch, .connect]
-    var methods: Set<HTTPMethod> { return idempotentMethods.union(nonIdempotentMethods) }
+    var methods: Set<HTTPMethod> { idempotentMethods.union(nonIdempotentMethods) }
 
     let session = Session(startRequestsImmediately: false)
 
@@ -122,7 +122,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
                                                       .zeroByteResource]
 
     var errorCodes: Set<URLError.Code> {
-        return retryableErrorCodes.union(nonRetryableErrorCodes)
+        retryableErrorCodes.union(nonRetryableErrorCodes)
     }
 }
 
@@ -351,7 +351,7 @@ class RetryPolicyTestCase: BaseRetryPolicyTestCase {
     }
 
     func urlError(with code: URLError.Code) -> URLError {
-        return NSError(domain: URLError.errorDomain, code: code.rawValue, userInfo: nil) as! URLError
+        NSError(domain: URLError.errorDomain, code: code.rawValue, userInfo: nil) as! URLError
     }
 }
 

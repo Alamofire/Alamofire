@@ -119,17 +119,17 @@ public class Request {
     fileprivate let protectedMutableState: Protector<MutableState> = Protector(MutableState())
 
     /// `State` of the `Request`.
-    public var state: State { return protectedMutableState.directValue.state }
+    public var state: State { protectedMutableState.directValue.state }
     /// Returns whether `state` is `.initialized`.
-    public var isInitialized: Bool { return state == .initialized }
+    public var isInitialized: Bool { state == .initialized }
     /// Returns whether `state is `.resumed`.
-    public var isResumed: Bool { return state == .resumed }
+    public var isResumed: Bool { state == .resumed }
     /// Returns whether `state` is `.suspended`.
-    public var isSuspended: Bool { return state == .suspended }
+    public var isSuspended: Bool { state == .suspended }
     /// Returns whether `state` is `.cancelled`.
-    public var isCancelled: Bool { return state == .cancelled }
+    public var isCancelled: Bool { state == .cancelled }
     /// Returns whether `state` is `.finished`.
-    public var isFinished: Bool { return state == .finished }
+    public var isFinished: Bool { state == .finished }
 
     // MARK: Progress
 
@@ -142,13 +142,13 @@ public class Request {
     public let downloadProgress = Progress(totalUnitCount: 0)
     /// `ProgressHandler` called when `uploadProgress` is updated, on the provided `DispatchQueue`.
     fileprivate var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
-        get { return protectedMutableState.directValue.uploadProgressHandler }
+        get { protectedMutableState.directValue.uploadProgressHandler }
         set { protectedMutableState.write { $0.uploadProgressHandler = newValue } }
     }
 
     /// `ProgressHandler` called when `downloadProgress` is updated, on the provided `DispatchQueue`.
     fileprivate var downloadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
-        get { return protectedMutableState.directValue.downloadProgressHandler }
+        get { protectedMutableState.directValue.downloadProgressHandler }
         set { protectedMutableState.write { $0.downloadProgressHandler = newValue } }
     }
 
@@ -156,7 +156,7 @@ public class Request {
 
     /// `RedirectHandler` set on the instance.
     public private(set) var redirectHandler: RedirectHandler? {
-        get { return protectedMutableState.directValue.redirectHandler }
+        get { protectedMutableState.directValue.redirectHandler }
         set { protectedMutableState.write { $0.redirectHandler = newValue } }
     }
 
@@ -164,7 +164,7 @@ public class Request {
 
     /// `CachedResponseHandler` set on the instance.
     public private(set) var cachedResponseHandler: CachedResponseHandler? {
-        get { return protectedMutableState.directValue.cachedResponseHandler }
+        get { protectedMutableState.directValue.cachedResponseHandler }
         set { protectedMutableState.write { $0.cachedResponseHandler = newValue } }
     }
 
@@ -172,7 +172,7 @@ public class Request {
 
     /// `URLCredential` used for authentication challenges. Created by calling one of the `authenticate` methods.
     public private(set) var credential: URLCredential? {
-        get { return protectedMutableState.directValue.credential }
+        get { protectedMutableState.directValue.credential }
         set { protectedMutableState.write { $0.credential = newValue } }
     }
 
@@ -184,58 +184,58 @@ public class Request {
     // MARK: URLRequests
 
     /// All `URLRequests` created on behalf of the `Request`, including original and adapted requests.
-    public var requests: [URLRequest] { return protectedMutableState.directValue.requests }
+    public var requests: [URLRequest] { protectedMutableState.directValue.requests }
     /// First `URLRequest` created on behalf of the `Request`. May not be the first one actually executed.
-    public var firstRequest: URLRequest? { return requests.first }
+    public var firstRequest: URLRequest? { requests.first }
     /// Last `URLRequest` created on behalf of the `Request`.
-    public var lastRequest: URLRequest? { return requests.last }
+    public var lastRequest: URLRequest? { requests.last }
     /// Current `URLRequest` created on behalf of the `Request`.
-    public var request: URLRequest? { return lastRequest }
+    public var request: URLRequest? { lastRequest }
 
     /// `URLRequest`s from all of the `URLSessionTask`s executed on behalf of the `Request`. May be different from
     /// `requests` due to `URLSession` manipulation.
     public var performedRequests: [URLRequest] {
-        return protectedMutableState.read { $0.tasks.compactMap { $0.currentRequest } }
+        protectedMutableState.read { $0.tasks.compactMap { $0.currentRequest } }
     }
 
     // MARK: HTTPURLResponse
 
     /// `HTTPURLResponse` received from the server, if any. If the `Request` was retried, this is the response of the
     /// last `URLSessionTask`.
-    public var response: HTTPURLResponse? { return lastTask?.response as? HTTPURLResponse }
+    public var response: HTTPURLResponse? { lastTask?.response as? HTTPURLResponse }
 
     // MARK: Tasks
 
     /// All `URLSessionTask`s created on behalf of the `Request`.
-    public var tasks: [URLSessionTask] { return protectedMutableState.directValue.tasks }
+    public var tasks: [URLSessionTask] { protectedMutableState.directValue.tasks }
     /// First `URLSessionTask` created on behalf of the `Request`.
-    public var firstTask: URLSessionTask? { return tasks.first }
+    public var firstTask: URLSessionTask? { tasks.first }
     /// Last `URLSessionTask` crated on behalf of the `Request`.
-    public var lastTask: URLSessionTask? { return tasks.last }
+    public var lastTask: URLSessionTask? { tasks.last }
     /// Current `URLSessionTask` created on behalf of the `Request`.
-    public var task: URLSessionTask? { return lastTask }
+    public var task: URLSessionTask? { lastTask }
 
     // MARK: Metrics
 
     /// All `URLSessionTaskMetrics` gathered on behalf of the `Request`. Should correspond to the `tasks` created.
-    public var allMetrics: [URLSessionTaskMetrics] { return protectedMutableState.directValue.metrics }
+    public var allMetrics: [URLSessionTaskMetrics] { protectedMutableState.directValue.metrics }
     /// First `URLSessionTaskMetrics` gathered on behalf of the `Request`.
-    public var firstMetrics: URLSessionTaskMetrics? { return allMetrics.first }
+    public var firstMetrics: URLSessionTaskMetrics? { allMetrics.first }
     /// Last `URLSessionTaskMetrics` gathered on behalf of the `Request`.
-    public var lastMetrics: URLSessionTaskMetrics? { return allMetrics.last }
+    public var lastMetrics: URLSessionTaskMetrics? { allMetrics.last }
     /// Current `URLSessionTaskMetrics` gathered on behalf of the `Request`.
-    public var metrics: URLSessionTaskMetrics? { return lastMetrics }
+    public var metrics: URLSessionTaskMetrics? { lastMetrics }
 
     // MARK: Retry Count
 
     /// Number of times the `Request` has been retried.
-    public var retryCount: Int { return protectedMutableState.directValue.retryCount }
+    public var retryCount: Int { protectedMutableState.directValue.retryCount }
 
     // MARK: Error
 
     /// `Error` returned from Alamofire internally, from the network request directly, or any validators executed.
     public fileprivate(set) var error: AFError? {
-        get { return protectedMutableState.directValue.error }
+        get { protectedMutableState.directValue.error }
         set { protectedMutableState.write { $0.error = newValue } }
     }
 
@@ -797,7 +797,7 @@ public class Request {
 
 extension Request: Equatable {
     public static func ==(lhs: Request, rhs: Request) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
     }
 }
 
@@ -934,7 +934,7 @@ public class DataRequest: Request {
     /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
     public let convertible: URLRequestConvertible
     /// `Data` read from the server so far.
-    public var data: Data? { return protectedData.directValue }
+    public var data: Data? { protectedData.directValue }
 
     /// Protected storage for the `Data` read by the instance.
     private var protectedData: Protector<Data?> = Protector(nil)
@@ -1073,7 +1073,7 @@ public class DownloadRequest: Request {
     public class func suggestedDownloadDestination(for directory: FileManager.SearchPathDirectory = .documentDirectory,
                                                    in domain: FileManager.SearchPathDomainMask = .userDomainMask,
                                                    options: Options = []) -> Destination {
-        return { temporaryURL, response in
+        { temporaryURL, response in
             let directoryURLs = FileManager.default.urls(for: directory, in: domain)
             let url = directoryURLs.first?.appendingPathComponent(response.suggestedFilename!) ?? temporaryURL
 
@@ -1119,9 +1119,9 @@ public class DownloadRequest: Request {
     /// `download(resumingWith data:)` API.
     ///
     /// - Note: For more information about `resumeData`, see [Apple's documentation](https://developer.apple.com/documentation/foundation/urlsessiondownloadtask/1411634-cancel).
-    public var resumeData: Data? { return protectedDownloadMutableState.directValue.resumeData }
+    public var resumeData: Data? { protectedDownloadMutableState.directValue.resumeData }
     /// If the download is successful, the `URL` where the file was downloaded.
-    public var fileURL: URL? { return protectedDownloadMutableState.directValue.fileURL }
+    public var fileURL: URL? { protectedDownloadMutableState.directValue.fileURL }
 
     // MARK: Initial State
 
@@ -1197,7 +1197,7 @@ public class DownloadRequest: Request {
     }
 
     override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
-        return session.downloadTask(with: request)
+        session.downloadTask(with: request)
     }
 
     /// Creates a `URLSessionTask` from the provided resume data.
@@ -1208,7 +1208,7 @@ public class DownloadRequest: Request {
     ///
     /// - Returns:   The `URLSessionTask` created.
     public func task(forResumeData data: Data, using session: URLSession) -> URLSessionTask {
-        return session.downloadTask(withResumeData: data)
+        session.downloadTask(withResumeData: data)
     }
 
     /// Cancels the instance. Once cancelled, a `DownloadRequest` can no longer be resumed or suspended.
@@ -1219,7 +1219,7 @@ public class DownloadRequest: Request {
     /// - Returns: The instance.
     @discardableResult
     public override func cancel() -> Self {
-        return cancel(producingResumeData: false)
+        cancel(producingResumeData: false)
     }
 
     /// Cancels the instance, optionally producing resume data. Once cancelled, a `DownloadRequest` can no longer be
@@ -1231,7 +1231,7 @@ public class DownloadRequest: Request {
     /// - Returns: The instance.
     @discardableResult
     public func cancel(producingResumeData shouldProduceResumeData: Bool) -> Self {
-        return cancel(optionallyProducingResumeData: shouldProduceResumeData ? { _ in } : nil)
+        cancel(optionallyProducingResumeData: shouldProduceResumeData ? { _ in } : nil)
     }
 
     /// Cancels the instance while producing resume data. Once cancelled, a `DownloadRequest` can no longer be resumed
@@ -1247,7 +1247,7 @@ public class DownloadRequest: Request {
     /// - Returns:                     The instance.
     @discardableResult
     public func cancel(byProducingResumeData completionHandler: @escaping (_ data: Data?) -> Void) -> Self {
-        return cancel(optionallyProducingResumeData: completionHandler)
+        cancel(optionallyProducingResumeData: completionHandler)
     }
 
     /// Internal implementation of cancellation that optionally takes a resume data handler. If no handler is passed,
@@ -1452,7 +1452,7 @@ public protocol UploadableConvertible {
 
 extension UploadRequest.Uploadable: UploadableConvertible {
     public func createUploadable() throws -> UploadRequest.Uploadable {
-        return self
+        self
     }
 }
 

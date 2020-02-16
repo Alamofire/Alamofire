@@ -451,7 +451,7 @@ open class Session {
         let headers: HTTPHeaders?
 
         func asURLRequest() throws -> URLRequest {
-            return try URLRequest(url: url, method: method, headers: headers)
+            try URLRequest(url: url, method: method, headers: headers)
         }
     }
 
@@ -460,11 +460,11 @@ open class Session {
         let uploadable: UploadableConvertible
 
         func createUploadable() throws -> UploadRequest.Uploadable {
-            return try uploadable.createUploadable()
+            try uploadable.createUploadable()
         }
 
         func asURLRequest() throws -> URLRequest {
-            return try request.asURLRequest()
+            try request.asURLRequest()
         }
     }
 
@@ -507,7 +507,7 @@ open class Session {
                      with convertible: URLRequestConvertible,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        return upload(.data(data), with: convertible, interceptor: interceptor, fileManager: fileManager)
+        upload(.data(data), with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     // MARK: File
@@ -551,7 +551,7 @@ open class Session {
                      with convertible: URLRequestConvertible,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        return upload(.file(fileURL, shouldRemove: false), with: convertible, interceptor: interceptor, fileManager: fileManager)
+        upload(.file(fileURL, shouldRemove: false), with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     // MARK: InputStream
@@ -595,7 +595,7 @@ open class Session {
                      with convertible: URLRequestConvertible,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        return upload(.stream(stream), with: convertible, interceptor: interceptor, fileManager: fileManager)
+        upload(.stream(stream), with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     // MARK: MultipartFormData
@@ -970,10 +970,10 @@ open class Session {
 
 extension Session: RequestDelegate {
     public var sessionConfiguration: URLSessionConfiguration {
-        return session.configuration
+        session.configuration
     }
 
-    public var startImmediately: Bool { return startRequestsImmediately }
+    public var startImmediately: Bool { startRequestsImmediately }
 
     public func cleanup(after request: Request) {
         activeRequests.remove(request)
@@ -1017,7 +1017,7 @@ extension Session: RequestDelegate {
 
 extension Session: SessionStateProvider {
     func request(for task: URLSessionTask) -> Request? {
-        return requestTaskMap[task]
+        requestTaskMap[task]
     }
 
     func didGatherMetricsForTask(_ task: URLSessionTask) {
@@ -1029,7 +1029,7 @@ extension Session: SessionStateProvider {
     }
 
     func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {
-        return requestTaskMap[task]?.credential ??
+        requestTaskMap[task]?.credential ??
             session.configuration.urlCredentialStorage?.defaultCredential(for: protectionSpace)
     }
 

@@ -226,6 +226,6 @@ extension Session {
     }
 
     fileprivate func cachedResponseExists(for request: Request) -> Bool {
-        return cachedResponse(for: request) != nil
+        cachedResponse(for: request) != nil
     }
 }
