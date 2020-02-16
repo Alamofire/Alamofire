@@ -49,12 +49,14 @@ open class SessionDelegate: NSObject {
             assertionFailure("StateProvider is nil.")
             return nil
         }
+//
+//        guard let request = provider.request(for: task) as? R else {
+//            fatalError("Returned Request is not of expected type: \(R.self).")
+//        }
+//
+//        return request
 
-        guard let request = provider.request(for: task) as? R else {
-            fatalError("Returned Request is not of expected type: \(R.self).")
-        }
-
-        return request
+        return provider.request(for: task) as? R
     }
 }
 
@@ -229,12 +231,14 @@ extension SessionDelegate: URLSessionDataDelegate {
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         eventMonitor?.urlSession(session, dataTask: dataTask, didReceive: data)
 
-        guard let request = request(for: dataTask, as: DataRequest.self) else {
+        if let request = request(for: dataTask, as: DataRequest.self) {
+            request.didReceive(data: data)
+        } else if let request = request(for: dataTask, as: DataStreamRequest.self) {
+            request.didReceive(data: data)
+        } else {
             assertionFailure("dataTask did not find DataRequest.")
             return
         }
-
-        request.didReceive(data: data)
     }
 
     open func urlSession(_ session: URLSession,

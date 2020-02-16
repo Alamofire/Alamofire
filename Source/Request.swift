@@ -1034,6 +1034,76 @@ public class DataRequest: Request {
     }
 }
 
+// MARK: - DataStreamRequest
+
+/// `Request` subclass which streams data through a response closure.
+public final class DataStreamRequest: Request {
+    public enum Streamed {
+        case data(Data)
+        case complete(request: URLRequest?, response: HTTPURLResponse?, error: AFError?)
+    }
+
+    public typealias Stream = (Streamed) -> Void
+
+    public let convertible: URLRequestConvertible
+
+    @Protected
+    var streams: [(queue: DispatchQueue, stream: Stream)] = []
+
+    /// Creates a `DataRequest` using the provided parameters.
+    ///
+    /// - Parameters:
+    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
+    ///   - convertible:        `URLRequestConvertible` value used to create `URLRequest`s for this instance.
+    ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
+    ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. By default targets
+    ///                         `underlyingQueue`, but can be passed another queue from a `Session`.
+    ///   - eventMonitor:       `EventMonitor` called for event callbacks from internal `Request` actions.
+    ///   - interceptor:        `RequestInterceptor` used throughout the request lifecycle.
+    ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
+    init(id: UUID = UUID(),
+         convertible: URLRequestConvertible,
+         underlyingQueue: DispatchQueue,
+         serializationQueue: DispatchQueue,
+         eventMonitor: EventMonitor?,
+         interceptor: RequestInterceptor?,
+         delegate: RequestDelegate) {
+        self.convertible = convertible
+
+        super.init(id: id,
+                   underlyingQueue: underlyingQueue,
+                   serializationQueue: serializationQueue,
+                   eventMonitor: eventMonitor,
+                   interceptor: interceptor,
+                   delegate: delegate)
+    }
+
+    override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
+        let copiedRequest = request
+        return session.dataTask(with: copiedRequest)
+    }
+
+    func didReceive(data: Data) {
+        $streams.read { streams in
+            streams.forEach { stream in stream.queue.async { stream.stream(.data(data)) } }
+        }
+    }
+
+    @discardableResult
+    public func responseStream(on queue: DispatchQueue = .main, stream: @escaping Stream) -> Self {
+        $streams.write { $0.append((queue, stream)) }
+        appendResponseSerializer {
+            self.underlyingQueue.async {
+                self.responseSerializerDidComplete {
+                    queue.async { stream(.complete(request: self.request, response: self.response, error: self.error)) }
+                }
+            }
+        }
+
+        return self
+    }
+}
+
 // MARK: - DownloadRequest
 
 /// `Request` subclass which downloads `Data` to a file on disk using `URLSessionDownloadTask`.

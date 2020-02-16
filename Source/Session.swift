@@ -320,6 +320,34 @@ open class Session {
         return request
     }
 
+    open func streamRequest<Parameters: Encodable>(_ convertible: URLConvertible,
+                                                   method: HTTPMethod = .get,
+                                                   parameters: Parameters? = nil,
+                                                   encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                   headers: HTTPHeaders? = nil,
+                                                   interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+        let convertible = RequestEncodableConvertible(url: convertible,
+                                                      method: method,
+                                                      parameters: parameters,
+                                                      encoder: encoder,
+                                                      headers: headers)
+
+        return streamRequest(convertible, interceptor: interceptor)
+    }
+
+    open func streamRequest(_ convertible: URLRequestConvertible, interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+        let request = DataStreamRequest(convertible: convertible,
+                                        underlyingQueue: rootQueue,
+                                        serializationQueue: serializationQueue,
+                                        eventMonitor: eventMonitor,
+                                        interceptor: interceptor,
+                                        delegate: self)
+
+        perform(request)
+
+        return request
+    }
+
     // MARK: - DownloadRequest
 
     /// Creates a `DownloadRequest` using a `URLRequest` created using the passed components, `RequestInterceptor`, and
@@ -815,11 +843,22 @@ open class Session {
         case let r as DataRequest: perform(r)
         case let r as UploadRequest: perform(r)
         case let r as DownloadRequest: perform(r)
+        case let r as DataStreamRequest: perform(r)
         default: fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
         }
     }
 
     func perform(_ request: DataRequest) {
+        requestQueue.async {
+            guard !request.isCancelled else { return }
+
+            self.activeRequests.insert(request)
+
+            self.performSetupOperations(for: request, convertible: request.convertible)
+        }
+    }
+
+    func perform(_ request: DataStreamRequest) {
         requestQueue.async {
             guard !request.isCancelled else { return }
 
