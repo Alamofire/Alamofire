@@ -1038,17 +1038,18 @@ public class DataRequest: Request {
 
 /// `Request` subclass which streams data through a response closure.
 public final class DataStreamRequest: Request {
-    public enum Streamed {
-        case data(Data)
+    public enum Streamed<T> {
+        case value(T)
+        case error(Error)
         case complete(request: URLRequest?, response: HTTPURLResponse?, error: AFError?)
     }
 
-    public typealias Stream = (Streamed) -> Void
+    public typealias Stream<T> = (Streamed<T>) -> Void
 
     public let convertible: URLRequestConvertible
 
     @Protected
-    var streams: [(queue: DispatchQueue, stream: Stream)] = []
+    var streams: [(queue: DispatchQueue, stream: (_ data: Data) -> Void)] = []
 
     /// Creates a `DataRequest` using the provided parameters.
     ///
@@ -1085,13 +1086,38 @@ public final class DataStreamRequest: Request {
 
     func didReceive(data: Data) {
         $streams.read { streams in
-            streams.forEach { stream in stream.queue.async { stream.stream(.data(data)) } }
+            streams.forEach { stream in stream.queue.async { stream.stream(data) } }
         }
     }
 
     @discardableResult
-    public func responseStream(on queue: DispatchQueue = .main, stream: @escaping Stream) -> Self {
-        $streams.write { $0.append((queue, stream)) }
+    public func responseStream(on queue: DispatchQueue = .main, stream: @escaping Stream<Data>) -> Self {
+        $streams.write { $0.append((queue, { stream(.value($0)) })) }
+        appendResponseSerializer {
+            self.underlyingQueue.async {
+                self.responseSerializerDidComplete {
+                    queue.async { stream(.complete(request: self.request, response: self.response, error: self.error)) }
+                }
+            }
+        }
+
+        return self
+    }
+
+    @discardableResult
+    public func responseStreamDecodable<T: Decodable>(of type: T.Type = T.self,
+                                                      on queue: DispatchQueue = .main,
+                                                      using decoder: DataDecoder = JSONDecoder(),
+                                                      stream: @escaping Stream<T>) -> Self {
+        let parser = { (data: Data) in
+            let result = Result { try decoder.decode(T.self, from: data) }
+            switch result {
+            case let .success(value): stream(.value(value))
+            case let .failure(error): stream(.error(error))
+            }
+        }
+
+        $streams.write { $0.append((queue, parser)) }
         appendResponseSerializer {
             self.underlyingQueue.async {
                 self.responseSerializerDidComplete {

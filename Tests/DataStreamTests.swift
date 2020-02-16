@@ -31,12 +31,14 @@ final class DataStreamTests: BaseTestCase {
         let expectedSize = 1000
         var accumulatedData = Data()
         var response: HTTPURLResponse?
+        var sawError = false
         let expect = expectation(description: "stream should complete")
 
         // When
         AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/\(expectedSize)")).responseStream { output in
             switch output {
-            case let .data(data): accumulatedData.append(data)
+            case let .value(data): accumulatedData.append(data)
+            case .error: sawError = true
             case let .complete(_, resp, _):
                 response = resp
                 expect.fulfill()
@@ -48,6 +50,7 @@ final class DataStreamTests: BaseTestCase {
         // Then
         XCTAssertEqual(response?.statusCode, 200)
         XCTAssertEqual(accumulatedData.count, expectedSize)
+        XCTAssertFalse(sawError)
     }
 
     func testThatDataCanBeStreamedManyTimes() {
@@ -55,16 +58,19 @@ final class DataStreamTests: BaseTestCase {
         let expectedSize = 1000
         var firstAccumulatedData = Data()
         var firstResponse: HTTPURLResponse?
+        var firstSawError = false
         let firstExpectation = expectation(description: "first stream should complete")
         var secondAccumulatedData = Data()
         var secondResponse: HTTPURLResponse?
+        var secondSawError = false
         let secondExpectation = expectation(description: "second stream should complete")
 
         // When
         AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/\(expectedSize)"))
             .responseStream { output in
                 switch output {
-                case let .data(data): firstAccumulatedData.append(data)
+                case let .value(data): firstAccumulatedData.append(data)
+                case .error: firstSawError = true
                 case let .complete(_, resp, _):
                     firstResponse = resp
                     firstExpectation.fulfill()
@@ -72,7 +78,8 @@ final class DataStreamTests: BaseTestCase {
             }
             .responseStream { output in
                 switch output {
-                case let .data(data): secondAccumulatedData.append(data)
+                case let .value(data): secondAccumulatedData.append(data)
+                case .error: secondSawError = true
                 case let .complete(_, resp, _):
                     secondResponse = resp
                     secondExpectation.fulfill()
@@ -84,21 +91,25 @@ final class DataStreamTests: BaseTestCase {
         // Then
         XCTAssertEqual(firstResponse?.statusCode, 200)
         XCTAssertEqual(firstAccumulatedData.count, expectedSize)
+        XCTAssertFalse(firstSawError)
         XCTAssertEqual(secondResponse?.statusCode, 200)
         XCTAssertEqual(secondAccumulatedData.count, expectedSize)
+        XCTAssertFalse(secondSawError)
     }
 
     func testThatDataStreamCanFailValidation() {
         // Given
         let request = URLRequest.makeHTTPBinRequest(path: "status/401")
         var dataSeen = false
+        var sawError = false
         var error: AFError?
         let expect = expectation(description: "stream should complete")
 
         // When
         AF.streamRequest(request).validate().responseStream { output in
             switch output {
-            case .data: dataSeen = true
+            case .value: dataSeen = true
+            case .error: sawError = true
             case let .complete(_, _, err):
                 error = err
                 expect.fulfill()
@@ -112,6 +123,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertTrue(error?.isResponseValidationError == true, "error should be response validation error")
         XCTAssertFalse(dataSeen, "no data should be seen")
+        XCTAssertFalse(sawError, "no stream error should be seen")
     }
 
     func testThatDataStreamsCanBeRetried() {
@@ -135,6 +147,7 @@ final class DataStreamTests: BaseTestCase {
         let session = Session(interceptor: GoodRetry())
         var accumulatedData = Data()
         var response: HTTPURLResponse?
+        var sawError = false
         let expect = expectation(description: "stream should complete")
 
         // When
@@ -142,7 +155,8 @@ final class DataStreamTests: BaseTestCase {
             .validate()
             .responseStream { output in
                 switch output {
-                case let .data(data): accumulatedData.append(data)
+                case let .value(data): accumulatedData.append(data)
+                case .error: sawError = true
                 case let .complete(_, resp, _):
                     response = resp
                     expect.fulfill()
@@ -153,6 +167,38 @@ final class DataStreamTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(accumulatedData.count, 1000)
+        XCTAssertEqual(response?.statusCode, 200)
+        XCTAssertFalse(sawError)
+    }
+
+    func testThatDataStreamsCanBeDecoded() {
+        // Given
+        // Only 1 right now, as multiple responses return invalid JSON from httpbin.org.
+        let count = 1
+        var responses: [HTTPBinResponse] = []
+        var response: HTTPURLResponse?
+        var sawError = false
+        let expect = expectation(description: "stream complete")
+
+        // When
+        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/\(count)"))
+            .responseStreamDecodable(of: HTTPBinResponse.self) { output in
+                switch output {
+                case let .value(value):
+                    responses.append(value)
+                case .error:
+                    sawError = true
+                case let .complete(_, resp, _):
+                    response = resp
+                    expect.fulfill()
+                }
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(responses.count, count)
+        XCTAssertFalse(sawError)
         XCTAssertEqual(response?.statusCode, 200)
     }
 }
