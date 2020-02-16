@@ -83,11 +83,11 @@ final class Protected<T> {
         get { lock.around { value } }
         set { lock.around { value = newValue } }
     }
-    
+
     var projectedValue: Protected<T> { self }
-    
+
     init(wrappedValue: T) {
-        self.value = wrappedValue
+        value = wrappedValue
     }
 
     /// Synchronously read or transform the contained value.
@@ -108,7 +108,7 @@ final class Protected<T> {
     func write<U>(_ closure: (inout T) -> U) -> U {
         lock.around { closure(&self.value) }
     }
-    
+
     subscript<Property>(dynamicMember keyPath: WritableKeyPath<T, Property>) -> Property {
         get { lock.around { value[keyPath: keyPath] } }
         set { lock.around { value[keyPath: keyPath] = newValue } }

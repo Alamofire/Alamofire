@@ -118,7 +118,7 @@ public class Request {
     /// Protected `MutableState` value that provides thread-safe access to state values.
     @Protected
     fileprivate var mutableState = MutableState()
-    
+
     /// `State` of the `Request`.
     public var state: State { mutableState.state }
     /// Returns whether `state` is `.initialized`.
