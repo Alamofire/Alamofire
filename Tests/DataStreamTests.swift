@@ -87,4 +87,72 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertEqual(secondResponse?.statusCode, 200)
         XCTAssertEqual(secondAccumulatedData.count, expectedSize)
     }
+
+    func testThatDataStreamCanFailValidation() {
+        // Given
+        let request = URLRequest.makeHTTPBinRequest(path: "status/401")
+        var dataSeen = false
+        var error: AFError?
+        let expect = expectation(description: "stream should complete")
+
+        // When
+        AF.streamRequest(request).validate().responseStream { output in
+            switch output {
+            case .data: dataSeen = true
+            case let .complete(_, _, err):
+                error = err
+                expect.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        NSLog(error?.localizedDescription ?? "No error description.")
+        XCTAssertNotNil(error, "error should not be nil")
+        XCTAssertTrue(error?.isResponseValidationError == true, "error should be response validation error")
+        XCTAssertFalse(dataSeen, "no data should be seen")
+    }
+
+    func testThatDataStreamsCanBeRetried() {
+        // Given
+        final class GoodRetry: RequestInterceptor {
+            var hasRetried = false
+
+            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+                if hasRetried {
+                    completion(.success(URLRequest.makeHTTPBinRequest(path: "bytes/1000")))
+                } else {
+                    completion(.success(urlRequest))
+                }
+            }
+
+            func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+                hasRetried = true
+                completion(.retry)
+            }
+        }
+        let session = Session(interceptor: GoodRetry())
+        var accumulatedData = Data()
+        var response: HTTPURLResponse?
+        let expect = expectation(description: "stream should complete")
+
+        // When
+        session.streamRequest(URLRequest.makeHTTPBinRequest(path: "status/401"))
+            .validate()
+            .responseStream { output in
+                switch output {
+                case let .data(data): accumulatedData.append(data)
+                case let .complete(_, resp, _):
+                    response = resp
+                    expect.fulfill()
+                }
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(accumulatedData.count, 1000)
+        XCTAssertEqual(response?.statusCode, 200)
+    }
 }

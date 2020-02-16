@@ -184,6 +184,20 @@ extension DataRequest {
     }
 }
 
+extension DataStreamRequest {
+    public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLResponse) -> ValidationResult
+
+    public func validate<S: Sequence>(statusCode acceptableStatusCodes: S) -> Self where S.Iterator.Element == Int {
+        return validate { [unowned self] _, response in
+            self.validate(statusCode: acceptableStatusCodes, response: response)
+        }
+    }
+
+    public func validate() -> Self {
+        validate(statusCode: acceptableStatusCodes)
+    }
+}
+
 // MARK: -
 
 extension DownloadRequest {

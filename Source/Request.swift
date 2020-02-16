@@ -1102,6 +1102,28 @@ public final class DataStreamRequest: Request {
 
         return self
     }
+
+    @discardableResult
+    public func validate(_ validation: @escaping Validation) -> Self {
+        let validator: () -> Void = { [unowned self] in
+            guard self.error == nil, let response = self.response else { return }
+
+            let result = validation(self.request, response)
+
+            if case let .failure(error) = result {
+                self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error)))
+            }
+            // TODO: Need stream events
+//            self.eventMonitor?.request(self,
+//                                       didValidateRequest: self.request,
+//                                       response: response,
+//                                       withResult: result)
+        }
+
+        $validators.write { $0.append(validator) }
+
+        return self
+    }
 }
 
 // MARK: - DownloadRequest
