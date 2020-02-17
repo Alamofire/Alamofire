@@ -188,6 +188,10 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("Request: \(request), didValidateRequestWithResult: \(result)")
     }
 
+    public func request(_ request: DataStreamRequest, didValidateRequest urlRequest: URLRequest?, response: HTTPURLResponse, withResult result: Request.ValidationResult) {
+        NSLog("Request: \(request), didValidateRequestWithResult: \(result)")
+    }
+
     public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {
         NSLog("Request: \(request), didCreateUploadable: \(uploadable)")
     }

@@ -26,21 +26,26 @@ import Alamofire
 import XCTest
 
 final class DataStreamTests: BaseTestCase {
-    func testThatDataCanBeStreamed() {
+    func testThatDataCanBeStreamedOnMainQueue() {
         // Given
         let expectedSize = 1000
         var accumulatedData = Data()
         var response: HTTPURLResponse?
         var sawError = false
+        var valueOnMain = false
+        var completeOnMain = false
         let expect = expectation(description: "stream should complete")
 
         // When
         AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/\(expectedSize)")).responseStream { output in
             switch output {
-            case let .value(data): accumulatedData.append(data)
+            case let .value(data):
+                accumulatedData.append(data)
+                valueOnMain = Thread.isMainThread
             case .error: sawError = true
             case let .complete(_, resp, _):
                 response = resp
+                completeOnMain = Thread.isMainThread
                 expect.fulfill()
             }
         }
@@ -51,6 +56,8 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertEqual(response?.statusCode, 200)
         XCTAssertEqual(accumulatedData.count, expectedSize)
         XCTAssertFalse(sawError)
+        XCTAssertTrue(valueOnMain)
+        XCTAssertTrue(completeOnMain)
     }
 
     func testThatDataCanBeStreamedManyTimes() {
@@ -94,6 +101,49 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertFalse(firstSawError)
         XCTAssertEqual(secondResponse?.statusCode, 200)
         XCTAssertEqual(secondAccumulatedData.count, expectedSize)
+        XCTAssertFalse(secondSawError)
+    }
+
+    func testThatDataCanBeStreamedAndDecodedAtTheSameTime() {
+        // Given
+        var firstAccumulatedData = Data()
+        var firstResponse: HTTPURLResponse?
+        var firstSawError = false
+        let firstExpectation = expectation(description: "first stream should complete")
+        var response: HTTPBinResponse?
+        var secondResponse: HTTPURLResponse?
+        var secondSawError = false
+        let secondExpectation = expectation(description: "second stream should complete")
+
+        // When
+        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+            .responseStream { output in
+                switch output {
+                case let .value(data): firstAccumulatedData.append(data)
+                case .error: firstSawError = true
+                case let .complete(_, resp, _):
+                    firstResponse = resp
+                    firstExpectation.fulfill()
+                }
+            }
+            .responseStreamDecodable(of: HTTPBinResponse.self) { output in
+                switch output {
+                case let .value(value): response = value
+                case .error: secondSawError = true
+                case let .complete(_, resp, _):
+                    secondResponse = resp
+                    secondExpectation.fulfill()
+                }
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(firstResponse?.statusCode, 200)
+        XCTAssertTrue(firstAccumulatedData.count > 0)
+        XCTAssertFalse(firstSawError)
+        XCTAssertEqual(secondResponse?.statusCode, 200)
+        XCTAssertNotNil(response)
         XCTAssertFalse(secondSawError)
     }
 
@@ -171,18 +221,18 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertFalse(sawError)
     }
 
-    func testThatDataStreamsCanBeDecoded() {
+    func testThatDataStreamsCanBeAString() {
         // Given
         // Only 1 right now, as multiple responses return invalid JSON from httpbin.org.
         let count = 1
-        var responses: [HTTPBinResponse] = []
+        var responses: [String] = []
         var response: HTTPURLResponse?
         var sawError = false
         let expect = expectation(description: "stream complete")
 
         // When
         AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/\(count)"))
-            .responseStreamDecodable(of: HTTPBinResponse.self) { output in
+            .responseStreamString { output in
                 switch output {
                 case let .value(value):
                     responses.append(value)
@@ -200,5 +250,97 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertEqual(responses.count, count)
         XCTAssertFalse(sawError)
         XCTAssertEqual(response?.statusCode, 200)
+    }
+
+    func testThatDataStreamsCanBeDecoded() {
+        // Given
+        // Only 1 right now, as multiple responses return invalid JSON from httpbin.org.
+        let count = 1
+        var responses: [HTTPBinResponse] = []
+        var response: HTTPURLResponse?
+        var sawError = false
+        var valueOnMain = false
+        var completeOnMain = false
+        let expect = expectation(description: "stream complete")
+
+        // When
+        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/\(count)"))
+            .responseStreamDecodable(of: HTTPBinResponse.self) { output in
+                switch output {
+                case let .value(value):
+                    responses.append(value)
+                    valueOnMain = Thread.isMainThread
+                case .error:
+                    sawError = true
+                case let .complete(_, resp, _):
+                    response = resp
+                    completeOnMain = Thread.isMainThread
+                    expect.fulfill()
+                }
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(responses.count, count)
+        XCTAssertFalse(sawError)
+        XCTAssertEqual(response?.statusCode, 200)
+        XCTAssertTrue(valueOnMain)
+        XCTAssertTrue(completeOnMain)
+    }
+
+    func testThatDataStreamRequestHasAppropriateLifetimeEvents() {
+        let eventMonitor = ClosureEventMonitor()
+        let session = Session(eventMonitors: [eventMonitor])
+
+        let didReceiveChallenge = expectation(description: "didReceiveChallenge should fire")
+        let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
+        let didReceiveData = expectation(description: "didReceiveData should fire")
+        let willCacheResponse = expectation(description: "willCacheResponse should fire")
+        let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
+        let didCreateTask = expectation(description: "didCreateTask should fire")
+        let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
+        let didComplete = expectation(description: "didComplete should fire")
+        let didFinish = expectation(description: "didFinish should fire")
+        let didResume = expectation(description: "didResume should fire")
+        let didResumeTask = expectation(description: "didResumeTask should fire")
+        let didValidate = expectation(description: "didValidateRequest should fire")
+        let responseHandler = expectation(description: "responseHandler should fire")
+
+        var dataReceived = false
+
+        eventMonitor.taskDidReceiveChallenge = { _, _, _ in didReceiveChallenge.fulfill() }
+        eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        eventMonitor.dataTaskDidReceiveData = { _, _, _ in
+            guard !dataReceived else { return }
+            // Data may be received many times, fulfill only once.
+            dataReceived = true
+            didReceiveData.fulfill()
+        }
+        eventMonitor.dataTaskWillCacheResponse = { _, _, _ in willCacheResponse.fulfill() }
+        eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateURLRequest.fulfill() }
+        eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
+        eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
+        eventMonitor.requestDidResume = { _ in didResume.fulfill() }
+        eventMonitor.requestDidResumeTask = { _, _ in didResumeTask.fulfill() }
+        eventMonitor.requestDidValidateRequestResponseWithResult = { _, _, _, _ in didValidate.fulfill() }
+
+        // When
+        let request = session.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+            .validate()
+            .responseStreamDecodable(of: HTTPBinResponse.self) { output in
+                switch output {
+                case .complete:
+                    responseHandler.fulfill()
+                default: break
+                }
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertEqual(request.state, .finished)
     }
 }

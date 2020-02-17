@@ -1090,6 +1090,13 @@ public final class DataStreamRequest: Request {
         }
     }
 
+    /// Adds a stream handler which performs no parsing on incoming `Data`.
+    ///
+    /// - Parameters:
+    ///   - queue:  `DispatchQueue` on which to perform the stream and completion handlers.
+    ///   - stream: `Stream` closure.
+    ///
+    /// - Returns:  The `DataStreamRequest`.
     @discardableResult
     public func responseStream(on queue: DispatchQueue = .main, stream: @escaping Stream<Data>) -> Self {
         $streams.write { $0.append((queue, { stream(.value($0)) })) }
@@ -1104,16 +1111,64 @@ public final class DataStreamRequest: Request {
         return self
     }
 
+    /// Adds a stream handler which parses incoming data as a UTF8 `String`.
+    ///
+    /// - Parameters:
+    ///   - queue:  `DispatchQueue` on which to perform the stream and completion handlers.
+    ///   - stream: `Stream` closure.
+    ///
+    /// - Returns:  The `DataStreamRequest`.
+    @discardableResult
+    public func responseStreamString(on queue: DispatchQueue = .main, stream: @escaping Stream<String>) -> Self {
+        let parser = { (data: Data) in
+            self.serializationQueue.async {
+                // Start work on serialization queue.
+                let string = String(decoding: data, as: UTF8.self)
+                // End work on serialization queue.
+                queue.async {
+                    stream(.value(string))
+                }
+            }
+        }
+
+        $streams.write { $0.append((queue, parser)) }
+        appendResponseSerializer {
+            self.underlyingQueue.async {
+                self.responseSerializerDidComplete {
+                    queue.async { stream(.complete(request: self.request, response: self.response, error: self.error)) }
+                }
+            }
+        }
+
+        return self
+    }
+
+    /// Adds a stream handler which parses incoming `Data` into a `Decodable` type using the provided `DataDecoder`.
+    ///
+    /// - Note: Parsing is performed on each chunk of `Data` that comes in. If custom chunking is required, use
+    ///         `responseStream`.
+    ///
+    /// - Parameters:
+    ///   - type:    `Decodable` type to decode `Data` into.
+    ///   - queue:   `DispatchQueue` on which the stream handler is performed.
+    ///   - decoder: `DataDecoder` which decodes the incoming `Data`.
+    ///   - stream:  `Stream` closure called as `Data` comes in.
     @discardableResult
     public func responseStreamDecodable<T: Decodable>(of type: T.Type = T.self,
                                                       on queue: DispatchQueue = .main,
                                                       using decoder: DataDecoder = JSONDecoder(),
                                                       stream: @escaping Stream<T>) -> Self {
         let parser = { (data: Data) in
-            let result = Result { try decoder.decode(T.self, from: data) }
-            switch result {
-            case let .success(value): stream(.value(value))
-            case let .failure(error): stream(.error(error))
+            self.serializationQueue.async {
+                // Start work on serialization queue.
+                let result = Result { try decoder.decode(T.self, from: data) }
+                // End work on serialization queue.
+                queue.async {
+                    switch result {
+                    case let .success(value): stream(.value(value))
+                    case let .failure(error): stream(.error(error))
+                    }
+                }
             }
         }
 
@@ -1139,11 +1194,11 @@ public final class DataStreamRequest: Request {
             if case let .failure(error) = result {
                 self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error)))
             }
-            // TODO: Need stream events
-//            self.eventMonitor?.request(self,
-//                                       didValidateRequest: self.request,
-//                                       response: response,
-//                                       withResult: result)
+
+            self.eventMonitor?.request(self,
+                                       didValidateRequest: self.request,
+                                       response: response,
+                                       withResult: result)
         }
 
         $validators.write { $0.append(validator) }
