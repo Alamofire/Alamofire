@@ -1,9 +1,4 @@
 $(function(){
-  var searchIndex = lunr(function() {
-    this.ref('url');
-    this.field('name');
-  });
-
   var $typeahead = $('[data-typeahead]');
   var $form = $typeahead.parents('form');
   var searchURL = $form.attr('action');
@@ -26,21 +21,34 @@ $(function(){
     $form.addClass('loading');
 
     $.getJSON(searchURL).then(function(searchData) {
-      $.each(searchData, function (url, doc) {
-        searchIndex.add({url: url, name: doc.name});
+      const searchIndex = lunr(function() {
+        this.ref('url');
+        this.field('name');
+        this.field('abstract');
+        for (const [url, doc] of Object.entries(searchData)) {
+          this.add({url: url, name: doc.name, abstract: doc.abstract});
+        }
       });
 
       $typeahead.typeahead(
         {
           highlight: true,
-          minLength: 3
+          minLength: 3,
+          autoselect: true
         },
         {
           limit: 10,
           display: displayTemplate,
           templates: { suggestion: suggestionTemplate },
           source: function(query, sync) {
-            var results = searchIndex.search(query).map(function(result) {
+            const lcSearch = query.toLowerCase();
+            const results = searchIndex.query(function(q) {
+                q.term(lcSearch, { boost: 100 });
+                q.term(lcSearch, {
+                  boost: 10,
+                  wildcard: lunr.Query.wildcard.TRAILING
+                });
+            }).map(function(result) {
               var doc = searchData[result.ref];
               doc.url = result.ref;
               return doc;

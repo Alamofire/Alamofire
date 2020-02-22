@@ -28,26 +28,37 @@ import Foundation
 
 /// An `os_unfair_lock` wrapper.
 final class UnfairLock {
-    private var unfairLock = os_unfair_lock()
+    private let unfairLock: os_unfair_lock_t
 
-    fileprivate func lock() {
-        os_unfair_lock_lock(&unfairLock)
+    init() {
+        unfairLock = .allocate(capacity: 1)
+        unfairLock.initialize(to: os_unfair_lock())
     }
 
-    fileprivate func unlock() {
-        os_unfair_lock_unlock(&unfairLock)
+    deinit {
+        unfairLock.deinitialize(count: 1)
+        unfairLock.deallocate()
+    }
+
+    private func lock() {
+        os_unfair_lock_lock(unfairLock)
+    }
+
+    private func unlock() {
+        os_unfair_lock_unlock(unfairLock)
     }
 
     /// Executes a closure returning a value while acquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
+    ///
     /// - Returns:           The value the closure generated.
     func around<T>(_ closure: () -> T) -> T {
         lock(); defer { unlock() }
         return closure()
     }
 
-    /// Execute a closure while aquiring the lock.
+    /// Execute a closure while acquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
     func around(_ closure: () -> Void) {
@@ -74,6 +85,7 @@ final class Protector<T> {
     /// Synchronously read or transform the contained value.
     ///
     /// - Parameter closure: The closure to execute.
+    ///
     /// - Returns:           The return value of the closure passed.
     func read<U>(_ closure: (T) -> U) -> U {
         return lock.around { closure(self.value) }
@@ -82,6 +94,7 @@ final class Protector<T> {
     /// Synchronously modify the protected value.
     ///
     /// - Parameter closure: The closure to execute.
+    ///
     /// - Returns:           The modified value.
     @discardableResult
     func write<U>(_ closure: (inout T) -> U) -> U {
@@ -126,5 +139,29 @@ extension Protector where T == Data? {
         write { (ward: inout T) in
             ward?.append(data)
         }
+    }
+}
+
+extension Protector where T == Request.MutableState {
+    /// Attempts to transition to the passed `State`.
+    ///
+    /// - Parameter state: The `State` to attempt transition to.
+    ///
+    /// - Returns:         Whether the transition occurred.
+    func attemptToTransitionTo(_ state: Request.State) -> Bool {
+        return lock.around {
+            guard value.state.canTransitionTo(state) else { return false }
+
+            value.state = state
+
+            return true
+        }
+    }
+
+    /// Perform a closure while locked with the provided `Request.State`.
+    ///
+    /// - Parameter perform: The closure to perform while locked.
+    func withState(perform: (Request.State) -> Void) {
+        lock.around { perform(value.state) }
     }
 }

@@ -35,8 +35,8 @@ public protocol CachedResponseHandler {
     ///   3. A `nil` value to prevent the cached response from being stored in the cache.
     ///
     /// - Parameters:
-    ///   - task: The data task whose request resulted in the cached response.
-    ///   - response: The cached response to potentially store in the cache.
+    ///   - task:       The data task whose request resulted in the cached response.
+    ///   - response:   The cached response to potentially store in the cache.
     ///   - completion: The closure to execute containing cached response, a modified response, or `nil`.
     func dataTask(_ task: URLSessionDataTask,
                   willCacheResponse response: CachedURLResponse,
@@ -49,13 +49,12 @@ public protocol CachedResponseHandler {
 /// response.
 public struct ResponseCacher {
     /// Defines the behavior of the `ResponseCacher` type.
-    ///
-    /// - cache:      Stores the cached response in the cache.
-    /// - doNotCache: Prevents the cached response from being stored in the cache.
-    /// - modify:     Modifies the cached response before storing it in the cache.
     public enum Behavior {
+        /// Stores the cached response in the cache.
         case cache
+        /// Prevents the cached response from being stored in the cache.
         case doNotCache
+        /// Modifies the cached response before storing it in the cache.
         case modify((URLSessionDataTask, CachedURLResponse) -> CachedURLResponse?)
     }
 
@@ -84,7 +83,7 @@ extension ResponseCacher: CachedResponseHandler {
             completion(response)
         case .doNotCache:
             completion(nil)
-        case .modify(let closure):
+        case let .modify(closure):
             let response = closure(task, response)
             completion(response)
         }

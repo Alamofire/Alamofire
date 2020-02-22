@@ -30,7 +30,7 @@ public protocol URLConvertible {
     /// Returns a `URL` from the conforming instance or throws.
     ///
     /// - Returns: The `URL` created from the instance.
-    /// - Throws: Any error thrown while creating the `URL`.
+    /// - Throws:  Any error thrown while creating the `URL`.
     func asURL() throws -> URL
 }
 
@@ -38,7 +38,7 @@ extension String: URLConvertible {
     /// Returns a `URL` if `self` can be used to initialize a `URL` instance, otherwise throws.
     ///
     /// - Returns: The `URL` initialized with `self`.
-    /// - Throws: An `AFError.invalidURL` instance.
+    /// - Throws:  An `AFError.invalidURL` instance.
     public func asURL() throws -> URL {
         guard let url = URL(string: self) else { throw AFError.invalidURL(url: self) }
 
@@ -55,7 +55,7 @@ extension URLComponents: URLConvertible {
     /// Returns a `URL` if the `self`'s `url` is not nil, otherwise throws.
     ///
     /// - Returns: The `URL` from the `url` property.
-    /// - Throws: An `AFError.invalidURL` instance.
+    /// - Throws:  An `AFError.invalidURL` instance.
     public func asURL() throws -> URL {
         guard let url = url else { throw AFError.invalidURL(url: self) }
 
@@ -67,10 +67,10 @@ extension URLComponents: URLConvertible {
 
 /// Types adopting the `URLRequestConvertible` protocol can be used to safely construct `URLRequest`s.
 public protocol URLRequestConvertible {
-    /// Returns a `URLRequest` or throws if an `Error` was encoutered.
+    /// Returns a `URLRequest` or throws if an `Error` was encountered.
     ///
     /// - Returns: A `URLRequest`.
-    /// - Throws: Any error thrown while constructing the `URLRequest`.
+    /// - Throws:  Any error thrown while constructing the `URLRequest`.
     func asURLRequest() throws -> URLRequest
 }
 
@@ -90,10 +90,10 @@ extension URLRequest {
     /// Creates an instance with the specified `url`, `method`, and `headers`.
     ///
     /// - Parameters:
-    ///   - url: The `URLConvertible` value.
-    ///   - method: The `HTTPMethod`.
+    ///   - url:     The `URLConvertible` value.
+    ///   - method:  The `HTTPMethod`.
     ///   - headers: The `HTTPHeaders`, `nil` by default.
-    /// - Throws: Any error thrown while converting the `URLConvertible` to a `URL`.
+    /// - Throws:    Any error thrown while converting the `URLConvertible` to a `URL`.
     public init(url: URLConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil) throws {
         let url = try url.asURL()
 

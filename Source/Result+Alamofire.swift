@@ -1,5 +1,5 @@
 //
-//  AFResult.swift
+//  Result+Alamofire.swift
 //
 //  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
 //
@@ -24,24 +24,25 @@
 
 import Foundation
 
-public typealias AFResult<T> = Result<T, Error>
+/// Default type of `Result` returned by Alamofire, with an `AFError` `Failure` type.
+public typealias AFResult<Success> = Result<Success, AFError>
 
 // MARK: - Internal APIs
 
-extension AFResult {
+extension Result {
     /// Returns the associated value if the result is a success, `nil` otherwise.
-    var value: Success? {
-        guard case .success(let value) = self else { return nil }
+    var success: Success? {
+        guard case let .success(value) = self else { return nil }
         return value
     }
 
     /// Returns the associated error value if the result is a failure, `nil` otherwise.
-    var error: Failure? {
-        guard case .failure(let error) = self else { return nil }
+    var failure: Failure? {
+        guard case let .failure(error) = self else { return nil }
         return error
     }
 
-    /// Initializes an `AFResult` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
+    /// Initializes a `Result` from value or error. Returns `.failure` if the error is non-nil, `.success` otherwise.
     ///
     /// - Parameters:
     ///   - value: A value.
@@ -54,54 +55,54 @@ extension AFResult {
         }
     }
 
-    /// Evaluates the specified closure when the `AFResult` is a success, passing the unwrapped value as a parameter.
+    /// Evaluates the specified closure when the `Result` is a success, passing the unwrapped value as a parameter.
     ///
-    /// Use the `flatMap` method with a closure that may throw an error. For example:
+    /// Use the `tryMap` method with a closure that may throw an error. For example:
     ///
-    ///     let possibleData: AFResult<Data> = .success(Data(...))
-    ///     let possibleObject = possibleData.flatMap {
+    ///     let possibleData: Result<Data, Error> = .success(Data(...))
+    ///     let possibleObject = possibleData.tryMap {
     ///         try JSONSerialization.jsonObject(with: $0)
     ///     }
     ///
     /// - parameter transform: A closure that takes the success value of the instance.
     ///
-    /// - returns: An `AFResult` containing the result of the given closure. If this instance is a failure, returns the
+    /// - returns: A `Result` containing the result of the given closure. If this instance is a failure, returns the
     ///            same failure.
-    func flatMap<T>(_ transform: (Success) throws -> T) -> AFResult<T> {
+    func tryMap<NewSuccess>(_ transform: (Success) throws -> NewSuccess) -> Result<NewSuccess, Error> {
         switch self {
-        case .success(let value):
+        case let .success(value):
             do {
                 return try .success(transform(value))
             } catch {
                 return .failure(error)
             }
-        case .failure(let error):
+        case let .failure(error):
             return .failure(error)
         }
     }
 
-    /// Evaluates the specified closure when the `AFResult` is a failure, passing the unwrapped error as a parameter.
+    /// Evaluates the specified closure when the `Result` is a failure, passing the unwrapped error as a parameter.
     ///
-    /// Use the `flatMapError` function with a closure that may throw an error. For example:
+    /// Use the `tryMapError` function with a closure that may throw an error. For example:
     ///
-    ///     let possibleData: AFResult<Data> = .success(Data(...))
-    ///     let possibleObject = possibleData.flatMapError {
+    ///     let possibleData: Result<Data, Error> = .success(Data(...))
+    ///     let possibleObject = possibleData.tryMapError {
     ///         try someFailableFunction(taking: $0)
     ///     }
     ///
     /// - Parameter transform: A throwing closure that takes the error of the instance.
     ///
-    /// - Returns: An `AFResult` instance containing the result of the transform. If this instance is a success, returns
+    /// - Returns: A `Result` instance containing the result of the transform. If this instance is a success, returns
     ///            the same success.
-    func flatMapError<T: Error>(_ transform: (Failure) throws -> T) -> AFResult<Success> {
+    func tryMapError<NewFailure: Error>(_ transform: (Failure) throws -> NewFailure) -> Result<Success, Error> {
         switch self {
-        case .failure(let error):
+        case let .failure(error):
             do {
                 return try .failure(transform(error))
             } catch {
                 return .failure(error)
             }
-        case .success(let value):
+        case let .success(value):
             return .success(value)
         }
     }

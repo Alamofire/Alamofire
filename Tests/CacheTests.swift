@@ -45,7 +45,6 @@ import XCTest
 ///
 /// For information about `Cache-Control` HTTP headers, please refer to RFC 2616 - Section 14.9.
 class CacheTestCase: BaseTestCase {
-
     // MARK: -
 
     struct CacheControl {
@@ -57,14 +56,12 @@ class CacheTestCase: BaseTestCase {
         static let noStore = "no-store"
 
         static var allValues: [String] {
-            return [
-                CacheControl.publicControl,
-                CacheControl.privateControl,
-                CacheControl.maxAgeNonExpired,
-                CacheControl.maxAgeExpired,
-                CacheControl.noCache,
-                CacheControl.noStore
-            ]
+            return [CacheControl.publicControl,
+                    CacheControl.privateControl,
+                    CacheControl.maxAgeNonExpired,
+                    CacheControl.maxAgeExpired,
+                    CacheControl.noCache,
+                    CacheControl.noStore]
         }
     }
 
@@ -86,15 +83,23 @@ class CacheTestCase: BaseTestCase {
 
         urlCache = {
             let capacity = 50 * 1024 * 1024 // MBs
-            let urlCache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
-
-            return urlCache
+            // swiftformat:disable indent
+            #if swift(>=5.1)
+            if #available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
+                return URLCache(memoryCapacity: capacity, diskCapacity: capacity)
+            } else {
+                return URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
+            }
+            #else
+            return URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
+            #endif
+            // swiftformat:enable indent
         }()
 
         manager = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.default
-                configuration.httpHeaders = HTTPHeaders.default
+                configuration.headers = HTTPHeaders.default
                 configuration.requestCachePolicy = .useProtocolCachePolicy
                 configuration.urlCache = urlCache
 
@@ -121,13 +126,13 @@ class CacheTestCase: BaseTestCase {
     // MARK: - Cache Priming Methods
 
     /**
-        Executes a request for all `Cache-Control` header values to load the response into the `URLCache`.
+     Executes a request for all `Cache-Control` header values to load the response into the `URLCache`.
 
-        This implementation leverages dispatch groups to execute all the requests as well as wait an additional
-        second before returning. This ensures the cache contains responses for all requests that are at least
-        one second old. This allows the tests to distinguish whether the subsequent responses come from the cache
-        or the network based on the timestamp of the response.
-    */
+     This implementation leverages dispatch groups to execute all the requests as well as wait an additional
+     second before returning. This ensures the cache contains responses for all requests that are at least
+     one second old. This allows the tests to distinguish whether the subsequent responses come from the cache
+     or the network based on the timestamp of the response.
+     */
     func primeCachedResponses() {
         let dispatchGroup = DispatchGroup()
         let serialQueue = DispatchQueue(label: "org.alamofire.cache-tests")
@@ -135,16 +140,14 @@ class CacheTestCase: BaseTestCase {
         for cacheControl in CacheControl.allValues {
             dispatchGroup.enter()
 
-            let request = startRequest(
-                cacheControl: cacheControl,
-                queue: serialQueue,
-                completion: { _, response in
-                    let timestamp = response!.allHeaderFields["Date"] as! String
-                    self.timestamps[cacheControl] = timestamp
+            let request = startRequest(cacheControl: cacheControl,
+                                       queue: serialQueue,
+                                       completion: { _, response in
+                                           let timestamp = response!.allHeaderFields["Date"] as! String
+                                           self.timestamps[cacheControl] = timestamp
 
-                    dispatchGroup.leave()
-                }
-            )
+                                           dispatchGroup.leave()
+            })
 
             requests[cacheControl] = request
         }
@@ -179,33 +182,27 @@ class CacheTestCase: BaseTestCase {
     }
 
     @discardableResult
-    func startRequest(
-        cacheControl: String,
-        cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
-        queue: DispatchQueue = .main,
-        completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
-        -> URLRequest
-    {
+    func startRequest(cacheControl: String,
+                      cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
+                      queue: DispatchQueue = .main,
+                      completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
+        -> URLRequest {
         let urlRequest = self.urlRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)
         let request = manager.request(urlRequest)
 
-        request.response(
-            queue: queue,
-            completionHandler: { response in
-                completion(response.request, response.response)
-            }
-        )
+        request.response(queue: queue,
+                         completionHandler: { response in
+                             completion(response.request, response.response)
+        })
 
         return urlRequest
     }
 
     // MARK: - Test Execution and Verification
 
-    func executeTest(
-        cachePolicy: URLRequest.CachePolicy,
-        cacheControl: String,
-        shouldReturnCachedResponse: Bool)
-    {
+    func executeTest(cachePolicy: URLRequest.CachePolicy,
+                     cacheControl: String,
+                     shouldReturnCachedResponse: Bool) {
         // Given
         let expectation = self.expectation(description: "GET request to httpbin")
         var response: HTTPURLResponse?

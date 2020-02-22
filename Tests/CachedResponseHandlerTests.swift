@@ -27,7 +27,6 @@ import Foundation
 import XCTest
 
 final class CachedResponseHandlerTestCase: BaseTestCase {
-
     // MARK: Properties
 
     private let urlString = "https://httpbin.org/get"
@@ -38,7 +37,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session()
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
@@ -58,7 +57,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session()
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should not cache response")
 
         // When
@@ -78,20 +77,16 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session()
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
-        let cacher = ResponseCacher(
-            behavior: .modify { _, response in
-                return CachedURLResponse(
-                    response: response.response,
-                    data: response.data,
-                    userInfo: ["key": "value"],
-                    storagePolicy: .allowed
-                )
-            }
-        )
+        let cacher = ResponseCacher(behavior: .modify { _, response in
+            CachedURLResponse(response: response.response,
+                              data: response.data,
+                              userInfo: ["key": "value"],
+                              storagePolicy: .allowed)
+        })
 
         let request = session.request(urlString).cacheResponse(using: cacher).response { resp in
             response = resp
@@ -112,7 +107,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session(using: ResponseCacher.cache)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
@@ -132,7 +127,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session(using: ResponseCacher.doNotCache)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should not cache response")
 
         // When
@@ -150,20 +145,16 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
 
     func testThatSessionCachedResponseHandlerCanModifyCacheResponse() {
         // Given
-        let cacher = ResponseCacher(
-            behavior: .modify { _, response in
-                return CachedURLResponse(
-                    response: response.response,
-                    data: response.data,
-                    userInfo: ["key": "value"],
-                    storagePolicy: .allowed
-                )
-            }
-        )
+        let cacher = ResponseCacher(behavior: .modify { _, response in
+            CachedURLResponse(response: response.response,
+                              data: response.data,
+                              userInfo: ["key": "value"],
+                              storagePolicy: .allowed)
+        })
 
         let session = self.session(using: cacher)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
@@ -186,7 +177,7 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
         // Given
         let session = self.session(using: ResponseCacher.cache)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should cache response")
 
         // When
@@ -205,8 +196,22 @@ final class CachedResponseHandlerTestCase: BaseTestCase {
     // MARK: Private - Test Helpers
 
     private func session(using handler: CachedResponseHandler? = nil) -> Session {
-        let configuration = URLSessionConfiguration.alamofireDefault
-        configuration.urlCache = URLCache(memoryCapacity: 100_000_000, diskCapacity: 100_000_000, diskPath: UUID().uuidString)
+        let configuration = URLSessionConfiguration.af.default
+        let capacity = 100_000_000
+        let cache: URLCache
+        // swiftformat:disable indent
+        #if swift(>=5.1)
+        if #available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
+            let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            cache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, directory: directory)
+        } else {
+            cache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: UUID().uuidString)
+        }
+        #else
+        cache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: UUID().uuidString)
+        #endif
+        // swiftformat:enable indent
+        configuration.urlCache = cache
 
         return Session(configuration: configuration, cachedResponseHandler: handler)
     }

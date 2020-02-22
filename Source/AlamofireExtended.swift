@@ -34,6 +34,7 @@ public struct AlamofireExtension<ExtendedType> {
 
 /// Protocol describing the `af` extension points for Alamofire extended types.
 public protocol AlamofireExtended {
+    /// Type being extended.
     associatedtype ExtendedType
 
     /// Static Alamofire extension point.
@@ -43,13 +44,15 @@ public protocol AlamofireExtended {
 }
 
 public extension AlamofireExtended {
+    /// Static Alamofire extension point.
     static var af: AlamofireExtension<Self>.Type {
         get { return AlamofireExtension<Self>.self }
-        set { }
+        set {}
     }
 
+    /// Instance Alamofire extension point.
     var af: AlamofireExtension<Self> {
         get { return AlamofireExtension(self) }
-        set { }
+        set {}
     }
 }

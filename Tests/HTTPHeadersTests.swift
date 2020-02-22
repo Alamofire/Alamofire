@@ -31,8 +31,8 @@ class HTTPHeadersTests: BaseTestCase {
         let headersFromDictionaryLiteral: HTTPHeaders = ["key": "", "Key": "", "KEY": ""]
         let headersFromDictionary = HTTPHeaders(["key": "", "Key": "", "KEY": ""])
         let headersFromArrayLiteral: HTTPHeaders = [HTTPHeader(name: "key", value: ""),
-                                             HTTPHeader(name: "Key", value: ""),
-                                             HTTPHeader(name: "KEY", value: "")]
+                                                    HTTPHeader(name: "Key", value: ""),
+                                                    HTTPHeader(name: "KEY", value: "")]
         let headersFromArray = HTTPHeaders([HTTPHeader(name: "key", value: ""),
                                             HTTPHeader(name: "Key", value: ""),
                                             HTTPHeader(name: "KEY", value: "")])
@@ -122,10 +122,10 @@ class HTTPHeadersTests: BaseTestCase {
         // When
         let description = headers.description
         let expectedDescription = """
-                                c: c
-                                a: a
-                                b: b
-                                """
+        c: c
+        a: a
+        b: b
+        """
 
         // Then
         XCTAssertEqual(description, expectedDescription)

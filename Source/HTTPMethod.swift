@@ -22,17 +22,33 @@
 //  THE SOFTWARE.
 //
 
-/// HTTP method definitions.
+/// Type representing HTTP methods. Raw `String` value is stored and compared case-sensitively, so
+/// `HTTPMethod.get != HTTPMethod(rawValue: "get")`.
 ///
 /// See https://tools.ietf.org/html/rfc7231#section-4.3
-public enum HTTPMethod: String {
-    case connect = "CONNECT"
-    case delete  = "DELETE"
-    case get     = "GET"
-    case head    = "HEAD"
-    case options = "OPTIONS"
-    case patch   = "PATCH"
-    case post    = "POST"
-    case put     = "PUT"
-    case trace   = "TRACE"
+public struct HTTPMethod: RawRepresentable, Equatable, Hashable {
+    /// `CONNECT` method.
+    public static let connect = HTTPMethod(rawValue: "CONNECT")
+    /// `DELETE` method.
+    public static let delete = HTTPMethod(rawValue: "DELETE")
+    /// `GET` method.
+    public static let get = HTTPMethod(rawValue: "GET")
+    /// `HEAD` method.
+    public static let head = HTTPMethod(rawValue: "HEAD")
+    /// `OPTIONS` method.
+    public static let options = HTTPMethod(rawValue: "OPTIONS")
+    /// `PATCH` method.
+    public static let patch = HTTPMethod(rawValue: "PATCH")
+    /// `POST` method.
+    public static let post = HTTPMethod(rawValue: "POST")
+    /// `PUT` method.
+    public static let put = HTTPMethod(rawValue: "PUT")
+    /// `TRACE` method.
+    public static let trace = HTTPMethod(rawValue: "TRACE")
+
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
 }
