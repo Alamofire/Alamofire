@@ -1044,9 +1044,16 @@ public final class DataStreamRequest: Request {
         case complete(request: URLRequest?, response: HTTPURLResponse?, error: AFError?)
     }
 
-    public typealias Stream<T> = (Streamed<T>) -> Void
+    public typealias StreamHandler<T> = (Streamed<T>) -> Void
 
     public let convertible: URLRequestConvertible
+
+    struct MutableState {
+        var outputStream: OutputStream?
+    }
+
+    @Protected
+    var streamMutableState = MutableState()
 
     @Protected
     var streams: [(queue: DispatchQueue, stream: (_ data: Data) -> Void)] = []
@@ -1084,10 +1091,37 @@ public final class DataStreamRequest: Request {
         return session.dataTask(with: copiedRequest)
     }
 
+    override func finish(error: AFError? = nil) {
+        super.finish(error: error)
+
+        $streamMutableState.write { state in
+            state.outputStream?.close()
+        }
+    }
+
     func didReceive(data: Data) {
+        $streamMutableState.read { state in
+            guard state.outputStream != nil else { return }
+
+            var bytes = Array(data)
+            state.outputStream?.write(&bytes, maxLength: bytes.count)
+        }
+
         $streams.read { streams in
             streams.forEach { stream in stream.queue.async { stream.stream(data) } }
         }
+    }
+
+    public func asInputStream(bufferSize: Int = 1024) -> InputStream {
+        var inputStream: InputStream?
+        $streamMutableState.write { state in
+            Foundation.Stream.getBoundStreams(withBufferSize: bufferSize,
+                                              inputStream: &inputStream,
+                                              outputStream: &state.outputStream)
+            state.outputStream?.open()
+        }
+
+        return inputStream!
     }
 
     /// Adds a stream handler which performs no parsing on incoming `Data`.
@@ -1098,7 +1132,7 @@ public final class DataStreamRequest: Request {
     ///
     /// - Returns:  The `DataStreamRequest`.
     @discardableResult
-    public func responseStream(on queue: DispatchQueue = .main, stream: @escaping Stream<Data>) -> Self {
+    public func responseStream(on queue: DispatchQueue = .main, stream: @escaping StreamHandler<Data>) -> Self {
         $streams.write { $0.append((queue, { stream(.value($0)) })) }
         appendResponseSerializer {
             self.underlyingQueue.async {
@@ -1119,7 +1153,7 @@ public final class DataStreamRequest: Request {
     ///
     /// - Returns:  The `DataStreamRequest`.
     @discardableResult
-    public func responseStreamString(on queue: DispatchQueue = .main, stream: @escaping Stream<String>) -> Self {
+    public func responseStreamString(on queue: DispatchQueue = .main, stream: @escaping StreamHandler<String>) -> Self {
         let parser = { (data: Data) in
             self.serializationQueue.async {
                 // Start work on serialization queue.
@@ -1157,7 +1191,7 @@ public final class DataStreamRequest: Request {
     public func responseStreamDecodable<T: Decodable>(of type: T.Type = T.self,
                                                       on queue: DispatchQueue = .main,
                                                       using decoder: DataDecoder = JSONDecoder(),
-                                                      stream: @escaping Stream<T>) -> Self {
+                                                      stream: @escaping StreamHandler<T>) -> Self {
         let parser = { (data: Data) in
             self.serializationQueue.async {
                 // Start work on serialization queue.

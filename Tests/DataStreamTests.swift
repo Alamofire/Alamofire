@@ -290,6 +290,7 @@ final class DataStreamTests: BaseTestCase {
     }
 
     func testThatDataStreamRequestHasAppropriateLifetimeEvents() {
+        // Given
         let eventMonitor = ClosureEventMonitor()
         let session = Session(eventMonitors: [eventMonitor])
 
@@ -342,5 +343,32 @@ final class DataStreamTests: BaseTestCase {
 
         // Then
         XCTAssertEqual(request.state, .finished)
+    }
+
+    func testThatDataStreamRequestProducesWorkingInputStream() {
+        // Given
+        var accumulatedData = Data()
+        let expect = expectation(description: "stream complete")
+
+        // When
+        let stream = AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "xml", headers: [.contentType("application/xml")]))
+            .responseStream { output in
+                switch output {
+                case let .value(data):
+                    accumulatedData.append(data)
+                case .error:
+                    break
+                case .complete:
+                    expect.fulfill()
+                }
+            }.asInputStream()
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        let parser = XMLParser(stream: stream)
+        let parsed = parser.parse()
+        XCTAssertTrue(parsed)
+        XCTAssertNil(parser.parserError)
     }
 }
