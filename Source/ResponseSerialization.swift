@@ -819,10 +819,10 @@ public struct DecodableStreamSerializer<T: Decodable>: DataStreamSerializer {
     public let decoder: DataDecoder
     public let dataPreprocessor: DataPreprocessor
 
-    /// <#Description#>
+    /// Creates an instance with the provided `DataDecoder` and `DataPreprocessor`.
     /// - Parameters:
-    ///   - decoder: <#decoder description#>
-    ///   - dataPreprocessor: <#dataPreprocessor description#>
+    ///   - decoder: `        DataDecoder` used to decode incoming `Data`.
+    ///   - dataPreprocessor: `DataPreprocessor` used to process incoming `Data` before it's passed through the `decoder`.
     public init(decoder: DataDecoder = JSONDecoder(), dataPreprocessor: DataPreprocessor = PassthroughPreprocessor()) {
         self.decoder = decoder
         self.dataPreprocessor = dataPreprocessor

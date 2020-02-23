@@ -1067,7 +1067,7 @@ public final class DataStreamRequest: Request {
     public let convertible: URLRequestConvertible
 
     /// Internal mutable state specific to this type.
-    struct MutableState {
+    struct StreamMutableState {
         /// `OutputStream` bound to the `InputStream` produced by `asInputStream`, if it has been called.
         var outputStream: OutputStream?
         /// `DispatchQueue`s and stream closures associated called as `Data` is received.
@@ -1075,7 +1075,7 @@ public final class DataStreamRequest: Request {
     }
 
     @Protected
-    var streamMutableState = MutableState()
+    var streamMutableState = StreamMutableState()
 
     /// Creates a `DataRequest` using the provided parameters.
     ///
@@ -1120,10 +1120,11 @@ public final class DataStreamRequest: Request {
 
     func didReceive(data: Data) {
         $streamMutableState.read { state in
-            guard state.outputStream != nil else { return }
+            if state.outputStream != nil {
+                var bytes = Array(data)
+                state.outputStream?.write(&bytes, maxLength: bytes.count)
+            }
 
-            var bytes = Array(data)
-            state.outputStream?.write(&bytes, maxLength: bytes.count)
             state.streams.forEach { stream in stream.queue.async { stream.stream(data) } }
         }
     }
