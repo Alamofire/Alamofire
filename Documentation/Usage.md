@@ -44,6 +44,10 @@
       - [Uploading a File](#uploading-a-file)
       - [Uploading Multipart Form Data](#uploading-multipart-form-data)
       - [Upload Progress](#upload-progress)
+    + [Streaming Data from a Server](#streaming-data-from-a-server)
+      - [Streaming `Data`](#streaming-data)
+      - [Streaming `String`s](#streaming-strings)
+      - [Streaming `Decodable` Values](#streaming-decodable-values)
     + [Statistical Metrics](#statistical-metrics)
       - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
     + [cURL Command Output](#curl-command-output)
@@ -149,7 +153,7 @@ extension HTTPMethod {
 
 ### Request Parameters and Parameter Encoders
 
-Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder `. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).
+Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder`. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).
 
 ```swift
 struct Login: Encodable {
@@ -709,10 +713,10 @@ AF.download("https://httpbin.org/image/png")
 The `downloadProgress` API can also take a `queue` parameter which defines which `DispatchQueue` the download progress closure should be called on.
 
 ```swift
-let utilityQueue = DispatchQueue.global(qos: .utility)
+let progressQueue = DispatchQueue(label: "com.alamofire.progressQueue", qos: .utility)
 
 AF.download("https://httpbin.org/image/png")
-    .downloadProgress(queue: utilityQueue) { progress in
+    .downloadProgress(queue: progressQueue) { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
     .responseData { response in
@@ -760,7 +764,7 @@ When sending relatively small amounts of data to a server using JSON or URL enco
 ```swift
 let data = Data("data".utf8)
 
-AF.upload(data, to: "https://httpbin.org/post").responseJSON { response in
+AF.upload(data, to: "https://httpbin.org/post").responseDecodable(of: HTTPBinResponse.self) { response in
     debugPrint(response)
 }
 ```
@@ -770,7 +774,7 @@ AF.upload(data, to: "https://httpbin.org/post").responseJSON { response in
 ```swift
 let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
 
-AF.upload(fileURL, to: "https://httpbin.org/post").responseJSON { response in
+AF.upload(fileURL, to: "https://httpbin.org/post").responseDecodable(of: HTTPBinResponse.self) { response in
     debugPrint(response)
 }
 ```
@@ -782,7 +786,7 @@ AF.upload(multipartFormData: { multipartFormData in
     multipartFormData.append(Data("one".utf8), withName: "one")
     multipartFormData.append(Data("two".utf8), withName: "two")
 }, to: "https://httpbin.org/post")
-    .responseJSON { response in
+    .responseDecodable(of: HTTPBinResponse.self) { response in
         debugPrint(response)
     }
 ```
@@ -801,9 +805,94 @@ AF.upload(fileURL, to: "https://httpbin.org/post")
     .downloadProgress { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
-    .responseJSON { response in
+    .responseDecodable(of: HTTPBinResponse.self) { response in
         debugPrint(response)
     }
+```
+
+### Streaming Data from a Server
+
+Large downloads or long lasting server connections which receive data over time may be better served by streaming rather than accumulating `Data` as it arrives. Alamofire offers the `DataStreamRequest` and associated APIs to handle this usage. Although it offers much of the same API as other `Request`s, there are several key differences. Most notably, `DataStreamRequest` never accumulates `Data` in memory or saves it to disk. Instead, added `responseStream` closures are repeatedly called as `Data` arrives. The same closures are called again when the connection has completed or received an error. 
+
+#### Streaming `Data`
+
+Streaming `Data` from a server can be accomplished like other Alamofire requests, but with a `StreamHandler` added.
+
+```swift
+func responseStream(on queue: DispatchQueue = .main, stream: @escaping StreamHandler<Data, Never>) -> Self
+```
+
+The provided `queue` is where the `StreamHandler` closures will be called.
+
+```swift
+AF.streamRequest(...).responseStream { output in
+    switch output {
+    case let .stream(result):
+        switch result {
+        case let .success(data):
+            print(data)
+        }
+    case let .complete(completion):
+        print(completion)
+    }
+}
+```
+
+> Handling the `.failure` case of the `Result` in the example above is unnecessary, as receiving `Data` can never fail.
+
+#### Streaming `String`s
+
+Like `Data` streaming, `String`s can be streamed by adding a `StreamHandler`.
+
+```swift
+func responseStreamString(on queue: DispatchQueue = .main,
+                          stream: @escaping StreamHandler<String, Never>) -> Self
+```
+
+`String` values are decoded as `UTF8` and the decoding cannot fail.
+
+```swift
+AF.streamRequest(...).responseStreamString { output in
+    switch output {
+    case let .stream(result):
+        switch result {
+        case let .success(string):
+            print(string)
+        }
+    case let .complete(completion):
+        print(completion)
+    }
+}
+```
+
+#### Streaming `Decodable` Values
+
+Incoming stream `Data` values can be turned into any `Decodable` value using `responseStreamDecodable`.
+
+```swift
+func responseStreamDecodable<T: Decodable>(of type: T.Type = T.self,
+                                           on queue: DispatchQueue = .main,
+                                           using decoder: DataDecoder = JSONDecoder(),
+                                           preprocessor: DataPreprocessor = PassthroughPreprocessor(),
+                                           stream: @escaping StreamHandler<T, AFError>) -> Self
+```
+
+Decoding failures do not end the stream, but instead produce an `AFError` in the `Result` of the `Output`.
+
+```swift
+AF.streamRequest(...).responseStreamDecodable(of: SomeType.self) { output in
+    switch output {
+    case let .stream(result):
+        switch result {
+        case let .success(value):
+            print(value)
+        case let .failure(error):
+            print(error)
+        }
+    case let .complete(completion):
+        print(completion)
+    }
+}
 ```
 
 ### Statistical Metrics
