@@ -41,6 +41,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [5.0.2](https://github.com/Alamofire/Alamofire/releases/tag/5.0.2)
+Released on 2020-02-23. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/65?closed=1).
+
+#### Fixed
+- Swift 5 support for `AlamofireExtension`.
+  - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3077](https://github.com/Alamofire/Alamofire/pull/3077).
+
 ## [5.0.1](https://github.com/Alamofire/Alamofire/releases/tag/5.0.1)
 Released on 2020-02-23. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/64?closed=1).
 
@@ -68,6 +75,8 @@ Released on 2020-02-14. All issues associated with this milestone can be found u
   - Fixed by [Jon Shier](https://github.com/jshier) in Pull Request [#3010](https://github.com/Alamofire/Alamofire/pull/3010).
 - Unwanted `public` attribute on `_URLEncodedFormEncoder`.
   - Fixed by [Mattt](https://github.com/mattt) in Pull Request [#3053](https://github.com/Alamofire/Alamofire/pull/3053).
+
+---
 
 ## [5.0.0-rc.3](https://github.com/Alamofire/Alamofire/releases/tag/5.0.0-rc.3)
 Released on 2019-10-26. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/62?closed=1). **Note:** Alamofire 5 is now API stable.
