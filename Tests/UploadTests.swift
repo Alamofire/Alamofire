@@ -515,7 +515,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         }
     }
 
-#if os(macOS)
+    #if os(macOS)
     func disabled_testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
         let manager: Session = {
@@ -564,7 +564,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return
         }
     }
-#endif
+    #endif
 
     // MARK: Combined Test Execution
 
