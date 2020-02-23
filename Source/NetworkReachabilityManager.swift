@@ -240,11 +240,11 @@ extension SCNetworkReachabilityFlags {
     var canConnectWithoutUserInteraction: Bool { return canConnectAutomatically && !contains(.interventionRequired) }
     var isActuallyReachable: Bool { return isReachable && (!isConnectionRequired || canConnectWithoutUserInteraction) }
     var isCellular: Bool {
-#if os(iOS) || os(tvOS)
+        #if os(iOS) || os(tvOS)
         return contains(.isWWAN)
-#else
+        #else
         return false
-#endif
+        #endif
     }
 
     /// Human readable `String` for all states, to help with debugging.

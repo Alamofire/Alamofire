@@ -4,6 +4,7 @@
 --swiftversion 5
 
 # rules
+--enable isEmpty
 --disable andOperator
 
 # format options
@@ -15,7 +16,7 @@
 --exponentcase lowercase
 --exponentgrouping disabled
 --fractiongrouping disabled
---ifdef outdent
+--ifdef no-indent
 --importgrouping testable-top
 --operatorfunc no-space
 --nospaceoperators ..<, ...
@@ -23,3 +24,4 @@
 --stripunusedargs closure-only
 --wraparguments after-first
 --wrapcollections after-first
+--wrapparameters after-first

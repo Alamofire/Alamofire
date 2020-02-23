@@ -257,7 +257,7 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
         XCTAssertEqual(status, .reachable(.ethernetOrWiFi))
     }
 
-#if os(iOS) || os(tvOS)
+    #if os(iOS) || os(tvOS)
     func testThatStatusIsReachableOnCellularStatusWhenIsWWAN() {
         // Given
         let flags: SCNetworkReachabilityFlags = [.reachable, .isWWAN]
@@ -279,5 +279,5 @@ final class NetworkReachabilityManagerTestCase: BaseTestCase {
         // Then
         XCTAssertEqual(status, .notReachable)
     }
-#endif
+    #endif
 }
