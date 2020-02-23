@@ -320,7 +320,9 @@ open class Session {
         return request
     }
 
-    /// Creates a `DataStreamRequest` from the passed components, `Encodeable` parameters, and `RequestInterceptor`.
+    // MARK: - DataStreamRequest
+
+    /// Creates a `DataStreamRequest` from the passed components, `Encodable` parameters, and `RequestInterceptor`.
     ///
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.

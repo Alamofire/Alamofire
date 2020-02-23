@@ -1038,6 +1038,9 @@ public class DataRequest: Request {
 
 /// `Request` subclass which streams HTTP response `Data` through a `StreamHandler` closure.
 public final class DataStreamRequest: Request {
+    /// Closure type handling `DataStreamRequest.Output` values.
+    public typealias StreamHandler<Success, Failure: Error> = (Output<Success, Failure>) -> Void
+
     /// Encapsulation of state passed to `StreamHandler` closures. Represent either the `Result` of processing streamed
     /// `Data` or the completion of the stream.
     public enum Output<Success, Failure: Error> {
@@ -1061,8 +1064,6 @@ public final class DataStreamRequest: Request {
         public let error: AFError?
     }
 
-    /// Closure type handling `DataStreamRequest.Output` values.
-    public typealias StreamHandler<Success, Failure: Error> = (Output<Success, Failure>) -> Void
     /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
     public let convertible: URLRequestConvertible
 
@@ -1196,6 +1197,18 @@ extension DataStreamRequest.Output {
         guard case let .stream(result) = self, case let .success(value) = result else { return nil }
 
         return value
+    }
+    
+    public var error: Failure? {
+        guard case let .stream(result) = self, case let .failure(error) = result else { return nil }
+
+        return error
+    }
+    
+    public var completion: DataStreamRequest.Completion? {
+        guard case let .complete(completion) = self else { return nil }
+
+        return completion
     }
 }
 
