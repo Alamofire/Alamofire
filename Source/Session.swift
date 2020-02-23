@@ -320,6 +320,18 @@ open class Session {
         return request
     }
 
+    /// Creates a `DataStreamRequest` from the passed components, `Encodeable` parameters, and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - parameters:  `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
+    ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`.
+    ///                  `URLEncodedFormParameterEncoder.default` by default.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///
+    /// - Returns:       The created `DataStream` request.
     open func streamRequest<Parameters: Encodable>(_ convertible: URLConvertible,
                                                    method: HTTPMethod = .get,
                                                    parameters: Parameters? = nil,
@@ -335,6 +347,13 @@ open class Session {
         return streamRequest(convertible, interceptor: interceptor)
     }
 
+    /// Creates a `DataStreamRequest` from the passed `URLRequestConvertible` value and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///
+    /// - Returns:       The created `DataStreamRequest`.
     open func streamRequest(_ convertible: URLRequestConvertible, interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
         let request = DataStreamRequest(convertible: convertible,
                                         underlyingQueue: rootQueue,
