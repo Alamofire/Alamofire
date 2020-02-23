@@ -99,6 +99,13 @@ extension Request {
         where S.Iterator.Element == String {
         guard let data = data, data.count > 0 else { return .success(Void()) }
 
+        return validate(contentType: acceptableContentTypes, response: response)
+    }
+
+    fileprivate func validate<S: Sequence>(contentType acceptableContentTypes: S,
+                                           response: HTTPURLResponse)
+        -> ValidationResult
+        where S.Iterator.Element == String {
         guard
             let responseContentType = response.mimeType,
             let responseMIMEType = MIMEType(responseContentType)
@@ -193,8 +200,22 @@ extension DataStreamRequest {
         }
     }
 
+    /// Validates that the response has a content type in the specified sequence.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func validate<S: Sequence>(contentType acceptableContentTypes: @escaping @autoclosure () -> S) -> Self where S.Iterator.Element == String {
+        return validate { [unowned self] _, response in
+            self.validate(contentType: acceptableContentTypes(), response: response)
+        }
+    }
+
     public func validate() -> Self {
-        validate(statusCode: acceptableStatusCodes)
+        validate(statusCode: acceptableStatusCodes).validate(contentType: self.acceptableContentTypes)
     }
 }
 

@@ -31,21 +31,22 @@ final class DataStreamTests: BaseTestCase {
         let expectedSize = 1000
         var accumulatedData = Data()
         var response: HTTPURLResponse?
-        var sawError = false
-        var valueOnMain = false
+        var streamOnMain = false
         var completeOnMain = false
         let expect = expectation(description: "stream should complete")
 
         // When
         AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/\(expectedSize)")).responseStream { output in
             switch output {
-            case let .value(data):
-                accumulatedData.append(data)
-                valueOnMain = Thread.isMainThread
-            case .error: sawError = true
-            case let .complete(_, resp, _):
-                response = resp
+            case let .stream(result):
+                streamOnMain = Thread.isMainThread
+                switch result {
+                case let .success(data):
+                    accumulatedData.append(data)
+                }
+            case let .complete(completion):
                 completeOnMain = Thread.isMainThread
+                response = completion.response
                 expect.fulfill()
             }
         }
@@ -55,8 +56,7 @@ final class DataStreamTests: BaseTestCase {
         // Then
         XCTAssertEqual(response?.statusCode, 200)
         XCTAssertEqual(accumulatedData.count, expectedSize)
-        XCTAssertFalse(sawError)
-        XCTAssertTrue(valueOnMain)
+        XCTAssertTrue(streamOnMain)
         XCTAssertTrue(completeOnMain)
     }
 
@@ -65,30 +65,42 @@ final class DataStreamTests: BaseTestCase {
         let expectedSize = 1000
         var firstAccumulatedData = Data()
         var firstResponse: HTTPURLResponse?
-        var firstSawError = false
+        var firstStreamOnMain = false
+        var firstCompleteOnMain = false
         let firstExpectation = expectation(description: "first stream should complete")
         var secondAccumulatedData = Data()
         var secondResponse: HTTPURLResponse?
-        var secondSawError = false
+        var secondStreamOnMain = false
+        var secondCompleteOnMain = false
         let secondExpectation = expectation(description: "second stream should complete")
 
         // When
         AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/\(expectedSize)"))
             .responseStream { output in
                 switch output {
-                case let .value(data): firstAccumulatedData.append(data)
-                case .error: firstSawError = true
-                case let .complete(_, resp, _):
-                    firstResponse = resp
+                case let .stream(result):
+                    firstStreamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(data):
+                        firstAccumulatedData.append(data)
+                    }
+                case let .complete(completion):
+                    firstCompleteOnMain = Thread.isMainThread
+                    firstResponse = completion.response
                     firstExpectation.fulfill()
                 }
             }
             .responseStream { output in
                 switch output {
-                case let .value(data): secondAccumulatedData.append(data)
-                case .error: secondSawError = true
-                case let .complete(_, resp, _):
-                    secondResponse = resp
+                case let .stream(result):
+                    secondStreamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(data):
+                        secondAccumulatedData.append(data)
+                    }
+                case let .complete(completion):
+                    secondCompleteOnMain = Thread.isMainThread
+                    secondResponse = completion.response
                     secondExpectation.fulfill()
                 }
             }
@@ -96,42 +108,59 @@ final class DataStreamTests: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
+        XCTAssertTrue(firstStreamOnMain)
+        XCTAssertTrue(firstCompleteOnMain)
         XCTAssertEqual(firstResponse?.statusCode, 200)
         XCTAssertEqual(firstAccumulatedData.count, expectedSize)
-        XCTAssertFalse(firstSawError)
+        XCTAssertTrue(secondStreamOnMain)
+        XCTAssertTrue(secondCompleteOnMain)
         XCTAssertEqual(secondResponse?.statusCode, 200)
         XCTAssertEqual(secondAccumulatedData.count, expectedSize)
-        XCTAssertFalse(secondSawError)
     }
 
     func testThatDataCanBeStreamedAndDecodedAtTheSameTime() {
         // Given
         var firstAccumulatedData = Data()
         var firstResponse: HTTPURLResponse?
-        var firstSawError = false
+        var firstStreamOnMain = false
+        var firstCompleteOnMain = false
         let firstExpectation = expectation(description: "first stream should complete")
-        var response: HTTPBinResponse?
+        var decodedResponse: HTTPBinResponse?
+        var decodingError: AFError?
         var secondResponse: HTTPURLResponse?
-        var secondSawError = false
+        var secondStreamOnMain = false
+        var secondCompleteOnMain = false
         let secondExpectation = expectation(description: "second stream should complete")
 
         // When
         AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
             .responseStream { output in
                 switch output {
-                case let .value(data): firstAccumulatedData.append(data)
-                case .error: firstSawError = true
-                case let .complete(_, resp, _):
-                    firstResponse = resp
+                case let .stream(result):
+                    firstStreamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(data):
+                        firstAccumulatedData.append(data)
+                    }
+                case let .complete(completion):
+                    firstCompleteOnMain = Thread.isMainThread
+                    firstResponse = completion.response
                     firstExpectation.fulfill()
                 }
             }
             .responseStreamDecodable(of: HTTPBinResponse.self) { output in
                 switch output {
-                case let .value(value): response = value
-                case .error: secondSawError = true
-                case let .complete(_, resp, _):
-                    secondResponse = resp
+                case let .stream(result):
+                    secondStreamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(value):
+                        decodedResponse = value
+                    case let .failure(error):
+                        decodingError = error
+                    }
+                case let .complete(completion):
+                    secondCompleteOnMain = Thread.isMainThread
+                    secondResponse = completion.response
                     secondExpectation.fulfill()
                 }
             }
@@ -139,29 +168,30 @@ final class DataStreamTests: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
+        XCTAssertTrue(firstStreamOnMain)
+        XCTAssertTrue(firstCompleteOnMain)
         XCTAssertEqual(firstResponse?.statusCode, 200)
         XCTAssertTrue(firstAccumulatedData.count > 0)
-        XCTAssertFalse(firstSawError)
+        XCTAssertTrue(secondStreamOnMain)
+        XCTAssertTrue(secondCompleteOnMain)
         XCTAssertEqual(secondResponse?.statusCode, 200)
-        XCTAssertNotNil(response)
-        XCTAssertFalse(secondSawError)
+        XCTAssertNotNil(decodedResponse)
+        XCTAssertNil(decodingError)
     }
 
     func testThatDataStreamCanFailValidation() {
         // Given
         let request = URLRequest.makeHTTPBinRequest(path: "status/401")
         var dataSeen = false
-        var sawError = false
         var error: AFError?
         let expect = expectation(description: "stream should complete")
 
         // When
         AF.streamRequest(request).validate().responseStream { output in
             switch output {
-            case .value: dataSeen = true
-            case .error: sawError = true
-            case let .complete(_, _, err):
-                error = err
+            case .stream: dataSeen = true
+            case let .complete(completion):
+                error = completion.error
                 expect.fulfill()
             }
         }
@@ -169,11 +199,9 @@ final class DataStreamTests: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        NSLog(error?.localizedDescription ?? "No error description.")
         XCTAssertNotNil(error, "error should not be nil")
         XCTAssertTrue(error?.isResponseValidationError == true, "error should be response validation error")
         XCTAssertFalse(dataSeen, "no data should be seen")
-        XCTAssertFalse(sawError, "no stream error should be seen")
     }
 
     func testThatDataStreamsCanBeRetried() {
@@ -194,10 +222,12 @@ final class DataStreamTests: BaseTestCase {
                 completion(.retry)
             }
         }
+
         let session = Session(interceptor: GoodRetry())
         var accumulatedData = Data()
+        var streamOnMain = false
+        var completeOnMain = false
         var response: HTTPURLResponse?
-        var sawError = false
         let expect = expectation(description: "stream should complete")
 
         // When
@@ -205,10 +235,15 @@ final class DataStreamTests: BaseTestCase {
             .validate()
             .responseStream { output in
                 switch output {
-                case let .value(data): accumulatedData.append(data)
-                case .error: sawError = true
-                case let .complete(_, resp, _):
-                    response = resp
+                case let .stream(result):
+                    streamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(data):
+                        accumulatedData.append(data)
+                    }
+                case let .complete(completion):
+                    completeOnMain = Thread.isMainThread
+                    response = completion.response
                     expect.fulfill()
                 }
             }
@@ -216,30 +251,33 @@ final class DataStreamTests: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
+        XCTAssertTrue(streamOnMain)
+        XCTAssertTrue(completeOnMain)
         XCTAssertEqual(accumulatedData.count, 1000)
         XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertFalse(sawError)
     }
 
     func testThatDataStreamsCanBeAString() {
         // Given
-        // Only 1 right now, as multiple responses return invalid JSON from httpbin.org.
-        let count = 1
-        var responses: [String] = []
+        var responseString: String?
+        var streamOnMain = false
+        var completeOnMain = false
         var response: HTTPURLResponse?
-        var sawError = false
         let expect = expectation(description: "stream complete")
 
         // When
-        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/\(count)"))
+        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
             .responseStreamString { output in
                 switch output {
-                case let .value(value):
-                    responses.append(value)
-                case .error:
-                    sawError = true
-                case let .complete(_, resp, _):
-                    response = resp
+                case let .stream(result):
+                    streamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(string):
+                        responseString = string
+                    }
+                case let .complete(completion):
+                    completeOnMain = Thread.isMainThread
+                    response = completion.response
                     expect.fulfill()
                 }
             }
@@ -247,8 +285,9 @@ final class DataStreamTests: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(responses.count, count)
-        XCTAssertFalse(sawError)
+        XCTAssertTrue(streamOnMain)
+        XCTAssertTrue(completeOnMain)
+        XCTAssertNotNil(responseString)
         XCTAssertEqual(response?.statusCode, 200)
     }
 
@@ -258,8 +297,8 @@ final class DataStreamTests: BaseTestCase {
         let count = 1
         var responses: [HTTPBinResponse] = []
         var response: HTTPURLResponse?
-        var sawError = false
-        var valueOnMain = false
+        var decodingError: AFError?
+        var streamOnMain = false
         var completeOnMain = false
         let expect = expectation(description: "stream complete")
 
@@ -267,14 +306,17 @@ final class DataStreamTests: BaseTestCase {
         AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/\(count)"))
             .responseStreamDecodable(of: HTTPBinResponse.self) { output in
                 switch output {
-                case let .value(value):
-                    responses.append(value)
-                    valueOnMain = Thread.isMainThread
-                case .error:
-                    sawError = true
-                case let .complete(_, resp, _):
-                    response = resp
+                case let .stream(result):
+                    streamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(value):
+                        responses.append(value)
+                    case let .failure(error):
+                        decodingError = error
+                    }
+                case let .complete(completion):
                     completeOnMain = Thread.isMainThread
+                    response = completion.response
                     expect.fulfill()
                 }
             }
@@ -282,11 +324,11 @@ final class DataStreamTests: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        XCTAssertEqual(responses.count, count)
-        XCTAssertFalse(sawError)
-        XCTAssertEqual(response?.statusCode, 200)
-        XCTAssertTrue(valueOnMain)
+        XCTAssertTrue(streamOnMain)
         XCTAssertTrue(completeOnMain)
+        XCTAssertEqual(responses.count, count)
+        XCTAssertEqual(response?.statusCode, 200)
+        XCTAssertNil(decodingError)
     }
 
     func testThatDataStreamRequestHasAppropriateLifetimeEvents() {
@@ -306,6 +348,7 @@ final class DataStreamTests: BaseTestCase {
         let didResume = expectation(description: "didResume should fire")
         let didResumeTask = expectation(description: "didResumeTask should fire")
         let didValidate = expectation(description: "didValidateRequest should fire")
+        didValidate.expectedFulfillmentCount = 2
         let responseHandler = expectation(description: "responseHandler should fire")
 
         var dataReceived = false
@@ -347,19 +390,15 @@ final class DataStreamTests: BaseTestCase {
 
     func testThatDataStreamRequestProducesWorkingInputStream() {
         // Given
-        var accumulatedData = Data()
         let expect = expectation(description: "stream complete")
 
         // When
         let stream = AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "xml", headers: [.contentType("application/xml")]))
             .responseStream { output in
                 switch output {
-                case let .value(data):
-                    accumulatedData.append(data)
-                case .error:
-                    break
                 case .complete:
                     expect.fulfill()
+                default: break
                 }
             }.asInputStream()
 
@@ -370,5 +409,44 @@ final class DataStreamTests: BaseTestCase {
         let parsed = parser.parse()
         XCTAssertTrue(parsed)
         XCTAssertNil(parser.parserError)
+    }
+
+    func testThatDataStreamSerializerCanBeUsedDirectly() {
+        // Given
+        var response: HTTPURLResponse?
+        var decodedResponse: HTTPBinResponse?
+        var decodingError: AFError?
+        var streamOnMain = false
+        var completeOnMain = false
+        let serializer = DecodableStreamSerializer<HTTPBinResponse>()
+        let expect = expectation(description: "stream complete")
+
+        // When
+        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "stream/1"))
+            .responseStream(using: serializer) { output in
+                switch output {
+                case let .stream(result):
+                    streamOnMain = Thread.isMainThread
+                    switch result {
+                    case let .success(value):
+                        decodedResponse = value
+                    case let .failure(error):
+                        decodingError = error
+                    }
+                case let .complete(completion):
+                    completeOnMain = Thread.isMainThread
+                    response = completion.response
+                    expect.fulfill()
+                }
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(streamOnMain)
+        XCTAssertTrue(completeOnMain)
+        XCTAssertNotNil(decodedResponse)
+        XCTAssertEqual(response?.statusCode, 200)
+        XCTAssertNil(decodingError)
     }
 }

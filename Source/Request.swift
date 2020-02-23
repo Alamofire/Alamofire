@@ -1036,27 +1036,46 @@ public class DataRequest: Request {
 
 // MARK: - DataStreamRequest
 
-/// `Request` subclass which streams data through a response closure.
+/// `Request` subclass which streams HTTP response `Data` through a `StreamHandler` closure.
 public final class DataStreamRequest: Request {
-    public enum Streamed<T> {
-        case value(T)
-        case error(Error)
-        case complete(request: URLRequest?, response: HTTPURLResponse?, error: AFError?)
+    /// Encapsulation of state passed to `StreamHandler` closures. Represent either the `Result` of processing streamed
+    /// `Data` or the completion of the stream.
+    public enum Output<Success, Failure: Error> {
+        /// Output produced every time the instance receives additional `Data`. The associated value contains the
+        /// `Result` of processing the incoming `Data`.
+        case stream(Result<Success, Failure>)
+        /// Output produced when the instance has completed, whether due to stream end, cancellation, or an error.
+        /// Associated `Completion` value contains some final, relevant state.
+        case complete(Completion)
     }
 
-    public typealias StreamHandler<T> = (Streamed<T>) -> Void
+    /// Value containing the state of a `DataStreamRequest` when the stream was completed.
+    public struct Completion {
+        /// Last `URLRequest` issued by the instance.
+        public let request: URLRequest?
+        /// Last `HTTPURLResponse` received by the instance.
+        public let response: HTTPURLResponse?
+        /// Last `URLSessionTaskMetrics` produced for the instance.
+        public let metrics: URLSessionTaskMetrics?
+        /// `AFError` produced for the instance, if any.
+        public let error: AFError?
+    }
 
+    /// Closure type handling `DataStreamRequest.Output` values.
+    public typealias StreamHandler<Success, Failure: Error> = (Output<Success, Failure>) -> Void
+    /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
     public let convertible: URLRequestConvertible
 
+    /// Internal mutable state specific to this type.
     struct MutableState {
+        /// `OutputStream` bound to the `InputStream` produced by `asInputStream`, if it has been called.
         var outputStream: OutputStream?
+        /// `DispatchQueue`s and stream closures associated called as `Data` is received.
+        var streams: [(queue: DispatchQueue, stream: (_ data: Data) -> Void)] = []
     }
 
     @Protected
     var streamMutableState = MutableState()
-
-    @Protected
-    var streams: [(queue: DispatchQueue, stream: (_ data: Data) -> Void)] = []
 
     /// Creates a `DataRequest` using the provided parameters.
     ///
@@ -1105,119 +1124,15 @@ public final class DataStreamRequest: Request {
 
             var bytes = Array(data)
             state.outputStream?.write(&bytes, maxLength: bytes.count)
-        }
-
-        $streams.read { streams in
-            streams.forEach { stream in stream.queue.async { stream.stream(data) } }
+            state.streams.forEach { stream in stream.queue.async { stream.stream(data) } }
         }
     }
 
-    public func asInputStream(bufferSize: Int = 1024) -> InputStream {
-        var inputStream: InputStream?
-        $streamMutableState.write { state in
-            Foundation.Stream.getBoundStreams(withBufferSize: bufferSize,
-                                              inputStream: &inputStream,
-                                              outputStream: &state.outputStream)
-            state.outputStream?.open()
-        }
-
-        return inputStream!
-    }
-
-    /// Adds a stream handler which performs no parsing on incoming `Data`.
+    /// Validates the `URLRequest` and `HTTPURLResponse` received for the instance using the provided `Validation` closure.
     ///
-    /// - Parameters:
-    ///   - queue:  `DispatchQueue` on which to perform the stream and completion handlers.
-    ///   - stream: `Stream` closure.
+    /// - Parameter validation: `Validation` closure used to validate the request and response.
     ///
-    /// - Returns:  The `DataStreamRequest`.
-    @discardableResult
-    public func responseStream(on queue: DispatchQueue = .main, stream: @escaping StreamHandler<Data>) -> Self {
-        $streams.write { $0.append((queue, { stream(.value($0)) })) }
-        appendResponseSerializer {
-            self.underlyingQueue.async {
-                self.responseSerializerDidComplete {
-                    queue.async { stream(.complete(request: self.request, response: self.response, error: self.error)) }
-                }
-            }
-        }
-
-        return self
-    }
-
-    /// Adds a stream handler which parses incoming data as a UTF8 `String`.
-    ///
-    /// - Parameters:
-    ///   - queue:  `DispatchQueue` on which to perform the stream and completion handlers.
-    ///   - stream: `Stream` closure.
-    ///
-    /// - Returns:  The `DataStreamRequest`.
-    @discardableResult
-    public func responseStreamString(on queue: DispatchQueue = .main, stream: @escaping StreamHandler<String>) -> Self {
-        let parser = { (data: Data) in
-            self.serializationQueue.async {
-                // Start work on serialization queue.
-                let string = String(decoding: data, as: UTF8.self)
-                // End work on serialization queue.
-                queue.async {
-                    stream(.value(string))
-                }
-            }
-        }
-
-        $streams.write { $0.append((queue, parser)) }
-        appendResponseSerializer {
-            self.underlyingQueue.async {
-                self.responseSerializerDidComplete {
-                    queue.async { stream(.complete(request: self.request, response: self.response, error: self.error)) }
-                }
-            }
-        }
-
-        return self
-    }
-
-    /// Adds a stream handler which parses incoming `Data` into a `Decodable` type using the provided `DataDecoder`.
-    ///
-    /// - Note: Parsing is performed on each chunk of `Data` that comes in. If custom chunking is required, use
-    ///         `responseStream`.
-    ///
-    /// - Parameters:
-    ///   - type:    `Decodable` type to decode `Data` into.
-    ///   - queue:   `DispatchQueue` on which the stream handler is performed.
-    ///   - decoder: `DataDecoder` which decodes the incoming `Data`.
-    ///   - stream:  `Stream` closure called as `Data` comes in.
-    @discardableResult
-    public func responseStreamDecodable<T: Decodable>(of type: T.Type = T.self,
-                                                      on queue: DispatchQueue = .main,
-                                                      using decoder: DataDecoder = JSONDecoder(),
-                                                      stream: @escaping StreamHandler<T>) -> Self {
-        let parser = { (data: Data) in
-            self.serializationQueue.async {
-                // Start work on serialization queue.
-                let result = Result { try decoder.decode(T.self, from: data) }
-                // End work on serialization queue.
-                queue.async {
-                    switch result {
-                    case let .success(value): stream(.value(value))
-                    case let .failure(error): stream(.error(error))
-                    }
-                }
-            }
-        }
-
-        $streams.write { $0.append((queue, parser)) }
-        appendResponseSerializer {
-            self.underlyingQueue.async {
-                self.responseSerializerDidComplete {
-                    queue.async { stream(.complete(request: self.request, response: self.response, error: self.error)) }
-                }
-            }
-        }
-
-        return self
-    }
-
+    /// - Returns:              The `DataStreamRequest`.
     @discardableResult
     public func validate(_ validation: @escaping Validation) -> Self {
         let validator: () -> Void = { [unowned self] in
@@ -1238,6 +1153,48 @@ public final class DataStreamRequest: Request {
         $validators.write { $0.append(validator) }
 
         return self
+    }
+
+    /// Produces an `InputStream` that receives the `Data` received by the instance.
+    ///
+    /// - Note: The `InputStream` produced by this method must have `open()` called before being able to read `Data`.
+    ///
+    /// - Parameter bufferSize: Size, in bytes, of the buffer between the `OutputStream` and `InputStream`.
+    ///
+    /// - Returns:              The `InputStream` bound to the internal `OutboundStream`.
+    public func asInputStream(bufferSize: Int = 1024) -> InputStream {
+        var inputStream: InputStream?
+        $streamMutableState.write { state in
+            Stream.getBoundStreams(withBufferSize: bufferSize,
+                                   inputStream: &inputStream,
+                                   outputStream: &state.outputStream)
+            state.outputStream?.open()
+        }
+
+        return inputStream!
+    }
+
+    func appendStreamCompletion<Success, Failure>(on queue: DispatchQueue,
+                                                  stream: @escaping StreamHandler<Success, Failure>) {
+        appendResponseSerializer {
+            self.underlyingQueue.async {
+                self.responseSerializerDidComplete {
+                    queue.async { stream(.complete(.init(request: self.request,
+                                                         response: self.response,
+                                                         metrics: self.metrics,
+                                                         error: self.error))) }
+                }
+            }
+        }
+    }
+}
+
+extension DataStreamRequest.Output {
+    /// `Success` value of the instance.
+    public var value: Success? {
+        guard case let .stream(result) = self, case let .success(value) = result else { return nil }
+
+        return value
     }
 }
 
