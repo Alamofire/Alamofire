@@ -42,7 +42,7 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [5.0.2](https://github.com/Alamofire/Alamofire/releases/tag/5.0.2)
-Released on 2020-02-23. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/65?closed=1).
+Released on 2020-02-23. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/66?closed=1).
 
 #### Fixed
 - Swift 5 support for `AlamofireExtension`.
