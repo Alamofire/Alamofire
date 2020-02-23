@@ -23,12 +23,22 @@
 //
 
 /// Type that acts as a generic extension point for all `AlamofireExtended` types.
+@dynamicMemberLookup
 public struct AlamofireExtension<ExtendedType> {
-    /// Stores the type or metatype of any extended type.
-    let type: ExtendedType
+    /// Stores the type or meta-type of any extended type.
+    public private(set) var type: ExtendedType
 
-    init(_ type: ExtendedType) {
+    /// Create an instance from the provided value.
+    ///
+    /// - Parameter type: Instance being extended.
+    public init(_ type: ExtendedType) {
         self.type = type
+    }
+
+    /// Get and set properties through a `WritableKeyPath` subscript for `@dynamicMemberLookup`.
+    public subscript<Property>(dynamicMember keyPath: WritableKeyPath<ExtendedType, Property>) -> Property {
+        get { type[keyPath: keyPath] }
+        set { type[keyPath: keyPath] = newValue }
     }
 }
 
