@@ -1198,13 +1198,13 @@ extension DataStreamRequest.Output {
 
         return value
     }
-    
+
     public var error: Failure? {
         guard case let .stream(result) = self, case let .failure(error) = result else { return nil }
 
         return error
     }
-    
+
     public var completion: DataStreamRequest.Completion? {
         guard case let .complete(completion) = self else { return nil }
 

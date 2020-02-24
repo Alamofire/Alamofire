@@ -861,7 +861,7 @@ extension DataStreamRequest {
     ///   - queue:      `DispatchQueue` on which to perform `StreamHandler` closure.
     ///   - stream:     `StreamHandler` closure called as `Data` is received. May be called multiple times.
     ///
-    /// - Returns: The `DataStreamRequest`.
+    /// - Returns:      The `DataStreamRequest`.
     @discardableResult
     public func responseStream<Serializer: DataStreamSerializer>(using serializer: Serializer,
                                                                  on queue: DispatchQueue = .main,
@@ -873,6 +873,7 @@ extension DataStreamRequest {
                     .mapError { $0.asAFError(or: AFError.responseSerializationFailed(reason: .customSerializationFailed(error: $0))) }
                 // End work on serialization queue.
                 queue.async {
+                    self.eventMonitor?.request(self, didParseStream: result)
                     stream(.stream(result))
                 }
             }

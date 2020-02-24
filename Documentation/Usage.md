@@ -48,6 +48,7 @@
       - [Streaming `Data`](#streaming-data)
       - [Streaming `String`s](#streaming-strings)
       - [Streaming `Decodable` Values](#streaming-decodable-values)
+      - [Producing an `InputStream`](#producing-an-inputstream)
     + [Statistical Metrics](#statistical-metrics)
       - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
     + [cURL Command Output](#curl-command-output)
@@ -893,6 +894,24 @@ AF.streamRequest(...).responseStreamDecodable(of: SomeType.self) { output in
         print(completion)
     }
 }
+```
+
+#### Producing an `InputStream`
+
+In addition to handling incoming `Data` using `StreamHandler` closures, `DataStreamRequest` can produce an `InputStream` value which can be used to read bytes as they arrive.
+
+```swift
+func asInputStream(bufferSize: Int = 1024) -> InputStream
+```
+
+`InputStream`s produced in this manner must have `open()` called before reading can start, or be passed to an API that opens the stream automatically. Once returned from this method, it's the caller's responsibility to keep the `InputStream` value alive and to call `close()` after reading is complete.
+
+```swift
+let inputStream = AF.streamRequest(...)
+    .responseStream { output in
+        ...
+    }
+    .asInputStream()
 ```
 
 ### Statistical Metrics

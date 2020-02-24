@@ -64,7 +64,7 @@ open class Session {
 
     /// Internal map between `Request`s and any `URLSessionTasks` that may be in flight for them.
     var requestTaskMap = RequestTaskMap()
-    /// Set of currently active `Request`s.
+    /// `Set` of currently active `Request`s.
     var activeRequests: Set<Request> = []
 
     /// Creates a `Session` from a `URLSession` and other parameters.
@@ -344,6 +344,28 @@ open class Session {
                                                       method: method,
                                                       parameters: parameters,
                                                       encoder: encoder,
+                                                      headers: headers)
+
+        return streamRequest(convertible, interceptor: interceptor)
+    }
+
+    /// Creates a `DataStreamRequest` from the passed components and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///
+    /// - Returns:       The created `DataStream` request.
+    open func streamRequest(_ convertible: URLConvertible,
+                            method: HTTPMethod = .get,
+                            headers: HTTPHeaders? = nil,
+                            interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+        let convertible = RequestEncodableConvertible(url: convertible,
+                                                      method: method,
+                                                      parameters: Optional<Empty>.none,
+                                                      encoder: URLEncodedFormParameterEncoder.default,
                                                       headers: headers)
 
         return streamRequest(convertible, interceptor: interceptor)

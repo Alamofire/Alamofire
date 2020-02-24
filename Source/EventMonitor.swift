@@ -166,10 +166,24 @@ public protocol EventMonitor {
 
     // MARK: DataStreamRequest Events
 
+    /// Event called when a `DataStreamRequest` calls a `Validation` closure.
+    ///
+    /// - Parameters:
+    ///   - request:    `DataStreamRequest` which is calling the `Validation`.
+    ///   - urlRequest: `URLRequest` of the request being validated.
+    ///   - response:   `HTTPURLResponse` of the request being validated.
+    ///   - result:      Produced `ValidationResult`.
     func request(_ request: DataStreamRequest,
                  didValidateRequest urlRequest: URLRequest?,
                  response: HTTPURLResponse,
                  withResult result: Request.ValidationResult)
+
+    /// Event called when a `DataStreamSerializer` produces a value from streamed `Data`.
+    ///
+    /// - Parameters:
+    ///   - request: `DataStreamRequest` for which the value was serialized.
+    ///   - result:  `Result` of the serialization attempt.
+    func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>)
 
     // MARK: UploadRequest Events
 
@@ -279,6 +293,7 @@ extension EventMonitor {
                         didValidateRequest urlRequest: URLRequest?,
                         response: HTTPURLResponse,
                         withResult result: Request.ValidationResult) {}
+    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {}
     public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {}
     public func request(_ request: UploadRequest, didFailToCreateUploadableWithError error: AFError) {}
     public func request(_ request: UploadRequest, didProvideInputStream stream: InputStream) {}
@@ -506,6 +521,10 @@ public final class CompositeEventMonitor: EventMonitor {
                                   response: response,
                                   withResult: result)
         }
+    }
+
+    public func request<Value>(_ request: DataStreamRequest, didParseStream result: Result<Value, AFError>) {
+        performEvent { $0.request(request, didParseStream: result) }
     }
 
     public func request(_ request: UploadRequest, didCreateUploadable uploadable: UploadRequest.Uploadable) {
