@@ -12,7 +12,7 @@ This guide is provided in order to ease the transition of existing applications 
 - **Encodable Parameters:** Alamofire now supports and prefers `Encodable` types as parameters using the `ParameterEncoder` protocol, allowing fully type-safe representation of request parameters.
 - **URLEncodedFormEncoder:** In addition to supporting `Encodable` parameters in general, Alamofire now includes the `URLEncodedFormEncoder`, an `Encoder` for URL form encoding. 
 - **`EventMonitor` Protocol:** `EventMonitor`s allow access to Alamofire’s internal events, making it far easier to observe specific actions through a request’s lifetime. This makes logging requests very easy.
-- **Async `RequestAdapter`s:** The `RequestAdatper` protocol now operates asynchronously, making it possible to add async resources to requests.
+- **Async `RequestAdapter`s:** The `RequestAdapter` protocol now operates asynchronously, making it possible to add async resources to requests.
 - **Per-`Request` `RequestInterceptor`s:** `RequestInterceptor`s can now be added to individual `Request`s, allowing fine-grained control for the first time.
 - **`CachedResponseHandler` and `RedirectHandler` Protocols:** Easy access and control over response caching and redirect behaviors, on both a `Session` and `Request` basis.
 - **`HTTPHeaders` Type:** Type safe access to common HTTP headers, with extensions to `URLRequest`, `HTTPURLResponse`, and `URLSessionConfiguration` to allow setting the headers of those types using Alamofire’s new type.
