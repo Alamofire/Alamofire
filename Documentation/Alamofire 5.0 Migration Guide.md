@@ -22,6 +22,7 @@ This guide is provided in order to ease the transition of existing applications 
 Most APIs have changed in Alamofire 5, so this list is not complete. While most top level `request` APIs remain the same, nearly every other type has changed in some way. For up to date examples, see our Usage and Advanced Usage documentation.
 
 - `SessionManager` has been renamed to `Session` and its APIs have completely changed.
+- Using a `URLSessionConfiguration` with a background identifier is not possible any more. We're explicitly ensuring Alamofire isn't used with background sessions, in order to prevent ongoing issues around support and surprise on the part of the user.
 - `SessionDelegate` has been rebuilt and it’s public API completely changed. The various closure overrides have been removed, with most now able to be replaced with specific Alamofire features. If there is a need for control over something the closures used to provide, feel free to open a feature request.
 - `TaskDelegate` and the various `*TaskDelegate` classes have been removed. All `URLSession*Delegate` handling is now performed by `SessionDelegate`.
 - `Result` has been removed. Alamofire now uses Swift’s `Result` type.
