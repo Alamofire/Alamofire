@@ -91,6 +91,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
     /// Result of a `URLAuthenticationChallenge` evaluation.
     typealias ChallengeEvaluation = (disposition: URLSession.AuthChallengeDisposition, credential: URLCredential?, error: AFError?)
 
+    #if !os(Linux)
     open func urlSession(_ session: URLSession,
                          task: URLSessionTask,
                          didReceive challenge: URLAuthenticationChallenge,
@@ -141,6 +142,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
             return (.cancelAuthenticationChallenge, nil, error.asAFError(or: .serverTrustEvaluationFailed(reason: .customEvaluationFailed(error: error))))
         }
     }
+    #endif
 
     /// Evaluates the credential-based authentication `URLAuthenticationChallenge` received for `task`.
     ///

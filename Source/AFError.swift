@@ -124,13 +124,19 @@ public enum AFError: Error {
         case invalidEmptyResponse(type: String)
     }
 
-    #if !os(Linux)
     /// Underlying reason a server trust evaluation error occurred.
     public enum ServerTrustFailureReason {
         /// The output of a server trust evaluation.
         public struct Output {
             /// The host for which the evaluation was performed.
             public let host: String
+            
+            #if os(Linux)
+            /// Creates an `Output` value from the provided value.
+            init(_ host: String) {
+                self.host = host
+            }
+            #else
             /// The `SecTrust` value which was evaluated.
             public let trust: SecTrust
             /// The `OSStatus` of evaluation operation.
@@ -145,6 +151,7 @@ public enum AFError: Error {
                 self.status = status
                 self.result = result
             }
+            #endif
         }
 
         /// No `ServerTrustEvaluator` was found for the associated host.
@@ -153,10 +160,12 @@ public enum AFError: Error {
         case noCertificatesFound
         /// No public keys were found with which to perform the trust evaluation.
         case noPublicKeysFound
+        #if !os(Linux)
         /// During evaluation, application of the associated `SecPolicy` failed.
         case policyApplicationFailed(trust: SecTrust, policy: SecPolicy, status: OSStatus)
         /// During evaluation, setting the associated anchor certificates failed.
         case settingAnchorCertificatesFailed(status: OSStatus, certificates: [SecCertificate])
+        #endif
         /// During evaluation, creation of the revocation policy failed.
         case revocationPolicyCreationFailed
         /// `SecTrust` evaluation failed with the associated `Error`, if one was produced.
@@ -165,6 +174,7 @@ public enum AFError: Error {
         case defaultEvaluationFailed(output: Output)
         /// Host validation failed with the associated `Output`.
         case hostValidationFailed(output: Output)
+        #if !os(Linux)
         /// Revocation check failed with the associated `Output` and options.
         case revocationCheckFailed(output: Output, options: RevocationTrustEvaluator.Options)
         /// Certificate pinning failed.
@@ -172,9 +182,9 @@ public enum AFError: Error {
         /// Public key pinning failed.
         case publicKeyPinningFailed(host: String, trust: SecTrust, pinnedKeys: [SecKey], serverKeys: [SecKey])
         /// Custom server trust evaluation failed due to the associated `Error`.
+        #endif
         case customEvaluationFailed(error: Error)
     }
-    #endif
 
     /// The underlying reason the `.urlRequestValidationFailed`
     public enum URLRequestValidationFailureReason {
@@ -207,9 +217,7 @@ public enum AFError: Error {
     /// Response serialization failed.
     case responseSerializationFailed(reason: ResponseSerializationFailureReason)
     /// `ServerTrustEvaluating` instance threw an error during trust evaluation.
-    #if !os(Linux)
     case serverTrustEvaluationFailed(reason: ServerTrustFailureReason)
-    #endif
     /// `Session` which issued the `Request` was deinitialized, most likely because its reference went out of scope.
     case sessionDeinitialized
     /// `Session` was explicitly invalidated, possibly with the `Error` produced by the underlying `URLSession`.
@@ -388,10 +396,8 @@ extension AFError {
             return reason.underlyingError
         case let .responseSerializationFailed(reason):
             return reason.underlyingError
-        #if !os(Linux)
         case let .serverTrustEvaluationFailed(reason):
             return reason.underlyingError
-        #endif
         case let .sessionInvalidated(error):
             return error
         case let .createUploadableFailed(error):
@@ -598,23 +604,28 @@ extension AFError.ResponseSerializationFailureReason {
     }
 }
 
-#if !os(Linux)
 extension AFError.ServerTrustFailureReason {
     var output: AFError.ServerTrustFailureReason.Output? {
         switch self {
-        case let .defaultEvaluationFailed(output),
-             let .hostValidationFailed(output),
-             let .revocationCheckFailed(output, _):
+        #if !os(Linux)
+        case let .revocationCheckFailed(output, _):
             return output
+        #endif
+        case let .defaultEvaluationFailed(output),
+             let .hostValidationFailed(output):
+            return output
+        #if !os(Linux)
+        case .policyApplicationFailed,
+             .settingAnchorCertificatesFailed,
+             .certificatePinningFailed,
+             .publicKeyPinningFailed:
+            return nil
+        #endif
         case .noRequiredEvaluator,
              .noCertificatesFound,
              .noPublicKeysFound,
-             .policyApplicationFailed,
-             .settingAnchorCertificatesFailed,
              .revocationPolicyCreationFailed,
              .trustEvaluationFailed,
-             .certificatePinningFailed,
-             .publicKeyPinningFailed,
              .customEvaluationFailed:
             return nil
         }
@@ -626,22 +637,24 @@ extension AFError.ServerTrustFailureReason {
             return error
         case let .trustEvaluationFailed(error):
             return error
+        #if !os(Linux)
+        case .policyApplicationFailed,
+             .settingAnchorCertificatesFailed,
+             .certificatePinningFailed,
+             .publicKeyPinningFailed,
+             .revocationCheckFailed:
+            return nil
+        #endif
         case .noRequiredEvaluator,
              .noCertificatesFound,
              .noPublicKeysFound,
-             .policyApplicationFailed,
-             .settingAnchorCertificatesFailed,
              .revocationPolicyCreationFailed,
              .defaultEvaluationFailed,
-             .hostValidationFailed,
-             .revocationCheckFailed,
-             .certificatePinningFailed,
-             .publicKeyPinningFailed:
+             .hostValidationFailed:
             return nil
         }
     }
 }
-#endif
 
 // MARK: - Error Descriptions
 
@@ -676,10 +689,8 @@ extension AFError: LocalizedError {
             """
         case let .sessionInvalidated(error):
             return "Session was invalidated with error: \(error?.localizedDescription ?? "No description.")"
-        #if !os(Linux)
         case let .serverTrustEvaluationFailed(reason):
             return "Server trust evaluation failed due to reason: \(reason.localizedDescription)"
-        #endif
         case let .urlRequestValidationFailed(reason):
             return "URLRequest validation failed due to reason: \(reason.localizedDescription)"
         case let .createUploadableFailed(error):
@@ -810,7 +821,6 @@ extension AFError.ResponseValidationFailureReason {
     }
 }
 
-#if !os(Linux)
 extension AFError.ServerTrustFailureReason {
     var localizedDescription: String {
         switch self {
@@ -820,10 +830,12 @@ extension AFError.ServerTrustFailureReason {
             return "No certificates were found or provided for evaluation."
         case .noPublicKeysFound:
             return "No public keys were found or provided for evaluation."
+        #if !os(Linux)
         case .policyApplicationFailed:
             return "Attempting to set a SecPolicy failed."
         case .settingAnchorCertificatesFailed:
             return "Attempting to set the provided certificates as anchor certificates failed."
+        #endif
         case .revocationPolicyCreationFailed:
             return "Attempting to create a revocation policy failed."
         case let .trustEvaluationFailed(error):
@@ -832,18 +844,19 @@ extension AFError.ServerTrustFailureReason {
             return "Default evaluation failed for host \(output.host)."
         case let .hostValidationFailed(output):
             return "Host validation failed for host \(output.host)."
+        #if !os(Linux)
         case let .revocationCheckFailed(output, _):
             return "Revocation check failed for host \(output.host)."
         case let .certificatePinningFailed(host, _, _, _):
             return "Certificate pinning failed for host \(host)."
         case let .publicKeyPinningFailed(host, _, _, _):
             return "Public key pinning failed for host \(host)."
+        #endif
         case let .customEvaluationFailed(error):
             return "Custom trust evaluation failed with error: \(error.localizedDescription)"
         }
     }
 }
-#endif
 
 extension AFError.URLRequestValidationFailureReason {
     var localizedDescription: String {
