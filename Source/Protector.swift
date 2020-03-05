@@ -26,28 +26,13 @@ import Foundation
 
 // MARK: -
 
-/// An `os_unfair_lock` wrapper.
-final class UnfairLock {
-    private let unfairLock: os_unfair_lock_t
+private protocol Lock {
+    func lock()
+    func unlock()
+}
 
-    init() {
-        unfairLock = .allocate(capacity: 1)
-        unfairLock.initialize(to: os_unfair_lock())
-    }
-
-    deinit {
-        unfairLock.deinitialize(count: 1)
-        unfairLock.deallocate()
-    }
-
-    private func lock() {
-        os_unfair_lock_lock(unfairLock)
-    }
-
-    private func unlock() {
-        os_unfair_lock_unlock(unfairLock)
-    }
-
+extension Lock {
+    
     /// Executes a closure returning a value while acquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
@@ -65,11 +50,66 @@ final class UnfairLock {
         lock(); defer { unlock() }
         return closure()
     }
+    
+}
+
+// MARK: -
+
+#if !os(Linux)
+/// An `os_unfair_lock` wrapper.
+final class UnfairLock: Lock {
+    private let unfairLock: os_unfair_lock_t
+
+    init() {
+        unfairLock = .allocate(capacity: 1)
+        unfairLock.initialize(to: os_unfair_lock())
+    }
+
+    deinit {
+        unfairLock.deinitialize(count: 1)
+        unfairLock.deallocate()
+    }
+
+    fileprivate func lock() {
+        os_unfair_lock_lock(unfairLock)
+    }
+
+    fileprivate func unlock() {
+        os_unfair_lock_unlock(unfairLock)
+    }
+}
+#endif
+
+/// A `pthread_mutex_t` wrapper.
+final class MutexLock: Lock {
+    private var mutex: pthread_mutex_t
+    
+    init() {
+        mutex = pthread_mutex_t()
+        pthread_mutex_init(&mutex, nil)
+    }
+    
+    deinit {
+        pthread_mutex_destroy(&mutex)
+    }
+    
+    fileprivate func lock() {
+        pthread_mutex_lock(&mutex)
+    }
+    
+    fileprivate func unlock() {
+        pthread_mutex_unlock(&mutex)
+    }
 }
 
 /// A thread-safe wrapper around a value.
 final class Protector<T> {
+    #if os(Linux)
+    private let lock = MutexLock()
+    #else
     private let lock = UnfairLock()
+    #endif
+    
     private var value: T
 
     init(_ value: T) {

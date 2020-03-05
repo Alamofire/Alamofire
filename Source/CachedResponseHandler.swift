@@ -24,6 +24,10 @@
 
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 /// A type that handles whether the data task should store the HTTP response in the cache.
 public protocol CachedResponseHandler {
     /// Determines whether the HTTP response should be stored in the cache.

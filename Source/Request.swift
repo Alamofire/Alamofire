@@ -24,6 +24,10 @@
 
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 /// `Request` is the common superclass of all Alamofire request types and provides common state, delegate, and callback
 /// handling.
 public class Request {
@@ -106,9 +110,11 @@ public class Request {
         var requests: [URLRequest] = []
         /// All `URLSessionTask`s created by Alamofire on behalf of the `Request`.
         var tasks: [URLSessionTask] = []
+        #if !os(Linux)
         /// All `URLSessionTaskMetrics` values gathered by Alamofire on behalf of the `Request`. Should correspond
         /// exactly the the `tasks` created.
         var metrics: [URLSessionTaskMetrics] = []
+        #endif
         /// Number of times any retriers provided retried the `Request`.
         var retryCount = 0
         /// Final `AFError` for the `Request`, whether from various internal Alamofire calls or as a result of a `task`.
@@ -215,6 +221,7 @@ public class Request {
     /// Current `URLSessionTask` created on behalf of the `Request`.
     public var task: URLSessionTask? { return lastTask }
 
+    #if !os(Linux)
     // MARK: Metrics
 
     /// All `URLSessionTaskMetrics` gathered on behalf of the `Request`. Should correspond to the `tasks` created.
@@ -225,6 +232,7 @@ public class Request {
     public var lastMetrics: URLSessionTaskMetrics? { return allMetrics.last }
     /// Current `URLSessionTaskMetrics` gathered on behalf of the `Request`.
     public var metrics: URLSessionTaskMetrics? { return lastMetrics }
+    #endif
 
     // MARK: Retry Count
 
@@ -386,6 +394,7 @@ public class Request {
         eventMonitor?.request(self, didCancelTask: task)
     }
 
+    #if !os(Linux)
     /// Called when a `URLSessionTaskMetrics` value is gathered on behalf of the instance.
     ///
     /// - Parameter metrics: The `URLSessionTaskMetrics` gathered.
@@ -394,6 +403,7 @@ public class Request {
 
         eventMonitor?.request(self, didGatherMetrics: metrics)
     }
+    #endif
 
     /// Called when a `URLSessionTask` fails before it is finished, typically during certificate pinning.
     ///

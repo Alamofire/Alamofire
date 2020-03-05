@@ -24,6 +24,10 @@
 
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 /// An order-preserving and case-insensitive representation of HTTP headers.
 public struct HTTPHeaders {
     private var headers: [HTTPHeader] = []
@@ -369,10 +373,17 @@ extension HTTPHeader {
     public static let defaultUserAgent: HTTPHeader = {
         let userAgent: String = {
             if let info = Bundle.main.infoDictionary {
+                #if os(Linux)
+                let executable = "Unknown"
+                let bundle = "Unknown"
+                let appVersion = "Unknown"
+                let appBuild = "Unknown"
+                #else
                 let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
                 let bundle = info[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
                 let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
                 let appBuild = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
+                #endif
 
                 let osNameVersion: String = {
                     let version = ProcessInfo.processInfo.operatingSystemVersion

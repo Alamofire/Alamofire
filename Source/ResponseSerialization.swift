@@ -24,6 +24,10 @@
 
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 // MARK: Protocols
 
 /// The type to which all data response serializers must conform in order to serialize a response.
@@ -183,12 +187,20 @@ extension DataRequest {
             // End work that should be on the serialization queue.
 
             self.underlyingQueue.async {
+                #if os(Linux)
+                let response = DataResponse(request: self.request,
+                                            response: self.response,
+                                            data: self.data,
+                                            serializationDuration: 0,
+                                            result: result)
+                #else
                 let response = DataResponse(request: self.request,
                                             response: self.response,
                                             data: self.data,
                                             metrics: self.metrics,
                                             serializationDuration: 0,
                                             result: result)
+                #endif
 
                 self.eventMonitor?.request(self, didParseResponse: response)
 
@@ -214,7 +226,7 @@ extension DataRequest {
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
-            let start = CFAbsoluteTimeGetCurrent()
+            let start = Date().timeIntervalSinceReferenceDate
             let result: AFResult<Serializer.SerializedObject> = Result {
                 try responseSerializer.serialize(request: self.request,
                                                  response: self.response,
@@ -224,16 +236,24 @@ extension DataRequest {
                 error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             }
 
-            let end = CFAbsoluteTimeGetCurrent()
+            let end = Date().timeIntervalSinceReferenceDate
             // End work that should be on the serialization queue.
 
             self.underlyingQueue.async {
+                #if os(Linux)
+                let response = DataResponse(request: self.request,
+                                            response: self.response,
+                                            data: self.data,
+                                            serializationDuration: end - start,
+                                            result: result)
+                #else
                 let response = DataResponse(request: self.request,
                                             response: self.response,
                                             data: self.data,
                                             metrics: self.metrics,
                                             serializationDuration: end - start,
                                             result: result)
+                #endif
 
                 self.eventMonitor?.request(self, didParseResponse: response)
 
@@ -258,12 +278,20 @@ extension DataRequest {
                     case let .doNotRetryWithError(retryError):
                         let result: AFResult<Serializer.SerializedObject> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
 
+                        #if os(Linux)
+                        let response = DataResponse(request: self.request,
+                                                    response: self.response,
+                                                    data: self.data,
+                                                    serializationDuration: end - start,
+                                                    result: result)
+                        #else
                         let response = DataResponse(request: self.request,
                                                     response: self.response,
                                                     data: self.data,
                                                     metrics: self.metrics,
                                                     serializationDuration: end - start,
                                                     result: result)
+                        #endif
 
                         didComplete = { completionHandler(response) }
 
@@ -296,6 +324,14 @@ extension DownloadRequest {
             // End work that should be on the serialization queue.
 
             self.underlyingQueue.async {
+                #if os(Linux)
+                let response = DownloadResponse(request: self.request,
+                                                response: self.response,
+                                                fileURL: self.fileURL,
+                                                resumeData: self.resumeData,
+                                                serializationDuration: 0,
+                                                result: result)
+                #else
                 let response = DownloadResponse(request: self.request,
                                                 response: self.response,
                                                 fileURL: self.fileURL,
@@ -303,6 +339,7 @@ extension DownloadRequest {
                                                 metrics: self.metrics,
                                                 serializationDuration: 0,
                                                 result: result)
+                #endif
 
                 self.eventMonitor?.request(self, didParseResponse: response)
 
@@ -329,7 +366,7 @@ extension DownloadRequest {
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
-            let start = CFAbsoluteTimeGetCurrent()
+            let start = Date().timeIntervalSinceReferenceDate
             let result: AFResult<Serializer.SerializedObject> = Result {
                 try responseSerializer.serializeDownload(request: self.request,
                                                          response: self.response,
@@ -338,10 +375,18 @@ extension DownloadRequest {
             }.mapError { error in
                 error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             }
-            let end = CFAbsoluteTimeGetCurrent()
+            let end = Date().timeIntervalSinceReferenceDate
             // End work that should be on the serialization queue.
 
             self.underlyingQueue.async {
+                #if os(Linux)
+                let response = DownloadResponse(request: self.request,
+                                                response: self.response,
+                                                fileURL: self.fileURL,
+                                                resumeData: self.resumeData,
+                                                serializationDuration: end - start,
+                                                result: result)
+                #else
                 let response = DownloadResponse(request: self.request,
                                                 response: self.response,
                                                 fileURL: self.fileURL,
@@ -349,6 +394,7 @@ extension DownloadRequest {
                                                 metrics: self.metrics,
                                                 serializationDuration: end - start,
                                                 result: result)
+                #endif
 
                 self.eventMonitor?.request(self, didParseResponse: response)
 
@@ -373,6 +419,14 @@ extension DownloadRequest {
                     case let .doNotRetryWithError(retryError):
                         let result: AFResult<Serializer.SerializedObject> = .failure(retryError.asAFError(orFailWith: "Received retryError was not already AFError"))
 
+                        #if os(Linux)
+                        let response = DownloadResponse(request: self.request,
+                                                        response: self.response,
+                                                        fileURL: self.fileURL,
+                                                        resumeData: self.resumeData,
+                                                        serializationDuration: end - start,
+                                                        result: result)
+                        #else
                         let response = DownloadResponse(request: self.request,
                                                         response: self.response,
                                                         fileURL: self.fileURL,
@@ -380,6 +434,7 @@ extension DownloadRequest {
                                                         metrics: self.metrics,
                                                         serializationDuration: end - start,
                                                         result: result)
+                        #endif
 
                         didComplete = { completionHandler(response) }
 
@@ -514,6 +569,9 @@ public final class StringResponseSerializer: ResponseSerializer {
 
         data = try dataPreprocessor.preprocess(data)
 
+        #if os(Linux)
+        let actualEncoding = String.Encoding.isoLatin1
+        #else
         var convertedEncoding = encoding
 
         if let encodingName = response?.textEncodingName as CFString?, convertedEncoding == nil {
@@ -523,6 +581,7 @@ public final class StringResponseSerializer: ResponseSerializer {
         }
 
         let actualEncoding = convertedEncoding ?? .isoLatin1
+        #endif
 
         guard let string = String(data: data, encoding: actualEncoding) else {
             throw AFError.responseSerializationFailed(reason: .stringSerializationFailed(encoding: actualEncoding))

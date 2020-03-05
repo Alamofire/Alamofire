@@ -24,6 +24,10 @@
 
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 /// A dictionary of parameters to apply to a `URLRequest`.
 public typealias Parameters = [String: Any]
 
@@ -197,11 +201,15 @@ public struct URLEncoding: ParameterEncoding {
                 components += queryComponents(fromKey: arrayEncoding.encode(key: key), value: value)
             }
         } else if let value = value as? NSNumber {
+            #if os(Linux)
+            components.append((escape(key), escape("\(value)")))
+            #else
             if value.isBool {
                 components.append((escape(key), escape(boolEncoding.encode(value: value.boolValue))))
             } else {
                 components.append((escape(key), escape("\(value)")))
             }
+            #endif
         } else if let bool = value as? Bool {
             components.append((escape(key), escape(boolEncoding.encode(value: bool))))
         } else {
@@ -310,5 +318,7 @@ public struct JSONEncoding: ParameterEncoding {
 // MARK: -
 
 extension NSNumber {
+    #if !os(Linux)
     fileprivate var isBool: Bool { return CFBooleanGetTypeID() == CFGetTypeID(self) }
+    #endif
 }

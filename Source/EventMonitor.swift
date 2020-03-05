@@ -24,6 +24,10 @@
 
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 /// Protocol outlining the lifetime events inside Alamofire. It includes both events received from the various
 /// `URLSession` delegate protocols as well as various events from the lifetime of `Request` and its subclasses.
 public protocol EventMonitor {
@@ -58,8 +62,10 @@ public protocol EventMonitor {
                     willPerformHTTPRedirection response: HTTPURLResponse,
                     newRequest request: URLRequest)
 
+    #if !os(Linux)
     /// Event called during `URLSessionTaskDelegate`'s `urlSession(_:task:didFinishCollecting:)` method.
     func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics)
+    #endif
 
     /// Event called during `URLSessionTaskDelegate`'s `urlSession(_:task:didCompleteWithError:)` method.
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?)
@@ -115,8 +121,10 @@ public protocol EventMonitor {
     /// Event called when a `URLSessionTask` subclass instance is created for a `Request`.
     func request(_ request: Request, didCreateTask task: URLSessionTask)
 
+    #if !os(Linux)
     /// Event called when a `Request` receives a `URLSessionTaskMetrics` value.
     func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics)
+    #endif
 
     /// Event called when a `Request` fails due to an error created by Alamofire. e.g. When certificate pinning fails.
     func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: AFError)
@@ -219,9 +227,11 @@ extension EventMonitor {
                            task: URLSessionTask,
                            willPerformHTTPRedirection response: HTTPURLResponse,
                            newRequest request: URLRequest) {}
+    #if !os(Linux)
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
                            didFinishCollecting metrics: URLSessionTaskMetrics) {}
+    #endif
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {}
     public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {}
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {}
@@ -250,7 +260,9 @@ extension EventMonitor {
                         withError error: AFError) {}
     public func request(_ request: Request, didCreateURLRequest urlRequest: URLRequest) {}
     public func request(_ request: Request, didCreateTask task: URLSessionTask) {}
+    #if !os(Linux)
     public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {}
+    #endif
     public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: AFError) {}
     public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: AFError?) {}
     public func requestIsRetrying(_ request: Request) {}
@@ -342,9 +354,11 @@ public final class CompositeEventMonitor: EventMonitor {
         }
     }
 
+    #if !os(Linux)
     public func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
         performEvent { $0.urlSession(session, task: task, didFinishCollecting: metrics) }
     }
+    #endif
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         performEvent { $0.urlSession(session, task: task, didCompleteWithError: error) }
@@ -421,9 +435,11 @@ public final class CompositeEventMonitor: EventMonitor {
         performEvent { $0.request(request, didCreateTask: task) }
     }
 
+    #if !os(Linux)
     public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
         performEvent { $0.request(request, didGatherMetrics: metrics) }
     }
+    #endif
 
     public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: AFError) {
         performEvent { $0.request(request, didFailTask: task, earlyWithError: error) }
@@ -544,8 +560,10 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `urlSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)` event.
     open var taskWillPerformHTTPRedirection: ((URLSession, URLSessionTask, HTTPURLResponse, URLRequest) -> Void)?
 
+    #if !os(Linux)
     /// Closure called on the `urlSession(_:task:didFinishCollecting:)` event.
     open var taskDidFinishCollectingMetrics: ((URLSession, URLSessionTask, URLSessionTaskMetrics) -> Void)?
+    #endif
 
     /// Closure called on the `urlSession(_:task:didCompleteWithError:)` event.
     open var taskDidComplete: ((URLSession, URLSessionTask, Error?) -> Void)?
@@ -589,8 +607,10 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `request(_:didCreateTask:)` event.
     open var requestDidCreateTask: ((Request, URLSessionTask) -> Void)?
 
+    #if !os(Linux)
     /// Closure called on the `request(_:didGatherMetrics:)` event.
     open var requestDidGatherMetrics: ((Request, URLSessionTaskMetrics) -> Void)?
+    #endif
 
     /// Closure called on the `request(_:didFailTask:earlyWithError:)` event.
     open var requestDidFailTaskEarlyWithError: ((Request, URLSessionTask, AFError) -> Void)?
@@ -685,9 +705,11 @@ open class ClosureEventMonitor: EventMonitor {
         taskWillPerformHTTPRedirection?(session, task, response, request)
     }
 
+    #if !os(Linux)
     open func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
         taskDidFinishCollectingMetrics?(session, task, metrics)
     }
+    #endif
 
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         taskDidComplete?(session, task, error)
@@ -750,9 +772,11 @@ open class ClosureEventMonitor: EventMonitor {
         requestDidCreateTask?(request, task)
     }
 
+    #if !os(Linux)
     open func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
         requestDidGatherMetrics?(request, metrics)
     }
+    #endif
 
     open func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: AFError) {
         requestDidFailTaskEarlyWithError?(request, task, error)

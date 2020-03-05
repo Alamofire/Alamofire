@@ -24,6 +24,10 @@
 
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 public extension Request {
     /// Posted when a `Request` is resumed. The `Notification` contains the resumed `Request`.
     static let didResumeNotification = Notification.Name(rawValue: "org.alamofire.notification.name.request.didResume")

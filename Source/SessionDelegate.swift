@@ -24,6 +24,10 @@
 
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 /// Class which implements the various `URLSessionDelegate` methods to connect various Alamofire features.
 open class SessionDelegate: NSObject {
     private let fileManager: FileManager
@@ -201,6 +205,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         }
     }
 
+    #if !os(Linux)
     open func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
         eventMonitor?.urlSession(session, task: task, didFinishCollecting: metrics)
 
@@ -208,6 +213,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         stateProvider?.didGatherMetricsForTask(task)
     }
+    #endif
 
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         eventMonitor?.urlSession(session, task: task, didCompleteWithError: error)

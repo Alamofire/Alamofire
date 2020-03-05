@@ -24,6 +24,10 @@
 
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 /// A type that can encode any `Encodable` type into a `URLRequest`.
 public protocol ParameterEncoder {
     /// Encode the provided `Encodable` parameters into `request`.

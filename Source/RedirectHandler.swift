@@ -24,6 +24,10 @@
 
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 /// A type that handles how an HTTP redirect response from a remote server should be redirected to the new request.
 public protocol RedirectHandler {
     /// Determines how the HTTP redirect response should be redirected to the new request.

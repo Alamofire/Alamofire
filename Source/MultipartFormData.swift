@@ -55,7 +55,9 @@ open class MultipartFormData {
         }
 
         static func randomBoundary() -> String {
-            return String(format: "alamofire.boundary.%08x%08x", arc4random(), arc4random())
+            let a: UInt32 = UInt32.random(in: UInt32.min...UInt32.max)
+            let b: UInt32 = UInt32.random(in: UInt32.min...UInt32.max)
+            return String(format: "alamofire.boundary.%08x%08x", a, b)
         }
 
         static func boundaryData(forBoundaryType boundaryType: BoundaryType, boundary: String) -> Data {
@@ -210,6 +212,7 @@ open class MultipartFormData {
         //              Check 2 - is file URL reachable?
         //============================================================
 
+        #if !os(Linux)
         do {
             let isReachable = try fileURL.checkPromisedItemIsReachable()
             guard isReachable else {
@@ -220,6 +223,7 @@ open class MultipartFormData {
             setBodyPartError(withReason: .bodyPartFileNotReachableWithError(atURL: fileURL, error: error))
             return
         }
+        #endif
 
         //============================================================
         //            Check 3 - is file URL a directory?
@@ -500,11 +504,13 @@ open class MultipartFormData {
     // MARK: - Private - Mime Type
 
     private func mimeType(forPathExtension pathExtension: String) -> String {
+        #if canImport(CoreServices) || canImport(MobileCoreServices)
         if
             let id = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension as CFString, nil)?.takeRetainedValue(),
             let contentType = UTTypeCopyPreferredTagWithClass(id, kUTTagClassMIMEType)?.takeRetainedValue() {
             return contentType as String
         }
+        #endif
 
         return "application/octet-stream"
     }
