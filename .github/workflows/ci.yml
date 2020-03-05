@@ -67,7 +67,9 @@ jobs:
   linux:
     name: Test SPM Linux Build
     runs-on: ubuntu-latest
+    container:
+      image: swift:latest
     steps:
+      - uses: actions/checkout@v1
       - name: SPM Linux build
-        uses: docker://swift:latest
-        run: docker build .
+        run: swift build -v -c debug
