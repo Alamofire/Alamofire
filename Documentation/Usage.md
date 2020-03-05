@@ -1,6 +1,6 @@
 - [Using Alamofire](#using-alamofire)
   * [Introduction](#introduction)
-      - [Aside: The `AF` Namespace](#aside--the-af-namespace-and-reference)
+      - [Aside: The `AF` Namespace](#aside-the-af-namespace-and-reference)
   * [Making Requests](#making-requests)
     + [HTTP Methods](#http-methods)
     + [Request Parameters and Parameter Encoders](#request-parameters-and-parameter-encoders)
