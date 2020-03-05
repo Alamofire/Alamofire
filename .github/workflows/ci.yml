@@ -64,3 +64,10 @@ jobs:
       - uses: actions/checkout@v1
       - name: SPM Build
         run: swift build
+  linux:
+    name: Test SPM Linux Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: SPM Linux build
+        uses: docker://swift:latest
+        run: docker build .
