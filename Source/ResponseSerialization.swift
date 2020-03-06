@@ -569,19 +569,13 @@ public final class StringResponseSerializer: ResponseSerializer {
 
         data = try dataPreprocessor.preprocess(data)
 
-        #if os(Linux)
-        let actualEncoding = String.Encoding.isoLatin1
-        #else
         var convertedEncoding = encoding
 
-        if let encodingName = response?.textEncodingName as CFString?, convertedEncoding == nil {
-            let ianaCharSet = CFStringConvertIANACharSetNameToEncoding(encodingName)
-            let nsStringEncoding = CFStringConvertEncodingToNSStringEncoding(ianaCharSet)
-            convertedEncoding = String.Encoding(rawValue: nsStringEncoding)
+        if let encodingName = response?.textEncodingName, convertedEncoding == nil {
+            convertedEncoding = String.Encoding(ianaCharsetName: encodingName)
         }
 
         let actualEncoding = convertedEncoding ?? .isoLatin1
-        #endif
 
         guard let string = String(data: data, encoding: actualEncoding) else {
             throw AFError.responseSerializationFailed(reason: .stringSerializationFailed(encoding: actualEncoding))
