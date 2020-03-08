@@ -23,6 +23,7 @@
 //
 
 import Alamofire
+import Foundation
 
 extension AFError {
     // ParameterEncodingFailureReason
