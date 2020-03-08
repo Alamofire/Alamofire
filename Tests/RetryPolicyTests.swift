@@ -29,7 +29,7 @@ import XCTest
 class BaseRetryPolicyTestCase: BaseTestCase {
     // MARK: Helper Types
 
-    class StubRequest: DataRequest {
+    final class StubRequest: DataRequest {
         let urlRequest: URLRequest
         override var request: URLRequest? { return urlRequest }
 
@@ -65,9 +65,14 @@ class BaseRetryPolicyTestCase: BaseTestCase {
     let session = Session(startRequestsImmediately: false)
 
     let url = URL(string: "https://api.alamofire.org")!
-    let connectionLostError = AFError.sessionTaskFailed(error: URLError(.networkConnectionLost))
-    let resourceUnavailableError = AFError.sessionTaskFailed(error: URLError(.resourceUnavailable))
-    let unknownError = AFError.sessionTaskFailed(error: URLError(.unknown))
+
+    let connectionLost = URLError(.networkConnectionLost)
+    let resourceUnavailable = URLError(.resourceUnavailable)
+    let unknown = URLError(.unknown)
+
+    lazy var connectionLostError = AFError.sessionTaskFailed(error: connectionLost)
+    lazy var resourceUnavailableError = AFError.sessionTaskFailed(error: resourceUnavailable)
+    lazy var unknownError = AFError.sessionTaskFailed(error: unknown)
 
     let retryableStatusCodes: Set<Int> = [408, 500, 502, 503, 504]
 
@@ -235,7 +240,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         // When
         for code in errorCodes {
             let request = self.request(method: .get)
-            let error = urlError(with: code)
+            let error = URLError(code)
 
             let expectation = self.expectation(description: "retry policy should complete")
 
@@ -257,12 +262,44 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         }
     }
 
-    func testThatRetryPolicyDoesNotRetryErrorsThatAreNotURLErrors() {
+    func testThatRetryPolicyRetriesRequestsWithRetryableAFErrors() {
+        // Given
+        let retryPolicy = RetryPolicy()
+        var results: [URLError.Code: RetryResult] = [:]
+
+        // When
+        for code in errorCodes {
+            let request = self.request(method: .get)
+            let error = AFError.sessionTaskFailed(error: URLError(code))
+
+            let expectation = self.expectation(description: "retry policy should complete")
+
+            retryPolicy.retry(request, for: session, dueTo: error) { result in
+                results[code] = result
+                expectation.fulfill()
+            }
+
+            waitForExpectations(timeout: timeout, handler: nil)
+        }
+
+        // Then
+        XCTAssertEqual(results.count, errorCodes.count)
+
+        for (urlErrorCode, result) in results {
+            XCTAssertEqual(result.retryRequired, retryableErrorCodes.contains(urlErrorCode))
+            XCTAssertEqual(result.delay, result.retryRequired ? 0.5 : nil)
+            XCTAssertNil(result.error)
+        }
+    }
+
+    func testThatRetryPolicyDoesNotRetryErrorsThatAreNotRetryable() {
         // Given
         let retryPolicy = RetryPolicy()
         let request = self.request(method: .get)
 
-        let errors: [Error] = [resourceUnavailableError,
+        let errors: [Error] = [resourceUnavailable,
+                               unknown,
+                               resourceUnavailableError,
                                unknownError]
 
         var results: [RetryResult] = []
@@ -283,7 +320,7 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         XCTAssertEqual(results.count, errors.count)
 
         for result in results {
-            XCTAssertEqual(result.retryRequired, false)
+            XCTAssertFalse(result.retryRequired)
             XCTAssertNil(result.delay)
             XCTAssertNil(result.error)
         }
@@ -348,10 +385,6 @@ final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         }
 
         return StubRequest(url, method: method, response: response, session: session)
-    }
-
-    func urlError(with code: URLError.Code) -> URLError {
-        return NSError(domain: URLError.errorDomain, code: code.rawValue, userInfo: nil) as! URLError
     }
 }
 
