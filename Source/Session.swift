@@ -1031,6 +1031,7 @@ extension Session: SessionStateProvider {
 
         if didDisassociate {
             waitingCompletions[task]?()
+            waitingCompletions[task] = nil
         }
     }
 
