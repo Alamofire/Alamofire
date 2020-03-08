@@ -519,7 +519,7 @@ final class InterceptorRequestTests: BaseTestCase {
         // Then
         XCTAssertEqual(request.tasks.count, 2, "There should be two tasks, one original, one retry.")
         XCTAssertEqual(interceptor.retryCalledCount, 2, "retry() should be called twice.")
-        XCTAssertEqual(interceptor.retries, [.retryWithDelay(0), .doNotRetry], "RetryResults should retryWithDelay, doNotRetry")
+        XCTAssertEqual(interceptor.retries, [.retryWithDelay(0.1), .doNotRetry], "RetryResults should retryWithDelay, doNotRetry")
     }
 }
 
@@ -563,10 +563,11 @@ extension RetryResult: Equatable {
     public static func ==(lhs: RetryResult, rhs: RetryResult) -> Bool {
         switch (lhs, rhs) {
         case (.retry, .retry),
-             (.retryWithDelay, .retryWithDelay),
              (.doNotRetry, .doNotRetry),
              (.doNotRetryWithError, .doNotRetryWithError):
             return true
+        case let (.retryWithDelay(leftDelay), .retryWithDelay(rightDelay)):
+            return leftDelay == rightDelay
         default:
             return false
         }
