@@ -59,7 +59,8 @@ jobs:
   spm:
     name: Test with SPM
     runs-on: macOS-latest    
-    needs: [macOS]
+    env: 
+      DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
     steps:
       - uses: actions/checkout@v1
       - name: SPM Test
