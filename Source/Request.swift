@@ -1280,7 +1280,7 @@ public class DownloadRequest: Request {
             } else {
                 // Resume to ensure metrics are gathered.
                 task.resume()
-                task.cancel()
+                task.cancel(byProducingResumeData: { _ in })
                 self.underlyingQueue.async { self.didCancelTask(task) }
             }
         }
