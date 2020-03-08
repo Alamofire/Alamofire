@@ -1576,8 +1576,10 @@ final class SessionCancellationTestCase: BaseTestCase {
                 hasRetried = true
             }
         }
-        let monitor = ClosureEventMonitor()
-        let session = Session(interceptor: OnceRetrier(), eventMonitors: [monitor])
+
+        let queue = DispatchQueue(label: "com.alamofire.testQueue")
+        let monitor = ClosureEventMonitor(queue: queue)
+        let session = Session(rootQueue: queue, interceptor: OnceRetrier(), eventMonitors: [monitor])
         let request = URLRequest.makeHTTPBinRequest(path: "status/401")
         let completion = expectation(description: "all requests should finish")
         let cancellation = expectation(description: "cancel all requests should be called")
