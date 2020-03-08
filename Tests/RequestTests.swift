@@ -127,6 +127,7 @@ final class RequestResponseTestCase: BaseTestCase {
         }
     }
 
+    #if !SWIFT_PACKAGE
     func testPOSTRequestWithBase64EncodedImages() {
         // Given
         let urlString = "https://httpbin.org/post"
@@ -176,6 +177,7 @@ final class RequestResponseTestCase: BaseTestCase {
             XCTFail("form parameter in JSON should not be nil")
         }
     }
+    #endif
 
     // MARK: Queues
 
