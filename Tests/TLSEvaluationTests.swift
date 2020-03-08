@@ -26,6 +26,7 @@ import Alamofire
 import Foundation
 import XCTest
 
+#if !SWIFT_PACKAGE
 private struct TestCertificates {
     static let rootCA = TestCertificates.certificate(filename: "expired.badssl.com-root-ca")
     static let intermediateCA1 = TestCertificates.certificate(filename: "expired.badssl.com-intermediate-ca-1")
@@ -553,3 +554,4 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 }
+#endif

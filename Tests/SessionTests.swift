@@ -274,19 +274,19 @@ final class SessionTestCase: BaseTestCase {
             let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
 
             let osName: String = {
-#if os(iOS)
+                #if os(iOS)
                 return "iOS"
-#elseif os(watchOS)
+                #elseif os(watchOS)
                 return "watchOS"
-#elseif os(tvOS)
+                #elseif os(tvOS)
                 return "tvOS"
-#elseif os(macOS)
+                #elseif os(macOS)
                 return "macOS"
-#elseif os(Linux)
+                #elseif os(Linux)
                 return "Linux"
-#else
+                #else
                 return "Unknown"
-#endif
+                #endif
             }()
 
             return "\(osName) \(versionString)"
@@ -1683,12 +1683,12 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
         executeAuthorizationHeaderTest(for: .ephemeral)
     }
 
-#if os(macOS)
+    #if os(macOS)
     func disabled_testThatBackgroundConfigurationHeadersAreSentWithRequest() {
         // Given, When, Then
         executeAuthorizationHeaderTest(for: .background)
     }
-#endif
+    #endif
 
     private func executeAuthorizationHeaderTest(for type: ConfigurationType) {
         // Given

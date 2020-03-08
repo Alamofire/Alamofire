@@ -26,6 +26,7 @@ import Alamofire
 import Foundation
 import XCTest
 
+#if !SWIFT_PACKAGE
 private struct TestCertificates {
     // Root Certificates
     static let rootCA = TestCertificates.certificate(filename: "alamofire-root-ca")
@@ -1396,9 +1397,9 @@ class ServerTrustPolicyCertificatesInBundleTestCase: ServerTrustPolicyTestCase {
         // When
         let certificates = Bundle(for: ServerTrustPolicyCertificatesInBundleTestCase.self).af.certificates
 
-// Then
-// Expectation: 19 well-formed certificates in the test bundle plus 4 invalid certificates.
-#if os(macOS)
+        // Then
+        // Expectation: 19 well-formed certificates in the test bundle plus 4 invalid certificates.
+        #if os(macOS)
         // For some reason, macOS is allowing all certificates to be considered valid. Need to file a
         // rdar demonstrating this behavior.
         if #available(macOS 10.12, *) {
@@ -1406,8 +1407,9 @@ class ServerTrustPolicyCertificatesInBundleTestCase: ServerTrustPolicyTestCase {
         } else {
             XCTAssertEqual(certificates.count, 23, "Expected 23 well-formed certificates")
         }
-#else
+        #else
         XCTAssertEqual(certificates.count, 19, "Expected 19 well-formed certificates")
-#endif
+        #endif
     }
 }
+#endif

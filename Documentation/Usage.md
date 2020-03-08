@@ -1,6 +1,6 @@
 - [Using Alamofire](#using-alamofire)
   * [Introduction](#introduction)
-      - [Aside: The `AF` Namespace](#aside--the-af-namespace-and-reference)
+      - [Aside: The `AF` Namespace](#aside-the-af-namespace-and-reference)
   * [Making Requests](#making-requests)
     + [HTTP Methods](#http-methods)
     + [Request Parameters and Parameter Encoders](#request-parameters-and-parameter-encoders)
@@ -149,7 +149,7 @@ extension HTTPMethod {
 
 ### Request Parameters and Parameter Encoders
 
-Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder `. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).
+Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder`. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).
 
 ```swift
 struct Login: Encodable {
