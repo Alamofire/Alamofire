@@ -65,9 +65,9 @@ class BaseRetryPolicyTestCase: BaseTestCase {
     let session = Session(startRequestsImmediately: false)
 
     let url = URL(string: "https://api.alamofire.org")!
-    let connectionLostError = NSError(domain: URLError.errorDomain, code: URLError.networkConnectionLost.rawValue, userInfo: nil)
-    let resourceUnavailableError = NSError(domain: URLError.errorDomain, code: URLError.resourceUnavailable.rawValue, userInfo: nil)
-    let unknownError = NSError(domain: URLError.errorDomain, code: URLError.unknown.rawValue, userInfo: nil)
+    let connectionLostError = AFError.sessionTaskFailed(error: URLError(.networkConnectionLost))
+    let resourceUnavailableError = AFError.sessionTaskFailed(error: URLError(.resourceUnavailable))
+    let unknownError = AFError.sessionTaskFailed(error: URLError(.unknown))
 
     let retryableStatusCodes: Set<Int> = [408, 500, 502, 503, 504]
 
@@ -128,7 +128,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 
 // MARK: -
 
-class RetryPolicyTestCase: BaseRetryPolicyTestCase {
+final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
     // MARK: Tests - Retry
 
     func testThatRetryPolicyRetriesRequestsBelowRetryLimit() {
@@ -357,7 +357,7 @@ class RetryPolicyTestCase: BaseRetryPolicyTestCase {
 
 // MARK: -
 
-class ConnectionLostRetryPolicyTestCase: BaseRetryPolicyTestCase {
+final class ConnectionLostRetryPolicyTestCase: BaseRetryPolicyTestCase {
     func testThatConnectionLostRetryPolicyCanBeInitializedWithDefaultValues() {
         // Given, When
         let retryPolicy = ConnectionLostRetryPolicy()
