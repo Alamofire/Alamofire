@@ -440,7 +440,7 @@ let accessToken: String
 
 func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
     var urlRequest = urlRequest
-    urlRequest.headers.add(.authorization(bearer: accessToken))
+    urlRequest.headers.add(.authorization(bearerToken: accessToken))
 
     completion(.success(urlRequest))
 }

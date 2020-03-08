@@ -73,9 +73,9 @@ open class ServerTrustManager {
 
 /// A protocol describing the API used to evaluate server trusts.
 public protocol ServerTrustEvaluating {
-#if os(Linux)
-// Implement this once Linux has API for evaluating server trusts.
-#else
+    #if os(Linux)
+    // Implement this once Linux has API for evaluating server trusts.
+    #else
     /// Evaluates the given `SecTrust` value for the given `host`.
     ///
     /// - Parameters:
@@ -84,7 +84,7 @@ public protocol ServerTrustEvaluating {
     ///
     /// - Returns: A `Bool` indicating whether the evaluator considers the `SecTrust` value valid for `host`.
     func evaluate(_ trust: SecTrust, forHost host: String) throws
-#endif
+    #endif
 }
 
 // MARK: - Server Trust Evaluators
@@ -345,9 +345,9 @@ public final class DisabledEvaluator: ServerTrustEvaluating {
 // MARK: - Extensions
 
 public extension Array where Element == ServerTrustEvaluating {
-#if os(Linux)
-// Add this same convenience method for Linux.
-#else
+    #if os(Linux)
+    // Add this same convenience method for Linux.
+    #else
     /// Evaluates the given `SecTrust` value for the given `host`.
     ///
     /// - Parameters:
@@ -360,7 +360,7 @@ public extension Array where Element == ServerTrustEvaluating {
             try evaluator.evaluate(trust, forHost: host)
         }
     }
-#endif
+    #endif
 }
 
 extension Bundle: AlamofireExtended {}

@@ -12,7 +12,7 @@ This guide is provided in order to ease the transition of existing applications 
 - **Encodable Parameters:** Alamofire now supports and prefers `Encodable` types as parameters using the `ParameterEncoder` protocol, allowing fully type-safe representation of request parameters.
 - **URLEncodedFormEncoder:** In addition to supporting `Encodable` parameters in general, Alamofire now includes the `URLEncodedFormEncoder`, an `Encoder` for URL form encoding. 
 - **`EventMonitor` Protocol:** `EventMonitor`s allow access to Alamofire’s internal events, making it far easier to observe specific actions through a request’s lifetime. This makes logging requests very easy.
-- **Async `RequestAdapter`s:** The `RequestAdatper` protocol now operates asynchronously, making it possible to add async resources to requests.
+- **Async `RequestAdapter`s:** The `RequestAdapter` protocol now operates asynchronously, making it possible to add async resources to requests.
 - **Per-`Request` `RequestInterceptor`s:** `RequestInterceptor`s can now be added to individual `Request`s, allowing fine-grained control for the first time.
 - **`CachedResponseHandler` and `RedirectHandler` Protocols:** Easy access and control over response caching and redirect behaviors, on both a `Session` and `Request` basis.
 - **`HTTPHeaders` Type:** Type safe access to common HTTP headers, with extensions to `URLRequest`, `HTTPURLResponse`, and `URLSessionConfiguration` to allow setting the headers of those types using Alamofire’s new type.
@@ -22,6 +22,7 @@ This guide is provided in order to ease the transition of existing applications 
 Most APIs have changed in Alamofire 5, so this list is not complete. While most top level `request` APIs remain the same, nearly every other type has changed in some way. For up to date examples, see our Usage and Advanced Usage documentation.
 
 - `SessionManager` has been renamed to `Session` and its APIs have completely changed.
+- Background `URLSessionConfiguration`s are no longer supported and attempting to use one will result in a fatal runtime error. Alamofire was never designed to work in the background and its closure-based APIs cannot survive a background transition, leading to ongoing issues around background behavior. Explicit background support will be added through dedicated APIs at some point in the future.
 - `SessionDelegate` has been rebuilt and it’s public API completely changed. The various closure overrides have been removed, with most now able to be replaced with specific Alamofire features. If there is a need for control over something the closures used to provide, feel free to open a feature request.
 - `TaskDelegate` and the various `*TaskDelegate` classes have been removed. All `URLSession*Delegate` handling is now performed by `SessionDelegate`.
 - `Result` has been removed. Alamofire now uses Swift’s `Result` type.

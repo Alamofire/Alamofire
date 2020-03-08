@@ -127,6 +127,7 @@ final class RequestResponseTestCase: BaseTestCase {
         }
     }
 
+    #if !SWIFT_PACKAGE
     func testPOSTRequestWithBase64EncodedImages() {
         // Given
         let urlString = "https://httpbin.org/post"
@@ -176,6 +177,7 @@ final class RequestResponseTestCase: BaseTestCase {
             XCTFail("form parameter in JSON should not be nil")
         }
     }
+    #endif
 
     // MARK: Queues
 
@@ -311,7 +313,7 @@ final class RequestResponseTestCase: BaseTestCase {
         let session = Session(eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 3
+        expect.expectedFulfillmentCount = 4
 
         eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
         eventMonitor.requestDidResume = { _ in expect.fulfill() }
@@ -323,7 +325,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in expect.fulfill() }
         for _ in 0..<100 {
             request.resume()
         }
@@ -369,7 +371,7 @@ final class RequestResponseTestCase: BaseTestCase {
         let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
 
         let expect = expectation(description: "request should receive appropriate lifetime events")
-        expect.expectedFulfillmentCount = 3
+        expect.expectedFulfillmentCount = 4
 
         eventMonitor.requestDidResumeTask = { _, _ in expect.fulfill() }
         eventMonitor.requestDidResume = { _ in expect.fulfill() }
@@ -381,7 +383,7 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.requestDidCancelTask = { _, _ in expect.fulfill() }
 
         // When
-        let request = session.request(URLRequest.makeHTTPBinRequest())
+        let request = session.request(URLRequest.makeHTTPBinRequest()).response { _ in expect.fulfill() }
         for _ in 0..<100 {
             request.resume()
         }
