@@ -1021,7 +1021,7 @@ extension Session: SessionStateProvider {
     func request(for task: URLSessionTask) -> Request? {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
-        requestTaskMap[task]
+        return requestTaskMap[task]
     }
 
     func didGatherMetricsForTask(_ task: URLSessionTask) {
@@ -1050,7 +1050,7 @@ extension Session: SessionStateProvider {
     func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
-        requestTaskMap[task]?.credential ??
+        return requestTaskMap[task]?.credential ??
             session.configuration.urlCredentialStorage?.defaultCredential(for: protectionSpace)
     }
 
