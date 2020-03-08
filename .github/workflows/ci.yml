@@ -57,10 +57,10 @@ jobs:
       - name: watchOS - ${{ matrix.destination }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean build | xcpretty
   spm:
-    name: Test SPM Integration
+    name: Test with SPM
     runs-on: macOS-latest    
     needs: [macOS]
     steps:
       - uses: actions/checkout@v1
-      - name: SPM Build
-        run: swift build
+      - name: SPM Test
+        run: swift test -c debug
