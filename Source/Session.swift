@@ -66,8 +66,11 @@ open class Session {
     var requestTaskMap = RequestTaskMap()
     /// Set of currently active `Request`s.
     var activeRequests: Set<Request> = []
+    
+    #if !os(Linux)
     /// Completion events awaiting `URLSessionTaskMetrics`.
     var waitingCompletions: [URLSessionTask: () -> Void] = [:]
+    #endif
 
     /// Creates a `Session` from a `URLSession` and other parameters.
     ///
@@ -1024,6 +1027,7 @@ extension Session: SessionStateProvider {
         return requestTaskMap[task]
     }
 
+    #if !os(Linux)
     func didGatherMetricsForTask(_ task: URLSessionTask) {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
@@ -1034,10 +1038,14 @@ extension Session: SessionStateProvider {
             waitingCompletions[task] = nil
         }
     }
+    #endif
 
     func didCompleteTask(_ task: URLSessionTask, completion: @escaping () -> Void) {
         dispatchPrecondition(condition: .onQueue(rootQueue))
 
+        #if os(Linux)
+        completion()
+        #else
         let didDisassociate = requestTaskMap.disassociateIfNecessaryAfterCompletingTask(task)
 
         if didDisassociate {
@@ -1045,6 +1053,7 @@ extension Session: SessionStateProvider {
         } else {
             waitingCompletions[task] = completion
         }
+        #endif
     }
 
     func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {

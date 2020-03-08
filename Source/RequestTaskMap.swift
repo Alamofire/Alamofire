@@ -110,6 +110,7 @@ struct RequestTaskMap {
         return taskEvents.isEmpty
     }
 
+    #if !os(Linux)
     mutating func disassociateIfNecessaryAfterGatheringMetricsForTask(_ task: URLSessionTask) -> Bool {
         guard let events = taskEvents[task] else {
             fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
@@ -133,4 +134,5 @@ struct RequestTaskMap {
         case (false, true): self[task] = nil; return true
         }
     }
+    #endif
 }

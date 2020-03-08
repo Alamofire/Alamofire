@@ -65,7 +65,11 @@ protocol SessionStateProvider: AnyObject {
     var cachedResponseHandler: CachedResponseHandler? { get }
 
     func request(for task: URLSessionTask) -> Request?
+    
+    #if !os(Linux)
     func didGatherMetricsForTask(_ task: URLSessionTask)
+    #endif
+    
     func didCompleteTask(_ task: URLSessionTask, completion: @escaping () -> Void)
     func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential?
     func cancelRequestsForSessionInvalidation(with error: Error?)
