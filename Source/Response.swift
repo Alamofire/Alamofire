@@ -24,10 +24,6 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// Default type of `DataResponse` returned by Alamofire, with an `AFError` `Failure` type.
 public typealias AFDataResponse<Success> = DataResponse<Success, AFError>
 /// Default type of `DownloadResponse` returned by Alamofire, with an `AFError` `Failure` type.

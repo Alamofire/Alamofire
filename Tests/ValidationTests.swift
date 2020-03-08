@@ -26,10 +26,6 @@
 import Foundation
 import XCTest
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 final class StatusCodeValidationTestCase: BaseTestCase {
     func testThatValidationForRequestWithAcceptableStatusCodeResponseSucceeds() {
         // Given

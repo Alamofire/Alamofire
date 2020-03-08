@@ -24,10 +24,6 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// Protocol outlining the lifetime events inside Alamofire. It includes both events received from the various
 /// `URLSession` delegate protocols as well as various events from the lifetime of `Request` and its subclasses.
 public protocol EventMonitor {

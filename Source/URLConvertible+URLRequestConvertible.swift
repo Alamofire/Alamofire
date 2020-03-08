@@ -24,10 +24,6 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// Types adopting the `URLConvertible` protocol can be used to construct `URL`s, which can then be used to construct
 /// `URLRequests`.
 public protocol URLConvertible {

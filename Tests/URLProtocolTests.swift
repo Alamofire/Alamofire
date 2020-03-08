@@ -26,10 +26,6 @@ import Alamofire
 import Foundation
 import XCTest
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 class ProxyURLProtocol: URLProtocol {
     // MARK: Properties
 

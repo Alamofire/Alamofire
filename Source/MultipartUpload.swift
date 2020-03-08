@@ -24,10 +24,6 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// Internal type which encapsulates a `MultipartFormData` upload.
 final class MultipartUpload {
     lazy var result = Result { try build() }

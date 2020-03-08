@@ -26,10 +26,6 @@ import Alamofire
 import Foundation
 import XCTest
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// This test case tests all implemented cache policies against various `Cache-Control` header values. These tests
 /// are meant to cover the main cases of `Cache-Control` header usage, but are by no means exhaustive.
 ///

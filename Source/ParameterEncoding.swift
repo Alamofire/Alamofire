@@ -24,10 +24,6 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// A dictionary of parameters to apply to a `URLRequest`.
 public typealias Parameters = [String: Any]
 

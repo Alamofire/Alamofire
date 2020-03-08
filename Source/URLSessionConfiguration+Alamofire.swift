@@ -24,10 +24,6 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 extension URLSessionConfiguration: AlamofireExtended {}
 extension AlamofireExtension where ExtendedType: URLSessionConfiguration {
     /// Alamofire's default configuration. Same as `URLSessionConfiguration.default` but adds Alamofire default

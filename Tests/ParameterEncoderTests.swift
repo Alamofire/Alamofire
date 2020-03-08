@@ -25,10 +25,6 @@
 import Alamofire
 import XCTest
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 final class JSONParameterEncoderTests: BaseTestCase {
     func testThatDataIsProperlyEncodedAndProperContentTypeIsSet() throws {
         // Given

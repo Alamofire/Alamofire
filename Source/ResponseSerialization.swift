@@ -24,10 +24,6 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 // MARK: Protocols
 
 /// The type to which all data response serializers must conform in order to serialize a response.

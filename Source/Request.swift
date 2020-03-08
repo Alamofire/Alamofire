@@ -24,10 +24,6 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// `Request` is the common superclass of all Alamofire request types and provides common state, delegate, and callback
 /// handling.
 public class Request {

@@ -24,10 +24,6 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 public extension URLRequest {
     /// Returns the `httpMethod` as Alamofire's `HTTPMethod` type.
     var method: HTTPMethod? {

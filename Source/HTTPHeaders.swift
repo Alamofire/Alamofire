@@ -24,10 +24,6 @@
 
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 /// An order-preserving and case-insensitive representation of HTTP headers.
 public struct HTTPHeaders {
     private var headers: [HTTPHeader] = []

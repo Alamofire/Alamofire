@@ -25,10 +25,6 @@
 import Alamofire
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 public final class NSLoggingEventMonitor: EventMonitor {
     public let queue = DispatchQueue(label: "org.alamofire.nsLoggingEventMonitorQueue", qos: .background)
 

@@ -26,10 +26,6 @@
 import Foundation
 import XCTest
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 final class SessionTestCase: BaseTestCase {
     // MARK: Helper Types
 

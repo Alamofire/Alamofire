@@ -26,10 +26,6 @@ import Alamofire
 import Foundation
 import XCTest
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 class ParameterEncodingTestCase: BaseTestCase {
     let urlRequest = URLRequest(url: URL(string: "https://example.com/")!)
 }

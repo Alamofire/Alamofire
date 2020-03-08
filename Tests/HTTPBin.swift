@@ -25,10 +25,6 @@
 import Alamofire
 import Foundation
 
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
-
 extension String {
     static let httpBinURLString = "https://httpbin.org"
 }
