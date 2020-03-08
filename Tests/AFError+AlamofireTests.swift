@@ -25,6 +25,10 @@
 import Alamofire
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 extension AFError {
     // ParameterEncodingFailureReason
 
@@ -351,10 +355,12 @@ extension AFError.ServerTrustFailureReason {
         return false
     }
 
+    #if !os(Linux)
     var isPolicyApplicationFailed: Bool {
         if case .policyApplicationFailed = self { return true }
         return false
     }
+    #endif
 
     var isRevocationPolicyCreationFailed: Bool {
         if case .revocationPolicyCreationFailed = self { return true }
@@ -376,6 +382,7 @@ extension AFError.ServerTrustFailureReason {
         return false
     }
 
+    #if !os(Linux)
     var isRevocationCheckFailed: Bool {
         if case .revocationCheckFailed = self { return true }
         return false
@@ -390,6 +397,7 @@ extension AFError.ServerTrustFailureReason {
         if case .publicKeyPinningFailed = self { return true }
         return false
     }
+    #endif
 }
 
 extension AFError.URLRequestValidationFailureReason {

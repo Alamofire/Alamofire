@@ -26,6 +26,10 @@ import Alamofire
 import Foundation
 import XCTest
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 final class RedirectHandlerTestCase: BaseTestCase {
     // MARK: - Properties
 

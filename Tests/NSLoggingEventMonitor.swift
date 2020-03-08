@@ -25,6 +25,10 @@
 import Alamofire
 import Foundation
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 public final class NSLoggingEventMonitor: EventMonitor {
     public let queue = DispatchQueue(label: "org.alamofire.nsLoggingEventMonitorQueue", qos: .background)
 
@@ -57,9 +61,11 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("URLSession: \(session), task: \(task), willPerformHTTPRedirection: \(response), newRequest: \(request)")
     }
 
+    #if !os(Linux)
     public func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
         NSLog("URLSession: \(session), task: \(task), didFinishCollecting: \(metrics)")
     }
+    #endif
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         NSLog("URLSession: \(session), task: \(task), didCompleteWithError: \(error?.localizedDescription ?? "None")")
@@ -124,9 +130,11 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("Request: \(request) didCreateTask \(task)")
     }
 
+    #if !os(Linux)
     public func request(_ request: Request, didGatherMetrics metrics: URLSessionTaskMetrics) {
         NSLog("Request: \(request) didGatherMetrics \(metrics)")
     }
+    #endif
 
     public func request(_ request: Request, didFailTask task: URLSessionTask, earlyWithError error: Error) {
         NSLog("Request: \(request) didFailTask \(task) earlyWithError \(error)")

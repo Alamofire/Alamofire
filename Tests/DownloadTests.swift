@@ -26,6 +26,10 @@ import Alamofire
 import Foundation
 import XCTest
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 class DownloadInitializationTestCase: BaseTestCase {
     func testDownloadClassMethodWithMethodURLAndDestination() {
         // Given
@@ -378,7 +382,11 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
         let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
+        
+        #if !os(Linux)
         let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
+        #endif
+        
         let didComplete = expectation(description: "didComplete should fire")
         let didWriteData = expectation(description: "didWriteData should fire")
         let didFinishDownloading = expectation(description: "didFinishDownloading should fire")
@@ -392,11 +400,18 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
 
         var wroteData = false
 
+        #if !os(Linux)
         eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateInitialURLRequest.fulfill() }
         eventMonitor.requestDidCreateURLRequest = { _, _ in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        
+        #if !os(Linux)
         eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
         eventMonitor.downloadTaskDidWriteData = { _, _, _, _, _ in
             guard !wroteData else { return }
@@ -432,7 +447,11 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
         let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
+        
+        #if !os(Linux)
         let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
+        #endif
+        
         let didComplete = expectation(description: "didComplete should fire")
         let didFinish = expectation(description: "didFinish should fire")
         let didResume = expectation(description: "didResume should fire")
@@ -442,11 +461,18 @@ final class DownloadRequestEventsTestCase: BaseTestCase {
         let didCancelTask = expectation(description: "didCancelTask should fire")
         let responseHandler = expectation(description: "responseHandler should fire")
 
+        #if !os(Linux)
         eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateInitialURLRequest.fulfill() }
         eventMonitor.requestDidCreateURLRequest = { _, _ in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        
+        #if !os(Linux)
         eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
         eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
         eventMonitor.requestDidResume = { _ in didResume.fulfill() }
@@ -713,7 +739,10 @@ final class DownloadResponseMapTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(response?.error)
         XCTAssertEqual(response?.result.success, "bar")
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatMapPreservesFailureError() {
@@ -738,7 +767,10 @@ final class DownloadResponseMapTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.result.isFailure, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }
 
@@ -771,7 +803,10 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(response?.error)
         XCTAssertEqual(response?.result.success, "bar")
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatTryMapCatchesTransformationError() {
@@ -805,7 +840,9 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
             XCTFail("flatMap should catch the transformation error")
         }
 
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatTryMapPreservesFailureError() {
@@ -830,7 +867,10 @@ final class DownloadResponseTryMapTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.result.isFailure, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }
 
@@ -863,7 +903,9 @@ final class DownloadResponseMapErrorTestCase: BaseTestCase {
 
         guard let error = response?.error, case .error = error else { XCTFail(); return }
 
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatMapErrorPreservesSuccessValue() {
@@ -887,7 +929,10 @@ final class DownloadResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.fileURL)
         XCTAssertNil(response?.resumeData)
         XCTAssertEqual(response?.result.isSuccess, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }
 
@@ -916,7 +961,10 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
         XCTAssertNil(response?.resumeData)
         XCTAssertNil(response?.error)
         XCTAssertEqual(response?.result.isSuccess, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatTryMapErrorCatchesTransformationError() {
@@ -948,7 +996,9 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
             XCTFail("flatMapError should catch the transformation error")
         }
 
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatTryMapErrorTransformsError() {
@@ -975,6 +1025,8 @@ final class DownloadResponseTryMapErrorTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isFailure, true)
         guard let error = response?.error, case TestError.error = error else { XCTFail(); return }
 
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }

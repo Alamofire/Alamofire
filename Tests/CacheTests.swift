@@ -26,6 +26,10 @@ import Alamofire
 import Foundation
 import XCTest
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 /// This test case tests all implemented cache policies against various `Cache-Control` header values. These tests
 /// are meant to cover the main cases of `Cache-Control` header usage, but are by no means exhaustive.
 ///
@@ -84,7 +88,7 @@ class CacheTestCase: BaseTestCase {
         urlCache = {
             let capacity = 50 * 1024 * 1024 // MBs
             // swiftformat:disable indent
-            #if swift(>=5.1)
+            #if swift(>=5.1) && !os(Linux)
             if #available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
                 return URLCache(memoryCapacity: capacity, diskCapacity: capacity)
             } else {

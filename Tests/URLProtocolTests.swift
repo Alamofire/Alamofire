@@ -26,6 +26,10 @@ import Alamofire
 import Foundation
 import XCTest
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 class ProxyURLProtocol: URLProtocol {
     // MARK: Properties
 
@@ -41,7 +45,7 @@ class ProxyURLProtocol: URLProtocol {
             return configuration
         }()
 
-        let session = Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        let session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
 
         return session
     }()

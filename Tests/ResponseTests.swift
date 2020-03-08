@@ -47,7 +47,10 @@ final class ResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertNil(response?.error)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatResponseReturnsFailureResultWithOptionalDataAndError() {
@@ -72,7 +75,10 @@ final class ResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response?.error)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
         XCTAssertEqual(response?.error?.isHostURLError, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }
 
@@ -100,7 +106,10 @@ final class ResponseDataTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatResponseDataReturnsFailureResultWithOptionalDataAndError() {
@@ -125,7 +134,10 @@ final class ResponseDataTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
         XCTAssertEqual(response?.error?.isHostURLError, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }
 
@@ -153,7 +165,10 @@ final class ResponseStringTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
@@ -178,7 +193,10 @@ final class ResponseStringTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
         XCTAssertEqual(response?.error?.isHostURLError, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }
 
@@ -206,7 +224,10 @@ final class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
@@ -231,7 +252,10 @@ final class ResponseJSONTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
         XCTAssertEqual(response?.error?.isHostURLError, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatResponseJSONReturnsSuccessResultForGETRequest() {
@@ -255,7 +279,10 @@ final class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
 
         if
             let responseDictionary = response?.result.success as? [String: Any],
@@ -287,7 +314,10 @@ final class ResponseJSONTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
 
         if
             let responseDictionary = response?.result.success as? [String: Any],
@@ -321,7 +351,10 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertEqual(response?.result.success?.url, "https://httpbin.org/get")
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatResponseDecodableWithPassedTypeReturnsSuccessResultWithValidJSON() {
@@ -345,7 +378,10 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertEqual(response?.result.success?.url, "https://httpbin.org/get")
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatResponseStringReturnsFailureResultWithOptionalDataAndError() {
@@ -370,7 +406,10 @@ final class ResponseJSONDecodableTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
         XCTAssertEqual(response?.error?.isHostURLError, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }
 
@@ -402,7 +441,10 @@ final class ResponseMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertEqual(response?.result.success, "bar")
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatMapPreservesFailureError() {
@@ -427,7 +469,10 @@ final class ResponseMapTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.isSessionTaskError, true)
         XCTAssertEqual(response?.error?.isHostURLError, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }
 
@@ -459,7 +504,10 @@ final class ResponseTryMapTestCase: BaseTestCase {
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
         XCTAssertEqual(response?.result.success, "bar")
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatTryMapCatchesTransformationError() {
@@ -494,7 +542,9 @@ final class ResponseTryMapTestCase: BaseTestCase {
             XCTFail("tryMap should catch the transformation error")
         }
 
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatTryMapPreservesFailureError() {
@@ -519,7 +569,10 @@ final class ResponseTryMapTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isFailure, true)
         XCTAssertEqual(response?.error?.asAFError?.isSessionTaskError, true)
         XCTAssertEqual(response?.error?.asAFError?.isHostURLError, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }
 
@@ -563,7 +616,9 @@ final class ResponseMapErrorTestCase: BaseTestCase {
         XCTAssertEqual(response?.result.isFailure, true)
         guard let error = response?.error, case .error = error else { XCTFail(); return }
 
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatMapErrorPreservesSuccessValue() {
@@ -586,7 +641,10 @@ final class ResponseMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }
 
@@ -613,7 +671,10 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
         XCTAssertNotNil(response?.response)
         XCTAssertNotNil(response?.data)
         XCTAssertEqual(response?.result.isSuccess, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatTryMapErrorCatchesTransformationError() {
@@ -643,7 +704,9 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
             XCTFail("tryMapError should catch the transformation error")
         }
 
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 
     func testThatTryMapErrorTransformsError() {
@@ -673,6 +736,9 @@ final class ResponseTryMapErrorTestCase: BaseTestCase {
 
         XCTAssertEqual(underlyingError.asAFError?.isSessionTaskError, true)
         XCTAssertEqual(underlyingError.asAFError?.isHostURLError, true)
+        
+        #if !os(Linux)
         XCTAssertNotNil(response?.metrics)
+        #endif
     }
 }

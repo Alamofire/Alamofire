@@ -26,6 +26,10 @@
 import Foundation
 import XCTest
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 class BaseRetryPolicyTestCase: BaseTestCase {
     // MARK: Helper Types
 
@@ -90,37 +94,44 @@ class BaseRetryPolicyTestCase: BaseTestCase {
                                                    .serverCertificateNotYetValid,
                                                    .timedOut]
 
-    let nonRetryableErrorCodes: Set<URLError.Code> = [.appTransportSecurityRequiresSecureConnection,
-                                                      .backgroundSessionRequiresSharedContainer,
-                                                      .badURL,
-                                                      .cancelled,
-                                                      .cannotCloseFile,
-                                                      .cannotCreateFile,
-                                                      .cannotDecodeContentData,
-                                                      .cannotDecodeRawData,
-                                                      .cannotMoveFile,
-                                                      .cannotOpenFile,
-                                                      .cannotParseResponse,
-                                                      .cannotRemoveFile,
-                                                      .cannotWriteToFile,
-                                                      .clientCertificateRejected,
-                                                      .clientCertificateRequired,
-                                                      .dataLengthExceedsMaximum,
-                                                      .fileDoesNotExist,
-                                                      .fileIsDirectory,
-                                                      .httpTooManyRedirects,
-                                                      .noPermissionsToReadFile,
-                                                      .redirectToNonExistentLocation,
-                                                      .requestBodyStreamExhausted,
-                                                      .resourceUnavailable,
-                                                      .serverCertificateHasUnknownRoot,
-                                                      .serverCertificateUntrusted,
-                                                      .unknown,
-                                                      .unsupportedURL,
-                                                      .userAuthenticationRequired,
-                                                      .userCancelledAuthentication,
-                                                      .zeroByteResource]
-
+    var nonRetryableErrorCodes: Set<URLError.Code> = {
+        var codes: Set<URLError.Code> = [.backgroundSessionRequiresSharedContainer,
+                                         .badURL,
+                                         .cancelled,
+                                         .cannotCloseFile,
+                                         .cannotCreateFile,
+                                         .cannotDecodeContentData,
+                                         .cannotDecodeRawData,
+                                         .cannotMoveFile,
+                                         .cannotOpenFile,
+                                         .cannotParseResponse,
+                                         .cannotRemoveFile,
+                                         .cannotWriteToFile,
+                                         .clientCertificateRejected,
+                                         .clientCertificateRequired,
+                                         .fileDoesNotExist,
+                                         .fileIsDirectory,
+                                         .httpTooManyRedirects,
+                                         .noPermissionsToReadFile,
+                                         .redirectToNonExistentLocation,
+                                         .requestBodyStreamExhausted,
+                                         .resourceUnavailable,
+                                         .serverCertificateHasUnknownRoot,
+                                         .serverCertificateUntrusted,
+                                         .unknown,
+                                         .unsupportedURL,
+                                         .userAuthenticationRequired,
+                                         .userCancelledAuthentication,
+                                         .zeroByteResource]
+        
+        #if !os(Linux)
+        codes.insert(.appTransportSecurityRequiresSecureConnection)
+        codes.insert(.dataLengthExceedsMaximum)
+        #endif
+        
+        return codes
+    }()
+    
     var errorCodes: Set<URLError.Code> {
         return retryableErrorCodes.union(nonRetryableErrorCodes)
     }

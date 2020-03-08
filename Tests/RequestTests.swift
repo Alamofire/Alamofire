@@ -26,6 +26,10 @@ import Alamofire
 import Foundation
 import XCTest
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 final class RequestResponseTestCase: BaseTestCase {
     func testRequestResponse() {
         // Given
@@ -552,7 +556,11 @@ final class RequestResponseTestCase: BaseTestCase {
         let willCacheResponse = expectation(description: "willCacheResponse should fire")
         let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
+        
+        #if !os(Linux)
         let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
+        #endif
+        
         let didComplete = expectation(description: "didComplete should fire")
         let didFinish = expectation(description: "didFinish should fire")
         let didResume = expectation(description: "didResume should fire")
@@ -563,7 +571,11 @@ final class RequestResponseTestCase: BaseTestCase {
         var dataReceived = false
 
         eventMonitor.taskDidReceiveChallenge = { _, _, _ in didReceiveChallenge.fulfill() }
+        
+        #if !os(Linux)
         eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        #endif
+        
         eventMonitor.dataTaskDidReceiveData = { _, _, _ in
             guard !dataReceived else { return }
             // Data may be received many times, fulfill only once.
@@ -573,7 +585,11 @@ final class RequestResponseTestCase: BaseTestCase {
         eventMonitor.dataTaskWillCacheResponse = { _, _, _ in willCacheResponse.fulfill() }
         eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        
+        #if !os(Linux)
         eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
         eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
         eventMonitor.requestDidResume = { _ in didResume.fulfill() }
@@ -599,7 +615,11 @@ final class RequestResponseTestCase: BaseTestCase {
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
+        
+        #if !os(Linux)
         let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
+        #endif
+        
         let didComplete = expectation(description: "didComplete should fire")
         let didFinish = expectation(description: "didFinish should fire")
         let didResume = expectation(description: "didResume should fire")
@@ -609,10 +629,17 @@ final class RequestResponseTestCase: BaseTestCase {
         let didCancelTask = expectation(description: "didCancelTask should fire")
         let responseHandler = expectation(description: "responseHandler should fire")
 
+        #if !os(Linux)
         eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        
+        #if !os(Linux)
         eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
         eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
         eventMonitor.requestDidResume = { _ in didResume.fulfill() }

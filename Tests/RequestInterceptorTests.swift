@@ -26,6 +26,10 @@
 import Foundation
 import XCTest
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 private struct MockError: Error {}
 private struct RetryError: Error {}
 

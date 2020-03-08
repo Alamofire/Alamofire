@@ -3,4 +3,4 @@ FROM swift:latest
 WORKDIR /alamofire
 COPY . .
 
-RUN swift build
+RUN swift test --enable-test-discovery

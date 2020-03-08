@@ -26,6 +26,10 @@ import Alamofire
 import Foundation
 import XCTest
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 #if !SWIFT_PACKAGE
 final class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndFile() {
@@ -651,7 +655,11 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
+        
+        #if !os(Linux)
         let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
+        #endif
+        
         let didComplete = expectation(description: "didComplete should fire")
         let didFinish = expectation(description: "didFinish should fire")
         let didResume = expectation(description: "didResume should fire")
@@ -660,11 +668,18 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let didParseResponse = expectation(description: "didParseResponse should fire")
         let responseHandler = expectation(description: "responseHandler should fire")
 
+        #if !os(Linux)
         eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateInitialURLRequest.fulfill() }
         eventMonitor.requestDidCreateURLRequest = { _, _ in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        
+        #if !os(Linux)
         eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
         eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
         eventMonitor.requestDidResume = { _ in didResume.fulfill() }
@@ -693,7 +708,11 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
+        
+        #if !os(Linux)
         let didGatherMetrics = expectation(description: "didGatherMetrics should fire")
+        #endif
+        
         let didComplete = expectation(description: "didComplete should fire")
         let didFinish = expectation(description: "didFinish should fire")
         let didResume = expectation(description: "didResume should fire")
@@ -704,11 +723,18 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let didCancelTask = expectation(description: "didCancelTask should fire")
         let responseHandler = expectation(description: "responseHandler should fire")
 
+        #if !os(Linux)
         eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCreateInitialURLRequest = { _, _ in didCreateInitialURLRequest.fulfill() }
         eventMonitor.requestDidCreateURLRequest = { _, _ in didCreateURLRequest.fulfill() }
         eventMonitor.requestDidCreateTask = { _, _ in didCreateTask.fulfill() }
+        
+        #if !os(Linux)
         eventMonitor.requestDidGatherMetrics = { _, _ in didGatherMetrics.fulfill() }
+        #endif
+        
         eventMonitor.requestDidCompleteTaskWithError = { _, _, _ in didComplete.fulfill() }
         eventMonitor.requestDidFinish = { _ in didFinish.fulfill() }
         eventMonitor.requestDidResume = { _ in didResume.fulfill() }

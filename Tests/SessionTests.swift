@@ -26,6 +26,10 @@
 import Foundation
 import XCTest
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 final class SessionTestCase: BaseTestCase {
     // MARK: Helper Types
 
@@ -1488,12 +1492,20 @@ final class SessionCancellationTestCase: BaseTestCase {
         completion.expectedFulfillmentCount = count
         let createdTasks = expectation(description: "all tasks created")
         createdTasks.expectedFulfillmentCount = count
+        
+        #if !os(Linux)
         let gatheredMetrics = expectation(description: "metrics gathered for all tasks")
         gatheredMetrics.expectedFulfillmentCount = count
+        #endif
+        
         let cancellation = expectation(description: "cancel all requests should be called")
         let monitor = ClosureEventMonitor()
         monitor.requestDidCreateTask = { _, _ in createdTasks.fulfill() }
+        
+        #if !os(Linux)
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.fulfill() }
+        #endif
+        
         let session = Session(eventMonitors: [monitor])
         let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
         var requests: [DataRequest] = []
@@ -1515,7 +1527,11 @@ final class SessionCancellationTestCase: BaseTestCase {
             cancellation.fulfill()
         }
 
+        #if os(Linux)
+        wait(for: [cancellation, completion], timeout: timeout)
+        #else
         wait(for: [gatheredMetrics, cancellation, completion], timeout: timeout)
+        #endif
 
         // Then
         XCTAssertTrue(responses.allSatisfy { $0.error?.isExplicitlyCancelledError == true })
@@ -1532,12 +1548,20 @@ final class SessionCancellationTestCase: BaseTestCase {
         completion.expectedFulfillmentCount = count
         let createdTasks = expectation(description: "all tasks created")
         createdTasks.expectedFulfillmentCount = count
+        
+        #if !os(Linux)
         let gatheredMetrics = expectation(description: "metrics gathered for all tasks")
         gatheredMetrics.expectedFulfillmentCount = count
+        #endif
+        
         let cancellation = expectation(description: "cancel all requests should be called")
         let monitor = ClosureEventMonitor()
         monitor.requestDidCreateTask = { _, _ in createdTasks.fulfill() }
+        
+        #if !os(Linux)
         monitor.requestDidGatherMetrics = { _, _ in gatheredMetrics.fulfill() }
+        #endif
+        
         let session = Session(startRequestsImmediately: false, eventMonitors: [monitor])
         let request = URLRequest.makeHTTPBinRequest(path: "delay/1")
         var responses: [DataResponse<Data?, AFError>] = []
@@ -1556,7 +1580,11 @@ final class SessionCancellationTestCase: BaseTestCase {
             cancellation.fulfill()
         }
 
+        #if os(Linux)
+        wait(for: [cancellation, completion], timeout: timeout)
+        #else
         wait(for: [gatheredMetrics, cancellation, completion], timeout: timeout)
+        #endif
 
         // Then
         XCTAssertTrue(responses.allSatisfy { $0.error?.isExplicitlyCancelledError == true })
@@ -1670,7 +1698,12 @@ final class SessionCancellationTestCase: BaseTestCase {
 
 final class SessionConfigurationHeadersTestCase: BaseTestCase {
     enum ConfigurationType {
-        case `default`, ephemeral, background
+        case `default`
+        case ephemeral
+        
+        #if !os(Linux)
+        case background
+        #endif
     }
 
     func testThatDefaultConfigurationHeadersAreSentWithRequest() {
@@ -1701,9 +1734,11 @@ final class SessionConfigurationHeadersTestCase: BaseTestCase {
                     configuration = .default
                 case .ephemeral:
                     configuration = .ephemeral
+                #if !os(Linux)
                 case .background:
                     let identifier = "org.alamofire.test.manager-configuration-tests"
                     configuration = .background(withIdentifier: identifier)
+                #endif
                 }
 
                 var headers = HTTPHeaders.default

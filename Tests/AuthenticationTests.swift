@@ -26,6 +26,10 @@ import Alamofire
 import Foundation
 import XCTest
 
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+
 class AuthenticationTestCase: BaseTestCase {
     let user = "user"
     let password = "password"
