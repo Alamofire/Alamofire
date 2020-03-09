@@ -358,7 +358,7 @@ class RetryPolicyTestCase: BaseRetryPolicyTestCase {
     }
 
     func urlError(with code: URLError.Code) -> URLError {
-        return NSError(domain: URLError.errorDomain, code: code.rawValue, userInfo: nil) as! URLError
+        return URLError(code, userInfo: [:])
     }
 }
 
