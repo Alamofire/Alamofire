@@ -324,11 +324,15 @@ open class RetryPolicy: RequestInterceptor {
     private func shouldRetry(response: HTTPURLResponse?, error: Error) -> Bool {
         if let statusCode = response?.statusCode, retryableHTTPStatusCodes.contains(statusCode) {
             return true
-        } else if let errorCode = (error as? URLError)?.code, retryableURLErrorCodes.contains(errorCode) {
-            return true
+        } else {
+            let errorCode = (error as? URLError)?.code
+            let afErrorCode = (error.asAFError?.underlyingError as? URLError)?.code
+            if let code = errorCode ?? afErrorCode, retryableURLErrorCodes.contains(code) {
+                return true
+            } else {
+                return false
+            }
         }
-
-        return false
     }
 }
 
