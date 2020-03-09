@@ -608,7 +608,10 @@ final class RequestResponseTestCase: BaseTestCase {
         let eventMonitor = ClosureEventMonitor()
         let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
 
+        #if !os(Linux)
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
+        #endif
+        
         let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
         
