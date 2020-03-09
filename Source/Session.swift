@@ -341,6 +341,7 @@ open class Session {
                                                    parameters: Parameters? = nil,
                                                    encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                                    headers: HTTPHeaders? = nil,
+                                                   automaticallyCancelOnStreamError: Bool = false,
                                                    interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
@@ -348,7 +349,9 @@ open class Session {
                                                       encoder: encoder,
                                                       headers: headers)
 
-        return streamRequest(convertible, interceptor: interceptor)
+        return streamRequest(convertible,
+                             automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
+                             interceptor: interceptor)
     }
 
     /// Creates a `DataStreamRequest` from the passed components and `RequestInterceptor`.
@@ -363,6 +366,7 @@ open class Session {
     open func streamRequest(_ convertible: URLConvertible,
                             method: HTTPMethod = .get,
                             headers: HTTPHeaders? = nil,
+                            automaticallyCancelOnStreamError: Bool = false,
                             interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
@@ -370,7 +374,9 @@ open class Session {
                                                       encoder: URLEncodedFormParameterEncoder.default,
                                                       headers: headers)
 
-        return streamRequest(convertible, interceptor: interceptor)
+        return streamRequest(convertible,
+                             automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
+                             interceptor: interceptor)
     }
 
     /// Creates a `DataStreamRequest` from the passed `URLRequestConvertible` value and `RequestInterceptor`.
@@ -380,8 +386,11 @@ open class Session {
     ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///
     /// - Returns:       The created `DataStreamRequest`.
-    open func streamRequest(_ convertible: URLRequestConvertible, interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+    open func streamRequest(_ convertible: URLRequestConvertible,
+                            automaticallyCancelOnStreamError: Bool = false,
+                            interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
         let request = DataStreamRequest(convertible: convertible,
+                                        automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
                                         underlyingQueue: rootQueue,
                                         serializationQueue: serializationQueue,
                                         eventMonitor: eventMonitor,

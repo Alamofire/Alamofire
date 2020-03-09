@@ -848,7 +848,12 @@ extension DataStreamRequest {
     /// - Returns:  The `DataStreamRequest`.
     @discardableResult
     public func responseStream(on queue: DispatchQueue = .main, stream: @escaping StreamHandler<Data, Never>) -> Self {
-        $streamMutableState.write { $0.streams.append((queue, { stream(.stream(.success($0))) })) }
+        $streamMutableState.write { state in
+            let capture = (queue, { data in
+                self.capturingError { try stream(.stream(.success(data))) }
+            })
+            state.streams.append(capture)
+        }
         appendStreamCompletion(on: queue, stream: stream)
 
         return self
@@ -874,7 +879,12 @@ extension DataStreamRequest {
                 // End work on serialization queue.
                 queue.async {
                     self.eventMonitor?.request(self, didParseStream: result)
-                    stream(.stream(result))
+                    if result.isFailure, self.automaticallyCancelOnStreamError {
+                        queue.async { self.cancel() }
+                    }
+                    self.capturingError {
+                        try stream(.stream(result))
+                    }
                 }
             }
         }
@@ -901,7 +911,9 @@ extension DataStreamRequest {
                 let string = String(decoding: data, as: UTF8.self)
                 // End work on serialization queue.
                 queue.async {
-                    stream(.stream(.success(string)))
+                    self.capturingError {
+                        try stream(.stream(.success(string)))
+                    }
                 }
             }
         }

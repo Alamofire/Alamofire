@@ -205,7 +205,7 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(firstStreamOnMain)
         XCTAssertTrue(firstCompleteOnMain)
         XCTAssertEqual(firstResponse?.statusCode, 200)
-        XCTAssertTrue(firstAccumulatedData.count > 0)
+        XCTAssertTrue(!firstAccumulatedData.isEmpty)
         XCTAssertTrue(secondStreamOnMain)
         XCTAssertTrue(secondCompleteOnMain)
         XCTAssertEqual(secondResponse?.statusCode, 200)
@@ -638,5 +638,56 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(streamOnMain)
         XCTAssertTrue(completeOnMain)
         XCTAssertEqual(response?.statusCode, 200)
+    }
+
+    func testThatDataStreamIsAutomaticallyCanceledOnStreamErrorWhenEnabled() {
+        var response: HTTPURLResponse?
+        var complete: DataStreamRequest.Completion?
+        let expect = expectation(description: "stream complete")
+
+        // When
+        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/50"), automaticallyCancelOnStreamError: true)
+            .responseStreamDecodable(of: HTTPBinResponse.self) { output in
+                switch output {
+                case let .complete(completion):
+                    complete = completion
+                    response = completion.response
+                    expect.fulfill()
+                default: break
+                }
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(response?.statusCode, 200)
+        XCTAssertTrue(complete?.error?.isExplicitlyCancelledError == true)
+    }
+
+    func testThatDataStreamIsAutomaticallyCanceledOnStreamClosureError() {
+        // Given
+        enum LocalError: Error { case failed }
+
+        var response: HTTPURLResponse?
+        var complete: DataStreamRequest.Completion?
+        let expect = expectation(description: "stream complete")
+
+        // When
+        AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "bytes/50"))
+            .responseStream { output in
+                switch output {
+                case .stream: throw LocalError.failed
+                case let .complete(completion):
+                    complete = completion
+                    response = completion.response
+                    expect.fulfill()
+                }
+            }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(response?.statusCode, 200)
+        XCTAssertTrue(complete?.error?.isExplicitlyCancelledError == false)
     }
 }

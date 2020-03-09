@@ -374,7 +374,7 @@ public class Request {
 
     /// Called when cancellation is completed, sets `error` to `AFError.explicitlyCancelled`.
     func didCancel() {
-        error = AFError.explicitlyCancelled
+        error = error ?? AFError.explicitlyCancelled
 
         eventMonitor?.requestDidCancel(self)
     }
@@ -1039,7 +1039,7 @@ public class DataRequest: Request {
 /// `Request` subclass which streams HTTP response `Data` through a `StreamHandler` closure.
 public final class DataStreamRequest: Request {
     /// Closure type handling `DataStreamRequest.Output` values.
-    public typealias StreamHandler<Success, Failure: Error> = (Output<Success, Failure>) -> Void
+    public typealias StreamHandler<Success, Failure: Error> = (Output<Success, Failure>) throws -> Void
 
     /// Encapsulation of state passed to `StreamHandler` closures. Represent either the `Result` of processing streamed
     /// `Data` or the completion of the stream.
@@ -1066,6 +1066,8 @@ public final class DataStreamRequest: Request {
 
     /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
     public let convertible: URLRequestConvertible
+    /// Whether or not the instance will be cancelled if stream parsing encounters an error.
+    public let automaticallyCancelOnStreamError: Bool
 
     /// Internal mutable state specific to this type.
     struct StreamMutableState {
@@ -1078,7 +1080,7 @@ public final class DataStreamRequest: Request {
     @Protected
     var streamMutableState = StreamMutableState()
 
-    /// Creates a `DataRequest` using the provided parameters.
+    /// Creates a `DataStreamRequest` using the provided parameters.
     ///
     /// - Parameters:
     ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
@@ -1091,12 +1093,14 @@ public final class DataStreamRequest: Request {
     ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
     init(id: UUID = UUID(),
          convertible: URLRequestConvertible,
+         automaticallyCancelOnStreamError: Bool,
          underlyingQueue: DispatchQueue,
          serializationQueue: DispatchQueue,
          eventMonitor: EventMonitor?,
          interceptor: RequestInterceptor?,
          delegate: RequestDelegate) {
         self.convertible = convertible
+        self.automaticallyCancelOnStreamError = automaticallyCancelOnStreamError
 
         super.init(id: id,
                    underlyingQueue: underlyingQueue,
@@ -1112,11 +1116,11 @@ public final class DataStreamRequest: Request {
     }
 
     override func finish(error: AFError? = nil) {
-        super.finish(error: error)
-
         $streamMutableState.write { state in
             state.outputStream?.close()
         }
+
+        super.finish(error: error)
     }
 
     func didReceive(data: Data) {
@@ -1176,15 +1180,30 @@ public final class DataStreamRequest: Request {
         return inputStream!
     }
 
+    func capturingError(from closure: () throws -> Void) {
+        do {
+            try closure()
+        } catch {
+            self.error = error.asAFError(or: AFError.responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+            cancel()
+        }
+    }
+
     func appendStreamCompletion<Success, Failure>(on queue: DispatchQueue,
                                                   stream: @escaping StreamHandler<Success, Failure>) {
         appendResponseSerializer {
             self.underlyingQueue.async {
                 self.responseSerializerDidComplete {
-                    queue.async { stream(.complete(.init(request: self.request,
-                                                         response: self.response,
-                                                         metrics: self.metrics,
-                                                         error: self.error))) }
+                    queue.async {
+                        do {
+                            try stream(.complete(.init(request: self.request,
+                                                       response: self.response,
+                                                       metrics: self.metrics,
+                                                       error: self.error)))
+                        } catch {
+                            // What to do with error?
+                        }
+                    }
                 }
             }
         }
