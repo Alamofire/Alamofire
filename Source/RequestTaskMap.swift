@@ -28,7 +28,14 @@ import Foundation
 struct RequestTaskMap {
     private var tasksToRequests: [URLSessionTask: Request]
     private var requestsToTasks: [Request: URLSessionTask]
-    private var taskEvents: [URLSessionTask: (completed: Bool, metricsGathered: Bool)]
+    
+    #if os(Linux)
+    typealias TaskEvents = Bool
+    #else
+    typealias TaskEvents = (completed: Bool, metricsGathered: Bool)
+    #endif
+    
+    private var taskEvents: [URLSessionTask: TaskEvents]
 
     var requests: [Request] {
         return Array(tasksToRequests.values)
@@ -36,7 +43,7 @@ struct RequestTaskMap {
 
     init(tasksToRequests: [URLSessionTask: Request] = [:],
          requestsToTasks: [Request: URLSessionTask] = [:],
-         taskEvents: [URLSessionTask: (completed: Bool, metricsGathered: Bool)] = [:]) {
+         taskEvents: [URLSessionTask: TaskEvents] = [:]) {
         self.tasksToRequests = tasksToRequests
         self.requestsToTasks = requestsToTasks
         self.taskEvents = taskEvents
@@ -59,7 +66,12 @@ struct RequestTaskMap {
 
             requestsToTasks[request] = newValue
             tasksToRequests[newValue] = request
+            
+            #if os(Linux)
+            taskEvents[newValue] = false
+            #else
             taskEvents[newValue] = (completed: false, metricsGathered: false)
+            #endif
         }
     }
 
@@ -80,7 +92,12 @@ struct RequestTaskMap {
 
             tasksToRequests[task] = newValue
             requestsToTasks[newValue] = task
+
+            #if os(Linux)
+            taskEvents[task] = false
+            #else
             taskEvents[task] = (completed: false, metricsGathered: false)
+            #endif
         }
     }
 
@@ -122,17 +139,24 @@ struct RequestTaskMap {
         case (true, false): self[task] = nil; return true
         }
     }
+    #endif
 
     mutating func disassociateIfNecessaryAfterCompletingTask(_ task: URLSessionTask) -> Bool {
         guard let events = taskEvents[task] else {
             fatalError("RequestTaskMap consistency error: no events corresponding to task found.")
         }
-
+        
+        #if os(Linux)
+        switch events {
+        case true: fatalError("RequestTaskMap consistency error: duplicate completionReceivedForTask call.")
+        case false: self[task] = nil; return true
+        }
+        #else
         switch (events.completed, events.metricsGathered) {
         case (true, _): fatalError("RequestTaskMap consistency error: duplicate completionReceivedForTask call.")
         case (false, false): taskEvents[task] = (completed: true, metricsGathered: false); return false
         case (false, true): self[task] = nil; return true
         }
+        #endif
     }
-    #endif
 }
