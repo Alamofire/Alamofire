@@ -875,7 +875,7 @@ extension DataStreamRequest {
             self.serializationQueue.async {
                 // Start work on serialization queue.
                 let result = Result { try serializer.serialize(data) }
-                    .mapError { $0.asAFError(or: AFError.responseSerializationFailed(reason: .customSerializationFailed(error: $0))) }
+                    .mapError { $0.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: $0))) }
                 // End work on serialization queue.
                 queue.async {
                     self.eventMonitor?.request(self, didParseStream: result)

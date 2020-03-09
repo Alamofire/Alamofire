@@ -1184,7 +1184,7 @@ public final class DataStreamRequest: Request {
         do {
             try closure()
         } catch {
-            self.error = error.asAFError(or: AFError.responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+            self.error = error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             cancel()
         }
     }
