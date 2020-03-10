@@ -604,6 +604,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(response?.error?.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
     }
 
+    #if !os(Linux)
     func testThatUploadStreamRequestWithInvalidURLStringThrowsResponseHandlerError() {
         // Given
         let session = Session()
@@ -627,6 +628,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(response?.error?.isInvalidURLError, true)
         XCTAssertEqual(response?.error?.urlConvertible as? String, "https://httpbin.org/get/äëïöü")
     }
+    #endif
 
     // MARK: Tests - Request Adapter
 
@@ -756,6 +758,7 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(headerAdapter.adaptedCount, 1)
     }
 
+    #if !os(Linux)
     func testThatSessionCallsRequestAdaptersWhenCreatingUploadRequestWithInputStream() {
         // Given
         let inputStream = InputStream(data: Data("data".utf8))
@@ -787,7 +790,8 @@ final class SessionTestCase: BaseTestCase {
         XCTAssertEqual(methodAdapter.adaptedCount, 2)
         XCTAssertEqual(headerAdapter.adaptedCount, 1)
     }
-
+    #endif
+    
     func testThatSessionReturnsRequestAdaptationErrorWhenRequestAdapterThrowsError() {
         // Given
         let urlString = "https://httpbin.org/get"
