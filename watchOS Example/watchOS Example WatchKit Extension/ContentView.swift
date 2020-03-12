@@ -95,6 +95,18 @@ final class BasicSession: NSObject, URLSessionTaskDelegate {
     
     private var completion: ((Result<Void, Error>) -> Void)?
     
+    override class func responds(to aSelector: Selector!) -> Bool {
+        let didRespond = super.responds(to: aSelector)
+        NSLog("Class did respond to \(aSelector!): \(didRespond)")
+        return didRespond
+    }
+    
+    override func responds(to aSelector: Selector!) -> Bool {
+        let didRespond = super.responds(to: aSelector)
+        NSLog("Instance did respond to \(aSelector!): \(didRespond)")
+        return didRespond
+    }
+    
     func request(_ completion: @escaping (Result<Void, Error>) -> Void) {
         self.completion = completion
         session.dataTask(with: URL(string: "https://httpbin.org/get")!).resume()
