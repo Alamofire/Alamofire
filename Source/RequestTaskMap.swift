@@ -129,7 +129,7 @@ struct RequestTaskMap {
 
         switch (events.completed, events.metricsGathered) {
         case (true, _): fatalError("RequestTaskMap consistency error: duplicate completionReceivedForTask call.")
-        #if os(watchOS)
+        #if os(watchOS) // watchOS doesn't gather metrics, so unconditionally remove the reference and return true.
         default: self[task] = nil; return true
         #else
         case (false, false): taskEvents[task] = (completed: true, metricsGathered: false); return false
