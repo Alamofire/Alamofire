@@ -44,7 +44,7 @@ Most APIs have changed in Alamofire 5, so this list is not complete. While most 
 	- `Request.didSuspendNotification` and `Request.didSuspendTaskNotification` to be notified when `Request`s and their `URLSessionTask`s have `suspend()` called.
 	- `Request.didCancelNotification` and `Request.didCancelTaskNotification` to be notified when `Request`s and their `URLSessionTask`s have `cancel()` called.
 	- `Request.didFinishNotification` and `Request.didCompleteTaskNotification` to be notified when `Request`s have `finish()` called and when `URLSessionTask`s trigger the `didComplete` delegate method.
-- `MulitpartFormData`’s API has changed and the top level `upload` methods to create and upload `MultipartFormData` have been updated to match other request APIs, so it’s not longer necessary to deal with the `Result` of the multipart encoding.
+- `MultipartFormData`’s API has changed and the top level `upload` methods to create and upload `MultipartFormData` have been updated to match other request APIs, so it’s not longer necessary to deal with the `Result` of the multipart encoding.
 - `NetworkReachabilityManager` has been refactored for greater reliability and simplicity. Instead of setting an update closure and then starting the listener, the closure is provided to the `startListening` method.
 - `Request` and its various subclasses have been rewritten and the public API completely changed. Please see the documentation for an exhaustive list of the current functionality.
 - `Timeline` and Alamofire’s previous `URLSessionTaskMetrics` handling have been replaced with native support for `URLSessionTaskMetrics`, which nows provides all timing information for Alamofire’s requests.
