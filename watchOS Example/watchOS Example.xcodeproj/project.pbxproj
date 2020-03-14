@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		31338A13241D9B410096C205 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31338A12241D9B410096C205 /* Networking.swift */; };
 		318E330F2419AD1C00BDE48F /* watchOS Example WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 318E330E2419AD1C00BDE48F /* watchOS Example WatchKit App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		318E33152419AD1C00BDE48F /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 318E33132419AD1C00BDE48F /* Interface.storyboard */; };
 		318E33172419AD1C00BDE48F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 318E33162419AD1C00BDE48F /* Assets.xcassets */; };
@@ -74,6 +75,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		31338A12241D9B410096C205 /* Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		318E330A2419AD1B00BDE48F /* watchOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "watchOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		318E330E2419AD1C00BDE48F /* watchOS Example WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "watchOS Example WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		318E33142419AD1C00BDE48F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
@@ -134,11 +136,12 @@
 		318E33212419AD1D00BDE48F /* watchOS Example WatchKit Extension */ = {
 			isa = PBXGroup;
 			children = (
-				318E33222419AD1D00BDE48F /* ContentView.swift */,
-				318E33242419AD1D00BDE48F /* HostingController.swift */,
-				318E33262419AD1D00BDE48F /* ExtensionDelegate.swift */,
 				318E33282419AD1D00BDE48F /* Assets.xcassets */,
+				318E33222419AD1D00BDE48F /* ContentView.swift */,
+				318E33262419AD1D00BDE48F /* ExtensionDelegate.swift */,
+				318E33242419AD1D00BDE48F /* HostingController.swift */,
 				318E332D2419AD1D00BDE48F /* Info.plist */,
+				31338A12241D9B410096C205 /* Networking.swift */,
 				318E332A2419AD1D00BDE48F /* Preview Content */,
 			);
 			path = "watchOS Example WatchKit Extension";
@@ -292,6 +295,7 @@
 				318E33252419AD1D00BDE48F /* HostingController.swift in Sources */,
 				318E33232419AD1D00BDE48F /* ContentView.swift in Sources */,
 				318E33272419AD1D00BDE48F /* ExtensionDelegate.swift in Sources */,
+				31338A13241D9B410096C205 /* Networking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,7 +444,7 @@
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"watchOS Example WatchKit Extension/Preview Content\"";
-				DEVELOPMENT_TEAM = 555RUP2XT7;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "watchOS Example WatchKit Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -464,7 +468,7 @@
 				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"watchOS Example WatchKit Extension/Preview Content\"";
-				DEVELOPMENT_TEAM = 555RUP2XT7;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "watchOS Example WatchKit Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -488,7 +492,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 555RUP2XT7;
+				DEVELOPMENT_TEAM = "";
 				IBSC_MODULE = watchOS_Example_WatchKit_Extension;
 				INFOPLIST_FILE = "watchOS Example WatchKit App/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.watchOS-Example.watchkitapp";
@@ -507,7 +511,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 555RUP2XT7;
+				DEVELOPMENT_TEAM = "";
 				IBSC_MODULE = watchOS_Example_WatchKit_Extension;
 				INFOPLIST_FILE = "watchOS Example WatchKit App/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.watchOS-Example.watchkitapp";
@@ -525,7 +529,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 555RUP2XT7;
+				DEVELOPMENT_TEAM = "";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.watchOS-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -538,7 +542,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 555RUP2XT7;
+				DEVELOPMENT_TEAM = "";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.watchOS-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
