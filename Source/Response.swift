@@ -42,6 +42,9 @@ public struct DataResponse<Success, Failure: Error> {
 
     #if !os(Linux)
     /// The final metrics of the response.
+    ///
+    /// - Note: Due to `FB7624529`, collection of `URLSessionTaskMetrics` on watchOS is currently disabled.`
+    ///
     public let metrics: URLSessionTaskMetrics?
     #endif
 
@@ -342,6 +345,9 @@ public struct DownloadResponse<Success, Failure: Error> {
 
     #if !os(Linux)
     /// The final metrics of the response.
+    ///
+    /// - Note: Due to `FB7624529`, collection of `URLSessionTaskMetrics` on watchOS is currently disabled.`
+    ///
     public let metrics: URLSessionTaskMetrics?
     #endif
 

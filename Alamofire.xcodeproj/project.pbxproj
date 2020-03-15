@@ -1669,6 +1669,11 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					CFNetwork,
+					"-Wl,-no_compact_unwind",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire.watchOS;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1687,6 +1692,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					CFNetwork,
+					"-Wl,-no_compact_unwind",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire.watchOS;
 				SDKROOT = watchos;
@@ -1749,7 +1759,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 5.0.2;
+				MARKETING_VERSION = 5.0.3;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1814,7 +1824,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 5.0.2;
+				MARKETING_VERSION = 5.0.3;
 				OTHER_LDFLAGS = (
 					"-framework",
 					CFNetwork,
