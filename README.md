@@ -166,7 +166,6 @@ The following radars have been resolved over time after being filed against the 
 ## Workarounds
 
 - Collection of `URLSessionTaskMetrics` is currently disabled on watchOS due to `FB7624529`.
-- `-no_compact_unwind` linker warning is currently disabled on watchOS due to the persistent existence of the warning.
 
 ## FAQ
 
