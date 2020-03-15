@@ -18,6 +18,4 @@ Pod::Spec.new do |s|
   s.source_files = 'Source/*.swift'
 
   s.frameworks = 'CFNetwork'
-
-  s.watchos.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-Wl,-no_compact_unwind' }
 end
