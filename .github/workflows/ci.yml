@@ -17,7 +17,7 @@ jobs:
     env: 
       DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
     steps:
-      - uses: actions/checkout@v1    
+      - uses: actions/checkout@v2
       - name: macOS
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   iOS:
@@ -29,7 +29,7 @@ jobs:
       matrix:
         destination: ["OS=13.3,name=iPhone 11 Pro"] #, "OS=12.4,name=iPhone XS", "OS=11.4,name=iPhone X", "OS=10.3.1,name=iPhone SE"]
     steps:
-      - uses: actions/checkout@v1            
+      - uses: actions/checkout@v2
       - name: iOS - ${{ matrix.destination }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   tvOS:
@@ -41,7 +41,7 @@ jobs:
       matrix:
         destination: ["OS=13.3,name=Apple TV 4K"] #, "OS=11.4,name=Apple TV 4K", "OS=10.2,name=Apple TV 1080p"]
     steps:
-      - uses: actions/checkout@v1            
+      - uses: actions/checkout@v2
       - name: tvOS - ${{ matrix.destination }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire tvOS" -destination "${{ matrix.destination }}" clean test | xcpretty
   watchOS:
@@ -53,7 +53,7 @@ jobs:
       matrix:
         destination: ["OS=6.1.1,name=Apple Watch Series 5 - 44mm"] #, "OS=4.2,name=Apple Watch Series 3 - 42mm", "OS=3.2,name=Apple Watch Series 2 - 42mm"]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: watchOS - ${{ matrix.destination }}
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire watchOS" -destination "${{ matrix.destination }}" clean build | xcpretty
   spm:
@@ -62,6 +62,6 @@ jobs:
     env: 
       DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: SPM Test
         run: swift test -c debug
