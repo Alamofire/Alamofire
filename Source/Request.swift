@@ -1036,19 +1036,28 @@ public class DataRequest: Request {
 
 // MARK: - DataStreamRequest
 
-/// `Request` subclass which streams HTTP response `Data` through a `StreamHandler` closure.
+/// `Request` subclass which streams HTTP response `Data` through a `Handler` closure.
 public final class DataStreamRequest: Request {
-    /// Closure type handling `DataStreamRequest.Output` values.
-    public typealias StreamHandler<Success, Failure: Error> = (Output<Success, Failure>) throws -> Void
+    /// Closure type handling `DataStreamRequest.Stream` values.
+    public typealias Handler<Success, Failure: Error> = (Stream<Success, Failure>) throws -> Void
 
-    /// Encapsulation of state passed to `StreamHandler` closures. Represent either the `Result` of processing streamed
+    /// Type encapsulating an `Event` as it flows through the stream, as well as a `CancellationToken` which can be used
+    /// to stop the stream at any time.
+    public struct Stream<Success, Failure: Error> {
+        /// Latest `Event` from the stream.
+        public let event: Event<Success, Failure>
+        /// Token used to cancel the stream.
+        public let token: CancellationToken
+    }
+
+    /// Type representing an event flowing through the stream. Contains either the `Result` of processing streamed
     /// `Data` or the completion of the stream.
-    public enum Output<Success, Failure: Error> {
+    public enum Event<Success, Failure: Error> {
         /// Output produced every time the instance receives additional `Data`. The associated value contains the
         /// `Result` of processing the incoming `Data`.
         case stream(Result<Success, Failure>)
         /// Output produced when the instance has completed, whether due to stream end, cancellation, or an error.
-        /// Associated `Completion` value contains some final, relevant state.
+        /// Associated `Completion` value contains the final state.
         case complete(Completion)
     }
 
@@ -1062,6 +1071,20 @@ public final class DataStreamRequest: Request {
         public let metrics: URLSessionTaskMetrics?
         /// `AFError` produced for the instance, if any.
         public let error: AFError?
+    }
+
+    /// Type used to cancel an ongoing stream.
+    public struct CancellationToken {
+        let request: DataStreamRequest
+
+        init(_ request: DataStreamRequest) {
+            self.request = request
+        }
+
+        /// Cancel's the ongoing stream by canceling the underlying `DataStreamRequest`.
+        public func cancel() {
+            request.cancel()
+        }
     }
 
     /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
@@ -1171,9 +1194,9 @@ public final class DataStreamRequest: Request {
     public func asInputStream(bufferSize: Int = 1024) -> InputStream {
         var inputStream: InputStream?
         $streamMutableState.write { state in
-            Stream.getBoundStreams(withBufferSize: bufferSize,
-                                   inputStream: &inputStream,
-                                   outputStream: &state.outputStream)
+            Foundation.Stream.getBoundStreams(withBufferSize: bufferSize,
+                                              inputStream: &inputStream,
+                                              outputStream: &state.outputStream)
             state.outputStream?.open()
         }
 
@@ -1190,16 +1213,17 @@ public final class DataStreamRequest: Request {
     }
 
     func appendStreamCompletion<Success, Failure>(on queue: DispatchQueue,
-                                                  stream: @escaping StreamHandler<Success, Failure>) {
+                                                  stream: @escaping Handler<Success, Failure>) {
         appendResponseSerializer {
             self.underlyingQueue.async {
                 self.responseSerializerDidComplete {
                     queue.async {
                         do {
-                            try stream(.complete(.init(request: self.request,
-                                                       response: self.response,
-                                                       metrics: self.metrics,
-                                                       error: self.error)))
+                            let completion = Completion(request: self.request,
+                                                        response: self.response,
+                                                        metrics: self.metrics,
+                                                        error: self.error)
+                            try stream(.init(event: .complete(completion), token: .init(self)))
                         } catch {
                             // What to do with error?
                         }
@@ -1210,22 +1234,22 @@ public final class DataStreamRequest: Request {
     }
 }
 
-extension DataStreamRequest.Output {
+extension DataStreamRequest.Stream {
     /// `Success` value of the instance.
     public var value: Success? {
-        guard case let .stream(result) = self, case let .success(value) = result else { return nil }
+        guard case let .stream(result) = event, case let .success(value) = result else { return nil }
 
         return value
     }
 
     public var error: Failure? {
-        guard case let .stream(result) = self, case let .failure(error) = result else { return nil }
+        guard case let .stream(result) = event, case let .failure(error) = result else { return nil }
 
         return error
     }
 
     public var completion: DataStreamRequest.Completion? {
-        guard case let .complete(completion) = self else { return nil }
+        guard case let .complete(completion) = event else { return nil }
 
         return completion
     }
