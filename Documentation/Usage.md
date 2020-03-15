@@ -818,6 +818,8 @@ AF.request("https://httpbin.org/get").responseJSON { response in
 }
 ```
 
+> Due to `FB7624529`, collection of `URLSessionTaskMetrics` on watchOS is currently disabled.
+
 ### cURL Command Output
 
 Debugging platform issues can be frustrating. Thankfully, Alamofire's `Request` type can produce the equivalent cURL command for easy debugging. Due to the asynchronous nature of Alamofire's `Request` creation, this API has both synchronous and asynchronous versions. To get the cURL command as soon as possible, you can chain the `cURLDescription` onto a request:

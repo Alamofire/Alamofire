@@ -41,6 +41,9 @@ public struct DataResponse<Success, Failure: Error> {
     public let data: Data?
 
     /// The final metrics of the response.
+    ///
+    /// - Note: Due to `FB7624529`, collection of `URLSessionTaskMetrics` on watchOS is currently disabled.`
+    ///
     public let metrics: URLSessionTaskMetrics?
 
     /// The time taken to serialize the response.
@@ -224,6 +227,9 @@ public struct DownloadResponse<Success, Failure: Error> {
     public let resumeData: Data?
 
     /// The final metrics of the response.
+    ///
+    /// - Note: Due to `FB7624529`, collection of `URLSessionTaskMetrics` on watchOS is currently disabled.`
+    ///
     public let metrics: URLSessionTaskMetrics?
 
     /// The time taken to serialize the response.
