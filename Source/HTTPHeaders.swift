@@ -367,44 +367,41 @@ extension HTTPHeader {
     ///
     /// Example: `iOS Example/1.0 (org.alamofire.iOS-Example; build:1; iOS 13.0.0) Alamofire/5.0.0`
     public static let defaultUserAgent: HTTPHeader = {
-        let userAgent: String = {
-            if let info = Bundle.main.infoDictionary {
-                let executable = info[kCFBundleExecutableKey as String] as? String ?? "Unknown"
-                let bundle = info[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
-                let appVersion = info["CFBundleShortVersionString"] as? String ?? "Unknown"
-                let appBuild = info[kCFBundleVersionKey as String] as? String ?? "Unknown"
+        let info = Bundle.main.infoDictionary
+        let executable = (info?[kCFBundleExecutableKey as String] as? String) ??
+            (ProcessInfo.processInfo.arguments.first?.split(separator: "/").last.map(String.init)) ??
+            "Unknown"
+        let bundle = info?[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
+        let appVersion = info?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let appBuild = info?[kCFBundleVersionKey as String] as? String ?? "Unknown"
 
-                let osNameVersion: String = {
-                    let version = ProcessInfo.processInfo.operatingSystemVersion
-                    let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-                    // swiftformat:disable indent
-                    let osName: String = {
-                    #if os(iOS)
-                        return "iOS"
-                    #elseif os(watchOS)
-                        return "watchOS"
-                    #elseif os(tvOS)
-                        return "tvOS"
-                    #elseif os(macOS)
-                        return "macOS"
-                    #elseif os(Linux)
-                        return "Linux"
-                    #else
-                        return "Unknown"
-                    #endif
-                    }()
-                    // swiftformat:enable indent
+        let osNameVersion: String = {
+            let version = ProcessInfo.processInfo.operatingSystemVersion
+            let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+            let osName: String = {
+                #if os(iOS)
+                return "iOS"
+                #elseif os(watchOS)
+                return "watchOS"
+                #elseif os(tvOS)
+                return "tvOS"
+                #elseif os(macOS)
+                return "macOS"
+                #elseif os(Linux)
+                return "Linux"
+                #elseif os(Windows)
+                return "Windows"
+                #else
+                return "Unknown"
+                #endif
+            }()
 
-                    return "\(osName) \(versionString)"
-                }()
-
-                let alamofireVersion = "Alamofire/\(version)"
-
-                return "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
-            }
-
-            return "Alamofire"
+            return "\(osName) \(versionString)"
         }()
+
+        let alamofireVersion = "Alamofire/\(version)"
+
+        let userAgent = "\(executable)/\(appVersion) (\(bundle); build:\(appBuild); \(osNameVersion)) \(alamofireVersion)"
 
         return .userAgent(userAgent)
     }()
