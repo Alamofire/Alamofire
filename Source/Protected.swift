@@ -24,30 +24,12 @@
 
 import Foundation
 
-// MARK: -
+private protocol Lock {
+    func lock()
+    func unlock()
+}
 
-/// An `os_unfair_lock` wrapper.
-final class UnfairLock {
-    private let unfairLock: os_unfair_lock_t
-
-    init() {
-        unfairLock = .allocate(capacity: 1)
-        unfairLock.initialize(to: os_unfair_lock())
-    }
-
-    deinit {
-        unfairLock.deinitialize(count: 1)
-        unfairLock.deallocate()
-    }
-
-    private func lock() {
-        os_unfair_lock_lock(unfairLock)
-    }
-
-    private func unlock() {
-        os_unfair_lock_unlock(unfairLock)
-    }
-
+extension Lock {
     /// Executes a closure returning a value while acquiring the lock.
     ///
     /// - Parameter closure: The closure to run.
@@ -67,11 +49,71 @@ final class UnfairLock {
     }
 }
 
+/// A `pthread_mutex_t` wrapper.
+final class MutexLock: Lock {
+    private var mutex: UnsafeMutablePointer<pthread_mutex_t>
+
+    init() {
+        mutex = .allocate(capacity: 1)
+
+        var attr = pthread_mutexattr_t()
+        pthread_mutexattr_init(&attr)
+        pthread_mutexattr_settype(&attr, .init(PTHREAD_MUTEX_ERRORCHECK))
+
+        let err = pthread_mutex_init(mutex, &attr)
+
+        precondition(err == 0, "Failed to create pthread_mutex")
+    }
+
+    deinit {
+        pthread_mutex_destroy(mutex)
+    }
+
+    fileprivate func lock() {
+        pthread_mutex_lock(mutex)
+    }
+
+    fileprivate func unlock() {
+        pthread_mutex_unlock(mutex)
+    }
+}
+
+#if !os(Linux)
+
+/// An `os_unfair_lock` wrapper.
+final class UnfairLock: Lock {
+    private let unfairLock: os_unfair_lock_t
+
+    init() {
+        unfairLock = .allocate(capacity: 1)
+        unfairLock.initialize(to: os_unfair_lock())
+    }
+
+    deinit {
+        unfairLock.deinitialize(count: 1)
+        unfairLock.deallocate()
+    }
+
+    fileprivate func lock() {
+        os_unfair_lock_lock(unfairLock)
+    }
+
+    fileprivate func unlock() {
+        os_unfair_lock_unlock(unfairLock)
+    }
+}
+
+#endif
+
 /// A thread-safe wrapper around a value.
 @propertyWrapper
 @dynamicMemberLookup
 final class Protected<T> {
-    private let lock = UnfairLock()
+    #if os(Linux)
+    private let lock: Lock = MutexLock()
+    #else
+    private let lock: Lock = UnfairLock()
+    #endif
     private var value: T
 
     init(_ value: T) {
