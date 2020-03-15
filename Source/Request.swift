@@ -1343,10 +1343,8 @@ public class UploadRequest: DataRequest {
         /// Upload from the provided file `URL`, as well as a `Bool` determining whether the source file should be
         /// automatically removed once uploaded.
         case file(URL, shouldRemove: Bool)
-        #if !os(Linux)
         /// Upload from the provided `InputStream`.
         case stream(InputStream)
-        #endif
     }
 
     // MARK: Initial State
@@ -1422,13 +1420,10 @@ public class UploadRequest: DataRequest {
         switch uploadable {
         case let .data(data): return session.uploadTask(with: request, from: data)
         case let .file(url, _): return session.uploadTask(with: request, fromFile: url)
-        #if !os(Linux)
         case .stream: return session.uploadTask(withStreamedRequest: request)
-        #endif
         }
     }
 
-    #if !os(Linux)
     /// Produces the `InputStream` from `uploadable`, if it can.
     ///
     /// - Note: Calling this method with a non-`.stream` `Uploadable` is a logic error and will crash.
@@ -1447,7 +1442,6 @@ public class UploadRequest: DataRequest {
 
         return stream
     }
-    #endif
 
     public override func cleanup() {
         defer { super.cleanup() }
