@@ -316,6 +316,29 @@ final class DataStreamTests: BaseTestCase {
         XCTAssertTrue(complete?.error?.isExplicitlyCancelledError == false)
     }
 
+    func testThatDataStreamCanBeCancelledInClosure() {
+        // Given
+        let expectedSize = 1000
+        var error: AFError?
+        let expect = expectation(description: "stream should complete")
+
+        // When
+        AF.streamRequest("https://httpbin.org/bytes/\(expectedSize)").responseStream { stream in
+            switch stream.event {
+            case .stream:
+                stream.cancel()
+            case .complete:
+                error = stream.completion?.error
+                expect.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(error?.isExplicitlyCancelledError == true)
+    }
+
     func testThatDataStreamCanBeCancelledByToken() {
         // Given
         let expectedSize = 1000

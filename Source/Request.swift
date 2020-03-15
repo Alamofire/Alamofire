@@ -1048,6 +1048,11 @@ public final class DataStreamRequest: Request {
         public let event: Event<Success, Failure>
         /// Token used to cancel the stream.
         public let token: CancellationToken
+
+        /// Cancel the ongoing stream by canceling the underlying `DataStreamRequest`.
+        public func cancel() {
+            token.cancel()
+        }
     }
 
     /// Type representing an event flowing through the stream. Contains either the `Result` of processing streamed
@@ -1081,7 +1086,7 @@ public final class DataStreamRequest: Request {
             self.request = request
         }
 
-        /// Cancel's the ongoing stream by canceling the underlying `DataStreamRequest`.
+        /// Cancel the ongoing stream by canceling the underlying `DataStreamRequest`.
         public func cancel() {
             request.cancel()
         }
