@@ -152,6 +152,7 @@ The following radars have some effect on the current implementation of Alamofire
 - [`rdar://21349340`](http://www.openradar.me/radar?id=5517037090635776) - Compiler throwing warning due to toll-free bridging issue in test case
 - `rdar://26870455` - Background URL Session Configurations do not work in the simulator
 - `rdar://26849668` - Some URLProtocol APIs do not properly handle `URLRequest`
+- `FB7624529` - `urlSession(_:task:didFinishCollecting:)` never called on watchOS
 
 ## Resolved Radars
 
@@ -161,7 +162,12 @@ The following radars have been resolved over time after being filed against the 
   - (Resolved): 9/1/17 in Xcode 9 beta 6.
 - [`rdar://36082113`](http://openradar.appspot.com/radar?id=4942308441063424) - `URLSessionTaskMetrics` failing to link on watchOS 3.0+
   - (Resolved): Just add `CFNetwork` to your linked frameworks.
-  
+
+## Workarounds
+
+- Collection of `URLSessionTaskMetrics` is currently disabled on watchOS due to `FB7624529`.
+- `-no_compact_unwind` linker warning is currently disabled on watchOS due to the persistent existence of the warning.
+
 ## FAQ
 
 ### What's the origin of the name Alamofire?
