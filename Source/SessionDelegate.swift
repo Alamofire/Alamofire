@@ -49,12 +49,6 @@ open class SessionDelegate: NSObject {
             assertionFailure("StateProvider is nil.")
             return nil
         }
-//
-//        guard let request = provider.request(for: task) as? R else {
-//            fatalError("Returned Request is not of expected type: \(R.self).")
-//        }
-//
-//        return request
 
         return provider.request(for: task) as? R
     }
@@ -326,7 +320,9 @@ extension SessionDelegate: URLSessionDownloadDelegate {
 
             request.didFinishDownloading(using: downloadTask, with: .success(destination))
         } catch {
-            request.didFinishDownloading(using: downloadTask, with: .failure(.downloadedFileMoveFailed(error: error, source: location, destination: destination)))
+            request.didFinishDownloading(using: downloadTask, with: .failure(.downloadedFileMoveFailed(error: error,
+                                                                                                       source: location,
+                                                                                                       destination: destination)))
         }
     }
 }
