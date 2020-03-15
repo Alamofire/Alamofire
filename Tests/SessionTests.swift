@@ -1571,6 +1571,16 @@ final class SessionCancellationTestCase: BaseTestCase {
         final class OnceRetrier: RequestInterceptor {
             private var hasRetried = false
 
+            func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+                if hasRetried {
+                    var request = urlRequest
+                    request.url = URL.makeHTTPBinURL(path: "delay/1")
+                    completion(.success(request))
+                } else {
+                    completion(.success(urlRequest))
+                }
+            }
+
             func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
                 completion(hasRetried ? .doNotRetry : .retry)
                 hasRetried = true

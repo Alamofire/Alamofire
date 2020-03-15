@@ -363,6 +363,8 @@ AF.request(...)
     }
 ```
 
+> Due to `FB7624529`, collection of `URLSessionTaskMetrics` on watchOS is currently disabled.
+
 ### `DataRequest`
 `DataRequest` is a subclass of `Request` which encapsulates a `URLSessionDataTask` downloading a server response into `Data` stored in memory. Therefore, it’s important to realize that extremely large downloads may adversely affect system performance. For those types of downloads, using `DownloadRequest` to save the data to disk is recommended.
 
