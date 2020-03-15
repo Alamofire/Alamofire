@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 `Alamofire` adheres to [Semantic Versioning](https://semver.org/).
 
 #### 5.x Releases
-- `5.0.x` Releases - [5.0.0](#500) | [5.0.1](#501)
+- `5.0.x` Releases - [5.0.0](#500) | [5.0.1](#501) | [5.0.2](#502) | [5.0.3](#503) | [5.0.4](#504)
 - `5.0.0` Release Candidates - [5.0.0-rc.1](#500-rc1) | [5.0.0-rc.2](#500-rc2) | [5.0.0-rc.3](#500-rc3)
 - `5.0.0` Betas - [5.0.0-beta.1](#500-beta1) | [5.0.0-beta.2](#500-beta2) | [5.0.0-beta.3](#500-beta3) | [5.0.0-beta.4](#500-beta4) | [5.0.0-beta.5](#500-beta5) | [5.0.0-beta.6](#500-beta6) | [5.0.0-beta.7](#500-beta7)
 
@@ -40,6 +40,13 @@ All notable changes to this project will be documented in this file.
 - `1.0.x` Releases - [1.0.0](#100) | [1.0.1](#101)
 
 ---
+
+## [5.0.4](https://github.com/Alamofire/Alamofire/releases/tag/5.0.4)
+Released on 2020-03-15. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/68?closed=1).
+
+#### Fixed
+- Incompatibility with bitcode on watchOS.
+  - Fixed by [Roman Podymov](https://github.com/RomanPodymov) in Pull Request [#3112](https://github.com/Alamofire/Alamofire/pull/3112).
 
 ## [5.0.3](https://github.com/Alamofire/Alamofire/releases/tag/5.0.3)
 Released on 2020-03-14. All issues associated with this milestone can be found using this [filter](https://github.com/Alamofire/Alamofire/milestone/67?closed=1).
