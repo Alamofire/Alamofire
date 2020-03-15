@@ -82,23 +82,30 @@ final class UnfairLock: Lock {
 
 /// A `pthread_mutex_t` wrapper.
 final class MutexLock: Lock {
-    private var mutex: pthread_mutex_t
+    private var mutex: UnsafeMutablePointer<pthread_mutex_t>
     
     init() {
-        mutex = pthread_mutex_t()
-        pthread_mutex_init(&mutex, nil)
+        mutex = .allocate(capacity: 1)
+        
+        var attr = pthread_mutexattr_t()
+        pthread_mutexattr_init(&attr)
+        pthread_mutexattr_settype(&attr, .init(PTHREAD_MUTEX_ERRORCHECK))
+        
+        let err = pthread_mutex_init(mutex, &attr)
+        
+        precondition(err == 0, "Failed to create pthread_mutex")
     }
     
     deinit {
-        pthread_mutex_destroy(&mutex)
+        pthread_mutex_destroy(mutex)
     }
     
     fileprivate func lock() {
-        pthread_mutex_lock(&mutex)
+        pthread_mutex_lock(mutex)
     }
     
     fileprivate func unlock() {
-        pthread_mutex_unlock(&mutex)
+        pthread_mutex_unlock(mutex)
     }
 }
 
