@@ -222,7 +222,7 @@ extension DataRequest {
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
-            let start = Date().timeIntervalSinceReferenceDate
+            let start = ProcessInfo.processInfo.systemUptime
             let result: AFResult<Serializer.SerializedObject> = Result {
                 try responseSerializer.serialize(request: self.request,
                                                  response: self.response,
@@ -232,7 +232,7 @@ extension DataRequest {
                 error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             }
 
-            let end = Date().timeIntervalSinceReferenceDate
+            let end = ProcessInfo.processInfo.systemUptime
             // End work that should be on the serialization queue.
 
             self.underlyingQueue.async {
