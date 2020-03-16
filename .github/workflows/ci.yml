@@ -70,6 +70,6 @@ jobs:
     container:
       image: swift:latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: SPM Linux build
         run: swift test -c debug --enable-test-discovery
