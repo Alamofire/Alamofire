@@ -28,11 +28,12 @@ import XCTest
 final class InternalRequestTests: BaseTestCase {
     func testThatMultipleFinishInvocationsDoNotCallSerializersMoreThanOnce() {
         // Given
-        var response: DataResponse<Data?, AFError>?
+        let session = Session(rootQueue: .main)
         let expect = expectation(description: "request complete")
+        var response: DataResponse<Data?, AFError>?
 
         // When
-        let request = AF.request(URLRequest.makeHTTPBinRequest()).response { resp in
+        let request = session.request(URLRequest.makeHTTPBinRequest()).response { resp in
             response = resp
             expect.fulfill()
         }
