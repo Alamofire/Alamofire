@@ -564,7 +564,10 @@ public class Request {
         downloadProgress.totalUnitCount = 0
         downloadProgress.completedUnitCount = 0
 
-        protectedMutableState.write { $0.responseSerializerCompletions = [] }
+        protectedMutableState.write { state in
+            state.isFinishing = false
+            state.responseSerializerCompletions = []
+        }
     }
 
     /// Called when updating the upload progress.
