@@ -62,7 +62,7 @@ class BaseRetryPolicyTestCase: BaseTestCase {
     let nonIdempotentMethods: Set<HTTPMethod> = [.post, .patch, .connect]
     var methods: Set<HTTPMethod> { return idempotentMethods.union(nonIdempotentMethods) }
 
-    let session = Session(startRequestsImmediately: false)
+    let session = Session(rootQueue: .main, startRequestsImmediately: false)
 
     let url = URL(string: "https://api.alamofire.org")!
 
