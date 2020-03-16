@@ -310,5 +310,5 @@ public struct JSONEncoding: ParameterEncoding {
 // MARK: -
 
 extension NSNumber {
-    fileprivate var isBool: Bool { CFBooleanGetTypeID() == CFGetTypeID(self) }
+    fileprivate var isBool: Bool { String(cString: objCType) == "c" }
 }
