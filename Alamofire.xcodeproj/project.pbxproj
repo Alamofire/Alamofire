@@ -694,9 +694,9 @@
 		4CCB20671D4549E000C64D5B /* expired.badssl.com */ = {
 			isa = PBXGroup;
 			children = (
-				4CCB20681D4549E000C64D5B /* expired.badssl.com-leaf.cer */,
 				4CCB206A1D4549E000C64D5B /* expired.badssl.com-intermediate-ca-1.cer */,
 				4CCB206B1D4549E000C64D5B /* expired.badssl.com-intermediate-ca-2.cer */,
+				4CCB20681D4549E000C64D5B /* expired.badssl.com-leaf.cer */,
 				4CCB20691D4549E000C64D5B /* expired.badssl.com-root-ca.cer */,
 			);
 			path = expired.badssl.com;
@@ -791,8 +791,8 @@
 			isa = PBXGroup;
 			children = (
 				4CFB02F21D7D2FA20056F249 /* empty_string.txt */,
-				4CFB02F31D7D2FA20056F249 /* utf32_string.txt */,
 				4CFB02F41D7D2FA20056F249 /* utf8_string.txt */,
+				4CFB02F31D7D2FA20056F249 /* utf32_string.txt */,
 			);
 			path = String;
 			sourceTree = "<group>";
@@ -805,8 +805,8 @@
 				B39E2F851C1A72F8002DA1A9 /* certDER.der */,
 				B39E2F861C1A72F8002DA1A9 /* certPEM.cer */,
 				B39E2F871C1A72F8002DA1A9 /* certPEM.crt */,
-				B39E2F891C1A72F8002DA1A9 /* randomGibberish.crt */,
 				B39E2F8A1C1A72F8002DA1A9 /* keyDER.der */,
+				B39E2F891C1A72F8002DA1A9 /* randomGibberish.crt */,
 			);
 			name = "Varying Encoding Types and Extensions";
 			sourceTree = "<group>";
@@ -1669,11 +1669,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"-framework",
-					CFNetwork,
-					"-Wl,-no_compact_unwind",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire.watchOS;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1692,11 +1687,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"-framework",
-					CFNetwork,
-					"-Wl,-no_compact_unwind",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.alamofire.Alamofire.watchOS;
 				SDKROOT = watchos;
@@ -1759,7 +1749,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 5.0.3;
+				MARKETING_VERSION = 5.0.4;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1824,7 +1814,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 5.0.3;
+				MARKETING_VERSION = 5.0.4;
 				OTHER_LDFLAGS = (
 					"-framework",
 					CFNetwork,
