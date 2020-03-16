@@ -113,6 +113,9 @@ public class Request {
         var retryCount = 0
         /// Final `AFError` for the `Request`, whether from various internal Alamofire calls or as a result of a `task`.
         var error: AFError?
+        /// Whether the instance has had `finish()` called and is running the serializers. Should be replaced with a
+        /// representation in the state machine in the future.
+        var isFinishing = false
     }
 
     /// Protected `MutableState` value that provides thread-safe access to state values.
@@ -456,6 +459,10 @@ public class Request {
     ///
     /// - Parameter error: The possible `Error` with which the instance will finish.
     func finish(error: AFError? = nil) {
+        guard !protectedMutableState.directValue.isFinishing else { return }
+
+        protectedMutableState.directValue.isFinishing = true
+
         if let error = error { self.error = error }
 
         // Start response handlers
@@ -525,6 +532,7 @@ public class Request {
                 }
 
                 mutableState.responseSerializerProcessingFinished = true
+                mutableState.isFinishing = false
             }
 
             completions.forEach { $0() }
