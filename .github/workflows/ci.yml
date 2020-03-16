@@ -7,8 +7,7 @@ on:
       - hotfix
   pull_request:
     branches: 
-      - master
-      - hotfix
+      - '*'
 
 jobs:
   macOS:
