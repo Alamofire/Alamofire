@@ -57,6 +57,6 @@ class BaseTestCase: XCTestCase {
             expect.fulfill()
         }
 
-        waitForExpectations(timeout: timeout)
+        wait(for: [expect], timeout: timeout)
     }
 }
