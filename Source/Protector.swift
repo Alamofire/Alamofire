@@ -89,7 +89,7 @@ final class MutexLock: Lock {
         
         var attr = pthread_mutexattr_t()
         pthread_mutexattr_init(&attr)
-        pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK)
+        pthread_mutexattr_settype(&attr, Int32(PTHREAD_MUTEX_ERRORCHECK))
         
         let err = pthread_mutex_init(mutex, &attr)
         precondition(err == 0, "Failed to init pthread_mutex")
