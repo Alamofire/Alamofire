@@ -45,7 +45,7 @@ extension Lock {
     /// - Parameter closure: The closure to run.
     func around(_ closure: () -> Void) {
         lock(); defer { unlock() }
-        return closure()
+        closure()
     }
 }
 
