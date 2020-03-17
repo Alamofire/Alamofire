@@ -81,7 +81,6 @@ final class MutexLock: Lock {
 #endif
 
 #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
-
 /// An `os_unfair_lock` wrapper.
 final class UnfairLock: Lock {
     private let unfairLock: os_unfair_lock_t
@@ -104,7 +103,6 @@ final class UnfairLock: Lock {
         os_unfair_lock_unlock(unfairLock)
     }
 }
-
 #endif
 
 /// A thread-safe wrapper around a value.
