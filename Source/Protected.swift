@@ -50,6 +50,7 @@ extension Lock {
 }
 
 /// A `pthread_mutex_t` wrapper.
+#if os(Linux)
 final class MutexLock: Lock {
     private var mutex: UnsafeMutablePointer<pthread_mutex_t>
 
@@ -77,6 +78,7 @@ final class MutexLock: Lock {
         pthread_mutex_unlock(mutex)
     }
 }
+#endif
 
 #if !os(Linux)
 
