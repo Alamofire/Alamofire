@@ -80,7 +80,7 @@ final class MutexLock: Lock {
 }
 #endif
 
-#if !os(Linux)
+#if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
 
 /// An `os_unfair_lock` wrapper.
 final class UnfairLock: Lock {
