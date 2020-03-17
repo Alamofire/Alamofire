@@ -93,19 +93,22 @@ final class MutexLock: Lock {
         
         let err = pthread_mutex_init(mutex, &attr)
         
-        precondition(err == 0, "Failed to create pthread_mutex")
+        precondition(err == 0, "Failed to init pthread_mutex")
     }
     
     deinit {
-        pthread_mutex_destroy(mutex)
+        let err = pthread_mutex_destroy(mutex)
+        precondition(err == 0, "Failed to destroy pthread_mutex")
     }
     
     fileprivate func lock() {
-        pthread_mutex_lock(mutex)
+        let err = pthread_mutex_lock(mutex)
+        precondition(err == 0, "Failed to lock pthread_mutex")
     }
     
     fileprivate func unlock() {
-        pthread_mutex_unlock(mutex)
+        let err = pthread_mutex_unlock(mutex)
+        precondition(err == 0, "Failed to unlock pthread_mutex")
     }
 }
 
