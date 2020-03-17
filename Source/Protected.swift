@@ -111,10 +111,10 @@ final class UnfairLock: Lock {
 @propertyWrapper
 @dynamicMemberLookup
 final class Protected<T> {
-    #if os(Linux)
-    private let lock: Lock = MutexLock()
-    #else
-    private let lock: Lock = UnfairLock()
+    #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
+    private let lock = UnfairLock()
+    #elseif os(Linux)
+    private let lock = MutexLock()
     #endif
     private var value: T
 
