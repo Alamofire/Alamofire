@@ -574,7 +574,8 @@ public class Request {
         uploadProgress.totalUnitCount = totalBytesExpectedToSend
         uploadProgress.completedUnitCount = totalBytesSent
 
-        uploadProgressHandler?.queue.async { self.uploadProgressHandler?.handler(self.uploadProgress) }
+        uploadProgressHandler?.queue.async { self.uploadProgressHandler?.handler(self.uploadProgress)
+        }
     }
 
     /// Perform a closure on the current `state` while locked.
@@ -1008,7 +1009,8 @@ public class DataRequest: Request {
         downloadProgress.totalUnitCount = totalBytesExpected
         downloadProgress.completedUnitCount = totalBytesReceived
 
-        downloadProgressHandler?.queue.async { self.downloadProgressHandler?.handler(self.downloadProgress) }
+        downloadProgressHandler?.queue.async { self.downloadProgressHandler?.handler(self.downloadProgress)
+        }
     }
 
     /// Validates the request, using the specified closure.
@@ -1200,7 +1202,8 @@ public class DownloadRequest: Request {
         downloadProgress.totalUnitCount = totalBytesExpectedToWrite
         downloadProgress.completedUnitCount += bytesWritten
 
-        downloadProgressHandler?.queue.async { self.downloadProgressHandler?.handler(self.downloadProgress) }
+        downloadProgressHandler?.queue.async { self.downloadProgressHandler?.handler(self.downloadProgress)
+        }
     }
 
     override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {

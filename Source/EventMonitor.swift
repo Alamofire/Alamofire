@@ -544,8 +544,10 @@ open class ClosureEventMonitor: EventMonitor {
     /// Closure called on the `urlSession(_:didBecomeInvalidWithError:)` event.
     open var sessionDidBecomeInvalidWithError: ((URLSession, Error?) -> Void)?
 
+    #if !os(Linux)
     /// Closure called on the `urlSession(_:task:didReceive:completionHandler:)`.
     open var taskDidReceiveChallenge: ((URLSession, URLSessionTask, URLAuthenticationChallenge) -> Void)?
+    #endif
 
     /// Closure that receives `urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)` event.
     open var taskDidSendBodyData: ((URLSession, URLSessionTask, Int64, Int64, Int64) -> Void)?
@@ -678,9 +680,11 @@ open class ClosureEventMonitor: EventMonitor {
         sessionDidBecomeInvalidWithError?(session, error)
     }
 
+    #if !os(Linux)
     open func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge) {
         taskDidReceiveChallenge?(session, task, challenge)
     }
+    #endif
 
     open func urlSession(_ session: URLSession,
                          task: URLSessionTask,

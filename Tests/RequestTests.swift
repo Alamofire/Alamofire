@@ -546,9 +546,9 @@ final class RequestResponseTestCase: BaseTestCase {
         let eventMonitor = ClosureEventMonitor()
         let session = Session(eventMonitors: [eventMonitor])
 
+        #if !os(Linux)
         let didReceiveChallenge = expectation(description: "didReceiveChallenge should fire")
         
-        #if !os(Linux)
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         #endif
         
@@ -570,7 +570,9 @@ final class RequestResponseTestCase: BaseTestCase {
 
         var dataReceived = false
 
+        #if !os(Linux)
         eventMonitor.taskDidReceiveChallenge = { _, _, _ in didReceiveChallenge.fulfill() }
+        #endif
         
         #if !os(Linux)
         eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }

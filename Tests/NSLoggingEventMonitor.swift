@@ -34,9 +34,11 @@ public final class NSLoggingEventMonitor: EventMonitor {
         NSLog("URLSession: \(session), didBecomeInvalidWithError: \(error?.localizedDescription ?? "None")")
     }
 
+    #if !os(Linux)
     public func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge) {
         NSLog("URLSession: \(session), task: \(task), didReceiveChallenge: \(challenge)")
     }
+    #endif
 
     public func urlSession(_ session: URLSession,
                            task: URLSessionTask,
