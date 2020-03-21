@@ -620,10 +620,8 @@ public class Request {
                 return
             }
 
-            #if !os(Linux)
             // Resume to ensure metrics are gathered.
             task.resume()
-            #endif
             
             task.cancel()
             underlyingQueue.async { self.didCancelTask(task) }
@@ -1279,10 +1277,8 @@ public class DownloadRequest: Request {
             }
 
             if let completionHandler = completionHandler {
-                #if !os(Linux)
                 // Resume to ensure metrics are gathered.
                 task.resume()
-                #endif
                 
                 task.cancel { resumeData in
                     self.protectedDownloadMutableState.write { $0.resumeData = resumeData }
@@ -1290,11 +1286,9 @@ public class DownloadRequest: Request {
                     completionHandler(resumeData)
                 }
             } else {
-                #if !os(Linux)
                 // Resume to ensure metrics are gathered.
                 task.resume()
-                #endif
-
+                
                 task.cancel(byProducingResumeData: { _ in })
                 self.underlyingQueue.async { self.didCancelTask(task) }
             }
