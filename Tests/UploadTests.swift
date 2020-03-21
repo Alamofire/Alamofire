@@ -646,8 +646,11 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         // Given
         let eventMonitor = ClosureEventMonitor()
         let session = Session(eventMonitors: [eventMonitor])
-
+        
+        #if !os(Linux)
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
+        #endif
+        
         let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")
@@ -700,7 +703,10 @@ final class UploadRequestEventsTestCase: BaseTestCase {
         let eventMonitor = ClosureEventMonitor()
         let session = Session(startRequestsImmediately: false, eventMonitors: [eventMonitor])
 
+        #if !os(Linux)
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
+        #endif
+        
         let didCreateInitialURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
         let didCreateURLRequest = expectation(description: "didCreateURLRequest should fire")
         let didCreateTask = expectation(description: "didCreateTask should fire")

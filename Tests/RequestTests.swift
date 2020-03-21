@@ -547,7 +547,11 @@ final class RequestResponseTestCase: BaseTestCase {
         let session = Session(eventMonitors: [eventMonitor])
 
         let didReceiveChallenge = expectation(description: "didReceiveChallenge should fire")
+        
+        #if !os(Linux)
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
+        #endif
+        
         let didReceiveData = expectation(description: "didReceiveData should fire")
         let willCacheResponse = expectation(description: "willCacheResponse should fire")
         let didCreateURLRequest = expectation(description: "didCreateInitialURLRequest should fire")
