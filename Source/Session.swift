@@ -555,7 +555,6 @@ open class Session {
         return upload(.file(fileURL, shouldRemove: false), with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
-    #if !os(Linux)
     // MARK: InputStream
 
     /// Creates an `UploadRequest` from the `InputStream` provided using a `URLRequest` from the provided components and
@@ -599,7 +598,6 @@ open class Session {
                      fileManager: FileManager = .default) -> UploadRequest {
         return upload(.stream(stream), with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
-    #endif
 
     // MARK: MultipartFormData
 

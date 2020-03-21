@@ -179,7 +179,6 @@ extension SessionDelegate: URLSessionTaskDelegate {
                                                                 totalBytesExpectedToSend: totalBytesExpectedToSend)
     }
 
-    #if !os(Linux)
     open func urlSession(_ session: URLSession,
                          task: URLSessionTask,
                          needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
@@ -193,7 +192,6 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         completionHandler(request.inputStream())
     }
-    #endif
 
     open func urlSession(_ session: URLSession,
                          task: URLSessionTask,
