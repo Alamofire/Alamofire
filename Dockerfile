@@ -1,4 +1,4 @@
-FROM swift:latest
+FROM swiftlang/swift:nightly
 
 WORKDIR /alamofire
 COPY . .
