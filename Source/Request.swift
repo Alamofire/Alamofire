@@ -139,9 +139,9 @@ public class Request {
     public typealias ProgressHandler = (Progress) -> Void
 
     /// `Progress` of the upload of the body of the executed `URLRequest`. Reset to `0` if the `Request` is retried.
-    public let uploadProgress = Progress(totalUnitCount: 0)
+    public private(set) var uploadProgress = Progress(totalUnitCount: 0)
     /// `Progress` of the download of any response data. Reset to `0` if the `Request` is retried.
-    public let downloadProgress = Progress(totalUnitCount: 0)
+    public private(set) var downloadProgress = Progress(totalUnitCount: 0)
     /// `ProgressHandler` called when `uploadProgress` is updated, on the provided `DispatchQueue`.
     fileprivate var uploadProgressHandler: (handler: ProgressHandler, queue: DispatchQueue)? {
         get { return protectedMutableState.directValue.uploadProgressHandler }
@@ -557,10 +557,8 @@ public class Request {
     func reset() {
         error = nil
 
-        uploadProgress.totalUnitCount = 0
-        uploadProgress.completedUnitCount = 0
-        downloadProgress.totalUnitCount = 0
-        downloadProgress.completedUnitCount = 0
+        uploadProgress = Progress(totalUnitCount: 0)
+        downloadProgress = Progress(totalUnitCount: 0)
 
         protectedMutableState.write { $0.responseSerializerCompletions = [] }
     }
