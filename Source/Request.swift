@@ -496,9 +496,9 @@ public class Request {
     func finish(error: AFError? = nil) {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        guard !protectedMutableState.directValue.isFinishing else { return }
+        guard !mutableState.isFinishing else { return }
 
-        protectedMutableState.directValue.isFinishing = true
+        mutableState.isFinishing = true
 
         if let error = error { self.error = error }
 
@@ -601,7 +601,7 @@ public class Request {
         downloadProgress.totalUnitCount = 0
         downloadProgress.completedUnitCount = 0
 
-        protectedMutableState.write { state in
+        $mutableState.write { state in
             state.isFinishing = false
             state.responseSerializerCompletions = []
         }
