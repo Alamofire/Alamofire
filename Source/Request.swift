@@ -113,6 +113,9 @@ public class Request {
         var retryCount = 0
         /// Final `AFError` for the `Request`, whether from various internal Alamofire calls or as a result of a `task`.
         var error: AFError?
+        /// Whether the instance has had `finish()` called and is running the serializers. Should be replaced with a
+        /// representation in the state machine in the future.
+        var isFinishing = false
     }
 
     /// Protected `MutableState` value that provides thread-safe access to state values.
@@ -272,6 +275,8 @@ public class Request {
     ///
     /// - Parameter request: The `URLRequest` created.
     func didCreateInitialURLRequest(_ request: URLRequest) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         protectedMutableState.write { $0.requests.append(request) }
 
         eventMonitor?.request(self, didCreateInitialURLRequest: request)
@@ -283,6 +288,8 @@ public class Request {
     ///
     /// - Parameter error: `AFError` thrown from the failed creation.
     func didFailToCreateURLRequest(with error: AFError) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         self.error = error
 
         eventMonitor?.request(self, didFailToCreateURLRequestWithError: error)
@@ -298,6 +305,8 @@ public class Request {
     ///   - initialRequest: The `URLRequest` that was adapted.
     ///   - adaptedRequest: The `URLRequest` returned by the `RequestAdapter`.
     func didAdaptInitialRequest(_ initialRequest: URLRequest, to adaptedRequest: URLRequest) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         protectedMutableState.write { $0.requests.append(adaptedRequest) }
 
         eventMonitor?.request(self, didAdaptInitialRequest: initialRequest, to: adaptedRequest)
@@ -311,6 +320,8 @@ public class Request {
     ///   - request: The `URLRequest` the adapter was called with.
     ///   - error:   The `AFError` returned by the `RequestAdapter`.
     func didFailToAdaptURLRequest(_ request: URLRequest, withError error: AFError) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         self.error = error
 
         eventMonitor?.request(self, didFailToAdaptURLRequest: request, withError: error)
@@ -324,6 +335,8 @@ public class Request {
     ///
     /// - Parameter request: The `URLRequest` created.
     func didCreateURLRequest(_ request: URLRequest) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         eventMonitor?.request(self, didCreateURLRequest: request)
 
         callCURLHandlerIfNecessary()
@@ -343,6 +356,8 @@ public class Request {
     ///
     /// - Parameter task: The `URLSessionTask` created.
     func didCreateTask(_ task: URLSessionTask) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         protectedMutableState.write { $0.tasks.append(task) }
 
         eventMonitor?.request(self, didCreateTask: task)
@@ -350,6 +365,8 @@ public class Request {
 
     /// Called when resumption is completed.
     func didResume() {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         eventMonitor?.requestDidResume(self)
     }
 
@@ -357,11 +374,15 @@ public class Request {
     ///
     /// - Parameter task: The `URLSessionTask` resumed.
     func didResumeTask(_ task: URLSessionTask) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         eventMonitor?.request(self, didResumeTask: task)
     }
 
     /// Called when suspension is completed.
     func didSuspend() {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         eventMonitor?.requestDidSuspend(self)
     }
 
@@ -369,11 +390,15 @@ public class Request {
     ///
     /// - Parameter task: The `URLSessionTask` suspended.
     func didSuspendTask(_ task: URLSessionTask) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         eventMonitor?.request(self, didSuspendTask: task)
     }
 
     /// Called when cancellation is completed, sets `error` to `AFError.explicitlyCancelled`.
     func didCancel() {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         error = AFError.explicitlyCancelled
 
         eventMonitor?.requestDidCancel(self)
@@ -383,6 +408,8 @@ public class Request {
     ///
     /// - Parameter task: The `URLSessionTask` cancelled.
     func didCancelTask(_ task: URLSessionTask) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         eventMonitor?.request(self, didCancelTask: task)
     }
 
@@ -390,6 +417,8 @@ public class Request {
     ///
     /// - Parameter metrics: The `URLSessionTaskMetrics` gathered.
     func didGatherMetrics(_ metrics: URLSessionTaskMetrics) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         protectedMutableState.write { $0.metrics.append(metrics) }
 
         eventMonitor?.request(self, didGatherMetrics: metrics)
@@ -401,6 +430,8 @@ public class Request {
     ///   - task:  The `URLSessionTask` which failed.
     ///   - error: The early failure `AFError`.
     func didFailTask(_ task: URLSessionTask, earlyWithError error: AFError) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         self.error = error
 
         // Task will still complete, so didCompleteTask(_:with:) will handle retry.
@@ -416,7 +447,10 @@ public class Request {
     ///   - error: The `AFError` `task` may have completed with. If `error` has already been set on the instance, this
     ///            value is ignored.
     func didCompleteTask(_ task: URLSessionTask, with error: AFError?) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         self.error = self.error ?? error
+
         protectedValidators.directValue.forEach { $0() }
 
         eventMonitor?.request(self, didCompleteTask: task, with: error)
@@ -426,6 +460,8 @@ public class Request {
 
     /// Called when the `RequestDelegate` is going to retry this `Request`. Calls `reset()`.
     func prepareForRetry() {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         protectedMutableState.write { $0.retryCount += 1 }
 
         reset()
@@ -438,6 +474,8 @@ public class Request {
     ///
     /// - Parameter error: The possible `AFError` which may trigger retry.
     func retryOrFinish(error: AFError?) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
         guard let error = error, let delegate = delegate else { finish(); return }
 
         delegate.retryResult(for: self, dueTo: error) { retryResult in
@@ -456,6 +494,12 @@ public class Request {
     ///
     /// - Parameter error: The possible `Error` with which the instance will finish.
     func finish(error: AFError? = nil) {
+        dispatchPrecondition(condition: .onQueue(underlyingQueue))
+
+        guard !protectedMutableState.directValue.isFinishing else { return }
+
+        protectedMutableState.directValue.isFinishing = true
+
         if let error = error { self.error = error }
 
         // Start response handlers
@@ -525,6 +569,7 @@ public class Request {
                 }
 
                 mutableState.responseSerializerProcessingFinished = true
+                mutableState.isFinishing = false
             }
 
             completions.forEach { $0() }
@@ -556,7 +601,10 @@ public class Request {
         downloadProgress.totalUnitCount = 0
         downloadProgress.completedUnitCount = 0
 
-        protectedMutableState.write { $0.responseSerializerCompletions = [] }
+        protectedMutableState.write { state in
+            state.isFinishing = false
+            state.responseSerializerCompletions = []
+        }
     }
 
     /// Called when updating the upload progress.
