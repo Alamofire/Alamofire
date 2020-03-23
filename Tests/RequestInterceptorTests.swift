@@ -500,16 +500,74 @@ final class InterceptorTestCase: BaseTestCase {
     }
 }
 
-// MARK: -
+// MARK: - Functional Tests
+
+final class InterceptorRequestTests: BaseTestCase {
+    func testThatRetryPolicyRetriesRequestTimeout() {
+        // Given
+        let interceptor = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0.1))
+        let urlRequest = URLRequest.makeHTTPBinRequest(path: "delay/1", timeout: 0.01)
+        let expect = expectation(description: "request completed")
+
+        // When
+        let request = AF.request(urlRequest, interceptor: interceptor).response { _ in
+            expect.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(request.tasks.count, 2, "There should be two tasks, one original, one retry.")
+        XCTAssertEqual(interceptor.retryCalledCount, 2, "retry() should be called twice.")
+        XCTAssertEqual(interceptor.retries, [.retryWithDelay(0.1), .doNotRetry], "RetryResults should retryWithDelay, doNotRetry")
+    }
+}
+
+// MARK: - Helpers
+
+/// Class which captures the output of any underlying `RequestInterceptor`.
+final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterceptor {
+    var onAdaptation: ((Result<URLRequest, Error>) -> Void)?
+    var onRetry: ((RetryResult) -> Void)?
+
+    private(set) var adaptations: [Result<URLRequest, Error>] = []
+    private(set) var retries: [RetryResult] = []
+
+    /// Number of times `retry` was called.
+    var retryCalledCount: Int { return retries.count }
+
+    let interceptor: Interceptor
+
+    init(_ interceptor: Interceptor) {
+        self.interceptor = interceptor
+    }
+
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        interceptor.adapt(urlRequest, for: session) { result in
+            self.adaptations.append(result)
+            completion(result)
+            self.onAdaptation?(result)
+        }
+    }
+
+    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        interceptor.retry(request, for: session, dueTo: error) { result in
+            self.retries.append(result)
+            completion(result)
+            self.onRetry?(result)
+        }
+    }
+}
 
 extension RetryResult: Equatable {
     public static func ==(lhs: RetryResult, rhs: RetryResult) -> Bool {
         switch (lhs, rhs) {
         case (.retry, .retry),
-             (.retryWithDelay, .retryWithDelay),
              (.doNotRetry, .doNotRetry),
              (.doNotRetryWithError, .doNotRetryWithError):
             return true
+        case let (.retryWithDelay(leftDelay), .retryWithDelay(rightDelay)):
+            return leftDelay == rightDelay
         default:
             return false
         }

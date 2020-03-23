@@ -23,6 +23,7 @@
 //
 
 import Alamofire
+import Foundation
 
 extension AFError {
     // ParameterEncodingFailureReason
@@ -173,6 +174,11 @@ extension AFError {
     var isBodyDataInGETRequest: Bool {
         if case let .urlRequestValidationFailed(reason) = self, reason.isBodyDataInGETRequest { return true }
         return false
+    }
+
+    var isHostURLError: Bool {
+        guard let errorCode = (underlyingError as? URLError)?.code else { return false }
+        return [.cannotConnectToHost, .cannotFindHost].contains(errorCode)
     }
 }
 
@@ -352,6 +358,11 @@ extension AFError.ServerTrustFailureReason {
 
     var isRevocationPolicyCreationFailed: Bool {
         if case .revocationPolicyCreationFailed = self { return true }
+        return false
+    }
+
+    var isTrustEvaluationFailed: Bool {
+        if case .trustEvaluationFailed = self { return true }
         return false
     }
 

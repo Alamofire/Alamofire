@@ -1,23 +1,23 @@
 - [Using Alamofire](#using-alamofire)
   * [Introduction](#introduction)
-      - [Aside: The `AF` Namespace](#aside--the--af--namespace)
+      - [Aside: The `AF` Namespace](#aside-the-af-namespace-and-reference)
   * [Making Requests](#making-requests)
     + [HTTP Methods](#http-methods)
     + [Request Parameters and Parameter Encoders](#request-parameters-and-parameter-encoders)
-      - [`URLEncodedFormParameterEncoder`](#-urlencodedformparameterencoder-)
+      - [`URLEncodedFormParameterEncoder`](#urlencodedformparameterencoder)
         * [GET Request With URL-Encoded Parameters](#get-request-with-url-encoded-parameters)
         * [POST Request With URL-Encoded Parameters](#post-request-with-url-encoded-parameters)
         * [Configuring the Sorting of Encoded Parameters](#configuring-the-sorting-of-encoded-parameters)
-        * [Configuring the Encoding of `Array` Parameters](#configuring-the-encoding-of--array--parameters)
-        * [Configuring the Encoding of `Bool` Parameters](#configuring-the-encoding-of--bool--parameters)
-        * [Configuring the Encoding of `Data` Parameters](#configuring-the-encoding-of--data--parameters)
-        * [Configuring the Encoding of `Date` Parameters](#configuring-the-encoding-of--date--parameters)
+        * [Configuring the Encoding of `Array` Parameters](#configuring-the-encoding-of-array-parameters)
+        * [Configuring the Encoding of `Bool` Parameters](#configuring-the-encoding-of-bool-parameters)
+        * [Configuring the Encoding of `Data` Parameters](#configuring-the-encoding-of-data-parameters)
+        * [Configuring the Encoding of `Date` Parameters](#configuring-the-encoding-of-date-parameters)
         * [Configuring the Encoding of Coding Keys](#configuring-the-encoding-of-coding-keys)
         * [Configuring the Encoding of Spaces](#configuring-the-encoding-of-spaces)
-      - [`JSONParameterEncoder`](#-jsonparameterencoder-)
+      - [`JSONParameterEncoder`](#jsonparameterencoder)
         * [POST Request with JSON-Encoded Parameters](#post-request-with-json-encoded-parameters)
-        * [Configuring a Custom `JSONEncoder`](#configuring-a-custom--jsonencoder-)
-        * [Manual Parameter Encoding of a `URLRequest`](#manual-parameter-encoding-of-a--urlrequest-)
+        * [Configuring a Custom `JSONEncoder`](#configuring-a-custom-jsonencoder)
+        * [Manual Parameter Encoding of a `URLRequest`](#manual-parameter-encoding-of-a-urlrequest)
     + [HTTP Headers](#http-headers)
     + [Response Validation](#response-validation)
       - [Automatic Validation](#automatic-validation)
@@ -27,13 +27,13 @@
       - [Response Data Handler](#response-data-handler)
       - [Response String Handler](#response-string-handler)
       - [Response JSON Handler](#response-json-handler)
-      - [Response `Decodable` Handler](#response--decodable--handler)
+      - [Response `Decodable` Handler](#response-decodable-handler)
       - [Chained Response Handlers](#chained-response-handlers)
       - [Response Handler Queue](#response-handler-queue)
     + [Response Caching](#response-caching)
     + [Authentication](#authentication)
       - [HTTP Basic Authentication](#http-basic-authentication)
-      - [Authentication with `URLCredential`](#authentication-with--urlcredential-)
+      - [Authentication with `URLCredential`](#authentication-with-urlcredential)
       - [Manual Authentication](#manual-authentication)
     + [Downloading Data to a File](#downloading-data-to-a-file)
       - [Download File Destination](#download-file-destination)
@@ -45,7 +45,7 @@
       - [Uploading Multipart Form Data](#uploading-multipart-form-data)
       - [Upload Progress](#upload-progress)
     + [Statistical Metrics](#statistical-metrics)
-      - [`URLSessionTaskMetrics`](#-urlsessiontaskmetrics-)
+      - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
     + [cURL Command Output](#curl-command-output)
 
 # Using Alamofire
@@ -55,8 +55,8 @@ Alamofire provides an elegant and composable interface to HTTP network requests.
 
 Additionally, networking in Alamofire (and the URL Loading System in general) is done _asynchronously_. Asynchronous programming may be a source of frustration to programmers unfamiliar with the concept, but there are [very good reasons](https://developer.apple.com/library/ios/qa/qa1693/_index.html) for doing it this way.
 
-#### Aside: The `AF` Namespace
-Previous versions of Alamofire's documentation used examples like `Alamofire.request()`. This API, while it appeared to require the `Alamofire` prefix, in fact worked fine without it. The `request` method and other functions were available globally in any file with `import Alamofire`. Starting in Alamofire 5, this functionality has been moved out of the global [namespace](https://en.wikipedia.org/wiki/Namespace) and into the `AF` enum, which acts as a namespace. This allows Alamofire to offer the same convenience functionality while not having to pollute the global namespace every time Alamofire is used. Similarly, types extended by Alamofire will use an `af` property extension to separate the functionality Alamofire adds from other extensions.
+#### Aside: The `AF` Namespace and Reference
+Previous versions of Alamofire's documentation used examples like `Alamofire.request()`. This API, while it appeared to require the `Alamofire` prefix, in fact worked fine without it. The `request` method and other functions were available globally in any file with `import Alamofire`. Starting in Alamofire 5, this functionality has been removed and instead the `AF` global is a reference to `Session.default`. This allows Alamofire to offer the same convenience functionality while not having to pollute the global namespace every time Alamofire is used and not having to duplicate the `Session` API globally. Similarly, types extended by Alamofire will use an `af` property extension to separate the functionality Alamofire adds from other extensions.
 
 ## Making Requests
 Alamofire provides a variety of convenience methods for making HTTP requests. At the simplest, just provide a `String` that can be converted into a `URL`:
@@ -149,7 +149,7 @@ extension HTTPMethod {
 
 ### Request Parameters and Parameter Encoders
 
-Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder `. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).
+Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder`. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).
 
 ```swift
 struct Login: Encodable {
@@ -211,7 +211,7 @@ AF.request("https://httpbin.org/post", method: .post, parameters: parameters, en
 
 #### Configuring the Sorting of Encoded Values
 
-Since Swift 4.2, the hashing algorithm used by Swift's `Dictionary` type produces a random internal ordering at runtime which differs between app launches. This can cause encoded parameters to change order, which may have an impact on caching and other behaviors. By default `URLEncodedFormEncoder` will sort its encoded key-value pairs. While this produces constant output for all `Encodable` types, it may not match the actual encoding order implemented by the type. You can set `alphabetizeKeyValuePairs` to return to implementation order, though that will also have the randomized `Dictionary` order as well.
+Since Swift 4.2, the hashing algorithm used by Swift's `Dictionary` type produces a random internal ordering at runtime which differs between app launches. This can cause encoded parameters to change order, which may have an impact on caching and other behaviors. By default `URLEncodedFormEncoder` will sort its encoded key-value pairs. While this produces constant output for all `Encodable` types, it may not match the actual encoding order implemented by the type. You can set `alphabetizeKeyValuePairs` to `false` to return to implementation order, though that will also have the randomized `Dictionary` order as well.
 
 You can create your own `URLEncodedFormParameterEncoder` and specify the desired `alphabetizeKeyValuePairs` in the initializer of the passed `URLEncodedFormEncoder`:
 
@@ -560,7 +560,7 @@ Alamofire.request("https://httpbin.org/get")
 
 #### Response Handler Queue
 
-Closures passed to response handlers are executed on the `.main` queue by default, but a specific `DispatchQueue` can passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed on a background queue.
+Closures passed to response handlers are executed on the `.main` queue by default, but a specific `DispatchQueue` can be passed on which to execute the closure. Actual serialization work (conversion of `Data` to some other type) is always executed on a background queue.
 
 ```swift
 let utilityQueue = DispatchQueue.global(qos: .utility)
@@ -817,6 +817,8 @@ AF.request("https://httpbin.org/get").responseJSON { response in
     print(response.metrics)
 }
 ```
+
+> Due to `FB7624529`, collection of `URLSessionTaskMetrics` on watchOS is currently disabled.
 
 ### cURL Command Output
 

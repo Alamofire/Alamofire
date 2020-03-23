@@ -26,7 +26,8 @@ import Alamofire
 import Foundation
 import XCTest
 
-class UploadFileInitializationTestCase: BaseTestCase {
+#if !SWIFT_PACKAGE
+final class UploadFileInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndFile() {
         // Given
         let urlString = "https://httpbin.org/post"
@@ -72,6 +73,7 @@ class UploadFileInitializationTestCase: BaseTestCase {
         XCTAssertNotNil(request.response, "response should not be nil")
     }
 }
+#endif
 
 // MARK: -
 
@@ -122,7 +124,8 @@ class UploadDataInitializationTestCase: BaseTestCase {
 
 // MARK: -
 
-class UploadStreamInitializationTestCase: BaseTestCase {
+#if !SWIFT_PACKAGE
+final class UploadStreamInitializationTestCase: BaseTestCase {
     func testUploadClassMethodWithMethodURLAndStream() {
         // Given
         let urlString = "https://httpbin.org/post"
@@ -170,6 +173,7 @@ class UploadStreamInitializationTestCase: BaseTestCase {
         XCTAssertNotNil(request.response, "response should not be nil, tasks: \(request.tasks)")
     }
 }
+#endif
 
 // MARK: -
 
@@ -200,7 +204,7 @@ class UploadDataTestCase: BaseTestCase {
     func testUploadDataRequestWithProgress() {
         // Given
         let urlString = "https://httpbin.org/post"
-        let string = String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", count: 100)
+        let string = String(repeating: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", count: 300)
         let data = Data(string.utf8)
 
         let expectation = self.expectation(description: "Bytes upload progress should be reported: \(urlString)")
@@ -515,7 +519,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
         }
     }
 
-#if os(macOS)
+    #if os(macOS)
     func disabled_testThatUploadingMultipartFormDataOnBackgroundSessionWritesDataToFileToAvoidCrash() {
         // Given
         let manager: Session = {
@@ -564,7 +568,7 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
             return
         }
     }
-#endif
+    #endif
 
     // MARK: Combined Test Execution
 
@@ -715,7 +719,7 @@ final class UploadRequestEventsTestCase: BaseTestCase {
 
         // When
         let request = session.upload(Data("PAYLOAD".utf8),
-                                     with: URLRequest.makeHTTPBinRequest(path: "post", method: .post)).response { _ in
+                                     with: URLRequest.makeHTTPBinRequest(path: "delay/5", method: .post)).response { _ in
             responseHandler.fulfill()
         }
 
