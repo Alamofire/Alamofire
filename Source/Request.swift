@@ -1457,6 +1457,13 @@ public class UploadRequest: DataRequest {
         }
     }
 
+    override func reset() {
+        // Uploadable must be recreated on every retry.
+        uploadable = nil
+
+        super.reset()
+    }
+
     /// Produces the `InputStream` from `uploadable`, if it can.
     ///
     /// - Note: Calling this method with a non-`.stream` `Uploadable` is a logic error and will crash.
