@@ -559,6 +559,27 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
     }
 }
 
+/// Retry a request once, allowing the second to succeed using the method path.
+final class SingleRetrier: RequestInterceptor {
+    private var hasRetried = false
+
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        if hasRetried {
+            var request = URLRequest.makeHTTPBinRequest(path: "\(urlRequest.httpMethod?.lowercased() ?? "get")")
+            request.method = urlRequest.method
+            request.headers = urlRequest.headers
+            completion(.success(request))
+        } else {
+            completion(.success(urlRequest))
+        }
+    }
+
+    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        completion(hasRetried ? .doNotRetry : .retry)
+        hasRetried = true
+    }
+}
+
 extension RetryResult: Equatable {
     public static func ==(lhs: RetryResult, rhs: RetryResult) -> Bool {
         switch (lhs, rhs) {
