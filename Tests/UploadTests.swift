@@ -641,6 +641,37 @@ class UploadMultipartFormDataTestCase: BaseTestCase {
     }
 }
 
+final class UploadRetryTests: BaseTestCase {
+    func testThatDataUploadRetriesCorrectly() {
+        // Given
+        let request = URLRequest.makeHTTPBinRequest(path: "delay/1",
+                                                    method: .post,
+                                                    headers: [.contentType("text/plain")],
+                                                    timeout: 0.1)
+        let retrier = InspectorInterceptor(SingleRetrier())
+        let didRetry = expectation(description: "request did retry")
+        retrier.onRetry = { _ in didRetry.fulfill() }
+        let session = Session(interceptor: retrier)
+        let body = "body"
+        let data = Data(body.utf8)
+        var response: AFDataResponse<HTTPBinResponse>?
+        let completion = expectation(description: "upload should complete")
+
+        // When
+        session.upload(data, with: request).responseDecodable(of: HTTPBinResponse.self) {
+            response = $0
+            completion.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(retrier.retryCalledCount, 1)
+        XCTAssertTrue(response?.result.isSuccess == true)
+        XCTAssertEqual(response?.value?.data, body)
+    }
+}
+
 final class UploadRequestEventsTestCase: BaseTestCase {
     func testThatUploadRequestTriggersAllAppropriateLifetimeEvents() {
         // Given
