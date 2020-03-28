@@ -734,6 +734,21 @@ final class RequestResponseTestCase: BaseTestCase {
         XCTAssertNotNil(response2?.value)
         XCTAssertNotNil(response3?.value)
     }
+    
+    func testThatRequestsCanHaveCustomTimeoutValueSet() {
+        // Given
+        let url = URL.makeHTTPBinURL(path: "delay/1")
+        let expect = expectation(description: "request completed")
+        var response: AFDataResponse<Data?>?
+        
+        // When
+        AF.request(url, timeout: 0.01).response { response = $0; expect.fulfill() }
+        
+        waitForExpectations(timeout: timeout)
+        
+        // Then
+        XCTAssertEqual((response?.error?.underlyingError as? URLError)?.code, .timedOut)
+    }
 }
 
 // MARK: -

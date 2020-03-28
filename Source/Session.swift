@@ -223,12 +223,15 @@ open class Session {
     struct RequestConvertible: URLRequestConvertible {
         let url: URLConvertible
         let method: HTTPMethod
+        let timeout: TimeInterval
         let parameters: Parameters?
         let encoding: ParameterEncoding
         let headers: HTTPHeaders?
 
         func asURLRequest() throws -> URLRequest {
-            let request = try URLRequest(url: url, method: method, headers: headers)
+            var request = try URLRequest(url: url, method: method, headers: headers)
+            request.timeoutInterval = timeout
+
             return try encoding.encode(request, with: parameters)
         }
     }
@@ -238,6 +241,8 @@ open class Session {
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                  default.
     ///   - parameters:  `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by default.
     ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
     ///                  `URLEncoding.default` by default.
@@ -247,12 +252,14 @@ open class Session {
     /// - Returns:       The created `DataRequest`.
     open func request(_ convertible: URLConvertible,
                       method: HTTPMethod = .get,
+                      timeout: TimeInterval = 60,
                       parameters: Parameters? = nil,
                       encoding: ParameterEncoding = URLEncoding.default,
                       headers: HTTPHeaders? = nil,
                       interceptor: RequestInterceptor? = nil) -> DataRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
+                                             timeout: timeout,
                                              parameters: parameters,
                                              encoding: encoding,
                                              headers: headers)
@@ -263,12 +270,14 @@ open class Session {
     struct RequestEncodableConvertible<Parameters: Encodable>: URLRequestConvertible {
         let url: URLConvertible
         let method: HTTPMethod
+        let timeout: TimeInterval
         let parameters: Parameters?
         let encoder: ParameterEncoder
         let headers: HTTPHeaders?
 
         func asURLRequest() throws -> URLRequest {
-            let request = try URLRequest(url: url, method: method, headers: headers)
+            var request = try URLRequest(url: url, method: method, headers: headers)
+            request.timeoutInterval = timeout
 
             return try parameters.map { try encoder.encode($0, into: request) } ?? request
         }
@@ -280,6 +289,8 @@ open class Session {
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                  default.
     ///   - parameters:  `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
     ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`.
     ///                  `URLEncodedFormParameterEncoder.default` by default.
@@ -289,12 +300,14 @@ open class Session {
     /// - Returns:       The created `DataRequest`.
     open func request<Parameters: Encodable>(_ convertible: URLConvertible,
                                              method: HTTPMethod = .get,
+                                             timeout: TimeInterval = 60,
                                              parameters: Parameters? = nil,
                                              encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                              headers: HTTPHeaders? = nil,
                                              interceptor: RequestInterceptor? = nil) -> DataRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
+                                                      timeout: timeout,
                                                       parameters: parameters,
                                                       encoder: encoder,
                                                       headers: headers)
@@ -330,6 +343,8 @@ open class Session {
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                  default.
     ///   - parameters:  `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by default.
     ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`. Defaults
     ///                  to `URLEncoding.default`.
@@ -341,6 +356,7 @@ open class Session {
     /// - Returns:       The created `DownloadRequest`.
     open func download(_ convertible: URLConvertible,
                        method: HTTPMethod = .get,
+                       timeout: TimeInterval = 60,
                        parameters: Parameters? = nil,
                        encoding: ParameterEncoding = URLEncoding.default,
                        headers: HTTPHeaders? = nil,
@@ -348,6 +364,7 @@ open class Session {
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
+                                             timeout: timeout,
                                              parameters: parameters,
                                              encoding: encoding,
                                              headers: headers)
@@ -361,6 +378,8 @@ open class Session {
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                  default.
     ///   - parameters:  Value conforming to `Encodable` to be encoded into the `URLRequest`. `nil` by default.
     ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`. Defaults
     ///                  to `URLEncodedFormParameterEncoder.default`.
@@ -372,6 +391,7 @@ open class Session {
     /// - Returns:       The created `DownloadRequest`.
     open func download<Parameters: Encodable>(_ convertible: URLConvertible,
                                               method: HTTPMethod = .get,
+                                              timeout: TimeInterval = 60,
                                               parameters: Parameters? = nil,
                                               encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                               headers: HTTPHeaders? = nil,
@@ -379,6 +399,7 @@ open class Session {
                                               to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
+                                                      timeout: timeout,
                                                       parameters: parameters,
                                                       encoder: encoder,
                                                       headers: headers)
@@ -450,6 +471,7 @@ open class Session {
     struct ParameterlessRequestConvertible: URLRequestConvertible {
         let url: URLConvertible
         let method: HTTPMethod
+        let timeout: TimeInterval
         let headers: HTTPHeaders?
 
         func asURLRequest() throws -> URLRequest {
@@ -478,6 +500,8 @@ open class Session {
     ///   - data:        The `Data` to upload.
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                  default.
     ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
@@ -487,10 +511,11 @@ open class Session {
     open func upload(_ data: Data,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
+                     timeout: TimeInterval = 60,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, timeout: timeout, headers: headers)
 
         return upload(data, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
@@ -521,6 +546,8 @@ open class Session {
     ///   - fileURL:     The `URL` of the file to upload.
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                  default.
     ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor: `RequestInterceptor` value to be used by the returned `UploadRequest`. `nil` by default.
     ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
@@ -530,10 +557,14 @@ open class Session {
     open func upload(_ fileURL: URL,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
+                     timeout: TimeInterval = 60,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+        let convertible = ParameterlessRequestConvertible(url: convertible,
+                                                          method: method,
+                                                          timeout: timeout,
+                                                          headers: headers)
 
         return upload(fileURL, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
@@ -565,6 +596,8 @@ open class Session {
     ///   - stream:      The `InputStream` that provides the data to upload.
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                  default.
     ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
@@ -574,10 +607,11 @@ open class Session {
     open func upload(_ stream: InputStream,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
+                     timeout: TimeInterval = 60,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, timeout: timeout, headers: headers)
 
         return upload(stream, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
@@ -625,6 +659,8 @@ open class Session {
     ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
     ///                              default.
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - timeout:                 Time, in seconds, request will spend waiting for an initial response from the
+    ///                              server. 60 by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
@@ -635,10 +671,11 @@ open class Session {
                      to url: URLConvertible,
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      method: HTTPMethod = .post,
+                     timeout: TimeInterval = 60,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
+        let convertible = ParameterlessRequestConvertible(url: url, method: method, timeout: timeout, headers: headers)
 
         let formData = MultipartFormData(fileManager: fileManager)
         multipartFormData(formData)
@@ -715,6 +752,8 @@ open class Session {
     ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
     ///                              default.
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - timeout:                 Time, in seconds, request will spend waiting for an initial response from the
+    ///                              server. 60 by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
@@ -725,10 +764,11 @@ open class Session {
                      to url: URLConvertible,
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      method: HTTPMethod = .post,
+                     timeout: TimeInterval = 60,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
                      fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
+        let convertible = ParameterlessRequestConvertible(url: url, method: method, timeout: timeout, headers: headers)
 
         let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
                                               encodingMemoryThreshold: encodingMemoryThreshold,
