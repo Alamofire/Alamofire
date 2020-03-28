@@ -11,7 +11,7 @@ on:
 
 jobs:
   macOS_5_1:
-    name: Test macOS 
+    name: Test macOS (5.1)
     runs-on: macOS-latest
     env: 
       DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
@@ -20,7 +20,7 @@ jobs:
       - name: macOS
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
   macOS_5_2:
-    name: Test macOS 
+    name: Test macOS (5.2)
     runs-on: macOS-latest
     env: 
       DEVELOPER_DIR: /Applications/Xcode_11.4.0.app/Contents/Developer
