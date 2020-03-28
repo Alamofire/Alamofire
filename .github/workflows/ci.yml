@@ -10,7 +10,7 @@ on:
       - '*'
 
 jobs:
-  macOS(5.1):
+  macOS(5_1):
     name: Test macOS 
     runs-on: macOS-latest
     env: 
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: macOS
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
-  macOS(5.2):
+  macOS(5_2):
     name: Test macOS 
     runs-on: macOS-latest
     env: 
