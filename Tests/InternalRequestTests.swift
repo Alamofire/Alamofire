@@ -1,7 +1,7 @@
 //
-//  Alamofire.swift
+//  InternalRequestTests.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2020 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -22,8 +22,28 @@
 //  THE SOFTWARE.
 //
 
-/// Reference to `Session.default` for quick bootstrapping and examples.
-public let AF = Session.default
+@testable import Alamofire
+import XCTest
 
-/// Current Alamofire version. Necessary since SPM doesn't use dynamic libraries. Plus this will be more accurate.
-let version = "5.0.5"
+final class InternalRequestTests: BaseTestCase {
+    func testThatMultipleFinishInvocationsDoNotCallSerializersMoreThanOnce() {
+        // Given
+        let session = Session(rootQueue: .main, startRequestsImmediately: false)
+        let expect = expectation(description: "request complete")
+        var response: DataResponse<Data?, AFError>?
+
+        // When
+        let request = session.request(URLRequest.makeHTTPBinRequest()).response { resp in
+            response = resp
+            expect.fulfill()
+        }
+        for _ in 0..<100 {
+            request.finish()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertNotNil(response)
+    }
+}

@@ -893,9 +893,10 @@ open class Session {
     ///
     /// - Parameter request: The `Request` to perform.
     func perform(_ request: Request) {
+        // Leaf types must come first, otherwise they will cast as their superclass.
         switch request {
+        case let r as UploadRequest: perform(r) // UploadRequest must come before DataRequest due to subtype relationship.
         case let r as DataRequest: perform(r)
-        case let r as UploadRequest: perform(r)
         case let r as DownloadRequest: perform(r)
         case let r as DataStreamRequest: perform(r)
         default: fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
@@ -1055,7 +1056,11 @@ open class Session {
     // MARK: - Invalidation
 
     func finishRequestsForDeinit() {
-        requestTaskMap.requests.forEach { $0.finish(error: AFError.sessionDeinitialized) }
+        requestTaskMap.requests.forEach { request in
+            rootQueue.async {
+                request.finish(error: AFError.sessionDeinitialized)
+            }
+        }
     }
 }
 
