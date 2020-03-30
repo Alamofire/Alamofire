@@ -879,7 +879,6 @@ Calling `responseJSON(queue:options:completionHandler)` on `DataRequest` or `Dow
 #### `DecodableResponseSerializer`
 Calling `responseDecodable(of:queue:decoder:completionHandler)` on `DataRequest` or `DownloadRequest` uses a `DecodableResponseSerializer`to validate that `Data` has been returned appropriately (no empty responses unless allowed by the `emptyResponseMethods` and `emptyResponseCodes`) and passes that `Data` through the `dataPreprocessor`. The preprocessed `Data` is then passed through the provided `DataDecoder` and parsed into the provided or inferred `Decodable` type.
 
-
 ### Customizing Response Handlers
 In addition to the flexible `ResponseSerializer`s included with Alamofire, there are additional ways to customize response handling. 
 
@@ -930,15 +929,15 @@ To make the `CommaDelimitedSerializer` more useful, additional behaviors could b
 
 ```swift
 public protocol DataStreamSerializer {
-/// Type produced from the serialized `Data`.
-associatedtype SerializedObject
+    /// Type produced from the serialized `Data`.
+    associatedtype SerializedObject
 
-/// Serializes incoming `Data` into a `SerializedObject` value.
-///
-/// - Parameter data: `Data` to be serialized.
-///
-/// - Throws: Any error produced during serialization.
-func serialize(_ data: Data) throws -> SerializedObject
+    /// Serializes incoming `Data` into a `SerializedObject` value.
+    ///
+    /// - Parameter data: `Data` to be serialized.
+    ///
+    /// - Throws: Any error produced during serialization.
+    func serialize(_ data: Data) throws -> SerializedObject
 }
 ```
 
@@ -946,7 +945,7 @@ Any custom `DataStreamSerializer` can be used to process streaming `Data` by usi
 
 ```swift
 AF.streamRequest(...).responseStream(using: CustomSerializer()) { stream in 
-// Process stream.
+    // Process stream.
 }
 ```
 
@@ -954,7 +953,7 @@ Alamofire includes `DecodableStreamSerializer`, a `DataStreamSerializer` which c
 
 ```swift
 AF.streamRequest(...).responseDecodable(of: DecodableType.self) { stream in 
-// Process stream.
+    // Process stream.
 }
 ```
 
@@ -962,7 +961,7 @@ Or by using it directly in the previously mentioned `streamResponse` method:
 
 ```swift
 AF.streamRequest(...).responseStream(using: DecodableStreamSerializer<DecodableType>(decoder: JSONDecoder())) { stream in 
-// Process stream.
+    // Process stream.
 }
 ```
 
