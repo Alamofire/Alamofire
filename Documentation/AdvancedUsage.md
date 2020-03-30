@@ -306,7 +306,7 @@ AF.request(...)
 Alamofire’s `CachedResponseHandler` protocol provides control and customization over the caching of responses. In addition to per-`Session` `CachedResponseHandler`s, each `Request` can be given its own `CachedResponseHandler` which overrides any provided by the `Session`.
 
 ```swift
-let cacher = Cacher(behavior: .cache)
+let cacher = ResponseCacher(behavior: .cache)
 AF.request(...)
     .cacheResponse(using: cacher)
     .responseDecodable(of: SomeType.self) { response in 
