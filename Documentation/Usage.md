@@ -959,7 +959,7 @@ let inputStream = AF.streamRequest(...)
 
 #### Cancellation
 
-`DataStreamRequest`s can be cancelled in three ways. First, like all other Alamofire `Request`s, `DataStreamRequest` can have `cancel()` called, canceling the underlying task and completing the stream.
+`DataStreamRequest`s can be cancelled in four ways. First, like all other Alamofire `Request`s, `DataStreamRequest` can have `cancel()` called, canceling the underlying task and completing the stream.
 
 ```swift
 let request = AF.streamRequest(...).responseStream(...)
@@ -971,6 +971,15 @@ Second, `DataStreamRequest`s can be cancelled automatically when their `DataStre
 
 ```swift
 AF.streamRequest(..., automaticallyCancelOnStreamError: true).responseStream(...)
+```
+
+Third, `DataStreamRequest`s will be cancelled if an error is thrown out of the `Handler` closure. This error is then stored on the request and is available in the `Completion` value.
+
+```swift
+AF.streamRequest(...).responseStream { stream in
+    // Process stream.
+    throw SomeError() // Cancels request.
+}
 ```
 
 Finally, `DataStreamRequest`s can be cancelled by using the `Stream` value's `cancel()` method. 
