@@ -41,10 +41,10 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 
             let request = Session.RequestConvertible(url: url,
                                                      method: method,
-                                                     timeout: 60,
                                                      parameters: nil,
                                                      encoding: URLEncoding.default,
-                                                     headers: nil)
+                                                     headers: nil,
+                                                     requestModifier: nil)
 
             urlRequest = try! request.asURLRequest()
 

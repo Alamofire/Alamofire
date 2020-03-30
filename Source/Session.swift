@@ -220,17 +220,19 @@ open class Session {
 
     // MARK: - DataRequest
 
+    public typealias RequestModifier = (inout URLRequest) throws -> Void
+
     struct RequestConvertible: URLRequestConvertible {
         let url: URLConvertible
         let method: HTTPMethod
-        let timeout: TimeInterval
         let parameters: Parameters?
         let encoding: ParameterEncoding
         let headers: HTTPHeaders?
+        let requestModifier: RequestModifier?
 
         func asURLRequest() throws -> URLRequest {
             var request = try URLRequest(url: url, method: method, headers: headers)
-            request.timeoutInterval = timeout
+            try requestModifier?(&request)
 
             return try encoding.encode(request, with: parameters)
         }
@@ -252,17 +254,17 @@ open class Session {
     /// - Returns:       The created `DataRequest`.
     open func request(_ convertible: URLConvertible,
                       method: HTTPMethod = .get,
-                      timeout: TimeInterval = 60,
                       parameters: Parameters? = nil,
                       encoding: ParameterEncoding = URLEncoding.default,
                       headers: HTTPHeaders? = nil,
-                      interceptor: RequestInterceptor? = nil) -> DataRequest {
+                      interceptor: RequestInterceptor? = nil,
+                      requestModifier: RequestModifier? = nil) -> DataRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
-                                             timeout: timeout,
                                              parameters: parameters,
                                              encoding: encoding,
-                                             headers: headers)
+                                             headers: headers,
+                                             requestModifier: requestModifier)
 
         return request(convertible, interceptor: interceptor)
     }
@@ -270,14 +272,14 @@ open class Session {
     struct RequestEncodableConvertible<Parameters: Encodable>: URLRequestConvertible {
         let url: URLConvertible
         let method: HTTPMethod
-        let timeout: TimeInterval
         let parameters: Parameters?
         let encoder: ParameterEncoder
         let headers: HTTPHeaders?
+        let requestModifier: RequestModifier?
 
         func asURLRequest() throws -> URLRequest {
             var request = try URLRequest(url: url, method: method, headers: headers)
-            request.timeoutInterval = timeout
+            try requestModifier?(&request)
 
             return try parameters.map { try encoder.encode($0, into: request) } ?? request
         }
@@ -300,17 +302,17 @@ open class Session {
     /// - Returns:       The created `DataRequest`.
     open func request<Parameters: Encodable>(_ convertible: URLConvertible,
                                              method: HTTPMethod = .get,
-                                             timeout: TimeInterval = 60,
                                              parameters: Parameters? = nil,
                                              encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                              headers: HTTPHeaders? = nil,
-                                             interceptor: RequestInterceptor? = nil) -> DataRequest {
+                                             interceptor: RequestInterceptor? = nil,
+                                             requestModifier: RequestModifier? = nil) -> DataRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
-                                                      timeout: timeout,
                                                       parameters: parameters,
                                                       encoder: encoder,
-                                                      headers: headers)
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
 
         return request(convertible, interceptor: interceptor)
     }
@@ -356,18 +358,18 @@ open class Session {
     /// - Returns:       The created `DownloadRequest`.
     open func download(_ convertible: URLConvertible,
                        method: HTTPMethod = .get,
-                       timeout: TimeInterval = 60,
                        parameters: Parameters? = nil,
                        encoding: ParameterEncoding = URLEncoding.default,
                        headers: HTTPHeaders? = nil,
                        interceptor: RequestInterceptor? = nil,
+                       requestModifier: RequestModifier? = nil,
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
-                                             timeout: timeout,
                                              parameters: parameters,
                                              encoding: encoding,
-                                             headers: headers)
+                                             headers: headers,
+                                             requestModifier: requestModifier)
 
         return download(convertible, interceptor: interceptor, to: destination)
     }
@@ -391,18 +393,18 @@ open class Session {
     /// - Returns:       The created `DownloadRequest`.
     open func download<Parameters: Encodable>(_ convertible: URLConvertible,
                                               method: HTTPMethod = .get,
-                                              timeout: TimeInterval = 60,
                                               parameters: Parameters? = nil,
                                               encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                               headers: HTTPHeaders? = nil,
                                               interceptor: RequestInterceptor? = nil,
+                                              requestModifier: RequestModifier? = nil,
                                               to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
-                                                      timeout: timeout,
                                                       parameters: parameters,
                                                       encoder: encoder,
-                                                      headers: headers)
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
 
         return download(convertible, interceptor: interceptor, to: destination)
     }
@@ -471,11 +473,14 @@ open class Session {
     struct ParameterlessRequestConvertible: URLRequestConvertible {
         let url: URLConvertible
         let method: HTTPMethod
-        let timeout: TimeInterval
         let headers: HTTPHeaders?
+        let requestModifier: RequestModifier?
 
         func asURLRequest() throws -> URLRequest {
-            try URLRequest(url: url, method: method, headers: headers)
+            var request = try URLRequest(url: url, method: method, headers: headers)
+            try requestModifier?(&request)
+
+            return request
         }
     }
 
@@ -511,11 +516,14 @@ open class Session {
     open func upload(_ data: Data,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
-                     timeout: TimeInterval = 60,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, timeout: timeout, headers: headers)
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         return upload(data, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
@@ -557,14 +565,14 @@ open class Session {
     open func upload(_ fileURL: URL,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
-                     timeout: TimeInterval = 60,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
         let convertible = ParameterlessRequestConvertible(url: convertible,
                                                           method: method,
-                                                          timeout: timeout,
-                                                          headers: headers)
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         return upload(fileURL, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
@@ -607,11 +615,14 @@ open class Session {
     open func upload(_ stream: InputStream,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
-                     timeout: TimeInterval = 60,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, timeout: timeout, headers: headers)
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         return upload(stream, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
@@ -671,11 +682,14 @@ open class Session {
                      to url: URLConvertible,
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      method: HTTPMethod = .post,
-                     timeout: TimeInterval = 60,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: url, method: method, timeout: timeout, headers: headers)
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: url,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         let formData = MultipartFormData(fileManager: fileManager)
         multipartFormData(formData)
@@ -764,11 +778,14 @@ open class Session {
                      to url: URLConvertible,
                      usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      method: HTTPMethod = .post,
-                     timeout: TimeInterval = 60,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: url, method: method, timeout: timeout, headers: headers)
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: url,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
                                               encodingMemoryThreshold: encodingMemoryThreshold,
