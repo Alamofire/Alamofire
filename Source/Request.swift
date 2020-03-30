@@ -1201,12 +1201,14 @@ public final class DataStreamRequest: Request {
 
     func didReceive(data: Data) {
         $streamMutableState.read { state in
-            if state.outputStream != nil {
-                var bytes = Array(data)
-                state.outputStream?.write(&bytes, maxLength: bytes.count)
+            if let stream = state.outputStream {
+                underlyingQueue.async {
+                    var bytes = Array(data)
+                    stream.write(&bytes, maxLength: bytes.count)
+                }
             }
 
-            state.streams.forEach { stream in stream.queue.async { stream.stream(data) } }
+            underlyingQueue.async { state.streams.forEach { stream in stream.queue.async { stream.stream(data) } } }
         }
     }
 
