@@ -232,7 +232,7 @@ extension SessionDelegate: URLSessionDataDelegate {
         } else if let request = request(for: dataTask, as: DataStreamRequest.self) {
             request.didReceive(data: data)
         } else {
-            assertionFailure("dataTask did not find DataRequest.")
+            assertionFailure("dataTask did not find DataRequest or DataStreamRequest in didReceive")
             return
         }
     }
