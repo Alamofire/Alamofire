@@ -1280,7 +1280,7 @@ public final class DataStreamRequest: Request {
                                                         error: self.error)
                             try stream(.init(event: .complete(completion), token: .init(self)))
                         } catch {
-                            // What to do with error?
+                            // Ignore error, as errors on Completion can't be handled anyway.
                         }
                     }
                 }
