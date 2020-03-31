@@ -48,7 +48,7 @@ extension String: URLConvertible {
 
 extension URL: URLConvertible {
     /// Returns `self`.
-    public func asURL() throws -> URL { return self }
+    public func asURL() throws -> URL { self }
 }
 
 extension URLComponents: URLConvertible {
@@ -76,12 +76,12 @@ public protocol URLRequestConvertible {
 
 extension URLRequestConvertible {
     /// The `URLRequest` returned by discarding any `Error` encountered.
-    public var urlRequest: URLRequest? { return try? asURLRequest() }
+    public var urlRequest: URLRequest? { try? asURLRequest() }
 }
 
 extension URLRequest: URLRequestConvertible {
     /// Returns `self`.
-    public func asURLRequest() throws -> URLRequest { return self }
+    public func asURLRequest() throws -> URLRequest { self }
 }
 
 // MARK: -

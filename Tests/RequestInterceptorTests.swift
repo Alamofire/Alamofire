@@ -534,7 +534,7 @@ final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterc
     private(set) var retries: [RetryResult] = []
 
     /// Number of times `retry` was called.
-    var retryCalledCount: Int { return retries.count }
+    var retryCalledCount: Int { retries.count }
 
     let interceptor: Interceptor
 

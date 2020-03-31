@@ -501,8 +501,8 @@ Using a secure HTTPS connection when communicating with servers and web services
 
 ### Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`
 
-#### `ServerTrustEvaluting`
-The `ServerTrustEvaluting` protocol provides a way to perform any sort of server trust evaluation. It has a single requirement:
+#### `ServerTrustEvaluating`
+The `ServerTrustEvaluating` protocol provides a way to perform any sort of server trust evaluation. It has a single requirement:
 
 ```swift
 func evaluate(_ trust: SecTrust, forHost host: String) throws

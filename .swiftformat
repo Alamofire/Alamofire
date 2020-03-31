@@ -1,7 +1,7 @@
 # file options
 
 --symlinks ignore
---swiftversion 5
+--swiftversion 5.1
 
 # rules
 --enable isEmpty

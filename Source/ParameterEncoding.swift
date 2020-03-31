@@ -116,13 +116,13 @@ public struct URLEncoding: ParameterEncoding {
     // MARK: Properties
 
     /// Returns a default `URLEncoding` instance with a `.methodDependent` destination.
-    public static var `default`: URLEncoding { return URLEncoding() }
+    public static var `default`: URLEncoding { URLEncoding() }
 
     /// Returns a `URLEncoding` instance with a `.queryString` destination.
-    public static var queryString: URLEncoding { return URLEncoding(destination: .queryString) }
+    public static var queryString: URLEncoding { URLEncoding(destination: .queryString) }
 
     /// Returns a `URLEncoding` instance with an `.httpBody` destination.
-    public static var httpBody: URLEncoding { return URLEncoding(destination: .httpBody) }
+    public static var httpBody: URLEncoding { URLEncoding(destination: .httpBody) }
 
     /// The destination defining where the encoded query string is to be applied to the URL request.
     public let destination: Destination
@@ -217,7 +217,7 @@ public struct URLEncoding: ParameterEncoding {
     ///
     /// - Returns:          The percent-escaped `String`.
     public func escape(_ string: String) -> String {
-        return string.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) ?? string
+        string.addingPercentEncoding(withAllowedCharacters: .afURLQueryAllowed) ?? string
     }
 
     private func query(_ parameters: [String: Any]) -> String {
@@ -239,10 +239,10 @@ public struct JSONEncoding: ParameterEncoding {
     // MARK: Properties
 
     /// Returns a `JSONEncoding` instance with default writing options.
-    public static var `default`: JSONEncoding { return JSONEncoding() }
+    public static var `default`: JSONEncoding { JSONEncoding() }
 
     /// Returns a `JSONEncoding` instance with `.prettyPrinted` writing options.
-    public static var prettyPrinted: JSONEncoding { return JSONEncoding(options: .prettyPrinted) }
+    public static var prettyPrinted: JSONEncoding { JSONEncoding(options: .prettyPrinted) }
 
     /// The options for writing the parameters as JSON data.
     public let options: JSONSerialization.WritingOptions
@@ -310,5 +310,9 @@ public struct JSONEncoding: ParameterEncoding {
 // MARK: -
 
 extension NSNumber {
-    fileprivate var isBool: Bool { return CFBooleanGetTypeID() == CFGetTypeID(self) }
+    fileprivate var isBool: Bool {
+        // Use Obj-C type encoding to check whether the underlying type is a `Bool`, as it's guaranteed as part of
+        // swift-corelibs-foundation, per [this discussion on the Swift forums](https://forums.swift.org/t/alamofire-on-linux-possible-but-not-release-ready/34553/22).
+        String(cString: objCType) == "c"
+    }
 }
