@@ -49,8 +49,8 @@ extension Lock {
     }
 }
 
-/// A `pthread_mutex_t` wrapper.
 #if os(Linux)
+/// A `pthread_mutex_t` wrapper.
 final class MutexLock: Lock {
     private var mutex: UnsafeMutablePointer<pthread_mutex_t>
 
