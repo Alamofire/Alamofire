@@ -153,10 +153,7 @@ class ServerTrustPolicyTestCase: BaseTestCase {
 extension SecTrust {
     /// Evaluates `self` and returns `true` if the evaluation succeeds with a value of `.unspecified` or `.proceed`.
     var isValid: Bool {
-        var result = SecTrustResultType.invalid
-        let status = SecTrustEvaluate(self, &result)
-
-        return (status == errSecSuccess) ? (result == .unspecified || result == .proceed) : false
+        Result { try af.evaluate() }.isSuccess
     }
 }
 
