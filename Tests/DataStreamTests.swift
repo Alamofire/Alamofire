@@ -218,7 +218,8 @@ final class DataStreamTests: BaseTestCase {
         let expect = expectation(description: "stream complete")
 
         // When
-        let stream = AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "xml", headers: [.contentType("application/xml")]))
+        let stream = AF.streamRequest(URLRequest.makeHTTPBinRequest(path: "xml",
+                                                                    headers: [.contentType("application/xml")]))
             .responseStream { stream in
                 switch stream.event {
                 case .complete:
@@ -230,7 +231,7 @@ final class DataStreamTests: BaseTestCase {
         waitForExpectations(timeout: timeout)
 
         // Then
-        let parser = XMLParser(stream: stream)
+        let parser = XMLParser(stream: stream!)
         let parsed = parser.parse()
         XCTAssertTrue(parsed)
         XCTAssertNil(parser.parserError)

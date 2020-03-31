@@ -1159,14 +1159,20 @@ public final class DataStreamRequest: Request {
     /// Creates a `DataStreamRequest` using the provided parameters.
     ///
     /// - Parameters:
-    ///   - id:                 `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()` by default.
-    ///   - convertible:        `URLRequestConvertible` value used to create `URLRequest`s for this instance.
-    ///   - underlyingQueue:    `DispatchQueue` on which all internal `Request` work is performed.
-    ///   - serializationQueue: `DispatchQueue` on which all serialization work is performed. By default targets
-    ///                         `underlyingQueue`, but can be passed another queue from a `Session`.
-    ///   - eventMonitor:       `EventMonitor` called for event callbacks from internal `Request` actions.
-    ///   - interceptor:        `RequestInterceptor` used throughout the request lifecycle.
-    ///   - delegate:           `RequestDelegate` that provides an interface to actions not performed by the `Request`.
+    ///   - id:                               `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()`
+    ///                                        by default.
+    ///   - convertible:                      `URLRequestConvertible` value used to create `URLRequest`s for this
+    ///                                        instance.
+    ///   - automaticallyCancelOnStreamError: `Bool` indicating whether the instance will be cancelled when an `Error`
+    ///                                       is thrown while serializing stream `Data`.
+    ///   - underlyingQueue:                  `DispatchQueue` on which all internal `Request` work is performed.
+    ///   - serializationQueue:               `DispatchQueue` on which all serialization work is performed. By default
+    ///                                       targets
+    ///                                       `underlyingQueue`, but can be passed another queue from a `Session`.
+    ///   - eventMonitor:                     `EventMonitor` called for event callbacks from internal `Request` actions.
+    ///   - interceptor:                      `RequestInterceptor` used throughout the request lifecycle.
+    ///   - delegate:                         `RequestDelegate` that provides an interface to actions not performed by
+    ///                                       the `Request`.
     init(id: UUID = UUID(),
          convertible: URLRequestConvertible,
          automaticallyCancelOnStreamError: Bool,
@@ -1242,11 +1248,15 @@ public final class DataStreamRequest: Request {
     /// Produces an `InputStream` that receives the `Data` received by the instance.
     ///
     /// - Note: The `InputStream` produced by this method must have `open()` called before being able to read `Data`.
+    ///         Additionally, this method will automatically call `resume()` on the instance, regardless of whether or
+    ///         not the creating session has `startRequestsImmediately` set to `true`.
     ///
     /// - Parameter bufferSize: Size, in bytes, of the buffer between the `OutputStream` and `InputStream`.
     ///
     /// - Returns:              The `InputStream` bound to the internal `OutboundStream`.
-    public func asInputStream(bufferSize: Int = 1024) -> InputStream {
+    public func asInputStream(bufferSize: Int = 1024) -> InputStream? {
+        defer { resume() }
+
         var inputStream: InputStream?
         $streamMutableState.write { state in
             Foundation.Stream.getBoundStreams(withBufferSize: bufferSize,
@@ -1255,7 +1265,7 @@ public final class DataStreamRequest: Request {
             state.outputStream?.open()
         }
 
-        return inputStream!
+        return inputStream
     }
 
     func capturingError(from closure: () throws -> Void) {
@@ -1296,14 +1306,14 @@ extension DataStreamRequest.Stream {
 
         return value
     }
-    
+
     /// `Failure` value of the instance, if any.
     public var error: Failure? {
         guard case let .stream(result) = event, case let .failure(error) = result else { return nil }
 
         return error
     }
-    
+
     /// `Completion` value of the instance, if any.
     public var completion: DataStreamRequest.Completion? {
         guard case let .complete(completion) = event else { return nil }
