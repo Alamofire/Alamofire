@@ -61,21 +61,23 @@ final class MutexLock: Lock {
         pthread_mutexattr_init(&attr)
         pthread_mutexattr_settype(&attr, .init(PTHREAD_MUTEX_ERRORCHECK))
 
-        let err = pthread_mutex_init(mutex, &attr)
-
-        precondition(err == 0, "Failed to create pthread_mutex")
+        let error = pthread_mutex_init(mutex, &attr)
+        precondition(error == 0, "Failed to create pthread_mutex")
     }
 
     deinit {
-        pthread_mutex_destroy(mutex)
+        let error = pthread_mutex_destroy(mutex)
+        precondition(error == 0, "Failed to destroy pthread_mutex")
     }
 
     fileprivate func lock() {
-        pthread_mutex_lock(mutex)
+        let error = pthread_mutex_lock(mutex)
+        precondition(error == 0, "Failed to lock pthread_mutex")
     }
 
     fileprivate func unlock() {
-        pthread_mutex_unlock(mutex)
+        let error = pthread_mutex_unlock(mutex)
+        precondition(error == 0, "Failed to unlock pthread_mutex")
     }
 }
 #endif
