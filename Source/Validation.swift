@@ -36,7 +36,7 @@ extension Request {
         let type: String
         let subtype: String
 
-        var isWildcard: Bool { return type == "*" && subtype == "*" }
+        var isWildcard: Bool { type == "*" && subtype == "*" }
 
         init?(_ string: String) {
             let components: [String] = {
@@ -66,7 +66,7 @@ extension Request {
 
     // MARK: Properties
 
-    fileprivate var acceptableStatusCodes: Range<Int> { return 200..<300 }
+    fileprivate var acceptableStatusCodes: Range<Int> { 200..<300 }
 
     fileprivate var acceptableContentTypes: [String] {
         if let accept = request?.value(forHTTPHeaderField: "Accept") {

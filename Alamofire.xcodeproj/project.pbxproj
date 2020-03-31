@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3106FB6123F8C53A007FAB43 /* ProtectedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */; };
+		3106FB6223F8C53A007FAB43 /* ProtectedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */; };
+		3106FB6323F8C53A007FAB43 /* ProtectedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */; };
 		3107EA3520A11AE100445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
 		3107EA3620A11AE100445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
 		3107EA3720A11AE200445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
@@ -71,10 +74,10 @@
 		317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */; };
 		317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */; };
 		317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */; };
-		3191B5751F5F53A6003960A8 /* Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protector.swift */; };
-		3191B5761F5F53A6003960A8 /* Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protector.swift */; };
-		3191B5771F5F53A6003960A8 /* Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protector.swift */; };
-		3191B5781F5F53A6003960A8 /* Protector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protector.swift */; };
+		3191B5751F5F53A6003960A8 /* Protected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protected.swift */; };
+		3191B5761F5F53A6003960A8 /* Protected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protected.swift */; };
+		3191B5771F5F53A6003960A8 /* Protected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protected.swift */; };
+		3191B5781F5F53A6003960A8 /* Protected.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3191B5741F5F53A6003960A8 /* Protected.swift */; };
 		31991794209CDA7F00103A19 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31991790209CDA7F00103A19 /* Request.swift */; };
 		31991795209CDA7F00103A19 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31991790209CDA7F00103A19 /* Request.swift */; };
 		31991796209CDA7F00103A19 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31991790209CDA7F00103A19 /* Request.swift */; };
@@ -349,6 +352,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectedTests.swift; sourceTree = "<group>"; };
 		3111CE8720A77843008315E2 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
 		3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeadersTests.swift; sourceTree = "<group>"; };
 		311B198F20B0D3B40036823B /* MultipartUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartUpload.swift; sourceTree = "<group>"; };
@@ -361,7 +365,7 @@
 		31727417218BAEC90039FFCC /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		3172741C218BB1790039FFCC /* ParameterEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoder.swift; sourceTree = "<group>"; };
 		31727421218BB9A50039FFCC /* HTTPBin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPBin.swift; sourceTree = "<group>"; };
-		3191B5741F5F53A6003960A8 /* Protector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protector.swift; sourceTree = "<group>"; };
+		3191B5741F5F53A6003960A8 /* Protected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protected.swift; sourceTree = "<group>"; };
 		31991790209CDA7F00103A19 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		31991791209CDA7F00103A19 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
 		31991792209CDA7F00103A19 /* Session.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
@@ -548,6 +552,7 @@
 				3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */,
 				4C3238E61B3604DB00FE04AE /* MultipartFormDataTests.swift */,
 				4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */,
+				3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */,
 				4C0CB64A220CA8D600604EDC /* RedirectHandlerTests.swift */,
 				4C0CB630220BC70300604EDC /* RequestInterceptorTests.swift */,
 				4C0B58381B747A4400C0B99C /* ResponseSerializationTests.swift */,
@@ -710,7 +715,7 @@
 				4CB928281C66BFBC00CE5F08 /* Notifications.swift */,
 				3172741C218BB1790039FFCC /* ParameterEncoder.swift */,
 				4CE2724E1AF88FB500F1D59A /* ParameterEncoding.swift */,
-				3191B5741F5F53A6003960A8 /* Protector.swift */,
+				3191B5741F5F53A6003960A8 /* Protected.swift */,
 				31991790209CDA7F00103A19 /* Request.swift */,
 				319917A4209CDAC400103A19 /* RequestTaskMap.swift */,
 				31991791209CDA7F00103A19 /* Response.swift */,
@@ -1060,7 +1065,6 @@
 					4CF626EE1BA7CB3E0011A099 = {
 						CreatedOnToolsVersion = 7.1;
 						LastSwiftMigration = 0900;
-						ProvisioningStyle = Manual;
 					};
 					4CF626F71BA7CB3E0011A099 = {
 						CreatedOnToolsVersion = 7.1;
@@ -1070,21 +1074,17 @@
 					4DD67C0A1A5C55C900ED2280 = {
 						CreatedOnToolsVersion = 6.1.1;
 						LastSwiftMigration = 0900;
-						ProvisioningStyle = Manual;
 					};
 					E4202FCD1B667AA100C997FB = {
 						LastSwiftMigration = 0900;
-						ProvisioningStyle = Manual;
 					};
 					F8111E3219A95C8B0040E7D1 = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
 					};
 					F8111E3D19A95C8B0040E7D1 = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
 					};
 					F829C6B11A7A94F100A2CD59 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -1268,7 +1268,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CF627081BA7CBF60011A099 /* AFError.swift in Sources */,
-				3191B5771F5F53A6003960A8 /* Protector.swift in Sources */,
+				3191B5771F5F53A6003960A8 /* Protected.swift in Sources */,
 				3199179A209CDA7F00103A19 /* Response.swift in Sources */,
 				31D83FD020D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
 				319917A7209CDAC400103A19 /* RequestTaskMap.swift in Sources */,
@@ -1319,6 +1319,7 @@
 				4CFB02921D7CF28F0056F249 /* FileManager+AlamofireTests.swift in Sources */,
 				4CF627141BA7CC240011A099 /* BaseTestCase.swift in Sources */,
 				4C7DD7ED224C627300249836 /* Result+Alamofire.swift in Sources */,
+				3106FB6323F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
 				31727424218BB9A50039FFCC /* HTTPBin.swift in Sources */,
 				311A89C123185BC0003BB714 /* CachedResponseHandlerTests.swift in Sources */,
 				31EBD9C320D1D89D00D1FF34 /* ValidationTests.swift in Sources */,
@@ -1343,7 +1344,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CE272501AF88FB500F1D59A /* ParameterEncoding.swift in Sources */,
-				3191B5761F5F53A6003960A8 /* Protector.swift in Sources */,
+				3191B5761F5F53A6003960A8 /* Protected.swift in Sources */,
 				4CDE2C471AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				31991799209CDA7F00103A19 /* Response.swift in Sources */,
 				31D83FCF20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
@@ -1383,7 +1384,7 @@
 			files = (
 				4CEE82AD1C6813CF00E9C9F0 /* NetworkReachabilityManager.swift in Sources */,
 				E4202FD01B667AA100C997FB /* ParameterEncoding.swift in Sources */,
-				3191B5781F5F53A6003960A8 /* Protector.swift in Sources */,
+				3191B5781F5F53A6003960A8 /* Protected.swift in Sources */,
 				3199179B209CDA7F00103A19 /* Response.swift in Sources */,
 				31D83FD120D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
 				319917A8209CDAC400103A19 /* RequestTaskMap.swift in Sources */,
@@ -1421,7 +1422,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CE2724F1AF88FB500F1D59A /* ParameterEncoding.swift in Sources */,
-				3191B5751F5F53A6003960A8 /* Protector.swift in Sources */,
+				3191B5751F5F53A6003960A8 /* Protected.swift in Sources */,
 				4CDE2C461AF89FF300BABAE5 /* ResponseSerialization.swift in Sources */,
 				31991798209CDA7F00103A19 /* Response.swift in Sources */,
 				31D83FCE20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift in Sources */,
@@ -1472,6 +1473,7 @@
 				F8858DDD19A96B4300F55F93 /* RequestTests.swift in Sources */,
 				4C256A531B096C770065714F /* BaseTestCase.swift in Sources */,
 				4C7DD7EB224C627300249836 /* Result+Alamofire.swift in Sources */,
+				3106FB6123F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
 				31727422218BB9A50039FFCC /* HTTPBin.swift in Sources */,
 				311A89BF23185BBF003BB714 /* CachedResponseHandlerTests.swift in Sources */,
 				31EBD9C120D1D89C00D1FF34 /* ValidationTests.swift in Sources */,
@@ -1508,6 +1510,7 @@
 				F829C6BE1A7A950600A2CD59 /* ParameterEncodingTests.swift in Sources */,
 				F829C6BF1A7A950600A2CD59 /* RequestTests.swift in Sources */,
 				4C7DD7EC224C627300249836 /* Result+Alamofire.swift in Sources */,
+				3106FB6223F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
 				31727423218BB9A50039FFCC /* HTTPBin.swift in Sources */,
 				311A89C023185BBF003BB714 /* CachedResponseHandlerTests.swift in Sources */,
 				31EBD9C220D1D89C00D1FF34 /* ValidationTests.swift in Sources */,
@@ -1723,7 +1726,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -1747,7 +1750,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 5.0.5;
+				MARKETING_VERSION = 5.1.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1795,7 +1798,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1812,7 +1815,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 5.0.5;
+				MARKETING_VERSION = 5.1.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					CFNetwork,
@@ -1872,7 +1875,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1881,6 +1887,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1889,7 +1897,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1898,6 +1909,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = iphoneos;
 			};
 			name = Release;

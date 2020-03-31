@@ -201,7 +201,7 @@ public protocol EventMonitor {
 
 extension EventMonitor {
     /// The default queue on which `CompositeEventMonitor`s will call the `EventMonitor` methods. `.main` by default.
-    public var queue: DispatchQueue { return .main }
+    public var queue: DispatchQueue { .main }
 
     // MARK: Default Implementations
 

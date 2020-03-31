@@ -72,7 +72,7 @@ class DownloadInitializationTestCase: BaseTestCase {
 
 class DownloadResponseTestCase: BaseTestCase {
     private var randomCachesFileURL: URL {
-        return testDirectoryURL.appendingPathComponent("\(UUID().uuidString).json")
+        testDirectoryURL.appendingPathComponent("\(UUID().uuidString).json")
     }
 
     func testDownloadRequest() {

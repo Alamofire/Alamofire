@@ -64,7 +64,7 @@ extension URLRequest {
 
 extension Data {
     var asString: String {
-        return String(decoding: self, as: UTF8.self)
+        String(decoding: self, as: UTF8.self)
     }
 }
 
