@@ -63,6 +63,10 @@
 		31501E882196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
 		31501E892196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
 		31501E8A2196962A005829F2 /* ParameterEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31501E872196962A005829F2 /* ParameterEncoderTests.swift */; };
+		315A4C56241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */; };
+		315A4C57241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */; };
+		315A4C58241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */; };
+		315A4C59241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */; };
 		31727418218BAEC90039FFCC /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727417218BAEC90039FFCC /* HTTPMethod.swift */; };
 		31727419218BAEC90039FFCC /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727417218BAEC90039FFCC /* HTTPMethod.swift */; };
 		3172741A218BAEC90039FFCC /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31727417218BAEC90039FFCC /* HTTPMethod.swift */; };
@@ -364,6 +368,7 @@
 		312D1E0C1FC2551400E51FF1 /* AdvancedUsage.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = AdvancedUsage.md; path = Documentation/AdvancedUsage.md; sourceTree = "<group>"; };
 		31425AC0241F098000EE3CCC /* InternalRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternalRequestTests.swift; sourceTree = "<group>"; };
 		31501E872196962A005829F2 /* ParameterEncoderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoderTests.swift; sourceTree = "<group>"; };
+		315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringEncoding+Alamofire.swift"; sourceTree = "<group>"; };
 		316250E41F00ABE900E207A6 /* ISSUE_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = ISSUE_TEMPLATE.md; path = .github/ISSUE_TEMPLATE.md; sourceTree = "<group>"; };
 		316250E51F00ACD000E207A6 /* PULL_REQUEST_TEMPLATE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = PULL_REQUEST_TEMPLATE.md; path = .github/PULL_REQUEST_TEMPLATE.md; sourceTree = "<group>"; };
 		31727417218BAEC90039FFCC /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
@@ -656,6 +661,7 @@
 				4C43669A1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift */,
 				319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */,
 				4196936122FA1E05001EA5D5 /* Result+Alamofire.swift */,
+				315A4C55241EF28B00D57C7A /* StringEncoding+Alamofire.swift */,
 				4C0CB640220CA89400604EDC /* URLRequest+Alamofire.swift */,
 				31F5085C20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift */,
 			);
@@ -1070,7 +1076,6 @@
 					4CF626EE1BA7CB3E0011A099 = {
 						CreatedOnToolsVersion = 7.1;
 						LastSwiftMigration = 0900;
-						ProvisioningStyle = Manual;
 					};
 					4CF626F71BA7CB3E0011A099 = {
 						CreatedOnToolsVersion = 7.1;
@@ -1080,21 +1085,17 @@
 					4DD67C0A1A5C55C900ED2280 = {
 						CreatedOnToolsVersion = 6.1.1;
 						LastSwiftMigration = 0900;
-						ProvisioningStyle = Manual;
 					};
 					E4202FCD1B667AA100C997FB = {
 						LastSwiftMigration = 0900;
-						ProvisioningStyle = Manual;
 					};
 					F8111E3219A95C8B0040E7D1 = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
 					};
 					F8111E3D19A95C8B0040E7D1 = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 1020;
-						ProvisioningStyle = Manual;
 					};
 					F829C6B11A7A94F100A2CD59 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -1297,6 +1298,7 @@
 				4CF6270F1BA7CBF60011A099 /* ResponseSerialization.swift in Sources */,
 				4C256A0821EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
 				4C43669D1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
+				315A4C58241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */,
 				4C3D00561C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
 				311B199220B0E3480036823B /* MultipartUpload.swift in Sources */,
 				4C4466ED21F8F5D800AC9703 /* CachedResponseHandler.swift in Sources */,
@@ -1374,6 +1376,7 @@
 				4C0CB642220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4C23EB441B327C5B0090E0BC /* MultipartFormData.swift in Sources */,
 				4C256A0721EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
+				315A4C57241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */,
 				4C43669C1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				4C811F8E1B51856D00E0F59A /* ServerTrustEvaluation.swift in Sources */,
 				311B199120B0E3470036823B /* MultipartUpload.swift in Sources */,
@@ -1413,6 +1416,7 @@
 				4C0CB644220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4C256A0921EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
 				4C43669E1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
+				315A4C59241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */,
 				E4202FD41B667AA100C997FB /* Alamofire.swift in Sources */,
 				311B199320B0E3480036823B /* MultipartUpload.swift in Sources */,
 				4C4466EE21F8F5D800AC9703 /* CachedResponseHandler.swift in Sources */,
@@ -1452,6 +1456,7 @@
 				4C0CB641220CA89400604EDC /* URLRequest+Alamofire.swift in Sources */,
 				4C811F8D1B51856D00E0F59A /* ServerTrustEvaluation.swift in Sources */,
 				4C256A0621EEB69000AD5D87 /* RequestInterceptor.swift in Sources */,
+				315A4C56241EF28B00D57C7A /* StringEncoding+Alamofire.swift in Sources */,
 				4C43669B1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift in Sources */,
 				4C3D00541C66A63000D1F709 /* NetworkReachabilityManager.swift in Sources */,
 				311B199020B0D3B40036823B /* MultipartUpload.swift in Sources */,
@@ -1739,7 +1744,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -1763,7 +1768,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 5.0.5;
+				MARKETING_VERSION = 5.1.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1811,7 +1816,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1828,7 +1833,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				MARKETING_VERSION = 5.0.5;
+				MARKETING_VERSION = 5.1.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					CFNetwork,
@@ -1888,7 +1893,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1897,6 +1905,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1905,7 +1915,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1914,6 +1927,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.alamofire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = iphoneos;
 			};
 			name = Release;
