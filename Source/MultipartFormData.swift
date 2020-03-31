@@ -55,7 +55,10 @@ open class MultipartFormData {
         }
 
         static func randomBoundary() -> String {
-            String(format: "alamofire.boundary.%08x%08x", arc4random(), arc4random())
+            let first = UInt32.random(in: UInt32.min...UInt32.max)
+            let second = UInt32.random(in: UInt32.min...UInt32.max)
+
+            return String(format: "alamofire.boundary.%08x%08x", first, second)
         }
 
         static func boundaryData(forBoundaryType boundaryType: BoundaryType, boundary: String) -> Data {

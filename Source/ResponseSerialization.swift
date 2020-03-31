@@ -214,7 +214,7 @@ extension DataRequest {
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
-            let start = CFAbsoluteTimeGetCurrent()
+            let start = ProcessInfo.processInfo.systemUptime
             let result: AFResult<Serializer.SerializedObject> = Result {
                 try responseSerializer.serialize(request: self.request,
                                                  response: self.response,
@@ -224,7 +224,7 @@ extension DataRequest {
                 error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             }
 
-            let end = CFAbsoluteTimeGetCurrent()
+            let end = ProcessInfo.processInfo.systemUptime
             // End work that should be on the serialization queue.
 
             self.underlyingQueue.async {
@@ -329,7 +329,7 @@ extension DownloadRequest {
         -> Self {
         appendResponseSerializer {
             // Start work that should be on the serialization queue.
-            let start = CFAbsoluteTimeGetCurrent()
+            let start = ProcessInfo.processInfo.systemUptime
             let result: AFResult<Serializer.SerializedObject> = Result {
                 try responseSerializer.serializeDownload(request: self.request,
                                                          response: self.response,
@@ -338,7 +338,7 @@ extension DownloadRequest {
             }.mapError { error in
                 error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
             }
-            let end = CFAbsoluteTimeGetCurrent()
+            let end = ProcessInfo.processInfo.systemUptime
             // End work that should be on the serialization queue.
 
             self.underlyingQueue.async {
@@ -516,10 +516,8 @@ public final class StringResponseSerializer: ResponseSerializer {
 
         var convertedEncoding = encoding
 
-        if let encodingName = response?.textEncodingName as CFString?, convertedEncoding == nil {
-            let ianaCharSet = CFStringConvertIANACharSetNameToEncoding(encodingName)
-            let nsStringEncoding = CFStringConvertEncodingToNSStringEncoding(ianaCharSet)
-            convertedEncoding = String.Encoding(rawValue: nsStringEncoding)
+        if let encodingName = response?.textEncodingName, convertedEncoding == nil {
+            convertedEncoding = String.Encoding(ianaCharsetName: encodingName)
         }
 
         let actualEncoding = convertedEncoding ?? .isoLatin1
