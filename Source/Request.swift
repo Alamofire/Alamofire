@@ -1128,8 +1128,10 @@ public final class DataStreamRequest: Request {
         public let request: URLRequest?
         /// Last `HTTPURLResponse` received by the instance.
         public let response: HTTPURLResponse?
+        #if !os(Linux)
         /// Last `URLSessionTaskMetrics` produced for the instance.
         public let metrics: URLSessionTaskMetrics?
+        #endif
         /// `AFError` produced for the instance, if any.
         public let error: AFError?
     }
@@ -1292,10 +1294,16 @@ public final class DataStreamRequest: Request {
                 self.responseSerializerDidComplete {
                     queue.async {
                         do {
+                            #if os(Linux)
+                            let completion = Completion(request: self.request,
+                                                        response: self.response,
+                                                        error: self.error)
+                            #else
                             let completion = Completion(request: self.request,
                                                         response: self.response,
                                                         metrics: self.metrics,
                                                         error: self.error)
+                            #endif
                             try stream(.init(event: .complete(completion), token: .init(self)))
                         } catch {
                             // Ignore error, as errors on Completion can't be handled anyway.
