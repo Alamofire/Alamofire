@@ -241,15 +241,18 @@ open class Session {
     /// Creates a `DataRequest` from a `URLRequest` created using the passed components and a `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                  default.
-    ///   - parameters:  `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by default.
-    ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
-    ///                  `URLEncoding.default` by default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                      default.
+    ///   - parameters:      `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by
+    ///                      default.
+    ///   - encoding:        `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
+    ///                      `URLEncoding.default` by default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
     /// - Returns:       The created `DataRequest`.
     open func request(_ convertible: URLConvertible,
@@ -353,6 +356,8 @@ open class Session {
     ///                                       is thrown while serializing stream `Data`. `false` by default.
     ///   - interceptor:                      `RequestInterceptor` value to be used by the returned `DataRequest`. `nil`
     ///                                       by default.
+    ///   - requestModifier:                  `RequestModifier` which will be applied to the `URLRequest` created from
+    ///                                       the provided parameters. `nil` by default.
     ///
     /// - Returns:       The created `DataStream` request.
     open func streamRequest<Parameters: Encodable>(_ convertible: URLConvertible,
@@ -385,6 +390,8 @@ open class Session {
     ///                                       is thrown while serializing stream `Data`. `false` by default.
     ///   - interceptor:                      `RequestInterceptor` value to be used by the returned `DataRequest`. `nil`
     ///                                       by default.
+    ///   - requestModifier:                  `RequestModifier` which will be applied to the `URLRequest` created from
+    ///                                       the provided parameters. `nil` by default.
     ///
     /// - Returns:       The created `DataStream` request.
     open func streamRequest(_ convertible: URLConvertible,
@@ -437,19 +444,22 @@ open class Session {
     /// `Destination`.
     ///
     /// - Parameters:
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                  default.
-    ///   - parameters:  `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by default.
-    ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`. Defaults
-    ///                  to `URLEncoding.default`.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
-    ///   - destination: `DownloadRequest.Destination` closure used to determine how and where the downloaded file
-    ///                  should be moved. `nil` by default.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                      default.
+    ///   - parameters:      `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by
+    ///                      default.
+    ///   - encoding:        `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
+    ///                      Defaults to `URLEncoding.default`.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
+    ///   - destination:     `DownloadRequest.Destination` closure used to determine how and where the downloaded file
+    ///                      should be moved. `nil` by default.
     ///
-    /// - Returns:       The created `DownloadRequest`.
+    /// - Returns:           The created `DownloadRequest`.
     open func download(_ convertible: URLConvertible,
                        method: HTTPMethod = .get,
                        parameters: Parameters? = nil,
@@ -472,19 +482,21 @@ open class Session {
     /// a `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                  default.
-    ///   - parameters:  Value conforming to `Encodable` to be encoded into the `URLRequest`. `nil` by default.
-    ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`. Defaults
-    ///                  to `URLEncodedFormParameterEncoder.default`.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
-    ///   - destination: `DownloadRequest.Destination` closure used to determine how and where the downloaded file
-    ///                  should be moved. `nil` by default.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                      default.
+    ///   - parameters:      Value conforming to `Encodable` to be encoded into the `URLRequest`. `nil` by default.
+    ///   - encoder:         `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`.
+    ///                      Defaults to `URLEncodedFormParameterEncoder.default`.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
+    ///   - destination:     `DownloadRequest.Destination` closure used to determine how and where the downloaded file
+    ///                      should be moved. `nil` by default.
     ///
-    /// - Returns:       The created `DownloadRequest`.
+    /// - Returns:           The created `DownloadRequest`.
     open func download<Parameters: Encodable>(_ convertible: URLConvertible,
                                               method: HTTPMethod = .get,
                                               parameters: Parameters? = nil,
@@ -596,17 +608,19 @@ open class Session {
     /// Creates an `UploadRequest` for the given `Data`, `URLRequest` components, and `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - data:        The `Data` to upload.
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                  default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
-    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
-    ///                  default.
+    ///   - data:            The `Data` to upload.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                      default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                      default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
-    /// - Returns:       The created `UploadRequest`.
+    /// - Returns:           The created `UploadRequest`.
     open func upload(_ data: Data,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
@@ -645,17 +659,19 @@ open class Session {
     /// components and `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - fileURL:     The `URL` of the file to upload.
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                  default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `UploadRequest`. `nil` by default.
-    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
-    ///                  default.
+    ///   - fileURL:         The `URL` of the file to upload.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                      default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `UploadRequest`. `nil` by default.
+    ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                      default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
-    /// - Returns:       The created `UploadRequest`.
+    /// - Returns:           The created `UploadRequest`.
     open func upload(_ fileURL: URL,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
@@ -695,17 +711,19 @@ open class Session {
     /// `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - stream:      The `InputStream` that provides the data to upload.
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                  default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
-    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
-    ///                  default.
+    ///   - stream:          The `InputStream` that provides the data to upload.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
+    ///                      default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                      default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
-    /// - Returns:       The created `UploadRequest`.
+    /// - Returns:           The created `UploadRequest`.
     open func upload(_ stream: InputStream,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
@@ -770,6 +788,8 @@ open class Session {
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
     ///                              written to disk before being uploaded. `.default` instance by default.
+    ///   - requestModifier:         `RequestModifier` which will be applied to the `URLRequest` created from the
+    ///                              provided parameters. `nil` by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
@@ -820,6 +840,8 @@ open class Session {
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
     ///                              written to disk before being uploaded. `.default` instance by default.
+    ///   - requestModifier:         `RequestModifier` which will be applied to the `URLRequest` created from the
+    ///                              provided parameters. `nil` by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
@@ -866,6 +888,8 @@ open class Session {
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
     ///                              written to disk before being uploaded. `.default` instance by default.
+    ///   - requestModifier:         `RequestModifier` which will be applied to the `URLRequest` created from the
+    ///                              provided parameters. `nil` by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: MultipartFormData,
