@@ -44,6 +44,11 @@
       - [Uploading a File](#uploading-a-file)
       - [Uploading Multipart Form Data](#uploading-multipart-form-data)
       - [Upload Progress](#upload-progress)
+    + [Streaming Data from a Server](#streaming-data-from-a-server)
+      - [Streaming `Data`](#streaming-data)
+      - [Streaming `String`s](#streaming-strings)
+      - [Streaming `Decodable` Values](#streaming-decodable-values)
+      - [Producing an `InputStream`](#producing-an-inputstream)
     + [Statistical Metrics](#statistical-metrics)
       - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
     + [cURL Command Output](#curl-command-output)
@@ -709,10 +714,10 @@ AF.download("https://httpbin.org/image/png")
 The `downloadProgress` API can also take a `queue` parameter which defines which `DispatchQueue` the download progress closure should be called on.
 
 ```swift
-let utilityQueue = DispatchQueue.global(qos: .utility)
+let progressQueue = DispatchQueue(label: "com.alamofire.progressQueue", qos: .utility)
 
 AF.download("https://httpbin.org/image/png")
-    .downloadProgress(queue: utilityQueue) { progress in
+    .downloadProgress(queue: progressQueue) { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
     .responseData { response in
@@ -760,7 +765,7 @@ When sending relatively small amounts of data to a server using JSON or URL enco
 ```swift
 let data = Data("data".utf8)
 
-AF.upload(data, to: "https://httpbin.org/post").responseJSON { response in
+AF.upload(data, to: "https://httpbin.org/post").responseDecodable(of: HTTPBinResponse.self) { response in
     debugPrint(response)
 }
 ```
@@ -770,7 +775,7 @@ AF.upload(data, to: "https://httpbin.org/post").responseJSON { response in
 ```swift
 let fileURL = Bundle.main.url(forResource: "video", withExtension: "mov")
 
-AF.upload(fileURL, to: "https://httpbin.org/post").responseJSON { response in
+AF.upload(fileURL, to: "https://httpbin.org/post").responseDecodable(of: HTTPBinResponse.self) { response in
     debugPrint(response)
 }
 ```
@@ -782,7 +787,7 @@ AF.upload(multipartFormData: { multipartFormData in
     multipartFormData.append(Data("one".utf8), withName: "one")
     multipartFormData.append(Data("two".utf8), withName: "two")
 }, to: "https://httpbin.org/post")
-    .responseJSON { response in
+    .responseDecodable(of: HTTPBinResponse.self) { response in
         debugPrint(response)
     }
 ```
@@ -801,9 +806,189 @@ AF.upload(fileURL, to: "https://httpbin.org/post")
     .downloadProgress { progress in
         print("Download Progress: \(progress.fractionCompleted)")
     }
-    .responseJSON { response in
+    .responseDecodable(of: HTTPBinResponse.self) { response in
         debugPrint(response)
     }
+```
+
+### Streaming Data from a Server
+
+Large downloads or long lasting server connections which receive data over time may be better served by streaming rather than accumulating `Data` as it arrives. Alamofire offers the `DataStreamRequest` type and associated APIs to handle this usage. Although it offers much of the same API as other `Request`s, there are several key differences. Most notably, `DataStreamRequest` never accumulates `Data` in memory or saves it to disk. Instead, added `responseStream` closures are repeatedly called as `Data` arrives. The same closures are called again when the connection has completed or received an error.
+
+Every `Handler` closure captures a `Stream` value, which contains both the `Event` being processed as well as a `CancellationToken`, which can be used to cancel the request.
+
+```swift
+public struct Stream<Success, Failure: Error> {
+    /// Latest `Event` from the stream.
+    public let event: Event<Success, Failure>
+    /// Token used to cancel the stream.
+    public let token: CancellationToken
+    /// Cancel the ongoing stream by canceling the underlying `DataStreamRequest`.
+    public func cancel() {
+        token.cancel()
+    }
+}
+```
+
+An `Event` is an `enum` representing two possible stream states.
+
+```swift
+public enum Event<Success, Failure: Error> {
+    /// Output produced every time the instance receives additional `Data`. The associated value contains the
+    /// `Result` of processing the incoming `Data`.
+    case stream(Result<Success, Failure>)
+    /// Output produced when the instance has completed, whether due to stream end, cancellation, or an error.
+    /// Associated `Completion` value contains the final state.
+    case complete(Completion)
+}
+```
+
+When complete, the `Completion` value will contain the state of the `DataStreamRequest` when the stream ended.
+
+```swift
+public struct Completion {
+    /// Last `URLRequest` issued by the instance.
+    public let request: URLRequest?
+    /// Last `HTTPURLResponse` received by the instance.
+    public let response: HTTPURLResponse?
+    /// Last `URLSessionTaskMetrics` produced for the instance.
+    public let metrics: URLSessionTaskMetrics?
+    /// `AFError` produced for the instance, if any.
+    public let error: AFError?
+}
+```
+
+#### Streaming `Data`
+
+Streaming `Data` from a server can be accomplished like other Alamofire requests, but with a `Handler` closure added.
+
+```swift
+func responseStream(on queue: DispatchQueue = .main, stream: @escaping Handler<Data, Never>) -> Self
+```
+
+The provided `queue` is where the `Handler` closure will be called.
+
+```swift
+AF.streamRequest(...).responseStream { stream in
+    switch stream.event {
+    case let .stream(result):
+        switch result {
+        case let .success(data):
+            print(data)
+        }
+    case let .complete(completion):
+        print(completion)
+    }
+}
+```
+
+> Handling the `.failure` case of the `Result` in the example above is unnecessary, as receiving `Data` can never fail.
+
+#### Streaming `String`s
+
+Like `Data` streaming, `String`s can be streamed by adding a `Handler`.
+
+```swift
+func responseStreamString(on queue: DispatchQueue = .main,
+                          stream: @escaping StreamHandler<String, Never>) -> Self
+```
+
+`String` values are decoded as `UTF8` and the decoding cannot fail.
+
+```swift
+AF.streamRequest(...).responseStreamString { stream in
+    switch stream.event {
+    case let .stream(result):
+        switch result {
+        case let .success(string):
+            print(string)
+        }
+    case let .complete(completion):
+        print(completion)
+    }
+}
+```
+
+#### Streaming `Decodable` Values
+
+Incoming stream `Data` values can be turned into any `Decodable` value using `responseStreamDecodable`.
+
+```swift
+func responseStreamDecodable<T: Decodable>(of type: T.Type = T.self,
+                                           on queue: DispatchQueue = .main,
+                                           using decoder: DataDecoder = JSONDecoder(),
+                                           preprocessor: DataPreprocessor = PassthroughPreprocessor(),
+                                           stream: @escaping Handler<T, AFError>) -> Self
+```
+
+Decoding failures do not end the stream, but instead produce an `AFError` in the `Result` of the `Output`.
+
+```swift
+AF.streamRequest(...).responseStreamDecodable(of: SomeType.self) { stream in
+    switch stream.event {
+    case let .stream(result):
+        switch result {
+        case let .success(value):
+            print(value)
+        case let .failure(error):
+            print(error)
+        }
+    case let .complete(completion):
+        print(completion)
+    }
+}
+```
+
+#### Producing an `InputStream`
+
+In addition to handling incoming `Data` using `StreamHandler` closures, `DataStreamRequest` can produce an `InputStream` value which can be used to read bytes as they arrive.
+
+```swift
+func asInputStream(bufferSize: Int = 1024) -> InputStream
+```
+
+`InputStream`s produced in this manner must have `open()` called before reading can start, or be passed to an API that opens the stream automatically. Once returned from this method, it's the caller's responsibility to keep the `InputStream` value alive and to call `close()` after reading is complete.
+
+```swift
+let inputStream = AF.streamRequest(...)
+    .responseStream { output in
+        ...
+    }
+    .asInputStream()
+```
+
+#### Cancellation
+
+`DataStreamRequest`s can be cancelled in four ways. First, like all other Alamofire `Request`s, `DataStreamRequest` can have `cancel()` called, canceling the underlying task and completing the stream.
+
+```swift
+let request = AF.streamRequest(...).responseStream(...)
+...
+request.cancel()
+```
+
+Second, `DataStreamRequest`s can be cancelled automatically when their `DataStreamSerializer` encounters and error. This behavior is disabled by default and can be enabled by passing the `automaticallyCancelOnStreamError` parameter when creating the request.
+
+```swift
+AF.streamRequest(..., automaticallyCancelOnStreamError: true).responseStream(...)
+```
+
+Third, `DataStreamRequest`s will be cancelled if an error is thrown out of the `Handler` closure. This error is then stored on the request and is available in the `Completion` value.
+
+```swift
+AF.streamRequest(...).responseStream { stream in
+    // Process stream.
+    throw SomeError() // Cancels request.
+}
+```
+
+Finally, `DataStreamRequest`s can be cancelled by using the `Stream` value's `cancel()` method. 
+
+```swift
+AF.streamRequest(...).responseStream { stream in 
+    // Decide to cancel request.
+    stream.cancel()
+}
 ```
 
 ### Statistical Metrics
