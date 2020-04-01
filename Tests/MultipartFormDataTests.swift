@@ -51,12 +51,12 @@ struct BoundaryGenerator {
     }
 
     static func boundaryData(boundaryType: BoundaryType, boundaryKey: String) -> Data {
-        return Data(BoundaryGenerator.boundary(forBoundaryType: boundaryType,
-                                               boundaryKey: boundaryKey).utf8)
+        Data(BoundaryGenerator.boundary(forBoundaryType: boundaryType,
+                                        boundaryKey: boundaryKey).utf8)
     }
 }
 
-private func temporaryFileURL() -> URL { return BaseTestCase.testDirectoryURL.appendingPathComponent(UUID().uuidString) }
+private func temporaryFileURL() -> URL { BaseTestCase.testDirectoryURL.appendingPathComponent(UUID().uuidString) }
 
 // MARK: -
 

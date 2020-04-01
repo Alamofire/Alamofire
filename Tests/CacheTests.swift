@@ -56,12 +56,12 @@ class CacheTestCase: BaseTestCase {
         static let noStore = "no-store"
 
         static var allValues: [String] {
-            return [CacheControl.publicControl,
-                    CacheControl.privateControl,
-                    CacheControl.maxAgeNonExpired,
-                    CacheControl.maxAgeExpired,
-                    CacheControl.noCache,
-                    CacheControl.noStore]
+            [CacheControl.publicControl,
+             CacheControl.privateControl,
+             CacheControl.maxAgeNonExpired,
+             CacheControl.maxAgeExpired,
+             CacheControl.noCache,
+             CacheControl.noStore]
         }
     }
 
@@ -93,7 +93,6 @@ class CacheTestCase: BaseTestCase {
             #else
             return URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
             #endif
-            // swiftformat:enable indent
         }()
 
         manager = {

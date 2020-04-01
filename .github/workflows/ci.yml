@@ -19,6 +19,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: macOS
         run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire macOS" -destination "platform=macOS" clean test | xcpretty
+  Catalyst:
+    name: Test Catalyst 
+    runs-on: macOS-latest
+    env: 
+      DEVELOPER_DIR: /Applications/Xcode_11.3.1.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v2
+      - name: Catalyst
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -project "Alamofire.xcodeproj" -scheme "Alamofire iOS" -destination "platform=macOS" clean test | xcpretty
   iOS:
     name: Test iOS 
     runs-on: macOS-latest

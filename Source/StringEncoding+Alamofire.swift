@@ -1,7 +1,7 @@
 //
 //  StringEncoding+Alamofire.swift
 //
-//  Copyright (c) 2019 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2020 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,11 @@
 import Foundation
 
 extension String.Encoding {
-    
+    /// Creates an encoding from the IANA charset name.
+    ///
+    /// - Notes: These mappings match those [provided by CoreFoundation](https://opensource.apple.com/source/CF/CF-476.18/CFStringUtilities.c.auto.html)
+    ///
+    /// - Parameter name: IANA charset name.
     init?(ianaCharsetName name: String) {
         switch name.lowercased() {
         case "utf-8":
@@ -48,5 +52,4 @@ extension String.Encoding {
             return nil
         }
     }
-    
 }

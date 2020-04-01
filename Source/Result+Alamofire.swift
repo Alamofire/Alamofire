@@ -30,6 +30,17 @@ public typealias AFResult<Success> = Result<Success, AFError>
 // MARK: - Internal APIs
 
 extension Result {
+    /// Returns whether the instance is `.success`.
+    var isSuccess: Bool {
+        guard case .success = self else { return false }
+        return true
+    }
+
+    /// Returns whether the instance is `.failure`.
+    var isFailure: Bool {
+        !isSuccess
+    }
+
     /// Returns the associated value if the result is a success, `nil` otherwise.
     var success: Success? {
         guard case let .success(value) = self else { return nil }

@@ -93,7 +93,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = DataResponseSerializer()
-        let request = URLRequest.make(method: .get)
+        let request = URLRequest.makeHTTPBinRequest()
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -109,7 +109,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = DataResponseSerializer()
-        let request = URLRequest.make(method: .get)
+        let request = URLRequest.makeHTTPBinRequest()
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -125,7 +125,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatDataResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = DataResponseSerializer()
-        let request = URLRequest.make(method: .head)
+        let request = URLRequest.makeHTTPBinRequest(method: .head)
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -273,7 +273,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = StringResponseSerializer()
-        let request = URLRequest.make(method: .get)
+        let request = URLRequest.makeHTTPBinRequest()
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -289,7 +289,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = StringResponseSerializer()
-        let request = URLRequest.make(method: .get)
+        let request = URLRequest.makeHTTPBinRequest()
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -305,7 +305,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatStringResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = StringResponseSerializer()
-        let request = URLRequest.make(method: .head)
+        let request = URLRequest.makeHTTPBinRequest(method: .head)
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -410,7 +410,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
-        let request = URLRequest.make(method: .get)
+        let request = URLRequest.makeHTTPBinRequest()
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -426,7 +426,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
-        let request = URLRequest.make(method: .get)
+        let request = URLRequest.makeHTTPBinRequest()
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -442,7 +442,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
     func testThatJSONResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = JSONResponseSerializer()
-        let request = URLRequest.make(method: .head)
+        let request = URLRequest.makeHTTPBinRequest(method: .head)
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -461,7 +461,7 @@ final class DataResponseSerializationTestCase: BaseTestCase {
 // used by testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithEmptyResponseConformingTypeAndEmptyResponseStatusCode
 extension Bool: EmptyResponse {
     public static func emptyValue() -> Bool {
-        return true
+        true
     }
 }
 
@@ -470,7 +470,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
 
     struct DecodableValue: Decodable, EmptyResponse {
         static func emptyValue() -> DecodableValue {
-            return DecodableValue(string: "")
+            DecodableValue(string: "")
         }
 
         let string: String
@@ -593,7 +593,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
     func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd204ResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
-        let request = URLRequest.make(method: .get)
+        let request = URLRequest.makeHTTPBinRequest()
         let response = HTTPURLResponse(statusCode: 204)
 
         // When
@@ -608,7 +608,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
     func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithGETRequestAnd205ResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
-        let request = URLRequest.make(method: .get)
+        let request = URLRequest.makeHTTPBinRequest()
         let response = HTTPURLResponse(statusCode: 205)
 
         // When
@@ -623,7 +623,7 @@ final class DecodableResponseSerializerTests: BaseTestCase {
     func testThatDecodableResponseSerializerSucceedsWhenDataIsNilWithHEADRequestAnd200ResponseStatusCode() {
         // Given
         let serializer = DecodableResponseSerializer<Empty>()
-        let request = URLRequest.make(method: .head)
+        let request = URLRequest.makeHTTPBinRequest(method: .head)
         let response = HTTPURLResponse(statusCode: 200)
 
         // When
@@ -673,15 +673,15 @@ final class DownloadResponseSerializationTestCase: BaseTestCase {
 
     private let error = AFError.responseSerializationFailed(reason: .inputFileNil)
 
-    private var jsonEmptyDataFileURL: URL { return url(forResource: "empty_data", withExtension: "json") }
-    private var jsonValidDataFileURL: URL { return url(forResource: "valid_data", withExtension: "json") }
-    private var jsonInvalidDataFileURL: URL { return url(forResource: "invalid_data", withExtension: "json") }
+    private var jsonEmptyDataFileURL: URL { url(forResource: "empty_data", withExtension: "json") }
+    private var jsonValidDataFileURL: URL { url(forResource: "valid_data", withExtension: "json") }
+    private var jsonInvalidDataFileURL: URL { url(forResource: "invalid_data", withExtension: "json") }
 
-    private var stringEmptyDataFileURL: URL { return url(forResource: "empty_string", withExtension: "txt") }
-    private var stringUTF8DataFileURL: URL { return url(forResource: "utf8_string", withExtension: "txt") }
-    private var stringUTF32DataFileURL: URL { return url(forResource: "utf32_string", withExtension: "txt") }
+    private var stringEmptyDataFileURL: URL { url(forResource: "empty_string", withExtension: "txt") }
+    private var stringUTF8DataFileURL: URL { url(forResource: "utf8_string", withExtension: "txt") }
+    private var stringUTF32DataFileURL: URL { url(forResource: "utf32_string", withExtension: "txt") }
 
-    private var invalidFileURL: URL { return URL(fileURLWithPath: "/this/file/does/not/exist.txt") }
+    private var invalidFileURL: URL { URL(fileURLWithPath: "/this/file/does/not/exist.txt") }
 
     // MARK: Tests - Data Response Serializer
 
@@ -1067,7 +1067,7 @@ final class CustomResponseSerializerTests: BaseTestCase {
         // Given
         final class UselessResponseSerializer: ResponseSerializer {
             func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Data? {
-                return data
+                data
             }
         }
         let serializer = UselessResponseSerializer()
@@ -1090,7 +1090,7 @@ final class CustomResponseSerializerTests: BaseTestCase {
 final class DataPreprocessorSerializationTests: BaseTestCase {
     struct DropFirst: DataPreprocessor {
         func preprocess(_ data: Data) throws -> Data {
-            return data.dropFirst()
+            data.dropFirst()
         }
     }
 

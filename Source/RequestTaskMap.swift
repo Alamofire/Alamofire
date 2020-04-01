@@ -26,6 +26,8 @@ import Foundation
 
 /// A type that maintains a two way, one to one map of `URLSessionTask`s to `Request`s.
 struct RequestTaskMap {
+    private typealias Events = (completed: Bool, metricsGathered: Bool)
+
     private var tasksToRequests: [URLSessionTask: Request]
     private var requestsToTasks: [Request: URLSessionTask]
     
@@ -38,7 +40,7 @@ struct RequestTaskMap {
     private var taskEvents: [URLSessionTask: TaskEvents]
 
     var requests: [Request] {
-        return Array(tasksToRequests.values)
+        Array(tasksToRequests.values)
     }
 
     init(tasksToRequests: [URLSessionTask: Request] = [:],
@@ -50,7 +52,7 @@ struct RequestTaskMap {
     }
 
     subscript(_ request: Request) -> URLSessionTask? {
-        get { return requestsToTasks[request] }
+        get { requestsToTasks[request] }
         set {
             guard let newValue = newValue else {
                 guard let task = requestsToTasks[request] else {
@@ -76,7 +78,7 @@ struct RequestTaskMap {
     }
 
     subscript(_ task: URLSessionTask) -> Request? {
-        get { return tasksToRequests[task] }
+        get { tasksToRequests[task] }
         set {
             guard let newValue = newValue else {
                 guard let request = tasksToRequests[task] else {
