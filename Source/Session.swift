@@ -361,12 +361,14 @@ open class Session {
                                                    encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                                    headers: HTTPHeaders? = nil,
                                                    automaticallyCancelOnStreamError: Bool = false,
-                                                   interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+                                                   interceptor: RequestInterceptor? = nil,
+                                                   requestModifier: RequestModifier? = nil) -> DataStreamRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: parameters,
                                                       encoder: encoder,
-                                                      headers: headers)
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
 
         return streamRequest(convertible,
                              automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
@@ -389,12 +391,14 @@ open class Session {
                             method: HTTPMethod = .get,
                             headers: HTTPHeaders? = nil,
                             automaticallyCancelOnStreamError: Bool = false,
-                            interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+                            interceptor: RequestInterceptor? = nil,
+                            requestModifier: RequestModifier? = nil) -> DataStreamRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: Optional<Empty>.none,
                                                       encoder: URLEncodedFormParameterEncoder.default,
-                                                      headers: headers)
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
 
         return streamRequest(convertible,
                              automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
