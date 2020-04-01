@@ -243,8 +243,6 @@ open class Session {
     /// - Parameters:
     ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                      default.
     ///   - parameters:      `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by
     ///                      default.
     ///   - encoding:        `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
@@ -294,8 +292,6 @@ open class Session {
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - timeout:     Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                  default.
     ///   - parameters:  `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
     ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`.
     ///                  `URLEncodedFormParameterEncoder.default` by default.
@@ -446,8 +442,6 @@ open class Session {
     /// - Parameters:
     ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                      default.
     ///   - parameters:      `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by
     ///                      default.
     ///   - encoding:        `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
@@ -484,8 +478,6 @@ open class Session {
     /// - Parameters:
     ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                      default.
     ///   - parameters:      Value conforming to `Encodable` to be encoded into the `URLRequest`. `nil` by default.
     ///   - encoder:         `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`.
     ///                      Defaults to `URLEncodedFormParameterEncoder.default`.
@@ -611,8 +603,6 @@ open class Session {
     ///   - data:            The `Data` to upload.
     ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                      default.
     ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
@@ -662,8 +652,6 @@ open class Session {
     ///   - fileURL:         The `URL` of the file to upload.
     ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                      default.
     ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:     `RequestInterceptor` value to be used by the returned `UploadRequest`. `nil` by default.
     ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
@@ -714,8 +702,6 @@ open class Session {
     ///   - stream:          The `InputStream` that provides the data to upload.
     ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - timeout:         Time, in seconds, request will spend waiting for an initial response from the server. 60 by
-    ///                      default.
     ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
@@ -782,8 +768,6 @@ open class Session {
     ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
     ///                              default.
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - timeout:                 Time, in seconds, request will spend waiting for an initial response from the
-    ///                              server. 60 by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
@@ -882,8 +866,6 @@ open class Session {
     ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
     ///                              default.
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - timeout:                 Time, in seconds, request will spend waiting for an initial response from the
-    ///                              server. 60 by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
