@@ -387,6 +387,12 @@ AF.request(...)
     }
 ```
 
+### `DataStreamRequest`
+`DataStreamRequest` is a subclass of `Request` which encapsulates a `URLSessionDataTask` and streams `Data` from an HTTP connection over time.
+
+#### Additional State
+`DataStreamRequest` contains no additional public state.
+
 ### `UploadRequest`
 `UploadRequest` is a subclass of `DataRequest` which encapsulates a `URLSessionUploadTask`, uploading a `Data` value, file on disk, or `InputStream` to a remote server. 
 
@@ -917,6 +923,47 @@ struct CommaDelimitedSerializer: ResponseSerializer {
 Note that the `SerializedObject` `associatedtype` requirement is met by the return type of the `serialize` method. In more complex serializers, this return type itself can be generic, allowing the serialization of generic types, as seen by the `DecodableResponseSerializer`.
 
 To make the `CommaDelimitedSerializer` more useful, additional behaviors could be added, like allowing the customization of empty HTTP methods and response codes by passing them through to the underlying `StringResponseSerializer`.
+
+### Streaming Response Handlers
+`DataStreamRequest` uses its own unique response handler type to process incoming `Data` as part of a stream. In addition to the provided handlers, custom serialization can be performed through the use of the `DataStreamSerializer` protocol.
+
+```swift
+public protocol DataStreamSerializer {
+    /// Type produced from the serialized `Data`.
+    associatedtype SerializedObject
+
+    /// Serializes incoming `Data` into a `SerializedObject` value.
+    ///
+    /// - Parameter data: `Data` to be serialized.
+    ///
+    /// - Throws: Any error produced during serialization.
+    func serialize(_ data: Data) throws -> SerializedObject
+}
+```
+
+Any custom `DataStreamSerializer` can be used to process streaming `Data` by using the `responseStream` method:
+
+```swift
+AF.streamRequest(...).responseStream(using: CustomSerializer()) { stream in 
+    // Process stream.
+}
+```
+
+Alamofire includes `DecodableStreamSerializer`, a `DataStreamSerializer` which can parse `Decodable` types from incoming `Data`. It can be customized with both a `DataDecoder` instance and a `DataPreprocessor` and used through the `responseStreamDecodable` method: 
+
+```swift
+AF.streamRequest(...).responseDecodable(of: DecodableType.self) { stream in 
+    // Process stream.
+}
+```
+
+Or by using it directly in the previously mentioned `streamResponse` method:
+
+```swift
+AF.streamRequest(...).responseStream(using: DecodableStreamSerializer<DecodableType>(decoder: JSONDecoder())) { stream in 
+    // Process stream.
+}
+```
 
 ## Network Reachability
 The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.

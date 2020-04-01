@@ -99,6 +99,13 @@ extension Request {
         where S.Iterator.Element == String {
         guard let data = data, !data.isEmpty else { return .success(Void()) }
 
+        return validate(contentType: acceptableContentTypes, response: response)
+    }
+
+    fileprivate func validate<S: Sequence>(contentType acceptableContentTypes: S,
+                                           response: HTTPURLResponse)
+        -> ValidationResult
+        where S.Iterator.Element == String {
         guard
             let responseContentType = response.mimeType,
             let responseMIMEType = MIMEType(responseContentType)
@@ -145,9 +152,9 @@ extension DataRequest {
     ///
     /// If validation fails, subsequent calls to response handlers will have an associated error.
     ///
-    /// - parameter range: The range of acceptable status codes.
+    /// - Parameter statusCode: `Sequence` of acceptable response status codes.
     ///
-    /// - returns: The request.
+    /// - Returns:              The instance.
     @discardableResult
     public func validate<S: Sequence>(statusCode acceptableStatusCodes: S) -> Self where S.Iterator.Element == Int {
         return validate { [unowned self] _, response, _ in
@@ -184,6 +191,49 @@ extension DataRequest {
     }
 }
 
+extension DataStreamRequest {
+    public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLResponse) -> ValidationResult
+
+    /// Validates that the response has a status code in the specified sequence.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - Parameter statusCode: `Sequence` of acceptable response status codes.
+    ///
+    /// - Returns:              The instance.
+    @discardableResult
+    public func validate<S: Sequence>(statusCode acceptableStatusCodes: S) -> Self where S.Iterator.Element == Int {
+        return validate { [unowned self] _, response in
+            self.validate(statusCode: acceptableStatusCodes, response: response)
+        }
+    }
+
+    /// Validates that the response has a content type in the specified sequence.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - parameter contentType: The acceptable content types, which may specify wildcard types and/or subtypes.
+    ///
+    /// - returns: The request.
+    @discardableResult
+    public func validate<S: Sequence>(contentType acceptableContentTypes: @escaping @autoclosure () -> S) -> Self where S.Iterator.Element == String {
+        return validate { [unowned self] _, response in
+            self.validate(contentType: acceptableContentTypes(), response: response)
+        }
+    }
+
+    /// Validates that the response has a status code in the default acceptable range of 200...299, and that the content
+    /// type matches any specified in the Accept HTTP header field.
+    ///
+    /// If validation fails, subsequent calls to response handlers will have an associated error.
+    ///
+    /// - Returns: The instance.
+    @discardableResult
+    public func validate() -> Self {
+        validate(statusCode: acceptableStatusCodes).validate(contentType: self.acceptableContentTypes)
+    }
+}
+
 // MARK: -
 
 extension DownloadRequest {
@@ -198,9 +248,9 @@ extension DownloadRequest {
     ///
     /// If validation fails, subsequent calls to response handlers will have an associated error.
     ///
-    /// - parameter range: The range of acceptable status codes.
+    /// - Parameter statusCode: `Sequence` of acceptable response status codes.
     ///
-    /// - returns: The request.
+    /// - Returns:              The instance.
     @discardableResult
     public func validate<S: Sequence>(statusCode acceptableStatusCodes: S) -> Self where S.Iterator.Element == Int {
         return validate { [unowned self] _, response, _ in

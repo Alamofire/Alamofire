@@ -399,7 +399,7 @@ public class Request {
     func didCancel() {
         dispatchPrecondition(condition: .onQueue(underlyingQueue))
 
-        error = AFError.explicitlyCancelled
+        error = error ?? AFError.explicitlyCancelled
 
         eventMonitor?.requestDidCancel(self)
     }
@@ -1079,6 +1079,246 @@ public class DataRequest: Request {
         $validators.write { $0.append(validator) }
 
         return self
+    }
+}
+
+// MARK: - DataStreamRequest
+
+/// `Request` subclass which streams HTTP response `Data` through a `Handler` closure.
+public final class DataStreamRequest: Request {
+    /// Closure type handling `DataStreamRequest.Stream` values.
+    public typealias Handler<Success, Failure: Error> = (Stream<Success, Failure>) throws -> Void
+
+    /// Type encapsulating an `Event` as it flows through the stream, as well as a `CancellationToken` which can be used
+    /// to stop the stream at any time.
+    public struct Stream<Success, Failure: Error> {
+        /// Latest `Event` from the stream.
+        public let event: Event<Success, Failure>
+        /// Token used to cancel the stream.
+        public let token: CancellationToken
+
+        /// Cancel the ongoing stream by canceling the underlying `DataStreamRequest`.
+        public func cancel() {
+            token.cancel()
+        }
+    }
+
+    /// Type representing an event flowing through the stream. Contains either the `Result` of processing streamed
+    /// `Data` or the completion of the stream.
+    public enum Event<Success, Failure: Error> {
+        /// Output produced every time the instance receives additional `Data`. The associated value contains the
+        /// `Result` of processing the incoming `Data`.
+        case stream(Result<Success, Failure>)
+        /// Output produced when the instance has completed, whether due to stream end, cancellation, or an error.
+        /// Associated `Completion` value contains the final state.
+        case complete(Completion)
+    }
+
+    /// Value containing the state of a `DataStreamRequest` when the stream was completed.
+    public struct Completion {
+        /// Last `URLRequest` issued by the instance.
+        public let request: URLRequest?
+        /// Last `HTTPURLResponse` received by the instance.
+        public let response: HTTPURLResponse?
+        /// Last `URLSessionTaskMetrics` produced for the instance.
+        public let metrics: URLSessionTaskMetrics?
+        /// `AFError` produced for the instance, if any.
+        public let error: AFError?
+    }
+
+    /// Type used to cancel an ongoing stream.
+    public struct CancellationToken {
+        let request: DataStreamRequest
+
+        init(_ request: DataStreamRequest) {
+            self.request = request
+        }
+
+        /// Cancel the ongoing stream by canceling the underlying `DataStreamRequest`.
+        public func cancel() {
+            request.cancel()
+        }
+    }
+
+    /// `URLRequestConvertible` value used to create `URLRequest`s for this instance.
+    public let convertible: URLRequestConvertible
+    /// Whether or not the instance will be cancelled if stream parsing encounters an error.
+    public let automaticallyCancelOnStreamError: Bool
+
+    /// Internal mutable state specific to this type.
+    struct StreamMutableState {
+        /// `OutputStream` bound to the `InputStream` produced by `asInputStream`, if it has been called.
+        var outputStream: OutputStream?
+        /// `DispatchQueue`s and stream closures associated called as `Data` is received.
+        var streams: [(queue: DispatchQueue, stream: (_ data: Data) -> Void)] = []
+    }
+
+    @Protected
+    var streamMutableState = StreamMutableState()
+
+    /// Creates a `DataStreamRequest` using the provided parameters.
+    ///
+    /// - Parameters:
+    ///   - id:                               `UUID` used for the `Hashable` and `Equatable` implementations. `UUID()`
+    ///                                        by default.
+    ///   - convertible:                      `URLRequestConvertible` value used to create `URLRequest`s for this
+    ///                                        instance.
+    ///   - automaticallyCancelOnStreamError: `Bool` indicating whether the instance will be cancelled when an `Error`
+    ///                                       is thrown while serializing stream `Data`.
+    ///   - underlyingQueue:                  `DispatchQueue` on which all internal `Request` work is performed.
+    ///   - serializationQueue:               `DispatchQueue` on which all serialization work is performed. By default
+    ///                                       targets
+    ///                                       `underlyingQueue`, but can be passed another queue from a `Session`.
+    ///   - eventMonitor:                     `EventMonitor` called for event callbacks from internal `Request` actions.
+    ///   - interceptor:                      `RequestInterceptor` used throughout the request lifecycle.
+    ///   - delegate:                         `RequestDelegate` that provides an interface to actions not performed by
+    ///                                       the `Request`.
+    init(id: UUID = UUID(),
+         convertible: URLRequestConvertible,
+         automaticallyCancelOnStreamError: Bool,
+         underlyingQueue: DispatchQueue,
+         serializationQueue: DispatchQueue,
+         eventMonitor: EventMonitor?,
+         interceptor: RequestInterceptor?,
+         delegate: RequestDelegate) {
+        self.convertible = convertible
+        self.automaticallyCancelOnStreamError = automaticallyCancelOnStreamError
+
+        super.init(id: id,
+                   underlyingQueue: underlyingQueue,
+                   serializationQueue: serializationQueue,
+                   eventMonitor: eventMonitor,
+                   interceptor: interceptor,
+                   delegate: delegate)
+    }
+
+    override func task(for request: URLRequest, using session: URLSession) -> URLSessionTask {
+        let copiedRequest = request
+        return session.dataTask(with: copiedRequest)
+    }
+
+    override func finish(error: AFError? = nil) {
+        $streamMutableState.write { state in
+            state.outputStream?.close()
+        }
+
+        super.finish(error: error)
+    }
+
+    func didReceive(data: Data) {
+        $streamMutableState.read { state in
+            if let stream = state.outputStream {
+                underlyingQueue.async {
+                    var bytes = Array(data)
+                    stream.write(&bytes, maxLength: bytes.count)
+                }
+            }
+
+            underlyingQueue.async { state.streams.forEach { stream in stream.queue.async { stream.stream(data) } } }
+        }
+    }
+
+    /// Validates the `URLRequest` and `HTTPURLResponse` received for the instance using the provided `Validation` closure.
+    ///
+    /// - Parameter validation: `Validation` closure used to validate the request and response.
+    ///
+    /// - Returns:              The `DataStreamRequest`.
+    @discardableResult
+    public func validate(_ validation: @escaping Validation) -> Self {
+        let validator: () -> Void = { [unowned self] in
+            guard self.error == nil, let response = self.response else { return }
+
+            let result = validation(self.request, response)
+
+            if case let .failure(error) = result {
+                self.error = error.asAFError(or: .responseValidationFailed(reason: .customValidationFailed(error: error)))
+            }
+
+            self.eventMonitor?.request(self,
+                                       didValidateRequest: self.request,
+                                       response: response,
+                                       withResult: result)
+        }
+
+        $validators.write { $0.append(validator) }
+
+        return self
+    }
+
+    /// Produces an `InputStream` that receives the `Data` received by the instance.
+    ///
+    /// - Note: The `InputStream` produced by this method must have `open()` called before being able to read `Data`.
+    ///         Additionally, this method will automatically call `resume()` on the instance, regardless of whether or
+    ///         not the creating session has `startRequestsImmediately` set to `true`.
+    ///
+    /// - Parameter bufferSize: Size, in bytes, of the buffer between the `OutputStream` and `InputStream`.
+    ///
+    /// - Returns:              The `InputStream` bound to the internal `OutboundStream`.
+    public func asInputStream(bufferSize: Int = 1024) -> InputStream? {
+        defer { resume() }
+
+        var inputStream: InputStream?
+        $streamMutableState.write { state in
+            Foundation.Stream.getBoundStreams(withBufferSize: bufferSize,
+                                              inputStream: &inputStream,
+                                              outputStream: &state.outputStream)
+            state.outputStream?.open()
+        }
+
+        return inputStream
+    }
+
+    func capturingError(from closure: () throws -> Void) {
+        do {
+            try closure()
+        } catch {
+            self.error = error.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: error)))
+            cancel()
+        }
+    }
+
+    func appendStreamCompletion<Success, Failure>(on queue: DispatchQueue,
+                                                  stream: @escaping Handler<Success, Failure>) {
+        appendResponseSerializer {
+            self.underlyingQueue.async {
+                self.responseSerializerDidComplete {
+                    queue.async {
+                        do {
+                            let completion = Completion(request: self.request,
+                                                        response: self.response,
+                                                        metrics: self.metrics,
+                                                        error: self.error)
+                            try stream(.init(event: .complete(completion), token: .init(self)))
+                        } catch {
+                            // Ignore error, as errors on Completion can't be handled anyway.
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+extension DataStreamRequest.Stream {
+    /// `Success` value of the instance, if any.
+    public var value: Success? {
+        guard case let .stream(result) = event, case let .success(value) = result else { return nil }
+
+        return value
+    }
+
+    /// `Failure` value of the instance, if any.
+    public var error: Failure? {
+        guard case let .stream(result) = event, case let .failure(error) = result else { return nil }
+
+        return error
+    }
+
+    /// `Completion` value of the instance, if any.
+    public var completion: DataStreamRequest.Completion? {
+        guard case let .complete(completion) = event else { return nil }
+
+        return completion
     }
 }
 

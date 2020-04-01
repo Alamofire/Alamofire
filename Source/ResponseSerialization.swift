@@ -670,8 +670,8 @@ public protocol EmptyResponse {
     static func emptyValue() -> Self
 }
 
-/// Type representing an empty response. Use `Empty.value` to get the static instance.
-public struct Empty: Decodable {
+/// Type representing an empty value. Use `Empty.value` to get the static instance.
+public struct Empty: Codable {
     /// Static `Empty` instance used for all `Empty` responses.
     public static let value = Empty()
 }
@@ -794,5 +794,153 @@ extension DownloadRequest {
         response(queue: queue,
                  responseSerializer: DecodableResponseSerializer(decoder: decoder),
                  completionHandler: completionHandler)
+    }
+}
+
+// MARK: - DataStreamRequest
+
+/// A type which can serialize incoming `Data`.
+public protocol DataStreamSerializer {
+    /// Type produced from the serialized `Data`.
+    associatedtype SerializedObject
+
+    /// Serializes incoming `Data` into a `SerializedObject` value.
+    ///
+    /// - Parameter data: `Data` to be serialized.
+    ///
+    /// - Throws: Any error produced during serialization.
+    func serialize(_ data: Data) throws -> SerializedObject
+}
+
+/// `DataStreamSerializer` which uses the provided `DataPreprocessor` and `DataDecoder` to serialize the incoming `Data`.
+public struct DecodableStreamSerializer<T: Decodable>: DataStreamSerializer {
+    public let decoder: DataDecoder
+    public let dataPreprocessor: DataPreprocessor
+
+    /// Creates an instance with the provided `DataDecoder` and `DataPreprocessor`.
+    /// - Parameters:
+    ///   - decoder: `        DataDecoder` used to decode incoming `Data`.
+    ///   - dataPreprocessor: `DataPreprocessor` used to process incoming `Data` before it's passed through the `decoder`.
+    public init(decoder: DataDecoder = JSONDecoder(), dataPreprocessor: DataPreprocessor = PassthroughPreprocessor()) {
+        self.decoder = decoder
+        self.dataPreprocessor = dataPreprocessor
+    }
+
+    public func serialize(_ data: Data) throws -> T {
+        let processedData = try dataPreprocessor.preprocess(data)
+        do {
+            return try decoder.decode(T.self, from: processedData)
+        } catch {
+            throw AFError.responseSerializationFailed(reason: .decodingFailed(error: error))
+        }
+    }
+}
+
+extension DataStreamRequest {
+    /// Adds a stream handler which performs no parsing on incoming `Data`.
+    ///
+    /// - Parameters:
+    ///   - queue:  `DispatchQueue` on which to perform `StreamHandler` closure.
+    ///   - stream: `StreamHandler` closure called as `Data` is received. May be called multiple times.
+    ///
+    /// - Returns:  The `DataStreamRequest`.
+    @discardableResult
+    public func responseStream(on queue: DispatchQueue = .main, stream: @escaping Handler<Data, Never>) -> Self {
+        $streamMutableState.write { state in
+            let capture = (queue, { data in
+                self.capturingError {
+                    try stream(.init(event: .stream(.success(data)), token: .init(self)))
+                }
+            })
+            state.streams.append(capture)
+        }
+        appendStreamCompletion(on: queue, stream: stream)
+
+        return self
+    }
+
+    /// Adds a `StreamHandler` which uses the provided `DataStreamSerializer` to process incoming `Data`.
+    ///
+    /// - Parameters:
+    ///   - serializer: `DataStreamSerializer` used to process incoming `Data`. Its work is done on the `serializationQueue`.
+    ///   - queue:      `DispatchQueue` on which to perform `StreamHandler` closure.
+    ///   - stream:     `StreamHandler` closure called as `Data` is received. May be called multiple times.
+    ///
+    /// - Returns:      The `DataStreamRequest`.
+    @discardableResult
+    public func responseStream<Serializer: DataStreamSerializer>(using serializer: Serializer,
+                                                                 on queue: DispatchQueue = .main,
+                                                                 stream: @escaping Handler<Serializer.SerializedObject, AFError>) -> Self {
+        let parser = { (data: Data) in
+            self.serializationQueue.async {
+                // Start work on serialization queue.
+                let result = Result { try serializer.serialize(data) }
+                    .mapError { $0.asAFError(or: .responseSerializationFailed(reason: .customSerializationFailed(error: $0))) }
+                // End work on serialization queue.
+                queue.async {
+                    self.eventMonitor?.request(self, didParseStream: result)
+                    if result.isFailure, self.automaticallyCancelOnStreamError {
+                        queue.async { self.cancel() }
+                    }
+                    self.capturingError {
+                        try stream(.init(event: .stream(result), token: .init(self)))
+                    }
+                }
+            }
+        }
+
+        $streamMutableState.write { $0.streams.append((queue, parser)) }
+        appendStreamCompletion(on: queue, stream: stream)
+
+        return self
+    }
+
+    /// Adds a `StreamHandler` which parses incoming `Data` as a UTF8 `String`.
+    ///
+    /// - Parameters:
+    ///   - queue:      `DispatchQueue` on which to perform `StreamHandler` closure.
+    ///   - stream:     `StreamHandler` closure called as `Data` is received. May be called multiple times.
+    ///
+    /// - Returns:  The `DataStreamRequest`.
+    @discardableResult
+    public func responseStreamString(on queue: DispatchQueue = .main,
+                                     stream: @escaping Handler<String, Never>) -> Self {
+        let parser = { (data: Data) in
+            self.serializationQueue.async {
+                // Start work on serialization queue.
+                let string = String(decoding: data, as: UTF8.self)
+                // End work on serialization queue.
+                queue.async {
+                    self.capturingError {
+                        try stream(.init(event: .stream(.success(string)), token: .init(self)))
+                    }
+                }
+            }
+        }
+
+        $streamMutableState.write { $0.streams.append((queue, parser)) }
+        appendStreamCompletion(on: queue, stream: stream)
+
+        return self
+    }
+
+    /// Adds a `StreamHandler` which parses incoming `Data` using the provided `DataDecoder`.
+    ///
+    /// - Parameters:
+    ///   - type:         `Decodable` type to parse incoming `Data` into.
+    ///   - queue:        `DispatchQueue` on which to perform `StreamHandler` closure.
+    ///   - decoder:      `DataDecoder` used to decode the incoming `Data`.
+    ///   - preprocessor: `DataPreprocessor` used to process the incoming `Data` before it's passed to the `decoder`.
+    ///   - stream:       `StreamHandler` closure called as `Data` is received. May be called multiple times.
+    ///
+    /// - Returns: The `DataStreamRequest`.
+    @discardableResult
+    public func responseStreamDecodable<T: Decodable>(of type: T.Type = T.self,
+                                                      on queue: DispatchQueue = .main,
+                                                      using decoder: DataDecoder = JSONDecoder(),
+                                                      preprocessor: DataPreprocessor = PassthroughPreprocessor(),
+                                                      stream: @escaping Handler<T, AFError>) -> Self {
+        responseStream(using: DecodableStreamSerializer<T>(decoder: decoder, dataPreprocessor: preprocessor),
+                       stream: stream)
     }
 }

@@ -64,7 +64,7 @@ open class Session {
 
     /// Internal map between `Request`s and any `URLSessionTasks` that may be in flight for them.
     var requestTaskMap = RequestTaskMap()
-    /// Set of currently active `Request`s.
+    /// `Set` of currently active `Request`s.
     var activeRequests: Set<Request> = []
     /// Completion events awaiting `URLSessionTaskMetrics`.
     var waitingCompletions: [URLSessionTask: () -> Void] = [:]
@@ -316,6 +316,96 @@ open class Session {
                                   eventMonitor: eventMonitor,
                                   interceptor: interceptor,
                                   delegate: self)
+
+        perform(request)
+
+        return request
+    }
+
+    // MARK: - DataStreamRequest
+
+    /// Creates a `DataStreamRequest` from the passed components, `Encodable` parameters, and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible:                      `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:                           `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - parameters:                       `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
+    ///   - encoder:                          `ParameterEncoder` to be used to encode the `parameters` value into the
+    ///                                       `URLRequest`.
+    ///                                       `URLEncodedFormParameterEncoder.default` by default.
+    ///   - headers:                          `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - automaticallyCancelOnStreamError: `Bool` indicating whether the instance should be canceled when an `Error`
+    ///                                       is thrown while serializing stream `Data`. `false` by default.
+    ///   - interceptor:                      `RequestInterceptor` value to be used by the returned `DataRequest`. `nil`
+    ///                                       by default.
+    ///
+    /// - Returns:       The created `DataStream` request.
+    open func streamRequest<Parameters: Encodable>(_ convertible: URLConvertible,
+                                                   method: HTTPMethod = .get,
+                                                   parameters: Parameters? = nil,
+                                                   encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                   headers: HTTPHeaders? = nil,
+                                                   automaticallyCancelOnStreamError: Bool = false,
+                                                   interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+        let convertible = RequestEncodableConvertible(url: convertible,
+                                                      method: method,
+                                                      parameters: parameters,
+                                                      encoder: encoder,
+                                                      headers: headers)
+
+        return streamRequest(convertible,
+                             automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
+                             interceptor: interceptor)
+    }
+
+    /// Creates a `DataStreamRequest` from the passed components and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible:                      `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:                           `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - headers:                          `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - automaticallyCancelOnStreamError: `Bool` indicating whether the instance should be canceled when an `Error`
+    ///                                       is thrown while serializing stream `Data`. `false` by default.
+    ///   - interceptor:                      `RequestInterceptor` value to be used by the returned `DataRequest`. `nil`
+    ///                                       by default.
+    ///
+    /// - Returns:       The created `DataStream` request.
+    open func streamRequest(_ convertible: URLConvertible,
+                            method: HTTPMethod = .get,
+                            headers: HTTPHeaders? = nil,
+                            automaticallyCancelOnStreamError: Bool = false,
+                            interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+        let convertible = RequestEncodableConvertible(url: convertible,
+                                                      method: method,
+                                                      parameters: Optional<Empty>.none,
+                                                      encoder: URLEncodedFormParameterEncoder.default,
+                                                      headers: headers)
+
+        return streamRequest(convertible,
+                             automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
+                             interceptor: interceptor)
+    }
+
+    /// Creates a `DataStreamRequest` from the passed `URLRequestConvertible` value and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible:                      `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - automaticallyCancelOnStreamError: `Bool` indicating whether the instance should be canceled when an `Error`
+    ///                                       is thrown while serializing stream `Data`. `false` by default.
+    ///   - interceptor:                      `RequestInterceptor` value to be used by the returned `DataRequest`. `nil`
+    ///                                        by default.
+    ///
+    /// - Returns:       The created `DataStreamRequest`.
+    open func streamRequest(_ convertible: URLRequestConvertible,
+                            automaticallyCancelOnStreamError: Bool = false,
+                            interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+        let request = DataStreamRequest(convertible: convertible,
+                                        automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
+                                        underlyingQueue: rootQueue,
+                                        serializationQueue: serializationQueue,
+                                        eventMonitor: eventMonitor,
+                                        interceptor: interceptor,
+                                        delegate: self)
 
         perform(request)
 
@@ -818,11 +908,22 @@ open class Session {
         case let r as UploadRequest: perform(r) // UploadRequest must come before DataRequest due to subtype relationship.
         case let r as DataRequest: perform(r)
         case let r as DownloadRequest: perform(r)
+        case let r as DataStreamRequest: perform(r)
         default: fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
         }
     }
 
     func perform(_ request: DataRequest) {
+        requestQueue.async {
+            guard !request.isCancelled else { return }
+
+            self.activeRequests.insert(request)
+
+            self.performSetupOperations(for: request, convertible: request.convertible)
+        }
+    }
+
+    func perform(_ request: DataStreamRequest) {
         requestQueue.async {
             guard !request.isCancelled else { return }
 

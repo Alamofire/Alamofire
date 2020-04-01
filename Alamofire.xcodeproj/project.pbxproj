@@ -10,6 +10,9 @@
 		3106FB6123F8C53A007FAB43 /* ProtectedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */; };
 		3106FB6223F8C53A007FAB43 /* ProtectedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */; };
 		3106FB6323F8C53A007FAB43 /* ProtectedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */; };
+		3106FB6523F8D9E0007FAB43 /* DataStreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6423F8D9E0007FAB43 /* DataStreamTests.swift */; };
+		3106FB6623F8D9E0007FAB43 /* DataStreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6423F8D9E0007FAB43 /* DataStreamTests.swift */; };
+		3106FB6723F8D9E0007FAB43 /* DataStreamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3106FB6423F8D9E0007FAB43 /* DataStreamTests.swift */; };
 		3107EA3520A11AE100445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
 		3107EA3620A11AE100445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
 		3107EA3720A11AE200445260 /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */; };
@@ -357,6 +360,7 @@
 
 /* Begin PBXFileReference section */
 		3106FB6023F8C53A007FAB43 /* ProtectedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectedTests.swift; sourceTree = "<group>"; };
+		3106FB6423F8D9E0007FAB43 /* DataStreamTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStreamTests.swift; sourceTree = "<group>"; };
 		3111CE8720A77843008315E2 /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
 		3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeadersTests.swift; sourceTree = "<group>"; };
 		311B198F20B0D3B40036823B /* MultipartUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartUpload.swift; sourceTree = "<group>"; };
@@ -536,6 +540,7 @@
 			isa = PBXGroup;
 			children = (
 				F8E6024419CB46A800A3E7F1 /* AuthenticationTests.swift */,
+				3106FB6423F8D9E0007FAB43 /* DataStreamTests.swift */,
 				F8111E5B19A9674D0040E7D1 /* DownloadTests.swift */,
 				31425AC0241F098000EE3CCC /* InternalRequestTests.swift */,
 				31501E872196962A005829F2 /* ParameterEncoderTests.swift */,
@@ -1332,6 +1337,7 @@
 				31EBD9C320D1D89D00D1FF34 /* ValidationTests.swift in Sources */,
 				3111CE8620A76370008315E2 /* SessionTests.swift in Sources */,
 				31C2B0F220B271380089BA7C /* TLSEvaluationTests.swift in Sources */,
+				3106FB6723F8D9E0007FAB43 /* DataStreamTests.swift in Sources */,
 				3111CE9D20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2182220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7820B2208000A9FEC5 /* DownloadTests.swift in Sources */,
@@ -1489,6 +1495,7 @@
 				31EBD9C120D1D89C00D1FF34 /* ValidationTests.swift in Sources */,
 				3111CE8420A7636E008315E2 /* SessionTests.swift in Sources */,
 				31C2B0F020B271370089BA7C /* TLSEvaluationTests.swift in Sources */,
+				3106FB6523F8D9E0007FAB43 /* DataStreamTests.swift in Sources */,
 				3111CE9B20A7EC57008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2180220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7620B2207F00A9FEC5 /* DownloadTests.swift in Sources */,
@@ -1526,6 +1533,7 @@
 				31EBD9C220D1D89C00D1FF34 /* ValidationTests.swift in Sources */,
 				3111CE8520A7636F008315E2 /* SessionTests.swift in Sources */,
 				31C2B0F120B271370089BA7C /* TLSEvaluationTests.swift in Sources */,
+				3106FB6623F8D9E0007FAB43 /* DataStreamTests.swift in Sources */,
 				3111CE9C20A7EC58008315E2 /* URLProtocolTests.swift in Sources */,
 				4CBD2181220B48AE008F1C59 /* RetryPolicyTests.swift in Sources */,
 				317A6A7720B2208000A9FEC5 /* DownloadTests.swift in Sources */,
