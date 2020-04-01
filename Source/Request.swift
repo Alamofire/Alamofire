@@ -1255,6 +1255,7 @@ public final class DataStreamRequest: Request {
         return self
     }
 
+    #if !os(Linux)
     /// Produces an `InputStream` that receives the `Data` received by the instance.
     ///
     /// - Note: The `InputStream` produced by this method must have `open()` called before being able to read `Data`.
@@ -1277,6 +1278,7 @@ public final class DataStreamRequest: Request {
 
         return inputStream
     }
+    #endif
 
     func capturingError(from closure: () throws -> Void) {
         do {
