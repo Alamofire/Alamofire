@@ -152,6 +152,26 @@ extension HTTPMethod {
 }
 ```
 
+### Setting Other `URLRequest` Properties
+
+Alamofire's request creation methods offer the most common parameters for customization but sometimes those just aren't enough. The `URLRequest`s created from the passed values can be modified by using a `RequestModifier` closure when creating requests. For example, to set the `URLRequest`'s `timeoutInterval` to 5 seconds, modify the request in the closure.
+
+```swift
+AF.request("https://httpbin.org/get", requestModifier: { $0.timeoutInterval = 5 }).response(...)
+```
+
+`RequestModifier`s also work with trailing closure syntax.
+
+```swift
+AF.request("https://httpbin.org/get") { urlRequest in
+    urlRequest.timeoutInterval = 5
+    urlRequest.allowsConstrainedNetworkAccess = false
+}
+.response(...)
+```
+
+`RequestModifier`s only apply to request created using methods taking a `URL` and other individual components, not to values created directly from `URLRequestConvertible` values, as those values should be able to set all parameters themselves. Additionally, adoption of `URLRequestConvertible` is recommended once *most* requests start needing to be modified during creation. You can read more in our [Advanced Usage documentation](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#making-requests).
+
 ### Request Parameters and Parameter Encoders
 
 Alamofire supports passing any `Encodable` type as the parameters of a request. These parameters are then passed through a type conforming to the `ParameterEncoder` protocol and added to the `URLRequest` which is then sent over the network. Alamofire includes two `ParameterEncoder` conforming types: `JSONParameterEncoder` and `URLEncodedFormParameterEncoder`. These types cover the most common encodings used by modern services (XML encoding is left as an exercise for the reader).

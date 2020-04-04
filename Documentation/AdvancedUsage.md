@@ -1,66 +1,69 @@
 - [Advanced Usage](#advanced-usage)
   * [`Session`](#session)
-	+ [Creating Custom `Session` Instances](#creating-custom-session-instances)
-	  - [Creating a `Session` With a `URLSessionConfiguration`](#creating-a-session-with-a-urlsessionconfiguration)
-	+ [`SessionDelegate`](#sessiondelegate)
-	+ [`startRequestsImmediately`](#startrequestsimmediately)
-	+ [A `Session`’s `DispatchQueue`s](#a-sessions-dispatchqueues)
-	+ [Adding a `RequestInterceptor`](#adding-a-requestinterceptor)
-	+ [Adding a `ServerTrustManager`](#adding-a-servertrustmanager)
-	+ [Adding a `RedirectHandler`](#adding-a-redirecthandler)
-	+ [Adding a `CachedResponseHandler`](#adding-a-cachedresponsehandler)
-	+ [Adding `EventMonitor`s](#adding-eventmonitors)
-	+ [Creating Instances From `URLSession`s](#creating-instances-from-urlsessions)
+    + [Creating Custom `Session` Instances](#creating-custom-session-instances)
+      - [Creating a `Session` With a `URLSessionConfiguration`](#creating-a-session-with-a-urlsessionconfiguration)
+    + [`SessionDelegate`](#sessiondelegate)
+    + [`startRequestsImmediately`](#startrequestsimmediately)
+    + [A `Session`’s `DispatchQueue`s](#a-sessions-dispatchqueues)
+    + [Adding a `RequestInterceptor`](#adding-a-requestinterceptor)
+    + [Adding a `ServerTrustManager`](#adding-a-servertrustmanager)
+    + [Adding a `RedirectHandler`](#adding-a-redirecthandler)
+    + [Adding a `CachedResponseHandler`](#adding-a-cachedresponsehandler)
+    + [Adding `EventMonitor`s](#adding-eventmonitors)
+    + [Creating Instances From `URLSession`s](#creating-instances-from-urlsessions)
   * [Requests](#requests)
-	+ [The Request Pipeline](#the-request-pipeline)
-	+ [`Request`](#request)
-	  - [State](#state)
-	  - [Progress](#progress)
-	  - [Handling Redirects](#handling-redirects)
-	  - [Customizing Caching](#customizing-caching)
-	  - [Credentials](#credentials)
-	  - [A `Request`’s `URLRequest`s](#a-requests-urlrequests)
-	  - [`URLSessionTask`s](#urlsessiontasks)
-	  - [Response](#response)
-	  - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
-	+ [`DataRequest`](#datarequest)
-	  - [Additional State](#additional-state)
-	  - [Validation](#validation)
-	+ [`UploadRequest`](#uploadrequest)
-	  - [Additional State](#additional-state-1)
-	+ [`DownloadRequest`](#downloadrequest)
-	  - [Additional State](#additional-state-2)
-	  - [Cancellation](#cancellation)
-	  - [Validation](#validation-1)
+    + [The Request Pipeline](#the-request-pipeline)
+    + [`Request`](#request)
+      - [State](#state)
+      - [Progress](#progress)
+      - [Handling Redirects](#handling-redirects)
+      - [Customizing Caching](#customizing-caching)
+      - [Credentials](#credentials)
+      - [A `Request`’s `URLRequest`s](#a-requests-urlrequests)
+      - [`URLSessionTask`s](#urlsessiontasks)
+      - [Response](#response)
+      - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
+    + [`DataRequest`](#datarequest)
+      - [Additional State](#additional-state)
+      - [Validation](#validation)
+    + [`DataStreamRequest`](#datastreamrequest)
+      - [Additional State](#additional-state)
+      - [Validation](#validation)
+    + [`UploadRequest`](#uploadrequest)
+      - [Additional State](#additional-state-1)
+    + [`DownloadRequest`](#downloadrequest)
+      - [Additional State](#additional-state-2)
+      - [Cancellation](#cancellation)
+      - [Validation](#validation-1)
   * [Adapting and Retrying Requests with `RequestInterceptor`](#adapting-and-retrying-requests-with-requestinterceptor)
-	+ [`RequestAdapter`](#requestadapter)
-	+ [`RequestRetrier`](#requestretrier)
+    + [`RequestAdapter`](#requestadapter)
+    + [`RequestRetrier`](#requestretrier)
   * [Security](#security)
-	+ [Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`](#evaluating-server-trusts-with-servertrustmanager-and-servertrustevaluating)
-	  - [`ServerTrustEvaluting`](#servertrustevaluting)
-	  - [`ServerTrustManager`](#servertrustmanager)
-		* [Subclassing Server Trust Policy Manager](#subclassing-server-trust-policy-manager)
-	+ [App Transport Security](#app-transport-security)
-	  - [Using Self-Signed Certificates with Local Networking](#using-self-signed-certificates-with-local-networking)
+    + [Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`](#evaluating-server-trusts-with-servertrustmanager-and-servertrustevaluating)
+      - [`ServerTrustEvaluting`](#servertrustevaluting)
+      - [`ServerTrustManager`](#servertrustmanager)
+  * [Subclassing Server Trust Policy Manager](#subclassing-server-trust-policy-manager)
+    + [App Transport Security](#app-transport-security)
+      - [Using Self-Signed Certificates with Local Networking](#using-self-signed-certificates-with-local-networking)
   * [Customizing Caching and Redirect Handling](#customizing-caching-and-redirect-handling)
-	+ [`CachedResponseHandler`](#cachedresponsehandler)
-	+ [`RedirectHandler`](#redirecthandler)
+    + [`CachedResponseHandler`](#cachedresponsehandler)
+    + [`RedirectHandler`](#redirecthandler)
   * [Using `EventMonitor`s](#using-eventmonitors)
-	+ [Logging](#logging)
+    + [Logging](#logging)
   * [Making Requests](#making-requests)
-	+ [`URLConvertible`](#urlconvertible)
-	+ [`URLRequestConvertible`](#urlrequestconvertible)
-	+ [Routing Requests](#routing-requests)
+    + [`URLConvertible`](#urlconvertible)
+    + [`URLRequestConvertible`](#urlrequestconvertible)
+    + [Routing Requests](#routing-requests)
   * [Response Handling](#response-handling)
-	+ [Handling Responses Without Serialization](#handling-responses-without-serialization)
-	+ [`ResponseSerializer`](#responseserializer)
-	  - [`DataResponseSerializer`](#dataresponseserializer)
-	  - [`StringResponseSerializer`](#stringresponseserializer)
-	  - [`JSONResponseSerializer`](#jsonresponseserializer)
-	  - [`DecodableResponseSerializer`](#decodableresponseserializer)
-	+ [Customizing Response Handlers](#customizing-response-handlers)
-	  - [Response Transforms](#response-transforms)
-	  - [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
+    + [Handling Responses Without Serialization](#handling-responses-without-serialization)
+    + [`ResponseSerializer`](#responseserializer)
+      - [`DataResponseSerializer`](#dataresponseserializer)
+      - [`StringResponseSerializer`](#stringresponseserializer)
+      - [`JSONResponseSerializer`](#jsonresponseserializer)
+      - [`DecodableResponseSerializer`](#decodableresponseserializer)
+    + [Customizing Response Handlers](#customizing-response-handlers)
+      - [Response Transforms](#response-transforms)
+      - [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
   * [Network Reachability](#network-reachability)
 
 # Advanced Usage
@@ -372,13 +375,13 @@ AF.request(...)
 `DataRequest`s have a few properties in addition to those provided by `Request`. These include `data`, which is the accumulated `Data` from the server response, and `convertible`, which is the `URLRequestConvertible` the `DataRequest` was created with, containing the original parameters creating the instance.
 
 #### Validation
-`DataRequest`s do not validate responses by default. Instead, a call to `validate()` must be added to the in order to verify various properties are valid. 
+`DataRequest`s do not validate responses by default. Instead, a call to `validate()` must be added to the request in order to verify various properties are valid. 
 
 ```swift
 public typealias Validation = (URLRequest?, HTTPURLResponse, Data?) -> Result<Void, Error>
 ```
 
-By default, adding `validate()` ensures the response status code is within the `200..<300` range and that the response’s `Content-Type` matches the request `Accept` value. Validation can be further customized by passing a `Validation` closure:
+By default, adding `validate()` ensures the response status code is within the `200..<300` range and that the response’s `Content-Type` matches the request's `Accept` value. Validation can be further customized by passing a `Validation` closure:
 
 ```swift
 AF.request(...)
@@ -392,6 +395,22 @@ AF.request(...)
 
 #### Additional State
 `DataStreamRequest` contains no additional public state.
+
+#### Validation
+`DataStreamRequest`s do not validate responses by default. Instead, a call to `validate()` must be added to the request in order to verify various properties are valid. 
+
+```swift
+public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLResponse) -> Result<Void, Error>
+```
+
+By default, adding `validate()` ensures the response status code is within the `200..<300` range and that the response’s `Content-Type` matches the request's `Accept` value. Validation can be further customized by passing a `Validation` closure:
+
+```swift
+AF.request(...)
+    .validate { request, response in
+        ...
+    }
+```
 
 ### `UploadRequest`
 `UploadRequest` is a subclass of `DataRequest` which encapsulates a `URLSessionUploadTask`, uploading a `Data` value, file on disk, or `InputStream` to a remote server. 
