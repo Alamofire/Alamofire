@@ -549,12 +549,12 @@
 				31425AC0241F098000EE3CCC /* InternalRequestTests.swift */,
 				31501E872196962A005829F2 /* ParameterEncoderTests.swift */,
 				F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */,
+				31B51E8B2434FECB005356DB /* RequestModifierTests.swift */,
 				F8111E5D19A9674D0040E7D1 /* RequestTests.swift */,
 				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
 				4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */,
 				F8D1C6F419D52968002E74FE /* SessionTests.swift */,
 				F8111E5F19A9674D0040E7D1 /* UploadTests.swift */,
-				31B51E8B2434FECB005356DB /* RequestModifierTests.swift */,
 			);
 			name = Core;
 			sourceTree = "<group>";
