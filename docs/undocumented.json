@@ -2,28 +2,28 @@
   "warnings": [
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/EventMonitor.swift",
-      "line": 269,
+      "line": 290,
       "symbol": "EventMonitor.request(_:didParseResponse:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/EventMonitor.swift",
-      "line": 270,
+      "line": 291,
       "symbol": "EventMonitor.request(_:didParseResponse:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/EventMonitor.swift",
-      "line": 281,
+      "line": 307,
       "symbol": "EventMonitor.request(_:didParseResponse:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/EventMonitor.swift",
-      "line": 282,
+      "line": 308,
       "symbol": "EventMonitor.request(_:didParseResponse:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -44,91 +44,91 @@
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 77,
+      "line": 73,
       "symbol": "SessionDelegate.urlSession(_:didBecomeInvalidWithError:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 90,
+      "line": 86,
       "symbol": "SessionDelegate.urlSession(_:task:didReceive:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 161,
+      "line": 157,
       "symbol": "SessionDelegate.urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 176,
+      "line": 172,
       "symbol": "SessionDelegate.urlSession(_:task:needNewBodyStream:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 190,
+      "line": 186,
       "symbol": "SessionDelegate.urlSession(_:task:willPerformHTTPRedirection:newRequest:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 204,
+      "line": 200,
       "symbol": "SessionDelegate.urlSession(_:task:didFinishCollecting:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 212,
+      "line": 208,
       "symbol": "SessionDelegate.urlSession(_:task:didCompleteWithError:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 223,
+      "line": 219,
       "symbol": "SessionDelegate.urlSession(_:taskIsWaitingForConnectivity:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 231,
+      "line": 227,
       "symbol": "SessionDelegate.urlSession(_:dataTask:didReceive:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 242,
+      "line": 240,
       "symbol": "SessionDelegate.urlSession(_:dataTask:willCacheResponse:completionHandler:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 259,
+      "line": 257,
       "symbol": "SessionDelegate.urlSession(_:downloadTask:didResumeAtOffset:expectedTotalBytes:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 276,
+      "line": 274,
       "symbol": "SessionDelegate.urlSession(_:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/jshier/Desktop/Code/Alamofire/Source/SessionDelegate.swift",
-      "line": 295,
+      "line": 293,
       "symbol": "SessionDelegate.urlSession(_:downloadTask:didFinishDownloadingTo:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
