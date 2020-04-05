@@ -1,57 +1,56 @@
-- [Using Alamofire](#using-alamofire)
-  * [Introduction](#introduction)
-      - [Aside: The `AF` Namespace](#aside-the-af-namespace-and-reference)
-  * [Making Requests](#making-requests)
-    + [HTTP Methods](#http-methods)
-    + [Request Parameters and Parameter Encoders](#request-parameters-and-parameter-encoders)
-      - [`URLEncodedFormParameterEncoder`](#urlencodedformparameterencoder)
-        * [GET Request With URL-Encoded Parameters](#get-request-with-url-encoded-parameters)
-        * [POST Request With URL-Encoded Parameters](#post-request-with-url-encoded-parameters)
-        * [Configuring the Sorting of Encoded Parameters](#configuring-the-sorting-of-encoded-parameters)
-        * [Configuring the Encoding of `Array` Parameters](#configuring-the-encoding-of-array-parameters)
-        * [Configuring the Encoding of `Bool` Parameters](#configuring-the-encoding-of-bool-parameters)
-        * [Configuring the Encoding of `Data` Parameters](#configuring-the-encoding-of-data-parameters)
-        * [Configuring the Encoding of `Date` Parameters](#configuring-the-encoding-of-date-parameters)
-        * [Configuring the Encoding of Coding Keys](#configuring-the-encoding-of-coding-keys)
-        * [Configuring the Encoding of Spaces](#configuring-the-encoding-of-spaces)
-      - [`JSONParameterEncoder`](#jsonparameterencoder)
-        * [POST Request with JSON-Encoded Parameters](#post-request-with-json-encoded-parameters)
-        * [Configuring a Custom `JSONEncoder`](#configuring-a-custom-jsonencoder)
-        * [Manual Parameter Encoding of a `URLRequest`](#manual-parameter-encoding-of-a-urlrequest)
-    + [HTTP Headers](#http-headers)
-    + [Response Validation](#response-validation)
-      - [Automatic Validation](#automatic-validation)
-      - [Manual Validation](#manual-validation)
-    + [Response Handling](#response-handling)
-      - [Response Handler](#response-handler)
-      - [Response Data Handler](#response-data-handler)
-      - [Response String Handler](#response-string-handler)
-      - [Response JSON Handler](#response-json-handler)
-      - [Response `Decodable` Handler](#response-decodable-handler)
-      - [Chained Response Handlers](#chained-response-handlers)
-      - [Response Handler Queue](#response-handler-queue)
-    + [Response Caching](#response-caching)
-    + [Authentication](#authentication)
-      - [HTTP Basic Authentication](#http-basic-authentication)
-      - [Authentication with `URLCredential`](#authentication-with-urlcredential)
-      - [Manual Authentication](#manual-authentication)
-    + [Downloading Data to a File](#downloading-data-to-a-file)
-      - [Download File Destination](#download-file-destination)
-      - [Download Progress](#download-progress)
-      - [Canceling and Resuming a Download](#canceling-and-resuming-a-download)
-    + [Uploading Data to a Server](#uploading-data-to-a-server)
-      - [Uploading Data](#uploading-data)
-      - [Uploading a File](#uploading-a-file)
-      - [Uploading Multipart Form Data](#uploading-multipart-form-data)
-      - [Upload Progress](#upload-progress)
-    + [Streaming Data from a Server](#streaming-data-from-a-server)
-      - [Streaming `Data`](#streaming-data)
-      - [Streaming `String`s](#streaming-strings)
-      - [Streaming `Decodable` Values](#streaming-decodable-values)
-      - [Producing an `InputStream`](#producing-an-inputstream)
-    + [Statistical Metrics](#statistical-metrics)
-      - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
-    + [cURL Command Output](#curl-command-output)
+* [Introduction](#introduction)
+    - [Aside: The `AF` Namespace](#aside-the-af-namespace-and-reference)
+* [Making Requests](#making-requests)
+  + [HTTP Methods](#http-methods)
+  + [Request Parameters and Parameter Encoders](#request-parameters-and-parameter-encoders)
+    - [`URLEncodedFormParameterEncoder`](#urlencodedformparameterencoder)
+      * [GET Request With URL-Encoded Parameters](#get-request-with-url-encoded-parameters)
+      * [POST Request With URL-Encoded Parameters](#post-request-with-url-encoded-parameters)
+      * [Configuring the Sorting of Encoded Parameters](#configuring-the-sorting-of-encoded-parameters)
+      * [Configuring the Encoding of `Array` Parameters](#configuring-the-encoding-of-array-parameters)
+      * [Configuring the Encoding of `Bool` Parameters](#configuring-the-encoding-of-bool-parameters)
+      * [Configuring the Encoding of `Data` Parameters](#configuring-the-encoding-of-data-parameters)
+      * [Configuring the Encoding of `Date` Parameters](#configuring-the-encoding-of-date-parameters)
+      * [Configuring the Encoding of Coding Keys](#configuring-the-encoding-of-coding-keys)
+      * [Configuring the Encoding of Spaces](#configuring-the-encoding-of-spaces)
+    - [`JSONParameterEncoder`](#jsonparameterencoder)
+      * [POST Request with JSON-Encoded Parameters](#post-request-with-json-encoded-parameters)
+      * [Configuring a Custom `JSONEncoder`](#configuring-a-custom-jsonencoder)
+      * [Manual Parameter Encoding of a `URLRequest`](#manual-parameter-encoding-of-a-urlrequest)
+  + [HTTP Headers](#http-headers)
+  + [Response Validation](#response-validation)
+    - [Automatic Validation](#automatic-validation)
+    - [Manual Validation](#manual-validation)
+  + [Response Handling](#response-handling)
+    - [Response Handler](#response-handler)
+    - [Response Data Handler](#response-data-handler)
+    - [Response String Handler](#response-string-handler)
+    - [Response JSON Handler](#response-json-handler)
+    - [Response `Decodable` Handler](#response-decodable-handler)
+    - [Chained Response Handlers](#chained-response-handlers)
+    - [Response Handler Queue](#response-handler-queue)
+  + [Response Caching](#response-caching)
+  + [Authentication](#authentication)
+    - [HTTP Basic Authentication](#http-basic-authentication)
+    - [Authentication with `URLCredential`](#authentication-with-urlcredential)
+    - [Manual Authentication](#manual-authentication)
+  + [Downloading Data to a File](#downloading-data-to-a-file)
+    - [Download File Destination](#download-file-destination)
+    - [Download Progress](#download-progress)
+    - [Canceling and Resuming a Download](#canceling-and-resuming-a-download)
+  + [Uploading Data to a Server](#uploading-data-to-a-server)
+    - [Uploading Data](#uploading-data)
+    - [Uploading a File](#uploading-a-file)
+    - [Uploading Multipart Form Data](#uploading-multipart-form-data)
+    - [Upload Progress](#upload-progress)
+  + [Streaming Data from a Server](#streaming-data-from-a-server)
+    - [Streaming `Data`](#streaming-data)
+    - [Streaming `String`s](#streaming-strings)
+    - [Streaming `Decodable` Values](#streaming-decodable-values)
+    - [Producing an `InputStream`](#producing-an-inputstream)
+  + [Statistical Metrics](#statistical-metrics)
+    - [`URLSessionTaskMetrics`](#urlsessiontaskmetrics)
+  + [cURL Command Output](#curl-command-output)
 
 # Using Alamofire
 
@@ -151,6 +150,26 @@ extension HTTPMethod {
     static let custom = HTTPMethod(rawValue: "CUSTOM")
 }
 ```
+
+### Setting Other `URLRequest` Properties
+
+Alamofire's request creation methods offer the most common parameters for customization but sometimes those just aren't enough. The `URLRequest`s created from the passed values can be modified by using a `RequestModifier` closure when creating requests. For example, to set the `URLRequest`'s `timeoutInterval` to 5 seconds, modify the request in the closure.
+
+```swift
+AF.request("https://httpbin.org/get", requestModifier: { $0.timeoutInterval = 5 }).response(...)
+```
+
+`RequestModifier`s also work with trailing closure syntax.
+
+```swift
+AF.request("https://httpbin.org/get") { urlRequest in
+    urlRequest.timeoutInterval = 5
+    urlRequest.allowsConstrainedNetworkAccess = false
+}
+.response(...)
+```
+
+`RequestModifier`s only apply to request created using methods taking a `URL` and other individual components, not to values created directly from `URLRequestConvertible` values, as those values should be able to set all parameters themselves. Additionally, adoption of `URLRequestConvertible` is recommended once *most* requests start needing to be modified during creation. You can read more in our [Advanced Usage documentation](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#making-requests).
 
 ### Request Parameters and Parameter Encoders
 

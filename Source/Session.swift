@@ -220,15 +220,21 @@ open class Session {
 
     // MARK: - DataRequest
 
+    /// Closure which provides a `URLRequest` for mutation.
+    public typealias RequestModifier = (inout URLRequest) throws -> Void
+
     struct RequestConvertible: URLRequestConvertible {
         let url: URLConvertible
         let method: HTTPMethod
         let parameters: Parameters?
         let encoding: ParameterEncoding
         let headers: HTTPHeaders?
+        let requestModifier: RequestModifier?
 
         func asURLRequest() throws -> URLRequest {
-            let request = try URLRequest(url: url, method: method, headers: headers)
+            var request = try URLRequest(url: url, method: method, headers: headers)
+            try requestModifier?(&request)
+
             return try encoding.encode(request, with: parameters)
         }
     }
@@ -236,13 +242,16 @@ open class Session {
     /// Creates a `DataRequest` from a `URLRequest` created using the passed components and a `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - parameters:  `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by default.
-    ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
-    ///                  `URLEncoding.default` by default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - parameters:      `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by
+    ///                      default.
+    ///   - encoding:        `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
+    ///                      `URLEncoding.default` by default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
     /// - Returns:       The created `DataRequest`.
     open func request(_ convertible: URLConvertible,
@@ -250,12 +259,14 @@ open class Session {
                       parameters: Parameters? = nil,
                       encoding: ParameterEncoding = URLEncoding.default,
                       headers: HTTPHeaders? = nil,
-                      interceptor: RequestInterceptor? = nil) -> DataRequest {
+                      interceptor: RequestInterceptor? = nil,
+                      requestModifier: RequestModifier? = nil) -> DataRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
                                              parameters: parameters,
                                              encoding: encoding,
-                                             headers: headers)
+                                             headers: headers,
+                                             requestModifier: requestModifier)
 
         return request(convertible, interceptor: interceptor)
     }
@@ -266,9 +277,11 @@ open class Session {
         let parameters: Parameters?
         let encoder: ParameterEncoder
         let headers: HTTPHeaders?
+        let requestModifier: RequestModifier?
 
         func asURLRequest() throws -> URLRequest {
-            let request = try URLRequest(url: url, method: method, headers: headers)
+            var request = try URLRequest(url: url, method: method, headers: headers)
+            try requestModifier?(&request)
 
             return try parameters.map { try encoder.encode($0, into: request) } ?? request
         }
@@ -292,12 +305,14 @@ open class Session {
                                              parameters: Parameters? = nil,
                                              encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                              headers: HTTPHeaders? = nil,
-                                             interceptor: RequestInterceptor? = nil) -> DataRequest {
+                                             interceptor: RequestInterceptor? = nil,
+                                             requestModifier: RequestModifier? = nil) -> DataRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: parameters,
                                                       encoder: encoder,
-                                                      headers: headers)
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
 
         return request(convertible, interceptor: interceptor)
     }
@@ -338,6 +353,8 @@ open class Session {
     ///                                       is thrown while serializing stream `Data`. `false` by default.
     ///   - interceptor:                      `RequestInterceptor` value to be used by the returned `DataRequest`. `nil`
     ///                                       by default.
+    ///   - requestModifier:                  `RequestModifier` which will be applied to the `URLRequest` created from
+    ///                                       the provided parameters. `nil` by default.
     ///
     /// - Returns:       The created `DataStream` request.
     open func streamRequest<Parameters: Encodable>(_ convertible: URLConvertible,
@@ -346,12 +363,14 @@ open class Session {
                                                    encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                                    headers: HTTPHeaders? = nil,
                                                    automaticallyCancelOnStreamError: Bool = false,
-                                                   interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+                                                   interceptor: RequestInterceptor? = nil,
+                                                   requestModifier: RequestModifier? = nil) -> DataStreamRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: parameters,
                                                       encoder: encoder,
-                                                      headers: headers)
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
 
         return streamRequest(convertible,
                              automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
@@ -368,18 +387,22 @@ open class Session {
     ///                                       is thrown while serializing stream `Data`. `false` by default.
     ///   - interceptor:                      `RequestInterceptor` value to be used by the returned `DataRequest`. `nil`
     ///                                       by default.
+    ///   - requestModifier:                  `RequestModifier` which will be applied to the `URLRequest` created from
+    ///                                       the provided parameters. `nil` by default.
     ///
     /// - Returns:       The created `DataStream` request.
     open func streamRequest(_ convertible: URLConvertible,
                             method: HTTPMethod = .get,
                             headers: HTTPHeaders? = nil,
                             automaticallyCancelOnStreamError: Bool = false,
-                            interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+                            interceptor: RequestInterceptor? = nil,
+                            requestModifier: RequestModifier? = nil) -> DataStreamRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: Optional<Empty>.none,
                                                       encoder: URLEncodedFormParameterEncoder.default,
-                                                      headers: headers)
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
 
         return streamRequest(convertible,
                              automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
@@ -418,29 +441,34 @@ open class Session {
     /// `Destination`.
     ///
     /// - Parameters:
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - parameters:  `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by default.
-    ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`. Defaults
-    ///                  to `URLEncoding.default`.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
-    ///   - destination: `DownloadRequest.Destination` closure used to determine how and where the downloaded file
-    ///                  should be moved. `nil` by default.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - parameters:      `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by
+    ///                      default.
+    ///   - encoding:        `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
+    ///                      Defaults to `URLEncoding.default`.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
+    ///   - destination:     `DownloadRequest.Destination` closure used to determine how and where the downloaded file
+    ///                      should be moved. `nil` by default.
     ///
-    /// - Returns:       The created `DownloadRequest`.
+    /// - Returns:           The created `DownloadRequest`.
     open func download(_ convertible: URLConvertible,
                        method: HTTPMethod = .get,
                        parameters: Parameters? = nil,
                        encoding: ParameterEncoding = URLEncoding.default,
                        headers: HTTPHeaders? = nil,
                        interceptor: RequestInterceptor? = nil,
+                       requestModifier: RequestModifier? = nil,
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
                                              parameters: parameters,
                                              encoding: encoding,
-                                             headers: headers)
+                                             headers: headers,
+                                             requestModifier: requestModifier)
 
         return download(convertible, interceptor: interceptor, to: destination)
     }
@@ -449,29 +477,33 @@ open class Session {
     /// a `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - parameters:  Value conforming to `Encodable` to be encoded into the `URLRequest`. `nil` by default.
-    ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`. Defaults
-    ///                  to `URLEncodedFormParameterEncoder.default`.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
-    ///   - destination: `DownloadRequest.Destination` closure used to determine how and where the downloaded file
-    ///                  should be moved. `nil` by default.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - parameters:      Value conforming to `Encodable` to be encoded into the `URLRequest`. `nil` by default.
+    ///   - encoder:         `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`.
+    ///                      Defaults to `URLEncodedFormParameterEncoder.default`.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
+    ///   - destination:     `DownloadRequest.Destination` closure used to determine how and where the downloaded file
+    ///                      should be moved. `nil` by default.
     ///
-    /// - Returns:       The created `DownloadRequest`.
+    /// - Returns:           The created `DownloadRequest`.
     open func download<Parameters: Encodable>(_ convertible: URLConvertible,
                                               method: HTTPMethod = .get,
                                               parameters: Parameters? = nil,
                                               encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                               headers: HTTPHeaders? = nil,
                                               interceptor: RequestInterceptor? = nil,
+                                              requestModifier: RequestModifier? = nil,
                                               to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: parameters,
                                                       encoder: encoder,
-                                                      headers: headers)
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
 
         return download(convertible, interceptor: interceptor, to: destination)
     }
@@ -541,9 +573,13 @@ open class Session {
         let url: URLConvertible
         let method: HTTPMethod
         let headers: HTTPHeaders?
+        let requestModifier: RequestModifier?
 
         func asURLRequest() throws -> URLRequest {
-            try URLRequest(url: url, method: method, headers: headers)
+            var request = try URLRequest(url: url, method: method, headers: headers)
+            try requestModifier?(&request)
+
+            return request
         }
     }
 
@@ -565,22 +601,28 @@ open class Session {
     /// Creates an `UploadRequest` for the given `Data`, `URLRequest` components, and `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - data:        The `Data` to upload.
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
-    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
-    ///                  default.
+    ///   - data:            The `Data` to upload.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                      default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
-    /// - Returns:       The created `UploadRequest`.
+    /// - Returns:           The created `UploadRequest`.
     open func upload(_ data: Data,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         return upload(data, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
@@ -608,22 +650,28 @@ open class Session {
     /// components and `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - fileURL:     The `URL` of the file to upload.
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `UploadRequest`. `nil` by default.
-    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
-    ///                  default.
+    ///   - fileURL:         The `URL` of the file to upload.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `UploadRequest`. `nil` by default.
+    ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                      default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
-    /// - Returns:       The created `UploadRequest`.
+    /// - Returns:           The created `UploadRequest`.
     open func upload(_ fileURL: URL,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         return upload(fileURL, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
@@ -652,22 +700,28 @@ open class Session {
     /// `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - stream:      The `InputStream` that provides the data to upload.
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
-    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
-    ///                  default.
+    ///   - stream:          The `InputStream` that provides the data to upload.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                      default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
-    /// - Returns:       The created `UploadRequest`.
+    /// - Returns:           The created `UploadRequest`.
     open func upload(_ stream: InputStream,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         return upload(stream, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
@@ -719,6 +773,8 @@ open class Session {
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
     ///                              written to disk before being uploaded. `.default` instance by default.
+    ///   - requestModifier:         `RequestModifier` which will be applied to the `URLRequest` created from the
+    ///                              provided parameters. `nil` by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
@@ -727,8 +783,12 @@ open class Session {
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: url,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         let formData = MultipartFormData(fileManager: fileManager)
         multipartFormData(formData)
@@ -765,6 +825,8 @@ open class Session {
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
     ///                              written to disk before being uploaded. `.default` instance by default.
+    ///   - requestModifier:         `RequestModifier` which will be applied to the `URLRequest` created from the
+    ///                              provided parameters. `nil` by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
@@ -809,6 +871,8 @@ open class Session {
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
     ///                              written to disk before being uploaded. `.default` instance by default.
+    ///   - requestModifier:         `RequestModifier` which will be applied to the `URLRequest` created from the
+    ///                              provided parameters. `nil` by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: MultipartFormData,
@@ -817,8 +881,12 @@ open class Session {
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
                      interceptor: RequestInterceptor? = nil,
-                     fileManager: FileManager = .default) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: url,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
                                               encodingMemoryThreshold: encodingMemoryThreshold,
