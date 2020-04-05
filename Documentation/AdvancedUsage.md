@@ -224,7 +224,7 @@ Each request performed by Alamofire is encapsulated by particular class, `DataRe
 Once a `Request` subclass has been created with it’s initial parameters or `URLRequestConvertible` value, it is passed through the series of steps making up Alamofire’s request pipeline. For a successful request, these include:
 
 1. Initial parameters, like HTTP method, headers, and parameters are encapsulated into an internal `URLRequestConvertible` value. If a `URLRequestConvertible` value is passed directly, that value is used unchanged.
-2. `asURLRequest()` is called on the the `URLRequestConvertible` value, creating the first `URLRequest` value. This value is passed to the `Request` and stored in `requests`.
+2. `asURLRequest()` is called on the the `URLRequestConvertible` value, creating the first `URLRequest` value. This value is passed to the `Request` and stored in `requests`. If the `URLRequestConvertible` value was created from the parameters passed to a `Session` method, any provided `RequestModifier` is called when the `URLRequest` is created.
 3. If there are any `Session` or `Request` `RequestAdapter`s or `RequestInterceptor`s, they’re called using the previously created `URLRequest`. The adapted `URLRequest` is then passed to the `Request` and stored in `request`s as well.
 4. `Session` calls the `Request` to create the `URLSessionTask` to perform the network request based on the `URLRequest`.
 5. Once the `URLSessionTask` is complete and `URLSessionTaskMetrics` have been gathered, the `Request` executes its `Validator`s. 

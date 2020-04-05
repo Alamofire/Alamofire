@@ -220,6 +220,7 @@ open class Session {
 
     // MARK: - DataRequest
 
+    /// Closure which provides a `URLRequest` for mutation.
     public typealias RequestModifier = (inout URLRequest) throws -> Void
 
     struct RequestConvertible: URLRequestConvertible {
