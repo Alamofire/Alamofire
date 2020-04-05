@@ -84,6 +84,21 @@
                 <a class="nav-group-task-link" href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest.html">DataStreamRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/Stream.html">– Stream</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/Event.html">– Event</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/Completion.html">– Completion</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/CancellationToken.html">– CancellationToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a>
               </li>
               <li class="nav-group-task">
@@ -308,6 +323,9 @@
                 <a class="nav-group-task-link" href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/DataStreamSerializer.html">DataStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DownloadResponseSerializerProtocol.html">DownloadResponseSerializerProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -365,6 +383,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DataResponse.html">DataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DownloadResponse.html">DownloadResponse</a>
@@ -1342,6 +1363,33 @@ event.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire19ClosureEventMonitorC43requestDidValidateRequestResponseWithResultyAA010DataStreamH0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCs0K0Oyyts5Error_pGtcSgvp"></a>
+                    <a name="//apple_ref/swift/Property/requestDidValidateRequestResponseWithResult" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire19ClosureEventMonitorC43requestDidValidateRequestResponseWithResultyAA010DataStreamH0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCs0K0Oyyts5Error_pGtcSgvp">requestDidValidateRequestResponseWithResult</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Closure called on the <code><a href="../Classes/ClosureEventMonitor.html#/s:9Alamofire12EventMonitorP7request_18didValidateRequest8response10withResultyAA010DataStreamG0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCs0J0Oyyts5Error_pGtF">request(_:didValidateRequest:response:withResult:)</a></code> event.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">requestDidValidateRequestResponseWithResult</span><span class="p">:</span> <span class="p">((</span><span class="kt"><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></span><span class="p">,</span> <span class="kt">URLRequest</span><span class="p">?,</span> <span class="kt">HTTPURLResponse</span><span class="p">,</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="o">.</span><span class="kt">ValidationResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire19ClosureEventMonitorC26requestDidCreateUploadableyAA13UploadRequestC_AF0H0OtcSgvp"></a>
                     <a name="//apple_ref/swift/Property/requestDidCreateUploadable" class="dashAnchor"></a>
                     <a class="token" href="#/s:9Alamofire19ClosureEventMonitorC26requestDidCreateUploadableyAA13UploadRequestC_AF0H0OtcSgvp">requestDidCreateUploadable</a>
@@ -1559,7 +1607,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire19ClosureEventMonitorC5queueACSo012OS_dispatch_E0C_tcfc"></a>
                     <a name="//apple_ref/swift/Method/init(queue:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire19ClosureEventMonitorC5queueACSo012OS_dispatch_E0C_tcfc">init(queue:)</a>
+                    <a class="token" href="#/s:9Alamofire19ClosureEventMonitorC5queueACSo012OS_dispatch_E0C_tcfc">init(queue:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1605,7 +1653,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_25didBecomeInvalidWithErrorySo12NSURLSessionC_s0J0_pSgtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:didBecomeInvalidWithError:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_25didBecomeInvalidWithErrorySo12NSURLSessionC_s0J0_pSgtF">urlSession(_:didBecomeInvalidWithError:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_25didBecomeInvalidWithErrorySo12NSURLSessionC_s0J0_pSgtF">urlSession(_:<wbr>didBecomeInvalidWithError:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1631,7 +1679,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_4task10didReceiveySo12NSURLSessionC_So0I4TaskCSo28NSURLAuthenticationChallengeCtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:task:didReceive:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_4task10didReceiveySo12NSURLSessionC_So0I4TaskCSo28NSURLAuthenticationChallengeCtF">urlSession(_:task:didReceive:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_4task10didReceiveySo12NSURLSessionC_So0I4TaskCSo28NSURLAuthenticationChallengeCtF">urlSession(_:<wbr>task:<wbr>didReceive:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1657,7 +1705,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_4task15didSendBodyData14totalBytesSent0kl10ExpectedToH0ySo12NSURLSessionC_So0P4TaskCs5Int64VA2NtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_4task15didSendBodyData14totalBytesSent0kl10ExpectedToH0ySo12NSURLSessionC_So0P4TaskCs5Int64VA2NtF">urlSession(_:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_4task15didSendBodyData14totalBytesSent0kl10ExpectedToH0ySo12NSURLSessionC_So0P4TaskCs5Int64VA2NtF">urlSession(_:<wbr>task:<wbr>didSendBodyData:<wbr>totalBytesSent:<wbr>totalBytesExpectedToSend:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1687,7 +1735,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_22taskNeedsNewBodyStreamySo12NSURLSessionC_So0K4TaskCtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:taskNeedsNewBodyStream:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_22taskNeedsNewBodyStreamySo12NSURLSessionC_So0K4TaskCtF">urlSession(_:taskNeedsNewBodyStream:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_22taskNeedsNewBodyStreamySo12NSURLSessionC_So0K4TaskCtF">urlSession(_:<wbr>taskNeedsNewBodyStream:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1713,7 +1761,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_4task26willPerformHTTPRedirection10newRequestySo12NSURLSessionC_So0L4TaskCSo17NSHTTPURLResponseC10Foundation10URLRequestVtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:task:willPerformHTTPRedirection:newRequest:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_4task26willPerformHTTPRedirection10newRequestySo12NSURLSessionC_So0L4TaskCSo17NSHTTPURLResponseC10Foundation10URLRequestVtF">urlSession(_:task:willPerformHTTPRedirection:newRequest:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_4task26willPerformHTTPRedirection10newRequestySo12NSURLSessionC_So0L4TaskCSo17NSHTTPURLResponseC10Foundation10URLRequestVtF">urlSession(_:<wbr>task:<wbr>willPerformHTTPRedirection:<wbr>newRequest:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1742,7 +1790,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_4task19didFinishCollectingySo12NSURLSessionC_So0J4TaskCSo0jK7MetricsCtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:task:didFinishCollecting:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_4task19didFinishCollectingySo12NSURLSessionC_So0J4TaskCSo0jK7MetricsCtF">urlSession(_:task:didFinishCollecting:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_4task19didFinishCollectingySo12NSURLSessionC_So0J4TaskCSo0jK7MetricsCtF">urlSession(_:<wbr>task:<wbr>didFinishCollecting:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1768,7 +1816,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_4task20didCompleteWithErrorySo12NSURLSessionC_So0K4TaskCs0J0_pSgtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:task:didCompleteWithError:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_4task20didCompleteWithErrorySo12NSURLSessionC_So0K4TaskCs0J0_pSgtF">urlSession(_:task:didCompleteWithError:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_4task20didCompleteWithErrorySo12NSURLSessionC_So0K4TaskCs0J0_pSgtF">urlSession(_:<wbr>task:<wbr>didCompleteWithError:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1794,7 +1842,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_28taskIsWaitingForConnectivityySo12NSURLSessionC_So0K4TaskCtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:taskIsWaitingForConnectivity:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_28taskIsWaitingForConnectivityySo12NSURLSessionC_So0K4TaskCtF">urlSession(_:taskIsWaitingForConnectivity:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_28taskIsWaitingForConnectivityySo12NSURLSessionC_So0K4TaskCtF">urlSession(_:<wbr>taskIsWaitingForConnectivity:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1821,7 +1869,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0C10Foundation0K0VtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:dataTask:didReceive:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0C10Foundation0K0VtF">urlSession(_:dataTask:didReceive:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_8dataTask10didReceiveySo12NSURLSessionC_So0j4DataG0C10Foundation0K0VtF">urlSession(_:<wbr>dataTask:<wbr>didReceive:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1847,7 +1895,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_8dataTask17willCacheResponseySo12NSURLSessionC_So0k4DataG0CSo19NSCachedURLResponseCtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:dataTask:willCacheResponse:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_8dataTask17willCacheResponseySo12NSURLSessionC_So0k4DataG0CSo19NSCachedURLResponseCtF">urlSession(_:dataTask:willCacheResponse:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_8dataTask17willCacheResponseySo12NSURLSessionC_So0k4DataG0CSo19NSCachedURLResponseCtF">urlSession(_:<wbr>dataTask:<wbr>willCacheResponse:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1873,7 +1921,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_12downloadTask17didResumeAtOffset18expectedTotalBytesySo12NSURLSessionC_So0o8DownloadG0Cs5Int64VAMtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:downloadTask:didResumeAtOffset:expectedTotalBytes:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_12downloadTask17didResumeAtOffset18expectedTotalBytesySo12NSURLSessionC_So0o8DownloadG0Cs5Int64VAMtF">urlSession(_:downloadTask:didResumeAtOffset:expectedTotalBytes:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_12downloadTask17didResumeAtOffset18expectedTotalBytesySo12NSURLSessionC_So0o8DownloadG0Cs5Int64VAMtF">urlSession(_:<wbr>downloadTask:<wbr>didResumeAtOffset:<wbr>expectedTotalBytes:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1902,7 +1950,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_12downloadTask12didWriteData17totalBytesWritten0kl10ExpectedToI0ySo12NSURLSessionC_So0p8DownloadG0Cs5Int64VA2NtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_12downloadTask12didWriteData17totalBytesWritten0kl10ExpectedToI0ySo12NSURLSessionC_So0p8DownloadG0Cs5Int64VA2NtF">urlSession(_:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_12downloadTask12didWriteData17totalBytesWritten0kl10ExpectedToI0ySo12NSURLSessionC_So0p8DownloadG0Cs5Int64VA2NtF">urlSession(_:<wbr>downloadTask:<wbr>didWriteData:<wbr>totalBytesWritten:<wbr>totalBytesExpectedToWrite:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1932,7 +1980,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP10urlSession_12downloadTask22didFinishDownloadingToySo12NSURLSessionC_So0l8DownloadG0C10Foundation3URLVtF"></a>
                     <a name="//apple_ref/swift/Method/urlSession(_:downloadTask:didFinishDownloadingTo:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_12downloadTask22didFinishDownloadingToySo12NSURLSessionC_So0l8DownloadG0C10Foundation3URLVtF">urlSession(_:downloadTask:didFinishDownloadingTo:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP10urlSession_12downloadTask22didFinishDownloadingToySo12NSURLSessionC_So0l8DownloadG0C10Foundation3URLVtF">urlSession(_:<wbr>downloadTask:<wbr>didFinishDownloadingTo:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1958,7 +2006,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_26didCreateInitialURLRequestyAA7RequestC_10Foundation0H0VtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didCreateInitialURLRequest:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_26didCreateInitialURLRequestyAA7RequestC_10Foundation0H0VtF">request(_:didCreateInitialURLRequest:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_26didCreateInitialURLRequestyAA7RequestC_10Foundation0H0VtF">request(_:<wbr>didCreateInitialURLRequest:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1984,7 +2032,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_34didFailToCreateURLRequestWithErroryAA7RequestC_AA7AFErrorOtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didFailToCreateURLRequestWithError:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_34didFailToCreateURLRequestWithErroryAA7RequestC_AA7AFErrorOtF">request(_:didFailToCreateURLRequestWithError:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_34didFailToCreateURLRequestWithErroryAA7RequestC_AA7AFErrorOtF">request(_:<wbr>didFailToCreateURLRequestWithError:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2010,7 +2058,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_22didAdaptInitialRequest2toyAA0H0C_10Foundation10URLRequestVAKtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didAdaptInitialRequest:to:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_22didAdaptInitialRequest2toyAA0H0C_10Foundation10URLRequestVAKtF">request(_:didAdaptInitialRequest:to:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_22didAdaptInitialRequest2toyAA0H0C_10Foundation10URLRequestVAKtF">request(_:<wbr>didAdaptInitialRequest:<wbr>to:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2036,7 +2084,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_24didFailToAdaptURLRequest9withErroryAA7RequestC_10Foundation0I0VAA7AFErrorOtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didFailToAdaptURLRequest:withError:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_24didFailToAdaptURLRequest9withErroryAA7RequestC_10Foundation0I0VAA7AFErrorOtF">request(_:didFailToAdaptURLRequest:withError:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_24didFailToAdaptURLRequest9withErroryAA7RequestC_10Foundation0I0VAA7AFErrorOtF">request(_:<wbr>didFailToAdaptURLRequest:<wbr>withError:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2062,7 +2110,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didCreateURLRequest:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF">request(_:didCreateURLRequest:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_19didCreateURLRequestyAA7RequestC_10Foundation0G0VtF">request(_:<wbr>didCreateURLRequest:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2088,7 +2136,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_13didCreateTaskyAA7RequestC_So012NSURLSessionG0CtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didCreateTask:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_13didCreateTaskyAA7RequestC_So012NSURLSessionG0CtF">request(_:didCreateTask:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_13didCreateTaskyAA7RequestC_So012NSURLSessionG0CtF">request(_:<wbr>didCreateTask:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2114,7 +2162,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_16didGatherMetricsyAA7RequestC_So016NSURLSessionTaskG0CtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didGatherMetrics:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_16didGatherMetricsyAA7RequestC_So016NSURLSessionTaskG0CtF">request(_:didGatherMetrics:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_16didGatherMetricsyAA7RequestC_So016NSURLSessionTaskG0CtF">request(_:<wbr>didGatherMetrics:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2140,7 +2188,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_11didFailTask14earlyWithErroryAA7RequestC_So012NSURLSessionG0CAA7AFErrorOtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didFailTask:earlyWithError:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_11didFailTask14earlyWithErroryAA7RequestC_So012NSURLSessionG0CAA7AFErrorOtF">request(_:didFailTask:earlyWithError:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_11didFailTask14earlyWithErroryAA7RequestC_So012NSURLSessionG0CAA7AFErrorOtF">request(_:<wbr>didFailTask:<wbr>earlyWithError:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2166,7 +2214,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_15didCompleteTask4withyAA7RequestC_So012NSURLSessionG0CAA7AFErrorOSgtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didCompleteTask:with:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_15didCompleteTask4withyAA7RequestC_So012NSURLSessionG0CAA7AFErrorOSgtF">request(_:didCompleteTask:with:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_15didCompleteTask4withyAA7RequestC_So012NSURLSessionG0CAA7AFErrorOSgtF">request(_:<wbr>didCompleteTask:<wbr>with:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2192,7 +2240,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP17requestIsRetryingyyAA7RequestCF"></a>
                     <a name="//apple_ref/swift/Method/requestIsRetrying(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP17requestIsRetryingyyAA7RequestCF">requestIsRetrying(_:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP17requestIsRetryingyyAA7RequestCF">requestIsRetrying(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2218,7 +2266,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP16requestDidFinishyyAA7RequestCF"></a>
                     <a name="//apple_ref/swift/Method/requestDidFinish(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP16requestDidFinishyyAA7RequestCF">requestDidFinish(_:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP16requestDidFinishyyAA7RequestCF">requestDidFinish(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2244,7 +2292,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP16requestDidResumeyyAA7RequestCF"></a>
                     <a name="//apple_ref/swift/Method/requestDidResume(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP16requestDidResumeyyAA7RequestCF">requestDidResume(_:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP16requestDidResumeyyAA7RequestCF">requestDidResume(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2270,7 +2318,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_13didResumeTaskyAA7RequestC_So012NSURLSessionG0CtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didResumeTask:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_13didResumeTaskyAA7RequestC_So012NSURLSessionG0CtF">request(_:didResumeTask:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_13didResumeTaskyAA7RequestC_So012NSURLSessionG0CtF">request(_:<wbr>didResumeTask:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2296,7 +2344,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP17requestDidSuspendyyAA7RequestCF"></a>
                     <a name="//apple_ref/swift/Method/requestDidSuspend(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP17requestDidSuspendyyAA7RequestCF">requestDidSuspend(_:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP17requestDidSuspendyyAA7RequestCF">requestDidSuspend(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2322,7 +2370,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_14didSuspendTaskyAA7RequestC_So012NSURLSessionG0CtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didSuspendTask:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_14didSuspendTaskyAA7RequestC_So012NSURLSessionG0CtF">request(_:didSuspendTask:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_14didSuspendTaskyAA7RequestC_So012NSURLSessionG0CtF">request(_:<wbr>didSuspendTask:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2348,7 +2396,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP16requestDidCancelyyAA7RequestCF"></a>
                     <a name="//apple_ref/swift/Method/requestDidCancel(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP16requestDidCancelyyAA7RequestCF">requestDidCancel(_:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP16requestDidCancelyyAA7RequestCF">requestDidCancel(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2374,7 +2422,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_13didCancelTaskyAA7RequestC_So012NSURLSessionG0CtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didCancelTask:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_13didCancelTaskyAA7RequestC_So012NSURLSessionG0CtF">request(_:didCancelTask:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_13didCancelTaskyAA7RequestC_So012NSURLSessionG0CtF">request(_:<wbr>didCancelTask:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2400,7 +2448,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_18didValidateRequest8response4data10withResultyAA04DataG0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCAK0L0VSgs0K0Oyyts5Error_pGtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didValidateRequest:response:data:withResult:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_18didValidateRequest8response4data10withResultyAA04DataG0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCAK0L0VSgs0K0Oyyts5Error_pGtF">request(_:didValidateRequest:response:data:withResult:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_18didValidateRequest8response4data10withResultyAA04DataG0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCAK0L0VSgs0K0Oyyts5Error_pGtF">request(_:<wbr>didValidateRequest:<wbr>response:<wbr>data:<wbr>withResult:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2430,7 +2478,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA11DataRequestC_AA0hG0Vy10Foundation0H0VSgAA7AFErrorOGtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didParseResponse:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA11DataRequestC_AA0hG0Vy10Foundation0H0VSgAA7AFErrorOGtF">request(_:didParseResponse:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA11DataRequestC_AA0hG0Vy10Foundation0H0VSgAA7AFErrorOGtF">request(_:<wbr>didParseResponse:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2454,9 +2502,35 @@ event.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:9Alamofire12EventMonitorP7request_18didValidateRequest8response10withResultyAA010DataStreamG0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCs0J0Oyyts5Error_pGtF"></a>
+                    <a name="//apple_ref/swift/Method/request(_:didValidateRequest:response:withResult:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_18didValidateRequest8response10withResultyAA010DataStreamG0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCs0J0Oyyts5Error_pGtF">request(_:<wbr>didValidateRequest:<wbr>response:<wbr>withResult:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">request</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt"><a href="../Classes/DataStreamRequest.html">DataStreamRequest</a></span><span class="p">,</span> <span class="n">didValidateRequest</span> <span class="nv">urlRequest</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?,</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">,</span> <span class="n">withResult</span> <span class="nv">result</span><span class="p">:</span> <span class="kt"><a href="../Classes/Request.html">Request</a></span><span class="o">.</span><span class="kt">ValidationResult</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_19didCreateUploadableyAA13UploadRequestC_AG0G0OtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didCreateUploadable:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_19didCreateUploadableyAA13UploadRequestC_AG0G0OtF">request(_:didCreateUploadable:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_19didCreateUploadableyAA13UploadRequestC_AG0G0OtF">request(_:<wbr>didCreateUploadable:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2482,7 +2556,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_34didFailToCreateUploadableWithErroryAA13UploadRequestC_AA7AFErrorOtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didFailToCreateUploadableWithError:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_34didFailToCreateUploadableWithErroryAA13UploadRequestC_AA7AFErrorOtF">request(_:didFailToCreateUploadableWithError:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_34didFailToCreateUploadableWithErroryAA13UploadRequestC_AA7AFErrorOtF">request(_:<wbr>didFailToCreateUploadableWithError:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2508,7 +2582,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_21didProvideInputStreamyAA13UploadRequestC_So07NSInputH0CtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didProvideInputStream:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_21didProvideInputStreamyAA13UploadRequestC_So07NSInputH0CtF">request(_:didProvideInputStream:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_21didProvideInputStreamyAA13UploadRequestC_So07NSInputH0CtF">request(_:<wbr>didProvideInputStream:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2534,7 +2608,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_25didFinishDownloadingUsing4withyAA15DownloadRequestC_So16NSURLSessionTaskCs6ResultOy10Foundation3URLVAA7AFErrorOGtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didFinishDownloadingUsing:with:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_25didFinishDownloadingUsing4withyAA15DownloadRequestC_So16NSURLSessionTaskCs6ResultOy10Foundation3URLVAA7AFErrorOGtF">request(_:didFinishDownloadingUsing:with:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_25didFinishDownloadingUsing4withyAA15DownloadRequestC_So16NSURLSessionTaskCs6ResultOy10Foundation3URLVAA7AFErrorOGtF">request(_:<wbr>didFinishDownloadingUsing:<wbr>with:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2560,7 +2634,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_23didCreateDestinationURLyAA15DownloadRequestC_10Foundation0H0VtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didCreateDestinationURL:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_23didCreateDestinationURLyAA15DownloadRequestC_10Foundation0H0VtF">request(_:didCreateDestinationURL:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_23didCreateDestinationURLyAA15DownloadRequestC_10Foundation0H0VtF">request(_:<wbr>didCreateDestinationURL:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2586,7 +2660,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_18didValidateRequest8response7fileURL10withResultyAA08DownloadG0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCAK0J0VSgs0L0Oyyts5Error_pGtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didValidateRequest:response:fileURL:withResult:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_18didValidateRequest8response7fileURL10withResultyAA08DownloadG0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCAK0J0VSgs0L0Oyyts5Error_pGtF">request(_:didValidateRequest:response:fileURL:withResult:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_18didValidateRequest8response7fileURL10withResultyAA08DownloadG0C_10Foundation10URLRequestVSgSo17NSHTTPURLResponseCAK0J0VSgs0L0Oyyts5Error_pGtF">request(_:<wbr>didValidateRequest:<wbr>response:<wbr>fileURL:<wbr>withResult:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2616,7 +2690,7 @@ event.</p>
                     <code>
                     <a name="/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA15DownloadRequestC_AA0hG0Vy10Foundation3URLVSgAA7AFErrorOGtF"></a>
                     <a name="//apple_ref/swift/Method/request(_:didParseResponse:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA15DownloadRequestC_AA0hG0Vy10Foundation3URLVSgAA7AFErrorOGtF">request(_:didParseResponse:)</a>
+                    <a class="token" href="#/s:9Alamofire12EventMonitorP7request_16didParseResponseyAA15DownloadRequestC_AA0hG0Vy10Foundation3URLVSgAA7AFErrorOGtF">request(_:<wbr>didParseResponse:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2645,8 +2719,8 @@ event.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-03-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-04-04)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

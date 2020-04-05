@@ -248,8 +248,10 @@ pre code {
     content: "";
     display: block; }
   .item .token, .item .direct-link {
+    display: inline-block;
+    text-indent: -20px;
     padding-left: 3px;
-    margin-left: 0px;
+    margin-left: 20px;
     font-size: 1rem; }
   .item .declaration-note {
     font-size: .85em;

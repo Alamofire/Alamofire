@@ -825,8 +825,6 @@ open class Session {
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
     ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
     ///                              written to disk before being uploaded. `.default` instance by default.
-    ///   - requestModifier:         `RequestModifier` which will be applied to the `URLRequest` created from the
-    ///                              provided parameters. `nil` by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,

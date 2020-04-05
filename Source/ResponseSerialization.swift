@@ -814,7 +814,9 @@ public protocol DataStreamSerializer {
 
 /// `DataStreamSerializer` which uses the provided `DataPreprocessor` and `DataDecoder` to serialize the incoming `Data`.
 public struct DecodableStreamSerializer<T: Decodable>: DataStreamSerializer {
+    /// `DataDecoder` used to decode incoming `Data`.
     public let decoder: DataDecoder
+    /// `DataPreprocessor` incoming `Data` is passed through before being passed to the `DataDecoder`.
     public let dataPreprocessor: DataPreprocessor
 
     /// Creates an instance with the provided `DataDecoder` and `DataPreprocessor`.
