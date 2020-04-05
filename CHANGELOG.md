@@ -56,6 +56,10 @@ Released on 2020-04-04. All issues associated with this milestone can be found u
   - Updated by  [Jon Shier](https://github.com/jshier) in Pull Request [#3115](https://github.com/Alamofire/Alamofire/pull/3115).
 - Project to require Swift 5.1.
   - Updated by  [Jon Shier](https://github.com/jshier) in Pull Request [#3066](https://github.com/Alamofire/Alamofire/pull/3066).
+  
+#### Fixed
+- Typo in `ServerTrustEvaluating` documentation.
+  - Fixed by [Lucas Tavares](https://github.com/tavares1) in Pull Request [#3138](https://github.com/Alamofire/Alamofire/pull/3138).
 
 ---
 
