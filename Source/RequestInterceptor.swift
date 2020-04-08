@@ -188,6 +188,14 @@ open class Interceptor: RequestInterceptor {
         self.retriers = retriers
     }
 
+    /// Creates an instance from an array of `RequestInterceptor`s.
+    ///
+    /// - Parameter interceptors: `RequestInterceptor`s to be used.
+    public init(interceptors: [RequestInterceptor]) {
+        adapters = interceptors
+        retriers = interceptors
+    }
+
     open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         adapt(urlRequest, for: session, using: adapters, completion: completion)
     }
