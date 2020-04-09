@@ -37,6 +37,7 @@
 * [Adapting and Retrying Requests with `RequestInterceptor`](#adapting-and-retrying-requests-with-requestinterceptor)
   + [`RequestAdapter`](#requestadapter)
   + [`RequestRetrier`](#requestretrier)
+  + [Using Multiple `RequestInterceptor`s](#using-multiple-requestinterceptors)
 * [Security](#security)
   + [Evaluating Server Trusts with `ServerTrustManager` and `ServerTrustEvaluating`](#evaluating-server-trusts-with-servertrustmanager-and-servertrustevaluating)
     - [`ServerTrustEvaluting`](#servertrustevaluting)
