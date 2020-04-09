@@ -522,7 +522,7 @@ open func retry(_ request: Request, for session: Session, dueTo error: Error, co
 
 ### Using Multiple `RequestInterceptor`s
 
-Alamofire supports the use of multiple `RequestInterceptor`s at both the `Session` and `Request` levels through the use of the `Interceptor` type. `Interceptor`s can be composed of adapter and retrier closures, a single combination of a `RequestAdapter` and `RequestRetrier`, a combination of arrays of `RequestAdapter`s and `RequestRetrier`s, or an array of `RequestInterceptor`s.
+Alamofire supports the use of multiple `RequestInterceptor`s at both the `Session` and `Request` levels through the use of the `Interceptor` type. `Interceptor`s can be composed of adapter and retrier closures, a single combination of a `RequestAdapter` and `RequestRetrier`, or a combination of arrays of `RequestAdapter`s, `RequestRetrier`s, and `RequestInterceptor`s.
 
 ```swift
 let adapter = // Some RequestAdapter
