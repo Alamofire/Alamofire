@@ -26,13 +26,13 @@ import Foundation
 
 /// A type that can inspect and optionally adapt a `URLRequest` in some manner if necessary.
 public protocol RequestAdapter {
-    /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the AFResult.
+    /// Inspects and adapts the specified `URLRequest` in some manner and calls the completion handler with the Result.
     ///
     /// - Parameters:
     ///   - urlRequest: The `URLRequest` to adapt.
     ///   - session:    The `Session` that will execute the `URLRequest`.
     ///   - completion: The completion handler that must be called when adaptation is complete.
-    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void)
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void)
 }
 
 // MARK: -
@@ -53,19 +53,19 @@ extension RetryResult {
     var retryRequired: Bool {
         switch self {
         case .retry, .retryWithDelay: return true
-        default:                      return false
+        default: return false
         }
     }
 
     var delay: TimeInterval? {
         switch self {
-        case .retryWithDelay(let delay): return delay
-        default:                         return nil
+        case let .retryWithDelay(delay): return delay
+        default: return nil
         }
     }
 
     var error: Error? {
-        guard case .doNotRetryWithError(let error) = self else { return nil }
+        guard case let .doNotRetryWithError(error) = self else { return nil }
         return error
     }
 }
@@ -83,7 +83,7 @@ public protocol RequestRetrier {
     ///   - request:    `Request` that failed due to the provided `Error`.
     ///   - session:    `Session` that produced the `Request`.
     ///   - error:      `Error` encountered while executing the `Request`.
-    ///   - completion: Completion closure to be executed when a retry decision has been deterined.
+    ///   - completion: Completion closure to be executed when a retry decision has been determined.
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void)
 }
 
@@ -93,22 +93,20 @@ public protocol RequestRetrier {
 public protocol RequestInterceptor: RequestAdapter, RequestRetrier {}
 
 extension RequestInterceptor {
-    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
+    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         completion(.success(urlRequest))
     }
 
-    public func retry(
-        _ request: Request,
-        for session: Session,
-        dueTo error: Error,
-        completion: @escaping (RetryResult) -> Void)
-    {
+    public func retry(_ request: Request,
+                      for session: Session,
+                      dueTo error: Error,
+                      completion: @escaping (RetryResult) -> Void) {
         completion(.doNotRetry)
     }
 }
 
 /// `RequestAdapter` closure definition.
-public typealias AdaptHandler = (URLRequest, Session, _ completion: @escaping (AFResult<URLRequest>) -> Void) -> Void
+public typealias AdaptHandler = (URLRequest, Session, _ completion: @escaping (Result<URLRequest, Error>) -> Void) -> Void
 /// `RequestRetrier` closure definition.
 public typealias RetryHandler = (Request, Session, Error, _ completion: @escaping (RetryResult) -> Void) -> Void
 
@@ -125,7 +123,7 @@ open class Adapter: RequestInterceptor {
         self.adaptHandler = adaptHandler
     }
 
-    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
+    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         adaptHandler(urlRequest, session, completion)
     }
 }
@@ -143,12 +141,10 @@ open class Retrier: RequestInterceptor {
         self.retryHandler = retryHandler
     }
 
-    open func retry(
-        _ request: Request,
-        for session: Session,
-        dueTo error: Error,
-        completion: @escaping (RetryResult) -> Void)
-    {
+    open func retry(_ request: Request,
+                    for session: Session,
+                    dueTo error: Error,
+                    completion: @escaping (RetryResult) -> Void) {
         retryHandler(request, session, error, completion)
     }
 }
@@ -168,8 +164,8 @@ open class Interceptor: RequestInterceptor {
     ///   - adaptHandler: `AdaptHandler` closure to be used.
     ///   - retryHandler: `RetryHandler` closure to be used.
     public init(adaptHandler: @escaping AdaptHandler, retryHandler: @escaping RetryHandler) {
-        self.adapters = [Adapter(adaptHandler)]
-        self.retriers = [Retrier(retryHandler)]
+        adapters = [Adapter(adaptHandler)]
+        retriers = [Retrier(retryHandler)]
     }
 
     /// Creates an instance from `RequestAdapter` and `RequestRetrier` values.
@@ -178,8 +174,8 @@ open class Interceptor: RequestInterceptor {
     ///   - adapter: `RequestAdapter` value to be used.
     ///   - retrier: `RequestRetrier` value to be used.
     public init(adapter: RequestAdapter, retrier: RequestRetrier) {
-        self.adapters = [adapter]
-        self.retriers = [retrier]
+        adapters = [adapter]
+        retriers = [retrier]
     }
 
     /// Creates an instance from the arrays of `RequestAdapter` and `RequestRetrier` values.
@@ -192,16 +188,14 @@ open class Interceptor: RequestInterceptor {
         self.retriers = retriers
     }
 
-    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (AFResult<URLRequest>) -> Void) {
+    open func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         adapt(urlRequest, for: session, using: adapters, completion: completion)
     }
 
-    private func adapt(
-        _ urlRequest: URLRequest,
-        for session: Session,
-        using adapters: [RequestAdapter],
-        completion: @escaping (AFResult<URLRequest>) -> Void)
-    {
+    private func adapt(_ urlRequest: URLRequest,
+                       for session: Session,
+                       using adapters: [RequestAdapter],
+                       completion: @escaping (Result<URLRequest, Error>) -> Void) {
         var pendingAdapters = adapters
 
         guard !pendingAdapters.isEmpty else { completion(.success(urlRequest)); return }
@@ -210,7 +204,7 @@ open class Interceptor: RequestInterceptor {
 
         adapter.adapt(urlRequest, for: session) { result in
             switch result {
-            case .success(let urlRequest):
+            case let .success(urlRequest):
                 self.adapt(urlRequest, for: session, using: pendingAdapters, completion: completion)
             case .failure:
                 completion(result)
@@ -218,22 +212,18 @@ open class Interceptor: RequestInterceptor {
         }
     }
 
-    open func retry(
-        _ request: Request,
-        for session: Session,
-        dueTo error: Error,
-        completion: @escaping (RetryResult) -> Void)
-    {
+    open func retry(_ request: Request,
+                    for session: Session,
+                    dueTo error: Error,
+                    completion: @escaping (RetryResult) -> Void) {
         retry(request, for: session, dueTo: error, using: retriers, completion: completion)
     }
 
-    private func retry(
-        _ request: Request,
-        for session: Session,
-        dueTo error: Error,
-        using retriers: [RequestRetrier],
-        completion: @escaping (RetryResult) -> Void)
-    {
+    private func retry(_ request: Request,
+                       for session: Session,
+                       dueTo error: Error,
+                       using retriers: [RequestRetrier],
+                       completion: @escaping (RetryResult) -> Void) {
         var pendingRetriers = retriers
 
         guard !pendingRetriers.isEmpty else { completion(.doNotRetry); return }

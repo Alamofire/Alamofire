@@ -7,4 +7,7 @@
    <FileRef
       location = "group:Example/iOS Example.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:watchOS Example/watchOS Example.xcodeproj">
+   </FileRef>
 </Workspace>

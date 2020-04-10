@@ -26,8 +26,8 @@
 import Foundation
 import XCTest
 
-fileprivate struct MockError: Error {}
-fileprivate struct RetryError: Error {}
+private struct MockError: Error {}
+private struct RetryError: Error {}
 
 // MARK: -
 
@@ -89,7 +89,7 @@ final class AdapterTestCase: BaseTestCase {
             completion(.success(request))
         }
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         // When
         adapter.adapt(urlRequest, for: session) { result = $0 }
@@ -131,7 +131,7 @@ final class AdapterTestCase: BaseTestCase {
             }
         }
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         let completesExpectation = expectation(description: "adapter completes")
 
@@ -159,7 +159,7 @@ final class RetrierTestCase: BaseTestCase {
         let request = session.request(url)
         var retried = false
 
-        let retrier = Retrier { request, session, error, completion in
+        let retrier = Retrier { _, _, _, completion in
             retried = true
             completion(.retry)
         }
@@ -183,7 +183,7 @@ final class RetrierTestCase: BaseTestCase {
             completion(.retry)
         }
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         // When
         retrier.adapt(urlRequest, for: session) { result = $0 }
@@ -199,7 +199,7 @@ final class RetrierTestCase: BaseTestCase {
         let request = session.request(url)
         var retried = false
 
-        let retrier = Retrier { request, session, error, completion in
+        let retrier = Retrier { _, _, _, completion in
             retried = true
             DispatchQueue.main.async {
                 completion(.retry)
@@ -272,14 +272,14 @@ final class InterceptorTestCase: BaseTestCase {
         let session = Session()
         let interceptor = Interceptor()
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
         XCTAssertTrue(result.isSuccess)
-        XCTAssertEqual(result.value, urlRequest)
+        XCTAssertEqual(result.success, urlRequest)
     }
 
     func testThatInterceptorCanAdaptRequestWithOneAdapter() {
@@ -287,17 +287,17 @@ final class InterceptorTestCase: BaseTestCase {
         let urlRequest = URLRequest(url: URL(string: "https://httpbin.org/get")!)
         let session = Session()
 
-        let adapter = Adapter { urlRequest, _, completion in completion(.failure(MockError())) }
+        let adapter = Adapter { _, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter])
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
         XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.error is MockError)
+        XCTAssertTrue(result.failure is MockError)
     }
 
     func testThatInterceptorCanAdaptRequestWithMultipleAdapters() {
@@ -306,17 +306,17 @@ final class InterceptorTestCase: BaseTestCase {
         let session = Session()
 
         let adapter1 = Adapter { urlRequest, _, completion in completion(.success(urlRequest)) }
-        let adapter2 = Adapter { urlRequest, _, completion in completion(.failure(MockError())) }
+        let adapter2 = Adapter { _, _, completion in completion(.failure(MockError())) }
         let interceptor = Interceptor(adapters: [adapter1, adapter2])
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         // When
         interceptor.adapt(urlRequest, for: session) { result = $0 }
 
         // Then
         XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.error is MockError)
+        XCTAssertTrue(result.failure is MockError)
     }
 
     func testThatInterceptorCanAdaptRequestAsynchronously() {
@@ -324,14 +324,14 @@ final class InterceptorTestCase: BaseTestCase {
         let urlRequest = URLRequest(url: URL(string: "https://httpbin.org/get")!)
         let session = Session()
 
-        let adapter = Adapter { urlRequest, _, completion in
+        let adapter = Adapter { _, _, completion in
             DispatchQueue.main.async {
                 completion(.failure(MockError()))
             }
         }
         let interceptor = Interceptor(adapters: [adapter])
 
-        var result: AFResult<URLRequest>!
+        var result: Result<URLRequest, Error>!
 
         let completesExpectation = expectation(description: "interceptor completes")
 
@@ -345,7 +345,7 @@ final class InterceptorTestCase: BaseTestCase {
 
         // Then
         XCTAssertTrue(result.isFailure)
-        XCTAssertTrue(result.error is MockError)
+        XCTAssertTrue(result.failure is MockError)
     }
 
     func testThatInterceptorCanRetryRequestWithNoRetriers() {
@@ -494,23 +494,101 @@ final class InterceptorTestCase: BaseTestCase {
         interceptor.retry(request, for: session, dueTo: MockError()) { result = $0 }
 
         // Then
-        XCTAssertEqual(result, .doNotRetryWithError(RetryError()))
+        XCTAssertEqual(result, RetryResult.doNotRetryWithError(RetryError()))
         XCTAssertTrue(result.error is RetryError)
         XCTAssertFalse(retrier2Called)
     }
 }
 
-// MARK: -
+// MARK: - Functional Tests
+
+final class InterceptorRequestTests: BaseTestCase {
+    func testThatRetryPolicyRetriesRequestTimeout() {
+        // Given
+        let interceptor = InspectorInterceptor(RetryPolicy(retryLimit: 1, exponentialBackoffScale: 0.1))
+        let urlRequest = URLRequest.makeHTTPBinRequest(path: "delay/1", timeout: 0.01)
+        let expect = expectation(description: "request completed")
+
+        // When
+        let request = AF.request(urlRequest, interceptor: interceptor).response { _ in
+            expect.fulfill()
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertEqual(request.tasks.count, 2, "There should be two tasks, one original, one retry.")
+        XCTAssertEqual(interceptor.retryCalledCount, 2, "retry() should be called twice.")
+        XCTAssertEqual(interceptor.retries, [.retryWithDelay(0.1), .doNotRetry], "RetryResults should retryWithDelay, doNotRetry")
+    }
+}
+
+// MARK: - Helpers
+
+/// Class which captures the output of any underlying `RequestInterceptor`.
+final class InspectorInterceptor<Interceptor: RequestInterceptor>: RequestInterceptor {
+    var onAdaptation: ((Result<URLRequest, Error>) -> Void)?
+    var onRetry: ((RetryResult) -> Void)?
+
+    private(set) var adaptations: [Result<URLRequest, Error>] = []
+    private(set) var retries: [RetryResult] = []
+
+    /// Number of times `retry` was called.
+    var retryCalledCount: Int { retries.count }
+
+    let interceptor: Interceptor
+
+    init(_ interceptor: Interceptor) {
+        self.interceptor = interceptor
+    }
+
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        interceptor.adapt(urlRequest, for: session) { result in
+            self.adaptations.append(result)
+            completion(result)
+            self.onAdaptation?(result)
+        }
+    }
+
+    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        interceptor.retry(request, for: session, dueTo: error) { result in
+            self.retries.append(result)
+            completion(result)
+            self.onRetry?(result)
+        }
+    }
+}
+
+/// Retry a request once, allowing the second to succeed using the method path.
+final class SingleRetrier: RequestInterceptor {
+    private var hasRetried = false
+
+    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        if hasRetried {
+            var request = URLRequest.makeHTTPBinRequest(path: "\(urlRequest.httpMethod?.lowercased() ?? "get")")
+            request.method = urlRequest.method
+            request.headers = urlRequest.headers
+            completion(.success(request))
+        } else {
+            completion(.success(urlRequest))
+        }
+    }
+
+    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        completion(hasRetried ? .doNotRetry : .retry)
+        hasRetried = true
+    }
+}
 
 extension RetryResult: Equatable {
-    public static func == (lhs: RetryResult, rhs: RetryResult) -> Bool {
+    public static func ==(lhs: RetryResult, rhs: RetryResult) -> Bool {
         switch (lhs, rhs) {
         case (.retry, .retry),
-             (.retryWithDelay, .retryWithDelay),
              (.doNotRetry, .doNotRetry),
              (.doNotRetryWithError, .doNotRetryWithError):
             return true
-
+        case let (.retryWithDelay(leftDelay), .retryWithDelay(rightDelay)):
+            return leftDelay == rightDelay
         default:
             return false
         }

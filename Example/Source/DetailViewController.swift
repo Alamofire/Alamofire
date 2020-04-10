@@ -76,7 +76,7 @@ class DetailViewController: UITableViewController {
 
         let start = CACurrentMediaTime()
 
-        let requestComplete: (HTTPURLResponse?, AFResult<String>) -> Void = { response, result in
+        let requestComplete: (HTTPURLResponse?, Result<String, AFError>) -> Void = { response, result in
             let end = CACurrentMediaTime()
             self.elapsedTime = end - start
 
@@ -89,7 +89,7 @@ class DetailViewController: UITableViewController {
             if let segueIdentifier = self.segueIdentifier {
                 switch segueIdentifier {
                 case "GET", "POST", "PUT", "DELETE":
-                    if case .success(let value) = result { self.body = value }
+                    if case let .success(value) = result { self.body = value }
                 case "DOWNLOAD":
                     self.body = self.downloadedBodyString()
                 default:
@@ -117,11 +117,9 @@ class DetailViewController: UITableViewController {
         let cachesDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask)[0]
 
         do {
-            let contents = try fileManager.contentsOfDirectory(
-                at: cachesDirectory,
-                includingPropertiesForKeys: nil,
-                options: .skipsHiddenFiles
-            )
+            let contents = try fileManager.contentsOfDirectory(at: cachesDirectory,
+                                                               includingPropertiesForKeys: nil,
+                                                               options: .skipsHiddenFiles)
 
             if let fileURL = contents.first, let data = try? Data(contentsOf: fileURL) {
                 let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions())
@@ -176,7 +174,7 @@ extension DetailViewController {
 
 extension DetailViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        2
     }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

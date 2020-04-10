@@ -42,7 +42,7 @@ open class Session {
     public let startRequestsImmediately: Bool
     /// `DispatchQueue` on which `URLRequest`s are created asynchronously. By default this queue uses `rootQueue` as its
     /// `target`, but a separate queue can be used if request creation is determined to be a bottleneck. Always profile
-    /// and test before introduing an additional queue.
+    /// and test before introducing an additional queue.
     public let requestQueue: DispatchQueue
     /// `DispatchQueue` passed to all `Request`s on which they perform their response serialization. By default this
     /// queue uses `rootQueue` as its `target` but a separate queue can be used if response serialization is determined
@@ -64,6 +64,10 @@ open class Session {
 
     /// Internal map between `Request`s and any `URLSessionTasks` that may be in flight for them.
     var requestTaskMap = RequestTaskMap()
+    /// `Set` of currently active `Request`s.
+    var activeRequests: Set<Request> = []
+    /// Completion events awaiting `URLSessionTaskMetrics`.
+    var waitingCompletions: [URLSessionTask: () -> Void] = [:]
 
     /// Creates a `Session` from a `URLSession` and other parameters.
     ///
@@ -74,7 +78,7 @@ open class Session {
     ///   - session:                  Underlying `URLSession` for this instance.
     ///   - delegate:                 `SessionDelegate` that handles `session`'s delegate callbacks as well as `Request`
     ///                               interaction.
-    ///   - rootQueue:                Root `DispatchQueue` for all internal callbacks and state updats. **MUST** be a
+    ///   - rootQueue:                Root `DispatchQueue` for all internal callbacks and state updates. **MUST** be a
     ///                               serial queue.
     ///   - startRequestsImmediately: Determines whether this instance will automatically start all `Request`s. `true`
     ///                               by default. If set to `false`, all `Request`s created must have `.resume()` called.
@@ -108,8 +112,10 @@ open class Session {
                 redirectHandler: RedirectHandler? = nil,
                 cachedResponseHandler: CachedResponseHandler? = nil,
                 eventMonitors: [EventMonitor] = []) {
+        precondition(session.configuration.identifier == nil,
+                     "Alamofire does not support background URLSessionConfigurations.")
         precondition(session.delegateQueue.underlyingQueue === rootQueue,
-                     "Session(session:) intializer must be passed the DispatchQueue used as the delegateQueue's underlyingQueue as rootQueue.")
+                     "Session(session:) initializer must be passed the DispatchQueue used as the delegateQueue's underlyingQueue as rootQueue.")
 
         self.session = session
         self.delegate = delegate
@@ -128,8 +134,8 @@ open class Session {
 
     /// Creates a `Session` from a `URLSessionConfiguration`.
     ///
-    /// - Note: This intializer lets Alamofire handle the creation of the underlying `URLSession` and its
-    ///         `delegateQueue`, and is the recommended intiailizer for most uses.
+    /// - Note: This initializer lets Alamofire handle the creation of the underlying `URLSession` and its
+    ///         `delegateQueue`, and is the recommended initializer for most uses.
     ///
     /// - Parameters:
     ///   - configuration:            `URLSessionConfiguration` to be used to create the underlying `URLSession`. Changes
@@ -137,7 +143,7 @@ open class Session {
     ///                               `URLSessionConfiguration.af.default` by default.
     ///   - delegate:                 `SessionDelegate` that handles `session`'s delegate callbacks as well as `Request`
     ///                               interaction. `SessionDelegate()` by default.
-    ///   - rootQueue:                Root `DispatchQueue` for all internal callbacks and state updats. **MUST** be a
+    ///   - rootQueue:                Root `DispatchQueue` for all internal callbacks and state updates. **MUST** be a
     ///                               serial queue. `DispatchQueue(label: "org.alamofire.session.rootQueue")` by default.
     ///   - startRequestsImmediately: Determines whether this instance will automatically start all `Request`s. `true`
     ///                               by default. If set to `false`, all `Request`s created must have `.resume()` called.
@@ -171,6 +177,8 @@ open class Session {
                             redirectHandler: RedirectHandler? = nil,
                             cachedResponseHandler: CachedResponseHandler? = nil,
                             eventMonitors: [EventMonitor] = []) {
+        precondition(configuration.identifier == nil, "Alamofire does not support background URLSessionConfigurations.")
+
         let delegateQueue = OperationQueue(maxConcurrentOperationCount: 1, underlyingQueue: rootQueue, name: "org.alamofire.session.sessionDelegateQueue")
         let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: delegateQueue)
 
@@ -192,7 +200,28 @@ open class Session {
         session.invalidateAndCancel()
     }
 
+    // MARK: - Cancellation
+
+    /// Cancel all active `Request`s, optionally calling a completion handler when complete.
+    ///
+    /// - Note: This is an asynchronous operation and does not block the creation of future `Request`s. Cancelled
+    ///         `Request`s may not cancel immediately due internal work, and may not cancel at all if they are close to
+    ///         completion when cancelled.
+    ///
+    /// - Parameters:
+    ///   - queue:      `DispatchQueue` on which the completion handler is run. `.main` by default.
+    ///   - completion: Closure to be called when all `Request`s have been cancelled.
+    public func cancelAllRequests(completingOnQueue queue: DispatchQueue = .main, completion: (() -> Void)? = nil) {
+        rootQueue.async {
+            self.activeRequests.forEach { $0.cancel() }
+            queue.async { completion?() }
+        }
+    }
+
     // MARK: - DataRequest
+
+    /// Closure which provides a `URLRequest` for mutation.
+    public typealias RequestModifier = (inout URLRequest) throws -> Void
 
     struct RequestConvertible: URLRequestConvertible {
         let url: URLConvertible
@@ -200,23 +229,29 @@ open class Session {
         let parameters: Parameters?
         let encoding: ParameterEncoding
         let headers: HTTPHeaders?
+        let requestModifier: RequestModifier?
 
         func asURLRequest() throws -> URLRequest {
-            let request = try URLRequest(url: url, method: method, headers: headers)
+            var request = try URLRequest(url: url, method: method, headers: headers)
+            try requestModifier?(&request)
+
             return try encoding.encode(request, with: parameters)
         }
     }
 
-    /// Creates a `DataRequest` from a `URLRequest` created using the passeed components and a `RequestInterceptor`.
+    /// Creates a `DataRequest` from a `URLRequest` created using the passed components and a `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - parameters:  `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by default.
-    ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
-    ///                  `URLEncoding.default` by default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - parameters:      `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by
+    ///                      default.
+    ///   - encoding:        `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
+    ///                      `URLEncoding.default` by default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
     /// - Returns:       The created `DataRequest`.
     open func request(_ convertible: URLConvertible,
@@ -224,12 +259,14 @@ open class Session {
                       parameters: Parameters? = nil,
                       encoding: ParameterEncoding = URLEncoding.default,
                       headers: HTTPHeaders? = nil,
-                      interceptor: RequestInterceptor? = nil) -> DataRequest {
+                      interceptor: RequestInterceptor? = nil,
+                      requestModifier: RequestModifier? = nil) -> DataRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
                                              parameters: parameters,
                                              encoding: encoding,
-                                             headers: headers)
+                                             headers: headers,
+                                             requestModifier: requestModifier)
 
         return request(convertible, interceptor: interceptor)
     }
@@ -240,9 +277,11 @@ open class Session {
         let parameters: Parameters?
         let encoder: ParameterEncoder
         let headers: HTTPHeaders?
+        let requestModifier: RequestModifier?
 
         func asURLRequest() throws -> URLRequest {
-            let request = try URLRequest(url: url, method: method, headers: headers)
+            var request = try URLRequest(url: url, method: method, headers: headers)
+            try requestModifier?(&request)
 
             return try parameters.map { try encoder.encode($0, into: request) } ?? request
         }
@@ -254,7 +293,7 @@ open class Session {
     /// - Parameters:
     ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
     ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - parameters:  Value conforming to `Encodable` to be encoded into the `URLRequest`. `nil` by default.
+    ///   - parameters:  `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
     ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`.
     ///                  `URLEncodedFormParameterEncoder.default` by default.
     ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
@@ -266,12 +305,14 @@ open class Session {
                                              parameters: Parameters? = nil,
                                              encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                              headers: HTTPHeaders? = nil,
-                                             interceptor: RequestInterceptor? = nil) -> DataRequest {
+                                             interceptor: RequestInterceptor? = nil,
+                                             requestModifier: RequestModifier? = nil) -> DataRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: parameters,
                                                       encoder: encoder,
-                                                      headers: headers)
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
 
         return request(convertible, interceptor: interceptor)
     }
@@ -296,35 +337,138 @@ open class Session {
         return request
     }
 
+    // MARK: - DataStreamRequest
+
+    /// Creates a `DataStreamRequest` from the passed components, `Encodable` parameters, and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible:                      `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:                           `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - parameters:                       `Encodable` value to be encoded into the `URLRequest`. `nil` by default.
+    ///   - encoder:                          `ParameterEncoder` to be used to encode the `parameters` value into the
+    ///                                       `URLRequest`.
+    ///                                       `URLEncodedFormParameterEncoder.default` by default.
+    ///   - headers:                          `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - automaticallyCancelOnStreamError: `Bool` indicating whether the instance should be canceled when an `Error`
+    ///                                       is thrown while serializing stream `Data`. `false` by default.
+    ///   - interceptor:                      `RequestInterceptor` value to be used by the returned `DataRequest`. `nil`
+    ///                                       by default.
+    ///   - requestModifier:                  `RequestModifier` which will be applied to the `URLRequest` created from
+    ///                                       the provided parameters. `nil` by default.
+    ///
+    /// - Returns:       The created `DataStream` request.
+    open func streamRequest<Parameters: Encodable>(_ convertible: URLConvertible,
+                                                   method: HTTPMethod = .get,
+                                                   parameters: Parameters? = nil,
+                                                   encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                                   headers: HTTPHeaders? = nil,
+                                                   automaticallyCancelOnStreamError: Bool = false,
+                                                   interceptor: RequestInterceptor? = nil,
+                                                   requestModifier: RequestModifier? = nil) -> DataStreamRequest {
+        let convertible = RequestEncodableConvertible(url: convertible,
+                                                      method: method,
+                                                      parameters: parameters,
+                                                      encoder: encoder,
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
+
+        return streamRequest(convertible,
+                             automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
+                             interceptor: interceptor)
+    }
+
+    /// Creates a `DataStreamRequest` from the passed components and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible:                      `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:                           `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - headers:                          `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - automaticallyCancelOnStreamError: `Bool` indicating whether the instance should be canceled when an `Error`
+    ///                                       is thrown while serializing stream `Data`. `false` by default.
+    ///   - interceptor:                      `RequestInterceptor` value to be used by the returned `DataRequest`. `nil`
+    ///                                       by default.
+    ///   - requestModifier:                  `RequestModifier` which will be applied to the `URLRequest` created from
+    ///                                       the provided parameters. `nil` by default.
+    ///
+    /// - Returns:       The created `DataStream` request.
+    open func streamRequest(_ convertible: URLConvertible,
+                            method: HTTPMethod = .get,
+                            headers: HTTPHeaders? = nil,
+                            automaticallyCancelOnStreamError: Bool = false,
+                            interceptor: RequestInterceptor? = nil,
+                            requestModifier: RequestModifier? = nil) -> DataStreamRequest {
+        let convertible = RequestEncodableConvertible(url: convertible,
+                                                      method: method,
+                                                      parameters: Optional<Empty>.none,
+                                                      encoder: URLEncodedFormParameterEncoder.default,
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
+
+        return streamRequest(convertible,
+                             automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
+                             interceptor: interceptor)
+    }
+
+    /// Creates a `DataStreamRequest` from the passed `URLRequestConvertible` value and `RequestInterceptor`.
+    ///
+    /// - Parameters:
+    ///   - convertible:                      `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - automaticallyCancelOnStreamError: `Bool` indicating whether the instance should be canceled when an `Error`
+    ///                                       is thrown while serializing stream `Data`. `false` by default.
+    ///   - interceptor:                      `RequestInterceptor` value to be used by the returned `DataRequest`. `nil`
+    ///                                        by default.
+    ///
+    /// - Returns:       The created `DataStreamRequest`.
+    open func streamRequest(_ convertible: URLRequestConvertible,
+                            automaticallyCancelOnStreamError: Bool = false,
+                            interceptor: RequestInterceptor? = nil) -> DataStreamRequest {
+        let request = DataStreamRequest(convertible: convertible,
+                                        automaticallyCancelOnStreamError: automaticallyCancelOnStreamError,
+                                        underlyingQueue: rootQueue,
+                                        serializationQueue: serializationQueue,
+                                        eventMonitor: eventMonitor,
+                                        interceptor: interceptor,
+                                        delegate: self)
+
+        perform(request)
+
+        return request
+    }
+
     // MARK: - DownloadRequest
 
     /// Creates a `DownloadRequest` using a `URLRequest` created using the passed components, `RequestInterceptor`, and
     /// `Destination`.
     ///
     /// - Parameters:
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - parameters:  `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by default.
-    ///   - encoding:    `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`. Defaults
-    ///                  to `URLEncoding.default`.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
-    ///   - destination: `DownloadRequest.Destination` closure used to determine how and where the downloaded file
-    ///                  should be moved. `nil` by default.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - parameters:      `Parameters` (a.k.a. `[String: Any]`) value to be encoded into the `URLRequest`. `nil` by
+    ///                      default.
+    ///   - encoding:        `ParameterEncoding` to be used to encode the `parameters` value into the `URLRequest`.
+    ///                      Defaults to `URLEncoding.default`.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
+    ///   - destination:     `DownloadRequest.Destination` closure used to determine how and where the downloaded file
+    ///                      should be moved. `nil` by default.
     ///
-    /// - Returns:       The created `DownloadRequest`.
+    /// - Returns:           The created `DownloadRequest`.
     open func download(_ convertible: URLConvertible,
                        method: HTTPMethod = .get,
                        parameters: Parameters? = nil,
                        encoding: ParameterEncoding = URLEncoding.default,
                        headers: HTTPHeaders? = nil,
                        interceptor: RequestInterceptor? = nil,
+                       requestModifier: RequestModifier? = nil,
                        to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestConvertible(url: convertible,
                                              method: method,
                                              parameters: parameters,
                                              encoding: encoding,
-                                             headers: headers)
+                                             headers: headers,
+                                             requestModifier: requestModifier)
 
         return download(convertible, interceptor: interceptor, to: destination)
     }
@@ -333,29 +477,33 @@ open class Session {
     /// a `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.get` by default.
-    ///   - parameters:  Value conforming to `Encodable` to be encoded into the `URLRequest`. `nil` by default.
-    ///   - encoder:     `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`. Defaults
-    ///                  to `URLEncodedFormParameterEncoder.default`.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
-    ///   - destination: `DownloadRequest.Destination` closure used to determine how and where the downloaded file
-    ///                  should be moved. `nil` by default.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.get` by default.
+    ///   - parameters:      Value conforming to `Encodable` to be encoded into the `URLRequest`. `nil` by default.
+    ///   - encoder:         `ParameterEncoder` to be used to encode the `parameters` value into the `URLRequest`.
+    ///                      Defaults to `URLEncodedFormParameterEncoder.default`.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
+    ///   - destination:     `DownloadRequest.Destination` closure used to determine how and where the downloaded file
+    ///                      should be moved. `nil` by default.
     ///
-    /// - Returns:       The created `DownloadRequest`.
+    /// - Returns:           The created `DownloadRequest`.
     open func download<Parameters: Encodable>(_ convertible: URLConvertible,
                                               method: HTTPMethod = .get,
                                               parameters: Parameters? = nil,
                                               encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
                                               headers: HTTPHeaders? = nil,
                                               interceptor: RequestInterceptor? = nil,
+                                              requestModifier: RequestModifier? = nil,
                                               to destination: DownloadRequest.Destination? = nil) -> DownloadRequest {
         let convertible = RequestEncodableConvertible(url: convertible,
                                                       method: method,
                                                       parameters: parameters,
                                                       encoder: encoder,
-                                                      headers: headers)
+                                                      headers: headers,
+                                                      requestModifier: requestModifier)
 
         return download(convertible, interceptor: interceptor, to: destination)
     }
@@ -425,9 +573,13 @@ open class Session {
         let url: URLConvertible
         let method: HTTPMethod
         let headers: HTTPHeaders?
+        let requestModifier: RequestModifier?
 
         func asURLRequest() throws -> URLRequest {
-            return try URLRequest(url: url, method: method, headers: headers)
+            var request = try URLRequest(url: url, method: method, headers: headers)
+            try requestModifier?(&request)
+
+            return request
         }
     }
 
@@ -436,11 +588,11 @@ open class Session {
         let uploadable: UploadableConvertible
 
         func createUploadable() throws -> UploadRequest.Uploadable {
-            return try uploadable.createUploadable()
+            try uploadable.createUploadable()
         }
 
         func asURLRequest() throws -> URLRequest {
-            return try request.asURLRequest()
+            try request.asURLRequest()
         }
     }
 
@@ -449,21 +601,30 @@ open class Session {
     /// Creates an `UploadRequest` for the given `Data`, `URLRequest` components, and `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - data:        The `Data` to upload.
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - data:            The `Data` to upload.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                      default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
-    /// - Returns:       The created `UploadRequest`.
+    /// - Returns:           The created `UploadRequest`.
     open func upload(_ data: Data,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+                     interceptor: RequestInterceptor? = nil,
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
-        return upload(data, with: convertible, interceptor: interceptor)
+        return upload(data, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     /// Creates an `UploadRequest` for the given `Data` using the `URLRequestConvertible` value and `RequestInterceptor`.
@@ -472,12 +633,15 @@ open class Session {
     ///   - data:        The `Data` to upload.
     ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
     ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                  default.
     ///
     /// - Returns:       The created `UploadRequest`.
     open func upload(_ data: Data,
                      with convertible: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return upload(.data(data), with: convertible, interceptor: interceptor)
+                     interceptor: RequestInterceptor? = nil,
+                     fileManager: FileManager = .default) -> UploadRequest {
+        upload(.data(data), with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     // MARK: File
@@ -486,21 +650,30 @@ open class Session {
     /// components and `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - fileURL:     The `URL` of the file to upload.
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileURL:         The `URL` of the file to upload.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `UploadRequest`. `nil` by default.
+    ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                      default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
-    /// - Returns:       The created `UploadRequest`.
+    /// - Returns:           The created `UploadRequest`.
     open func upload(_ fileURL: URL,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+                     interceptor: RequestInterceptor? = nil,
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
-        return upload(fileURL, with: convertible, interceptor: interceptor)
+        return upload(fileURL, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     /// Creates an `UploadRequest` for the file at the given file `URL` using the `URLRequestConvertible` value and
@@ -510,12 +683,15 @@ open class Session {
     ///   - fileURL:     The `URL` of the file to upload.
     ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
     ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                  default.
     ///
     /// - Returns:       The created `UploadRequest`.
     open func upload(_ fileURL: URL,
                      with convertible: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return upload(.file(fileURL, shouldRemove: false), with: convertible, interceptor: interceptor)
+                     interceptor: RequestInterceptor? = nil,
+                     fileManager: FileManager = .default) -> UploadRequest {
+        upload(.file(fileURL, shouldRemove: false), with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     // MARK: InputStream
@@ -524,21 +700,30 @@ open class Session {
     /// `RequestInterceptor`.
     ///
     /// - Parameters:
-    ///   - stream:      The `InputStream` that provides the data to upload.
-    ///   - convertible: `URLConvertible` value to be used as the `URLRequest`'s `URL`.
-    ///   - method:      `HTTPMethod` for the `URLRequest`. `.post` by default.
-    ///   - headers:     `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
-    ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - stream:          The `InputStream` that provides the data to upload.
+    ///   - convertible:     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - method:          `HTTPMethod` for the `URLRequest`. `.post` by default.
+    ///   - headers:         `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
+    ///   - interceptor:     `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:     `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                      default.
+    ///   - requestModifier: `RequestModifier` which will be applied to the `URLRequest` created from the provided
+    ///                      parameters. `nil` by default.
     ///
-    /// - Returns:       The created `UploadRequest`.
+    /// - Returns:           The created `UploadRequest`.
     open func upload(_ stream: InputStream,
                      to convertible: URLConvertible,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: convertible, method: method, headers: headers)
+                     interceptor: RequestInterceptor? = nil,
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: convertible,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
-        return upload(stream, with: convertible, interceptor: interceptor)
+        return upload(stream, with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     /// Creates an `UploadRequest` from the provided `InputStream` using the `URLRequestConvertible` value and
@@ -548,12 +733,15 @@ open class Session {
     ///   - stream:      The `InputStream` that provides the data to upload.
     ///   - convertible: `URLRequestConvertible` value to be used to create the `URLRequest`.
     ///   - interceptor: `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager: `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                  default.
     ///
     /// - Returns:       The created `UploadRequest`.
     open func upload(_ stream: InputStream,
                      with convertible: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        return upload(.stream(stream), with: convertible, interceptor: interceptor)
+                     interceptor: RequestInterceptor? = nil,
+                     fileManager: FileManager = .default) -> UploadRequest {
+        upload(.stream(stream), with: convertible, interceptor: interceptor, fileManager: fileManager)
     }
 
     // MARK: MultipartFormData
@@ -561,7 +749,7 @@ open class Session {
     /// Creates an `UploadRequest` for the multipart form data built using a closure and sent using the provided
     /// `URLRequest` components and `RequestInterceptor`.
     ///
-    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cumulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
     /// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
     /// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
@@ -576,38 +764,46 @@ open class Session {
     ///
     /// - Parameters:
     ///   - multipartFormData:       `MultipartFormData` building closure.
-    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
-    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by default.
-    ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
-    ///                              written to disk before being uploaded.
     ///   - convertible:             `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
+    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
+    ///                              default.
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
+    ///                              written to disk before being uploaded. `.default` instance by default.
+    ///   - requestModifier:         `RequestModifier` which will be applied to the `URLRequest` created from the
+    ///                              provided parameters. `nil` by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
-                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
-                     fileManager: FileManager = .default,
                      to url: URLConvertible,
+                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
+                     interceptor: RequestInterceptor? = nil,
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: url,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
         let formData = MultipartFormData(fileManager: fileManager)
         multipartFormData(formData)
 
         return upload(multipartFormData: formData,
-                      usingThreshold: encodingMemoryThreshold,
                       with: convertible,
-                      interceptor: interceptor)
+                      usingThreshold: encodingMemoryThreshold,
+                      interceptor: interceptor,
+                      fileManager: fileManager)
     }
 
     /// Creates an `UploadRequest` using a `MultipartFormData` building closure, the provided `URLRequestConvertible`
     /// value, and a `RequestInterceptor`.
     ///
-    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cumulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
     /// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
     /// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
@@ -622,32 +818,34 @@ open class Session {
     ///
     /// - Parameters:
     ///   - multipartFormData:       `MultipartFormData` building closure.
-    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
-    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by default.
-    ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
-    ///                              written to disk before being uploaded.
     ///   - request:                 `URLRequestConvertible` value to be used to create the `URLRequest`.
+    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
+    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
+    ///                              default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
+    ///                              written to disk before being uploaded. `.default` instance by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: @escaping (MultipartFormData) -> Void,
-                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
-                     fileManager: FileManager = .default,
                      with request: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
+                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
+                     interceptor: RequestInterceptor? = nil,
+                     fileManager: FileManager = .default) -> UploadRequest {
         let formData = MultipartFormData(fileManager: fileManager)
         multipartFormData(formData)
 
         return upload(multipartFormData: formData,
-                      usingThreshold: encodingMemoryThreshold,
                       with: request,
-                      interceptor: interceptor)
+                      usingThreshold: encodingMemoryThreshold,
+                      interceptor: interceptor,
+                      fileManager: fileManager)
     }
 
     /// Creates an `UploadRequest` for the prebuilt `MultipartFormData` value using the provided `URLRequest` components
     /// and `RequestInterceptor`.
     ///
-    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cumulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
     /// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
     /// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
@@ -662,34 +860,44 @@ open class Session {
     ///
     /// - Parameters:
     ///   - multipartFormData:       `MultipartFormData` instance to upload.
-    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
-    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by default.
     ///   - url:                     `URLConvertible` value to be used as the `URLRequest`'s `URL`.
+    ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
+    ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
+    ///                              default.
     ///   - method:                  `HTTPMethod` for the `URLRequest`. `.post` by default.
     ///   - headers:                 `HTTPHeaders` value to be added to the `URLRequest`. `nil` by default.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:             `FileManager` to be used if the form data exceeds the memory threshold and is
+    ///                              written to disk before being uploaded. `.default` instance by default.
+    ///   - requestModifier:         `RequestModifier` which will be applied to the `URLRequest` created from the
+    ///                              provided parameters. `nil` by default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: MultipartFormData,
-                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      to url: URLConvertible,
+                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      method: HTTPMethod = .post,
                      headers: HTTPHeaders? = nil,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let convertible = ParameterlessRequestConvertible(url: url, method: method, headers: headers)
+                     interceptor: RequestInterceptor? = nil,
+                     fileManager: FileManager = .default,
+                     requestModifier: RequestModifier? = nil) -> UploadRequest {
+        let convertible = ParameterlessRequestConvertible(url: url,
+                                                          method: method,
+                                                          headers: headers,
+                                                          requestModifier: requestModifier)
 
-        let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
+        let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
                                               encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: convertible,
                                               multipartFormData: multipartFormData)
 
-        return upload(multipartUpload, interceptor: interceptor)
+        return upload(multipartUpload, interceptor: interceptor, fileManager: fileManager)
     }
 
     /// Creates an `UploadRequest` for the prebuilt `MultipartFormData` value using the providing `URLRequestConvertible`
     /// value and `RequestInterceptor`.
     ///
-    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cummulative
+    /// It is important to understand the memory implications of uploading `MultipartFormData`. If the cumulative
     /// payload is small, encoding the data in-memory and directly uploading to a server is the by far the most
     /// efficient approach. However, if the payload is too large, encoding the data in-memory could cause your app to
     /// be terminated. Larger payloads must first be written to disk using input and output streams to keep the memory
@@ -704,23 +912,26 @@ open class Session {
     ///
     /// - Parameters:
     ///   - multipartFormData:       `MultipartFormData` instance to upload.
+    ///   - request:                 `URLRequestConvertible` value to be used to create the `URLRequest`.
     ///   - encodingMemoryThreshold: Byte threshold used to determine whether the form data is encoded into memory or
     ///                              onto disk before being uploaded. `MultipartFormData.encodingMemoryThreshold` by
     ///                              default.
-    ///   - request:                 `URLRequestConvertible` value to be used to create the `URLRequest`.
     ///   - interceptor:             `RequestInterceptor` value to be used by the returned `DataRequest`. `nil` by default.
+    ///   - fileManager:             `FileManager` instance to be used by the returned `UploadRequest`. `.default` instance by
+    ///                              default.
     ///
     /// - Returns:                   The created `UploadRequest`.
     open func upload(multipartFormData: MultipartFormData,
-                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
                      with request: URLRequestConvertible,
-                     interceptor: RequestInterceptor? = nil) -> UploadRequest {
-        let multipartUpload = MultipartUpload(isInBackgroundSession: (session.configuration.identifier != nil),
+                     usingThreshold encodingMemoryThreshold: UInt64 = MultipartFormData.encodingMemoryThreshold,
+                     interceptor: RequestInterceptor? = nil,
+                     fileManager: FileManager = .default) -> UploadRequest {
+        let multipartUpload = MultipartUpload(isInBackgroundSession: session.configuration.identifier != nil,
                                               encodingMemoryThreshold: encodingMemoryThreshold,
                                               request: request,
                                               multipartFormData: multipartFormData)
 
-        return upload(multipartUpload, interceptor: interceptor)
+        return upload(multipartUpload, interceptor: interceptor, fileManager: fileManager)
     }
 
     // MARK: - Internal API
@@ -729,18 +940,20 @@ open class Session {
 
     func upload(_ uploadable: UploadRequest.Uploadable,
                 with convertible: URLRequestConvertible,
-                interceptor: RequestInterceptor?) -> UploadRequest {
+                interceptor: RequestInterceptor?,
+                fileManager: FileManager) -> UploadRequest {
         let uploadable = Upload(request: convertible, uploadable: uploadable)
 
-        return upload(uploadable, interceptor: interceptor)
+        return upload(uploadable, interceptor: interceptor, fileManager: fileManager)
     }
 
-    func upload(_ upload: UploadConvertible, interceptor: RequestInterceptor?) -> UploadRequest {
+    func upload(_ upload: UploadConvertible, interceptor: RequestInterceptor?, fileManager: FileManager) -> UploadRequest {
         let request = UploadRequest(convertible: upload,
                                     underlyingQueue: rootQueue,
                                     serializationQueue: serializationQueue,
                                     eventMonitor: eventMonitor,
                                     interceptor: interceptor,
+                                    fileManager: fileManager,
                                     delegate: self)
 
         perform(request)
@@ -750,11 +963,18 @@ open class Session {
 
     // MARK: Perform
 
+    /// Perform `Request`.
+    ///
+    /// - Note: Called during retry.
+    ///
+    /// - Parameter request: The `Request` to perform.
     func perform(_ request: Request) {
+        // Leaf types must come first, otherwise they will cast as their superclass.
         switch request {
+        case let r as UploadRequest: perform(r) // UploadRequest must come before DataRequest due to subtype relationship.
         case let r as DataRequest: perform(r)
-        case let r as UploadRequest: perform(r)
         case let r as DownloadRequest: perform(r)
+        case let r as DataStreamRequest: perform(r)
         default: fatalError("Attempted to perform unsupported Request subclass: \(type(of: request))")
         }
     }
@@ -762,6 +982,18 @@ open class Session {
     func perform(_ request: DataRequest) {
         requestQueue.async {
             guard !request.isCancelled else { return }
+
+            self.activeRequests.insert(request)
+
+            self.performSetupOperations(for: request, convertible: request.convertible)
+        }
+    }
+
+    func perform(_ request: DataStreamRequest) {
+        requestQueue.async {
+            guard !request.isCancelled else { return }
+
+            self.activeRequests.insert(request)
 
             self.performSetupOperations(for: request, convertible: request.convertible)
         }
@@ -771,13 +1003,15 @@ open class Session {
         requestQueue.async {
             guard !request.isCancelled else { return }
 
+            self.activeRequests.insert(request)
+
             do {
                 let uploadable = try request.upload.createUploadable()
                 self.rootQueue.async { request.didCreateUploadable(uploadable) }
 
                 self.performSetupOperations(for: request, convertible: request.convertible)
             } catch {
-                self.rootQueue.async { request.didFailToCreateUploadable(with: error) }
+                self.rootQueue.async { request.didFailToCreateUploadable(with: error.asAFError(or: .createUploadableFailed(error: error))) }
             }
         }
     }
@@ -785,6 +1019,8 @@ open class Session {
     func perform(_ request: DownloadRequest) {
         requestQueue.async {
             guard !request.isCancelled else { return }
+
+            self.activeRequests.insert(request)
 
             switch request.downloadable {
             case let .request(convertible):
@@ -796,37 +1032,45 @@ open class Session {
     }
 
     func performSetupOperations(for request: Request, convertible: URLRequestConvertible) {
+        let initialRequest: URLRequest
+
         do {
-            let initialRequest = try convertible.asURLRequest()
-            rootQueue.async { request.didCreateURLRequest(initialRequest) }
-
-            guard !request.isCancelled else { return }
-
-            if let adapter = adapter(for: request) {
-                adapter.adapt(initialRequest, for: self) { result in
-                    do {
-                        let adaptedRequest = try result.get()
-
-                        self.rootQueue.async {
-                            request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
-                            self.didCreateURLRequest(adaptedRequest, for: request)
-                        }
-                    } catch {
-                        let adaptError = AFError.requestAdaptationFailed(error: error)
-                        self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: adaptError) }
-                    }
-                }
-            } else {
-                rootQueue.async { self.didCreateURLRequest(initialRequest, for: request) }
-            }
+            initialRequest = try convertible.asURLRequest()
+            try initialRequest.validate()
         } catch {
-            rootQueue.async { request.didFailToCreateURLRequest(with: error) }
+            rootQueue.async { request.didFailToCreateURLRequest(with: error.asAFError(or: .createURLRequestFailed(error: error))) }
+            return
+        }
+
+        rootQueue.async { request.didCreateInitialURLRequest(initialRequest) }
+
+        guard !request.isCancelled else { return }
+
+        guard let adapter = adapter(for: request) else {
+            rootQueue.async { self.didCreateURLRequest(initialRequest, for: request) }
+            return
+        }
+
+        adapter.adapt(initialRequest, for: self) { result in
+            do {
+                let adaptedRequest = try result.get()
+                try adaptedRequest.validate()
+
+                self.rootQueue.async {
+                    request.didAdaptInitialRequest(initialRequest, to: adaptedRequest)
+                    self.didCreateURLRequest(adaptedRequest, for: request)
+                }
+            } catch {
+                self.rootQueue.async { request.didFailToAdaptURLRequest(initialRequest, withError: .requestAdaptationFailed(error: error)) }
+            }
         }
     }
 
     // MARK: - Task Handling
 
     func didCreateURLRequest(_ urlRequest: URLRequest, for request: Request) {
+        request.didCreateURLRequest(urlRequest)
+
         guard !request.isCancelled else { return }
 
         let task = request.task(for: urlRequest, using: session)
@@ -847,25 +1091,22 @@ open class Session {
     }
 
     func updateStatesForTask(_ task: URLSessionTask, request: Request) {
-        request.withState { (state) in
-            switch (startRequestsImmediately, state) {
-            case (true, .initialized):
-                rootQueue.async { request.resume() }
-            case (false, .initialized):
+        request.withState { state in
+            switch state {
+            case .initialized, .finished:
                 // Do nothing.
                 break
-            case (_, .resumed):
+            case .resumed:
                 task.resume()
                 rootQueue.async { request.didResumeTask(task) }
-            case (_, .suspended):
+            case .suspended:
                 task.suspend()
                 rootQueue.async { request.didSuspendTask(task) }
-            case (_, .cancelled):
+            case .cancelled:
+                // Resume to ensure metrics are gathered.
+                task.resume()
                 task.cancel()
                 rootQueue.async { request.didCancelTask(task) }
-            case (_, .finished):
-                // Do nothing
-                break
             }
         }
     }
@@ -891,7 +1132,11 @@ open class Session {
     // MARK: - Invalidation
 
     func finishRequestsForDeinit() {
-        requestTaskMap.requests.forEach { $0.finish(error: AFError.sessionDeinitialized) }
+        requestTaskMap.requests.forEach { request in
+            rootQueue.async {
+                request.finish(error: AFError.sessionDeinitialized)
+            }
+        }
     }
 }
 
@@ -899,10 +1144,16 @@ open class Session {
 
 extension Session: RequestDelegate {
     public var sessionConfiguration: URLSessionConfiguration {
-        return session.configuration
+        session.configuration
     }
 
-    public func retryResult(for request: Request, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+    public var startImmediately: Bool { startRequestsImmediately }
+
+    public func cleanup(after request: Request) {
+        activeRequests.remove(request)
+    }
+
+    public func retryResult(for request: Request, dueTo error: AFError, completion: @escaping (RetryResult) -> Void) {
         guard let retrier = retrier(for: request) else {
             rootQueue.async { completion(.doNotRetry) }
             return
@@ -919,7 +1170,7 @@ extension Session: RequestDelegate {
     }
 
     public func retryRequest(_ request: Request, withDelay timeDelay: TimeInterval?) {
-        self.rootQueue.async {
+        rootQueue.async {
             let retry: () -> Void = {
                 guard !request.isCancelled else { return }
 
@@ -940,23 +1191,44 @@ extension Session: RequestDelegate {
 
 extension Session: SessionStateProvider {
     func request(for task: URLSessionTask) -> Request? {
+        dispatchPrecondition(condition: .onQueue(rootQueue))
+
         return requestTaskMap[task]
     }
 
     func didGatherMetricsForTask(_ task: URLSessionTask) {
-        requestTaskMap.disassociateIfNecessaryAfterGatheringMetricsForTask(task)
+        dispatchPrecondition(condition: .onQueue(rootQueue))
+
+        let didDisassociate = requestTaskMap.disassociateIfNecessaryAfterGatheringMetricsForTask(task)
+
+        if didDisassociate {
+            waitingCompletions[task]?()
+            waitingCompletions[task] = nil
+        }
     }
 
-    func didCompleteTask(_ task: URLSessionTask) {
-        requestTaskMap.disassociateIfNecessaryAfterCompletingTask(task)
+    func didCompleteTask(_ task: URLSessionTask, completion: @escaping () -> Void) {
+        dispatchPrecondition(condition: .onQueue(rootQueue))
+
+        let didDisassociate = requestTaskMap.disassociateIfNecessaryAfterCompletingTask(task)
+
+        if didDisassociate {
+            completion()
+        } else {
+            waitingCompletions[task] = completion
+        }
     }
 
     func credential(for task: URLSessionTask, in protectionSpace: URLProtectionSpace) -> URLCredential? {
+        dispatchPrecondition(condition: .onQueue(rootQueue))
+
         return requestTaskMap[task]?.credential ??
             session.configuration.urlCredentialStorage?.defaultCredential(for: protectionSpace)
     }
 
     func cancelRequestsForSessionInvalidation(with error: Error?) {
+        dispatchPrecondition(condition: .onQueue(rootQueue))
+
         requestTaskMap.requests.forEach { $0.finish(error: AFError.sessionInvalidated(error: error)) }
     }
 }

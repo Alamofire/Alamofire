@@ -27,37 +27,33 @@ import Foundation
 import XCTest
 
 class BaseRetryPolicyTestCase: BaseTestCase {
-
     // MARK: Helper Types
 
-    class StubRequest: DataRequest {
+    final class StubRequest: DataRequest {
         let urlRequest: URLRequest
-        override var request: URLRequest? { return urlRequest }
+        override var request: URLRequest? { urlRequest }
 
         let mockedResponse: HTTPURLResponse?
-        override var response: HTTPURLResponse? { return mockedResponse }
+        override var response: HTTPURLResponse? { mockedResponse }
 
         init(_ url: URL, method: HTTPMethod, response: HTTPURLResponse?, session: Session) {
             mockedResponse = response
 
-            let request = Session.RequestConvertible(
-                url: url,
-                method: method,
-                parameters: nil,
-                encoding: URLEncoding.default,
-                headers: nil
-            )
+            let request = Session.RequestConvertible(url: url,
+                                                     method: method,
+                                                     parameters: nil,
+                                                     encoding: URLEncoding.default,
+                                                     headers: nil,
+                                                     requestModifier: nil)
 
             urlRequest = try! request.asURLRequest()
 
-            super.init(
-                convertible: request,
-                underlyingQueue: session.rootQueue,
-                serializationQueue: session.serializationQueue,
-                eventMonitor: session.eventMonitor,
-                interceptor: nil,
-                delegate: session
-            )
+            super.init(convertible: request,
+                       underlyingQueue: session.rootQueue,
+                       serializationQueue: session.serializationQueue,
+                       eventMonitor: session.eventMonitor,
+                       interceptor: nil,
+                       delegate: session)
         }
     }
 
@@ -65,80 +61,80 @@ class BaseRetryPolicyTestCase: BaseTestCase {
 
     let idempotentMethods: Set<HTTPMethod> = [.get, .head, .put, .delete, .options, .trace]
     let nonIdempotentMethods: Set<HTTPMethod> = [.post, .patch, .connect]
-    var methods: Set<HTTPMethod> { return idempotentMethods.union(nonIdempotentMethods) }
+    var methods: Set<HTTPMethod> { idempotentMethods.union(nonIdempotentMethods) }
 
-    let session = Session(startRequestsImmediately: false)
+    let session = Session(rootQueue: .main, startRequestsImmediately: false)
 
     let url = URL(string: "https://api.alamofire.org")!
-    let connectionLostError = NSError(domain: URLError.errorDomain, code: URLError.networkConnectionLost.rawValue, userInfo: nil)
-    let resourceUnavailableError = NSError(domain: URLError.errorDomain, code: URLError.resourceUnavailable.rawValue, userInfo: nil)
-    let unknownError = NSError(domain: URLError.errorDomain, code: URLError.unknown.rawValue, userInfo: nil)
+
+    let connectionLost = URLError(.networkConnectionLost)
+    let resourceUnavailable = URLError(.resourceUnavailable)
+    let unknown = URLError(.unknown)
+
+    lazy var connectionLostError = AFError.sessionTaskFailed(error: connectionLost)
+    lazy var resourceUnavailableError = AFError.sessionTaskFailed(error: resourceUnavailable)
+    lazy var unknownError = AFError.sessionTaskFailed(error: unknown)
 
     let retryableStatusCodes: Set<Int> = [408, 500, 502, 503, 504]
 
-    let retryableErrorCodes: Set<URLError.Code> = [
-        .backgroundSessionInUseByAnotherProcess,
-        .backgroundSessionWasDisconnected,
-        .badServerResponse,
-        .callIsActive,
-        .cannotConnectToHost,
-        .cannotFindHost,
-        .cannotLoadFromNetwork,
-        .dataNotAllowed,
-        .dnsLookupFailed,
-        .downloadDecodingFailedMidStream,
-        .downloadDecodingFailedToComplete,
-        .internationalRoamingOff,
-        .networkConnectionLost,
-        .notConnectedToInternet,
-        .secureConnectionFailed,
-        .serverCertificateHasBadDate,
-        .serverCertificateNotYetValid,
-        .timedOut
-    ]
+    let retryableErrorCodes: Set<URLError.Code> = [.backgroundSessionInUseByAnotherProcess,
+                                                   .backgroundSessionWasDisconnected,
+                                                   .badServerResponse,
+                                                   .callIsActive,
+                                                   .cannotConnectToHost,
+                                                   .cannotFindHost,
+                                                   .cannotLoadFromNetwork,
+                                                   .dataNotAllowed,
+                                                   .dnsLookupFailed,
+                                                   .downloadDecodingFailedMidStream,
+                                                   .downloadDecodingFailedToComplete,
+                                                   .internationalRoamingOff,
+                                                   .networkConnectionLost,
+                                                   .notConnectedToInternet,
+                                                   .secureConnectionFailed,
+                                                   .serverCertificateHasBadDate,
+                                                   .serverCertificateNotYetValid,
+                                                   .timedOut]
 
-    let nonRetryableErrorCodes: Set<URLError.Code> = [
-        .appTransportSecurityRequiresSecureConnection,
-        .backgroundSessionRequiresSharedContainer,
-        .badURL,
-        .cancelled,
-        .cannotCloseFile,
-        .cannotCreateFile,
-        .cannotDecodeContentData,
-        .cannotDecodeRawData,
-        .cannotMoveFile,
-        .cannotOpenFile,
-        .cannotParseResponse,
-        .cannotRemoveFile,
-        .cannotWriteToFile,
-        .clientCertificateRejected,
-        .clientCertificateRequired,
-        .dataLengthExceedsMaximum,
-        .fileDoesNotExist,
-        .fileIsDirectory,
-        .httpTooManyRedirects,
-        .noPermissionsToReadFile,
-        .redirectToNonExistentLocation,
-        .requestBodyStreamExhausted,
-        .resourceUnavailable,
-        .serverCertificateHasUnknownRoot,
-        .serverCertificateUntrusted,
-        .unknown,
-        .unsupportedURL,
-        .userAuthenticationRequired,
-        .userCancelledAuthentication,
-        .zeroByteResource
-    ]
+    let nonRetryableErrorCodes: Set<URLError.Code> = [.appTransportSecurityRequiresSecureConnection,
+                                                      .backgroundSessionRequiresSharedContainer,
+                                                      .badURL,
+                                                      .cancelled,
+                                                      .cannotCloseFile,
+                                                      .cannotCreateFile,
+                                                      .cannotDecodeContentData,
+                                                      .cannotDecodeRawData,
+                                                      .cannotMoveFile,
+                                                      .cannotOpenFile,
+                                                      .cannotParseResponse,
+                                                      .cannotRemoveFile,
+                                                      .cannotWriteToFile,
+                                                      .clientCertificateRejected,
+                                                      .clientCertificateRequired,
+                                                      .dataLengthExceedsMaximum,
+                                                      .fileDoesNotExist,
+                                                      .fileIsDirectory,
+                                                      .httpTooManyRedirects,
+                                                      .noPermissionsToReadFile,
+                                                      .redirectToNonExistentLocation,
+                                                      .requestBodyStreamExhausted,
+                                                      .resourceUnavailable,
+                                                      .serverCertificateHasUnknownRoot,
+                                                      .serverCertificateUntrusted,
+                                                      .unknown,
+                                                      .unsupportedURL,
+                                                      .userAuthenticationRequired,
+                                                      .userCancelledAuthentication,
+                                                      .zeroByteResource]
 
     var errorCodes: Set<URLError.Code> {
-        return retryableErrorCodes.union(nonRetryableErrorCodes)
+        retryableErrorCodes.union(nonRetryableErrorCodes)
     }
 }
 
 // MARK: -
 
-class RetryPolicyTestCase: BaseRetryPolicyTestCase {
-
+final class RetryPolicyTestCase: BaseRetryPolicyTestCase {
     // MARK: Tests - Retry
 
     func testThatRetryPolicyRetriesRequestsBelowRetryLimit() {
@@ -245,7 +241,7 @@ class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         // When
         for code in errorCodes {
             let request = self.request(method: .get)
-            let error = urlError(with: code)
+            let error = URLError(code)
 
             let expectation = self.expectation(description: "retry policy should complete")
 
@@ -267,15 +263,45 @@ class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         }
     }
 
-    func testThatRetryPolicyDoesNotRetryErrorsThatAreNotURLErrors() {
+    func testThatRetryPolicyRetriesRequestsWithRetryableAFErrors() {
+        // Given
+        let retryPolicy = RetryPolicy()
+        var results: [URLError.Code: RetryResult] = [:]
+
+        // When
+        for code in errorCodes {
+            let request = self.request(method: .get)
+            let error = AFError.sessionTaskFailed(error: URLError(code))
+
+            let expectation = self.expectation(description: "retry policy should complete")
+
+            retryPolicy.retry(request, for: session, dueTo: error) { result in
+                results[code] = result
+                expectation.fulfill()
+            }
+
+            waitForExpectations(timeout: timeout, handler: nil)
+        }
+
+        // Then
+        XCTAssertEqual(results.count, errorCodes.count)
+
+        for (urlErrorCode, result) in results {
+            XCTAssertEqual(result.retryRequired, retryableErrorCodes.contains(urlErrorCode))
+            XCTAssertEqual(result.delay, result.retryRequired ? 0.5 : nil)
+            XCTAssertNil(result.error)
+        }
+    }
+
+    func testThatRetryPolicyDoesNotRetryErrorsThatAreNotRetryable() {
         // Given
         let retryPolicy = RetryPolicy()
         let request = self.request(method: .get)
 
-        let errors: [Error] = [
-            resourceUnavailableError,
-            unknownError
-        ]
+        let errors: [Error] = [resourceUnavailable,
+                               unknown,
+                               resourceUnavailableError,
+                               unknownError]
 
         var results: [RetryResult] = []
 
@@ -295,7 +321,7 @@ class RetryPolicyTestCase: BaseRetryPolicyTestCase {
         XCTAssertEqual(results.count, errors.count)
 
         for result in results {
-            XCTAssertEqual(result.retryRequired, false)
+            XCTAssertFalse(result.retryRequired)
             XCTAssertNil(result.delay)
             XCTAssertNil(result.error)
         }
@@ -363,13 +389,13 @@ class RetryPolicyTestCase: BaseRetryPolicyTestCase {
     }
 
     func urlError(with code: URLError.Code) -> URLError {
-        return NSError(domain: URLError.errorDomain, code: code.rawValue, userInfo: nil) as! URLError
+        NSError(domain: URLError.errorDomain, code: code.rawValue, userInfo: nil) as! URLError
     }
 }
 
 // MARK: -
 
-class ConnectionLostRetryPolicyTestCase: BaseRetryPolicyTestCase {
+final class ConnectionLostRetryPolicyTestCase: BaseRetryPolicyTestCase {
     func testThatConnectionLostRetryPolicyCanBeInitializedWithDefaultValues() {
         // Given, When
         let retryPolicy = ConnectionLostRetryPolicy()
@@ -385,12 +411,10 @@ class ConnectionLostRetryPolicyTestCase: BaseRetryPolicyTestCase {
 
     func testThatConnectionLostRetryPolicyCanBeInitializedWithCustomValues() {
         // Given, When
-        let retryPolicy = ConnectionLostRetryPolicy(
-            retryLimit: 3,
-            exponentialBackoffBase: 4,
-            exponentialBackoffScale: 0.25,
-            retryableHTTPMethods: [.delete, .get]
-        )
+        let retryPolicy = ConnectionLostRetryPolicy(retryLimit: 3,
+                                                    exponentialBackoffBase: 4,
+                                                    exponentialBackoffScale: 0.25,
+                                                    retryableHTTPMethods: [.delete, .get])
 
         // Then
         XCTAssertEqual(retryPolicy.retryLimit, 3)

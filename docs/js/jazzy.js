@@ -8,26 +8,41 @@ if (navigator.userAgent.match(/xcode/i)) {
   window.jazzy.docset = true
 }
 
-// On doc load, toggle the URL hash discussion if present
-$(document).ready(function() {
-  if (!window.jazzy.docset) {
-    var linkToHash = $('a[href="' + window.location.hash +'"]');
-    linkToHash.trigger("click");
-  }
-});
+function toggleItem($link, $content) {
+  var animationDuration = 300;
+  $link.toggleClass('token-open');
+  $content.slideToggle(animationDuration);
+}
 
-// On token click, toggle its discussion and animate token.marginLeft
-$(".token").click(function(event) {
+function itemLinkToContent($link) {
+  return $link.parent().parent().next();
+}
+
+// On doc load + hash-change, open any targetted item
+function openCurrentItemIfClosed() {
   if (window.jazzy.docset) {
     return;
   }
-  var link = $(this);
-  var animationDuration = 300;
-  $content = link.parent().parent().next();
-  $content.slideToggle(animationDuration);
+  var $link = $(`a[name="${location.hash.substring(1)}"]`).nextAll('.token');
+  $content = itemLinkToContent($link);
+  if ($content.is(':hidden')) {
+    toggleItem($link, $content);
+  }
+}
+
+$(openCurrentItemIfClosed);
+$(window).on('hashchange', openCurrentItemIfClosed);
+
+// On item link ('token') click, toggle its discussion
+$('.token').on('click', function(event) {
+  if (window.jazzy.docset) {
+    return;
+  }
+  var $link = $(this);
+  toggleItem($link, itemLinkToContent($link));
 
   // Keeps the document from jumping to the hash.
-  var href = $(this).attr('href');
+  var href = $link.attr('href');
   if (history.pushState) {
     history.pushState({}, '', href);
   } else {
@@ -36,8 +51,20 @@ $(".token").click(function(event) {
   event.preventDefault();
 });
 
-// Dumb down quotes within code blocks that delimit strings instead of quotations
-// https://github.com/realm/jazzy/issues/714
-$("code q").replaceWith(function () {
-  return ["\"", $(this).contents(), "\""];
+// Clicks on links to the current, closed, item need to open the item
+$("a:not('.token')").on('click', function() {
+  if (location == this.href) {
+    openCurrentItemIfClosed();
+  }
 });
+
+// KaTeX rendering
+if ("katex" in window) {
+  $($('.math').each( (_, element) => {
+    katex.render(element.textContent, element, {
+      displayMode: $(element).hasClass('m-block'),
+      throwOnError: false,
+      trust: true
+    });
+  }))
+}

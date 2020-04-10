@@ -39,18 +39,14 @@ extension URL {
 extension URLRequest {
     static func makeHTTPBinRequest(path: String = "get",
                                    method: HTTPMethod = .get,
-                                   headers: HTTPHeaders = .init()) -> URLRequest {
+                                   headers: HTTPHeaders = .init(),
+                                   timeout: TimeInterval = 60,
+                                   cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy) -> URLRequest {
         var request = URLRequest(url: .makeHTTPBinURL(path: path))
         request.httpMethod = method.rawValue
         request.headers = headers
-
-        return request
-    }
-
-    static func make(url: URL = URL(string: "https://httpbin.org/get")!, method: HTTPMethod = .get, headers: HTTPHeaders = .init()) -> URLRequest {
-        var request = URLRequest(url:url)
-        request.method = method
-        request.headers = headers
+        request.timeoutInterval = timeout
+        request.cachePolicy = cachePolicy
 
         return request
     }
@@ -58,7 +54,7 @@ extension URLRequest {
 
 extension Data {
     var asString: String {
-        return String(data: self, encoding: .utf8)!
+        String(decoding: self, as: UTF8.self)
     }
 }
 

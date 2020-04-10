@@ -35,14 +35,14 @@ open class ServerTrustManager {
     /// Initializes the `ServerTrustManager` instance with the given evaluators.
     ///
     /// Since different servers and web services can have different leaf certificates, intermediate and even root
-    /// certficates, it is important to have the flexibility to specify evaluation policies on a per host basis. This
+    /// certificates, it is important to have the flexibility to specify evaluation policies on a per host basis. This
     /// allows for scenarios such as using default evaluation for host1, certificate pinning for host2, public key
     /// pinning for host3 and disabling evaluation for host4.
     ///
     /// - Parameters:
     ///   - allHostsMustBeEvaluated: The value determining whether all hosts for this instance must be evaluated. `true`
     ///                              by default.
-    ///   - evaluators:              A dictionary of evaluators mappend to hosts.
+    ///   - evaluators:              A dictionary of evaluators mapped to hosts.
     public init(allHostsMustBeEvaluated: Bool = true, evaluators: [String: ServerTrustEvaluating]) {
         self.allHostsMustBeEvaluated = allHostsMustBeEvaluated
         self.evaluators = evaluators
@@ -95,7 +95,7 @@ public protocol ServerTrustEvaluating {
 public final class DefaultTrustEvaluator: ServerTrustEvaluating {
     private let validateHost: Bool
 
-    /// Creates a `DefaultTrustEvalutor`.
+    /// Creates a `DefaultTrustEvaluator`.
     ///
     /// - Parameter validateHost: Determines whether or not the evaluator should validate the host. `true` by default.
     public init(validateHost: Bool = true) {
@@ -178,8 +178,12 @@ public final class RevocationTrustEvaluator: ServerTrustEvaluating {
             try trust.af.performValidation(forHost: host)
         }
 
-        try trust.af.validate(policy: SecPolicy.af.revocation(options: options)) { (status, result) in
-            AFError.serverTrustEvaluationFailed(reason: .revocationCheckFailed(output: .init(host, trust, status, result), options: options))
+        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+            try trust.af.evaluate(afterApplying: SecPolicy.af.revocation(options: options))
+        } else {
+            try trust.af.validate(policy: SecPolicy.af.revocation(options: options)) { status, result in
+                AFError.serverTrustEvaluationFailed(reason: .revocationCheckFailed(output: .init(host, trust, status, result), options: options))
+            }
         }
     }
 }
@@ -198,9 +202,9 @@ public final class PinnedCertificatesTrustEvaluator: ServerTrustEvaluating {
     /// Creates a `PinnedCertificatesTrustEvaluator`.
     ///
     /// - Parameters:
-    ///   - certificates:                 The certificates to use to evalute the trust. All `cer`, `crt`, and `der`
+    ///   - certificates:                 The certificates to use to evaluate the trust. All `cer`, `crt`, and `der`
     ///                                   certificates in `Bundle.main` by default.
-    ///   - acceptSelfSignedCertificates: Adds the provided certificates as anchors for the trust evaulation, allowing
+    ///   - acceptSelfSignedCertificates: Adds the provided certificates as anchors for the trust evaluation, allowing
     ///                                   self-signed certificates to pass. `false` by default. THIS SETTING SHOULD BE
     ///                                   FALSE IN PRODUCTION!
     ///   - performDefaultValidation:     Determines whether default validation should be performed in addition to
@@ -333,9 +337,9 @@ public final class CompositeTrustEvaluator: ServerTrustEvaluating {
 /// **THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!**
 public final class DisabledEvaluator: ServerTrustEvaluating {
     /// Creates an instance.
-    public init() { }
+    public init() {}
 
-    public func evaluate(_ trust: SecTrust, forHost host: String) throws { }
+    public func evaluate(_ trust: SecTrust, forHost host: String) throws {}
 }
 
 // MARK: - Extensions
@@ -363,7 +367,7 @@ extension Bundle: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType: Bundle {
     /// Returns all valid `cer`, `crt`, and `der` certificates in the bundle.
     var certificates: [SecCertificate] {
-        return paths(forResourcesOfTypes: [".cer", ".CER", ".crt", ".CRT", ".der", ".DER"]).compactMap { path in
+        paths(forResourcesOfTypes: [".cer", ".CER", ".crt", ".CRT", ".der", ".DER"]).compactMap { path in
             guard
                 let certificateData = try? Data(contentsOf: URL(fileURLWithPath: path)) as CFData,
                 let certificate = SecCertificateCreateWithData(nil, certificateData) else { return nil }
@@ -374,7 +378,7 @@ public extension AlamofireExtension where ExtendedType: Bundle {
 
     /// Returns all public keys for the valid certificates in the bundle.
     var publicKeys: [SecKey] {
-        return certificates.af.publicKeys
+        certificates.af.publicKeys
     }
 
     /// Returns all pathnames for the resources identified by the provided file extensions.
@@ -383,18 +387,32 @@ public extension AlamofireExtension where ExtendedType: Bundle {
     ///
     /// - Returns:         All pathnames for the given filename extensions.
     func paths(forResourcesOfTypes types: [String]) -> [String] {
-        return Array(Set(types.flatMap { type.paths(forResourcesOfType: $0, inDirectory: nil) }))
+        Array(Set(types.flatMap { type.paths(forResourcesOfType: $0, inDirectory: nil) }))
     }
 }
 
 extension SecTrust: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == SecTrust {
-    /// Attempts to validate `self` using the policy provided and transforming any error produced using the closure passed.
+    /// Evaluates `self` after applying the `SecPolicy` value provided.
+    ///
+    /// - Parameter policy: The `SecPolicy` to apply to `self` before evaluation.
+    ///
+    /// - Throws:           Any `Error` from applying the `SecPolicy` or from evaluation.
+    @available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)
+    func evaluate(afterApplying policy: SecPolicy) throws {
+        try apply(policy: policy).af.evaluate()
+    }
+
+    /// Attempts to validate `self` using the `SecPolicy` provided and transforming any error produced using the closure passed.
     ///
     /// - Parameters:
     ///   - policy:        The `SecPolicy` used to evaluate `self`.
     ///   - errorProducer: The closure used transform the failed `OSStatus` and `SecTrustResultType`.
-    /// - Throws:          Any error from applying the `policy`, or the result of `errorProducer` if validation fails.
+    /// - Throws:          Any `Error` from applying the `policy`, or the result of `errorProducer` if validation fails.
+    @available(iOS, introduced: 10, deprecated: 12, renamed: "evaluate(afterApplying:)")
+    @available(macOS, introduced: 10.12, deprecated: 10.14, renamed: "evaluate(afterApplying:)")
+    @available(tvOS, introduced: 10, deprecated: 12, renamed: "evaluate(afterApplying:)")
+    @available(watchOS, introduced: 3, deprecated: 5, renamed: "evaluate(afterApplying:)")
     func validate(policy: SecPolicy, errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> Error) throws {
         try apply(policy: policy).af.validate(errorProducer: errorProducer)
     }
@@ -417,11 +435,29 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
         return type
     }
 
+    /// Evaluate `self`, throwing an `Error` if evaluation fails.
+    ///
+    /// - Throws: `AFError.serverTrustEvaluationFailed` with reason `.trustValidationFailed` and associated error from
+    ///           the underlying evaluation.
+    @available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *)
+    func evaluate() throws {
+        var error: CFError?
+        let evaluationSucceeded = SecTrustEvaluateWithError(type, &error)
+
+        if !evaluationSucceeded {
+            throw AFError.serverTrustEvaluationFailed(reason: .trustEvaluationFailed(error: error))
+        }
+    }
+
     /// Validate `self`, passing any failure values through `errorProducer`.
     ///
     /// - Parameter errorProducer: The closure used to transform the failed `OSStatus` and `SecTrustResultType` into an
     ///                            `Error`.
     /// - Throws:                  The `Error` produced by the `errorProducer` closure.
+    @available(iOS, introduced: 10, deprecated: 12, renamed: "evaluate()")
+    @available(macOS, introduced: 10.12, deprecated: 10.14, renamed: "evaluate()")
+    @available(tvOS, introduced: 10, deprecated: 12, renamed: "evaluate()")
+    @available(watchOS, introduced: 3, deprecated: 5, renamed: "evaluate()")
     func validate(errorProducer: (_ status: OSStatus, _ result: SecTrustResultType) -> Error) throws {
         var result = SecTrustResultType.invalid
         let status = SecTrustEvaluate(type, &result)
@@ -453,19 +489,19 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
 
     /// The public keys contained in `self`.
     var publicKeys: [SecKey] {
-        return certificates.af.publicKeys
+        certificates.af.publicKeys
     }
 
     /// The `SecCertificate`s contained i `self`.
     var certificates: [SecCertificate] {
-        return (0..<SecTrustGetCertificateCount(type)).compactMap { index in
+        (0..<SecTrustGetCertificateCount(type)).compactMap { index in
             SecTrustGetCertificateAtIndex(type, index)
         }
     }
 
     /// The `Data` values for all certificates contained in `self`.
     var certificateData: [Data] {
-        return certificates.af.data
+        certificates.af.data
     }
 
     /// Validates `self` after applying `SecPolicy.af.default`. This evaluation does not validate the hostname.
@@ -473,8 +509,12 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
     /// - Parameter host: The hostname, used only in the error output if validation fails.
     /// - Throws: An `AFError.serverTrustEvaluationFailed` instance with a `.defaultEvaluationFailed` reason.
     func performDefaultValidation(forHost host: String) throws {
-        try validate(policy: SecPolicy.af.default) { (status, result) in
-            AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, type, status, result)))
+        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+            try evaluate(afterApplying: SecPolicy.af.default)
+        } else {
+            try validate(policy: SecPolicy.af.default) { status, result in
+                AFError.serverTrustEvaluationFailed(reason: .defaultEvaluationFailed(output: .init(host, type, status, result)))
+            }
         }
     }
 
@@ -484,8 +524,12 @@ public extension AlamofireExtension where ExtendedType == SecTrust {
     /// - Parameter host: The hostname to use in the validation.
     /// - Throws:         An `AFError.serverTrustEvaluationFailed` instance with a `.defaultEvaluationFailed` reason.
     func performValidation(forHost host: String) throws {
-        try validate(policy: SecPolicy.af.hostname(host)) { (status, result) in
-            AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, type, status, result)))
+        if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
+            try evaluate(afterApplying: SecPolicy.af.hostname(host))
+        } else {
+            try validate(policy: SecPolicy.af.hostname(host)) { status, result in
+                AFError.serverTrustEvaluationFailed(reason: .hostValidationFailed(output: .init(host, type, status, result)))
+            }
         }
     }
 }
@@ -501,7 +545,7 @@ public extension AlamofireExtension where ExtendedType == SecPolicy {
     ///
     /// - Returns:            The `SecPolicy`.
     static func hostname(_ hostname: String) -> SecPolicy {
-        return SecPolicyCreateSSL(true, hostname as CFString)
+        SecPolicyCreateSSL(true, hostname as CFString)
     }
 
     /// Creates a `SecPolicy` which checks the revocation of certificates.
@@ -521,15 +565,15 @@ public extension AlamofireExtension where ExtendedType == SecPolicy {
 }
 
 extension Array: AlamofireExtended {}
-public extension AlamofireExtension where ExtendedType == Array<SecCertificate> {
+public extension AlamofireExtension where ExtendedType == [SecCertificate] {
     /// All `Data` values for the contained `SecCertificate`s.
     var data: [Data] {
-        return type.map { SecCertificateCopyData($0) as Data }
+        type.map { SecCertificateCopyData($0) as Data }
     }
 
     /// All public `SecKey` values for the contained `SecCertificate`s.
     var publicKeys: [SecKey] {
-        return type.compactMap { $0.af.publicKey }
+        type.compactMap { $0.af.publicKey }
     }
 }
 
@@ -550,13 +594,13 @@ public extension AlamofireExtension where ExtendedType == SecCertificate {
 extension OSStatus: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == OSStatus {
     /// Returns whether `self` is `errSecSuccess`.
-    var isSuccess: Bool { return type == errSecSuccess }
+    var isSuccess: Bool { type == errSecSuccess }
 }
 
 extension SecTrustResultType: AlamofireExtended {}
 public extension AlamofireExtension where ExtendedType == SecTrustResultType {
     /// Returns whether `self is `.unspecified` or `.proceed`.
     var isSuccess: Bool {
-        return (type == .unspecified || type == .proceed)
+        (type == .unspecified || type == .proceed)
     }
 }

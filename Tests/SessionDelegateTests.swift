@@ -45,7 +45,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         manager.request(urlString)
@@ -73,7 +73,7 @@ class SessionDelegateTestCase: BaseTestCase {
 
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
 
         // When
         manager.request(urlString)
@@ -103,7 +103,7 @@ class SessionDelegateTestCase: BaseTestCase {
         var resumedTaskRequest: Request?
         var completedTaskRequest: Request?
         var completedRequest: Request?
-        var requestResponse: DataResponse<Data?>?
+        var requestResponse: DataResponse<Data?, AFError>?
         let expect = expectation(description: "request should complete")
 
         // When
@@ -157,11 +157,11 @@ class SessionDelegateTestCase: BaseTestCase {
         var resumedTaskRequest: Request?
         var completedTaskRequest: Request?
         var completedRequest: Request?
-        var requestResponse: DownloadResponse<URL?>?
+        var requestResponse: DownloadResponse<URL?, AFError>?
         let expect = expectation(description: "request should complete")
 
         // When
-        let request = session.download("https://httpbin.org/get").response { (response) in
+        let request = session.download("https://httpbin.org/get").response { response in
             requestResponse = response
             expect.fulfill()
         }

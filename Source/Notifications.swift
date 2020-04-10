@@ -49,7 +49,7 @@ public extension Request {
 extension Notification {
     /// The `Request` contained by the instance's `userInfo`, `nil` otherwise.
     public var request: Request? {
-        return userInfo?[String.requestKey] as? Request
+        userInfo?[String.requestKey] as? Request
     }
 
     /// Convenience initializer for a `Notification` containing a `Request` payload.
@@ -109,7 +109,7 @@ public final class AlamofireNotifications: EventMonitor {
         NotificationCenter.default.postNotification(named: Request.didCancelTaskNotification, with: request)
     }
 
-    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: Error?) {
+    public func request(_ request: Request, didCompleteTask task: URLSessionTask, with error: AFError?) {
         NotificationCenter.default.postNotification(named: Request.didCompleteTaskNotification, with: request)
     }
 }

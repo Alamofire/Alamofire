@@ -27,11 +27,10 @@ import Foundation
 import XCTest
 
 final class RedirectHandlerTestCase: BaseTestCase {
-
     // MARK: - Properties
 
-    private var redirectURLString: String { return "https://www.apple.com/" }
-    private var urlString: String { return "https://httpbin.org/redirect-to?url=\(redirectURLString)" }
+    private var redirectURLString: String { "https://www.apple.com/" }
+    private var urlString: String { "https://httpbin.org/redirect-to?url=\(redirectURLString)" }
 
     // MARK: - Tests - Per Request
 
@@ -39,7 +38,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         // Given
         let session = Session()
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
         // When
@@ -64,7 +63,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         // Given
         let session = Session()
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should NOT redirect to \(redirectURLString)")
 
         // When
@@ -91,7 +90,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         let redirectURLString = "https://www.nike.com"
         let redirectURLRequest = URLRequest(url: URL(string: redirectURLString)!)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
         // When
@@ -120,7 +119,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         // Given
         let session = Session(redirectHandler: Redirector.follow)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
         // When
@@ -145,7 +144,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         // Given
         let session = Session(redirectHandler: Redirector.doNotFollow)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should NOT redirect to \(redirectURLString)")
 
         // When
@@ -174,7 +173,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         let redirector = Redirector(behavior: .modify { _, _, _ in redirectURLRequest })
         let session = Session(redirectHandler: redirector)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
         // When
@@ -201,7 +200,7 @@ final class RedirectHandlerTestCase: BaseTestCase {
         // Given
         let session = Session(redirectHandler: Redirector.doNotFollow)
 
-        var response: DataResponse<Data?>?
+        var response: DataResponse<Data?, AFError>?
         let expectation = self.expectation(description: "Request should redirect to \(redirectURLString)")
 
         // When

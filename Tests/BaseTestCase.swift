@@ -27,10 +27,10 @@ import Foundation
 import XCTest
 
 class BaseTestCase: XCTestCase {
-    let timeout: TimeInterval = 5
+    let timeout: TimeInterval = 10
 
-    static var testDirectoryURL: URL { return FileManager.temporaryDirectoryURL.appendingPathComponent("org.alamofire.tests") }
-    var testDirectoryURL: URL { return BaseTestCase.testDirectoryURL }
+    static var testDirectoryURL: URL { FileManager.temporaryDirectoryURL.appendingPathComponent("org.alamofire.tests") }
+    var testDirectoryURL: URL { BaseTestCase.testDirectoryURL }
 
     override func setUp() {
         super.setUp()
@@ -44,26 +44,19 @@ class BaseTestCase: XCTestCase {
         return bundle.url(forResource: fileName, withExtension: ext)!
     }
 
-    func assertErrorIsAFError(_ error: Error?,
-                              file: StaticString = #file,
-                              line: UInt = #line,
-                              evaluation: (_ error: AFError) -> Void) {
-        guard let error = error?.asAFError else {
-            XCTFail("error is not an AFError", file: file, line: line)
-            return
+    /// Runs assertions on a particular `DispatchQueue`.
+    ///
+    /// - Parameters:
+    ///   - queue: The `DispatchQueue` on which to run the assertions.
+    ///   - assertions: Closure containing assertions to run
+    func assert(on queue: DispatchQueue, assertions: @escaping () -> Void) {
+        let expect = expectation(description: "all assertions are complete")
+
+        queue.async {
+            assertions()
+            expect.fulfill()
         }
 
-        evaluation(error)
-    }
-
-    func assertErrorIsServerTrustEvaluationError(_ error: Error?, file: StaticString = #file, line: UInt = #line, evaluation: (_ reason: AFError.ServerTrustFailureReason) -> Void) {
-        assertErrorIsAFError(error, file: file, line: line) { (error) in
-            guard case let .serverTrustEvaluationFailed(reason) = error else {
-                XCTFail("error is not .serverTrustEvaluationFailed", file: file, line: line)
-                return
-            }
-
-            evaluation(reason)
-        }
+        waitForExpectations(timeout: timeout)
     }
 }
