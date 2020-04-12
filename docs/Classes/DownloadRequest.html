@@ -84,6 +84,21 @@
                 <a class="nav-group-task-link" href="../Classes/DataResponseSerializer.html">DataResponseSerializer</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest.html">DataStreamRequest</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/Stream.html">– Stream</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/Event.html">– Event</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/Completion.html">– Completion</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataStreamRequest/CancellationToken.html">– CancellationToken</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/DecodableResponseSerializer.html">DecodableResponseSerializer</a>
               </li>
               <li class="nav-group-task">
@@ -308,6 +323,9 @@
                 <a class="nav-group-task-link" href="../Protocols/DataResponseSerializerProtocol.html">DataResponseSerializerProtocol</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/DataStreamSerializer.html">DataStreamSerializer</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DownloadResponseSerializerProtocol.html">DownloadResponseSerializerProtocol</a>
               </li>
               <li class="nav-group-task">
@@ -365,6 +383,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DataResponse.html">DataResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DecodableStreamSerializer.html">DecodableStreamSerializer</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/DownloadResponse.html">DownloadResponse</a>
@@ -526,7 +547,8 @@ the options defining how the file should be moved.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Destination</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span> <span class="nv">temporaryURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="n">_</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nv">destinationURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest/Options.html">Options</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Destination</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span> <span class="nv">temporaryURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span>
+                                <span class="n">_</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nv">destinationURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Classes/DownloadRequest/Options.html">Options</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -538,7 +560,7 @@ the options defining how the file should be moved.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC09suggestedB11Destination3for2in7options10Foundation3URLV011destinationJ0_AC7OptionsVAGtAJ_So17NSHTTPURLResponseCtcSo21NSSearchPathDirectoryV_So0nO10DomainMaskVAMtFZ"></a>
                     <a name="//apple_ref/swift/Method/suggestedDownloadDestination(for:in:options:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC09suggestedB11Destination3for2in7options10Foundation3URLV011destinationJ0_AC7OptionsVAGtAJ_So17NSHTTPURLResponseCtcSo21NSSearchPathDirectoryV_So0nO10DomainMaskVAMtFZ">suggestedDownloadDestination(for:in:options:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC09suggestedB11Destination3for2in7options10Foundation3URLV011destinationJ0_AC7OptionsVAGtAJ_So17NSHTTPURLResponseCtcSo21NSSearchPathDirectoryV_So0nO10DomainMaskVAMtFZ">suggestedDownloadDestination(for:<wbr>in:<wbr>options:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -770,7 +792,7 @@ file URL in the first available directory with the specified search path directo
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC4task13forResumeData5usingSo16NSURLSessionTaskC10Foundation0G0V_So0I0CtF"></a>
                     <a name="//apple_ref/swift/Method/task(forResumeData:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC4task13forResumeData5usingSo16NSURLSessionTaskC10Foundation0G0V_So0I0CtF">task(forResumeData:using:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC4task13forResumeData5usingSo16NSURLSessionTaskC10Foundation0G0V_So0I0CtF">task(forResumeData:<wbr>using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -870,7 +892,7 @@ file URL in the first available directory with the specified search path directo
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC6cancel19producingResumeDataACXDSb_tF"></a>
                     <a name="//apple_ref/swift/Method/cancel(producingResumeData:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC6cancel19producingResumeDataACXDSb_tF">cancel(producingResumeData:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC6cancel19producingResumeDataACXDSb_tF">cancel(producingResumeData:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -909,7 +931,7 @@ resumed or suspended.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC6cancel21byProducingResumeDataACXDy10Foundation0H0VSgc_tF"></a>
                     <a name="//apple_ref/swift/Method/cancel(byProducingResumeData:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC6cancel21byProducingResumeDataACXDy10Foundation0H0VSgc_tF">cancel(byProducingResumeData:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC6cancel21byProducingResumeDataACXDy10Foundation0H0VSgc_tF">cancel(byProducingResumeData:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -969,7 +991,7 @@ or suspended.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC8validateyACXDs6ResultOyyts5Error_pG10Foundation10URLRequestVSg_So17NSHTTPURLResponseCAI3URLVSgtcF"></a>
                     <a name="//apple_ref/swift/Method/validate(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8validateyACXDs6ResultOyyts5Error_pG10Foundation10URLRequestVSg_So17NSHTTPURLResponseCAI3URLVSgtcF">validate(_:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8validateyACXDs6ResultOyyts5Error_pG10Foundation10URLRequestVSg_So17NSHTTPURLResponseCAI3URLVSgtcF">validate(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1038,7 +1060,7 @@ or suspended.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0C_yAA0B8ResponseVy10Foundation3URLVSgAA7AFErrorOGctF"></a>
                     <a name="//apple_ref/swift/Method/response(queue:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0C_yAA0B8ResponseVy10Foundation3URLVSgAA7AFErrorOGctF">response(queue:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8response5queue17completionHandlerACXDSo012OS_dispatch_E0C_yAA0B8ResponseVy10Foundation3URLVSgAA7AFErrorOGctF">response(queue:<wbr>completionHandler:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1103,7 +1125,7 @@ or suspended.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0bkF8ProtocolRzlF"></a>
                     <a name="//apple_ref/swift/Method/response(queue:responseSerializer:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0bkF8ProtocolRzlF">response(queue:responseSerializer:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8response5queue0D10Serializer17completionHandlerACXDSo012OS_dispatch_E0C_xyAA0B8ResponseVy16SerializedObjectQzAA7AFErrorOGctAA0bkF8ProtocolRzlF">response(queue:<wbr>responseSerializer:<wbr>completionHandler:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1195,7 +1217,7 @@ or suspended.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC12responseData5queue17completionHandlerACXDSo012OS_dispatch_F0C_yAA0B8ResponseVy10Foundation0E0VAA7AFErrorOGctF"></a>
                     <a name="//apple_ref/swift/Method/responseData(queue:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC12responseData5queue17completionHandlerACXDSo012OS_dispatch_F0C_yAA0B8ResponseVy10Foundation0E0VAA7AFErrorOGctF">responseData(queue:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC12responseData5queue17completionHandlerACXDSo012OS_dispatch_F0C_yAA0B8ResponseVy10Foundation0E0VAA7AFErrorOGctF">responseData(queue:<wbr>completionHandler:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1273,7 +1295,7 @@ or suspended.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC14responseString5queue8encoding17completionHandlerACXDSo012OS_dispatch_F0C_SS10FoundationE8EncodingVSgyAA0B8ResponseVySSAA7AFErrorOGctF"></a>
                     <a name="//apple_ref/swift/Method/responseString(queue:encoding:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC14responseString5queue8encoding17completionHandlerACXDSo012OS_dispatch_F0C_SS10FoundationE8EncodingVSgyAA0B8ResponseVySSAA7AFErrorOGctF">responseString(queue:encoding:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC14responseString5queue8encoding17completionHandlerACXDSo012OS_dispatch_F0C_SS10FoundationE8EncodingVSgyAA0B8ResponseVySSAA7AFErrorOGctF">responseString(queue:<wbr>encoding:<wbr>completionHandler:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1365,7 +1387,7 @@ or suspended.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC12responseJSON5queue7options17completionHandlerACXDSo012OS_dispatch_F0C_So20NSJSONReadingOptionsVyAA0B8ResponseVyypAA7AFErrorOGctF"></a>
                     <a name="//apple_ref/swift/Method/responseJSON(queue:options:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC12responseJSON5queue7options17completionHandlerACXDSo012OS_dispatch_F0C_So20NSJSONReadingOptionsVyAA0B8ResponseVyypAA7AFErrorOGctF">responseJSON(queue:options:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC12responseJSON5queue7options17completionHandlerACXDSo012OS_dispatch_F0C_So20NSJSONReadingOptionsVyAA0B8ResponseVyypAA7AFErrorOGctF">responseJSON(queue:<wbr>options:<wbr>completionHandler:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1456,7 +1478,7 @@ or suspended.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC17responseDecodable2of5queue7decoder17completionHandlerACXDxm_So012OS_dispatch_G0CAA11DataDecoder_pyAA0B8ResponseVyxAA7AFErrorOGctSeRzlF"></a>
                     <a name="//apple_ref/swift/Method/responseDecodable(of:queue:decoder:completionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC17responseDecodable2of5queue7decoder17completionHandlerACXDxm_So012OS_dispatch_G0CAA11DataDecoder_pyAA0B8ResponseVyxAA7AFErrorOGctSeRzlF">responseDecodable(of:queue:decoder:completionHandler:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC17responseDecodable2of5queue7decoder17completionHandlerACXDxm_So012OS_dispatch_G0CAA11DataDecoder_pyAA0B8ResponseVyxAA7AFErrorOGctSeRzlF">responseDecodable(of:<wbr>queue:<wbr>decoder:<wbr>completionHandler:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1566,7 +1588,10 @@ destination URL, and returns whether the request was valid.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Validation</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?,</span> <span class="n">_</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">,</span> <span class="n">_</span> <span class="nv">fileURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">ValidationResult</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Validation</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt">URLRequest</span><span class="p">?,</span>
+                               <span class="n">_</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">HTTPURLResponse</span><span class="p">,</span>
+                               <span class="n">_</span> <span class="nv">fileURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?)</span>
+    <span class="o">-&gt;</span> <span class="kt">ValidationResult</span></code></pre>
 
                         </div>
                       </div>
@@ -1578,7 +1603,7 @@ destination URL, and returns whether the request was valid.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC8validate10statusCodeACXDx_tSTRzSi7ElementRtzlF"></a>
                     <a name="//apple_ref/swift/Method/validate(statusCode:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8validate10statusCodeACXDx_tSTRzSi7ElementRtzlF">validate(statusCode:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8validate10statusCodeACXDx_tSTRzSi7ElementRtzlF">validate(statusCode:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1607,12 +1632,12 @@ destination URL, and returns whether the request was valid.</p>
                             <tr>
                               <td>
                                 <code>
-                                <em>range</em>
+                                <em>statusCode</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>The range of acceptable status codes.</p>
+                                  <p><code>Sequence</code> of acceptable response status codes.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1621,7 +1646,7 @@ destination URL, and returns whether the request was valid.</p>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>The request.</p>
+                        <p>The instance.</p>
                       </div>
                     </section>
                   </div>
@@ -1631,7 +1656,7 @@ destination URL, and returns whether the request was valid.</p>
                     <code>
                     <a name="/s:9Alamofire15DownloadRequestC8validate11contentTypeACXDxyXA_tSTRzSS7ElementRtzlF"></a>
                     <a name="//apple_ref/swift/Method/validate(contentType:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8validate11contentTypeACXDxyXA_tSTRzSS7ElementRtzlF">validate(contentType:)</a>
+                    <a class="token" href="#/s:9Alamofire15DownloadRequestC8validate11contentTypeACXDxyXA_tSTRzSS7ElementRtzlF">validate(contentType:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1722,8 +1747,8 @@ type matches any specified in the Accept HTTP header field.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-03-23)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="http://alamofire.org/" target="_blank" rel="external">Alamofire Software Foundation</a>. All rights reserved. (Last updated: 2020-04-04)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

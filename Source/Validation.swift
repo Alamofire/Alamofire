@@ -192,6 +192,8 @@ extension DataRequest {
 }
 
 extension DataStreamRequest {
+    /// A closure used to validate a request that takes a `URLRequest` and `HTTPURLResponse` and returns whether the
+    /// request was valid.
     public typealias Validation = (_ request: URLRequest?, _ response: HTTPURLResponse) -> ValidationResult
 
     /// Validates that the response has a status code in the specified sequence.

@@ -43,7 +43,8 @@ class BaseRetryPolicyTestCase: BaseTestCase {
                                                      method: method,
                                                      parameters: nil,
                                                      encoding: URLEncoding.default,
-                                                     headers: nil)
+                                                     headers: nil,
+                                                     requestModifier: nil)
 
             urlRequest = try! request.asURLRequest()
 

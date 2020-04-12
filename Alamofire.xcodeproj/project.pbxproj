@@ -113,6 +113,9 @@
 		319917BA209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */; };
 		319917BB209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */; };
 		319917BC209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */; };
+		31B51E8C2434FECB005356DB /* RequestModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B51E8B2434FECB005356DB /* RequestModifierTests.swift */; };
+		31B51E8D2434FECB005356DB /* RequestModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B51E8B2434FECB005356DB /* RequestModifierTests.swift */; };
+		31B51E8E2434FECB005356DB /* RequestModifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31B51E8B2434FECB005356DB /* RequestModifierTests.swift */; };
 		31C2B0EA20B271040089BA7C /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
 		31C2B0EB20B271050089BA7C /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
 		31C2B0EC20B271060089BA7C /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C341BB91B1A865A00C1B34D /* CacheTests.swift */; };
@@ -383,6 +386,7 @@
 		319917A9209CDCB000103A19 /* HTTPHeaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeaders.swift; sourceTree = "<group>"; };
 		319917B8209CE53A00103A19 /* OperationQueue+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OperationQueue+Alamofire.swift"; sourceTree = "<group>"; };
 		31B2CA9521AA25CD005B371A /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		31B51E8B2434FECB005356DB /* RequestModifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestModifierTests.swift; sourceTree = "<group>"; };
 		31D83FCD20D5C29300D93E47 /* URLConvertible+URLRequestConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLConvertible+URLRequestConvertible.swift"; sourceTree = "<group>"; };
 		31DADDFA224811ED0051390F /* AlamofireExtended.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireExtended.swift; sourceTree = "<group>"; };
 		31ED52E61D73889D00199085 /* AFError+AlamofireTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AFError+AlamofireTests.swift"; sourceTree = "<group>"; };
@@ -545,6 +549,7 @@
 				31425AC0241F098000EE3CCC /* InternalRequestTests.swift */,
 				31501E872196962A005829F2 /* ParameterEncoderTests.swift */,
 				F8111E5C19A9674D0040E7D1 /* ParameterEncodingTests.swift */,
+				31B51E8B2434FECB005356DB /* RequestModifierTests.swift */,
 				F8111E5D19A9674D0040E7D1 /* RequestTests.swift */,
 				F8111E5E19A9674D0040E7D1 /* ResponseTests.swift */,
 				4C9DCE771CB1BCE2003E6463 /* SessionDelegateTests.swift */,
@@ -1318,6 +1323,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31B51E8E2434FECB005356DB /* RequestModifierTests.swift in Sources */,
 				4CF627181BA7CC240011A099 /* RequestTests.swift in Sources */,
 				3111CE9720A7EC3A008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
 				3111CE9420A7EC32008315E2 /* ResponseSerializationTests.swift in Sources */,
@@ -1476,6 +1482,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31B51E8C2434FECB005356DB /* RequestModifierTests.swift in Sources */,
 				31ED52E81D73891B00199085 /* AFError+AlamofireTests.swift in Sources */,
 				3111CE9520A7EC39008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
 				3111CE9220A7EC30008315E2 /* ResponseSerializationTests.swift in Sources */,
@@ -1514,6 +1521,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31B51E8D2434FECB005356DB /* RequestModifierTests.swift in Sources */,
 				31ED52E91D73891C00199085 /* AFError+AlamofireTests.swift in Sources */,
 				3111CE9620A7EC3A008315E2 /* ServerTrustEvaluatorTests.swift in Sources */,
 				3111CE9320A7EC31008315E2 /* ResponseSerializationTests.swift in Sources */,
