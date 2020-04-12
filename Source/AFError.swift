@@ -220,6 +220,10 @@ public enum AFError: Error {
     case sessionInvalidated(error: Error?)
     /// `URLSessionTask` completed with error.
     case sessionTaskFailed(error: Error)
+    /// An `OutputStream` returned an error during a write operation.
+    case streamError(Error?)
+    /// An `OutputStream` of a fixed size was too full to write data to.
+    case streamFull
     /// `URLRequest` failed validation.
     case urlRequestValidationFailed(reason: URLRequestValidationFailureReason)
 }
@@ -404,9 +408,12 @@ extension AFError {
             return error
         case let .sessionTaskFailed(error):
             return error
+        case let .streamError(error):
+            return error
         case .explicitlyCancelled,
              .invalidURL,
              .sessionDeinitialized,
+             .streamFull,
              .urlRequestValidationFailed:
             return nil
         }
@@ -697,6 +704,12 @@ extension AFError: LocalizedError {
             return "Moving downloaded file from: \(source) to: \(destination) failed with error: \(error.localizedDescription)"
         case let .sessionTaskFailed(error):
             return "URLSessionTask failed with error: \(error.localizedDescription)"
+        case let .streamError(.some(error)):
+            return "OutputStream failed with error: \(error.localizedDescription)"
+        case .streamError:
+            return "OutputStream failed"
+        case .streamFull:
+            return "OutputStream full"
         }
     }
 }

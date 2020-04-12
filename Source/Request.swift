@@ -1220,7 +1220,15 @@ public final class DataStreamRequest: Request {
             if let stream = state.outputStream {
                 underlyingQueue.async {
                     var bytes = Array(data)
-                    stream.write(&bytes, maxLength: bytes.count)
+
+                    let bytesWritten = stream.write(&bytes,
+                                                    maxLength: bytes.count)
+
+                    if bytesWritten == 0 {
+                        self.finish(error: .streamFull)
+                    } else if bytesWritten < 0 {
+                        self.finish(error: .streamError(stream.streamError))
+                    }
                 }
             }
 
