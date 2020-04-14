@@ -27,18 +27,33 @@
 import Combine
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-public struct DataResponsePublisher<Value>: Publisher where Value: Decodable {
-    public typealias Output = DataResponse<Value, AFError>
+public struct DataResponsePublisher<Serializer>: Publisher where Serializer: ResponseSerializer {
+    public typealias Output = DataResponse<Serializer.SerializedObject, AFError>
     public typealias Failure = Never
 
-    let request: DataRequest
+    private let request: DataRequest
+    private let queue: DispatchQueue
+    private let serializer: Serializer
 
-    init(_ request: DataRequest) {
+    init(_ request: DataRequest, queue: DispatchQueue, serializer: Serializer) {
         self.request = request
+        self.queue = queue
+        self.serializer = serializer
+    }
+
+    public func result() -> AnyPublisher<Result<Serializer.SerializedObject, AFError>, Never> {
+        map { $0.result }.eraseToAnyPublisher()
+    }
+
+    public func value() -> AnyPublisher<Serializer.SerializedObject, AFError> {
+        setFailureType(to: AFError.self).flatMap { $0.result.publisher }.eraseToAnyPublisher()
     }
 
     public func receive<S>(subscriber: S) where S: Subscriber, Self.Failure == S.Failure, Self.Output == S.Input {
-        subscriber.receive(subscription: Inner(request: request, downstream: subscriber))
+        subscriber.receive(subscription: Inner(request: request,
+                                               queue: queue,
+                                               serializer: serializer,
+                                               downstream: subscriber))
     }
 
     private final class Inner<Downstream: Subscriber>: Subscription, Cancellable
@@ -49,9 +64,13 @@ public struct DataResponsePublisher<Value>: Publisher where Value: Decodable {
         @Protected
         private var downstream: Downstream?
         private let request: DataRequest
+        private let queue: DispatchQueue
+        private let serializer: Serializer
 
-        init(request: DataRequest, downstream: Downstream) {
+        init(request: DataRequest, queue: DispatchQueue, serializer: Serializer, downstream: Downstream) {
             self.request = request
+            self.queue = queue
+            self.serializer = serializer
             self.downstream = downstream
         }
 
@@ -62,7 +81,7 @@ public struct DataResponsePublisher<Value>: Publisher where Value: Decodable {
 
             self.downstream = nil
 
-            request.responseDecodable(of: Value.self) { response in
+            request.response(queue: queue, responseSerializer: serializer) { response in
                 _ = downstream.receive(response)
                 downstream.receive(completion: .finished)
             }
@@ -77,8 +96,16 @@ public struct DataResponsePublisher<Value>: Publisher where Value: Decodable {
 
 extension DataRequest {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func responsePublisher<T: Decodable>(of: T.Type = T.self) -> DataResponsePublisher<T> {
-        DataResponsePublisher(self)
+    public func responsePublisher<T: Decodable>(of: T.Type = T.self,
+                                                queue: DispatchQueue = .main,
+                                                preprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
+                                                decoder: DataDecoder = JSONDecoder(),
+                                                emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
+                                                emptyResponseMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DataResponsePublisher<DecodableResponseSerializer<T>> {
+        DataResponsePublisher(self, queue: queue, serializer: DecodableResponseSerializer(dataPreprocessor: preprocessor,
+                                                                                          decoder: decoder,
+                                                                                          emptyResponseCodes: emptyResponseCodes,
+                                                                                          emptyRequestMethods: emptyResponseMethods))
     }
 }
 
