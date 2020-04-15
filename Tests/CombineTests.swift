@@ -64,6 +64,53 @@ final class CombineTests: BaseTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func testThatNonAutomaticDataRequestCanBePublished() {
+        // Given
+        let responseReceived = expectation(description: "response should be received")
+        let completionReceived = expectation(description: "stream should complete")
+        let session = Session(startRequestsImmediately: false)
+        var response: DataResponse<HTTPBinResponse, AFError>?
+
+        // When
+        store {
+            session.request(URLRequest.makeHTTPBinRequest())
+                .responsePublisher(of: HTTPBinResponse.self)
+                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                      receiveValue: { response = $0; responseReceived.fulfill() })
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(response?.result.isSuccess == true)
+    }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func testThatDataRequestCanBePublishedWithMultipleHandlers() {
+        // Given
+        let handlerResponseReceived = expectation(description: "handler response should be received")
+        let publishedResponseReceived = expectation(description: "published response should be received")
+        let completionReceived = expectation(description: "stream should complete")
+        var handlerResponse: DataResponse<HTTPBinResponse, AFError>?
+        var publishedResponse: DataResponse<HTTPBinResponse, AFError>?
+
+        // When
+        store {
+            AF.request(URLRequest.makeHTTPBinRequest())
+                .responseDecodable(of: HTTPBinResponse.self) { handlerResponse = $0; handlerResponseReceived.fulfill() }
+                .responsePublisher(of: HTTPBinResponse.self)
+                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                      receiveValue: { publishedResponse = $0; publishedResponseReceived.fulfill() })
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(handlerResponse?.result.isSuccess == true)
+        XCTAssertTrue(publishedResponse?.result.isSuccess == true)
+    }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataRequestCanPublishResult() {
         // Given
         let responseReceived = expectation(description: "response should be received")

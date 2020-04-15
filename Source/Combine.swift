@@ -84,7 +84,7 @@ public struct DataResponsePublisher<Serializer>: Publisher where Serializer: Res
             request.response(queue: queue, responseSerializer: serializer) { response in
                 _ = downstream.receive(response)
                 downstream.receive(completion: .finished)
-            }
+            }.resume()
         }
 
         func cancel() {
@@ -96,16 +96,22 @@ public struct DataResponsePublisher<Serializer>: Publisher where Serializer: Res
 
 extension DataRequest {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func responsePublisher<Serializer: ResponseSerializer>(serializer: Serializer, queue: DispatchQueue = .main) -> DataResponsePublisher<Serializer> {
+        DataResponsePublisher(self, queue: queue, serializer: serializer)
+    }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func responsePublisher<T: Decodable>(of: T.Type = T.self,
                                                 queue: DispatchQueue = .main,
                                                 preprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
                                                 decoder: DataDecoder = JSONDecoder(),
                                                 emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
                                                 emptyResponseMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DataResponsePublisher<DecodableResponseSerializer<T>> {
-        DataResponsePublisher(self, queue: queue, serializer: DecodableResponseSerializer(dataPreprocessor: preprocessor,
-                                                                                          decoder: decoder,
-                                                                                          emptyResponseCodes: emptyResponseCodes,
-                                                                                          emptyRequestMethods: emptyResponseMethods))
+        responsePublisher(serializer: DecodableResponseSerializer(dataPreprocessor: preprocessor,
+                                                                  decoder: decoder,
+                                                                  emptyResponseCodes: emptyResponseCodes,
+                                                                  emptyRequestMethods: emptyResponseMethods),
+                          queue: queue)
     }
 }
 
