@@ -27,32 +27,32 @@
 import Combine
 
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-public struct DataResponsePublisher<Serializer>: Publisher where Serializer: ResponseSerializer {
-    public typealias Output = DataResponse<Serializer.SerializedObject, AFError>
+public struct DataResponsePublisher<Value>: Publisher {
+    public typealias Output = DataResponse<Value, AFError>
     public typealias Failure = Never
 
-    private let request: DataRequest
-    private let queue: DispatchQueue
-    private let serializer: Serializer
+    private typealias Handler = (@escaping (_ response: DataResponse<Value, AFError>) -> Void) -> DataRequest
 
-    init(_ request: DataRequest, queue: DispatchQueue, serializer: Serializer) {
+    private let request: DataRequest
+    private let responseHandler: Handler
+
+    init<Serializer: ResponseSerializer>(_ request: DataRequest, queue: DispatchQueue, serializer: Serializer)
+        where Value == Serializer.SerializedObject {
         self.request = request
-        self.queue = queue
-        self.serializer = serializer
+        responseHandler = { request.response(queue: queue, responseSerializer: serializer, completionHandler: $0) }
     }
 
-    public func result() -> AnyPublisher<Result<Serializer.SerializedObject, AFError>, Never> {
+    public func result() -> AnyPublisher<Result<Value, AFError>, Never> {
         map { $0.result }.eraseToAnyPublisher()
     }
 
-    public func value() -> AnyPublisher<Serializer.SerializedObject, AFError> {
+    public func value() -> AnyPublisher<Value, AFError> {
         setFailureType(to: AFError.self).flatMap { $0.result.publisher }.eraseToAnyPublisher()
     }
 
     public func receive<S>(subscriber: S) where S: Subscriber, Self.Failure == S.Failure, Self.Output == S.Input {
         subscriber.receive(subscription: Inner(request: request,
-                                               queue: queue,
-                                               serializer: serializer,
+                                               responseHandler: responseHandler,
                                                downstream: subscriber))
     }
 
@@ -64,13 +64,11 @@ public struct DataResponsePublisher<Serializer>: Publisher where Serializer: Res
         @Protected
         private var downstream: Downstream?
         private let request: DataRequest
-        private let queue: DispatchQueue
-        private let serializer: Serializer
+        private let responseHandler: Handler
 
-        init(request: DataRequest, queue: DispatchQueue, serializer: Serializer, downstream: Downstream) {
+        init(request: DataRequest, responseHandler: @escaping Handler, downstream: Downstream) {
             self.request = request
-            self.queue = queue
-            self.serializer = serializer
+            self.responseHandler = responseHandler
             self.downstream = downstream
         }
 
@@ -80,8 +78,7 @@ public struct DataResponsePublisher<Serializer>: Publisher where Serializer: Res
             guard let downstream = downstream else { return }
 
             self.downstream = nil
-
-            request.response(queue: queue, responseSerializer: serializer) { response in
+            responseHandler { response in
                 _ = downstream.receive(response)
                 downstream.receive(completion: .finished)
             }.resume()
@@ -96,7 +93,8 @@ public struct DataResponsePublisher<Serializer>: Publisher where Serializer: Res
 
 extension DataRequest {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func responsePublisher<Serializer: ResponseSerializer>(serializer: Serializer, queue: DispatchQueue = .main) -> DataResponsePublisher<Serializer> {
+    public func responsePublisher<Serializer: ResponseSerializer, T>(serializer: Serializer, queue: DispatchQueue = .main) -> DataResponsePublisher<T>
+        where Serializer.SerializedObject == T {
         DataResponsePublisher(self, queue: queue, serializer: serializer)
     }
 
@@ -106,7 +104,7 @@ extension DataRequest {
                                                 preprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
                                                 decoder: DataDecoder = JSONDecoder(),
                                                 emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
-                                                emptyResponseMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DataResponsePublisher<DecodableResponseSerializer<T>> {
+                                                emptyResponseMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DataResponsePublisher<T> {
         responsePublisher(serializer: DecodableResponseSerializer(dataPreprocessor: preprocessor,
                                                                   decoder: decoder,
                                                                   emptyResponseCodes: emptyResponseCodes,
