@@ -100,7 +100,7 @@ public struct DataResponsePublisher<Value>: Publisher {
 
 extension DataRequest {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func publishResponse<Serializer: ResponseSerializer, T>(using serializer: Serializer, queue: DispatchQueue = .main) -> DataResponsePublisher<T>
+    public func publishResponse<Serializer: ResponseSerializer, T>(using serializer: Serializer, on queue: DispatchQueue = .main) -> DataResponsePublisher<T>
         where Serializer.SerializedObject == T {
         DataResponsePublisher(self, queue: queue, serializer: serializer)
     }
@@ -113,7 +113,7 @@ extension DataRequest {
         publishResponse(using: DataResponseSerializer(dataPreprocessor: preprocessor,
                                                       emptyResponseCodes: emptyResponseCodes,
                                                       emptyRequestMethods: emptyRequestMethods),
-                        queue: queue)
+                        on: queue)
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
@@ -126,7 +126,7 @@ extension DataRequest {
                                                         encoding: encoding,
                                                         emptyResponseCodes: emptyResponseCodes,
                                                         emptyRequestMethods: emptyRequestMethods),
-                        queue: queue)
+                        on: queue)
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
@@ -140,7 +140,7 @@ extension DataRequest {
                                                            decoder: decoder,
                                                            emptyResponseCodes: emptyResponseCodes,
                                                            emptyRequestMethods: emptyResponseMethods),
-                        queue: queue)
+                        on: queue)
     }
 }
 
