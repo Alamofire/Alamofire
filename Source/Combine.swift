@@ -35,6 +35,13 @@ public struct DataResponsePublisher<Value>: Publisher {
 
     private let request: DataRequest
     private let responseHandler: Handler
+//
+//    init(_ request: DataRequest, queue: DispatchQueue) {
+//        self.request = request
+//        responseHandler = { (handler: (DataResponse<Data?, AFError>) -> Void)) -> DataRequest in
+//            request.response(queue: queue, completionHandler: handler)
+//        }
+//    }
 
     init<Serializer: ResponseSerializer>(_ request: DataRequest, queue: DispatchQueue, serializer: Serializer)
         where Value == Serializer.SerializedObject {
@@ -93,23 +100,47 @@ public struct DataResponsePublisher<Value>: Publisher {
 
 extension DataRequest {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func responsePublisher<Serializer: ResponseSerializer, T>(serializer: Serializer, queue: DispatchQueue = .main) -> DataResponsePublisher<T>
+    public func publish<Serializer: ResponseSerializer, T>(serializer: Serializer, queue: DispatchQueue = .main) -> DataResponsePublisher<T>
         where Serializer.SerializedObject == T {
         DataResponsePublisher(self, queue: queue, serializer: serializer)
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func responsePublisher<T: Decodable>(of: T.Type = T.self,
-                                                queue: DispatchQueue = .main,
-                                                preprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
-                                                decoder: DataDecoder = JSONDecoder(),
-                                                emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
-                                                emptyResponseMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DataResponsePublisher<T> {
-        responsePublisher(serializer: DecodableResponseSerializer(dataPreprocessor: preprocessor,
-                                                                  decoder: decoder,
-                                                                  emptyResponseCodes: emptyResponseCodes,
-                                                                  emptyRequestMethods: emptyResponseMethods),
-                          queue: queue)
+    public func publishData(queue: DispatchQueue = .main,
+                            preprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
+                            emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
+                            emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DataResponsePublisher<Data> {
+        publish(serializer: DataResponseSerializer(dataPreprocessor: preprocessor,
+                                                   emptyResponseCodes: emptyResponseCodes,
+                                                   emptyRequestMethods: emptyRequestMethods),
+                queue: queue)
+    }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func publishString(queue: DispatchQueue = .main,
+                              preprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
+                              encoding: String.Encoding? = nil,
+                              emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
+                              emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) -> DataResponsePublisher<String> {
+        publish(serializer: StringResponseSerializer(dataPreprocessor: preprocessor,
+                                                     encoding: encoding,
+                                                     emptyResponseCodes: emptyResponseCodes,
+                                                     emptyRequestMethods: emptyRequestMethods),
+                queue: queue)
+    }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func publishDecodable<T: Decodable>(of: T.Type = T.self,
+                                               queue: DispatchQueue = .main,
+                                               preprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
+                                               decoder: DataDecoder = JSONDecoder(),
+                                               emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
+                                               emptyResponseMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DataResponsePublisher<T> {
+        publish(serializer: DecodableResponseSerializer(dataPreprocessor: preprocessor,
+                                                        decoder: decoder,
+                                                        emptyResponseCodes: emptyResponseCodes,
+                                                        emptyRequestMethods: emptyResponseMethods),
+                queue: queue)
     }
 }
 

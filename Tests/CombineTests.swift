@@ -52,7 +52,7 @@ final class CombineTests: BaseTestCase {
         // When
         store {
             AF.request(URLRequest.makeHTTPBinRequest())
-                .responsePublisher(of: HTTPBinResponse.self)
+                .publishDecodable(of: HTTPBinResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
         }
@@ -74,7 +74,51 @@ final class CombineTests: BaseTestCase {
         // When
         store {
             session.request(URLRequest.makeHTTPBinRequest())
-                .responsePublisher(of: HTTPBinResponse.self)
+                .publishDecodable(of: HTTPBinResponse.self)
+                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                      receiveValue: { response = $0; responseReceived.fulfill() })
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(response?.result.isSuccess == true)
+    }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func testThatDataRequestCanPublishData() {
+        // Given
+        let responseReceived = expectation(description: "response should be received")
+        let completionReceived = expectation(description: "stream should complete")
+        let session = Session(startRequestsImmediately: false)
+        var response: DataResponse<Data, AFError>?
+
+        // When
+        store {
+            session.request(URLRequest.makeHTTPBinRequest())
+                .publishData()
+                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                      receiveValue: { response = $0; responseReceived.fulfill() })
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(response?.result.isSuccess == true)
+    }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func testThatDataRequestCanPublishString() {
+        // Given
+        let responseReceived = expectation(description: "response should be received")
+        let completionReceived = expectation(description: "stream should complete")
+        let session = Session(startRequestsImmediately: false)
+        var response: DataResponse<String, AFError>?
+
+        // When
+        store {
+            session.request(URLRequest.makeHTTPBinRequest())
+                .publishString()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { response = $0; responseReceived.fulfill() })
         }
@@ -98,7 +142,7 @@ final class CombineTests: BaseTestCase {
         store {
             AF.request(URLRequest.makeHTTPBinRequest())
                 .responseDecodable(of: HTTPBinResponse.self) { handlerResponse = $0; handlerResponseReceived.fulfill() }
-                .responsePublisher(of: HTTPBinResponse.self)
+                .publishDecodable(of: HTTPBinResponse.self)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { publishedResponse = $0; publishedResponseReceived.fulfill() })
         }
@@ -120,7 +164,7 @@ final class CombineTests: BaseTestCase {
         // When
         store {
             AF.request(URLRequest.makeHTTPBinRequest())
-                .responsePublisher(of: HTTPBinResponse.self)
+                .publishDecodable(of: HTTPBinResponse.self)
                 .result()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { result = $0; responseReceived.fulfill() })
@@ -142,7 +186,7 @@ final class CombineTests: BaseTestCase {
         // When
         store {
             AF.request(URLRequest.makeHTTPBinRequest())
-                .responsePublisher(of: HTTPBinResponse.self)
+                .publishDecodable(of: HTTPBinResponse.self)
                 .value()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { value = $0; responseReceived.fulfill() })
@@ -163,7 +207,7 @@ final class CombineTests: BaseTestCase {
         // When
         store {
             AF.request(URLRequest.makeHTTPBinRequest(path: "delay/1", timeout: 0.1))
-                .responsePublisher(of: HTTPBinResponse.self)
+                .publishDecodable(of: HTTPBinResponse.self)
                 .value()
                 .sink(receiveCompletion: { completion in
                     switch completion {
@@ -192,7 +236,7 @@ final class CombineTests: BaseTestCase {
 
         // When
         let request = AF.request(URLRequest.makeHTTPBinRequest())
-        let publisher = request.responsePublisher(of: HTTPBinResponse.self)
+        let publisher = request.publishDecodable(of: HTTPBinResponse.self)
 
         let stateAfterPublisher = request.state
 
@@ -220,7 +264,7 @@ final class CombineTests: BaseTestCase {
         // When
         store {
             AF.request(URLRequest.makeHTTPBinRequest())
-                .responsePublisher(of: HTTPBinResponse.self)
+                .publishDecodable(of: HTTPBinResponse.self)
                 .subscribe(on: queue)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: {
@@ -248,7 +292,7 @@ final class CombineTests: BaseTestCase {
         // When
         store {
             AF.request(URLRequest.makeHTTPBinRequest())
-                .responsePublisher(of: HTTPBinResponse.self, queue: queue)
+                .publishDecodable(of: HTTPBinResponse.self, queue: queue)
                 .sink(receiveCompletion: { _ in
                     dispatchPrecondition(condition: .onQueue(queue))
                     completionReceived.fulfill()
@@ -278,7 +322,7 @@ final class CombineTests: BaseTestCase {
         // When
         store {
             AF.request(URLRequest.makeHTTPBinRequest())
-                .responsePublisher(of: HTTPBinResponse.self, queue: queue)
+                .publishDecodable(of: HTTPBinResponse.self, queue: queue)
                 .receive(on: DispatchQueue.main)
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: {
@@ -305,7 +349,7 @@ final class CombineTests: BaseTestCase {
         // When
         let request = AF.request(URLRequest.makeHTTPBinRequest())
         var token: AnyCancellable? = request
-            .responsePublisher(of: HTTPBinResponse.self)
+            .publishDecodable(of: HTTPBinResponse.self)
             .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                   receiveValue: { response = $0; responseReceived.fulfill() })
         token = nil
@@ -328,9 +372,9 @@ final class CombineTests: BaseTestCase {
 
         // When
         let first = AF.request(URLRequest.makeHTTPBinRequest())
-            .responsePublisher(of: HTTPBinResponse.self)
+            .publishDecodable(of: HTTPBinResponse.self)
         let second = AF.request(URLRequest.makeHTTPBinRequest())
-            .responsePublisher(of: HTTPBinResponse.self)
+            .publishDecodable(of: HTTPBinResponse.self)
 
         store {
             Publishers.CombineLatest(first, second)
