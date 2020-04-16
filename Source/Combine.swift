@@ -130,7 +130,7 @@ extension DataRequest {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func publishDecodable<T: Decodable>(of: T.Type = T.self,
+    public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
                                                preprocessor: DataPreprocessor = DecodableResponseSerializer<T>.defaultDataPreprocessor,
                                                decoder: DataDecoder = JSONDecoder(),
