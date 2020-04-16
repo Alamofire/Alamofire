@@ -100,7 +100,7 @@ public struct DataResponsePublisher<Value>: Publisher {
 
 extension DataRequest {
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    public func publish<Serializer: ResponseSerializer, T>(serializer: Serializer, queue: DispatchQueue = .main) -> DataResponsePublisher<T>
+    public func publishResponse<Serializer: ResponseSerializer, T>(using serializer: Serializer, queue: DispatchQueue = .main) -> DataResponsePublisher<T>
         where Serializer.SerializedObject == T {
         DataResponsePublisher(self, queue: queue, serializer: serializer)
     }
@@ -110,10 +110,10 @@ extension DataRequest {
                             preprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
                             emptyResponseCodes: Set<Int> = DataResponseSerializer.defaultEmptyResponseCodes,
                             emptyRequestMethods: Set<HTTPMethod> = DataResponseSerializer.defaultEmptyRequestMethods) -> DataResponsePublisher<Data> {
-        publish(serializer: DataResponseSerializer(dataPreprocessor: preprocessor,
-                                                   emptyResponseCodes: emptyResponseCodes,
-                                                   emptyRequestMethods: emptyRequestMethods),
-                queue: queue)
+        publishResponse(using: DataResponseSerializer(dataPreprocessor: preprocessor,
+                                                      emptyResponseCodes: emptyResponseCodes,
+                                                      emptyRequestMethods: emptyRequestMethods),
+                        queue: queue)
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
@@ -122,11 +122,11 @@ extension DataRequest {
                               encoding: String.Encoding? = nil,
                               emptyResponseCodes: Set<Int> = StringResponseSerializer.defaultEmptyResponseCodes,
                               emptyRequestMethods: Set<HTTPMethod> = StringResponseSerializer.defaultEmptyRequestMethods) -> DataResponsePublisher<String> {
-        publish(serializer: StringResponseSerializer(dataPreprocessor: preprocessor,
-                                                     encoding: encoding,
-                                                     emptyResponseCodes: emptyResponseCodes,
-                                                     emptyRequestMethods: emptyRequestMethods),
-                queue: queue)
+        publishResponse(using: StringResponseSerializer(dataPreprocessor: preprocessor,
+                                                        encoding: encoding,
+                                                        emptyResponseCodes: emptyResponseCodes,
+                                                        emptyRequestMethods: emptyRequestMethods),
+                        queue: queue)
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
@@ -136,11 +136,11 @@ extension DataRequest {
                                                decoder: DataDecoder = JSONDecoder(),
                                                emptyResponseCodes: Set<Int> = DecodableResponseSerializer<T>.defaultEmptyResponseCodes,
                                                emptyResponseMethods: Set<HTTPMethod> = DecodableResponseSerializer<T>.defaultEmptyRequestMethods) -> DataResponsePublisher<T> {
-        publish(serializer: DecodableResponseSerializer(dataPreprocessor: preprocessor,
-                                                        decoder: decoder,
-                                                        emptyResponseCodes: emptyResponseCodes,
-                                                        emptyRequestMethods: emptyResponseMethods),
-                queue: queue)
+        publishResponse(using: DecodableResponseSerializer(dataPreprocessor: preprocessor,
+                                                           decoder: decoder,
+                                                           emptyResponseCodes: emptyResponseCodes,
+                                                           emptyRequestMethods: emptyResponseMethods),
+                        queue: queue)
     }
 }
 
