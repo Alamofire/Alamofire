@@ -65,7 +65,7 @@ public struct DataResponsePublisher<Value>: Publisher {
         setFailureType(to: AFError.self).flatMap { $0.result.publisher }.eraseToAnyPublisher()
     }
 
-    public func receive<S>(subscriber: S) where S: Subscriber, Self.Failure == S.Failure, Self.Output == S.Input {
+    public func receive<S>(subscriber: S) where S: Subscriber, DataResponsePublisher.Failure == S.Failure, DataResponsePublisher.Output == S.Input {
         subscriber.receive(subscription: Inner(request: request,
                                                responseHandler: responseHandler,
                                                downstream: subscriber))
