@@ -26,6 +26,9 @@
 
 import Combine
 
+// MARK: - DataRequest / UploadRequest
+
+/// A Combine `Publisher` that publishes the `DataResponse<Value, AFError>` of the provided `DataRequest`.
 @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
 public struct DataResponsePublisher<Value>: Publisher {
     public typealias Output = DataResponse<Value, AFError>
@@ -35,24 +38,29 @@ public struct DataResponsePublisher<Value>: Publisher {
 
     private let request: DataRequest
     private let responseHandler: Handler
-//
-//    init(_ request: DataRequest, queue: DispatchQueue) {
-//        self.request = request
-//        responseHandler = { (handler: (DataResponse<Data?, AFError>) -> Void)) -> DataRequest in
-//            request.response(queue: queue, completionHandler: handler)
-//        }
-//    }
 
-    init<Serializer: ResponseSerializer>(_ request: DataRequest, queue: DispatchQueue, serializer: Serializer)
+    /// Create an instance which will serialize responses using the provided `ResponseSerializer`.
+    ///
+    /// - Parameters:
+    ///   - request:    `DataRequest` for which to publish the response.
+    ///   - queue:      `DispatchQueue` on which the `DataResponse` value will be published. `.main` by default.
+    ///   - serializer: `ResponseSerializer` used to produce the published `DataResponse`.
+    public init<Serializer: ResponseSerializer>(_ request: DataRequest, queue: DispatchQueue, serializer: Serializer)
         where Value == Serializer.SerializedObject {
         self.request = request
         responseHandler = { request.response(queue: queue, responseSerializer: serializer, completionHandler: $0) }
     }
 
+    /// Publish only the `Result` of the `DataResponse` value.
+    ///
+    /// - Returns: The `AnyPublisher` publishing the `Result<Value, AFError>` value.
     public func result() -> AnyPublisher<Result<Value, AFError>, Never> {
         map { $0.result }.eraseToAnyPublisher()
     }
 
+    /// Publish the `Result` of the `DataResponse` as a single `Value` or fail with the `AFError` instance.
+    ///
+    /// - Returns: The `AnyPublisher<Value, AFError>` publishing the stream.
     public func value() -> AnyPublisher<Value, AFError> {
         setFailureType(to: AFError.self).flatMap { $0.result.publisher }.eraseToAnyPublisher()
     }
@@ -98,13 +106,42 @@ public struct DataResponsePublisher<Value>: Publisher {
     }
 }
 
+@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+extension DataResponsePublisher where Value == Data? {
+    /// Create an instance which publishes a `DataResponse<Data?, AFError>` value without serialization.
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public init(_ request: DataRequest, queue: DispatchQueue) {
+        self.request = request
+        responseHandler = { request.response(queue: queue, completionHandler: $0) }
+    }
+}
+
 extension DataRequest {
+    /// Creates a `DataResponsePublisher` for this instance using the given `ResponseSerializer` and `DispatchQueue`.
+    ///
+    /// - Parameters:
+    ///   - serializer: `ResponseSerializer` used to serialize response `Data`.
+    ///   - queue:      `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
+    ///
+    /// - Returns: `    The `DataResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishResponse<Serializer: ResponseSerializer, T>(using serializer: Serializer, on queue: DispatchQueue = .main) -> DataResponsePublisher<T>
         where Serializer.SerializedObject == T {
         DataResponsePublisher(self, queue: queue, serializer: serializer)
     }
 
+    /// Creates a `DataResponsePublisher` for this instance and uses a `DataResponseSerializer` to serialize the
+    /// response.
+    ///
+    /// - Parameters:
+    ///   - queue:               `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
+    ///   - preprocessor:        `DataPreprocessor` which filters the `Data` before serialization. `PassthroughPreprocessor()`
+    ///                          by default.
+    ///   - emptyResponseCodes:  `Set<Int>` of HTTP status codes for which empty responses are allowed. `[204, 205]` by
+    ///                          default.
+    ///   - emptyRequestMethods: `Set<HTTPMethod>` of `HTTPMethod`s for which empty responses are allowed, regardless of
+    ///                          status code. `[.head]` by default.
+    /// - Returns:               The `DataResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishData(queue: DispatchQueue = .main,
                             preprocessor: DataPreprocessor = DataResponseSerializer.defaultDataPreprocessor,
@@ -116,6 +153,22 @@ extension DataRequest {
                         on: queue)
     }
 
+    /// Creates a `DataResponsePublisher` for this instance and uses a `StringResponseSerializer` to serialize the
+    /// response.
+    ///
+    /// - Parameters:
+    ///   - queue:               `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
+    ///   - preprocessor:        `DataPreprocessor` which filters the `Data` before serialization. `PassthroughPreprocessor()`
+    ///                          by default.
+    ///   - encoding:            `String.Encoding` to parse the response. `nil` by default, in which case the encoding
+    ///                          will be determined by the server response, falling back to the default HTTP character
+    ///                          set, `ISO-8859-1`.
+    ///   - emptyResponseCodes:  `Set<Int>` of HTTP status codes for which empty responses are allowed. `[204, 205]` by
+    ///                          default.
+    ///   - emptyRequestMethods: `Set<HTTPMethod>` of `HTTPMethod`s for which empty responses are allowed, regardless of
+    ///                          status code. `[.head]` by default.
+    ///
+    /// - Returns:               The `DataResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishString(queue: DispatchQueue = .main,
                               preprocessor: DataPreprocessor = StringResponseSerializer.defaultDataPreprocessor,
@@ -129,6 +182,21 @@ extension DataRequest {
                         on: queue)
     }
 
+    /// Creates a `DataResponsePublisher` for this instance and uses a `DecodableResponseSerializer` to serialize the
+    /// response.
+    ///
+    /// - Parameters:
+    ///   - type:                `Decodable` type to which to decode response `Data`. Inferred from the context by default.
+    ///   - queue:               `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
+    ///   - preprocessor:        `DataPreprocessor` which filters the `Data` before serialization. `PassthroughPreprocessor()`
+    ///                          by default.
+    ///   - decoder:             `DataDecoder` instance used to decode response `Data`. `JSONDecoder()` by default.
+    ///   - emptyResponseCodes:  `Set<Int>` of HTTP status codes for which empty responses are allowed. `[204, 205]` by
+    ///                          default.
+    ///   - emptyRequestMethods: `Set<HTTPMethod>` of `HTTPMethod`s for which empty responses are allowed, regardless of
+    ///                          status code. `[.head]` by default.
+    ///
+    /// - Returns:               The `DataResponsePublisher`.
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     public func publishDecodable<T: Decodable>(type: T.Type = T.self,
                                                queue: DispatchQueue = .main,
@@ -141,6 +209,16 @@ extension DataRequest {
                                                            emptyResponseCodes: emptyResponseCodes,
                                                            emptyRequestMethods: emptyResponseMethods),
                         on: queue)
+    }
+
+    /// Creates a `DataResponsePublisher` for this instance which does not serialize the response before publishing.
+    ///
+    ///   - queue: `DispatchQueue` on which the `DataResponse` will be published. `.main` by default.
+    ///
+    /// - Returns: The `DataResponsePublisher`.
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func publishUnserialized(queue: DispatchQueue = .main) -> DataResponsePublisher<Data?> {
+        DataResponsePublisher(self, queue: queue)
     }
 }
 

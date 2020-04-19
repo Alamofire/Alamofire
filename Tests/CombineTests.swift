@@ -130,6 +130,27 @@ final class CombineTests: BaseTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func testThatDataRequestCanBePublishedUnserialized() {
+        // Given
+        let responseReceived = expectation(description: "response should be received")
+        let completionReceived = expectation(description: "stream should complete")
+        var response: DataResponse<Data?, AFError>?
+
+        // When
+        store {
+            AF.request(URLRequest.makeHTTPBinRequest())
+                .publishUnserialized()
+                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                      receiveValue: { response = $0; responseReceived.fulfill() })
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(response?.result.isSuccess == true)
+    }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
     func testThatDataRequestCanBePublishedWithMultipleHandlers() {
         // Given
         let handlerResponseReceived = expectation(description: "handler response should be received")
