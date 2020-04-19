@@ -25,6 +25,8 @@
 #if canImport(Combine)
 
 import Combine
+import Dispatch
+import Foundation
 
 // MARK: - DataRequest / UploadRequest
 
