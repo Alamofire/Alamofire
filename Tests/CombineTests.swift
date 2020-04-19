@@ -412,6 +412,38 @@ final class CombineTests: BaseTestCase {
         XCTAssertTrue(firstResponse?.result.isSuccess == true)
         XCTAssertTrue(secondResponse?.result.isSuccess == true)
     }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func testThatMultipleDataRequestPublishersCanBeChained() {
+        // Given
+        let responseReceived = expectation(description: "combined response should be received")
+        let completionReceived = expectation(description: "combined stream should complete")
+        var firstResponse: DataResponse<HTTPBinResponse, AFError>?
+        var secondResponse: DataResponse<HTTPBinResponse, AFError>?
+
+        // When
+        store {
+            AF.request(URLRequest.makeHTTPBinRequest())
+                .publishDecodable(type: HTTPBinResponse.self)
+                .flatMap { response -> DataResponsePublisher<HTTPBinResponse> in
+                    firstResponse = response
+                    let request = URLRequest.makeHTTPBinRequest(headers: ["X-Custom": response.value?.url ?? "None"])
+                    return AF.request(request)
+                        .publishDecodable(type: HTTPBinResponse.self)
+                }
+                .sink(receiveCompletion: { _ in completionReceived.fulfill() }) { response in
+                    secondResponse = response
+                    responseReceived.fulfill()
+                }
+        }
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(firstResponse?.result.isSuccess == true)
+        XCTAssertTrue(secondResponse?.result.isSuccess == true)
+        XCTAssertEqual(secondResponse?.value?.headers["X-Custom"], "https://httpbin.org/get")
+    }
 }
 
 #endif

@@ -63,6 +63,7 @@
   + [Customizing Response Handlers](#customizing-response-handlers)
     - [Response Transforms](#response-transforms)
     - [Creating a Custom Response Serializer](#creating-a-custom-response-serializer)
+  + [Using Alamofire with Combine](#using-alamofire-with-combine)
 * [Network Reachability](#network-reachability)
 
 # Advanced Usage
@@ -982,6 +983,56 @@ AF.streamRequest(...).responseStream(using: DecodableStreamSerializer<DecodableT
     // Process stream.
 }
 ```
+
+## Using Alamofire with Combine
+On systems supporting the Combine framework, Alamofire offers the ability to publish responses using a custom `Publisher` type. These publishers would similarly to Alamofire's existing response handlers, in that they are chained onto the various request APIs, such as `validate()`. For example:
+
+```swift
+AF.request(...).publishDecodable(type: DecodableType.self)
+```
+
+This code produces a `DataResponsePublisher<DecodableType>` value which will publish a `DataResponse<DecodableType, AFError>` value. `DataResponsePublisher` is fully lazy, meaning that will only add the response handler and `resume` the request once a downstream `Subscriber` has made demand for values. It only provides one value and cannot be retried. 
+
+> To properly handle retry when using Alamofire's `Publisher`s, use Alamofire's built in retry mechanisms, as explained [above](#adapting-and-retrying-requests-with-requestinterceptor).
+
+Additionally, `DataResponsePublisher` provides the ability to transform the outgoing `DataResponse<Success, Failure>` into a `Result<Success, Failure>` value or a `Success` value with `Failure` error. For example:
+
+```swift
+let publisher = AF.request(...).publishDecodable(type: DecodableType.self)
+let resultPublisher = publisher.result() // Provides an AnyPublisher<Result<DecodableType, AFError>, Never>.
+let valuePublisher = publisher.value() // Provides an AnyPublisher<DecodableType, AFError>.
+```
+
+As with any `Publisher`, `DataResponsePublisher` can be used with various Combine APIs, allow Alamofire to support easy simultaneous requests for the first time.
+
+```swift
+let first = AF.request(...).publishDecodable(type: First.self)
+let second = AF.request(...).publishDecodable(type: Second.self)
+let both = Publishers.CombineLatest(first, second)
+both.sink { first, second in // DataResponse<First, AFError>, DataResponse<Second, AFError>
+    debugPrint(first)
+    debugPrint(second)
+}
+```
+
+Sequential requests are also possible:
+
+```swift
+AF.request(...)
+    .publishDecodable(type: First.self)
+    .value()
+    .flatMap {
+        AF.request(...) // Use First value to create second request.
+            .publishDecodable(type: Second.self)
+    }
+    .sink { second in // DataResponse<Second, AFError>
+        debugPrint(second)
+    }
+```
+
+Once subscribed, this chain of transformations will make the first request and then create a publisher for a second, finishing when the second request has finished.
+
+> As with all Combine usage, care must be taken to ensure that subscriptions are cancelled early by maintaining the lifetime of the `AnyCancellable` tokens returned by functions like `sink`. If a request is cancelled prematurely, the response's error will be set to `AFError.explicitlyCancelled`.
 
 ## Network Reachability
 The `NetworkReachabilityManager` listens for changes in the reachability of hosts and addresses for both Cellular and WiFi network interfaces.
