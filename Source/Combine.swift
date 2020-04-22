@@ -224,4 +224,193 @@ extension DataRequest {
     }
 }
 
+// A Combine `Publisher` that publishes a sequence of `Stream<Value, AFError>` values received by the provided `DataStreamRequest`.
+@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+public struct DataStreamPublisher<Value>: Publisher {
+    public typealias Output = DataStreamRequest.Stream<Value, AFError>
+    public typealias Failure = Never
+
+    private typealias Handler = (@escaping DataStreamRequest.Handler<Value, AFError>) -> DataStreamRequest
+
+    private let request: DataStreamRequest
+    private let streamHandler: Handler
+
+    /// Create an instance which will serialize responses using the provided `ResponseSerializer`.
+    ///
+    /// - Parameters:
+    ///   - request:    `DataStreamRequest` for which to publish the response.
+    ///   - queue:      `DispatchQueue` on which the `Stream<Value, AFError>` values will be published. `.main` by
+    ///                 default.
+    ///   - serializer: `DataStreamSerializer` used to produce the published `Stream<Value, AFError>` values.
+    public init<Serializer: DataStreamSerializer>(_ request: DataStreamRequest, queue: DispatchQueue, serializer: Serializer)
+        where Value == Serializer.SerializedObject {
+        self.request = request
+        streamHandler = { request.responseStream(using: serializer, on: queue, stream: $0) }
+    }
+
+    // TODO: Publishing just the Results means we lose any final errors. Perhaps we need to rebuild the results instead?
+
+    /// Publish only the `Result` of the `DataStreamRequest.Stream`'s `Event`s.
+    ///
+    /// - Returns: The `AnyPublisher` publishing the `Result<Value, AFError>` value.
+    public func result() -> AnyPublisher<Result<Value, AFError>, Never> {
+        compactMap { $0.result }.eraseToAnyPublisher()
+    }
+
+    /// Publish the streamed values of the `DataStreamRequest.Stream` as a sequence of `Value` or fail with the
+    /// `AFError` instance.
+    ///
+    /// - Returns: The `AnyPublisher<Value, AFError>` publishing the stream.
+    public func value() -> AnyPublisher<Value, AFError> {
+        result().setFailureType(to: AFError.self).flatMap { $0.publisher }.eraseToAnyPublisher()
+    }
+
+    public func receive<S>(subscriber: S) where S: Subscriber, DataStreamPublisher.Failure == S.Failure, DataStreamPublisher.Output == S.Input {
+        subscriber.receive(subscription: Inner(request: request,
+                                               streamHandler: streamHandler,
+                                               downstream: subscriber))
+    }
+
+    private final class Inner<Downstream: Subscriber>: Subscription, Cancellable
+        where Downstream.Input == Output {
+        typealias Input = DataStreamRequest
+        typealias Failure = Downstream.Failure
+
+        @Protected
+        private var downstream: Downstream?
+        private let request: DataStreamRequest
+        private let streamHandler: Handler
+
+        init(request: DataStreamRequest, streamHandler: @escaping Handler, downstream: Downstream) {
+            self.request = request
+            self.streamHandler = streamHandler
+            self.downstream = downstream
+        }
+
+        func request(_ demand: Subscribers.Demand) {
+            assert(demand > 0)
+
+            guard let downstream = downstream else { return }
+
+            self.downstream = nil
+            streamHandler { stream in
+                _ = downstream.receive(stream)
+                if case .complete = stream.event {
+                    downstream.receive(completion: .finished)
+                }
+            }.resume()
+        }
+
+        func cancel() {
+            request.cancel()
+            downstream = nil
+        }
+    }
+}
+
+extension DataStreamRequest {
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func publishDecodable<T: Decodable>(type: T.Type = T.self,
+                                               decoder: DataDecoder = JSONDecoder(),
+                                               preprocessor: DataPreprocessor = PassthroughPreprocessor()) -> DataStreamPublisher<T> {
+        DataStreamPublisher(self, queue: .main, serializer: DecodableStreamSerializer(decoder: decoder,
+                                                                                      dataPreprocessor: preprocessor))
+    }
+}
+
+/// A Combine `Publisher` that publishes the `DataResponse<Value, AFError>` of the provided `DataRequest`.
+@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+public struct DownloadResponsePublisher<Value>: Publisher {
+    public typealias Output = DownloadResponse<Value, AFError>
+    public typealias Failure = Never
+
+    private typealias Handler = (@escaping (_ response: DownloadResponse<Value, AFError>) -> Void) -> DownloadRequest
+
+    private let request: DownloadRequest
+    private let responseHandler: Handler
+
+    /// Create an instance which will serialize responses using the provided `ResponseSerializer`.
+    ///
+    /// - Parameters:
+    ///   - request:    `DataRequest` for which to publish the response.
+    ///   - queue:      `DispatchQueue` on which the `DataResponse` value will be published. `.main` by default.
+    ///   - serializer: `ResponseSerializer` used to produce the published `DataResponse`.
+    public init<Serializer: ResponseSerializer>(_ request: DownloadRequest, queue: DispatchQueue, serializer: Serializer)
+        where Value == Serializer.SerializedObject {
+        self.request = request
+        responseHandler = { request.response(queue: queue, responseSerializer: serializer, completionHandler: $0) }
+    }
+
+    /// Publish only the `Result` of the `DataResponse` value.
+    ///
+    /// - Returns: The `AnyPublisher` publishing the `Result<Value, AFError>` value.
+    public func result() -> AnyPublisher<Result<Value, AFError>, Never> {
+        map { $0.result }.eraseToAnyPublisher()
+    }
+
+    /// Publish the `Result` of the `DataResponse` as a single `Value` or fail with the `AFError` instance.
+    ///
+    /// - Returns: The `AnyPublisher<Value, AFError>` publishing the stream.
+    public func value() -> AnyPublisher<Value, AFError> {
+        setFailureType(to: AFError.self).flatMap { $0.result.publisher }.eraseToAnyPublisher()
+    }
+
+    public func receive<S>(subscriber: S) where S: Subscriber, DownloadResponsePublisher.Failure == S.Failure, DownloadResponsePublisher.Output == S.Input {
+        subscriber.receive(subscription: Inner(request: request,
+                                               responseHandler: responseHandler,
+                                               downstream: subscriber))
+    }
+
+    private final class Inner<Downstream: Subscriber>: Subscription, Cancellable
+        where Downstream.Input == Output {
+        typealias Input = DownloadRequest
+        typealias Failure = Downstream.Failure
+
+        @Protected
+        private var downstream: Downstream?
+        private let request: DownloadRequest
+        private let responseHandler: Handler
+
+        init(request: DownloadRequest, responseHandler: @escaping Handler, downstream: Downstream) {
+            self.request = request
+            self.responseHandler = responseHandler
+            self.downstream = downstream
+        }
+
+        func request(_ demand: Subscribers.Demand) {
+            assert(demand > 0)
+
+            guard let downstream = downstream else { return }
+
+            self.downstream = nil
+            responseHandler { response in
+                _ = downstream.receive(response)
+                downstream.receive(completion: .finished)
+            }.resume()
+        }
+
+        func cancel() {
+            request.cancel()
+            downstream = nil
+        }
+    }
+}
+
+@available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+extension DownloadResponsePublisher where Value == URL? {
+    /// Create an instance which publishes a `DownloadResponse<URL?, AFError>` value without serialization.
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public init(_ request: DownloadRequest, queue: DispatchQueue) {
+        self.request = request
+        responseHandler = { request.response(queue: queue, completionHandler: $0) }
+    }
+}
+
+extension DownloadRequest {
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    public func publishURL() -> DownloadResponsePublisher<URL?> {
+        DownloadResponsePublisher(self, queue: .main)
+    }
+}
+
 #endif
