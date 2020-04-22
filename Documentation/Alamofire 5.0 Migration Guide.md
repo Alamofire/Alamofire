@@ -33,7 +33,7 @@ Most APIs have changed in Alamofire 5, so this list is not complete. While most 
 	- `.performRevokedEvaluation	` is replaced by `RevocationTrustEvaluator`.
 	- `.pinCertificates` is replaced by `PinnedCertificatesTrustEvaluator`.
 	- `.pinPublicKeys` is replaced by `PublicKeysTrustEvaluator`.
-	- `.disableEvalution` is replaced by `DisabledTrustEvalutor`.
+	- `.disableEvaluation` is replaced by `DisabledTrustEvaluator`.
 	- `.customEvaluation` is replaced by either using `CompositeTrustEvalutor` to combine existing `ServerTrustEvaluating` types or by creating a new type that conforms to `ServerTrustEvaluating`.
 - `DataResponse` and `DownloadResponse` are now both doubly generic to both the response type as well as the error type. By default all Alamofire APIs return a `AF` prefixed response type, which defaults the `Error` type to `AFError`.
 - Alamofire now returns `AFError` for all of its APIs, wrapping any underlying system or custom APIs in `AFError` instances.

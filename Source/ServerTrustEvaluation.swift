@@ -335,7 +335,10 @@ public final class CompositeTrustEvaluator: ServerTrustEvaluating {
 /// Disables all evaluation which in turn will always consider any server trust as valid.
 ///
 /// **THIS EVALUATOR SHOULD NEVER BE USED IN PRODUCTION!**
-public final class DisabledEvaluator: ServerTrustEvaluating {
+@available(*, deprecated, message: "DisabledEvaluator will be renamed, please use DisabledTrustEvaluator instead")
+public typealias DisabledEvaluator = DisabledTrustEvaluator
+
+public final class DisabledTrustEvaluator: ServerTrustEvaluating {
     /// Creates an instance.
     public init() {}
 
