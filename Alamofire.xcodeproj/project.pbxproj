@@ -194,6 +194,10 @@
 		4C4466EC21F8F5D800AC9703 /* CachedResponseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4466EA21F8F5D800AC9703 /* CachedResponseHandler.swift */; };
 		4C4466ED21F8F5D800AC9703 /* CachedResponseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4466EA21F8F5D800AC9703 /* CachedResponseHandler.swift */; };
 		4C4466EE21F8F5D800AC9703 /* CachedResponseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4466EA21F8F5D800AC9703 /* CachedResponseHandler.swift */; };
+		4C67D1362454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */; };
+		4C67D1372454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */; };
+		4C67D1382454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */; };
+		4C67D1392454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */; };
 		4C743CF61C22772D00BCB23E /* certDER.cer in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F831C1A72F8002DA1A9 /* certDER.cer */; };
 		4C743CF71C22772D00BCB23E /* certDER.crt in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F841C1A72F8002DA1A9 /* certDER.crt */; };
 		4C743CF81C22772D00BCB23E /* certDER.der in Resources */ = {isa = PBXBuildFile; fileRef = B39E2F851C1A72F8002DA1A9 /* certDER.der */; };
@@ -256,6 +260,9 @@
 		4C7DD7ED224C627300249836 /* Result+Alamofire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7DD7EA224C627300249836 /* Result+Alamofire.swift */; };
 		4C811F8D1B51856D00E0F59A /* ServerTrustEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustEvaluation.swift */; };
 		4C811F8E1B51856D00E0F59A /* ServerTrustEvaluation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C811F8C1B51856D00E0F59A /* ServerTrustEvaluation.swift */; };
+		4CB0080D2455FE9700C38783 /* AuthenticationInterceptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB0080C2455FE9700C38783 /* AuthenticationInterceptorTests.swift */; };
+		4CB0080E2455FE9700C38783 /* AuthenticationInterceptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB0080C2455FE9700C38783 /* AuthenticationInterceptorTests.swift */; };
+		4CB0080F2455FE9700C38783 /* AuthenticationInterceptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB0080C2455FE9700C38783 /* AuthenticationInterceptorTests.swift */; };
 		4CB928291C66BFBC00CE5F08 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB928281C66BFBC00CE5F08 /* Notifications.swift */; };
 		4CB9282A1C66BFBC00CE5F08 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB928281C66BFBC00CE5F08 /* Notifications.swift */; };
 		4CB9282B1C66BFBC00CE5F08 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CB928281C66BFBC00CE5F08 /* Notifications.swift */; };
@@ -414,6 +421,7 @@
 		4C3D00571C66A8B900D1F709 /* NetworkReachabilityManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkReachabilityManagerTests.swift; sourceTree = "<group>"; };
 		4C43669A1D7BB93D00C38AAD /* DispatchQueue+Alamofire.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Alamofire.swift"; sourceTree = "<group>"; };
 		4C4466EA21F8F5D800AC9703 /* CachedResponseHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedResponseHandler.swift; sourceTree = "<group>"; };
+		4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationInterceptor.swift; sourceTree = "<group>"; };
 		4C7DD7EA224C627300249836 /* Result+Alamofire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Alamofire.swift"; sourceTree = "<group>"; };
 		4C811F8C1B51856D00E0F59A /* ServerTrustEvaluation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerTrustEvaluation.swift; sourceTree = "<group>"; };
 		4C812C3A1B535F220017E0BF /* alamofire-root-ca.cer */ = {isa = PBXFileReference; lastKnownFileType = file; name = "alamofire-root-ca.cer"; path = "alamofire.org/alamofire-root-ca.cer"; sourceTree = "<group>"; };
@@ -432,6 +440,7 @@
 		4C9E88371F5FB3B0000BEC61 /* Alamofire 2.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "Alamofire 2.0 Migration Guide.md"; path = "Documentation/Alamofire 2.0 Migration Guide.md"; sourceTree = "<group>"; };
 		4C9E88381F5FB3B0000BEC61 /* Alamofire 3.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "Alamofire 3.0 Migration Guide.md"; path = "Documentation/Alamofire 3.0 Migration Guide.md"; sourceTree = "<group>"; };
 		4C9E88391F5FB3B0000BEC61 /* Alamofire 4.0 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = "Alamofire 4.0 Migration Guide.md"; path = "Documentation/Alamofire 4.0 Migration Guide.md"; sourceTree = "<group>"; };
+		4CB0080C2455FE9700C38783 /* AuthenticationInterceptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationInterceptorTests.swift; sourceTree = "<group>"; };
 		4CB928281C66BFBC00CE5F08 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		4CBD217F220B48AE008F1C59 /* RetryPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryPolicyTests.swift; sourceTree = "<group>"; };
 		4CCB20681D4549E000C64D5B /* expired.badssl.com-leaf.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "expired.badssl.com-leaf.cer"; sourceTree = "<group>"; };
@@ -562,6 +571,7 @@
 		4C256A4F1B09656E0065714F /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				4CB0080C2455FE9700C38783 /* AuthenticationInterceptorTests.swift */,
 				4CFD6B132201338E00FFB5E3 /* CachedResponseHandlerTests.swift */,
 				4C341BB91B1A865A00C1B34D /* CacheTests.swift */,
 				3113D46A21878227001CCD21 /* HTTPHeadersTests.swift */,
@@ -746,6 +756,7 @@
 			isa = PBXGroup;
 			children = (
 				31DADDFA224811ED0051390F /* AlamofireExtended.swift */,
+				4C67D1352454B12A00CBA725 /* AuthenticationInterceptor.swift */,
 				4C4466EA21F8F5D800AC9703 /* CachedResponseHandler.swift */,
 				3111CE8720A77843008315E2 /* EventMonitor.swift */,
 				4C23EB421B327C5B0090E0BC /* MultipartFormData.swift */,
@@ -1292,6 +1303,7 @@
 				31F5085F20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */,
 				4196936422FA1E05001EA5D5 /* Result+Alamofire.swift in Sources */,
 				3172741F218BB1790039FFCC /* ParameterEncoder.swift in Sources */,
+				4C67D1382454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */,
 				319917BB209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */,
 				319917AC209CDCB000103A19 /* HTTPHeaders.swift in Sources */,
 				3172741A218BAEC90039FFCC /* HTTPMethod.swift in Sources */,
@@ -1338,6 +1350,7 @@
 				4CF627141BA7CC240011A099 /* BaseTestCase.swift in Sources */,
 				4C7DD7ED224C627300249836 /* Result+Alamofire.swift in Sources */,
 				3106FB6323F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
+				4CB0080F2455FE9700C38783 /* AuthenticationInterceptorTests.swift in Sources */,
 				31727424218BB9A50039FFCC /* HTTPBin.swift in Sources */,
 				311A89C123185BC0003BB714 /* CachedResponseHandlerTests.swift in Sources */,
 				31EBD9C320D1D89D00D1FF34 /* ValidationTests.swift in Sources */,
@@ -1371,6 +1384,7 @@
 				4C1DC8551B68908E00476DE3 /* AFError.swift in Sources */,
 				31F5085E20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */,
 				4196936322FA1E05001EA5D5 /* Result+Alamofire.swift in Sources */,
+				4C67D1372454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */,
 				3172741E218BB1790039FFCC /* ParameterEncoder.swift in Sources */,
 				319917BA209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */,
 				319917AB209CDCB000103A19 /* HTTPHeaders.swift in Sources */,
@@ -1411,6 +1425,7 @@
 				4CEC605A1B745C9100E684F4 /* AFError.swift in Sources */,
 				31F5086020B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */,
 				4196936522FA1EAD001EA5D5 /* Result+Alamofire.swift in Sources */,
+				4C67D1392454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */,
 				31727420218BB1790039FFCC /* ParameterEncoder.swift in Sources */,
 				319917BC209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */,
 				319917AD209CDCB000103A19 /* HTTPHeaders.swift in Sources */,
@@ -1451,6 +1466,7 @@
 				4C1DC8541B68908E00476DE3 /* AFError.swift in Sources */,
 				31F5085D20B50DC400FE2A0C /* URLSessionConfiguration+Alamofire.swift in Sources */,
 				4196936222FA1E05001EA5D5 /* Result+Alamofire.swift in Sources */,
+				4C67D1362454B12A00CBA725 /* AuthenticationInterceptor.swift in Sources */,
 				3172741D218BB1790039FFCC /* ParameterEncoder.swift in Sources */,
 				319917B9209CE53A00103A19 /* OperationQueue+Alamofire.swift in Sources */,
 				319917AA209CDCB000103A19 /* HTTPHeaders.swift in Sources */,
@@ -1497,6 +1513,7 @@
 				4C256A531B096C770065714F /* BaseTestCase.swift in Sources */,
 				4C7DD7EB224C627300249836 /* Result+Alamofire.swift in Sources */,
 				3106FB6123F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
+				4CB0080D2455FE9700C38783 /* AuthenticationInterceptorTests.swift in Sources */,
 				31727422218BB9A50039FFCC /* HTTPBin.swift in Sources */,
 				311A89BF23185BBF003BB714 /* CachedResponseHandlerTests.swift in Sources */,
 				31EBD9C120D1D89C00D1FF34 /* ValidationTests.swift in Sources */,
@@ -1536,6 +1553,7 @@
 				F829C6BF1A7A950600A2CD59 /* RequestTests.swift in Sources */,
 				4C7DD7EC224C627300249836 /* Result+Alamofire.swift in Sources */,
 				3106FB6223F8C53A007FAB43 /* ProtectedTests.swift in Sources */,
+				4CB0080E2455FE9700C38783 /* AuthenticationInterceptorTests.swift in Sources */,
 				31727423218BB9A50039FFCC /* HTTPBin.swift in Sources */,
 				311A89C023185BBF003BB714 /* CachedResponseHandlerTests.swift in Sources */,
 				31EBD9C220D1D89C00D1FF34 /* ValidationTests.swift in Sources */,
