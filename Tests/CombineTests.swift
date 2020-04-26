@@ -364,7 +364,7 @@ final class DataRequestCombineTests: CombineTestCase {
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
-    func testThatPublishedDataRequestCanBeCancelled() {
+    func testThatPublishedDataRequestCanBeCancelledAutomatically() {
         // Given
         let responseReceived = expectation(description: "response should be received")
         let completionReceived = expectation(description: "stream should complete")
@@ -384,6 +384,30 @@ final class DataRequestCombineTests: CombineTestCase {
         XCTAssertTrue(response?.result.isFailure == true)
         XCTAssertTrue(request.isCancelled)
         XCTAssertNil(token)
+    }
+
+    @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
+    func testThatPublishedDataRequestCanBeCancelledManually() {
+        // Given
+        let responseReceived = expectation(description: "response should be received")
+        let completionReceived = expectation(description: "stream should complete")
+        var response: DataResponse<HTTPBinResponse, AFError>?
+
+        // When
+        let request = AF.request(URLRequest.makeHTTPBinRequest())
+        store {
+            request
+                .publishDecodable(type: HTTPBinResponse.self)
+                .sink(receiveCompletion: { _ in completionReceived.fulfill() },
+                      receiveValue: { response = $0; responseReceived.fulfill() })
+        }
+        request.cancel()
+
+        waitForExpectations(timeout: timeout)
+
+        // Then
+        XCTAssertTrue(response?.result.isFailure == true)
+        XCTAssertTrue(request.isCancelled)
     }
 
     @available(macOS 10.15, iOS 13, watchOS 6, tvOS 13, *)
