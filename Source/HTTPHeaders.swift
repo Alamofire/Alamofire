@@ -369,19 +369,12 @@ extension HTTPHeader {
     public static let defaultUserAgent: HTTPHeader = {
         let info = Bundle.main.infoDictionary
         
-        #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
-        let executable = (info?[kCFBundleExecutableKey as String] as? String) ??
+        let executable = (info?["CFBundleExecutable"] as? String) ??
             (ProcessInfo.processInfo.arguments.first?.split(separator: "/").last.map(String.init)) ??
             "Unknown"
-        let bundle = info?[kCFBundleIdentifierKey as String] as? String ?? "Unknown"
+        let bundle = info?["CFBundleIdentifier"] as? String ?? "Unknown"
         let appVersion = info?["CFBundleShortVersionString"] as? String ?? "Unknown"
-        let appBuild = info?[kCFBundleVersionKey as String] as? String ?? "Unknown"
-        #else
-        let executable = "Unknown"
-        let bundle = "Unknown"
-        let appVersion = "Unknown"
-        let appBuild = "Unknown"
-        #endif
+        let appBuild = info?["CFBundleVersion"] as? String ?? "Unknown"
 
         let osNameVersion: String = {
             let version = ProcessInfo.processInfo.operatingSystemVersion
