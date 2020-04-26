@@ -568,7 +568,7 @@ final class DownloadRequestCombineTests: CombineTestCase {
         // When
         store {
             AF.download(URLRequest.makeHTTPBinRequest())
-                .publishURL()
+                .publishUnserialized()
                 .sink(receiveCompletion: { _ in completionReceived.fulfill() },
                       receiveValue: { url = $0.value!; responseReceived.fulfill() })
         }

@@ -1300,6 +1300,7 @@ public final class DataStreamRequest: Request {
 }
 
 extension DataStreamRequest.Stream {
+    /// Incoming `Result` values from `Event.stream`.
     public var result: Result<Success, Failure>? {
         guard case let .stream(result) = event else { return nil }
 
