@@ -696,8 +696,9 @@ final class DataStreamLifetimeEvents: BaseTestCase {
         let parseMonitor = Monitor()
         let session = Session(eventMonitors: [eventMonitor, parseMonitor])
 
-        #if !os(Linux)
         let didReceiveChallenge = expectation(description: "didReceiveChallenge should fire")
+
+        #if !os(Linux)
         let taskDidFinishCollecting = expectation(description: "taskDidFinishCollecting should fire")
         #endif
         
@@ -719,9 +720,9 @@ final class DataStreamLifetimeEvents: BaseTestCase {
 
         var dataReceived = false
 
-        #if !os(Linux)
         eventMonitor.taskDidReceiveChallenge = { _, _, _ in didReceiveChallenge.fulfill() }
 
+        #if !os(Linux)
         eventMonitor.taskDidFinishCollectingMetrics = { _, _, _ in taskDidFinishCollecting.fulfill() }
         #endif
         

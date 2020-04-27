@@ -87,7 +87,6 @@ extension SessionDelegate: URLSessionTaskDelegate {
     /// Result of a `URLAuthenticationChallenge` evaluation.
     typealias ChallengeEvaluation = (disposition: URLSession.AuthChallengeDisposition, credential: URLCredential?, error: AFError?)
 
-    #if !os(Linux)
     open func urlSession(_ session: URLSession,
                          task: URLSessionTask,
                          didReceive challenge: URLAuthenticationChallenge,
@@ -96,10 +95,14 @@ extension SessionDelegate: URLSessionTaskDelegate {
 
         let evaluation: ChallengeEvaluation
         switch challenge.protectionSpace.authenticationMethod {
+        #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
         case NSURLAuthenticationMethodServerTrust:
             evaluation = attemptServerTrustAuthentication(with: challenge)
-        case NSURLAuthenticationMethodHTTPBasic, NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM,
+        case NSURLAuthenticationMethodHTTPDigest, NSURLAuthenticationMethodNTLM,
              NSURLAuthenticationMethodNegotiate, NSURLAuthenticationMethodClientCertificate:
+            evaluation = attemptCredentialAuthentication(for: challenge, belongingTo: task)
+        #endif
+        case NSURLAuthenticationMethodHTTPBasic:
             evaluation = attemptCredentialAuthentication(for: challenge, belongingTo: task)
         default:
             evaluation = (.performDefaultHandling, nil, nil)
@@ -112,6 +115,7 @@ extension SessionDelegate: URLSessionTaskDelegate {
         completionHandler(evaluation.disposition, evaluation.credential)
     }
 
+    #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
     /// Evaluates the server trust `URLAuthenticationChallenge` received.
     ///
     /// - Parameter challenge: The `URLAuthenticationChallenge`.
